@@ -57,7 +57,7 @@ public class LogDetailServiceImp(
     {
         if (sportType != SportType.Cricket)
         {
-            return new List<string>();
+            return [];
         }
 
         var criteria = new GetPlayerInfoCriteria { MatchId = matchId };

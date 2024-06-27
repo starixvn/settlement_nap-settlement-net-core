@@ -143,8 +143,11 @@ public static class SportGroup
 
     public const string OtherGroup = "All Other Sports";
 
-    public static readonly int[] SupportSettleDetermine = { SportType.BasketBall };
+    public static readonly int[] SupportSettleDetermine = [SportType.BasketBall];
 
-    public static readonly int[] SOP = { SportType.BasketBall, SportType.Badminton, SportType.VolleyBall,
-        SportType.ESports, SportType.Cricket, SportType.Tennis };
+    public static readonly int[] SOP =
+    [
+        SportType.BasketBall, SportType.Badminton, SportType.VolleyBall,
+        SportType.ESports, SportType.Cricket, SportType.Tennis
+    ];
 }

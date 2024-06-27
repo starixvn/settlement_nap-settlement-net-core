@@ -23,7 +23,7 @@ public class CompareMatchServiceTests
 
         var match = new MultiSportMatch { MatchId = 1 };
 
-        var actual = service.GetDifferentMatchSiteInfo(match, new List<MultiSportMatch> { siteMatch });
+        var actual = service.GetDifferentMatchSiteInfo(match, [siteMatch]);
 
         Assert.NotNull(actual);
     }
@@ -45,7 +45,7 @@ public class CompareMatchServiceTests
 
         var match = new MultiSportMatch { MatchId = 1 };
 
-        var actual = service.GetDifferentMatchSiteInfo(match, new List<MultiSportMatch> { siteMatch });
+        var actual = service.GetDifferentMatchSiteInfo(match, [siteMatch]);
 
         Assert.NotNull(actual);
     }
@@ -56,7 +56,7 @@ public class CompareMatchServiceTests
         var siteMatch = new MultiSportMatch { MatchId = 1 };
         var match = new MultiSportMatch { MatchId = 1 };
 
-        var actual = service.GetDifferentMatchSiteInfo(match, new List<MultiSportMatch> { siteMatch });
+        var actual = service.GetDifferentMatchSiteInfo(match, [siteMatch]);
 
         Assert.Null(actual);
     }
@@ -67,7 +67,7 @@ public class CompareMatchServiceTests
         var siteMatch = new MultiSportMatch { MatchId = 2 };
         var match = new MultiSportMatch { MatchId = 1 };
 
-        var actual = service.GetDifferentMatchSiteInfo(match, new List<MultiSportMatch> { siteMatch });
+        var actual = service.GetDifferentMatchSiteInfo(match, [siteMatch]);
 
         Assert.Null(actual);
     }

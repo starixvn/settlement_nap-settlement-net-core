@@ -55,7 +55,7 @@ public class FastMarketResultServiceImp(
         }
         else
         {
-            oldResults = new List<OldResult>();
+            oldResults = [];
         }
 
         if (oldResults.Any())
@@ -76,7 +76,7 @@ public class FastMarketResultServiceImp(
 
         var resultRoot = new OldResultRoot
         {
-            OldResultElements = new List<OldResultElement> { resultElement }
+            OldResultElements = [resultElement]
         };
 
         return xmlConvertService.Serialize(resultRoot);

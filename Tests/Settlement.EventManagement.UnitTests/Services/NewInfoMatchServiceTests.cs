@@ -121,7 +121,7 @@ public class NewInfoMatchServiceTests
             SourceName = sourceName
         };
 
-        var result = service.ConfirmScore(new List<ResultDetail> { resultDetail }, "01");
+        var result = service.ConfirmScore([resultDetail], "01");
 
         Assert.Equal(expected, result);
     }
@@ -129,7 +129,7 @@ public class NewInfoMatchServiceTests
     [Fact]
     public void IsNotConsistentScore_SuspenderIsBlank_ReturnFalse()
     {
-        var result = service.IsInconsistentScore("-", new List<ResultDetail>(), new List<ResultDetail>(), "01");
+        var result = service.IsInconsistentScore("-", [], [], "01");
 
         Assert.False(result);
     }
@@ -158,8 +158,8 @@ public class NewInfoMatchServiceTests
             AwayValue = away
         };
 
-        var result = service.IsInconsistentScore("Test", new List<ResultDetail> { resultDetail },
-            new List<ResultDetail> { sourceResultDetail }, "01");
+        var result = service.IsInconsistentScore("Test", [resultDetail],
+            [sourceResultDetail], "01");
 
         Assert.Equal(expected, result);
     }

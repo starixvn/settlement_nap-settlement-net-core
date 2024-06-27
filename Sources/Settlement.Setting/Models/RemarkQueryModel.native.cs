@@ -9,15 +9,15 @@ public class RemarkQueryModel
     private AutoCalculationSetting autoCalcSetting;
     private const int ConvertToBase = 2;
 
-    private readonly List<string> eventStatusReasonTitles = new()
-    {
+    private readonly List<string> eventStatusReasonTitles =
+    [
         Core.Constants.EventStatus.IrregularTime1H,
         Core.Constants.EventStatus.IrregularTime,
         Core.Constants.EventStatus.WrongTeamName,
         Core.Constants.EventStatus.Suspended
-    };
+    ];
 
-    private readonly List<int> eventStatusReasons = new() { 1, 2, 3, 4 };
+    private readonly List<int> eventStatusReasons = [1, 2, 3, 4];
 
     public string EventStatus
     {

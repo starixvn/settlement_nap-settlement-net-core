@@ -29,7 +29,7 @@ public class ResultDetailModel
 
     public byte ResultSetting { get; set; }
 
-    public List<string> MultipleTicketStatus { get; } = new();
+    public List<string> MultipleTicketStatus { get; } = [];
 
     public ResultDetailSetting ResultSettingData => new()
     {

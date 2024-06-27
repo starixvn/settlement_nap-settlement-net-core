@@ -48,7 +48,7 @@ public class OutrightTicketServiceImp(IDynamicRepository repository, IOptions<Ap
             TotalTicket = groupTeam.Sum(item => item.TotalTicket),
             TotalCal = groupTeam.Sum(item => item.TotalCal),
             TotalHide = groupTeam.Sum(item => item.TotalHide),
-            TotalRunning = groupTeam.Sum(item => item.TotalRunning),
+            TotalRunning = groupTeam.Sum(item => item.TotalRunning)
         });
         return result;
     }

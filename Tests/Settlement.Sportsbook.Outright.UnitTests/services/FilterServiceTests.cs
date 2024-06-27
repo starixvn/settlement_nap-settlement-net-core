@@ -35,14 +35,14 @@ public class FilterServiceTests
         service = new FilterServiceImp(repository, balanceUpService, mapper, refDataService, outrightTicketService);
     }
 
-    private static List<League> FakeLeagues => new()
-    {
-        new League { SportType = SportType.Diving},
-        new League { SportType = SportType.Badminton},
-        new League { SportType = SportType.Soccer},
-        new League { SportType = SportType.Soccer},
+    private static List<League> FakeLeagues =>
+    [
+        new League { SportType = SportType.Diving },
+        new League { SportType = SportType.Badminton },
+        new League { SportType = SportType.Soccer },
+        new League { SportType = SportType.Soccer },
         new League { SportType = SportType.OtherSports }
-    };
+    ];
 
     [Fact]
     public async Task GetLeague_Always_ReturnLeague()
@@ -92,7 +92,7 @@ public class FilterServiceTests
 
         outrightTicketService.GetTeamsTicketCount(listTeam).Returns(new List<TeamTicketModel>
         {
-            new TeamTicketModel
+            new()
             {
                 OrId = 1,
                 TotalTicket = 4

@@ -6,9 +6,9 @@ namespace Settlement.ResourceInfos.Services.Others;
 
 public class OtherResourceName : IMapperService
 {
-    private readonly List<int> sportQuarter = new() { SportType.Football, SportType.Rugby, SportType.NetBall };
+    private readonly List<int> sportQuarter = [SportType.Football, SportType.Rugby, SportType.NetBall];
 
-    private readonly List<int> sportPeriod = new() { SportType.IceHockey, SportType.FieldHockey };
+    private readonly List<int> sportPeriod = [SportType.IceHockey, SportType.FieldHockey];
 
     public (string, string) GetResourceName(string resourceId, int sportType)
     {

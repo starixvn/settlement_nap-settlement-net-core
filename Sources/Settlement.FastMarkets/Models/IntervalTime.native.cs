@@ -5,11 +5,11 @@ public class IntervalTime
     private const int Halftime = 45;
     private const int FullTime = 90;
 
-    public List<Selection> Value => new()
-    {
+    public List<Selection> Value =>
+    [
         HalfTimeSelection(),
         FullTimeSelection()
-    };
+    ];
 
     private List<Selection> HalfTimeInterval()
     {

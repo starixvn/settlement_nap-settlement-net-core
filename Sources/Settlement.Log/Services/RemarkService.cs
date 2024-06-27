@@ -15,7 +15,7 @@ public interface RemarkService
 
 public class RemarkServiceImp(RemarkNodeService remarkNodeService) : RemarkService
 {
-    private readonly List<int> fastMarketAction = new() { 165, 166, 167 };
+    private readonly List<int> fastMarketAction = [165, 166, 167];
 
     public bool IsFastMarketAction(int actionId)
     {

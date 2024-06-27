@@ -18,7 +18,7 @@ public interface OutrightSettleService
 
     Task UpdateDeadHeatSetting(UpdateDeadHeatSettingRequest request);
 
-    Task<byte?> GetDeadHeadLeagueSetting(GetDeatHeadLeagueSettingRequest request);
+    Task<byte?> GetDeadHeadLeagueSetting(GetDeadHeadLeagueSettingRequest request);
 }
 
 public class OutrightSettleServiceImp(
@@ -33,7 +33,7 @@ public class OutrightSettleServiceImp(
 {
     private const string SpName = "NAP_Admin_Settlement_Outright";
 
-    private readonly List<string> runningStatus = new() { EventStatus.Running, EventStatus.Closed, EventStatus.Internal };
+    private readonly List<string> runningStatus = [EventStatus.Running, EventStatus.Closed, EventStatus.Internal];
 
     public async Task<LeagueInfo> GetLeagueInfo(GetLeagueInfoRequest request)
     {
@@ -99,7 +99,7 @@ public class OutrightSettleServiceImp(
         await repository.ExecuteAsync(criteria);
     }
 
-    public async Task<byte?> GetDeadHeadLeagueSetting(GetDeatHeadLeagueSettingRequest request)
+    public async Task<byte?> GetDeadHeadLeagueSetting(GetDeadHeadLeagueSettingRequest request)
     {
         var criteria = new GetDeadHeatLeagueSettingCriteria
         {

@@ -241,7 +241,7 @@ public class CreateQueryServiceTests
 
         var resources = new Resources<ResourceItem>
         {
-            ResourceItems = new List<ResourceItem> { new() { ResourceId = childMatch.ResourceId } }
+            ResourceItems = [new ResourceItem { ResourceId = childMatch.ResourceId }]
         };
 
         var expectedData = xmlConvertService.Serialize(resources);

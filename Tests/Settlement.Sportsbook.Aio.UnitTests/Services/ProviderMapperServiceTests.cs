@@ -16,7 +16,7 @@ public class ProviderMapperServiceTests
             new(),
             new()
         };
-        var input = new Tuple<List<ExternalResultDetailModel>, List<ExternalResultModel>>(fakeList, new List<ExternalResultModel>());
+        var input = new Tuple<List<ExternalResultDetailModel>, List<ExternalResultModel>>(fakeList, []);
 
         service.Decorate(input);
 

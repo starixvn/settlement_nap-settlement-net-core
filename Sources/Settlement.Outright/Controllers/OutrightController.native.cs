@@ -47,6 +47,6 @@ public class OutrightController(IMediator mediator, FilterService getDataFilterS
 
     [HttpPost]
     [Route("get-deadheat-setting")]
-    public async Task<IActionResult> GetDeadHeatSetting(GetDeatHeadLeagueSettingRequest request)
+    public async Task<IActionResult> GetDeadHeatSetting(GetDeadHeadLeagueSettingRequest request)
        => Ok(await mediator.Send(request).ConfigureAwait(false));
 }

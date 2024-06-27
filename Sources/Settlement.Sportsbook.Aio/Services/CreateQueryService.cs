@@ -85,7 +85,7 @@ public class CreateQueryServiceImp(
     {
         var resource = new Resources<ResourceItem>
         {
-            ResourceItems = new List<ResourceItem> { mapper.Map<ChildMatchModel, ResourceItem>(childMatch) }
+            ResourceItems = [mapper.Map<ChildMatchModel, ResourceItem>(childMatch)]
         };
 
         return xmlConvertService.Serialize(resource);

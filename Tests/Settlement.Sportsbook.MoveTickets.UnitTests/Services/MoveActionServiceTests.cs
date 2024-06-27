@@ -31,7 +31,7 @@ public class MoveActionServiceTests
             }
         };
         accessor.HttpContext = context;
-        var appSettings = new AppSettingsKey { SiteDbServer = new List<string> { "01", "02" } };
+        var appSettings = new AppSettingsKey { SiteDbServer = ["01", "02"] };
         var options = Options.Create(appSettings);
         service = new MoveActionServiceImp(repository, currentSession, accessor, logService,
             options);

@@ -44,10 +44,10 @@ public class EventCounterServiceTests
         var queryModel = new SettleRequest
         {
             Action = "CAL",
-            EventCounters = new List<EventCounter>()
+            EventCounters = []
         };
 
-        eventCounterElementService.GetEventCounters(Arg.Any<List<EventCounter>>()).Returns(new List<EventCounterElement>());
+        eventCounterElementService.GetEventCounters(Arg.Any<List<EventCounter>>()).Returns([]);
 
         // Act
         var result = service.Result(queryModel);
@@ -64,12 +64,12 @@ public class EventCounterServiceTests
         var queryModel = new SettleRequest
         {
             Action = "CAL",
-            EventCounters = new List<EventCounter>()
+            EventCounters = []
         };
 
         var eventCounters = new List<EventCounterElement>
         {
-            new() { Id = "3", Items= new List<ItemElement>() }
+            new() { Id = "3", Items= [] }
         };
 
         eventCounterElementService.GetEventCounters(Arg.Any<List<EventCounter>>()).Returns(eventCounters);

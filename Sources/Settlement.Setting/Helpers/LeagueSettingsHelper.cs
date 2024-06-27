@@ -20,7 +20,7 @@ public static class LeagueSettingsHelper
                 { "Early: Has trader", obj => obj.EAR_HasTrader },
                 { "Early: Number Provider", obj => obj.EAR_NumberProvider },
                 { "Early: Primary Provider", obj => obj.EAR_PrimaryProvider },
-                { "Early: Secondary Provider", obj => obj.EAR_SecondaryProvider },
+                { "Early: Secondary Provider", obj => obj.EAR_SecondaryProvider }
             };
 
         var result = new StringBuilder($"Update auto payout setting on leagueId: {firstObject.LeagueId}.");

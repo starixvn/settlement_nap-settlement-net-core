@@ -48,7 +48,7 @@ public class GenerateResultAmendmentServiceImp(XmlConvertService xmlConvertServi
         {
             ResourceId = x.ResourceId,
             CalcDateTime = x.LogDate.ToString("yyyy-MM-dd HH:mm:ss.fff"),
-            ReCalcDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"),
+            ReCalcDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff")
         }).ToList();
 
         var extraInfo = new ExtraInfo { ExtraInfoItems = extraInfoItems };
@@ -253,7 +253,7 @@ public class GenerateResultAmendmentServiceImp(XmlConvertService xmlConvertServi
             ResourceId = resultChanged.ResourceId,
             Home = resultChanged.HomeValue,
             Away = resultChanged.AwayValue,
-            RefBetTypeId = betTypeId,
+            RefBetTypeId = betTypeId
         };
 
         return itemChanged;
@@ -266,7 +266,7 @@ public class GenerateResultAmendmentServiceImp(XmlConvertService xmlConvertServi
             ResourceId = resourceItem.ResourceId,
             Home = resourceItem.HomeValue,
             Away = resourceItem.AwayValue,
-            RefBetTypeId = betTypeId,
+            RefBetTypeId = betTypeId
         };
 
         return itemChanged;

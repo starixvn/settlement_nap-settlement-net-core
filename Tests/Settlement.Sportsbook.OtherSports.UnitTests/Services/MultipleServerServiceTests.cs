@@ -32,7 +32,7 @@ public class MultipleServerServiceTests
         mergeDataService = Substitute.For<MergeDataService>();
         scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
         logService = Substitute.For<LogService>();
-        var appSettingsKey = new AppSettingsKey { SiteDbServer = new List<string> { "01", "02" } };
+        var appSettingsKey = new AppSettingsKey { SiteDbServer = ["01", "02"] };
         var options = Options.Create(appSettingsKey);
         var mapperConfig = new MapperConfigurationExpression();
         mapperConfig.AddProfile<OtherSportsAutoMapperProfile>();
@@ -91,7 +91,7 @@ public class MultipleServerServiceTests
             .Returns(fakeData);
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
         mergeDataService.MergeTicketCounts(Arg.Any<List<List<TicketCounts>>>())
-            .Returns(new List<TicketCounts> { ticketHt });
+            .Returns([ticketHt]);
 
         var result = await service.Calculate(new CalculateCriteria { Action = action, MatchId = 100, AdminId = 10, IsReSettledTickets = false, IsHedgeMatch = true }, new ScoreSetModel());
 
@@ -112,7 +112,7 @@ public class MultipleServerServiceTests
             .Returns(fakeData);
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
         mergeDataService.MergeTicketCounts(Arg.Any<List<List<TicketCounts>>>())
-            .Returns(new List<TicketCounts>());
+            .Returns([]);
 
         await service.Calculate(new CalculateCriteria { IsReSettledTickets = true, Action = "CAL" }, new ScoreSetModel());
 

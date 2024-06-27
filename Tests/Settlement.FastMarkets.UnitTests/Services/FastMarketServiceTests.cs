@@ -33,7 +33,7 @@ public class FastMarketServiceTests
         scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
         multipleServerFetcherService = Substitute.For<MultipleServerFetcherService>();
         generationService = Substitute.For<GenerationService>();
-        var appSettingKey = new AppSettingsKey { SiteDbServer = new List<string> { "01", "02" } };
+        var appSettingKey = new AppSettingsKey { SiteDbServer = ["01", "02"] };
         var option = Options.Create(appSettingKey);
         service = new FastMarketServiceImp(
             repository,

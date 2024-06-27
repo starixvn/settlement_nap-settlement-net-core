@@ -151,7 +151,7 @@ public class MatchServiceImp(
     {
         var matchIds = matches.Select(m => m.MatchId);
         var referenceActions = await cachingMatchesService.GetReferenceActions(matchIds);
-        matches.ForEach(m => m.ReferenceActions = referenceActions.TryGetValue(m.MatchId, out var action) ? action : new List<Models.Calculation.ReferenceAction>());
+        matches.ForEach(m => m.ReferenceActions = referenceActions.TryGetValue(m.MatchId, out var action) ? action : []);
     }
 
     private async Task<List<CalculateMatchWaiting>> GetAndCachingAutoCalculationMatches(string leagueId, string hashLeagueIds)

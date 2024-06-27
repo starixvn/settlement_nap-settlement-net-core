@@ -26,7 +26,7 @@ public class FetchDataServiceTests
         mapperConfig.AddProfile<SoccerAutoMapperProfile>();
         var config = new MapperConfiguration(mapperConfig);
         var mapper = new Mapper(config);
-        var appSettings = new AppSettingsKey { SiteDbServer = new List<string> { "DB01", "DB02", "DB03" } };
+        var appSettings = new AppSettingsKey { SiteDbServer = ["DB01", "DB02", "DB03"] };
         var option = Options.Create(appSettings);
         service = new FetchDateServiceImp(repository, mapper, option, mergeDataService);
     }

@@ -27,7 +27,7 @@ public class CompareMatchServiceTests
             IsCalculatingSingle = isCalculatingSingle
         };
 
-        var result = service.GetDifferentMatchSiteInfo(match, new List<Match> { siteMatch });
+        var result = service.GetDifferentMatchSiteInfo(match, [siteMatch]);
 
         Assert.NotNull(result);
     }
@@ -54,7 +54,7 @@ public class CompareMatchServiceTests
             IsWaitingEarlyBetTypes = isWaitingEarlyBetTypes
         };
 
-        var result = service.GetDifferentMatchSiteInfo(match, new List<Match> { siteMatch });
+        var result = service.GetDifferentMatchSiteInfo(match, [siteMatch]);
 
         Assert.NotNull(result);
     }

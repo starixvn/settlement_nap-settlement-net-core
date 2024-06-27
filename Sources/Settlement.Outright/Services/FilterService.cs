@@ -84,7 +84,7 @@ public class FilterServiceImp(
 
         return new SportOutright
         {
-            SportLeague = CreateSportOutright(leagues),
+            SportLeague = CreateSportOutright(leagues)
         };
     }
 
@@ -144,7 +144,7 @@ public class FilterServiceImp(
                 {
                     LeagueName = team.LeagueName,
                     LeagueId = team.LeagueId,
-                    Teams = new List<Team>(),
+                    Teams = [],
                     SportName = refDataService.GetSportName(team.SportType)
                 };
 

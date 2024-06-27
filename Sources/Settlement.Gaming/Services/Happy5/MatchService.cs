@@ -24,7 +24,9 @@ public class MatchServiceImp(
         var matches = (await repository.FetchAsync<MatchDetail>(criteria)).ToList();
         var balls = await GetBallsByMatchIds(matches);
 
-        matches.ForEach(m => m.Balls = balls.TryGetValue(m.MatchId, out var ball) ? ballService.CorrectNumberBall(m.MatchId, ball) : new List<BallModel>());
+        matches.ForEach(m => m.Balls = balls.TryGetValue(m.MatchId, out var ball) ? ballService.CorrectNumberBall(m.MatchId, ball) :
+        [
+        ]);
 
         return matches;
     }

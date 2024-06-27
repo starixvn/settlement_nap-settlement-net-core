@@ -20,7 +20,7 @@ public static class ChildMatchConstant
             { (SportType.TableTennis, 16), "0105" },
             { (SportType.TableTennis, 17), "0106" },
             { (SportType.TableTennis, 18), "0107" },
-            { (SportType.TableTennis, 19), "01" },
+            { (SportType.TableTennis, 19), "01" }
         };
 
     public static Dictionary<int, string> LeagueName => new()

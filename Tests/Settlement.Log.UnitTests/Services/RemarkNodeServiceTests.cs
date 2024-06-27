@@ -45,17 +45,17 @@ public class RemarkNodeServiceTests
             new()
             {
                 Position = 1,
-                Result = "80000260",
+                Result = "80000260"
             },
             new()
             {
                 Position = 2,
-                Result = "00000070",
+                Result = "00000070"
             },
             new()
             {
                 Position = 3,
-                Result = "00000000",
+                Result = "00000000"
             }
         };
 
@@ -78,7 +78,7 @@ public class RemarkNodeServiceTests
             new()
             {
                 Id = betTypeId,
-                Item = new BetTypeItemElement[] { new() { Position = position } }
+                Item = [new BetTypeItemElement { Position = position }]
             }
         };
         positionService.PositionName(betTypeId, Arg.Any<BetTypeItemElement>()).Returns(string.Empty);
@@ -104,7 +104,7 @@ public class RemarkNodeServiceTests
             new()
             {
                 Id = betTypeId,
-                Item = new BetTypeItemElement[] { new() { Position = position, Result = result } }
+                Item = [new BetTypeItemElement { Position = position, Result = result }]
             }
         };
 

@@ -61,10 +61,10 @@ public class ChildMatchModel
         get
         {
             bool[] settingMatch =
-            {
-                    Remark.IsKeyHold, Remark.IsMtdHold, Remark.IsPending, Remark.IsUndecided,
+            [
+                Remark.IsKeyHold, Remark.IsMtdHold, Remark.IsPending, Remark.IsUndecided,
                     Remark.IsUnderSettle
-                };
+            ];
             return settingMatch.ToList().Exists(item => item);
         }
     }

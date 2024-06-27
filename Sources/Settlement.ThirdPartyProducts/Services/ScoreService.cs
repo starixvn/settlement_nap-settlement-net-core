@@ -17,7 +17,7 @@ public class ScoreServiceImp(IScoreSetService scoreSetService) : ScoreService
 {
     private const string Halftime = "01";
     private const string Final = "00";
-    private readonly List<string> basketBallResources = new() { "Q1", "Q2", "Q3", "Q4", "OT" };
+    private readonly List<string> basketBallResources = ["Q1", "Q2", "Q3", "Q4", "OT"];
 
     public Score[] ScoreOfSets(List<ResultDetail> resultDetails, int sportType, bool isPopup)
     {
@@ -34,7 +34,7 @@ public class ScoreServiceImp(IScoreSetService scoreSetService) : ScoreService
             return quarterScore;
         }
 
-        return new Score[] { };
+        return [];
     }
 
     public Score HalftimeScore(List<ResultDetail> resultDetails, int sportType)

@@ -155,7 +155,7 @@ public class MatchServiceImp(
 
     private async Task<List<ResultDetail>> GetResultDetail(int matchId)
     {
-        var resultDetailCriteria = new GetResultDetailCriteria { MatchidList = matchId.ToString() };
+        var resultDetailCriteria = new GetResultDetailCriteria { MatchIdList = matchId.ToString() };
         return (await repository.FetchAsync<ResultDetail>(resultDetailCriteria)).ToList();
     }
 

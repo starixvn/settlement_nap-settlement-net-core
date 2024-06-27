@@ -71,8 +71,8 @@ public class MergeDataServiceTests
             BetSettledCount = 1
         };
 
-        data.Add((new List<ResultDetail>(), ticketCounts));
-        data.Add((new List<ResultDetail>(), ticketCountsSecond));
+        data.Add(([], ticketCounts));
+        data.Add(([], ticketCountsSecond));
 
         var result = service.MergeTicketDetails(data);
 

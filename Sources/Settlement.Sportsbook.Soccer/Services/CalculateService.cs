@@ -152,7 +152,7 @@ public class CalculateServiceImp(
     private static bool IsRelatedMatches(string actionName, List<FantasyRelatedMatch> relatedMatches)
     {
         return IsFirstHalfRelatedMatchesNotCalc(actionName, relatedMatches)
-               || IsFulltimeRelatedMatchesNotCalc(actionName, relatedMatches)
+               || IsFullTimeRelatedMatchesNotCalc(actionName, relatedMatches)
                || IsAllRelatedMatchesNotCalc(actionName, relatedMatches);
     }
 
@@ -160,14 +160,14 @@ public class CalculateServiceImp(
         => action.Equals(ActionName.CalculateHalfTime, StringComparison.Ordinal)
             && relatedMatches.Any(x => x.HtSettlementStatusId != SettlementStatus.Completed);
 
-    private static bool IsFulltimeRelatedMatchesNotCalc(string action, IEnumerable<FantasyRelatedMatch> relatedMatches)
+    private static bool IsFullTimeRelatedMatchesNotCalc(string action, IEnumerable<FantasyRelatedMatch> relatedMatches)
         => action.Equals(ActionName.CalculateFullTime, StringComparison.Ordinal)
             && relatedMatches.Any(x => x.FtSettlementStatusId != SettlementStatus.Completed);
 
     private static bool IsAllRelatedMatchesNotCalc(string action, List<FantasyRelatedMatch> relatedMatches)
         => action.Equals(ActionName.CalculateAll, StringComparison.Ordinal)
             && (IsFirstHalfRelatedMatchesNotCalc(ActionName.CalculateHalfTime, relatedMatches)
-                || IsFulltimeRelatedMatchesNotCalc(ActionName.CalculateFullTime, relatedMatches));
+                || IsFullTimeRelatedMatchesNotCalc(ActionName.CalculateFullTime, relatedMatches));
 
     private async Task ExecuteAsync(CalculateCriteria criteria)
     {

@@ -10,6 +10,23 @@ public class SiteMatchServiceTests
     private readonly SiteMatchService service = new SiteMatchServiceImp();
 
     [Theory]
+    [InlineData(true, false, true)]
+    [InlineData(false, true, true)]
+    [InlineData(false, false, false)]
+    public void IsExistRunningTickets_Always_ReturnCorrect(bool main, bool site, bool expected)
+    {
+        var match = new Match
+        {
+            IsExistRunningTicket = main,
+            SiteMatch = [new SiteMatch { IsExistRunningTicket = site }]
+        };
+
+        var result = service.IsExistRunningTickets(match);
+
+        Assert.Equal(expected, result);
+    }
+
+    [Theory]
     [InlineData(CalculateStatus.IsWaiting, null, CalculateStatus.IsWaiting)]
     [InlineData(null, CalculateStatus.IsWaiting, CalculateStatus.IsWaiting)]
     [InlineData(CalculateStatus.IsCalculating, null, CalculateStatus.IsCalculating)]
@@ -31,10 +48,7 @@ public class SiteMatchServiceTests
         var match = new Match
         {
             IsCalculatingSingle = mainStatus,
-            SiteMatch = new List<SiteMatch>
-            {
-                new() { IsCalculatingSingle = siteStatus }
-            }
+            SiteMatch = [new SiteMatch { IsCalculatingSingle = siteStatus }]
         };
 
         var result = service.IsCalculatingSingle(match);
@@ -69,10 +83,7 @@ public class SiteMatchServiceTests
     {
         var match = new Match
         {
-            SiteMatch = new List<SiteMatch>
-            {
-                new ()
-            },
+            SiteMatch = [new SiteMatch()],
             ChildMatchType = childMatchType,
             IsOpenOdds = isOpenOdds
         };
@@ -91,13 +102,13 @@ public class SiteMatchServiceTests
         {
             IsExistEarlyBetTypes = true,
             IsRunningEarlyBetTypes = isRunningEarlyBetTypesMain,
-            SiteMatch = new List<SiteMatch>
-            {
-                new ()
+            SiteMatch =
+            [
+                new SiteMatch
                 {
                     IsRunningEarlyBetTypes = isRunningEarlyBetTypesSite
                 }
-            }
+            ]
         };
 
         var result = service.EarlySettlementStatus(match);
@@ -114,13 +125,13 @@ public class SiteMatchServiceTests
         {
             IsExistEarlyBetTypes = true,
             IsWaitingEarlyBetTypes = isWaitingEarlyBetTypesMain,
-            SiteMatch = new List<SiteMatch>
-            {
-                new ()
+            SiteMatch =
+            [
+                new SiteMatch
                 {
                     IsWaitingEarlyBetTypes = isWaitingEarlyBetTypesSite
                 }
-            }
+            ]
         };
 
         var result = service.EarlySettlementStatus(match);

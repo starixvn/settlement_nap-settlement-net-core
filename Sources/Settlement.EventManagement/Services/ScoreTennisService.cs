@@ -9,6 +9,7 @@ public interface ScoreTennisService
 
 public class ScoreTennisServiceImp(IScoreSetService scoreSetService) : ScoreTennisService
 {
+    private readonly List<string> setResource = ["01", "02", "03", "04", "05"];
     public string GetEventStatus(IEnumerable<ResultDetail> resultDetails, string currentStatus)
     {
         var totalSet = resultDetails.FirstOrDefault(n => n.ResourceId == ResourceType.Final);
@@ -18,7 +19,6 @@ public class ScoreTennisServiceImp(IScoreSetService scoreSetService) : ScoreTenn
 
     public MoreScores ScoreLoader(List<ResultDetail> resultDetails, bool isLeader)
     {
-        List<string> setResource = new() { "01", "02", "03", "04", "05" };
         var moreScore = new MoreScores
         {
             Sets = setResource.Select(_ => new Score("-")).ToArray(),

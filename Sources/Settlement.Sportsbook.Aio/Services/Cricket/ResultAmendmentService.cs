@@ -122,7 +122,7 @@ public class ResultAmendmentServiceImp(
             WrongResult = wrongResult,
             ActualResult = actualResult,
             ExtraInfo = extraInfo,
-            ActionType = actionType,
+            ActionType = actionType
         };
 
         return resultHistoryItem;
@@ -140,7 +140,7 @@ public class ResultAmendmentServiceImp(
             (string a, string c) when a.Contains(ActionType.CalculateAll) && c.Contains(ActionType.CalculateAll) =>
                 ReSettleType.ReCalc,
 
-            _ => ReSettleType.UnKnow,
+            _ => ReSettleType.UnKnow
         };
 
     private static string CreateResourceInfo(List<ResultHistoryItem> resultHistoryItems) => JsonSerializer.Serialize(resultHistoryItems);

@@ -133,7 +133,8 @@ public class AioServiceImp(
         {
             var providerCriteria = validateApiKeyService.CriteriaName(request, $"{request.ApiKey}-{ApiKeyConstant.ProviderKey}");
             var providerResult = await repository.FetchAsync<ExternalResultDetailModel>(providerCriteria);
-            var provider = new Tuple<List<ExternalResultDetailModel>, List<ExternalResultModel>>(providerResult.ToList(), new List<ExternalResultModel>());
+            var provider = new Tuple<List<ExternalResultDetailModel>, List<ExternalResultModel>>(providerResult.ToList(),
+                []);
             providerMapperService.Decorate(provider);
             externalResults = provider.Item2;
         }
@@ -161,7 +162,7 @@ public class AioServiceImp(
         return new FantasyMatch
         {
             FantasyMatchDetail = firstResultSet.FirstOrDefault(),
-            RelatedMatches = relatedMatches,
+            RelatedMatches = relatedMatches
         };
     }
 
@@ -179,7 +180,7 @@ public class AioServiceImp(
                 AwayValue = match.AwayValue,
                 ResourceId = match.ResourceId,
                 ResultStatusId = match.ResultStatusId,
-                SettlementStatusId = match.SettlementStatusId,
+                SettlementStatusId = match.SettlementStatusId
             }).ToList();
 
             ClearScore(results, ResourceType.Halftime);
@@ -272,7 +273,7 @@ public class AioServiceImp(
         }
 
         var fantasyMatch = await GetRelatedMatches(request.MatchId);
-        var relatedMatches = fantasyMatch?.RelatedMatches ?? new List<RelatedMatch>();
+        var relatedMatches = fantasyMatch?.RelatedMatches ?? [];
         var settlingResourceIds = request.SelectedResources.Select(x => x.ResourceId).ToList();
 
         var isNotCalc = relatedMatches.Exists(x => x.Results.Exists(r => settlingResourceIds.Contains(r.ResourceId)
@@ -335,7 +336,7 @@ public class AioServiceImp(
             return childMatchTuple.Item1.ToList();
         }
 
-        return new List<ChildMatchModel>();
+        return [];
     }
 
     public async Task<bool> ResultSetting(ResultSettingRequest request)

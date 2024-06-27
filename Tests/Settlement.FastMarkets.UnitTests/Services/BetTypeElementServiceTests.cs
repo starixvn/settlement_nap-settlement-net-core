@@ -27,10 +27,11 @@ public class BetTypeElementServiceTests
         var betType = new BetType
         {
             BetTypeId = betTypeId,
-            FastMarketResults = new List<FastMarketResult> {
-                new () { BetType= betTypeId, Position =0, Checked = true, IsShow = true, ResultItem = resultItem0},
-                new ()  { BetType= betTypeId, Position =1, Checked = true, IsShow = true, ResultItem = resultItem1}
-            }
+            FastMarketResults =
+            [
+                new FastMarketResult { BetType = betTypeId, Position = 0, Checked = true, IsShow = true, ResultItem = resultItem0 },
+                new FastMarketResult { BetType = betTypeId, Position = 1, Checked = true, IsShow = true, ResultItem = resultItem1 }
+            ]
         };
 
         var betTypes = new List<BetType> { betType };
@@ -145,10 +146,7 @@ public class BetTypeElementServiceTests
         var betType = new BetType
         {
             BetTypeId = 228,
-            FastMarketResults = new List<FastMarketResult>
-            {
-                new ()  { BetType = 228, Position = 1, Checked = true, IsShow = true, Result = 1 }
-            }
+            FastMarketResults = [new FastMarketResult { BetType = 228, Position = 1, Checked = true, IsShow = true, Result = 1 }]
         };
         var betTypes = new List<BetType> { betType };
         const string actionName = "CAL";

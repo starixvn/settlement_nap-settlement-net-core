@@ -2,13 +2,13 @@
 
 public class Match : BaseMatch
 {
-    private readonly List<int> sportSupportDirect = new()
-    {
+    private readonly List<int> sportSupportDirect =
+    [
         Core.Constants.SportType.VolleyBall,
         Core.Constants.SportType.Badminton,
         Core.Constants.SportType.Cricket,
         Core.Constants.SportType.Tennis
-    };
+    ];
 
     [Key("isHavingIntervalScore")]
     public bool IsHavingIntervalScore { get; set; }

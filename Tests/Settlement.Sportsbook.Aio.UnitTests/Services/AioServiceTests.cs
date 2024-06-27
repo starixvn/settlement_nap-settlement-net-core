@@ -76,7 +76,7 @@ public class AioServiceTests
             HedgeMatchDetail = hedgeMatch,
             TicketCounts = new TicketCounts(),
             Permission = new Permission(),
-            ExternalResults = new List<ExternalResultModel>()
+            ExternalResults = []
         };
 
         Assert.Equal(expectedModel.MatchDetail.MatchId, result.MatchDetail.MatchId);
@@ -103,7 +103,7 @@ public class AioServiceTests
 
         var request = new CheckRunningOddsRequest
         {
-            SelectedResources = new List<CheckOddsItem>()
+            SelectedResources = []
         };
         createQueryService.CreateResources(Arg.Any<List<CheckOddsItem>>()).Returns("xml");
         var actual = await service.VerifyNoRunningOdds(request);

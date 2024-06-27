@@ -81,7 +81,7 @@ public class MatchServiceTests
             };
 
         // Act
-        var newMatches = service.GetScoreForMatchBySportType(matches, new List<ResultDetail>(), 90);
+        var newMatches = service.GetScoreForMatchBySportType(matches, [], 90);
 
         // Assert
         Assert.True(matches.Count == newMatches.Count);

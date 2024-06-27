@@ -139,7 +139,7 @@ public class MatchDetail
 
     public bool HasInstantCompleted { get; set; }
 
-    public List<SiteMatch> SiteMatch { get; set; } = new();
+    public List<SiteMatch> SiteMatch { get; set; } = [];
 
     public int ChildMatchType { get; set; }
 }

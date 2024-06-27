@@ -20,7 +20,7 @@ public class PositionServiceTests
     {
         // Arrange
         const string position = "Position";
-        var item = new BetTypeItemElement()
+        var item = new BetTypeItemElement
         {
             Position = "Position",
             Result = string.Empty

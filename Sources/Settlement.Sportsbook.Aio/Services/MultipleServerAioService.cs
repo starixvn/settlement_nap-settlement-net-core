@@ -256,7 +256,7 @@ public class MultipleServerAioServiceImp(
 
         return new Result
         {
-            HasResultAmendment = isResultAmendment,
+            HasResultAmendment = isResultAmendment
         };
     }
 

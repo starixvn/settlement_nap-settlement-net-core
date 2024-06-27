@@ -3,7 +3,7 @@ namespace Settlement.Sportsbook.OtherSports.Criteria;
 
 public class GetResultDetailCriteria : CriteriaBase
 {
-    public string MatchidList { get; set; }
+    public string MatchIdList { get; set; }
 
     public override string GetSettingKey()
     {
@@ -12,6 +12,6 @@ public class GetResultDetailCriteria : CriteriaBase
 
     public override bool IsValid()
     {
-        return !string.IsNullOrEmpty(MatchidList);
+        return !string.IsNullOrEmpty(MatchIdList);
     }
 }

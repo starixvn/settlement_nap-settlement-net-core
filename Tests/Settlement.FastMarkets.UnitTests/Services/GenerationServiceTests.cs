@@ -19,7 +19,7 @@ public class GenerationServiceTests
 
     public GenerationServiceTests()
     {
-        fastMarkets = new List<FastMarketResult>();
+        fastMarkets = [];
 
         fastMarketResultService = Substitute.For<IFastMarketResultService>();
         eventCounterService = Substitute.For<IEventCounterService>();

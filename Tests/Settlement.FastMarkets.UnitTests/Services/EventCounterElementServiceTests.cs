@@ -17,7 +17,7 @@ public class EventCounterElementServiceTests
     public void GetEventCounters_EventCountersIsEmpty_ReturnsEmptyCounterElement()
     {
         // Act
-        var counterElement = service.GetEventCounters(new List<EventCounter>());
+        var counterElement = service.GetEventCounters([]);
 
         // Assert
         Assert.Empty(counterElement);

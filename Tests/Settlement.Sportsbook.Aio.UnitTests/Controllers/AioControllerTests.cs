@@ -59,7 +59,7 @@ public class AioControllerTests
     public async Task GetRecalResult_Always_ReturnOkStatus()
     {
         var request = new GetRecalResultRequest();
-        mediator.Send(Arg.Any<GetRecalResultRequest>()).Returns(new List<Models.ResultDetail>());
+        mediator.Send(Arg.Any<GetRecalResultRequest>()).Returns([]);
 
         var actual = await controller.GetRecalResult(request) as OkObjectResult;
 

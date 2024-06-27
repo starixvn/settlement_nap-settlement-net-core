@@ -39,7 +39,7 @@ public class MoveRunningServiceTests
             }
         };
         accessor.HttpContext = context;
-        var appSettings = new AppSettingsKey { SiteDbServer = new List<string> { "01", "02" } };
+        var appSettings = new AppSettingsKey { SiteDbServer = ["01", "02"] };
         var options = Options.Create(appSettings);
         service = new MoveRunningServiceImp(repository, mapper, currentSession, accessor, logService,
             options, scaleOutSettleService);

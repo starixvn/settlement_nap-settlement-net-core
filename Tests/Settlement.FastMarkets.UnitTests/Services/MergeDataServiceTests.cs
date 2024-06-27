@@ -67,8 +67,8 @@ public class MergeDataServiceTests
 
         var data = new List<(List<FastMarketResult>, TicketCounts)>
         {
-            (new List<FastMarketResult>(), ticketCount),
-            (new List<FastMarketResult>(), ticketCountSecond)
+            ([], ticketCount),
+            ([], ticketCountSecond)
         };
 
         var result = service.MergeFastMarketTicketDetail(data);

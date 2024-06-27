@@ -32,7 +32,7 @@ public class BetBuilderMatchesServiceTests
         mergeMatchInfo = Substitute.For<MergeMatchInfo>();
         var cachingMatchesService = Substitute.For<CachingMatchesService>();
         betBuilderService = Substitute.For<BetBuilderService>();
-        var appSettingsKey = new AppSettingsKey { SiteDbServer = new List<string> { "01", "02" } };
+        var appSettingsKey = new AppSettingsKey { SiteDbServer = ["01", "02"] };
         var options = Options.Create(appSettingsKey);
         service = new BetBuilderMatchesServiceImp(repository, refDataService, mapper, mergeMatchInfo,
             cachingMatchesService, betBuilderService, options);
@@ -69,7 +69,7 @@ public class BetBuilderMatchesServiceTests
         mergeMatchInfo.ParlayStatus(Arg.Any<MatchDetailModel>()).Returns("Completed", "Refunded", "Running");
         refDataService.GetLeagueName(Arg.Any<int>()).Returns("1", "2", "1");
         refDataService.GetSportName(Arg.Any<int>()).Returns("soccer");
-        betBuilderService.CreateLeagues(Arg.Any<List<MatchDetailModel>>()).Returns(new List<LeagueModel>());
+        betBuilderService.CreateLeagues(Arg.Any<List<MatchDetailModel>>()).Returns([]);
 
         // Act
         await service.Search(new FilterRequest { Status = "Completed, Running" });
@@ -84,7 +84,7 @@ public class BetBuilderMatchesServiceTests
     {
         repository.FetchAsync<ResultDetail>(Arg.Any<GetResultDetailCriteria>()).Returns(new List<ResultDetail> { new() { ResourceId = "00" } });
 
-        var result = await service.ResultDetailByMatchIds(new List<MatchDetailModel>());
+        var result = await service.ResultDetailByMatchIds([]);
 
         Assert.Equal("00", result[0].ResourceId);
         Assert.Single(result);

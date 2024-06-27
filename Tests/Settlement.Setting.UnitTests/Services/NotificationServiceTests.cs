@@ -20,7 +20,7 @@ public class NotificationServiceTests
         sendMailService = Substitute.For<SendMailService>();
         var refDataService = Substitute.For<IRefDataService>();
         var currentSession = Substitute.For<INapSession>();
-        var appSetting = new AppSettingsKey { SiteDbServer = new List<string> { "01", "02" } };
+        var appSetting = new AppSettingsKey { SiteDbServer = ["01", "02"] };
         var option = Options.Create(appSetting);
         service = new NotificationServiceImp(repository, option, refDataService, currentSession, sendMailService);
     }

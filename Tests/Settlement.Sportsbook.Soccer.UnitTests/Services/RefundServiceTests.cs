@@ -25,7 +25,7 @@ public class RefundServiceTests
 
     private readonly LogService logService;
 
-    private readonly AppSettingsKey appSettings = new() { SiteDbServer = new List<string> { "DB01", "DB02", "DB03" } };
+    private readonly AppSettingsKey appSettings = new() { SiteDbServer = ["DB01", "DB02", "DB03"] };
 
     public RefundServiceTests()
     {

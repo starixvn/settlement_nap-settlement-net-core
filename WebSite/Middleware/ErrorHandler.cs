@@ -16,7 +16,7 @@ public class ErrorHandler(
 
     public async Task InvokeAsync(HttpContext context)
     {
-        string body = string.Empty;
+        var body = string.Empty;
         try
         {
             context.Request.EnableBuffering();

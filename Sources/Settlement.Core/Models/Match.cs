@@ -340,7 +340,7 @@ public class Match
 
     #endregion ExternalScore
 
-    public List<SiteMatch> SiteMatch { get; set; } = new();
+    public List<SiteMatch> SiteMatch { get; set; } = [];
 
     public int EventStatusReason { get; set; }
 

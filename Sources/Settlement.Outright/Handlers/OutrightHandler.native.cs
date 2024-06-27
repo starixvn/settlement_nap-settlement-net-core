@@ -19,7 +19,7 @@ public class OutrightHandler(
         IRequestHandler<OutrightCalculateRequest, Result>,
         IRequestHandler<CheckOutrightVoidTicketRequest, bool>,
         IRequestHandler<UpdateDeadHeatSettingRequest, Unit>,
-        IRequestHandler<GetDeatHeadLeagueSettingRequest, byte?>
+        IRequestHandler<GetDeadHeadLeagueSettingRequest, byte?>
 
 {
     public async Task<SportLeague> Handle(SportLeagueRequest request, CancellationToken cancellationToken) => await getDataFilterService.GetSportLeague(request);
@@ -56,6 +56,6 @@ public class OutrightHandler(
     public async Task<bool> Handle(CheckOutrightVoidTicketRequest request, CancellationToken cancellationToken)
         => await outrightSettleProcessService.CheckOutrightVoidTicket(request);
 
-    public async Task<byte?> Handle(GetDeatHeadLeagueSettingRequest request, CancellationToken cancellationToken)
+    public async Task<byte?> Handle(GetDeadHeadLeagueSettingRequest request, CancellationToken cancellationToken)
         => await settleService.GetDeadHeadLeagueSetting(request);
 }

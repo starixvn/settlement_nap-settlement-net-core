@@ -33,7 +33,7 @@ public class BetBuilderServiceTests
         var mapper = new Mapper(config);
         var appSetting = new AppSettingsKey
         {
-            SiteDbServer = new List<string> { "01", "02" }
+            SiteDbServer = ["01", "02"]
         };
         var option = Options.Create(appSetting);
         service = new BetBuilderServiceImp(repository, refDataService, mapper, scoreService, xmlConvertService, mergeMatchInfo, option);

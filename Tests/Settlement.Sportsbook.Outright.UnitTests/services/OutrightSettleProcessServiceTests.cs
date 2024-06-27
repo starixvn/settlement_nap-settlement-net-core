@@ -35,7 +35,7 @@ public class OutrightSettleProcessServiceTests
 		var config = new MapperConfiguration(mapperConfig);
 		var mapper = new Mapper(config);
 
-		var appSettingsKey = new AppSettingsKey { SiteDbServer = new List<string> { "01", "02" } };
+		var appSettingsKey = new AppSettingsKey { SiteDbServer = ["01", "02"] };
 		var options = Options.Create(appSettingsKey);
 
 		service = new OutrightSettleProcessServiceImp(repository, options, scaleOutSettleService, mapper, refDataService);

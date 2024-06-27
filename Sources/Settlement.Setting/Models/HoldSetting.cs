@@ -1,10 +1,9 @@
 ﻿using Settlement.Setting.Constants;
-
 namespace Settlement.Setting.Models;
 
 public class HoldSetting
 {
-    private Dictionary<string, short> holdBitPosition => new Dictionary<string, short>
+    private Dictionary<string, short> holdBitPosition => new()
     {
         {"isMtdHold", HoldBitPosition.MtdHold},
         {"isUndecided", HoldBitPosition.Undecided},
@@ -13,14 +12,14 @@ public class HoldSetting
         {"isKeyHold", HoldBitPosition.KeyHold},
     };
 
-    private Dictionary<string, string> holdDescription => new Dictionary<string, string>
+    private Dictionary<string, string> holdDescription => new()
     {
         {"isMtdHold", "Mtd. Hold"},
         {"isUndecided", "Undecided"},
         {"isPending","Result Pending"},
         {"isUnderSettle", "Under Settlement"},
         {"isKeyHold", "Hold Key"},
-        {"", string.Empty},
+        {"", string.Empty}
     };
 
     public string Name { get; set; }
@@ -41,4 +40,4 @@ public class HoldSetting
     {
         return HashCode.Combine(Name, Value, IsApplyChild);
     }
-};
+}

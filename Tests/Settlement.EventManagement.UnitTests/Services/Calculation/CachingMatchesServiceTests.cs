@@ -33,7 +33,7 @@ public class CachingMatchesServiceTests
 	[InlineData(true, "1234", CacheSettings.Keys.WaitingAutoPayoutCacheKey + "-1234")]
 	public void SetToCache_Always_SetLongAndShortCache(bool autoCalc, string leagueId, string logKey)
 	{
-		service.SetToCache(new List<Match>(), leagueId, autoCalc);
+		service.SetToCache([], leagueId, autoCalc);
 
 		cacheService.Received().CreateEntry(logKey);
 		cacheService.Received().CreateEntry(logKey + "-long");

@@ -290,8 +290,8 @@ public class MultiSportServiceImp(
                     AutoWaitingTime = match.AutoWaitingTime,
                     AutoRetryTime = match.AutoRetryTime,
                     AutoCalcSetting = match.AutoCalcSetting,
+                    Matches = [],
                     RefundWaitingTime = match.RefundWaitingTime,
-                    Matches = new List<Match>(),
                     SportType = match.SportType
                 };
 

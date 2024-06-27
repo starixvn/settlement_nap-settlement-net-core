@@ -40,7 +40,7 @@ public class MultipleServerAioServiceTests
         var config = new MapperConfiguration(mapperConfig);
         var mapper = new Mapper(config);
 
-        var appSetting = new AppSettingsKey { SiteDbServer = new List<string> { "01", "02" } };
+        var appSetting = new AppSettingsKey { SiteDbServer = ["01", "02"] };
         var option = Options.Create(appSetting);
         repository = Substitute.For<IDynamicRepository>();
         scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
@@ -100,7 +100,7 @@ public class MultipleServerAioServiceTests
             .Returns((new List<ResultDetail>(), new List<TicketCounts>()));
 
         mergeDataService.MergeTicketDetails(Arg.Any<List<(List<ResultDetail>, TicketCounts)>>())
-            .Returns((new List<ResultDetail> { new ResultDetail() { ResourceId = "00" } }, new TicketCounts()));
+            .Returns((new List<ResultDetail> { new() { ResourceId = "00" } }, new TicketCounts()));
 
         var (actualResultDetail, _) = await service.FetchResultDetails(new GetResultDetailCriteria(), SportType.ESports);
 
@@ -137,7 +137,7 @@ public class MultipleServerAioServiceTests
         var request = new CheckMarkedTicketsRequest
         {
             MatchId = 12345,
-            SelectedResources = new List<ResourceItem>()
+            SelectedResources = []
         };
 
         var actual = await service.CheckMarkedTickets(request);
@@ -176,10 +176,7 @@ public class MultipleServerAioServiceTests
         var childMatchSecond = new ChildMatch { MatchId = 456 };
         var request = new SettleRequest
         {
-            SelectedResources = new List<ResourceItem>
-            {
-                new() { ResourceId = "00" }
-            },
+            SelectedResources = [new ResourceItem { ResourceId = "00" }],
             SportType = SportType.Cricket
         };
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
@@ -203,10 +200,7 @@ public class MultipleServerAioServiceTests
     {
         var request = new SettleRequest
         {
-            SelectedResources = new List<ResourceItem>
-            {
-                new() { ResourceId = "00" }
-            }
+            SelectedResources = [new ResourceItem { ResourceId = "00" }]
         };
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
         createQueryService.QuerySettle(Arg.Any<SettleRequest>()).Returns(new SettleCriteria { Action = "CAL" });
@@ -226,10 +220,7 @@ public class MultipleServerAioServiceTests
         var request = new SettleRequest
         {
             IsReSettledTickets = true,
-            SelectedResources = new List<ResourceItem>
-            {
-                new() { ResourceId = "00" }
-            }
+            SelectedResources = [new ResourceItem { ResourceId = "00" }]
         };
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
         createQueryService.QuerySettle(Arg.Any<SettleRequest>()).Returns(new SettleCriteria { Action = "CAL", IsReSettledTickets = true });
@@ -245,15 +236,12 @@ public class MultipleServerAioServiceTests
     {
         var request = new SettleChildMatchRequest
         {
-            ChildMatches = new List<ChildMatchModel>
-            {
-                new() { MatchId = 1 },
-                new() { MatchId = 2 }
-            },
-            SelectedResources = new List<ResourceItem>
-            {
-                new() { ResourceId = "00" }
-            }
+            ChildMatches =
+            [
+                new ChildMatchModel { MatchId = 1 },
+                new ChildMatchModel { MatchId = 2 }
+            ],
+            SelectedResources = [new ResourceItem { ResourceId = "00" }]
         };
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
         createQueryService.QuerySettleChildMatch(Arg.Any<SettleChildMatchRequest>()).Returns(new SettleCriteria { Action = "CAL" });
@@ -271,10 +259,7 @@ public class MultipleServerAioServiceTests
         var request = new SettleChildMatchRequest
         {
             ChildMatchIds = "123,456",
-            SelectedResources = new List<ResourceItem>
-            {
-                new() { ResourceId = "00" }
-            }
+            SelectedResources = [new ResourceItem { ResourceId = "00" }]
         };
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
         createQueryService.QuerySettleChildMatch(Arg.Any<SettleChildMatchRequest>()).Returns(new SettleCriteria { Action = "CAL" });

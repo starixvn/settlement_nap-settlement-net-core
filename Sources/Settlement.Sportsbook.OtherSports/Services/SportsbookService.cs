@@ -59,7 +59,7 @@ public class SportsbookServiceImp(
 
     private async Task<List<ResultDetail>> GetResultDetail(int matchId)
     {
-        var resultDetailCriteria = new GetResultDetailCriteria { MatchidList = matchId.ToString() };
+        var resultDetailCriteria = new GetResultDetailCriteria { MatchIdList = matchId.ToString() };
         return (await repository.FetchAsync<ResultDetail>(resultDetailCriteria)).ToList();
     }
 
@@ -108,7 +108,7 @@ public class SportsbookServiceImp(
         var matchDetail = await repository.GetAsync<MatchDetail>(criteria);
         matchDetail.RefDataService = refDataService;
         var resultDetails = IsModifyResultDetailGroup(matchDetail.SportType)
-            ? generateService.GenerateResultDetail(matchDetail) : new List<ResultDetail>();
+            ? generateService.GenerateResultDetail(matchDetail) : [];
 
         return new MatchResultDetail
         {

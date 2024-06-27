@@ -41,7 +41,7 @@ public class MoveTicketServiceTests
         mapperConfig.AddProfile<SportsbookMoveTicketAutoMapperProfile>();
         var config = new MapperConfiguration(mapperConfig);
         var mapper = new Mapper(config);
-        var appSetting = new AppSettingsKey { SiteDbServer = new List<string> { "01", "02" } };
+        var appSetting = new AppSettingsKey { SiteDbServer = ["01", "02"] };
         var option = Options.Create(appSetting);
         service = new MoveTicketServiceImp(repository, refDataService, mapper, matchService, option, siteMatchService);
     }
@@ -55,7 +55,7 @@ public class MoveTicketServiceTests
             NewEventStatus = eventStatus,
             IsExistMarkedTicket = isMarkedTicket,
             RefDataService = refDataService,
-            ReferenceActions = new List<ReferenceAction>()
+            ReferenceActions = []
         };
     }
 

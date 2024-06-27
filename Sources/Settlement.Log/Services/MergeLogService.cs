@@ -18,7 +18,7 @@ public class MergeLogServiceImp : MergeLogService
     {
         if (distinctElements.Any())
         {
-            var logs = distinctElements[0].Logs ?? Array.Empty<LogItem>();
+            var logs = distinctElements[0].Logs ?? [];
             return string.Join("; ", logs.Select(l => $"{l.Name}: {l.Value}"));
         }
 
@@ -27,7 +27,7 @@ public class MergeLogServiceImp : MergeLogService
 
     public string MergeLog(IEnumerable<RootElement> roots)
     {
-        var logGroups = roots.SelectMany(r => r.Logs ?? Array.Empty<LogItem>()).GroupBy(log => (log.Name, log.Type))
+        var logGroups = roots.SelectMany(r => r.Logs ?? []).GroupBy(log => (log.Name, log.Type))
             .ToDictionary(
                 group => group.Key,
                 group => group.ToList());

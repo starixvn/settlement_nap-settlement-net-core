@@ -100,7 +100,7 @@ public class SettingServiceImp(
             MatchId = request.MatchId,
             RemarkJson = JsonSerializer.Serialize(remarkLogs),
             ActionId = holdMatchActionId,
-            UserId = currentSession.UserId,
+            UserId = currentSession.UserId
         };
         logService.WriteLog(logCriteria);
     }
@@ -129,7 +129,7 @@ public class SettingServiceImp(
 
             return childMatch.Select(x =>
             {
-                var changedNames = string.Join(",", changedChildMatchSettings.Select(x => $"{x.Description}({(x.Value ? "yes" : "no")})"));
+                var changedNames = string.Join(",", changedChildMatchSettings.Select(c => $"{c.Description}({(c.Value ? "yes" : "no")})"));
                 var parentMatchRemark = $"parent({x.ParentMatchId})";
 
                 return new RemarkLog
@@ -140,7 +140,7 @@ public class SettingServiceImp(
             }).ToList();
         }
 
-        return new List<RemarkLog>();
+        return [];
     }
 
     private async Task<string> UpdateHoldMatchSetting(UpdateHoldMatchSettingCriteria criteria)
@@ -180,8 +180,8 @@ public class SettingServiceImp(
             {
                 Type = x.Type,
                 IsApplyChild = x.IsApplyChild,
-                Value = x.Value,
-            }).ToList(),
+                Value = x.Value
+            }).ToList()
         };
 
         var criteria = new UpdateHoldMatchSettingCriteria

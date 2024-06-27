@@ -26,7 +26,7 @@ public class MatchServiceImp(
     {
         var criteria = mapper.Map<MatchInfoRequest, MatchInfoCriteria>(request);
         var matchDetail = await repository.GetAsync<MatchDetailModel>(criteria);
-        var resultDetails = await betBuilderMatchesService.ResultDetailByMatchIds(new List<MatchDetailModel> { matchDetail });
+        var resultDetails = await betBuilderMatchesService.ResultDetailByMatchIds([matchDetail]);
         matchDetail.MoreScores = betBuilderService.GetScoreByMatchId(resultDetails, matchDetail.MatchId, matchDetail.SportType, true);
         matchDetail.RefDataService = refDataService;
         return matchDetail;

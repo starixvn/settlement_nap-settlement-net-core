@@ -37,7 +37,7 @@ public class MergeDataServiceTests
             IsEnabledGoalRecordHt = central,
             IsLive = central
         };
-        var mainMatch = new MatchDetail { SiteMatch = new List<SiteMatch> { siteMatch, centralMatch } };
+        var mainMatch = new MatchDetail { SiteMatch = [siteMatch, centralMatch] };
         var ticketCounts = new List<TicketCounts>
         {
             new() { GroupId = 1 },
@@ -66,7 +66,7 @@ public class MergeDataServiceTests
     public void MergeSiteMatch_Always_GenerateStatus(int betCount, int betRunningCount, int betMarkedCount, int betWaitingCount, string status)
     {
         //Arrange
-        var mainMatch = new MatchDetail { SiteMatch = new List<SiteMatch>() };
+        var mainMatch = new MatchDetail { SiteMatch = [] };
         var ticketCountHt = new TicketCounts
         {
             GroupId = 1,
@@ -87,7 +87,7 @@ public class MergeDataServiceTests
 
         //act
         var matchDetail =
-            service.MergeSiteMatch(mainMatch, new List<TicketCounts> { ticketCountFt, ticketCountHt });
+            service.MergeSiteMatch(mainMatch, [ticketCountFt, ticketCountHt]);
 
         //assert
 
@@ -113,22 +113,24 @@ public class MergeDataServiceTests
         {
             new()
             {
-                SiteChildMatches =  new List<ChildMatchTicketInfos> {
-                    new()
+                SiteChildMatches =
+                [
+                    new ChildMatchTicketInfos
                     {
                         MatchId = 123, IsExistMarkedTicket = true, IsExistRunningTicket = false
                     }
-                }
+                ]
             },
 
             new()
             {
-                SiteChildMatches = new List<ChildMatchTicketInfos> {
-                    new()
+                SiteChildMatches =
+                [
+                    new ChildMatchTicketInfos
                     {
                         MatchId = 123, IsExistMarkedTicket = false, IsExistRunningTicket = true
                     }
-                }
+                ]
             }
         };
 
@@ -275,8 +277,8 @@ public class MergeDataServiceTests
         };
         var listSiteMatch = new List<(List<ResultDetailModel>, TicketCounts)>
         {
-            (new List<ResultDetailModel>(), ticketCountsOne),
-            (new List<ResultDetailModel>(), ticketCountsTwo)
+            ([], ticketCountsOne),
+            ([], ticketCountsTwo)
         };
 
         //act
@@ -323,8 +325,8 @@ public class MergeDataServiceTests
         };
         var listSiteMatch = new List<(List<ResultDetailModel>, TicketCounts)>
         {
-            (new List<ResultDetailModel> {ticketDetailOne, ticketDetailTwo}, new TicketCounts()),
-            (new List<ResultDetailModel> {ticketDetailThree}, new TicketCounts())
+            ([ticketDetailOne, ticketDetailTwo], new TicketCounts()),
+            ([ticketDetailThree], new TicketCounts())
         };
 
         //act
