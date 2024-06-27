@@ -21,30 +21,17 @@ public interface MoveTicketService
     Task<List<MoveTicketsMatchDetail>> GetMoveTicketsMatches(GetMoveTicketsMatchesRequest request);
 }
 
-public class MoveTicketServiceImp : MoveTicketService
-{
-    private readonly IDynamicRepository repository;
-    private readonly IRefDataService refDataService;
-    private readonly IMapper mapper;
-    private readonly IMatchService matchService;
+public class MoveTicketServiceImp(
     private readonly SiteMatchService siteMatchService;
-    private readonly AppSettingsKey appSettingsKey;
-
-    public MoveTicketServiceImp(
-        IDynamicRepository repository,
-        IRefDataService refDataService,
-        IMapper mapper,
-        IMatchService matchService,
+    IDynamicRepository repository,
+    IRefDataService refDataService,
+    IMapper mapper,
+    IMatchService matchService,
         IOptions<AppSettingsKey> appSettingsKey,
         SiteMatchService siteMatchService)
-    {
-        this.repository = repository;
-        this.refDataService = refDataService;
-        this.mapper = mapper;
-        this.matchService = matchService;
-        this.appSettingsKey = appSettingsKey.Value;
+{
+    private readonly AppSettingsKey appSettingsKey = appSettingsKey.Value;
         this.siteMatchService = siteMatchService;
-    }
 
     public async Task<List<SportModel>> GetSportBook(GetMatchRequest request)
     {

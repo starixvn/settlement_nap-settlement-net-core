@@ -6,12 +6,7 @@ namespace Settlement.Sportsbook.MoveTickets.UnitTests.Services;
 
 public class ScoreSetServiceTests
 {
-    private readonly IScoreSetService service;
-
-    public ScoreSetServiceTests()
-    {
-        service = new ScoreSetServiceImp();
-    }
+    private readonly IScoreSetService service = new ScoreSetServiceImp();
 
     [Fact]
     public void GetScore_HasResultDetailWithSettlementStatusIdIsRefund_ReturnsROnScore()

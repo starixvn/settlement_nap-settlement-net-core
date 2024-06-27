@@ -6,12 +6,7 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services;
 
 public class MergeDataServiceTests
 {
-    private readonly MergeDataService service;
-
-    public MergeDataServiceTests()
-    {
-        service = new MergeDataServiceImp();
-    }
+    private readonly MergeDataService service = new MergeDataServiceImp();
 
     [Fact]
     public void MergeTicketDetails_Always_SumBetTypeOnResultDetail()

@@ -21,43 +21,19 @@ public interface OutrightSettleService
     Task<byte?> GetDeadHeadLeagueSetting(GetDeatHeadLeagueSettingRequest request);
 }
 
-public class OutrightSettleServiceImp : OutrightSettleService
+public class OutrightSettleServiceImp(
+    IDynamicRepository repository,
+    IMapper mapper,
+    IRefDataService refDataService,
+    OutrightSettleProcessService outrightSettleProcessService,
+    INapSession currentSession,
+    IBalanceUpService balanceUpService,
+    OutrightTicketService outrightTicketService)
+    : OutrightSettleService
 {
-    private readonly IDynamicRepository repository;
-
-    private readonly IMapper mapper;
-
-    private readonly IRefDataService refDataService;
-
-    private readonly OutrightSettleProcessService outrightSettleProcessService;
-
-    private readonly INapSession currentSession;
-
-    private readonly IBalanceUpService balanceUpService;
-
-    private readonly OutrightTicketService outrightTicketService;
-
     private const string SpName = "NAP_Admin_Settlement_Outright";
 
     private readonly List<string> runningStatus = new() { EventStatus.Running, EventStatus.Closed, EventStatus.Internal };
-
-    public OutrightSettleServiceImp(IDynamicRepository repository,
-        IMapper mapper,
-        IRefDataService refDataService,
-        OutrightSettleProcessService outrightSettleProcessService,
-        INapSession currentSession,
-        IBalanceUpService balanceUpService,
-        OutrightTicketService outrightTicketService
-        )
-    {
-        this.repository = repository;
-        this.mapper = mapper;
-        this.refDataService = refDataService;
-        this.outrightSettleProcessService = outrightSettleProcessService;
-        this.currentSession = currentSession;
-        this.balanceUpService = balanceUpService;
-        this.outrightTicketService = outrightTicketService;
-    }
 
     public async Task<LeagueInfo> GetLeagueInfo(GetLeagueInfoRequest request)
     {

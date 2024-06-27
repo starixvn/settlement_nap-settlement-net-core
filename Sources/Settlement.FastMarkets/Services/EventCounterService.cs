@@ -9,19 +9,11 @@ public interface IEventCounterService
     string Result(SettleRequest request);
 }
 
-public class EventCounterServiceImp : IEventCounterService
+public class EventCounterServiceImp(
+    IEventCounterElementService eventCounterElementService,
+    XmlConvertService xmlConvertService)
+    : IEventCounterService
 {
-    private readonly IEventCounterElementService eventCounterElementService;
-
-    private readonly XmlConvertService xmlConvertService;
-
-    public EventCounterServiceImp(IEventCounterElementService eventCounterElementService,
-        XmlConvertService xmlConvertService)
-    {
-        this.eventCounterElementService = eventCounterElementService;
-        this.xmlConvertService = xmlConvertService;
-    }
-
     public string Result(SettleRequest request)
     {
         if (request.Action.Equals(ActionType.CalculateAll) || request.IsSettleDetermined)

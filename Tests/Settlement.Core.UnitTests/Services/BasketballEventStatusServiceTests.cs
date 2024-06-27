@@ -7,12 +7,7 @@ namespace Settlement.Core.UnitTests.Services;
 
 public class BasketballEventStatusServiceTests
 {
-    private readonly BasketballEventStatusService service;
-
-    public BasketballEventStatusServiceTests()
-    {
-        service = new BasketballEventStatusServiceImp();
-    }
+    private readonly BasketballEventStatusService service = new BasketballEventStatusServiceImp();
 
     [Fact]
     public void AdjustEventStatusAbandoned_ReturnsCorrectStatus_AbandonedSDTInRound()

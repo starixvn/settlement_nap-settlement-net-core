@@ -13,16 +13,9 @@ public interface RemarkService
     string RemarkValue(string value);
 }
 
-public class RemarkServiceImp : RemarkService
+public class RemarkServiceImp(RemarkNodeService remarkNodeService) : RemarkService
 {
     private readonly List<int> fastMarketAction = new() { 165, 166, 167 };
-
-    private readonly RemarkNodeService remarkNodeService;
-
-    public RemarkServiceImp(RemarkNodeService remarkNodeService)
-    {
-        this.remarkNodeService = remarkNodeService;
-    }
 
     public bool IsFastMarketAction(int actionId)
     {

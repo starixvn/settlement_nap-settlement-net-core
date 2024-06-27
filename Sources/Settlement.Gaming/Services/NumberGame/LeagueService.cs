@@ -9,20 +9,11 @@ public interface LeagueService
     Task<List<LeaguesModel>> Search(NumberGameMatchRequest request);
 }
 
-public class LeagueServiceImp : LeagueService
+public class LeagueServiceImp(
+    MatchService matchService,
+    IRefDataService refDataService)
+    : LeagueService
 {
-    private readonly MatchService matchService;
-
-    private readonly IRefDataService refDataService;
-
-    public LeagueServiceImp(
-        MatchService matchService,
-        IRefDataService refDataService)
-    {
-        this.matchService = matchService;
-        this.refDataService = refDataService;
-    }
-
     public async Task<List<LeaguesModel>> Search(NumberGameMatchRequest request)
     {
         var matches = await matchService.Matches(request);

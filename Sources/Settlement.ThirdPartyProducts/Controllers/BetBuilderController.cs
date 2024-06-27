@@ -8,15 +8,8 @@ namespace Settlement.ThirdPartyProducts.Controllers;
 
 [ApiController]
 [Route("api/bet-builder")]
-public class BetBuilderController : ControllerBase
+public class BetBuilderController(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator mediator;
-
-    public BetBuilderController(IMediator mediator)
-    {
-        this.mediator = mediator;
-    }
-
     [HttpGet]
     [Route("get-date")]
     public IActionResult GetDate()

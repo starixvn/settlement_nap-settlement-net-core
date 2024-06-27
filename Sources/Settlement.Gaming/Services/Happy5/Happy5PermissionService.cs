@@ -12,21 +12,9 @@ public interface PermissionService
     public Permission Permission { get; }
 }
 
-public class Happy5PermissionServiceImp : PermissionService
+public class Happy5PermissionServiceImp(INapSession session, IUserService userService, INapSettings siteSettings)
+    : PermissionService
 {
-    private readonly INapSession session;
-
-    private readonly IUserService userService;
-
-    private readonly INapSettings siteSettings;
-
-    public Happy5PermissionServiceImp(INapSession session, IUserService userService, INapSettings siteSettings)
-    {
-        this.session = session;
-        this.userService = userService;
-        this.siteSettings = siteSettings;
-    }
-
     public Permission Permission => new()
     {
         CanItAdmin = HasPermission(SettlementFunctionKeys.Happy5ResettleMatchBeforeYesterday, Constant.Policy.Host),

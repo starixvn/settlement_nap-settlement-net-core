@@ -8,35 +8,17 @@ using Settlement.Gaming.Services.Happy5;
 
 namespace Settlement.Gaming.Handlers;
 
-public class Happy5Handler :
-    IRequestHandler<Happy5BallsRequest, List<BallModel>>,
-    IRequestHandler<Happy5MatchRequest, HappyFive>,
-    IRequestHandler<Happy5SettlementRequest, Result>
+public class Happy5Handler(
+    INapSession currentSession,
+    BallService ballService,
+    LeagueService leagueService,
+    PermissionService permissionService,
+    SettlementService settlementService)
+    :
+        IRequestHandler<Happy5BallsRequest, List<BallModel>>,
+        IRequestHandler<Happy5MatchRequest, HappyFive>,
+        IRequestHandler<Happy5SettlementRequest, Result>
 {
-    private readonly INapSession currentSession;
-
-    private readonly BallService ballService;
-
-    private readonly LeagueService leagueService;
-
-    private readonly PermissionService permissionService;
-
-    private readonly SettlementService settlementService;
-
-    public Happy5Handler(
-        INapSession currentSession,
-        BallService ballService,
-        LeagueService leagueService,
-        PermissionService permissionService,
-        SettlementService settlementService)
-    {
-        this.currentSession = currentSession;
-        this.ballService = ballService;
-        this.leagueService = leagueService;
-        this.permissionService = permissionService;
-        this.settlementService = settlementService;
-    }
-
     public async Task<List<BallModel>> Handle(Happy5BallsRequest request, CancellationToken cancellationToken)
         => await ballService.GetBallsByMatchId(request.MatchId);
 

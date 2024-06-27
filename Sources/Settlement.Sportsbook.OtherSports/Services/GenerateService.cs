@@ -23,26 +23,17 @@ public interface GenerateService
     public List<ResourceItem> GenerateResources(CalculateRequest request);
 }
 
-public class GenerateServiceImp : GenerateService
+public class GenerateServiceImp(IDynamicRepository repository, XmlConvertService xmlConvertService)
+    : GenerateService
 {
     private const int BaseballHtNode = 5;
 
     private const int FootballHtNode = 2;
 
-    private readonly IDynamicRepository repository;
-
-    private readonly XmlConvertService xmlConvertService;
-
     private static readonly List<string> ResourceHalfTimeAction = new() { ActionType.UnCalculate, ActionType.RefundHalfTime, ActionType.CalculateHalfTime, ActionType.RefundAll };
 
     private static readonly List<string> ResourceFullTimeAction = new() { ActionType.UnCalculate, ActionType.RefundFullTime, ActionType.CalculateFullTime,
                                                                      ActionType.CalculateAll, ActionType.RefundAll };
-
-    public GenerateServiceImp(IDynamicRepository repository, XmlConvertService xmlConvertService)
-    {
-        this.repository = repository;
-        this.xmlConvertService = xmlConvertService;
-    }
 
     public string CreateResources(List<ResourceItem> selectedResources, string action)
     {

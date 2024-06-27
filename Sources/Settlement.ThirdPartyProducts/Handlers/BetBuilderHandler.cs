@@ -6,38 +6,20 @@ using Settlement.ThirdPartyProducts.Services;
 
 namespace Settlement.ThirdPartyProducts.Handlers;
 
-public class BetBuilderHandler : IRequestHandler<FilterRequest, MultiSportsModel>,
-    IRequestHandler<SportRequest, List<Sport>>,
-    IRequestHandler<GetSelectionRequest, SelectionPermissionModel>,
-    IRequestHandler<LeaguesRequest, List<LeagueTypeModel>>,
-    IRequestHandler<MatchesWaitingRequest, List<MatchDetailModel>>,
-    IRequestHandler<MatchInfoRequest, MatchDetailModel>,
-    IRequestHandler<CalculateRequest, Result>
+public class BetBuilderHandler(
+    MatchService matchService,
+    PermissionService permissionService,
+    BetBuilderService betBuilderService,
+    BetBuilderMatchesService betBuilderMatchesService,
+    BetBuilderCalculateService calculateService)
+    : IRequestHandler<FilterRequest, MultiSportsModel>,
+        IRequestHandler<SportRequest, List<Sport>>,
+        IRequestHandler<GetSelectionRequest, SelectionPermissionModel>,
+        IRequestHandler<LeaguesRequest, List<LeagueTypeModel>>,
+        IRequestHandler<MatchesWaitingRequest, List<MatchDetailModel>>,
+        IRequestHandler<MatchInfoRequest, MatchDetailModel>,
+        IRequestHandler<CalculateRequest, Result>
 {
-    private readonly MatchService matchService;
-
-    private readonly PermissionService permissionService;
-
-    private readonly BetBuilderService betBuilderService;
-
-    private readonly BetBuilderMatchesService betBuilderMatchesService;
-
-    private readonly BetBuilderCalculateService calculateService;
-
-    public BetBuilderHandler(
-        MatchService matchService,
-        PermissionService permissionService,
-        BetBuilderService betBuilderService,
-        BetBuilderMatchesService betBuilderMatchesService,
-        BetBuilderCalculateService calculateService)
-    {
-        this.matchService = matchService;
-        this.permissionService = permissionService;
-        this.betBuilderService = betBuilderService;
-        this.betBuilderMatchesService = betBuilderMatchesService;
-        this.calculateService = calculateService;
-    }
-
     public async Task<MultiSportsModel> Handle(FilterRequest request, CancellationToken cancellationToken) => new()
     {
         SportLeagues = await betBuilderMatchesService.Search(request),

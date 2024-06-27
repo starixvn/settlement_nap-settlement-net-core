@@ -9,7 +9,7 @@ public class ScoreSetServiceTests
 {
     private readonly IScoreSetService service = new ScoreSetServiceImp();
 
-    private readonly bool isLeader = true;
+    private const bool isLeader = true;
 
     [Fact]
     public void GetScore_HasResultDetailWithSettlementStatusIdIsRefund_ReturnsROnScore()

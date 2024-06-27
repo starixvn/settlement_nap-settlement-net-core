@@ -8,15 +8,8 @@ namespace Settlement.ThirdPartyProducts.Controllers;
 
 [ApiController]
 [Route("api/cash-out")]
-public class CashOutController : ControllerBase
+public class CashOutController(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator mediator;
-
-    public CashOutController(IMediator mediator)
-    {
-        this.mediator = mediator;
-    }
-
     [Route("void-bet")]
     [HttpPost]
     [LogPushRequest]

@@ -5,12 +5,7 @@ namespace Settlement.EventManagement.UnitTests.Services.Calculation;
 
 public class CompareMatchServiceTests
 {
-    private readonly CompareMatchService service;
-
-    public CompareMatchServiceTests()
-    {
-        service = new CompareMatchServiceImp();
-    }
+    private readonly CompareMatchService service = new CompareMatchServiceImp();
 
     [Theory]
     [InlineData(true, false, false, false, null)]

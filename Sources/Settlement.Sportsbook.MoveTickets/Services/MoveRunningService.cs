@@ -19,36 +19,20 @@ public interface MoveRunningService
     Task<Result> ValidateMovingRunningTickets(ValidateMatchesRequest request);
 }
 
-public class MoveRunningServiceImp : MoveRunningService
+public class MoveRunningServiceImp(
+    IDynamicRepository repository,
+    IMapper mapper,
+    INapSession currentSession,
+    IHttpContextAccessor accessor,
+    LogService logService,
+    IOptions<AppSettingsKey> appSettingsKey,
+    ScaleOutSettleService scaleOutSettleService)
+    : MoveRunningService
 {
     private const int ActionIdMoveRunningTickets = 81035;
     private const string ActionMoveTicket = "MoveTicket";
     private const string ModeRunningTicket = "43";
-    private readonly IDynamicRepository repository;
-    private readonly IMapper mapper;
-    private readonly INapSession currentSession;
-    private readonly IHttpContextAccessor accessor;
-    private readonly LogService logService;
-    private readonly AppSettingsKey appSettingsKey;
-    private readonly ScaleOutSettleService scaleOutSettleService;
-
-    public MoveRunningServiceImp(
-        IDynamicRepository repository,
-        IMapper mapper,
-        INapSession currentSession,
-        IHttpContextAccessor accessor,
-        LogService logService,
-        IOptions<AppSettingsKey> appSettingsKey,
-        ScaleOutSettleService scaleOutSettleService)
-    {
-        this.repository = repository;
-        this.mapper = mapper;
-        this.currentSession = currentSession;
-        this.accessor = accessor;
-        this.logService = logService;
-        this.appSettingsKey = appSettingsKey.Value;
-        this.scaleOutSettleService = scaleOutSettleService;
-    }
+    private readonly AppSettingsKey appSettingsKey = appSettingsKey.Value;
 
     public async Task<Result> MoveRunningTickets(MoveRunningTicketsRequest request)
     {

@@ -7,12 +7,7 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services.Badminton;
 
 public class ResultDetailMapperServiceTests
 {
-    private readonly IMapperService service;
-
-    public ResultDetailMapperServiceTests()
-    {
-        service = new ResultDetailMapperServiceImp();
-    }
+    private readonly IMapperService service = new ResultDetailMapperServiceImp();
 
     [Fact]
     public void Decorate_Always_GetBetTypeNameForResourceEarly()

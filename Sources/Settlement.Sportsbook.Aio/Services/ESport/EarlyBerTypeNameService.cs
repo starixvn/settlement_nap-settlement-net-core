@@ -9,17 +9,10 @@ public interface IEarlyBetTypeNameService
     ResultDetail GetBetTypeName(ResultDetail item);
 }
 
-public class EarlyBetTypeNameServiceImp : IEarlyBetTypeNameService
+public class EarlyBetTypeNameServiceImp(IResourceNameService resourceNameService) : IEarlyBetTypeNameService
 {
     private const int TwoPosition = 2;
     private const int FourPosition = 4;
-
-    private readonly IResourceNameService resourceNameService;
-
-    public EarlyBetTypeNameServiceImp(IResourceNameService resourceNameService)
-    {
-        this.resourceNameService = resourceNameService;
-    }
 
     public ResultDetail GetBetTypeName(ResultDetail item)
     {

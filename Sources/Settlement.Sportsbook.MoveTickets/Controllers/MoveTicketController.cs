@@ -8,15 +8,8 @@ namespace Settlement.Sportsbook.MoveTickets.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 
-public class MoveTicketController : ControllerBase
+public class MoveTicketController(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator mediator;
-
-    public MoveTicketController(IMediator mediator)
-    {
-        this.mediator = mediator;
-    }
-
     [Route("get-match")]
     [HttpPost]
     public async Task<IActionResult> GetMatch(GetMatchRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));

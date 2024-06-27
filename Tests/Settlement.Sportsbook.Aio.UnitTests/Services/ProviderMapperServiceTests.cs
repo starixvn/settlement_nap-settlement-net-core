@@ -5,12 +5,7 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services;
 
 public class ProviderMapperServiceTests
 {
-    private readonly ProviderMapperService service;
-
-    public ProviderMapperServiceTests()
-    {
-        service = new ProviderMapperService();
-    }
+    private readonly ProviderMapperService service = new();
 
     [Fact]
     public void Decorate_Always_FetchCorrectResultsAndGroupThem()

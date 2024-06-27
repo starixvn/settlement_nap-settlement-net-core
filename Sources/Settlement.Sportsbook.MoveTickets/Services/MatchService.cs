@@ -14,28 +14,13 @@ public interface IMatchService
     void SetNewMatchInfo(List<Match> matches);
 }
 
-public class MatchServiceImp : IMatchService
+public class MatchServiceImp(
+    IMatchResultDetailService matchResultDetailService,
+    IRefDataService refDataService,
+    CompareMatchService compareMatchService,
+    NewInfoMatchService newInfoMatchService)
+    : IMatchService
 {
-    private readonly IMatchResultDetailService matchResultDetailService;
-
-    private readonly IRefDataService refDataService;
-
-    private readonly CompareMatchService compareMatchService;
-
-    private readonly NewInfoMatchService newInfoMatchService;
-
-    public MatchServiceImp(
-        IMatchResultDetailService matchResultDetailService,
-        IRefDataService refDataService,
-        CompareMatchService compareMatchService,
-        NewInfoMatchService newInfoMatchService)
-    {
-        this.matchResultDetailService = matchResultDetailService;
-        this.refDataService = refDataService;
-        this.compareMatchService = compareMatchService;
-        this.newInfoMatchService = newInfoMatchService;
-    }
-
     public List<Match> GetScoreForMatchBySportType(List<Match> matches, List<ResultDetail> resultDetails, int sportType, int groupSport)
     {
         if (sportType == Core.Constants.SportType.Cricket)

@@ -33,7 +33,7 @@ public class MatchResultDetailServiceTests
 
     private static List<ResultDetail> ResultDetail => new();
 
-    private readonly bool isLeader = true;
+    private const bool isLeader = true;
 
     [Fact]
     public void TennisResultDetail_EmptyMatch_ReturnsEmpty()

@@ -6,20 +6,13 @@ using Settlement.Setting.Services;
 
 namespace Settlement.Setting.Handlers;
 
-public class OutsideSourceManagerHandler :
-        IRequestHandler<AddOutsideSourceRequest, AddSourceResult>,
-        IRequestHandler<GetLeagueOutsideSourceRequest, LeagueOutsideSourceModel>,
-        IRequestHandler<GetOutsideSourceRequest, List<OutsideSourceModel>>,
-        IRequestHandler<UpdateLeagueOutsideSourceRequest, Result>,
-        IRequestHandler<UpdateOutsideSourceRequest, Result>
+public class OutsideSourceManagerHandler(OutsideSourceSettingService outsideSourceSettingService) :
+    IRequestHandler<AddOutsideSourceRequest, AddSourceResult>,
+    IRequestHandler<GetLeagueOutsideSourceRequest, LeagueOutsideSourceModel>,
+    IRequestHandler<GetOutsideSourceRequest, List<OutsideSourceModel>>,
+    IRequestHandler<UpdateLeagueOutsideSourceRequest, Result>,
+    IRequestHandler<UpdateOutsideSourceRequest, Result>
 {
-    private readonly OutsideSourceSettingService outsideSourceSettingService;
-
-    public OutsideSourceManagerHandler(OutsideSourceSettingService outsideSourceSettingService)
-    {
-        this.outsideSourceSettingService = outsideSourceSettingService;
-    }
-
     public async Task<AddSourceResult> Handle(AddOutsideSourceRequest request, CancellationToken cancellationToken)
         => await outsideSourceSettingService.AddOutsideSource(request);
 

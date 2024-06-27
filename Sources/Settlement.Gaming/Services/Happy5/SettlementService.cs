@@ -16,41 +16,19 @@ public interface SettlementService
     Task<Result> Settle(Happy5SettlementRequest request);
 }
 
-public class SettlementServiceImp : SettlementService
+public class SettlementServiceImp(
+    IDynamicRepository repository,
+    IHttpContextAccessor accessor,
+    BallService ballService,
+    ScaleOutSettleThirdPartyService scaleOutSettleThirdPartyService,
+    IOptions<AppSettingsKey> options,
+    ScaleOutSettleService scaleOutSettleService,
+    LogService logService)
+    : SettlementService
 {
     private const int NotAuthorized = 1000;
 
-    private readonly IDynamicRepository repository;
-
-    private readonly BallService ballService;
-
-    private readonly IHttpContextAccessor accessor;
-
-    private readonly ScaleOutSettleThirdPartyService scaleOutSettleThirdPartyService;
-
-    private readonly AppSettingsKey appSettingsKey;
-
-    private readonly ScaleOutSettleService scaleOutSettleService;
-
-    private readonly LogService logService;
-
-    public SettlementServiceImp(
-        IDynamicRepository repository,
-        IHttpContextAccessor accessor,
-        BallService ballService,
-        ScaleOutSettleThirdPartyService scaleOutSettleThirdPartyService,
-        IOptions<AppSettingsKey> options,
-        ScaleOutSettleService scaleOutSettleService,
-        LogService logService)
-    {
-        this.repository = repository;
-        this.accessor = accessor;
-        this.ballService = ballService;
-        this.scaleOutSettleThirdPartyService = scaleOutSettleThirdPartyService;
-        appSettingsKey = options.Value;
-        this.scaleOutSettleService = scaleOutSettleService;
-        this.logService = logService;
-    }
+    private readonly AppSettingsKey appSettingsKey = options.Value;
 
     public async Task<Result> Settle(Happy5SettlementRequest request)
     {

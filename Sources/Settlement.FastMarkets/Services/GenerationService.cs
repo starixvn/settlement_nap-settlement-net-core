@@ -16,34 +16,16 @@ public interface GenerationService
     Task<PushFastMarketResultCriteria> QuerySettle(SettleRequest request);
 }
 
-public class GenerationServiceImp : GenerationService
+public class GenerationServiceImp(
+    IFastMarketResultService fastMarketResultService,
+    IEventCounterService eventCounterService,
+    IMapper mapper,
+    INapSession currentSession,
+    IHttpContextAccessor accessor,
+    IRefDataService refDataService,
+    ResultLabelService resultLabelService)
+    : GenerationService
 {
-    private readonly IFastMarketResultService fastMarketResultService;
-    private readonly IEventCounterService eventCounterService;
-    private readonly IMapper mapper;
-    private readonly INapSession currentSession;
-    private readonly IHttpContextAccessor accessor;
-    private readonly IRefDataService refDataService;
-    private readonly ResultLabelService resultLabelService;
-
-    public GenerationServiceImp(
-        IFastMarketResultService fastMarketResultService,
-        IEventCounterService eventCounterService,
-        IMapper mapper,
-        INapSession currentSession,
-        IHttpContextAccessor accessor,
-        IRefDataService refDataService,
-        ResultLabelService resultLabelService)
-    {
-        this.fastMarketResultService = fastMarketResultService;
-        this.eventCounterService = eventCounterService;
-        this.mapper = mapper;
-        this.currentSession = currentSession;
-        this.accessor = accessor;
-        this.refDataService = refDataService;
-        this.resultLabelService = resultLabelService;
-    }
-
     public async Task<PushFastMarketResultCriteria> QuerySettle(SettleRequest request)
     {
         var eventCounter = eventCounterService.Result(request);

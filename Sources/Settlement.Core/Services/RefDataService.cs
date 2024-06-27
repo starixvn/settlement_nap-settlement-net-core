@@ -15,16 +15,9 @@ public interface IRefDataService
     string GetBetTypeName(object betTypeId, object resourceId);
 }
 
-public class RefDataService : IRefDataService
+public class RefDataService(IRemotingRefService remotingRefService) : IRefDataService
 {
     private const string LanguageCode = "en";
-
-    private readonly IRemotingRefService remotingRefService;
-
-    public RefDataService(IRemotingRefService remotingRefService)
-    {
-        this.remotingRefService = remotingRefService;
-    }
 
     public string GetTeamName(object teamId)
     {

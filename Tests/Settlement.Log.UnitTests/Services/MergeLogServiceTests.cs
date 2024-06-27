@@ -6,12 +6,7 @@ namespace Settlement.Log.UnitTests.Services;
 
 public class MergeLogServiceTests
 {
-    private readonly MergeLogService service;
-
-    public MergeLogServiceTests()
-    {
-        service = new MergeLogServiceImp();
-    }
+    private readonly MergeLogService service = new MergeLogServiceImp();
 
     private IEnumerable<RootElement> CreateLogs(string name, string type, string firstLogValue, string secondLogValue, string thirdLogValue)
     {

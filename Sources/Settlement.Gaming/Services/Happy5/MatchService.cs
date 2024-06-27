@@ -12,24 +12,12 @@ public interface MatchService
     Task<List<MatchDetail>> Matches(Happy5MatchRequest request);
 }
 
-public class MatchServiceImp : MatchService
+public class MatchServiceImp(
+    IDynamicRepository repository,
+    BallService ballService,
+    IMapper mapper)
+    : MatchService
 {
-    private readonly IDynamicRepository repository;
-
-    private readonly BallService ballService;
-
-    private readonly IMapper mapper;
-
-    public MatchServiceImp(
-        IDynamicRepository repository,
-        BallService ballService,
-        IMapper mapper)
-    {
-        this.repository = repository;
-        this.ballService = ballService;
-        this.mapper = mapper;
-    }
-
     public async Task<List<MatchDetail>> Matches(Happy5MatchRequest request)
     {
         var criteria = mapper.Map<Happy5MatchRequest, GetMatchesCriteria>(request);

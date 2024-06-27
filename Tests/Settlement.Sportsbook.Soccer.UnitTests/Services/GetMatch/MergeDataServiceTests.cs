@@ -8,12 +8,7 @@ using Soccer.Services.GetMatch;
 
 public class MergeDataServiceTests
 {
-    private readonly IMergeDataService service;
-
-    public MergeDataServiceTests()
-    {
-        service = new MergeDataServiceImp();
-    }
+    private readonly IMergeDataService service = new MergeDataServiceImp();
 
     [Theory]
     [InlineData(true, false)]

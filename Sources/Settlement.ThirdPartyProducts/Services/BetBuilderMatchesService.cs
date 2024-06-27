@@ -18,40 +18,19 @@ public interface BetBuilderMatchesService
     Task<List<ResultDetail>> ResultDetailByMatchIds(List<MatchDetailModel> matches);
 }
 
-public class BetBuilderMatchesServiceImp : BetBuilderMatchesService
+public class BetBuilderMatchesServiceImp(
+    IDynamicRepository repository,
+    IRefDataService refDataService,
+    IMapper mapper,
+    MergeMatchInfo mergeMatchInfo,
+    CachingMatchesService cachingMatchesService,
+    BetBuilderService betBuilderService,
+    IOptions<AppSettingsKey> appSettingsKey)
+    : BetBuilderMatchesService
 {
-    private readonly IDynamicRepository repository;
-
-    private readonly IRefDataService refDataService;
-
-    private readonly IMapper mapper;
-
-    private readonly MergeMatchInfo mergeMatchInfo;
-
-    private readonly CachingMatchesService cachingMatchesService;
-
-    private readonly BetBuilderService betBuilderService;
-
-    private readonly AppSettingsKey appSettingsKey;
+    private readonly AppSettingsKey appSettingsKey = appSettingsKey.Value;
 
     private static int isProcessing;
-
-    public BetBuilderMatchesServiceImp(IDynamicRepository repository,
-            IRefDataService refDataService,
-            IMapper mapper,
-            MergeMatchInfo mergeMatchInfo,
-            CachingMatchesService cachingMatchesService,
-            BetBuilderService betBuilderService,
-            IOptions<AppSettingsKey> appSettingsKey)
-    {
-        this.repository = repository;
-        this.refDataService = refDataService;
-        this.mapper = mapper;
-        this.mergeMatchInfo = mergeMatchInfo;
-        this.cachingMatchesService = cachingMatchesService;
-        this.betBuilderService = betBuilderService;
-        this.appSettingsKey = appSettingsKey.Value;
-    }
 
     public async Task<List<SportModel>> Search(FilterRequest request)
     {

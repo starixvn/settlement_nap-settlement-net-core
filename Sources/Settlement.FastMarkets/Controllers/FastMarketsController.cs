@@ -7,15 +7,8 @@ namespace Settlement.FastMarkets.Controllers;
 
 [ApiController]
 [Route("api/fast-market")]
-public class FastMarketsController : ControllerBase
+public class FastMarketsController(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator mediator;
-
-    public FastMarketsController(IMediator mediator)
-    {
-        this.mediator = mediator;
-    }
-
     [Route("initial-filter"), HttpGet]
     public IActionResult InitialFilter() => Ok(new FastMarketFilter());
 

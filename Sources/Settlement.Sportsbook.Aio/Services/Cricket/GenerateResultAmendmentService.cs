@@ -13,15 +13,8 @@ public interface GenerateResultAmendmentService
     string CreateExtraInfo(List<ResultChanged> resultsChanged);
 }
 
-public class GenerateResultAmendmentServiceImp : GenerateResultAmendmentService
+public class GenerateResultAmendmentServiceImp(XmlConvertService xmlConvertService) : GenerateResultAmendmentService
 {
-    private readonly XmlConvertService xmlConvertService;
-
-    public GenerateResultAmendmentServiceImp(XmlConvertService xmlConvertService)
-    {
-        this.xmlConvertService = xmlConvertService;
-    }
-
     public (string, string) CreateWrongActualResults(List<ResultChanged> resultsChanged, List<ResourceItem> selectedResources)
     {
         var wrongResults = new List<CricketResultItem>();
@@ -51,14 +44,11 @@ public class GenerateResultAmendmentServiceImp : GenerateResultAmendmentService
 
     public string CreateExtraInfo(List<ResultChanged> resultsChanged)
     {
-        var extraInfoItems = resultsChanged.Select(x =>
+        var extraInfoItems = resultsChanged.Select(x => new ExtraInfoItem
         {
-            return new ExtraInfoItem
-            {
-                ResourceId = x.ResourceId,
-                CalcDateTime = x.LogDate.ToString("yyyy-MM-dd HH:mm:ss.fff"),
-                ReCalcDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"),
-            };
+            ResourceId = x.ResourceId,
+            CalcDateTime = x.LogDate.ToString("yyyy-MM-dd HH:mm:ss.fff"),
+            ReCalcDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"),
         }).ToList();
 
         var extraInfo = new ExtraInfo { ExtraInfoItems = extraInfoItems };

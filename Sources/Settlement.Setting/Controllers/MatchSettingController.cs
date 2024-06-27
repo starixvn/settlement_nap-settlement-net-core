@@ -6,15 +6,8 @@ namespace Settlement.Setting.Controllers;
 
 [ApiController]
 [Route("api/setting")]
-public class MatchSettingController : ControllerBase
+public class MatchSettingController(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator mediator;
-
-    public MatchSettingController(IMediator mediator)
-    {
-        this.mediator = mediator;
-    }
-
     [HttpGet]
     [Route("get-league-name")]
     public async Task<IActionResult> GetLeagueName(int leagueId)

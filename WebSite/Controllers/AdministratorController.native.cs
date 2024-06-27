@@ -10,18 +10,8 @@ using StackExchange.Redis;
 namespace Settlement.WebSites.Controllers;
 
 [AllowAnonymous]
-public class AdministratorController : Controller
+public class AdministratorController(ICache cache, IConfiguration configuration) : Controller
 {
-    private readonly ICache cache;
-
-    private readonly IConfiguration configuration;
-
-    public AdministratorController(ICache cache, IConfiguration configuration)
-    {
-        this.cache = cache;
-        this.configuration = configuration;
-    }
-
     public ActionResult Cache()
     {
         var connectionString = configuration.GetSection("AuthSettings:RedisConfig").Value;

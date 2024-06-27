@@ -8,20 +8,13 @@ public interface PositionService
     string PositionName(int betTypeId, BetTypeItemElement item);
 }
 
-public class PositionServiceImp : PositionService
+public class PositionServiceImp(ResultService resultService) : PositionService
 {
-    private readonly ResultService resultService;
-
     private const int TimeMachineHandicapScoreRange = 10;
 
     private const int InjuryTime = 45;
 
     private const string InjuryText = "44+";
-
-    public PositionServiceImp(ResultService resultService)
-    {
-        this.resultService = resultService;
-    }
 
     public string PositionName(int betTypeId, BetTypeItemElement item)
     {

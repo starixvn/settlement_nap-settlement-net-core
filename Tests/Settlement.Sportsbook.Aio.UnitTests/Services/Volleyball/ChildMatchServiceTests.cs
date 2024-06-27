@@ -6,18 +6,12 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services.Volleyball;
 
 public class ChildMatchServiceTests
 {
-    private readonly ChildMatchService service;
+    private readonly ChildMatchService service = new();
 
-    private readonly ResultDetail resultDetail;
-
-    public ChildMatchServiceTests()
+    private readonly ResultDetail resultDetail = new()
     {
-        service = new ChildMatchService();
-        resultDetail = new ResultDetail
-        {
-            ResourceId = ResourceType.Final
-        };
-    }
+        ResourceId = ResourceType.Final
+    };
 
     [Fact]
     public void Decorate_Always_ReturnChildMatchRunningAndNotConfirmedRefund()

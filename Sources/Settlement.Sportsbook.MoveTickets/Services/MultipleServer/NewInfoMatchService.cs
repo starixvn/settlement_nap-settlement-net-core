@@ -12,7 +12,7 @@ public interface NewInfoMatchService
     string EarlySettlementStatus(Match match);
 }
 
-public class NewInfoMatchServiceImp : NewInfoMatchService
+public class NewInfoMatchServiceImp(SiteMatchService siteMatchService) : NewInfoMatchService
 {
     private readonly List<int> eventStatusReasons = new() { 1, 2, 3, 4 };
 
@@ -23,13 +23,6 @@ public class NewInfoMatchServiceImp : NewInfoMatchService
         EventStatus.WrongTeamName,
         EventStatus.Suspended
     };
-
-    private readonly SiteMatchService siteMatchService;
-
-    public NewInfoMatchServiceImp(SiteMatchService siteMatchService)
-    {
-        this.siteMatchService = siteMatchService;
-    }
 
     public string EventStatusColor(Match match)
     {

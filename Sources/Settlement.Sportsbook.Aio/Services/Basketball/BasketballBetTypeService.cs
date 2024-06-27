@@ -13,22 +13,14 @@ public interface IBasketballBetTypeService
     ResultDetail CheckValue(ResultDetail item);
 }
 
-public class BasketballBetTypeServiceImp : IBasketballBetTypeService
+public class BasketballBetTypeServiceImp(
+    IGroupBetTypeService groupBetTypeService,
+    IResourceNameService resourceNameService)
+    : IBasketballBetTypeService
 {
-    private readonly IGroupBetTypeService groupBetTypeService;
-    private readonly IResourceNameService resourceNameService;
-
     private const int HalfBetTypeLength = 5;
     private const int BetTypeIndexLength = 2;
     private const int QuarterBetTypeLength = 7;
-
-    public BasketballBetTypeServiceImp(
-        IGroupBetTypeService groupBetTypeService,
-        IResourceNameService resourceNameService)
-    {
-        this.groupBetTypeService = groupBetTypeService;
-        this.resourceNameService = resourceNameService;
-    }
 
     public ResultDetail GetBetTypeNameAndGroup(ResultDetail item)
     {

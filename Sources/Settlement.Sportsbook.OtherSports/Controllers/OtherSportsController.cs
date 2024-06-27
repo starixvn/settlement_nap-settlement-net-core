@@ -8,15 +8,8 @@ namespace Settlement.Sportsbook.OtherSports.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 
-public class OtherSportsController : ControllerBase
+public class OtherSportsController(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator mediator;
-
-    public OtherSportsController(IMediator mediator)
-    {
-        this.mediator = mediator;
-    }
-
     [Route("get-match"), HttpPost]
     [LogGetRequest]
     public async Task<IActionResult> GetMatch(GetMatchRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));

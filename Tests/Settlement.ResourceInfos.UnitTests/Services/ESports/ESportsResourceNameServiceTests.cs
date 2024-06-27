@@ -6,12 +6,7 @@ using Settlement.ResourceInfos.Services.ESports;
 
 public class ESportsResourceNameServiceTests
 {
-    private readonly IMapperService service;
-
-    public ESportsResourceNameServiceTests()
-    {
-        service = new ESportsResourceNameService();
-    }
+    private readonly IMapperService service = new ESportsResourceNameService();
 
     [Theory]
     [InlineData("00", ResourceNameConstants.FullTime, "00")]

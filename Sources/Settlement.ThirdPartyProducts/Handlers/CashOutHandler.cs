@@ -7,21 +7,12 @@ using Settlement.ThirdPartyProducts.Services;
 
 namespace Settlement.ThirdPartyProducts.Handlers;
 
-public class CashOutHandler :
+public class CashOutHandler(IVoidBetApiService voidBetApiService) :
     IRequestHandler<VoidBetRequest>,
     IRequestHandler<CalcRequest>,
     IRequestHandler<RefundRequest>,
     IRequestHandler<GetTicketInfo, List<VoidBetInfo>>
 {
-    private readonly IVoidBetApiService voidBetApiService;
-
-    public CashOutHandler(
-        IVoidBetApiService voidBetApiService
-    )
-    {
-        this.voidBetApiService = voidBetApiService;
-    }
-
     public async Task<List<VoidBetInfo>> Handle(GetTicketInfo request, CancellationToken cancellationToken) =>
         await voidBetApiService.GetTicketInfo(request);
 

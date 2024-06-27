@@ -9,17 +9,10 @@ public interface IBadmintonBetTypeService
     ResultDetail GetBetTypeName(ResultDetail item);
 }
 
-public class BadmintonBetTypeServiceImp : IBadmintonBetTypeService
+public class BadmintonBetTypeServiceImp(IResourceNameService resourceNameService) : IBadmintonBetTypeService
 {
     private const int ThreePosition = 3;
     private const int MapCharacter = 2;
-
-    private readonly IResourceNameService resourceNameService;
-
-    public BadmintonBetTypeServiceImp(IResourceNameService resourceNameService)
-    {
-        this.resourceNameService = resourceNameService;
-    }
 
     public ResultDetail GetBetTypeName(ResultDetail item)
     {

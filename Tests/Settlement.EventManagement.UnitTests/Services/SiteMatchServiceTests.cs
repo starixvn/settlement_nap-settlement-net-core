@@ -8,12 +8,7 @@ namespace Settlement.EventManagement.UnitTests.Services;
 
 public class SiteMatchServiceTests
 {
-    private readonly SiteMatchService service;
-
-    public SiteMatchServiceTests()
-    {
-        service = new SiteMatchServiceImp();
-    }
+    private readonly SiteMatchService service = new SiteMatchServiceImp();
 
     [Theory]
     [InlineData(true, false, true)]

@@ -22,30 +22,15 @@ public interface OutrightSettleProcessService
     Task<bool> CheckOutrightVoidTicket(CheckOutrightVoidTicketRequest request);
 }
 
-public class OutrightSettleProcessServiceImp : OutrightSettleProcessService
+public class OutrightSettleProcessServiceImp(
+    IDynamicRepository repository,
+    IOptions<AppSettingsKey> appSettingsKey,
+    ScaleOutSettleThirdPartyService scaleOutSettleService,
+    IMapper mapper,
+    IRefDataService refDataService)
+    : OutrightSettleProcessService
 {
-    private readonly IDynamicRepository repository;
-
-    private readonly AppSettingsKey appSettingsKey;
-
-    private readonly ScaleOutSettleThirdPartyService scaleOutSettleService;
-
-    private readonly IMapper mapper;
-
-    private readonly IRefDataService refDataService;
-
-    public OutrightSettleProcessServiceImp(IDynamicRepository repository,
-        IOptions<AppSettingsKey> appSettingsKey,
-        ScaleOutSettleThirdPartyService scaleOutSettleService,
-        IMapper mapper,
-        IRefDataService refDataService)
-    {
-        this.repository = repository;
-        this.appSettingsKey = appSettingsKey.Value;
-        this.scaleOutSettleService = scaleOutSettleService;
-        this.mapper = mapper;
-        this.refDataService = refDataService;
-    }
+    private readonly AppSettingsKey appSettingsKey = appSettingsKey.Value;
 
     public async Task<Result> OutrightSettleMultiSite(OutrightSettleCriteria criteria)
     {

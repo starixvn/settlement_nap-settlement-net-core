@@ -18,13 +18,15 @@ public interface MoveActionService
     Task<Result> MoveTicket(MoveTicketRequest request);
 }
 
-public class MoveActionServiceImp : MoveActionService
+public class MoveActionServiceImp(
+    IDynamicRepository repository,
+    INapSession currentSession,
+    IHttpContextAccessor accessor,
+    LogService logService,
+    IOptions<AppSettingsKey> appSettingsKey)
+    : MoveActionService
 {
-    private readonly IDynamicRepository repository;
-    private readonly INapSession currentSession;
-    private readonly IHttpContextAccessor accessor;
-    private readonly LogService logService;
-    private readonly AppSettingsKey appSettingsKey;
+    private readonly AppSettingsKey appSettingsKey = appSettingsKey.Value;
 
     private const string NotExistValidTicketToMove =
         "WARNING! Cannot continue due to current has no valid ticket to move.";
@@ -32,20 +34,6 @@ public class MoveActionServiceImp : MoveActionService
     private const int NotExistValidTicketToMoveCode = 1_001_049;
     private const int ActionIdMoveTicketFailed = 81026;
     private const int ActionIdMoveTicket = 81025;
-
-    public MoveActionServiceImp(
-        IDynamicRepository repository,
-        INapSession currentSession,
-        IHttpContextAccessor accessor,
-        LogService logService,
-        IOptions<AppSettingsKey> appSettingsKey)
-    {
-        this.repository = repository;
-        this.currentSession = currentSession;
-        this.accessor = accessor;
-        this.logService = logService;
-        this.appSettingsKey = appSettingsKey.Value;
-    }
 
     public async Task<Result> MoveTicket(MoveTicketRequest request)
     {

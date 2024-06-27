@@ -16,18 +16,9 @@ public interface BallService
     string ResourcesBalls(List<BallModel> balls);
 }
 
-public class BallServiceImp : BallService
+public class BallServiceImp(IDynamicRepository repository, XmlConvertService xmlConvertService)
+    : BallService
 {
-    private readonly IDynamicRepository repository;
-
-    private readonly XmlConvertService xmlConvertService;
-
-    public BallServiceImp(IDynamicRepository repository, XmlConvertService xmlConvertService)
-    {
-        this.repository = repository;
-        this.xmlConvertService = xmlConvertService;
-    }
-
     public async Task<List<BallModel>> GetBalls(string matchIds)
     {
         var criteria = new GetBallCriteria

@@ -11,16 +11,9 @@ public interface IValidateApiKeyService
     INonQueryCommand CreateNonQueryCommand(object queryModel, string apiKey);
 }
 
-public class ValidateApiKeyServiceImp : IValidateApiKeyService
+public class ValidateApiKeyServiceImp(ICriteriaFactory simpleCriteriaFactory) : IValidateApiKeyService
 {
-    private readonly ICriteriaFactory criteriaFactory;
-
     private const string RefundKey = "-refund";
-
-    public ValidateApiKeyServiceImp(ICriteriaFactory simpleCriteriaFactory)
-    {
-        criteriaFactory = simpleCriteriaFactory;
-    }
 
     public string GetApiKey(string apiKey)
     {
@@ -35,13 +28,13 @@ public class ValidateApiKeyServiceImp : IValidateApiKeyService
 
     public ICriteria CriteriaName(object queryModel, string apiKey)
     {
-        var criteriaType = criteriaFactory.GetCriteriaType(apiKey);
+        var criteriaType = simpleCriteriaFactory.GetCriteriaType(apiKey);
         if (criteriaType == null)
         {
             throw new EmptyKeyException($"Data api is not found. Please check the method GetCriteriaType({apiKey})");
         }
 
-        var criteria = criteriaFactory.CreateCriteria(criteriaType, queryModel);
+        var criteria = simpleCriteriaFactory.CreateCriteria(criteriaType, queryModel);
         if (criteria == null)
         {
             throw new EmptyKeyException($"Data api is not found. Please check the method CreateCriteria({apiKey})");
@@ -52,13 +45,13 @@ public class ValidateApiKeyServiceImp : IValidateApiKeyService
 
     public INonQueryCommand CreateNonQueryCommand(object queryModel, string apiKey)
     {
-        var criteriaType = criteriaFactory.GetCriteriaType(apiKey);
+        var criteriaType = simpleCriteriaFactory.GetCriteriaType(apiKey);
         if (criteriaType == null)
         {
             throw new EmptyKeyException($"Data api is not found. Please check the method GetCriteriaType({apiKey})");
         }
 
-        var criteria = criteriaFactory.CreateNonQueryCommand(criteriaType, queryModel);
+        var criteria = simpleCriteriaFactory.CreateNonQueryCommand(criteriaType, queryModel);
         if (criteria == null)
         {
             throw new EmptyKeyException($"Data api is not found. Please check the method CreateCriteria({apiKey})");

@@ -7,17 +7,10 @@ namespace Settlement.Setting.Handlers;
 
 using Models.ProviderManager;
 
-public class ProviderManagerHandler :
-        IRequestHandler<GetProviderRequest, List<ProviderModel>>,
-        IRequestHandler<UpdateProviderRequest, Result>
+public class ProviderManagerHandler(ProviderSettingService providerSettingService) :
+    IRequestHandler<GetProviderRequest, List<ProviderModel>>,
+    IRequestHandler<UpdateProviderRequest, Result>
 {
-    private readonly ProviderSettingService providerSettingService;
-
-    public ProviderManagerHandler(ProviderSettingService providerSettingService)
-    {
-        this.providerSettingService = providerSettingService;
-    }
-
     public async Task<List<ProviderModel>> Handle(GetProviderRequest request, CancellationToken cancellationToken)
         => await providerSettingService.GetProvider(request);
 

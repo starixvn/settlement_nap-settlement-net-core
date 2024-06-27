@@ -27,39 +27,17 @@ public interface IFastMarketService
     Task<List<TimeMachineResult>> GetOuTimeMachineResult(GetOuTimeMachineResultRequest request);
 }
 
-public class FastMarketServiceImp : IFastMarketService
+public class FastMarketServiceImp(
+    IDynamicRepository repository,
+    IMapper mapper,
+    MultipleServerFetcherService multipleServerFetcherService,
+    IOptions<AppSettingsKey> appSettingsKey,
+    ScaleOutSettleService scaleOutSettleService,
+    GenerationService generationService,
+    LogService logService)
+    : IFastMarketService
 {
-    private readonly IDynamicRepository repository;
-
-    private readonly IMapper mapper;
-
-    private readonly MultipleServerFetcherService multipleServerFetcherService;
-
-    private readonly AppSettingsKey appSettingsKey;
-
-    private readonly GenerationService generationService;
-
-    private readonly ScaleOutSettleService scaleOutSettleService;
-
-    private readonly LogService logService;
-
-    public FastMarketServiceImp(
-        IDynamicRepository repository,
-        IMapper mapper,
-        MultipleServerFetcherService multipleServerFetcherService,
-        IOptions<AppSettingsKey> appSettingsKey,
-        ScaleOutSettleService scaleOutSettleService,
-        GenerationService generationService,
-        LogService logService)
-    {
-        this.repository = repository;
-        this.mapper = mapper;
-        this.multipleServerFetcherService = multipleServerFetcherService;
-        this.appSettingsKey = appSettingsKey.Value;
-        this.scaleOutSettleService = scaleOutSettleService;
-        this.generationService = generationService;
-        this.logService = logService;
-    }
+    private readonly AppSettingsKey appSettingsKey = appSettingsKey.Value;
 
     public async Task<FastMarketModel> Query(int matchId)
     {

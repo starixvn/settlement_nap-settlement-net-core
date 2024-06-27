@@ -26,40 +26,17 @@ public interface IVoidBetApiService
     Task<List<VoidBetInfo>> GetTicketInfo(GetTicketInfo request);
 }
 
-public class VoidBetApiServiceImp : IVoidBetApiService
+public class VoidBetApiServiceImp(
+    IDynamicRepository repository,
+    XmlConvertService xmlConvertService,
+    IMapper mapper,
+    SendMailService sendMailService,
+    IRefDataService refDataService,
+    IHttpClientFactory httpClientFactory,
+    IOptions<AppSettingsKey> appSettingsKey)
+    : IVoidBetApiService
 {
-    private readonly IDynamicRepository repository;
-
-    private readonly XmlConvertService xmlConvertService;
-
-    private readonly SendMailService sendMailService;
-
-    private readonly IMapper mapper;
-
-    private readonly IRefDataService refDataService;
-
-    private readonly IHttpClientFactory httpClientFactory;
-
-    private readonly AppSettingsKey appSettingsKey;
-
-    public VoidBetApiServiceImp(
-        IDynamicRepository repository,
-        XmlConvertService xmlConvertService,
-        IMapper mapper,
-        SendMailService sendMailService,
-        IRefDataService refDataService,
-        IHttpClientFactory httpClientFactory,
-        IOptions<AppSettingsKey> appSettingsKey)
-
-    {
-        this.repository = repository;
-        this.mapper = mapper;
-        this.xmlConvertService = xmlConvertService;
-        this.sendMailService = sendMailService;
-        this.refDataService = refDataService;
-        this.httpClientFactory = httpClientFactory;
-        this.appSettingsKey = appSettingsKey.Value;
-    }
+    private readonly AppSettingsKey appSettingsKey = appSettingsKey.Value;
 
     public async Task VoidBet(VoidBetRequest request)
     {

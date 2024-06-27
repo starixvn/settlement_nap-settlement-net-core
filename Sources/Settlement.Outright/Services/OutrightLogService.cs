@@ -9,18 +9,9 @@ public interface OutrightLogService
     Task<IEnumerable<OutrightLog>> GetLogBySubmit(GetLogRequest request);
 }
 
-public class OutrightLogServiceImp : OutrightLogService
+public class OutrightLogServiceImp(OutrightLogProcessService outrightLogService, IBalanceUpService balanceUpService)
+    : OutrightLogService
 {
-    private readonly OutrightLogProcessService outrightLogService;
-
-    private readonly IBalanceUpService balanceUpService;
-
-    public OutrightLogServiceImp(OutrightLogProcessService outrightLogService, IBalanceUpService balanceUpService)
-    {
-        this.outrightLogService = outrightLogService;
-        this.balanceUpService = balanceUpService;
-    }
-
     public async Task<IEnumerable<OutrightLog>> GetLogForView(GetLogRequest request)
     {
         request.BalanceUpDay = balanceUpService.GetBalanceUpDay().BalanceUpDay;

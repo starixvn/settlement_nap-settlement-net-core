@@ -6,12 +6,7 @@ namespace Settlement.FastMarkets.UnitTests.Services;
 
 public class BetTypeElementServiceTests
 {
-    private readonly IBetTypeElementService service;
-
-    public BetTypeElementServiceTests()
-    {
-        service = new BetTypeElementServiceImp();
-    }
+    private readonly IBetTypeElementService service = new BetTypeElementServiceImp();
 
     private List<BetType> ListBetTypesSelected(int betTypeId)
     {

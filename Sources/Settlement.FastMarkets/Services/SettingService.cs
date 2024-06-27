@@ -13,31 +13,14 @@ public interface ISettingService
     Task<Result> UpdateWaterBreakSetting(UpdateWaterBreakSettingRequest request);
 }
 
-public class SettingServiceImp : ISettingService
+public class SettingServiceImp(
+    IDynamicRepository repository,
+    XmlConvertService xmlConvertService,
+    IMapper mapper,
+    INapSession currentSession,
+    IHttpContextAccessor accessor)
+    : ISettingService
 {
-    private readonly IDynamicRepository repository;
-
-    private readonly XmlConvertService xmlConvertService;
-
-    private readonly IMapper mapper;
-
-    private readonly INapSession currentSession;
-
-    private readonly IHttpContextAccessor accessor;
-
-    public SettingServiceImp(IDynamicRepository repository,
-        XmlConvertService xmlConvertService,
-        IMapper mapper,
-        INapSession currentSession,
-        IHttpContextAccessor accessor)
-    {
-        this.repository = repository;
-        this.xmlConvertService = xmlConvertService;
-        this.mapper = mapper;
-        this.accessor = accessor;
-        this.currentSession = currentSession;
-    }
-
     public async Task<Result> UpdateWaterBreakSetting(UpdateWaterBreakSettingRequest request)
     {
         request.AdminId = currentSession.UserId;

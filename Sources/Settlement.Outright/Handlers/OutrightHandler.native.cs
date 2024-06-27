@@ -4,7 +4,13 @@ using Settlement.Outright.Services;
 
 namespace Settlement.Outright.Handlers;
 
-public class OutrightHandler :
+public class OutrightHandler(
+    FilterService getDataFilterService,
+    OutrightSettleService settleService,
+    OutrightLogService outrightLogService,
+    OutrightSettleProcessService outrightSettleProcessService,
+    OutrightPermissionService permission)
+    :
         IRequestHandler<SportLeagueRequest, SportLeague>,
         IRequestHandler<FilterRequest, SportOutright>,
         IRequestHandler<GetLeagueInfoRequest, LeagueInfo>,
@@ -16,30 +22,6 @@ public class OutrightHandler :
         IRequestHandler<GetDeatHeadLeagueSettingRequest, byte?>
 
 {
-    private readonly FilterService getDataFilterService;
-
-    private readonly OutrightPermissionService permission;
-
-    private readonly OutrightSettleService settleService;
-
-    private readonly OutrightLogService outrightLogService;
-
-    private readonly OutrightSettleProcessService outrightSettleProcessService;
-
-    public OutrightHandler(
-        FilterService getDataFilterService,
-        OutrightSettleService settleService,
-        OutrightLogService outrightLogService,
-        OutrightSettleProcessService outrightSettleProcessService,
-        OutrightPermissionService permission)
-    {
-        this.getDataFilterService = getDataFilterService;
-        this.settleService = settleService;
-        this.outrightLogService = outrightLogService;
-        this.outrightSettleProcessService = outrightSettleProcessService;
-        this.permission = permission;
-    }
-
     public async Task<SportLeague> Handle(SportLeagueRequest request, CancellationToken cancellationToken) => await getDataFilterService.GetSportLeague(request);
 
     public async Task<SportOutright> Handle(FilterRequest request, CancellationToken cancellationToken)

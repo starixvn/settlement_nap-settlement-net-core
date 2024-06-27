@@ -6,15 +6,8 @@ namespace Settlement.Setting.Controllers;
 
 [ApiController]
 [Route("api/league-settings")]
-public class LeagueSettingsController : ControllerBase
+public class LeagueSettingsController(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator mediator;
-
-    public LeagueSettingsController(IMediator mediator)
-    {
-        this.mediator = mediator;
-    }
-
     [HttpPost]
     [Route("get-settings")]
     public async Task<IActionResult> Proceed(GetLeagueSettingsRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));

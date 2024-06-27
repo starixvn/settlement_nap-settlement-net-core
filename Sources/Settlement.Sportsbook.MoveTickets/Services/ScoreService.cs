@@ -13,17 +13,10 @@ public interface IScoreService
     MoreScores ScoreLoader(List<ResultDetail> resultDetails, List<string> resources);
 }
 
-public class ScoreServiceImp : IScoreService
+public class ScoreServiceImp(IScoreSetService scoreSetService) : IScoreService
 {
     private const string Halftime = "01";
     private const string Final = "00";
-
-    private readonly IScoreSetService scoreSetService;
-
-    public ScoreServiceImp(IScoreSetService scoreSetService)
-    {
-        this.scoreSetService = scoreSetService;
-    }
 
     public Score[] ScoreOfSets(List<ResultDetail> resultDetails, List<string> resources)
     {

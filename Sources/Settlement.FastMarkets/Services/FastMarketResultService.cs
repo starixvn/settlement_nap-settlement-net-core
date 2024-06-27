@@ -13,22 +13,12 @@ public interface IFastMarketResultService
     Task<string> OldResults(List<BetType> betTypes, int matchId);
 }
 
-public class FastMarketResultServiceImp : IFastMarketResultService
+public class FastMarketResultServiceImp(
+    IBetTypeElementService betTypeElementService,
+    XmlConvertService xmlConvertService,
+    IDynamicRepository repository)
+    : IFastMarketResultService
 {
-    private readonly IBetTypeElementService betTypeElementService;
-
-    private readonly XmlConvertService xmlConvertService;
-
-    private readonly IDynamicRepository repository;
-
-    public FastMarketResultServiceImp(IBetTypeElementService betTypeElementService, XmlConvertService xmlConvertService,
-        IDynamicRepository repository)
-    {
-        this.betTypeElementService = betTypeElementService;
-        this.xmlConvertService = xmlConvertService;
-        this.repository = repository;
-    }
-
     public string Result(List<BetType> betTypeList, string action)
     {
         var betType = betTypeElementService.GetBetTypes(betTypeList, action);

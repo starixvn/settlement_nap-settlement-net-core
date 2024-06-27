@@ -7,15 +7,8 @@ namespace Settlement.Setting.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 
-public class NotificationsController : ControllerBase
+public class NotificationsController(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator mediator;
-
-    public NotificationsController(IMediator mediator)
-    {
-        this.mediator = mediator;
-    }
-
     [HttpGet]
     [Route("get-notification")]
     public async Task<IActionResult> GetNotification() => Ok(await mediator.Send(new ShowNotificationRequest()).ConfigureAwait(false));

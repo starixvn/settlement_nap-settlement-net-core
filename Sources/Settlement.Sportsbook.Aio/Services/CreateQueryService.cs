@@ -28,31 +28,14 @@ public interface ICreateQueryService
     void WriteLogChildMatch(SettleCriteria criteria, Result result);
 }
 
-public class CreateQueryServiceImp : ICreateQueryService
+public class CreateQueryServiceImp(
+    XmlConvertService xmlConvertService,
+    INapSession currentSession,
+    IHttpContextAccessor accessor,
+    IMapper mapper,
+    LogService logService)
+    : ICreateQueryService
 {
-    private readonly XmlConvertService xmlConvertService;
-
-    private readonly INapSession currentSession;
-
-    private readonly IHttpContextAccessor accessor;
-
-    private readonly IMapper mapper;
-
-    private readonly LogService logService;
-
-    public CreateQueryServiceImp(XmlConvertService xmlConvertService,
-                                INapSession currentSession,
-                                IHttpContextAccessor accessor,
-                                IMapper mapper,
-                                LogService logService)
-    {
-        this.xmlConvertService = xmlConvertService;
-        this.currentSession = currentSession;
-        this.accessor = accessor;
-        this.mapper = mapper;
-        this.logService = logService;
-    }
-
     public SettleCriteria QuerySettle(SettleRequest request)
     {
         var resourcesResult = CreateResources(request.SelectedResources);

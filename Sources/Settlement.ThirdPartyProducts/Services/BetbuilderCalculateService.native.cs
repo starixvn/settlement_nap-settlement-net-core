@@ -19,38 +19,17 @@ public interface BetBuilderCalculateService
     Task<Result> Calculate(CalculateRequest request);
 }
 
-public class BetBuilderCalculateServiceImp : BetBuilderCalculateService
+public class BetBuilderCalculateServiceImp(
+    IDynamicRepository repository,
+    XmlConvertService xmlConvertService,
+    INapSession currentSession,
+    IHttpContextAccessor accessor,
+    ScaleOutSettleService scaleOutSettleService,
+    LogService logService,
+    IOptions<AppSettingsKey> appSettingsKey)
+    : BetBuilderCalculateService
 {
-    private readonly IDynamicRepository repository;
-
-    private readonly XmlConvertService xmlConvertService;
-
-    private readonly INapSession currentSession;
-
-    private readonly IHttpContextAccessor accessor;
-
-    private readonly ScaleOutSettleService scaleOutSettleService;
-
-    private readonly LogService logService;
-
-    private readonly AppSettingsKey appSettingsKey;
-
-    public BetBuilderCalculateServiceImp(IDynamicRepository repository,
-        XmlConvertService xmlConvertService,
-        INapSession currentSession,
-        IHttpContextAccessor accessor,
-        ScaleOutSettleService scaleOutSettleService,
-        LogService logService,
-        IOptions<AppSettingsKey> appSettingsKey)
-    {
-        this.repository = repository;
-        this.xmlConvertService = xmlConvertService;
-        this.currentSession = currentSession;
-        this.accessor = accessor;
-        this.scaleOutSettleService = scaleOutSettleService;
-        this.logService = logService;
-        this.appSettingsKey = appSettingsKey.Value;
-    }
+    private readonly AppSettingsKey appSettingsKey = appSettingsKey.Value;
 
     public async Task<Result> Calculate(CalculateRequest request)
     {

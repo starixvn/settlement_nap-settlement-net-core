@@ -1,30 +1,21 @@
 ﻿namespace Settlement.Core.Models;
 
-public class GoalRecord
+public class GoalRecord(
+    bool isCalRefund,
+    string goal,
+    string betStatus,
+    int? halfTimeHomeScore,
+    int? halfTimeAwayScore)
 {
-    public GoalRecord(
-        bool isCalRefund,
-        string goal,
-        string betStatus,
-        int? halfTimeHomeScore,
-        int? halfTimeAwayScore)
-    {
-        IsCalRefund = isCalRefund;
-        BetStatus = betStatus;
-        HalfTimeHomeScore = halfTimeHomeScore;
-        HalfTimeAwayScore = halfTimeAwayScore;
-        Goal = goal;
-    }
+    public bool IsCalRefund { get; set; } = isCalRefund;
 
-    public bool IsCalRefund { get; set; }
+    public string BetStatus { get; set; } = betStatus;
 
-    public string BetStatus { get; set; }
+    public int? HalfTimeHomeScore { get; set; } = halfTimeHomeScore;
 
-    public int? HalfTimeHomeScore { get; set; }
+    public int? HalfTimeAwayScore { get; set; } = halfTimeAwayScore;
 
-    public int? HalfTimeAwayScore { get; set; }
-
-    public string Goal { get; set; }
+    public string Goal { get; set; } = goal;
 
     public string GetGoalRecord()
     {

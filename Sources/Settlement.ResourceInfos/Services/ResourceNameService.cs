@@ -7,15 +7,8 @@ public interface IResourceNameService
     public (string, string) GetResourceName(string resourceId, string sportKey, int sportType = 0);
 }
 
-public class ResourceNameService : IResourceNameService
+public class ResourceNameService(IMapperFactory mapperFactory) : IResourceNameService
 {
-    private readonly IMapperFactory mapperFactory;
-
-    public ResourceNameService(IMapperFactory mapperFactory)
-    {
-        this.mapperFactory = mapperFactory;
-    }
-
     public (string, string) GetResourceName(string resourceId, string sportKey, int sportType = 0)
     {
         var providerService = mapperFactory.GetMapperService(sportKey);

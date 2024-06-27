@@ -14,32 +14,14 @@ public interface MatchService
     Task<List<SelectionDetailModel>> GetSelection(int matchId);
 }
 
-public class MatchServiceImp : MatchService
+public class MatchServiceImp(
+    IRefDataService refDataService,
+    IMapper mapper,
+    IDynamicRepository repository,
+    BetBuilderMatchesService betBuilderMatchesService,
+    BetBuilderService betBuilderService)
+    : MatchService
 {
-    private readonly IDynamicRepository repository;
-
-    private readonly IRefDataService refDataService;
-
-    private readonly IMapper mapper;
-
-    private readonly BetBuilderMatchesService betBuilderMatchesService;
-
-    private readonly BetBuilderService betBuilderService;
-
-    public MatchServiceImp(
-        IRefDataService refDataService,
-        IMapper mapper,
-        IDynamicRepository repository,
-        BetBuilderMatchesService betBuilderMatchesService,
-        BetBuilderService betBuilderService)
-    {
-        this.refDataService = refDataService;
-        this.mapper = mapper;
-        this.repository = repository;
-        this.betBuilderMatchesService = betBuilderMatchesService;
-        this.betBuilderService = betBuilderService;
-    }
-
     public async Task<MatchDetailModel> GetMatch(MatchInfoRequest request)
     {
         var criteria = mapper.Map<MatchInfoRequest, MatchInfoCriteria>(request);

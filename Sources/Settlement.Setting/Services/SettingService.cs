@@ -29,35 +29,16 @@ public interface SettingService
     Task ProcessUpdateHoldMatchSetting(UpdateHoldMatchSettingRequest request);
 }
 
-public class SettingServiceImp : SettingService
+public class SettingServiceImp(
+    IDynamicRepository repository,
+    INapSession currentSession,
+    IHttpContextAccessor accessor,
+    IMapper mapper,
+    LogService logService,
+    XmlConvertService xmlConvertService)
+    : SettingService
 {
-    private readonly IDynamicRepository repository;
-
-    private readonly INapSession currentSession;
-
-    private readonly IHttpContextAccessor accessor;
-
-    private readonly IMapper mapper;
-    private readonly LogService logService;
-    private readonly XmlConvertService xmlConvertService;
-
     private const int holdMatchActionId = 81049;
-
-    public SettingServiceImp(
-        IDynamicRepository repository,
-        INapSession currentSession,
-        IHttpContextAccessor accessor,
-        IMapper mapper,
-        LogService logService,
-        XmlConvertService xmlConvertService)
-    {
-        this.repository = repository;
-        this.currentSession = currentSession;
-        this.accessor = accessor;
-        this.mapper = mapper;
-        this.logService = logService;
-        this.xmlConvertService = xmlConvertService;
-    }
 
     public async Task<Result> UpdateSettingLeague(SettingLeagueRequest query)
     {

@@ -21,33 +21,14 @@ public interface SportsbookService
     Task<MatchResultDetail> GetLatestResult(GetLatestResultRequest request);
 }
 
-public class SportsbookServiceImp : SportsbookService
+public class SportsbookServiceImp(
+    IDynamicRepository repository,
+    IRefDataService refDataService,
+    IMapper mapper,
+    GenerateService generateService,
+    MultipleServerService multipleServerService)
+    : SportsbookService
 {
-    private readonly IDynamicRepository repository;
-
-    private readonly IRefDataService refDataService;
-
-    private readonly IMapper mapper;
-
-    private readonly GenerateService generateService;
-
-    private readonly MultipleServerService multipleServerService;
-
-    public SportsbookServiceImp(
-        IDynamicRepository repository,
-        IRefDataService refDataService,
-        IMapper mapper,
-        GenerateService generateService,
-        MultipleServerService multipleServerService
-        )
-    {
-        this.repository = repository;
-        this.refDataService = refDataService;
-        this.mapper = mapper;
-        this.generateService = generateService;
-        this.multipleServerService = multipleServerService;
-    }
-
     public async Task<MatchResultDetail> GetMatch(GetMatchRequest request)
     {
         var (matchDetail, ticketCounts) = await multipleServerService.GetMatchInfo(request);
