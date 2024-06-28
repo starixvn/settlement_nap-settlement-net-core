@@ -1,7 +1,8 @@
-﻿using Settlement.Core.Models;
-using Settlement.Sportsbook.Aio.Services.ESport;
+﻿using Settlement.Sportsbook.Aio.Services.ESport;
 
 namespace Settlement.Sportsbook.Aio.UnitTests.Services.ESport;
+
+using Settlement.Models;
 
 public class ProviderMapperServiceTests
 {

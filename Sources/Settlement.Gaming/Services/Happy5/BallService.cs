@@ -40,17 +40,16 @@ public class BallServiceImp(IDynamicRepository repository, XmlConvertService xml
 
     public List<BallModel> CorrectNumberBall(int matchId, List<BallModel> balls)
     {
-        var newBalls = new List<BallModel>();
         var fiveBall = new List<byte> { 1, 2, 3, 4, 5 };
-        foreach (var item in fiveBall)
+
+        return fiveBall.Select(item => new BallModel(matchId, item, GetBallNumber(item))).ToList();
+
+        byte GetBallNumber(byte item)
         {
             var currentBall = balls.Find(b => b.Seq == item);
             var number = currentBall?.NumberBall ?? 0;
-            var ball = new BallModel(matchId, item, number);
-            newBalls.Add(ball);
+            return number;
         }
-
-        return newBalls;
     }
 
     public string ResourcesBalls(List<BallModel> balls)

@@ -60,15 +60,8 @@ public class BetBuilderServiceImp(
 
     public List<LeagueModel> CreateLeagues(List<MatchDetailModel> matches)
     {
-        var leagueIds = matches.GroupBy(m => m.LeagueId).Select(m => m.Key).ToList();
-        var leagues = new List<LeagueModel>();
-        foreach (var leagueId in leagueIds)
-        {
-            var matchesByLeagueId = matches.Where(m => m.LeagueId == leagueId).ToList();
-            var league = LeagueItem(leagueId, matchesByLeagueId);
-            leagues.Add(league);
-        }
-
+        var matchesByLeagueIds = matches.GroupBy(m => m.LeagueId).ToDictionary(m => m.Key, m => m.ToList());
+        var leagues = matchesByLeagueIds.Select(l => LeagueItem(l.Key, l.Value)).ToList();
         return leagues.OrderBy(item => item.SportType).ToList();
     }
 

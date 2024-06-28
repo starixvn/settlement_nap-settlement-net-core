@@ -1,6 +1,5 @@
 ﻿using Fanex.Data.Repository;
 using Microsoft.Extensions.Options;
-using NSubstitute.ExceptionExtensions;
 using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.Criteria.Cricket;
 using Settlement.Sportsbook.Aio.Models;

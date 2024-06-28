@@ -2,6 +2,8 @@
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Services.Basketball;
 
+namespace Settlement.Sportsbook.Aio.UnitTests.Services.Basketball;
+
 public class ResultDetailMapperServiceTests
 {
     [Fact]
@@ -10,14 +12,14 @@ public class ResultDetailMapperServiceTests
         var service = new ResultDetailMapperServiceImp();
 
         var resultDetails = new List<ResultDetail>
-            {
-                new ResultDetail { ResourceId = "12" },
-            };
+        {
+            new ResultDetail { ResourceId = "12" },
+        };
 
         var expectedResultDetails = new List<ResultDetail>
-            {
-                new ResultDetail { ResourceId = "12", HomeValue = "", AwayValue = "" },
-            };
+        {
+            new ResultDetail { ResourceId = "12", HomeValue = "", AwayValue = "" },
+        };
 
         // Act
         service.Decorate(resultDetails);

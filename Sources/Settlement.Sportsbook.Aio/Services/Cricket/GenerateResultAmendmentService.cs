@@ -6,6 +6,8 @@ using Settlement.Sportsbook.Aio.Models;
 
 namespace Settlement.Sportsbook.Aio.Services.Cricket;
 
+using Settlement.Services;
+
 public interface GenerateResultAmendmentService
 {
     (string, string) CreateWrongActualResults(List<ResultChanged> resultsChanged, List<ResourceItem> selectedResources);
@@ -91,10 +93,20 @@ public class GenerateResultAmendmentServiceImp(XmlConvertService xmlConvertServi
         if (PatternResultType.EarlyTypeOne.Contains(betTypeId))
         {
             itemChanged.Home = itemChanged.Home == "N" ? "None" : itemChanged.Home;
-            itemChanged.TeamIds = resultChanged.HomeValue == "H" ? $"{resourceItem.HomeId}" : resultChanged.HomeValue == "A" ? $"{resourceItem.AwayId}" : "";
+            itemChanged.TeamIds = DecisionOperator.QuaternaryDecision(
+                resultChanged.HomeValue == "H",
+                $"{resourceItem.HomeId}",
+                resultChanged.HomeValue == "A",
+                $"{resourceItem.AwayId}",
+                string.Empty);
 
             itemSelected.Home = itemSelected.Home == "N" ? "None" : itemSelected.Home;
-            itemSelected.TeamIds = resourceItem.HomeValue == "H" ? $"{resourceItem.HomeId}" : resourceItem.HomeValue == "A" ? $"{resourceItem.AwayId}" : "";
+            itemSelected.TeamIds = DecisionOperator.QuaternaryDecision(
+                resourceItem.HomeValue == "H",
+                $"{resourceItem.HomeId}",
+                resourceItem.HomeValue == "A",
+                $"{resourceItem.AwayId}",
+                "");
 
             return (itemChanged, itemSelected);
         }
@@ -106,8 +118,18 @@ public class GenerateResultAmendmentServiceImp(XmlConvertService xmlConvertServi
 
         if (PatternResultType.EarlyTypeThree.Contains(betTypeId))
         {
-            itemChanged.TeamIds = resultChanged.HomeValue == "H" ? $"{resourceItem.HomeId}" : resultChanged.HomeValue == "A" ? $"{resourceItem.AwayId}" : "";
-            itemSelected.TeamIds = resourceItem.HomeValue == "H" ? $"{resourceItem.HomeId}" : resourceItem.HomeValue == "A" ? $"{resourceItem.AwayId}" : "";
+            itemChanged.TeamIds = DecisionOperator.QuaternaryDecision(
+                resultChanged.HomeValue == "H",
+                $"{resourceItem.HomeId}",
+                resultChanged.HomeValue == "A",
+                $"{resourceItem.AwayId}",
+                "");
+            itemSelected.TeamIds = DecisionOperator.QuaternaryDecision(
+                resourceItem.HomeValue == "H",
+                $"{resourceItem.HomeId}",
+                resourceItem.HomeValue == "A",
+                $"{resourceItem.AwayId}",
+                "");
 
             return (itemChanged, itemSelected);
         }
