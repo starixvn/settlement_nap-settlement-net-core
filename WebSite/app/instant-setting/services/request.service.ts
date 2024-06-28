@@ -61,7 +61,7 @@ export class RequestService {
         this.modifyLeagueSettingsQuery(oldSettings);
         this.modifyLeagueSettingsQuery(newSettings);
 
-        let query = {
+        const query = {
             oldSettings,
             newSettings,
             isApplyAll
