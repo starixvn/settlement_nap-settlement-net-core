@@ -55,17 +55,7 @@ public class BallServiceImp(IDynamicRepository repository, XmlConvertService xml
 
     public string ResourcesBalls(List<BallModel> balls)
     {
-        var resourceItems = new List<ResourcesItem>();
-        foreach (var ball in balls)
-        {
-            var resource = new ResourcesItem
-            {
-                Seq = ball.Seq,
-                NumberBall = ball.NumberBall
-            };
-
-            resourceItems.Add(resource);
-        }
+        var resourceItems = balls.Select(ball => new ResourcesItem { Seq = ball.Seq, NumberBall = ball.NumberBall }).ToList();
 
         var resources = new Resources
         {

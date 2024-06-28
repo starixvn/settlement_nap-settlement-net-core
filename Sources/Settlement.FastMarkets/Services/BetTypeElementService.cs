@@ -15,15 +15,7 @@ public class BetTypeElementServiceImp : IBetTypeElementService
 {
     public List<BetTypeElement> GetBetTypes(List<BetType> betTypeList, string action)
     {
-        var betTypes = new List<BetTypeElement>();
-
-        foreach (var betType in betTypeList)
-        {
-            var betTypeElement = CreateBetTypeElement(betType.FastMarketResults, action);
-            betTypes.Add(betTypeElement);
-        }
-
-        return betTypes;
+        return betTypeList.Select(betType => CreateBetTypeElement(betType.FastMarketResults, action)).ToList();
     }
 
     private static string GetResult(FastMarketResult fastMarket, string actionName)
