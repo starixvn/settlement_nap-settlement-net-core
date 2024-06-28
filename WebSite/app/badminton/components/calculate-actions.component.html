@@ -16,7 +16,7 @@
 			<resettle-checker (proceedEvent)="onResettleCheckboxChange($event)"
 				[checked]="isReSettledTickets"></resettle-checker>
 		</div>
-		@if(match.matchDetail.sportType !== sportTypes.tableTennis && match.childMatches.length > 0 && permission.canRefund) {
+		<!-- @if(match.matchDetail.sportType !== sportTypes.tableTennis && match.childMatches.length > 0 && permission.canRefund) {
 		<div>
 			<div class="child-match">
 				<span class="collapse-icon" [ngClass]="collapse ? 'collapsed' : ''" (click)="collapseChildMatch()">&emsp;Related
@@ -29,7 +29,7 @@
 		}
 		@if(match.matchDetail.sportType === sportTypes.tableTennis && match.childMatches.length > 0 && permission.canRefund) {
 		<tb-child-match [matchDetail]="match.matchDetail" [matches]="match.childMatches" [isLeader]="permission.isLeader"/>
-		}
+		} -->
 
 	</div>
 	<div *ngIf="!isReadyMatch">
