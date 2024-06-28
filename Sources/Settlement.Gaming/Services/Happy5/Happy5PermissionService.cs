@@ -5,7 +5,7 @@ using Settlement.Models;
 
 namespace Settlement.Gaming.Services.Happy5;
 
-using Settlement.Configurations;
+using Configurations;
 
 public interface PermissionService
 {

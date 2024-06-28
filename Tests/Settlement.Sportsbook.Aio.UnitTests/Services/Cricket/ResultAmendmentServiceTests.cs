@@ -14,7 +14,7 @@ public class ResultAmendmentServiceTests
 {
     private readonly IDynamicRepository repository;
     private readonly ResultAmendmentService resultAmendmentService;
-    private List<string> siteDbServers = ["01", "02"];
+    private readonly List<string> siteDbServers = ["01", "02"];
 
     public ResultAmendmentServiceTests()
     {
@@ -50,7 +50,7 @@ public class ResultAmendmentServiceTests
         var settleCriteria = new SettleCriteria();
         var selectedResources = new List<ResourceItem>();
 
-        repository.FetchAsync<ResultChanged>(Arg.Any<CheckReSettleCriteria>()).Throws(new Exception());
+        repository.FetchAsync<ResultChanged>(Arg.Any<CheckReSettleCriteria>()).ThrowsAsync(new Exception());
 
         // Act
         var result = await resultAmendmentService.HandleResultAmendment(settleCriteria, selectedResources);
@@ -69,6 +69,6 @@ public class ResultAmendmentServiceTests
         await resultAmendmentService.UpdateResultHistory(criteria);
 
         // Assert
-        repository.Received(siteDbServers.Count).ExecuteAsync(criteria);
+        await repository.Received(siteDbServers.Count).ExecuteAsync(criteria);
     }
 }

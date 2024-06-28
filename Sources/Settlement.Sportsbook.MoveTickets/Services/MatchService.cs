@@ -23,7 +23,7 @@ public class MatchServiceImp(
 {
     public List<Match> GetScoreForMatchBySportType(List<Match> matches, List<ResultDetail> resultDetails, int sportType, int groupSport)
     {
-        if (sportType == Settlement.Constants.SportType.Cricket)
+        if (sportType == Constants.SportType.Cricket)
         {
             return matchResultDetailService.CricketResultDetail(matches, resultDetails);
         }

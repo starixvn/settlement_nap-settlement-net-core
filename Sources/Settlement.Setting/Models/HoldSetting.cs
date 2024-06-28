@@ -9,7 +9,7 @@ public class HoldSetting
         {"isUndecided", HoldBitPosition.Undecided},
         {"isPending", HoldBitPosition.Pending},
         {"isUnderSettle", HoldBitPosition.UnderSettle},
-        {"isKeyHold", HoldBitPosition.KeyHold},
+        {"isKeyHold", HoldBitPosition.KeyHold}
     };
 
     private Dictionary<string, string> holdDescription => new()

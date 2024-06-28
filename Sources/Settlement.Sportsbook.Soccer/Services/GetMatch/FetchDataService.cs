@@ -118,12 +118,7 @@ public class FetchDateServiceImp(IDynamicRepository repository,
                                                           betDaq.IsRefundRunningBetFair
                                                           || baseData.IsSettleAbandonedMatchBetFair !=
                                                           betDaq.IsSettleAbandonedMatchBetFair);
-        if (existConflictData)
-        {
-            return mergeDataService.MergeBetFair(baseData, nodeData);
-        }
-
-        return baseData;
+        return existConflictData ? mergeDataService.MergeBetFair(baseData, nodeData) : baseData;
     }
 
     public async Task<(List<ResultDetailModel>, TicketCounts)> GetEarlyTicketDetails(GetResultDetailEarlyCriteria criteria)

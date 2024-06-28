@@ -122,7 +122,7 @@ public class SettingServiceImp(
 
     private List<RemarkLog> CreateChildMatchRemarkLogs(List<HoldSetting> changedSettings, string childMatches)
     {
-        var changedChildMatchSettings = changedSettings.Where(x => x.IsApplyChild);
+        var changedChildMatchSettings = changedSettings.Where(x => x.IsApplyChild).ToList();
         if (changedChildMatchSettings.Any() && !string.IsNullOrEmpty(childMatches))
         {
             var childMatch = JsonSerializer.Deserialize<List<ChildMatchRemark>>(childMatches);
