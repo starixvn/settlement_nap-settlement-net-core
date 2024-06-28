@@ -82,8 +82,10 @@ public class SettlementServiceImp(
             _ => 0,
         };
 
-        var message = $"Match start settle at {settledResult.StartTime} and end at {settledResult.EndTime} with " +
-            $"ball results: {criteria.BallResults} {settledResult.ErrMsg}";
+        var balls = string.Join(", ", request.Balls.Select(b => $"B{b.Seq}({b.NumberBall})"));
+        var ballResult = request.Balls.Any() ? $"Ball results: {balls}" : string.Empty;
+        var message = $"Match start settle at {settledResult.StartTime} and end at {settledResult.EndTime}. " +
+                      ballResult + $"{settledResult.ErrMsg}";
 
         logService.ActionLog(criteria.MatchId, message, actionId);
     }
