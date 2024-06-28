@@ -232,7 +232,7 @@ public class MoveTicketServiceImp : MoveTicketService
             item.IsRunningEarlyBetTypes = ticketInfo.Exists(x => x.IsRunningEarlyBetTypes);
             item.IsWaitingEarlyBetTypes = ticketInfo.Exists(x => x.IsWaitingEarlyBetTypes);
             item.IsExistRunningTicket = ticketInfo.Exists(x => x.IsExistRunningTicket);
-            item.IsExistMarkedTicket = ticketInfo.Exists(x => x.IsExistFastMarket);
+            item.IsExistMarkedTicket = ticketInfo.Exists(x => x.IsExistMarkedTicket);
             item.IsCalculatingSingle = siteMatchService.IsCalculatingSingle(ticketInfo);
         }
     }
