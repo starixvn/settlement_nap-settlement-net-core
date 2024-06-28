@@ -102,4 +102,28 @@ public class AioControllerTests
         Assert.IsType<Result>(actual?.Value);
         Assert.Equal(200, actual.StatusCode);
     }
+
+    [Fact]
+    public async Task UpdateSettlementResultHistoryStatus_Always_ReturnOkStatus()
+    {
+        var request = new UpdateSettlementResultHistoryStatusRequest();
+        mediator.Send(Arg.Any<UpdateSettlementResultHistoryStatusRequest>()).Returns(true);
+
+        var actual = await controller.UpdateSettlementResultHistoryStatus(request) as OkObjectResult;
+
+        Assert.IsType<bool>(actual?.Value);
+        Assert.Equal(200, actual.StatusCode);
+    }
+
+    [Fact]
+    public async Task ResultSetting_Always_ReturnOkStatus()
+    {
+        var request = new ResultSettingRequest();
+        mediator.Send(Arg.Any<ResultSettingRequest>()).Returns(true);
+
+        var actual = await controller.ResultSetting(request) as OkObjectResult;
+
+        Assert.IsType<bool>(actual?.Value);
+        Assert.Equal(200, actual.StatusCode);
+    }
 }

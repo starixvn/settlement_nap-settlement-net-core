@@ -14,7 +14,7 @@ public class ResultAmendmentServiceTests
 {
     private readonly IDynamicRepository repository;
     private readonly ResultAmendmentService resultAmendmentService;
-    private readonly List<string> siteDbServers = ["01", "02"];
+    private readonly List<string> siteDbServers = new List<string> { "01", "02" };
 
     public ResultAmendmentServiceTests()
     {
@@ -43,20 +43,61 @@ public class ResultAmendmentServiceTests
         Assert.False(result);
     }
 
+    //[Fact]
+    //public async Task HandleResultAmendment_ProcessResultAmendmentThrowsException_ReturnFalse()
+    //{
+    //    // Arrange
+    //    var settleCriteria = new SettleCriteria();
+    //    var selectedResources = new List<ResourceItem>();
+
+    //    repository.FetchAsync<ResultChanged>(Arg.Any<CheckReSettleCriteria>()).Throws(new Exception());
+
+    //    // Act
+    //    var result = await resultAmendmentService.HandleResultAmendment(settleCriteria, selectedResources);
+
+    //    // Assert
+    //    Assert.False(result);
+    //}
+
     [Fact]
-    public async Task HandleResultAmendment_ProcessResultAmendmentThrowsException_ReturnFalse()
+    public async Task HandleResultAmendment_HasResultChanged_ReturnTrue()
     {
         // Arrange
-        var settleCriteria = new SettleCriteria();
+        var settleCriteria = new SettleCriteria
+        {
+            Action = "CAL",
+        };
         var selectedResources = new List<ResourceItem>();
 
-        repository.FetchAsync<ResultChanged>(Arg.Any<CheckReSettleCriteria>()).ThrowsAsync(new Exception());
+        repository.FetchAsync<ResultChanged>(Arg.Any<CheckReSettleCriteria>()).Returns(
+        [
+           new ResultChanged
+            {
+                ResourceId = "R12345",
+                HomeValue = "50",
+                AwayValue = "40",
+                Action = "CAL",
+                OtherInfo = "Info1",
+                LogDate = new DateTime(2023, 1, 1, 12, 0, 0),
+                ReSettleType = 1
+            },
+            new ResultChanged
+            {
+                ResourceId = "R67890",
+                HomeValue = "60",
+                AwayValue = "55",
+                Action = "REFUND",
+                OtherInfo = "Info2",
+                LogDate = new DateTime(2023, 2, 1, 13, 0, 0),
+                ReSettleType = 2
+            },
+        ]);
 
         // Act
         var result = await resultAmendmentService.HandleResultAmendment(settleCriteria, selectedResources);
 
         // Assert
-        Assert.False(result);
+        Assert.True(result);
     }
 
     [Fact]

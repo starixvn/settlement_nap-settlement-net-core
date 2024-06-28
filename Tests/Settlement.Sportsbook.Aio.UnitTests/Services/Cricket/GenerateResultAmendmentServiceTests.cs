@@ -8,9 +8,10 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services.Cricket;
 public class GenerateResultAmendmentServiceTests
 {
     private readonly GenerateResultAmendmentService generateResultAmendmentService;
-    private readonly XmlConvertService xmlConvertService = Substitute.For<XmlConvertService>();
+    private readonly XmlConvertService xmlConvertService;
     public GenerateResultAmendmentServiceTests()
     {
+        xmlConvertService = Substitute.For<XmlConvertService>();
         generateResultAmendmentService = new GenerateResultAmendmentServiceImp(xmlConvertService);
     }
 
@@ -39,26 +40,26 @@ public class GenerateResultAmendmentServiceTests
         // Arrange
         var resultsChanged = new List<ResultChanged>
             {
-                new() { ResourceId = "123", HomeValue = "H", AwayValue = "A" },
-                new() { ResourceId = "456", HomeValue = "A", AwayValue = "H" }
+                new ResultChanged { ResourceId = "9400", HomeValue = "H", AwayValue = "A" },
+                new ResultChanged { ResourceId = "9401", HomeValue = "A", AwayValue = "H" }
             };
 
         var selectedResources = new List<ResourceItem>
             {
-                new() { ResourceId = "123", HomeValue = "H", AwayValue = "A" },
-                new() { ResourceId = "456", HomeValue = "A", AwayValue = "H" }
+                new ResourceItem { ResourceId = "9400", HomeValue = "H", AwayValue = "A" },
+                new ResourceItem { ResourceId = "9401", HomeValue = "A", AwayValue = "H" }
             };
 
         var expectedWrongResults = new List<CricketResultItem>
             {
-                new() { ResourceId = "123", Home = "H", Away = "A", RefBetTypeId = "123" },
-                new() { ResourceId = "456", Home = "A", Away = "H", RefBetTypeId = "456" }
+                new CricketResultItem { ResourceId = "9400", Home = "H", Away = "A", RefBetTypeId = "9400" },
+                new CricketResultItem { ResourceId = "9401", Home = "A", Away = "H", RefBetTypeId = "9401" }
             };
 
         var expectedActualResults = new List<CricketResultItem>
             {
-                new() { ResourceId = "123", Home = "H", Away = "A", RefBetTypeId = "123" },
-                new() { ResourceId = "456", Home = "A", Away = "H", RefBetTypeId = "456" }
+                new CricketResultItem { ResourceId = "9400", Home = "H", Away = "A", RefBetTypeId = "9400" },
+                new CricketResultItem { ResourceId = "9401", Home = "A", Away = "H", RefBetTypeId = "9401" }
             };
 
         xmlConvertService.Serialize(Arg.Any<CricketResult>()).Returns("SerializedResult");

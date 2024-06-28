@@ -38,7 +38,4 @@
   <ItemGroup>
     <None Remove="Services\ESports\" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Services\ESport\" />
-  </ItemGroup>
 </Project>
