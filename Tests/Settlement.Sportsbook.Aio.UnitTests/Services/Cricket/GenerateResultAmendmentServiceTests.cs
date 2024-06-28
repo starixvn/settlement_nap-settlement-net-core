@@ -9,6 +9,7 @@ public class GenerateResultAmendmentServiceTests
 {
     private readonly GenerateResultAmendmentService generateResultAmendmentService;
     private readonly XmlConvertService xmlConvertService;
+
     public GenerateResultAmendmentServiceTests()
     {
         xmlConvertService = Substitute.For<XmlConvertService>();
@@ -40,14 +41,14 @@ public class GenerateResultAmendmentServiceTests
         // Arrange
         var resultsChanged = new List<ResultChanged>
             {
-                new ResultChanged { ResourceId = "9400", HomeValue = "H", AwayValue = "A" },
-                new ResultChanged { ResourceId = "9401", HomeValue = "A", AwayValue = "H" }
+                new() { ResourceId = "9400", HomeValue = "H", AwayValue = "A" },
+                new() { ResourceId = "9401", HomeValue = "A", AwayValue = "H" }
             };
 
         var selectedResources = new List<ResourceItem>
             {
-                new ResourceItem { ResourceId = "9400", HomeValue = "H", AwayValue = "A" },
-                new ResourceItem { ResourceId = "9401", HomeValue = "A", AwayValue = "H" }
+                new () { ResourceId = "9400", HomeValue = "H", AwayValue = "A" },
+                new () { ResourceId = "9401", HomeValue = "A", AwayValue = "H" }
             };
 
         var expectedWrongResults = new List<CricketResultItem>

@@ -43,22 +43,6 @@ public class ResultAmendmentServiceTests
         Assert.False(result);
     }
 
-    //[Fact]
-    //public async Task HandleResultAmendment_ProcessResultAmendmentThrowsException_ReturnFalse()
-    //{
-    //    // Arrange
-    //    var settleCriteria = new SettleCriteria();
-    //    var selectedResources = new List<ResourceItem>();
-
-    //    repository.FetchAsync<ResultChanged>(Arg.Any<CheckReSettleCriteria>()).Throws(new Exception());
-
-    //    // Act
-    //    var result = await resultAmendmentService.HandleResultAmendment(settleCriteria, selectedResources);
-
-    //    // Assert
-    //    Assert.False(result);
-    //}
-
     [Fact]
     public async Task HandleResultAmendment_HasResultChanged_ReturnTrue()
     {
