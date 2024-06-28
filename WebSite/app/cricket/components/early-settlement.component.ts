@@ -1,5 +1,4 @@
-﻿import { Injector } from '@angular/core';
-import { Component, ViewChild } from '@angular/core';
+﻿import { Component, ViewChild ,Injector } from '@angular/core';
 import { ToastContainerDirective } from 'ngx-toastr';
 import { Match, SettleQuery, SettleChildMatchQuery, UpdateSettlementResultHistoryStatus } from '../models';
 import * as _ from 'lodash';
@@ -15,7 +14,6 @@ import { EarlyCommonModule } from '../../shared/modules/early-common.module';
 import { MatchDetailComponent } from './match-detail.component';
 import { ResultValuePipe, ResultByPlayerNamePipe } from '../pipes';
 import { BlockUIService } from '../../shared/services/block-ui.service';
-import { ProviderSource } from '../../shared/models/league-settings.model';
 
 @Component({
   selector: 'early-settlement',

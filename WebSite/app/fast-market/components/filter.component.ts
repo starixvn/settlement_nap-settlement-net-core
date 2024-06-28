@@ -43,14 +43,13 @@ export class FilterComponent implements OnInit, OnChanges, AfterContentChecked  
   @Output() public readonly ticketStatusEvent = new EventEmitter();
   @Output() public readonly resultStatusEvent = new EventEmitter();
 
-  private numberItemsDisplay: number = DefaultSetting.NUMBER_ITEMS_DISPLAY;
-  private characterText: string = DefaultSetting.CHARACTER_TEXT;
-  private subfixNumberItemsCheckedText: string =
-    DefaultSetting.SUBFIX_NUMBER_ITEMS_CHECKED_TEXT;
+  private readonly numberItemsDisplay = DefaultSetting.NUMBER_ITEMS_DISPLAY;
+  private  readonly characterText = DefaultSetting.CHARACTER_TEXT;
+  private readonly subfixNumberItemsCheckedText = DefaultSetting.SUBFIX_NUMBER_ITEMS_CHECKED_TEXT;
 
   constructor(
     private readonly requestService: RequestService,
-    private changeDetector: ChangeDetectorRef
+    private readonly changeDetector: ChangeDetectorRef
   ) {}
 
   public ngOnInit() {

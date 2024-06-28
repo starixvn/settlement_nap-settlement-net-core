@@ -5,7 +5,7 @@ import { Observable, firstValueFrom } from 'rxjs';
 import { AutoSettingLeagueQuery, AutoSettingMatchQuery, Result } from '../../shared/models';
 @Injectable()
 export class RequestService {
-    private betBuilderApi = '/api/bet-builder';
+    private readonly betBuilderApi = '/api/bet-builder';
     constructor(private readonly httpRequestService: HttpRequestService) {
     }
    

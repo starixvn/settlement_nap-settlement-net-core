@@ -1,6 +1,5 @@
 ﻿namespace Settlement.Sportsbook.Aio;
 
-[Serializable]
 public class EmptyKeyException : Exception
 {
     public EmptyKeyException(string message)

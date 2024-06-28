@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import * as _ from 'lodash';
-import { ItemsSelect } from '../../shared/models';
-import { League as LeagueFilter } from '../../shared/models';
+import { League as LeagueFilter,ItemsSelect } from '../../shared/models';
 @Injectable()
 
 export class GenerateFilterService {

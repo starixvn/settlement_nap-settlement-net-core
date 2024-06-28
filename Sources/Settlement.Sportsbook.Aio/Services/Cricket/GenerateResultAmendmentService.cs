@@ -92,21 +92,8 @@ public class GenerateResultAmendmentServiceImp(XmlConvertService xmlConvertServi
 
         if (PatternResultType.EarlyTypeOne.Contains(betTypeId))
         {
-            itemChanged.Home = itemChanged.Home == "N" ? "None" : itemChanged.Home;
-            itemChanged.TeamIds = DecisionOperator.QuaternaryDecision(
-                resultChanged.HomeValue == "H",
-                $"{resourceItem.HomeId}",
-                resultChanged.HomeValue == "A",
-                $"{resourceItem.AwayId}",
-                string.Empty);
+            ProcessTypeOne(itemChanged, itemSelected, resultChanged, resourceItem);
 
-            itemSelected.Home = itemSelected.Home == "N" ? "None" : itemSelected.Home;
-            itemSelected.TeamIds = DecisionOperator.QuaternaryDecision(
-                resourceItem.HomeValue == "H",
-                $"{resourceItem.HomeId}",
-                resourceItem.HomeValue == "A",
-                $"{resourceItem.AwayId}",
-                "");
 
             return (itemChanged, itemSelected);
         }
@@ -117,24 +104,39 @@ public class GenerateResultAmendmentServiceImp(XmlConvertService xmlConvertServi
         }
 
         if (PatternResultType.EarlyTypeThree.Contains(betTypeId))
-        {
-            itemChanged.TeamIds = DecisionOperator.QuaternaryDecision(
-                resultChanged.HomeValue == "H",
-                $"{resourceItem.HomeId}",
-                resultChanged.HomeValue == "A",
-                $"{resourceItem.AwayId}",
-                "");
-            itemSelected.TeamIds = DecisionOperator.QuaternaryDecision(
-                resourceItem.HomeValue == "H",
-                $"{resourceItem.HomeId}",
-                resourceItem.HomeValue == "A",
-                $"{resourceItem.AwayId}",
-                "");
+        {            ProcessTypeThree(itemChanged, itemSelected, resultChanged, resourceItem);
 
             return (itemChanged, itemSelected);
         }
 
         return CreateEarlyFourResultItem(resultChanged, resourceItem);
+    }
+
+    private void ProcessTypeOne(CricketResultItem itemChanged, CricketResultItem itemSelected, ResultChanged resultChanged, ResourceItem resourceItem)
+    {
+        itemChanged.Home = NormalizeHomeValue(itemChanged.Home);
+        itemChanged.TeamIds = GetTeamIds(resultChanged.HomeValue, resourceItem);
+
+        itemSelected.Home = NormalizeHomeValue(itemSelected.Home);
+        itemSelected.TeamIds = GetTeamIds(resourceItem.HomeValue, resourceItem);
+    }
+
+    private void ProcessTypeThree(CricketResultItem itemChanged, CricketResultItem itemSelected, ResultChanged resultChanged, ResourceItem resourceItem)
+    {
+        itemChanged.TeamIds = GetTeamIds(resultChanged.HomeValue, resourceItem);
+        itemSelected.TeamIds = GetTeamIds(resourceItem.HomeValue, resourceItem);
+    }
+
+    private string NormalizeHomeValue(string homeValue) => homeValue == "N" ? "None" : homeValue;
+
+    private string GetTeamIds(string value, ResourceItem resourceItem)
+    {
+        return value switch
+        {
+            "H" => $"{resourceItem.HomeId}",
+            "A" => $"{resourceItem.AwayId}",
+            _ => ""
+        };
     }
 
     private (CricketResultItem, CricketResultItem) CreateEarlyFourResultItem(ResultChanged resultChanged, ResourceItem resourceItem)
@@ -236,7 +238,8 @@ public class GenerateResultAmendmentServiceImp(XmlConvertService xmlConvertServi
 
     private int GetBetType(string resourceId)
     {
-        return Convert.ToInt32(resourceId.Length < 5 ? resourceId : resourceId[..4]);
+        const int inningPosition = 4;
+        return Convert.ToInt32(resourceId.Length < 5 ? resourceId : resourceId[..inningPosition]);
     }
 
     private (CricketResultItem, CricketResultItem) CreateResultItemBase(ResultChanged resultChanged, ResourceItem resourceItem)

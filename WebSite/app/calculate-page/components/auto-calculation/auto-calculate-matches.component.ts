@@ -32,7 +32,7 @@ export class AutoCalculateMatchesComponent extends MatchesBaseComponent implemen
     private readonly autoSettingInstantType = 2;
     private subscriber: ISubscription;
     private readonly period = 6000;
-    private intervalTimer = interval(this.period);
+    private  readonly intervalTimer = interval(this.period);
     constructor(
         protected popupService: PopupService,
         protected requestService: RequestService,
@@ -90,7 +90,7 @@ export class AutoCalculateMatchesComponent extends MatchesBaseComponent implemen
     }
 
     public updateInstant(match: CalculationMatch) {
-        var isPermission = this.permission.canAutoPayout && this.notInQueue(match);
+        const isPermission = this.permission.canAutoPayout && this.notInQueue(match);
         if (isPermission) {
             this.dialogConfirmMessage.message = Language.instants.confirm;
             this.messageBoxService.confirm(this.dialogConfirmMessage, () => {

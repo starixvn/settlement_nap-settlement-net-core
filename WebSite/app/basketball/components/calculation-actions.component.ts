@@ -5,7 +5,7 @@ import {
   AioService,
   BlockUIService,
 } from "../../shared/services";
-import { League, ModalDialogMessage } from "../../shared/models";
+import {  ModalDialogMessage } from "../../shared/models";
 import { Language } from "../../shared/language.native";
 import {
   CalculateAction,
@@ -74,15 +74,15 @@ import { VerificationFantasyMatchService } from "../services/verification-fantas
 export class CalculationActionsComponent implements SportTemplate {
   @ViewChild(ToastContainerDirective, { static: true })
   toastContainer: ToastContainerDirective;
-  private basketballService = inject(BasketballService);
-  private messageBoxService = inject(MessageBoxService);
-  private betStatusService = inject(BetStatusService);
-  private aioService = inject(AioService);
-  private cashOutService = inject(CashOutService);
-  private verificationService = inject(VerificationService);
-  private  verificationFantasyMatchService = inject(VerificationFantasyMatchService);
-  private toastrService = inject(ToastrService);
-  private blockUiService = inject(BlockUIService);
+  private readonly basketballService = inject(BasketballService);
+  private readonly messageBoxService = inject(MessageBoxService);
+  private readonly betStatusService = inject(BetStatusService);
+  private readonly aioService = inject(AioService);
+  private readonly cashOutService = inject(CashOutService);
+  private  readonly verificationService = inject(VerificationService);
+  private readonly verificationFantasyMatchService = inject(VerificationFantasyMatchService);
+  private  readonly toastrService = inject(ToastrService);
+  private readonly blockUiService = inject(BlockUIService);
   readonly overTimeId = ResourcesIds.ot;
   blockUI = false;
   match: Match;
@@ -1010,7 +1010,7 @@ export class CalculationActionsComponent implements SportTemplate {
 
     this.resultDetails = this.resultDetails.map((result) => {
       const findScore = score.find(
-        (score) => score.resourceId == result.resourceId
+        x => x.resourceId === result.resourceId
       );
 
       if (!findScore) {

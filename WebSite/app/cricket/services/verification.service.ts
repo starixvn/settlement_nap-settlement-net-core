@@ -90,7 +90,7 @@ export class VerificationService  {
     }
 
     public allMapHaveScoreSources(resultDetails: ResultDetail[]) {
-        const findMap = resultDetails.filter((map: ResultDetail) => map.checked);
+        const findMap = resultDetails.filter((map) => map.checked);
         let result = true;
         _.forEach(findMap, (map) => {
             if (!this.isExistScoreSources(map, map.resourceId === ResourcesIds.final)) {
@@ -102,7 +102,7 @@ export class VerificationService  {
     }
 
     public allMapHaveScreenshotSource(resultDetails: ResultDetail[]) {
-        const checkedResults = resultDetails.filter((result: ResultDetail) => result.checked);
+        const checkedResults = resultDetails.filter((result) => result.checked);
         let result = true;
         _.forEach(checkedResults, (map) => {
             if (!this.isExistScoreSources(map, map.resourceId === ResourcesIds.final) && !this.isExistScreenshotSource(map)) {

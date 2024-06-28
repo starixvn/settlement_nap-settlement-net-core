@@ -114,7 +114,7 @@ export class FilterComponent extends FilterBaseComponent implements OnInit {
     const fromDateValue = this.verifyDateService.dateFormat(fromDate);
     const toDateValue = this.verifyDateService.dateFormat(toDate);
     if (this.verifyDateService.validDate(this.fromDate, this.toDate)) {
-      var query = new LeagueQuery(fromDateValue, toDateValue);
+      const query = new LeagueQuery(fromDateValue, toDateValue);
       const league = await this.requestService.getLeague(query);
       this.initLeague(league);
     } else {

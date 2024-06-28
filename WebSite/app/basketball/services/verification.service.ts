@@ -153,7 +153,7 @@ export class VerificationService extends VerificationBaseService {
     }
 
     public allMapHaveScoreSources(resultDetails: ResultDetail[]) {
-        const findMap = resultDetails.filter((map: ResultDetail) => map.checked);
+        const findMap = resultDetails.filter((map) => map.checked);
         let result = true;
         _.forEach(findMap, (map) => {
             if (!this.isExistScoreSources(map) && !this.isExistOverTimeScoreSources(map)) {
@@ -165,7 +165,7 @@ export class VerificationService extends VerificationBaseService {
     }
 
     public allMapHaveScreenshotSource(resultDetails: ResultDetail[]) {
-        const checkedResults = resultDetails.filter((result: ResultDetail) => result.checked);
+        const checkedResults = resultDetails.filter((result) => result.checked);
         let result = true;
         _.forEach(checkedResults, (map) => {
             if (!this.isExistScreenshotSource(map) && !this.isExistOverTimeScoreSources(map)) {

@@ -1,6 +1,6 @@
 ﻿namespace Settlement.Setting.Constants;
 
-public class HoldBitPosition
+public static class HoldBitPosition
 {
     public const int MtdHold = 16;
     public const int Undecided = 2;

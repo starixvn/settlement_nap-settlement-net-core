@@ -1,5 +1,4 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { FastMarketResult } from "../models";
 import { FastMarketBetType } from '../constants';
 import * as _ from 'lodash';
 @Pipe({

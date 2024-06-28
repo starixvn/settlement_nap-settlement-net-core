@@ -1,11 +1,7 @@
-import { Component, OnInit, DoCheck, ViewChild, Input } from "@angular/core";
+import { Component, OnInit, DoCheck, Input } from "@angular/core";
 import * as _ from "lodash";
-import {
-  RequestService,
-  TimeMachineService,
-  VerificationService,
-} from "../services";
-import { MessageBoxService, ClosePopupService } from "../../shared/services";
+import { RequestService, TimeMachineService, VerificationService, } from "../services";
+import { MessageBoxService } from "../../shared/services";
 import { ModalDialogMessage } from "../../shared/models";
 import { UrlHelper } from "../../helper";
 import { Language as SharedLanguage } from "../../shared/language.native";
@@ -169,24 +165,14 @@ export class BetTypesComponent implements OnInit, DoCheck {
 
   private doRefund() {
     if (this.isRefundWithSettleDetermined) {
-      const errorMessage =
-        this.verificationService.verifyBeforeRefundSDT(
-          this.fastMarkets.betTypes,
-          this.existingSpecialSessions
-        ) &&
-        this.verificationService.verifyBeforeRefund(
-          this.fastMarkets.betTypes,
-          true
-        );
+      let errorMessage = this.verificationService.verifyBeforeRefundSDT(this.fastMarkets.betTypes, this.existingSpecialSessions)
+        && this.verificationService.verifyBeforeRefund(this.fastMarkets.betTypes, true);
+
       if (_.isEmpty(errorMessage)) {
         this.modalDialogMessage.message =
           "You chose to Refund with settle determined tickets from selected intervals. Are you sure you want to proceed?";
         this.messageBoxService.confirm(this.modalDialogMessage, () => {
-          const errorMessage = this.verificationService.verifyBeforeCalculation(
-            this.fastMarkets.betTypes,
-            this.existingSpecialSessions,
-            true
-          );
+          errorMessage = this.verificationService.verifyBeforeCalculation(this.fastMarkets.betTypes, this.existingSpecialSessions, true);
           if (_.isEmpty(errorMessage)) {
             this.pushRefundQuery();
           } else {
@@ -1070,20 +1056,19 @@ export class BetTypesComponent implements OnInit, DoCheck {
         data: {
           matchId: this.matchId,
         },
-      })
-      .afterClosed()
-      .subscribe(
-        ({
-          results,
-          isCopyToOu,
-        }: {
-          results: TimeMachineResult[];
-          isCopyToOu: boolean;
-        }) => {
-          if (!results) return;
-
-          this.changeHDPScore(results, isCopyToOu);
+      }).afterClosed().subscribe(({
+        results,
+        isCopyToOu,
+      }: {
+        results: TimeMachineResult[];
+        isCopyToOu: boolean;
+      }) => {
+        if (!results) {
+          return;
         }
+
+        this.changeHDPScore(results, isCopyToOu);
+      }
       );
   }
 
@@ -1100,7 +1085,9 @@ export class BetTypesComponent implements OnInit, DoCheck {
       .subscribe(({ results }: {
         results: TimeMachineResult[]
       }) => {
-        if (!results) return;
+        if (!results) {
+          return;
+        }
         this.changeOUScore(results);
       }
       );

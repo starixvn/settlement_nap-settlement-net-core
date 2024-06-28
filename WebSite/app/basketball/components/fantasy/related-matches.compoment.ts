@@ -81,6 +81,8 @@ export class RelatedMatchesComponent {
     if (_.isEqual(resourceId, ResourcesIds.htScore)) {
       return "color-ht-score ";
     }
+
+    return "";
   }
 
   getEventStatusClass(eventStatus: string) {

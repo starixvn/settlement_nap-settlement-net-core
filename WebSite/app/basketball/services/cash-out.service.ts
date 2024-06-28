@@ -7,8 +7,8 @@ import { GenerateCashOutService } from './generate-cash-out.service';
 import { ResourcesIds } from '../constants';
 @Injectable()
 export class CashOutService {
-    private cashOutApi = '/api/cash-out';
-    private defaultScore = "0-0";
+    private readonly cashOutApi = '/api/cash-out';
+    private readonly defaultScore = "0-0";
     constructor(
         private readonly httpRequestService: HttpRequestService,
         private readonly generateCashOutService: GenerateCashOutService) { }

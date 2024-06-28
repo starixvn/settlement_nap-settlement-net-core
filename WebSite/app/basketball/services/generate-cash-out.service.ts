@@ -5,7 +5,7 @@ import { ResourcesIds } from '../constants';
 import { ResultDetail } from '../../shared/models/sportsbook-sop';
 @Injectable()
 export class GenerateCashOutService {
-    private defaultScore = "0-0";
+    private readonly defaultScore = "0-0";
 
     public isCalcHalftimeWithMatchTwoQuarters(resultDetails: ResultDetail[]){
         const settlementStatusId = [SettlementStatusId.Running, SettlementStatusId.Refund, SettlementStatusId.RefundSettleDetermined];
@@ -115,6 +115,8 @@ export class GenerateCashOutService {
         } else if(this.isSelectedQuarter(resultDetails, ResourcesIds.finalScore)) {
             return 0;
         }
+
+        return -1;
     }
 
     public generateHalfForSettleDetermined(resultDetails: ResultDetail[]) {
@@ -131,6 +133,8 @@ export class GenerateCashOutService {
         }else if(this.isSelectedQuarter(resultDetails, ResourcesIds.finalScore)) {
             return 10;
         }
+
+        return -1;
     }
 
     private getBetStatusByQuarter(resultDetails: ResultDetail[], quarter: string[]){
@@ -144,7 +148,7 @@ export class GenerateCashOutService {
     }
 
     private isRefundAll(resultDetails: ResultDetail[]) {
-        var count = resultDetails.filter((map) => map.checked &&
+        const count = resultDetails.filter((map) => map.checked &&
                     _.includes([ResourcesIds.quarter1, ResourcesIds.quarter2, ResourcesIds.quarter3, ResourcesIds.quarter4, ResourcesIds.htScore, ResourcesIds.finalScore], map.resourceId)).length;
         return count === 6;
     }

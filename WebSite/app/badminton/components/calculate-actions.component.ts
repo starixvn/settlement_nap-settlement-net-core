@@ -698,7 +698,9 @@ export class CalculateActionsComponent implements SportTemplate {
         && this.verificationService.isValidTraderConfirmScore(result);
   }
   private autoSelectChildMatch(result: ResultDetail) {
-    if (!this.isSupportSettleRelated || !this.isSettleRelated) return;
+    if (!this.isSupportSettleRelated || !this.isSettleRelated) {
+      return;
+    }
 
     const childMatch = this.match.childMatches.find(x => x.relatedResourceId === result.resourceId);
     if (childMatch) {
@@ -715,7 +717,7 @@ export class CalculateActionsComponent implements SportTemplate {
     this.messageBoxService.alert(this.confirmationDialogMessage);
   }
 
-  changeIsSettleRelated($event: any) {
+  changeIsSettleRelated($event: boolean) {
     if($event) {
       this.selectedResources.forEach(item => { 
         this.autoSelectChildMatch(item);

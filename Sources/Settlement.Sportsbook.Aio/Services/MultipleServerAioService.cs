@@ -189,9 +189,12 @@ public class MultipleServerAioServiceImp(
     {
         var isHasRefundChildMatch = request.SportType == SportType.TableTennis
             && request.ParentId == 0
-            && request.ActionName is ActionType.RefundAll;
+            && request.ActionName == ActionType.RefundAll;
 
-        if (!isHasRefundChildMatch) return;
+        if (!isHasRefundChildMatch)
+        {
+            return;
+        }
 
         var criteria = request.ChildMatchIds.Split(",")
             .Select(x => Convert.ToInt32(x))
