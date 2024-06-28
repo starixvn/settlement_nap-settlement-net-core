@@ -21,25 +21,14 @@ public class GameModel
 
     private string GetGameNameById()
     {
-        switch (GameType)
+        return GameType switch
         {
-            case Dota2:
-                return "DOTA2";
-
-            case Lol:
-                return "LOL";
-
-            case Csgo:
-                return "CS:GO";
-
-            case Kog:
-                return "KOG";
-
-            case WildRift:
-                return "Wild Rift";
-
-            default:
-                return "Others";
-        }
+            Dota2 => "DOTA2",
+            Lol => "LOL",
+            Csgo => "CS:GO",
+            Kog => "KOG",
+            WildRift => "Wild Rift",
+            _ => "Others"
+        };
     }
 }

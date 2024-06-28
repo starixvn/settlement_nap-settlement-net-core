@@ -57,27 +57,16 @@ public class SoccerResourceNameService : IMapperService
 
     private string GetResourceEarly(int betTypeId, string resourceId)
     {
-        switch (betTypeId)
+        return betTypeId switch
         {
-            case SoccerBetType.ExtraTimeNextGoal:
-                return $"Goal {Convert.ToUInt32(Round(resourceId))}";
-
-            case SoccerBetType.PenaltyShootoutBothOneNeither:
-            case SoccerBetType.PenaltyShootout1X2:
-            case SoccerBetType.PenaltyWoodwork:
-            case SoccerBetType.HomePenaltyShootout:
-            case SoccerBetType.AwayPenaltyShootout:
-                return refDataService.GetBetTypeName(betTypeId, Round(resourceId));
-
-            case SoccerBetType.HomePenaltyShootoutOverUnder:
-                return "Penalty Shootout First 10 - Home Score";
-
-            case SoccerBetType.AwayPenaltyShootoutOverUnder:
-                return "Penalty Shootout First 10 - Away Score";
-
-            default:
-                return refDataService.GetBetTypeName(betTypeId);
-        }
+            SoccerBetType.ExtraTimeNextGoal => $"Goal {Convert.ToUInt32(Round(resourceId))}",
+            SoccerBetType.PenaltyShootoutBothOneNeither or SoccerBetType.PenaltyShootout1X2
+                or SoccerBetType.PenaltyWoodwork or SoccerBetType.HomePenaltyShootout
+                or SoccerBetType.AwayPenaltyShootout => refDataService.GetBetTypeName(betTypeId, Round(resourceId)),
+            SoccerBetType.HomePenaltyShootoutOverUnder => "Penalty Shootout First 10 - Home Score",
+            SoccerBetType.AwayPenaltyShootoutOverUnder => "Penalty Shootout First 10 - Away Score",
+            _ => refDataService.GetBetTypeName(betTypeId)
+        };
     }
 
     private static string Round(string resourceId)

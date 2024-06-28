@@ -14,31 +14,21 @@ public class ScoreSetServiceImp : IScoreSetService
 {
     public Score GetScore(ResultDetail item, bool isLeader)
     {
-        if (item.SettlementStatusId == SettlementStatus.Refund)
+        switch (item.SettlementStatusId)
         {
-            return new Score(SetStatus.Refund);
-        }
-        if (item.SettlementStatusId == SettlementStatus.Abandoned)
-        {
-            return string.IsNullOrEmpty(item.HomeValue)
-                || string.IsNullOrEmpty(item.AwayValue)
-                ? new Score(SetStatus.Refund)
-                : new Score(ConvertScore(item.HomeValue), ConvertScore(item.AwayValue));
-        }
-
-        if (item.SettlementStatusId == SettlementStatus.RefundHt)
-        {
-            return new Score(SetStatus.RefundHt);
-        }
-
-        if (item.SettlementStatusId == SettlementStatus.RefundFt)
-        {
-            return new Score(SetStatus.RefundFt);
-        }
-
-        if (item.SettlementStatusId == SettlementStatus.Completed)
-        {
-            return new Score(ConvertScore(item.HomeValue), ConvertScore(item.AwayValue), Background.Calculated);
+            case SettlementStatus.Refund:
+                return new Score(SetStatus.Refund);
+            case SettlementStatus.Abandoned:
+                return string.IsNullOrEmpty(item.HomeValue)
+                       || string.IsNullOrEmpty(item.AwayValue)
+                    ? new Score(SetStatus.Refund)
+                    : new Score(ConvertScore(item.HomeValue), ConvertScore(item.AwayValue));
+            case SettlementStatus.RefundHt:
+                return new Score(SetStatus.RefundHt);
+            case SettlementStatus.RefundFt:
+                return new Score(SetStatus.RefundFt);
+            case SettlementStatus.Completed:
+                return new Score(ConvertScore(item.HomeValue), ConvertScore(item.AwayValue), Background.Calculated);
         }
 
         var score = new Score(ConvertScore(item.HomeValue), ConvertScore(item.AwayValue))

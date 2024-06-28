@@ -13,9 +13,9 @@ public class ProviderMapperServiceTests
         var service = new ProviderMapperService();
         var externalResultDetails = new List<ExternalResultDetailModel>
         {
-            new ExternalResultDetailModel { SourceId = 1, SourceName = "Source 1", OrderNo = 1, Remark = "Remark 1" },
-            new ExternalResultDetailModel { SourceId = 2, SourceName = "Source 2", OrderNo = 2, Remark = "Remark 2" },
-            new ExternalResultDetailModel { SourceId = 3, SourceName = "Source 3", OrderNo = 3, Remark = "Remark 3" }
+            new() { SourceId = 1, SourceName = "Source 1", OrderNo = 1, Remark = "Remark 1" },
+            new() { SourceId = 2, SourceName = "Source 2", OrderNo = 2, Remark = "Remark 2" },
+            new() { SourceId = 3, SourceName = "Source 3", OrderNo = 3, Remark = "Remark 3" }
         };
         var externalResultModel = new List<ExternalResultModel>();
 

@@ -25,16 +25,12 @@ public class TimeMachineResult
     {
         const int nineMinute = 9;
 
-        if (position == 0)
+        return position switch
         {
-            return $"0{position}:00-01:00";
-        }
-
-        if (position < nineMinute)
-        {
-            return $"0{position}:01-0{position + 1}:00";
-        }
-
-        return position == nineMinute ? $"0{position}:01-{position + 1}:00" : $"{position}:01-{position + 1}:00";
+            0 => $"0{position}:00-01:00",
+            < nineMinute => $"0{position}:01-0{position + 1}:00",
+            nineMinute => $"0{position}:01-{position + 1}:00",
+            _ => $"{position}:01-{position + 1}:00"
+        };
     }
 }

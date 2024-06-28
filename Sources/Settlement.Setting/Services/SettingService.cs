@@ -152,7 +152,7 @@ public class SettingServiceImp(
 
     private string GenerateChildMatchRemark(List<HoldSetting> changedSettings, string childMatches)
     {
-        if (!changedSettings.Exists(x => x.Type == HoldPosition.IsUndecided || x.Type == HoldPosition.IsMtdHold))
+        if (!changedSettings.Exists(x => x.Type is HoldPosition.IsUndecided or HoldPosition.IsMtdHold))
         {
             return string.Empty;
         }

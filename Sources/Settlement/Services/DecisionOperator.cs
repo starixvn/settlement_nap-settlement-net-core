@@ -9,12 +9,7 @@ public static class DecisionOperator
             return firstResult;
         }
 
-        if (secondCondition)
-        {
-            return secondResult;
-        }
-
-        return defaultResult;
+        return secondCondition ? secondResult : defaultResult;
     }
 
     public static T QuinaryDecision<T>(bool firstCondition, T firstResult, bool secondCondition, T secondResult, bool thirdCondition, T thirdResult, T defaultResult)
@@ -29,11 +24,6 @@ public static class DecisionOperator
             return secondResult;
         }
 
-        if (thirdCondition)
-        {
-            return thirdResult;
-        }
-
-        return defaultResult;
+        return thirdCondition ? thirdResult : defaultResult;
     }
 }

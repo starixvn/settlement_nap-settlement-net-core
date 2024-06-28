@@ -129,19 +129,27 @@ public class ResultAmendmentServiceImp(
     }
 
     private static short GetReSettleActionType(string beforeAction, string currentAction)
-        => (beforeAction.ToUpperInvariant(), currentAction.ToUpperInvariant()) switch
+    {
+        var before = beforeAction.ToUpperInvariant();
+        var current = currentAction.ToUpperInvariant();
+
+        if (before.Contains(ActionType.RefundAll) && current.Contains(ActionType.CalculateAll))
         {
-            (var a, string c) when a.Contains(ActionType.RefundAll) && c.Contains(ActionType.CalculateAll) =>
-                ReSettleType.RefundToCalc,
+            return ReSettleType.RefundToCalc;
+        }
 
-            (string a, string c) when a.Contains(ActionType.CalculateAll) && c.Contains(ActionType.RefundAll) =>
-                ReSettleType.CalcToRefund,
+        if (before.Contains(ActionType.CalculateAll) && current.Contains(ActionType.RefundAll))
+        {
+            return ReSettleType.CalcToRefund;
+        }
 
-            (string a, string c) when a.Contains(ActionType.CalculateAll) && c.Contains(ActionType.CalculateAll) =>
-                ReSettleType.ReCalc,
+        if (before.Contains(ActionType.CalculateAll) && current.Contains(ActionType.CalculateAll))
+        {
+            return ReSettleType.ReCalc;
+        }
 
-            _ => ReSettleType.UnKnow
-        };
+        return ReSettleType.UnKnow;
+    }
 
     private static string CreateResourceInfo(List<ResultHistoryItem> resultHistoryItems) => JsonSerializer.Serialize(resultHistoryItems);
 }

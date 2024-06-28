@@ -53,14 +53,14 @@ public class GenerateResultAmendmentServiceTests
 
         var expectedWrongResults = new List<CricketResultItem>
             {
-                new CricketResultItem { ResourceId = "9400", Home = "H", Away = "A", RefBetTypeId = "9400" },
-                new CricketResultItem { ResourceId = "9401", Home = "A", Away = "H", RefBetTypeId = "9401" }
+                new() { ResourceId = "9400", Home = "H", Away = "A", RefBetTypeId = "9400" },
+                new() { ResourceId = "9401", Home = "A", Away = "H", RefBetTypeId = "9401" }
             };
 
         var expectedActualResults = new List<CricketResultItem>
             {
-                new CricketResultItem { ResourceId = "9400", Home = "H", Away = "A", RefBetTypeId = "9400" },
-                new CricketResultItem { ResourceId = "9401", Home = "A", Away = "H", RefBetTypeId = "9401" }
+                new() { ResourceId = "9400", Home = "H", Away = "A", RefBetTypeId = "9400" },
+                new() { ResourceId = "9401", Home = "A", Away = "H", RefBetTypeId = "9401" }
             };
 
         xmlConvertService.Serialize(Arg.Any<CricketResult>()).Returns("SerializedResult");

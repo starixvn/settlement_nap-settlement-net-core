@@ -13,12 +13,12 @@ public class ResultDetailMapperServiceTests
 
         var resultDetails = new List<ResultDetail>
             {
-                new ResultDetail { ResourceId = "1" },
+                new() { ResourceId = "1" }
             };
 
         var expectedResultDetails = new List<ResultDetail>
             {
-                new ResultDetail { ResourceId = "1", HomeValue = null, AwayValue = null },
+                new() { ResourceId = "1", HomeValue = null, AwayValue = null }
             };
 
         // Act

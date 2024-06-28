@@ -12,24 +12,15 @@ public class ScoreSetServiceImp : IScoreSetService
 {
     public Score GetScore(ResultDetail item)
     {
-        if (item.SettlementStatusId == SettlementStatus.Refund)
+        return item.SettlementStatusId switch
         {
-            return new Score(SetStatus.Refund);
-        }
-
-        if (item.SettlementStatusId == SettlementStatus.RefundHt)
-        {
-            return new Score(SetStatus.RefundHt);
-        }
-
-        if (item.SettlementStatusId == SettlementStatus.RefundFt)
-        {
-            return new Score(SetStatus.RefundFt);
-        }
-
-        return item.SettlementStatusId == SettlementStatus.Completed
-            ? new Score(ConvertScore(item.HomeValue), ConvertScore(item.AwayValue), Background.Calculated)
-            : new Score(ConvertScore(item.HomeValue), ConvertScore(item.AwayValue));
+            SettlementStatus.Refund => new Score(SetStatus.Refund),
+            SettlementStatus.RefundHt => new Score(SetStatus.RefundHt),
+            SettlementStatus.RefundFt => new Score(SetStatus.RefundFt),
+            SettlementStatus.Completed => new Score(ConvertScore(item.HomeValue), ConvertScore(item.AwayValue),
+                Background.Calculated),
+            _ => new Score(ConvertScore(item.HomeValue), ConvertScore(item.AwayValue))
+        };
     }
 
     private static string ConvertScore(string value)

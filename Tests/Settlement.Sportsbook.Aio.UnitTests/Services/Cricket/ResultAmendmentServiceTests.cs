@@ -13,7 +13,7 @@ public class ResultAmendmentServiceTests
 {
     private readonly IDynamicRepository repository;
     private readonly ResultAmendmentService resultAmendmentService;
-    private readonly List<string> siteDbServers = new List<string> { "01", "02" };
+    private readonly List<string> siteDbServers = ["01", "02"];
 
     public ResultAmendmentServiceTests()
     {
@@ -48,7 +48,7 @@ public class ResultAmendmentServiceTests
         // Arrange
         var settleCriteria = new SettleCriteria
         {
-            Action = "CAL",
+            Action = "CAL"
         };
         var selectedResources = new List<ResourceItem>();
 
@@ -73,7 +73,7 @@ public class ResultAmendmentServiceTests
                 OtherInfo = "Info2",
                 LogDate = new DateTime(2023, 2, 1, 13, 0, 0),
                 ReSettleType = 2
-            },
+            }
         ]);
 
         // Act

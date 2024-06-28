@@ -36,15 +36,15 @@ public class BasketballBetTypeServiceImp(
         const int otherBetTypeLength = 3;
         var resourceId = resultDetail.ResourceId;
         var group = new GroupNameModel();
-        if (resourceId.Length == otherBetTypeLength)
+        switch (resourceId.Length)
         {
-            group = groupBetTypeService.GroupOtherBetType(resultDetail);
-        }
-
-        if (resourceId.Length is QuarterBetTypeLength or HalfBetTypeLength)
-        {
-            group = GroupHalfBetType(resultDetail, group);
-            group = GroupQuarterBetType(resultDetail, group);
+            case otherBetTypeLength:
+                group = groupBetTypeService.GroupOtherBetType(resultDetail);
+                break;
+            case QuarterBetTypeLength or HalfBetTypeLength:
+                group = GroupHalfBetType(resultDetail, group);
+                group = GroupQuarterBetType(resultDetail, group);
+                break;
         }
 
         resultDetail.GroupName = group.GroupName;
