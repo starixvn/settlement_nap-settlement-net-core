@@ -102,7 +102,7 @@ export class VerificationService  {
     }
 
     public allMapHaveScreenshotSource(resultDetails: ResultDetail[]) {
-        const checkedResults = resultDetails.filter((result) => result.checked);
+        const checkedResults = resultDetails.filter((x) => x.checked);
         let result = true;
         _.forEach(checkedResults, (map) => {
             if (!this.isExistScoreSources(map, map.resourceId === ResourcesIds.final) && !this.isExistScreenshotSource(map)) {

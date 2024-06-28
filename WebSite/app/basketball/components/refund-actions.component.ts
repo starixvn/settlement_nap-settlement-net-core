@@ -75,7 +75,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
         this.permission = this.match.permission;
         this.resourceConfirmedSdt = this.match.externalResults.find(r => r.sourceId === ScoreSourceType.confirmRefundSource)?.resultDetails ?? [];
         this.basketballService.getResourceExternalRefund(this.permission.isLeader, this.match.externalResults, this.resultDetails);
-        this.isConfirmRefund = this.resultDetails.findIndex(result => result.resultSettingData.isConfirmedRefund || result.resultSettingData.isConfirmedRefundSdt) == -1;
+        this.isConfirmRefund = this.resultDetails.findIndex(result => result.resultSettingData.isConfirmedRefund || result.resultSettingData.isConfirmedRefundSdt) === -1;
         this.isSDTSettle = this.permission.isLeader ? this.initSDTSettle() : false;
         this.disableScoreDirect = this.verificationService.isTicketOnQuarter(this.resultDetails, this.match.resultDetails);
         this.resetHomeAwayAndAddClass(this.resultDetails);

@@ -10,7 +10,7 @@ export class LeagueSettingsStore{
   originalState: LeagueSettings;
   state$: Observable<LeagueSettings>;
   actionAfterUpdate: () => void;
-  private _state$: BehaviorSubject<LeagueSettings>;
+  private readonly _state$: BehaviorSubject<LeagueSettings>;
 
   protected constructor() {
     this._state$ = new BehaviorSubject(new LeagueSettings());

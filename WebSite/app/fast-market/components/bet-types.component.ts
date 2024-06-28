@@ -1112,7 +1112,9 @@ export class BetTypesComponent implements OnInit, DoCheck {
       }
     });
 
-    if (isCopyToOu) this.copyToOuScore(results);
+    if (isCopyToOu) {
+      this.copyToOuScore(results);
+    }
   }
 
   private copyToOuScore(results: TimeMachineResult[]) {

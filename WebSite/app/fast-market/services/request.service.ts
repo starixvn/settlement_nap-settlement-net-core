@@ -18,7 +18,7 @@ import { TimeMachineResult } from "../models/interval.model";
 
 @Injectable()
 export class RequestService {
-  private fastMarketApi = "/api/fast-market";
+  private readonly fastMarketApi = "/api/fast-market";
   constructor(private readonly httpRequestService: HttpRequestService) {}
 
   public checkingMarkedTickets(

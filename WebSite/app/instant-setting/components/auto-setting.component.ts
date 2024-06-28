@@ -30,6 +30,7 @@ export class AutoSettingComponent implements OnInit {
   ];
 
   public originalListSetting: Array<SettingQuery>;
+  private readonly dialogResponseElement = 'dialog-response';
 
 
   constructor(
@@ -40,7 +41,7 @@ export class AutoSettingComponent implements OnInit {
 
   ngOnInit(): void {
     this.pageType = UrlHelper.getUrlParameter('pageType');
-    this.isMultiSelect = UrlHelper.getUrlParameter('multiSelect') == 'true';
+    this.isMultiSelect = UrlHelper.getUrlParameter('multiSelect') === 'true';
     this.currentState = Number(UrlHelper.getUrlParameter('currentState'));
     this.parseValue();
     this.getId();
@@ -101,7 +102,7 @@ export class AutoSettingComponent implements OnInit {
 
     const result = await this.requestService.updateSettingMatch(params);
     if (result.isSuccessful) {
-      parent.document.getElementById('dialog-response').setAttribute('value', this.currentState.toString());
+      parent.document.getElementById(this.dialogResponseElement).setAttribute('value', this.currentState.toString());
       this.messageBoxService.closePopup();
     } else {
       this.errorMessage = result.errMsg;
@@ -122,7 +123,7 @@ export class AutoSettingComponent implements OnInit {
         this.errorMessage = result.errMsg;
         return;
       } else if (_.isEqual(Number(i), listItem.length - 1)) {
-        parent.document.getElementById('dialog-response').setAttribute('value', this.parseValueToResponse());
+        parent.document.getElementById(this.dialogResponseElement).setAttribute('value', this.parseValueToResponse());
       }
     }
     this.messageBoxService.closePopup();
@@ -172,7 +173,7 @@ export class AutoSettingComponent implements OnInit {
 
     const result = await this.requestService.updateSettingLeague(query);
     if (result.isSuccessful) {
-      parent.document.getElementById('dialog-response')?.setAttribute('value', `${this.currentState},${isApplyAll}`);
+      parent.document.getElementById(this.dialogResponseElement)?.setAttribute('value', `${this.currentState},${isApplyAll}`);
       this.messageBoxService.closePopup();
     } else {
       this.errorMessage = result.errMsg;
@@ -194,7 +195,7 @@ export class AutoSettingComponent implements OnInit {
         this.errorMessage = result.errMsg;
         return;
       } else if (_.isEqual(Number(i), listItem.length - 1)) {
-        parent.document.getElementById('dialog-response').setAttribute('value', `${this.parseValueToResponse()},${isApplyAll}`);
+        parent.document.getElementById(this.dialogResponseElement).setAttribute('value', `${this.parseValueToResponse()},${isApplyAll}`);
       }
     }
     this.messageBoxService.closePopup();
@@ -205,7 +206,7 @@ export class AutoSettingComponent implements OnInit {
     if (_.isEmpty(listValue)) {
       return '0';
     }
-    const typeValue = this.listSetting.filter(item => item.isEnable).map(item => Math.pow(2, item.type - 1)).reduce((a, b) => a + b);
+    const typeValue = this.listSetting.filter(item => item.isEnable).map(item => Math.pow(2, item.type - 1)).reduce((a, b) => a + b,0);
     return typeValue.toString(2).split("").reverse().join("");
   }
 

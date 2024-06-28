@@ -1,16 +1,15 @@
 ﻿import * as _ from 'lodash';
 import { Injectable } from '@angular/core';
 import { HttpRequestService } from '../../shared/services';
-import { Observable, firstValueFrom } from 'rxjs';
-import { TimeSettingQuery, GetRemarkQuery, ChangeSettingQuery, RemarkAndPermission } from '../models';
+import { firstValueFrom } from 'rxjs';
+import { TimeSettingQuery, GetRemarkQuery, RemarkAndPermission } from '../models';
 import { AutoSettingLeagueQuery, AutoSettingMatchQuery, Result } from '../../shared/models';
-import { SettingType } from '../constants';
 import { LeagueSettings, ProviderSource, ResultSettings } from '../../shared/models/league-settings.model';
 
 @Injectable()
 export class RequestService {
-    private settingApi = '/api/setting';
-    private leagueSettingApi = '/api/league-settings'
+    private readonly settingApi = '/api/setting';
+    private readonly leagueSettingApi = '/api/league-settings'
     constructor(private readonly httpRequestService: HttpRequestService) {
     }
 

@@ -3,15 +3,13 @@ import {
   Remark,
   Permission,
   RemarkAndPermission,
-  ChangeSettingQuery,
-  League,
 } from "../models";
 import { UrlHelper } from "../../helper";
 import { RequestService } from "../services/request.service";
 import { ModalDialogMessage } from "../../shared/models";
 import { MessageBoxService } from "../../shared/services";
 import { Language } from "../../shared/language.native";
-import { SettingType, TooltipMessage } from "../constants";
+import { TooltipMessage } from "../constants";
 import { HttpUrlEncodingCodec } from "@angular/common/http";
 import { FormsModule } from "@angular/forms";
 import { OnlyIntegerDirective } from "../../shared/directives";
@@ -100,7 +98,7 @@ export class RemarkSettingComponent implements OnInit {
       orgHoldSettings,
     };
 
-    var result = await this.requestService.changeHoldMatchSetting(query);
+    const result = await this.requestService.changeHoldMatchSetting(query);
     const { remark } = result.match;
     const { eventStatus, newEventStatus } = result.match;
 

@@ -93,8 +93,6 @@ public class GenerateResultAmendmentServiceImp(XmlConvertService xmlConvertServi
         if (PatternResultType.EarlyTypeOne.Contains(betTypeId))
         {
             ProcessTypeOne(itemChanged, itemSelected, resultChanged, resourceItem);
-
-
             return (itemChanged, itemSelected);
         }
 
@@ -104,8 +102,8 @@ public class GenerateResultAmendmentServiceImp(XmlConvertService xmlConvertServi
         }
 
         if (PatternResultType.EarlyTypeThree.Contains(betTypeId))
-        {            ProcessTypeThree(itemChanged, itemSelected, resultChanged, resourceItem);
-
+        {
+            ProcessTypeThree(itemChanged, itemSelected, resultChanged, resourceItem);
             return (itemChanged, itemSelected);
         }
 

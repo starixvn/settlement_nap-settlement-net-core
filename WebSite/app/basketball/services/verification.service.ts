@@ -165,7 +165,7 @@ export class VerificationService extends VerificationBaseService {
     }
 
     public allMapHaveScreenshotSource(resultDetails: ResultDetail[]) {
-        const checkedResults = resultDetails.filter((result) => result.checked);
+        const checkedResults = resultDetails.filter((x) => x.checked);
         let result = true;
         _.forEach(checkedResults, (map) => {
             if (!this.isExistScreenshotSource(map) && !this.isExistOverTimeScoreSources(map)) {

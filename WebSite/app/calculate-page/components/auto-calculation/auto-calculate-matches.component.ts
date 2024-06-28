@@ -156,7 +156,7 @@ export class AutoCalculateMatchesComponent extends MatchesBaseComponent implemen
     }
 
     public openUpdatePayout(match: CalculationMatch) {
-        var isPermission = this.permission.canAutoPayout && this.notInQueue(match);
+        const isPermission = this.permission.canAutoPayout && this.notInQueue(match);
         if (isPermission) {
             this.popupService.openUpdatePayout(match);
         }
