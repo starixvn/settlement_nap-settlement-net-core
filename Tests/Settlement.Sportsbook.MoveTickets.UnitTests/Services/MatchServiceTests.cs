@@ -1,5 +1,5 @@
-﻿using Settlement.Core.Models;
-using Settlement.Core.Services;
+﻿using Settlement.Models;
+using Settlement.Services;
 
 namespace Settlement.Sportsbook.MoveTickets.UnitTests.Services;
 
@@ -28,7 +28,7 @@ public class MatchServiceTests
     public void GetScoreForMatchBySportType_IsCricket_ReturnsDefaultMatchesData()
     {
         // Act
-        service.GetScoreForMatchBySportType([], [], Core.Constants.SportType.Cricket, 10);
+        service.GetScoreForMatchBySportType([], [], Settlement.Constants.SportType.Cricket, 10);
 
         // Assert
         matchResultDetailService.Received().CricketResultDetail(Arg.Any<List<Match>>(), Arg.Any<List<ResultDetail>>());

@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using Settlement.Core.Models;
+using Settlement.Models;
 using Settlement.ThirdPartyProducts.Constants;
 using Settlement.ThirdPartyProducts.Requests;
 using Settlement.ThirdPartyProducts.Requests.CashOut;

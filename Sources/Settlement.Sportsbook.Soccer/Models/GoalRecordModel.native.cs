@@ -24,7 +24,7 @@ public class GoalRecordModel
         {
             if (IsExistRefundHt)
             {
-                return IsExistHalfTime ? $"{Core.Constants.BetStatus.RefundHt};1FL:{FirstGoal}-{LastGoal};" : $"{Core.Constants.BetStatus.RefundHt};";
+                return IsExistHalfTime ? $"{Settlement.Constants.BetStatus.RefundHt};1FL:{FirstGoal}-{LastGoal};" : $"{Settlement.Constants.BetStatus.RefundHt};";
             }
 
             return HalftimeBetStatusNotExistRefundHt;

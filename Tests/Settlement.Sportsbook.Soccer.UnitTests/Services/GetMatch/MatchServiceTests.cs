@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using Fanex.Data.Repository;
-using Settlement.Core.Constants;
-using Settlement.Core.Models;
-using Settlement.Core.Services;
+using Settlement.Constants;
+using Settlement.Models;
+using Settlement.Services;
 using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Requests;
@@ -11,9 +11,9 @@ using MatchDetail = Settlement.Sportsbook.Soccer.Models.MatchDetail;
 
 namespace Settlement.Sportsbook.Soccer.UnitTests.Services.GetMatch;
 
-using Core.Services.SpecificService;
 using Fanex.Caching;
 using Fanex.NAP.Client.Helpers.Web;
+using Settlement.Services.SpecificService;
 using Soccer.Services.GetMatch;
 
 public class MatchServiceTests

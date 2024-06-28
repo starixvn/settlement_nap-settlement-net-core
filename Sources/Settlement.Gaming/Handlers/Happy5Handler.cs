@@ -1,6 +1,6 @@
 ﻿using Fanex.NAP.Client.Helpers.Web;
 using MediatR;
-using Settlement.Core.Models;
+using Settlement.Models;
 using Settlement.Gaming.Models;
 using Settlement.Gaming.Models.Happy5;
 using Settlement.Gaming.Requests;

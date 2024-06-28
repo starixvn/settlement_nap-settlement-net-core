@@ -1,7 +1,7 @@
 ﻿using AutoFixture;
-using Settlement.Core.Constants;
-using Settlement.Core.Models;
-using Settlement.Core.Services;
+using Settlement.Constants;
+using Settlement.Models;
+using Settlement.Services;
 using Settlement.EventManagement.Services;
 
 namespace Settlement.EventManagement.UnitTests.Services;
@@ -131,7 +131,7 @@ public class ScoreServiceTests
         // Arrange
         var resultDetails = new List<ResultDetail>
         {
-            new() { MatchId = 1 , SettlementStatusId = SettlementStatus.Abandoned, ResourceId =  Core.Constants.Resources.ResultHaftTime[SportGroup.SupportSettleDetermine[0]][0] },
+            new() { MatchId = 1 , SettlementStatusId = SettlementStatus.Abandoned, ResourceId =  Settlement.Constants.Resources.ResultHaftTime[SportGroup.SupportSettleDetermine[0]][0] },
             new() { MatchId = 1 , ResourceId = "01" ,HomeValue = "1" , AwayValue = "1"}
         };
 
@@ -220,7 +220,7 @@ public class ScoreServiceTests
         // Arrange
         var resultDetails = new List<ResultDetail>
         {
-            new() { MatchId = 1 , SettlementStatusId = SettlementStatus.Abandoned, ResourceId =  Core.Constants.Resources.ResultFullTime[SportGroup.SupportSettleDetermine[0]][0] },
+            new() { MatchId = 1 , SettlementStatusId = SettlementStatus.Abandoned, ResourceId =  Settlement.Constants.Resources.ResultFullTime[SportGroup.SupportSettleDetermine[0]][0] },
             new() { MatchId = 1 , ResourceId = "00" ,HomeValue = "1" , AwayValue = "1"}
         };
 

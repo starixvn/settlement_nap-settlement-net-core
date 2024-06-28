@@ -1,6 +1,6 @@
 ﻿using Fanex.RemotingRef;
-using Settlement.Core.Constants;
-using Settlement.Core.Services;
+using Settlement.Constants;
+using Settlement.Services;
 using Settlement.ResourceInfos.Constants;
 using Settlement.ResourceInfos.MapperFactory;
 

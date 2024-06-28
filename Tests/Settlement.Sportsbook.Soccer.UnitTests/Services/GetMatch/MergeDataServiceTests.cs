@@ -1,5 +1,5 @@
 ﻿using Settlement.Sportsbook.Soccer.Models;
-using Settlement.Core.Models;
+using Settlement.Models;
 using MatchDetail = Settlement.Sportsbook.Soccer.Models.MatchDetail;
 
 namespace Settlement.Sportsbook.Soccer.UnitTests.Services.GetMatch;

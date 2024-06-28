@@ -1,4 +1,4 @@
-﻿using Settlement.Core.Models;
+﻿using Settlement.Models;
 using Settlement.FastMarkets.Models;
 
 namespace Settlement.FastMarkets.Services;

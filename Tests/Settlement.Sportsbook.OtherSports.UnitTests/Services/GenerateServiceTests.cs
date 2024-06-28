@@ -1,10 +1,10 @@
 ﻿using Fanex.Data.Repository;
 using Fanex.Settlement.Converter.Services;
-using Settlement.Core.Constants;
-using Settlement.Core.Models;
+using Settlement.Constants;
+using Settlement.Models;
 using Settlement.Sportsbook.OtherSports.Criteria;
 using Settlement.Sportsbook.OtherSports.Requests;
-using ResourceItem = Settlement.Core.Models.ResourceItem;
+using ResourceItem = Settlement.Models.ResourceItem;
 
 namespace Settlement.Sportsbook.OtherSports.UnitTests.Services;
 

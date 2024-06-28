@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Settlement.Core.ActionFilters;
+using Settlement.ActionFilters;
 using Settlement.Sportsbook.MoveTickets.Requests;
 
 namespace Settlement.Sportsbook.MoveTickets.Controllers;

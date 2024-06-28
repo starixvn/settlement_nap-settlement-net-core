@@ -1,6 +1,6 @@
-﻿using Settlement.Core.Constants;
-using Settlement.Core.Models;
-using Settlement.Core.Services;
+﻿using Settlement.Constants;
+using Settlement.Models;
+using Settlement.Services;
 
 namespace Settlement.Sportsbook.MoveTickets.Services;
 

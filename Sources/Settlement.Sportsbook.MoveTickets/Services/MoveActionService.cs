@@ -2,7 +2,7 @@
 
 namespace Settlement.Sportsbook.MoveTickets.Services;
 
-using Core.Constants;
+using Constants;
 using Criteria;
 using Fanex.Data.Repository;
 using Fanex.NAP.Client.Helpers.Web;
@@ -10,8 +10,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Models;
 using Requests;
-using Settlement.Core.Models;
-using Settlement.Core.Services;
+using Settlement.Models;
+using Settlement.Services;
 
 public interface MoveActionService
 {

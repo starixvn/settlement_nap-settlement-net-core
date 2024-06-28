@@ -1,11 +1,11 @@
 ﻿using Fanex.NAP.Client.Configuration;
 using Fanex.NAP.Client.Helpers.Web;
 using Fanex.NAP.Client.Services;
-using Settlement.Core.Models;
+using Settlement.Models;
 
 namespace Settlement.Outright.Services;
 
-using Core.Configurations;
+using Configurations;
 
 public interface OutrightPermissionService
 {

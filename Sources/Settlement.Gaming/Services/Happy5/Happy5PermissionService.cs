@@ -1,11 +1,11 @@
 ﻿using Fanex.NAP.Client.Configuration;
 using Fanex.NAP.Client.Helpers.Web;
 using Fanex.NAP.Client.Services;
-using Settlement.Core.Models;
+using Settlement.Models;
 
 namespace Settlement.Gaming.Services.Happy5;
 
-using Core.Configurations;
+using Settlement.Configurations;
 
 public interface PermissionService
 {

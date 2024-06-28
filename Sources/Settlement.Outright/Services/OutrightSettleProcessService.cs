@@ -3,8 +3,8 @@ using Fanex.Data.Repository;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.Extensions.Options;
-using Settlement.Core.Models;
-using Settlement.Core.Services;
+using Settlement.Models;
+using Settlement.Services;
 using Settlement.Outright.Criteria;
 
 namespace Settlement.Outright.Services;

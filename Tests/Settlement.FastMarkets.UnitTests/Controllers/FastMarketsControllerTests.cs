@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Settlement.Core.Models;
+using Settlement.Models;
 using Settlement.FastMarkets.Controllers;
 using Settlement.FastMarkets.Models;
 using Settlement.FastMarkets.Requests;

@@ -13,12 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Services\ExternalScoreService.cs.orig" />
-    <None Remove="Services\MatchResultDetailService.cs.orig" />
-    <None Remove="Services\MatchService.cs.orig" />
-  </ItemGroup>
-
-  <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
   <ItemGroup>

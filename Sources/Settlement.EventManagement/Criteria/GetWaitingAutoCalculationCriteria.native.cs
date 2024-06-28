@@ -1,10 +1,10 @@
-﻿using Settlement.Core.Criteria;
+﻿using Settlement.Criteria;
 
 namespace Settlement.EventManagement.Criteria;
 
 public class GetWaitingAutoCalculationCriteria : MultipleSiteCriteria
 {
-    public int SportType => Core.Constants.SportType.Soccer;
+    public int SportType => Settlement.Constants.SportType.Soccer;
 
     public int LeagueId { get; set; }
 

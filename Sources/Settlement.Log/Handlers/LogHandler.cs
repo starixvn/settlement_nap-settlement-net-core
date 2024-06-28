@@ -7,7 +7,7 @@ namespace Settlement.Log.Handlers;
 
 public class LogHandler(
     LogService logService,
-    Core.Services.IBalanceUpService balanceUpService)
+    Settlement.Services.IBalanceUpService balanceUpService)
     : IRequestHandler<LogRequest, List<LogModel>>
 {
     public async Task<List<LogModel>> Handle(LogRequest request, CancellationToken cancellationToken)

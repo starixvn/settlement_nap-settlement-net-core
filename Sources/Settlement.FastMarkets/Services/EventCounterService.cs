@@ -1,4 +1,4 @@
-﻿using Settlement.Core.Constants;
+﻿using Settlement.Constants;
 using Settlement.FastMarkets.Models.EventCounterModels;
 using Settlement.FastMarkets.Requests;
 

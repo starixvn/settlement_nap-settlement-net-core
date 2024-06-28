@@ -1,6 +1,6 @@
 ﻿namespace Settlement.EventManagement.Services.MultiSports;
 
-using Settlement.Core.Models;
+using Settlement.Models;
 using Match = Models.MultiSports.Match;
 
 public interface IMatchResultDetailService

@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using Fanex.NAP.Client.Helpers.Web;
 using Microsoft.AspNetCore.Http;
-using Settlement.Core.Constants;
-using Settlement.Core.Models;
+using Settlement.Constants;
+using Settlement.Models;
 using Settlement.Sportsbook.OtherSports.Criteria;
 using Settlement.Sportsbook.OtherSports.Models;
 using Settlement.Sportsbook.OtherSports.Requests;

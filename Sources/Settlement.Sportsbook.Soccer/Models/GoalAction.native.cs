@@ -1,4 +1,4 @@
-﻿using Settlement.Core.Constants;
+﻿using Settlement.Constants;
 
 namespace Settlement.Sportsbook.Soccer.Models;
 

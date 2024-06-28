@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using Fanex.Caching;
 using Fanex.NAP.Client.Helpers.Web;
-using Settlement.Core.Models;
-using Settlement.Core.Services;
+using Settlement.Models;
+using Settlement.Services;
 using Settlement.Sportsbook.MoveTickets.Handlers;
 using Settlement.Sportsbook.MoveTickets.Models;
 using Settlement.Sportsbook.MoveTickets.Requests;

@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Settlement.Core.Constants;
+using Settlement.Constants;
 using Settlement.EventManagement.Models.Calculation;
 using Settlement.EventManagement.Models.MultiSports;
 using StackExchange.Redis;

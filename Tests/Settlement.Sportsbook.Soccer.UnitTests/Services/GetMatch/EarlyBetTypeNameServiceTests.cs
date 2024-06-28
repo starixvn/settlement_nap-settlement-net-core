@@ -1,5 +1,5 @@
-﻿using Settlement.Core.Services;
-using static Settlement.Core.Constants.BetType;
+﻿using Settlement.Services;
+using static Settlement.Constants.BetType;
 
 namespace Settlement.Sportsbook.Soccer.UnitTests.Services.GetMatch;
 

@@ -1,6 +1,6 @@
 ﻿namespace Settlement.EventManagement.Services.Calculation;
 
-using Settlement.Core.Models;
+using Settlement.Models;
 using CalculationMatch = Models.Calculation.Match;
 
 public interface CompareMatchService

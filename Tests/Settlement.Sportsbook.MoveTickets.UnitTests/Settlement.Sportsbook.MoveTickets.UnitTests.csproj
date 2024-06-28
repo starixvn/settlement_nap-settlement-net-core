@@ -29,7 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Sources\Settlement.Core\Settlement.Core.csproj" />
+    <ProjectReference Include="..\..\Sources\Settlement\Settlement.csproj" />
     <ProjectReference Include="..\..\Sources\Settlement.Sportsbook.MoveTickets\Settlement.Sportsbook.MoveTickets.csproj" />
   </ItemGroup>
 

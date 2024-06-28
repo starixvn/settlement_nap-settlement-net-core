@@ -1,7 +1,7 @@
 ﻿namespace Settlement.Sportsbook.Soccer.Services.GetMatch;
 
 using Models;
-using Settlement.Core.Models;
+using Settlement.Models;
 
 public interface IMergeDataService
 {

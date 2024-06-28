@@ -1,5 +1,5 @@
 ﻿using NSubstitute;
-using Settlement.Core.Services;
+using Settlement.Services;
 using Settlement.Outright.Criteria;
 using Settlement.Outright.Models;
 using Settlement.Outright.Requests;

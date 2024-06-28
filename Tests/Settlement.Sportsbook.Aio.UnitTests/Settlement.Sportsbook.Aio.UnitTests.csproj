@@ -32,7 +32,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Sources\Settlement.Sportsbook.Aio\Settlement.Sportsbook.Aio.csproj" />
-    <ProjectReference Include="..\Settlement.Core.UnitTests\Settlement.Core.UnitTests.csproj" />
+    <ProjectReference Include="..\Settlement.UnitTests\Settlement.UnitTests.csproj" />
   </ItemGroup>
 
   <ItemGroup>

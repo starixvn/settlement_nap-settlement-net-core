@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using Settlement.Core.Models;
+using Settlement.Models;
 using ResourceItem = Settlement.ThirdPartyProducts.Models.ResourceItem;
 
 namespace Settlement.ThirdPartyProducts.Requests;

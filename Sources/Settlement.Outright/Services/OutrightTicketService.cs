@@ -1,6 +1,6 @@
 ﻿using Fanex.Data.Repository;
 using Microsoft.Extensions.Options;
-using Settlement.Core.Models;
+using Settlement.Models;
 using Settlement.Outright.Criteria;
 
 namespace Settlement.Outright.Services;

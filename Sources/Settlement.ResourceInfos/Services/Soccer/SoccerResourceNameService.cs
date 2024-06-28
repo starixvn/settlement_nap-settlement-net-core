@@ -1,9 +1,9 @@
 ﻿using Fanex.RemotingRef;
-using Settlement.Core.Constants;
-using Settlement.Core.Services;
+using Settlement.Constants;
+using Settlement.Services;
 using Settlement.ResourceInfos.Constants;
 using Settlement.ResourceInfos.MapperFactory;
-using static Settlement.Core.Constants.BetType;
+using static Settlement.Constants.BetType;
 
 namespace Settlement.ResourceInfos.Services.Soccer;
 

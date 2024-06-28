@@ -1,8 +1,8 @@
-﻿using Settlement.Core.Models;
+﻿using Settlement.Models;
 
 namespace Settlement.Sportsbook.Soccer.UnitTests.Services;
 
-using Core.Services.SpecificService;
+using Settlement.Services.SpecificService;
 
 public class GoalIconServiceTests
 {

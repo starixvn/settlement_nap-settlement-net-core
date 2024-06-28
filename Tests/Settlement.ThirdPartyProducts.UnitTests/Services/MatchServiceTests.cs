@@ -1,8 +1,8 @@
 ﻿using AutoFixture;
 using AutoMapper;
 using Fanex.Data.Repository;
-using Settlement.Core.Models;
-using Settlement.Core.Services;
+using Settlement.Models;
+using Settlement.Services;
 using Settlement.ThirdPartyProducts.Criteria;
 using Settlement.ThirdPartyProducts.Models;
 using Settlement.ThirdPartyProducts.Requests;

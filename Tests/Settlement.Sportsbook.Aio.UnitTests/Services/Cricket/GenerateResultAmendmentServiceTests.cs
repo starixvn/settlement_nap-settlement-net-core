@@ -1,5 +1,5 @@
 ﻿using Fanex.Settlement.Converter.Services;
-using Settlement.Core.Models;
+using Settlement.Models;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Services.Cricket;
 
@@ -8,10 +8,9 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services.Cricket;
 public class GenerateResultAmendmentServiceTests
 {
     private readonly GenerateResultAmendmentService generateResultAmendmentService;
-
+    private readonly XmlConvertService xmlConvertService = Substitute.For<XmlConvertService>();
     public GenerateResultAmendmentServiceTests()
     {
-        var xmlConvertService = Substitute.For<XmlConvertService>();
         generateResultAmendmentService = new GenerateResultAmendmentServiceImp(xmlConvertService);
     }
 
@@ -111,13 +110,13 @@ public class GenerateResultAmendmentServiceTests
 
         var expectedExtraInfo = new ExtraInfo { ExtraInfoItems = expectedExtraInfoItems };
 
-        _xmlConvertServiceMock.Serialize(Arg.Any<ExtraInfo>()).Returns("SerializedExtraInfo");
+        xmlConvertService.Serialize(Arg.Any<ExtraInfo>()).Returns("SerializedExtraInfo");
 
         // Act
-        var actualExtraInfo = _generateResultAmendmentService.CreateExtraInfo(resultsChanged);
+        var actualExtraInfo = generateResultAmendmentService.CreateExtraInfo(resultsChanged);
 
         // Assert
         Assert.Equal("SerializedExtraInfo", actualExtraInfo);
-        _xmlConvertServiceMock.Received(1).Serialize(Arg.Any<ExtraInfo>());
+        xmlConvertService.Received(1).Serialize(Arg.Any<ExtraInfo>());
     }
 }

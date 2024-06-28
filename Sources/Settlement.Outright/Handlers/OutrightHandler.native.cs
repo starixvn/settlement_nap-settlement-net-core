@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using Settlement.Core.Models;
+using Settlement.Models;
 using Settlement.Outright.Services;
 
 namespace Settlement.Outright.Handlers;

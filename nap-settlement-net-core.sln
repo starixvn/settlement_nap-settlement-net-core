@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Settlement.Sportsbook.Aio",
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{0318FAF0-0F10-4D19-A03A-BA495310F4D4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Settlement.Core", "Sources\Settlement.Core\Settlement.Core.csproj", "{C2438490-1481-4F3E-8673-FD5B1AB1ACDF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Settlement", "Sources\Settlement\Settlement.csproj", "{C2438490-1481-4F3E-8673-FD5B1AB1ACDF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Settlement.Sportsbook.MoveTickets.UnitTests", "Tests\Settlement.Sportsbook.MoveTickets.UnitTests\Settlement.Sportsbook.MoveTickets.UnitTests.csproj", "{8624D201-FCDD-4CE8-AE38-B8CE09073877}"
 EndProject
@@ -45,7 +45,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Settlement.ThirdPartyProduc
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{F6E96605-6144-461A-85E9-4FE6D3D49CC8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Settlement.Core.UnitTests", "Tests\Settlement.Core.UnitTests\Settlement.Core.UnitTests.csproj", "{22AE591D-1E4E-4CDE-A556-48453DE98F6E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Settlement.UnitTests", "Tests\Settlement.UnitTests\Settlement.UnitTests.csproj", "{22AE591D-1E4E-4CDE-A556-48453DE98F6E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Settlement.Setting", "Sources\Settlement.Setting\Settlement.Setting.csproj", "{629266FE-D1EB-47F5-B589-9BFB25DEBA00}"
 EndProject

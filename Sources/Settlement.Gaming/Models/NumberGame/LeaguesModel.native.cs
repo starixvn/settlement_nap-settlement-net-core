@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json;
-using Settlement.Core.Services;
+using Settlement.Services;
 
 namespace Settlement.Gaming.Models.NumberGame;
 

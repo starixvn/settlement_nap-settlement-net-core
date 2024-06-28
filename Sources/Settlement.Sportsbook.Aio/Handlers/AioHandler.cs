@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
-using Settlement.Core.Constants;
-using Settlement.Core.Models;
-using Settlement.Core.Services;
+using Settlement.Constants;
+using Settlement.Models;
+using Settlement.Services;
 using Settlement.Sportsbook.Aio.Criteria.Cricket;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Requests;

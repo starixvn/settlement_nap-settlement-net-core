@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Fanex.Data.Repository;
-using Settlement.Core.Services;
+using Settlement.Services;
 using Settlement.EventManagement.Criteria;
 using Settlement.EventManagement.Models;
 using Settlement.EventManagement.Models.Calculation;

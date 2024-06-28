@@ -7,7 +7,7 @@ using Settlement.Outright.Services;
 
 namespace Settlement.Sportsbook.Outright.UnitTests.services;
 
-using Core.Configurations;
+using Configurations;
 
 public class OutrightPermissionServiceTests
 {

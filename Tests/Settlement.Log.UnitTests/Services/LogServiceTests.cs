@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Fanex.Data.Repository;
-using Settlement.Core.Services;
+using Settlement.Services;
 using Settlement.Log.Models;
 using Settlement.Log.Services;
 using LogService = Settlement.Log.Services.LogService;

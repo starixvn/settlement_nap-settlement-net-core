@@ -1,10 +1,10 @@
 ﻿using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.Extensions.Options;
-using Settlement.Core.Constants;
-using Settlement.Core.Criteria;
-using Settlement.Core.Models;
-using Settlement.Core.Services;
+using Settlement.Constants;
+using Settlement.Criteria;
+using Settlement.Models;
+using Settlement.Services;
 using Settlement.Sportsbook.Aio.Constants;
 using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.Criteria.Tennis;

@@ -2,8 +2,8 @@
 using Fanex.Data.Repository;
 using Fanex.NAP.Client.Helpers.Web;
 using Microsoft.AspNetCore.Http;
-using Settlement.Core.Criteria;
-using Settlement.Core.Services;
+using Settlement.Criteria;
+using Settlement.Services;
 using Settlement.Setting.Criteria;
 using Settlement.Setting.Models;
 using Settlement.Setting.Requests;

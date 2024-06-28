@@ -1,4 +1,4 @@
-﻿using Settlement.Core.Services;
+﻿using Settlement.Services;
 using Settlement.Gaming.Requests;
 using Settlement.Gaming.Models.NumberGame;
 

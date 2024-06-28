@@ -1,6 +1,6 @@
 ﻿using NSubstitute;
 using NUnit.Framework;
-using Settlement.Core.Models;
+using Settlement.Models;
 using Settlement.CalculationSetting.Handlers;
 using Settlement.CalculationSetting.Requests;
 using Settlement.CalculationSetting.Services;

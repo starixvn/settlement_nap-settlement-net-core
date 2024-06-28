@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
-using Settlement.Core.Models;
-using Settlement.Core.Services;
+using Settlement.Models;
+using Settlement.Services;
 
 namespace Settlement.ThirdPartyProducts.Models;
 

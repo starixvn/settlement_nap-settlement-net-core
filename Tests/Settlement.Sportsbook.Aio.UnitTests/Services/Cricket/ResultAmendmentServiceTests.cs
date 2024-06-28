@@ -1,13 +1,14 @@
 ﻿using Fanex.Data.Repository;
 using Microsoft.Extensions.Options;
 using NSubstitute.ExceptionExtensions;
-using Settlement.Core.Models;
 using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.Criteria.Cricket;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Services.Cricket;
 
 namespace Settlement.Sportsbook.Aio.UnitTests.Services.Cricket;
+
+using Settlement.Models;
 
 public class ResultAmendmentServiceTests
 {

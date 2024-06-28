@@ -1,4 +1,4 @@
-﻿using Settlement.Core.Constants;
+﻿using Settlement.Constants;
 using Settlement.Sportsbook.Aio.Constants;
 using Settlement.Sportsbook.Aio.MapperFactory;
 using Settlement.Sportsbook.Aio.Models;

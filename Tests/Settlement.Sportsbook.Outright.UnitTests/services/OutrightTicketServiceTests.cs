@@ -1,7 +1,7 @@
 ﻿using Fanex.Data.Repository;
 using Microsoft.Extensions.Options;
 using NSubstitute;
-using Settlement.Core.Models;
+using Settlement.Models;
 using Settlement.Outright.Criteria;
 using Settlement.Outright.Models;
 using Settlement.Outright.Services;

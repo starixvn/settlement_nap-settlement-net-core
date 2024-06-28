@@ -6,11 +6,11 @@ using Fanex.Data.Repository;
 using Fanex.Settlement.Converter.Services;
 using Models;
 using Requests;
-using Settlement.Core.Constants;
-using Settlement.Core.Models;
+using Settlement.Constants;
+using Settlement.Models;
 using System.Collections.Generic;
 using System.Text;
-using ResourceItem = Settlement.Core.Models.ResourceItem;
+using ResourceItem = Settlement.Models.ResourceItem;
 
 public interface GenerateService
 {

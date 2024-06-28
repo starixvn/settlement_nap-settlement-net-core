@@ -1,4 +1,4 @@
-﻿using Settlement.Core.Models;
+﻿using Settlement.Models;
 
 namespace Settlement.Gaming.Models.Happy5;
 

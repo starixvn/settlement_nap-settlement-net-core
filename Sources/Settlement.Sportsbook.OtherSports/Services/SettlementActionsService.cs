@@ -8,7 +8,7 @@ using Criteria;
 using Fanex.NAP.Client.Helpers.Web;
 using Microsoft.AspNetCore.Http;
 using Requests;
-using Settlement.Core.Models;
+using Settlement.Models;
 
 public interface SettlementActionsService
 {

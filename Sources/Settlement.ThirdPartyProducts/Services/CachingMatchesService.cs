@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
-using Settlement.Core.Constants;
+using Settlement.Constants;
 using Settlement.ThirdPartyProducts.Models;
 
 namespace Settlement.ThirdPartyProducts.Services;

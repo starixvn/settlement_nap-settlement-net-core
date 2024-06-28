@@ -1,4 +1,4 @@
-﻿using Settlement.Core.Models;
+﻿using Settlement.Models;
 using Settlement.EventManagement.Services.MultiSports;
 
 namespace Settlement.EventManagement.UnitTests.Services.MultiSports;

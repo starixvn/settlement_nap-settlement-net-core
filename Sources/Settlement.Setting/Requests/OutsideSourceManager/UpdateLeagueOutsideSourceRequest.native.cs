@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using Settlement.Setting.Models.OutsideSourceManager;
-using Settlement.Core.Models;
+using Settlement.Models;
 
 
 namespace Settlement.Setting.Requests.OutsideSourceManager;

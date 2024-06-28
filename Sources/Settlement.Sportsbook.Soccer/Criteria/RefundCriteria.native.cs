@@ -39,7 +39,7 @@ public class RefundCriteria : NonQueryCommand
     public string SpName => "NAP_Admin_Settlement_Refund_1_Push";
 
     [SpParam(Ignored = true)]
-    public int SportType => Core.Constants.SportType.Soccer;
+    public int SportType => Settlement.Constants.SportType.Soccer;
 
     public override string GetSettingKey() => $"Refund_{DbServer}";
 

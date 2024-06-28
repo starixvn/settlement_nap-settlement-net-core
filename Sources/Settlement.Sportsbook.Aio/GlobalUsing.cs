@@ -5,5 +5,5 @@ global using Fanex.Settlement.Converter.Helpers;
 global using Fanex.Settlement.Converter.Services;
 global using MediatR;
 global using Microsoft.AspNetCore.Mvc;
-global using Settlement.Core.ActionFilters;
+global using Settlement.ActionFilters;
 global using System.Runtime.Serialization;

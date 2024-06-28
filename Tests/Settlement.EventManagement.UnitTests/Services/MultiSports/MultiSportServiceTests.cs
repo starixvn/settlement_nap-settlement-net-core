@@ -2,8 +2,8 @@
 using Fanex.Data.Repository;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
-using Settlement.Core.Models;
-using Settlement.Core.Services;
+using Settlement.Models;
+using Settlement.Services;
 using Settlement.EventManagement.Requests;
 using Settlement.EventManagement.Services;
 using Settlement.EventManagement.Services.MultiSports;

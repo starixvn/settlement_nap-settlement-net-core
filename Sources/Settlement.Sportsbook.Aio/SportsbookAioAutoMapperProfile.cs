@@ -1,5 +1,5 @@
-﻿using Settlement.Core.Criteria;
-using Settlement.Core.Models;
+﻿using Settlement.Criteria;
+using Settlement.Models;
 using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Requests;

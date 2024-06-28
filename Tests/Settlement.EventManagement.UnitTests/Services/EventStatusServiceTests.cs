@@ -1,4 +1,4 @@
-﻿using Settlement.Core.Constants;
+﻿using Settlement.Constants;
 using Settlement.EventManagement.Services;
 using Match = Settlement.EventManagement.Models.MultiSports.Match;
 

@@ -3,13 +3,13 @@
 namespace Settlement.Sportsbook.Soccer.Services.GetMatch;
 
 using AutoMapper;
-using Core.Services.SpecificService;
 using Criteria;
 using Fanex.Data.Repository;
 using Models;
-using Settlement.Core.Constants;
-using Settlement.Core.Models;
-using Settlement.Core.Services;
+using Settlement.Constants;
+using Settlement.Models;
+using Settlement.Services;
+using Settlement.Services.SpecificService;
 using MatchDetail = Models.MatchDetail;
 
 public interface MatchEarlyService

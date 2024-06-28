@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Settlement.Core.Constants;
-using Settlement.Core.Services;
+using Settlement.Constants;
+using Settlement.Services;
 using Settlement.Setting.Requests.OutsideSourceManager;
 using Settlement.Setting.Requests.ProviderManager;
 

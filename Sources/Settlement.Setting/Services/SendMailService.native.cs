@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using RazorEngine;
 using RazorEngine.Templating;
-using Settlement.Core.Constants;
+using Settlement.Constants;
 using Settlement.Setting.Models.Notification;
 
 namespace Settlement.Setting.Services;

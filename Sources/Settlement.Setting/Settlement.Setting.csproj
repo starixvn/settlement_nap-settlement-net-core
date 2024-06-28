@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Settlement.Core\Settlement.Core.csproj" />
+    <ProjectReference Include="..\Settlement\Settlement.csproj" />
   </ItemGroup>
 
 </Project>

@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Settlement.Core\Settlement.Core.csproj" />
+    <ProjectReference Include="..\Settlement\Settlement.csproj" />
     <ProjectReference Include="..\Settlement.ResourceInfos\Settlement.ResourceInfos.csproj" />
   </ItemGroup>
 

@@ -1,8 +1,8 @@
-﻿using static Settlement.Core.Constants.BetType;
+﻿using static Settlement.Constants.BetType;
 
 namespace Settlement.Sportsbook.Soccer.Services.GetMatch;
 
-using Settlement.Core.Services;
+using Settlement.Services;
 
 public interface EarlyBetTypeNameService
 {

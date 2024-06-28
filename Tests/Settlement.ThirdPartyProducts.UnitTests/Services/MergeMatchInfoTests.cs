@@ -1,4 +1,4 @@
-﻿using Settlement.Core.Constants;
+﻿using Settlement.Constants;
 using Settlement.ThirdPartyProducts.Models;
 
 namespace Settlement.ThirdPartyProducts.UnitTests.Services;

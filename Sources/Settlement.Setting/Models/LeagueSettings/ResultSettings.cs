@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json;
-using Settlement.Core.Models;
+using Settlement.Models;
 
 namespace Settlement.Setting.Models.LeagueSettings;
 

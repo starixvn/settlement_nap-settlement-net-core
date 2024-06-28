@@ -8,7 +8,7 @@ using Fanex.Data.Repository;
 using Microsoft.Extensions.Options;
 using Models;
 using Requests;
-using Settlement.Core.Models;
+using Settlement.Models;
 using Match = Models.Match;
 using MatchDetail = Models.MatchDetail;
 

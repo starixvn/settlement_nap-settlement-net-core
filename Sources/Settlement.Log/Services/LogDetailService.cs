@@ -1,5 +1,5 @@
 ﻿using Fanex.Data.Repository;
-using Settlement.Core.Constants;
+using Settlement.Constants;
 using Settlement.Log.Criteria;
 using Settlement.Log.Models;
 using Settlement.Log.Models.BetTypeElement;

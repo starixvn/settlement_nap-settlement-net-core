@@ -1,5 +1,5 @@
-﻿using Settlement.Core.Constants;
-using Settlement.Core.Models;
+﻿using Settlement.Constants;
+using Settlement.Models;
 
 namespace Settlement.Sportsbook.Soccer.Models;
 

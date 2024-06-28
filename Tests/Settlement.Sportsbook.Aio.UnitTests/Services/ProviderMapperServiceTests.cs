@@ -1,4 +1,4 @@
-﻿using Settlement.Core.Models;
+﻿using Settlement.Models;
 using Settlement.Sportsbook.Aio.Services;
 
 namespace Settlement.Sportsbook.Aio.UnitTests.Services;

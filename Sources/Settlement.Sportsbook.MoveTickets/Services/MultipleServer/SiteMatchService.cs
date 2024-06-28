@@ -1,7 +1,7 @@
 ﻿namespace Settlement.Sportsbook.MoveTickets.Services.MultipleServer;
 
-using Core.Constants;
-using Settlement.Core.Models;
+using Constants;
+using Settlement.Models;
 
 public interface SiteMatchService
 {

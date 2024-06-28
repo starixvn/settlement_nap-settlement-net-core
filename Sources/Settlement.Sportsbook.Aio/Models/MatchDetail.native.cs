@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
-using Settlement.Core.Constants;
-using Settlement.Core.Services;
+using Settlement.Constants;
+using Settlement.Services;
 
 namespace Settlement.Sportsbook.Aio.Models;
 

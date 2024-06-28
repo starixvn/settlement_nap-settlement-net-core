@@ -1,7 +1,7 @@
 ﻿using Fanex.Logging;
 using Microsoft.Extensions.Options;
-using Settlement.Core.Constants;
-using Settlement.Core.Models;
+using Settlement.Constants;
+using Settlement.Models;
 using Settlement.Sportsbook.Aio.Constants.Cricket;
 using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.Criteria.Cricket;
