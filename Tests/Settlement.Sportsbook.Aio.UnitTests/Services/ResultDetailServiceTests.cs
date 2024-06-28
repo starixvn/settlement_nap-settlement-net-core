@@ -20,19 +20,19 @@ public class ResultDetailServiceTests
     public async Task SetInterval_ShouldSetIntervalNoForAllResultDetails()
     {
         // Arrange
-        int sportType = 1;
+        const int sportType = 1;
         var resultDetails = new List<ResultDetail>
         {
-            new ResultDetail { ResourceId = "1" },
-            new ResultDetail { ResourceId = "2" },
-            new ResultDetail { ResourceId = "3" }
+            new() { ResourceId = "1" },
+            new() { ResourceId = "2" },
+            new() { ResourceId = "3" }
         };
 
         var resourceIndexes = new List<ResourceIndex>
         {
-            new ResourceIndex { ResourceId = "1", IntervalNo = 10 },
-            new ResourceIndex { ResourceId = "2", IntervalNo = 20 },
-            new ResourceIndex { ResourceId = "3", IntervalNo = 30 }
+            new() { ResourceId = "1", IntervalNo = 10 },
+            new() { ResourceId = "2", IntervalNo = 20 },
+            new() { ResourceId = "3", IntervalNo = 30 }
         };
 
         repository.FetchAsync<ResourceIndex>(Arg.Any<GetResourceIndexCriteria>())

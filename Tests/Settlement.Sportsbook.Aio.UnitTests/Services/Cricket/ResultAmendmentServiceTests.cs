@@ -13,9 +13,8 @@ using Settlement.Models;
 public class ResultAmendmentServiceTests
 {
     private readonly IDynamicRepository repository;
-    private readonly GenerateResultAmendmentService generateResultAmendmentService;
     private readonly ResultAmendmentService resultAmendmentService;
-    private List<string> siteDbServers = new List<string> { "01", "02" };
+    private List<string> siteDbServers = ["01", "02"];
 
     public ResultAmendmentServiceTests()
     {
@@ -23,7 +22,7 @@ public class ResultAmendmentServiceTests
         var options = Options.Create(appSettingsKey);
         repository = Substitute.For<IDynamicRepository>();
 
-        generateResultAmendmentService = Substitute.For<GenerateResultAmendmentService>();
+        var generateResultAmendmentService = Substitute.For<GenerateResultAmendmentService>();
         resultAmendmentService = new ResultAmendmentServiceImp(repository, options, generateResultAmendmentService);
     }
 
@@ -70,6 +69,6 @@ public class ResultAmendmentServiceTests
         await resultAmendmentService.UpdateResultHistory(criteria);
 
         // Assert
-        repository.Received(siteDbServers.Count()).ExecuteAsync(criteria);
+        repository.Received(siteDbServers.Count).ExecuteAsync(criteria);
     }
 }
