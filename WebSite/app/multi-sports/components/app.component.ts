@@ -1,7 +1,6 @@
 import { Component, OnInit, OnDestroy, Injector, ChangeDetectionStrategy } from '@angular/core';
 import { DatePipe } from "@angular/common";
-import { Subscription } from "rxjs";
-import { interval } from 'rxjs';
+import { interval,Subscription } from 'rxjs';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import {
     BlockUIService,

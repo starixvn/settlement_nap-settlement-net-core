@@ -1,7 +1,6 @@
 ﻿import * as _ from 'lodash';
-import { Component, Input, OnInit } from "@angular/core";
-import { ProviderLog, MatchDetail, ProviderResultLog } from '../../models';
-import { UrlHelper } from '../../../helper';
+import { Component, Input } from "@angular/core";
+import { ProviderLog } from '../../models';
 
 @Component({
     selector: 'provider-result',

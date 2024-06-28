@@ -33,11 +33,11 @@ export class ResultOtherSportService {
             return _.includes(BetTypeWithNo[sportType], logDetail.betType)  ? 'No' : 'None';
         }
 
-        if (MappingValue[logDetail.homeValue] != undefined) {
+        if (MappingValue[logDetail.homeValue] !== undefined) {
             return MappingValue[logDetail.homeValue];
         }
 
-        if (MappingValueWithBettype[`${logDetail.homeValue}-${logDetail.betType}`] != undefined) {
+        if (MappingValueWithBettype[`${logDetail.homeValue}-${logDetail.betType}`] !== undefined) {
             return MappingValueWithBettype[`${logDetail.homeValue}-${logDetail.betType}`];
         }
 
@@ -45,7 +45,10 @@ export class ResultOtherSportService {
     }
 
     private getPlayerName(players: string[], otherInfo: string, homeValue: string) {
-        if(_.isNull(homeValue) || _.isNull(otherInfo)) return "-";
+        if(_.isNull(homeValue) || _.isNull(otherInfo)) {
+            return "-";
+        }
+        
         const playerIds = otherInfo.split(',');
         const values = homeValue.split(',');
         const listPlayer = [];

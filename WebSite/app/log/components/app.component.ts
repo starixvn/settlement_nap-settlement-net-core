@@ -17,7 +17,7 @@ export class AppComponent implements OnInit {
     constructor(
         private readonly blockUIService: BlockUIService,
         private readonly elementRef: ElementRef<HTMLElement>,
-        private viewContainerRef: ViewContainerRef) {
+        private readonly viewContainerRef: ViewContainerRef) {
     }
 
     public ngOnInit() {

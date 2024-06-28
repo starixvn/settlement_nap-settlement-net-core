@@ -86,7 +86,7 @@ export class RequestService {
     }
 
     private parseProvider(providerNames: string, providers: ProviderSource[]): string {
-        let listNames = providerNames.split(', ');
+        const listNames = providerNames.split(', ');
         return providers.filter(p => listNames.indexOf(p.sourceName) !== -1).map(p => p.sourceId).join(',');
     }
 }
