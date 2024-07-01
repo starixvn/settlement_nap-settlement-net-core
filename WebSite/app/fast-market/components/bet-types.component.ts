@@ -126,18 +126,12 @@ export class BetTypesComponent implements OnInit, DoCheck {
       this.fastMarkets.betTypes
     );
     if (_.isEmpty(errorMessage)) {
-      let uncalMessage =
-        "Are you sure you want to UNCALCULATE the selected result?";
+      let unCalcMessage = Language.uncalcMessage;
       if (this.hasRunningResultStatus()) {
-        uncalMessage =
-          "WARNING! Please double check the results selected to Uncalculate. ";
-        uncalMessage +=
-          "Selected results with Result Status as 'Running' might be affected: ";
-        uncalMessage +=
-          "they will not be auto key-in or auto- settled any more.";
+        unCalcMessage = Language.doubleCheckUnCalcRunningMessage;
       }
 
-      this.modalDialogMessage.message = uncalMessage;
+      this.modalDialogMessage.message = unCalcMessage;
       this.messageBoxService.confirm(this.modalDialogMessage, () =>
         this.doSubmitByAction("UNDO")
       );
@@ -149,11 +143,7 @@ export class BetTypesComponent implements OnInit, DoCheck {
   public refundAction() {
     this.toastrService.clear();
     this.requestService
-      .checkingStatus(
-        this.fastMarkets.matchId,
-        "REFUND",
-        this.isRefundWithSettleDetermined
-      )
+      .checkingStatus(this.fastMarkets.matchId, "REFUND", this.isRefundWithSettleDetermined)
       .subscribe((result: Result) => {
         if (!result.isSuccessful) {
           this.toastrService.error(result.errMsg);
@@ -165,14 +155,12 @@ export class BetTypesComponent implements OnInit, DoCheck {
 
   private doRefund() {
     if (this.isRefundWithSettleDetermined) {
-      let errorMessage = this.verificationService.verifyBeforeRefundSDT(this.fastMarkets.betTypes, this.existingSpecialSessions)
+      const errorMessage = this.verificationService.verifyBeforeRefundSDT(this.fastMarkets.betTypes, this.existingSpecialSessions)
         && this.verificationService.verifyBeforeRefund(this.fastMarkets.betTypes, true);
-
       if (_.isEmpty(errorMessage)) {
-        this.modalDialogMessage.message =
-          "You chose to Refund with settle determined tickets from selected intervals. Are you sure you want to proceed?";
+        this.modalDialogMessage.message = Language.refundConfirmMessage;
         this.messageBoxService.confirm(this.modalDialogMessage, () => {
-          errorMessage = this.verificationService.verifyBeforeCalculation(this.fastMarkets.betTypes, this.existingSpecialSessions, true);
+          const errorMessage = this.verificationService.verifyBeforeCalculation(this.fastMarkets.betTypes, this.existingSpecialSessions, true);
           if (_.isEmpty(errorMessage)) {
             this.pushRefundQuery();
           } else {
@@ -215,15 +203,12 @@ export class BetTypesComponent implements OnInit, DoCheck {
       });
   }
 
-  public onEventCounterCheckedChange(
-    event: EventCounter,
-    directlyClick: boolean
-  ) {
+  public onEventCounterCheckedChange(event: EventCounter, directlyClick: boolean) {
     for (const betType of this.fastMarkets.betTypes) {
       switch (betType.betTypeId) {
         case FastMarketBetType.nextOneMinute:
           this.handleNextOneMinuteChecked(betType, directlyClick);
-          const result = this.findFastMarketResult(betType, event.position);
+          const result = this.verificationService.findFastMarketResult(betType, event.position);
           if (result) {
             result.checked = event.checked;
           }
@@ -244,19 +229,6 @@ export class BetTypesComponent implements OnInit, DoCheck {
     this.handleIntervalSelection();
   }
 
-  private findFastMarketResult(
-    betType: BetType,
-    position: number
-  ): FastMarketResult {
-    for (const result of betType.fastMarketResults) {
-      if (result.position === position) {
-        return result;
-      }
-    }
-
-    return null;
-  }
-
   private handleNextFiveMinutesUnChecked(
     betType: BetType,
     event: EventCounter
@@ -266,7 +238,7 @@ export class BetTypesComponent implements OnInit, DoCheck {
       const startPosition = Math.max(event.position - this.positionStep, 0);
       const endPosition = event.position;
       for (let i = startPosition; i <= endPosition; i++) {
-        const result = this.findFastMarketResult(betType, i);
+        const result = this.verificationService.findFastMarketResult(betType, i);
         if (result && checkedPositions.indexOf(i) === -1) {
           checkedPositions.push(i);
         }
@@ -291,7 +263,7 @@ export class BetTypesComponent implements OnInit, DoCheck {
       const startPosition = Math.max(item.position - this.positionStep, 0);
       const endPosition = item.position;
       for (let i = startPosition; i <= endPosition; i++) {
-        const result = this.findFastMarketResult(betType, i);
+        const result = this.verificationService.findFastMarketResult(betType, i);
         if (result && checkedPositions.indexOf(i) === -1) {
           checkedPositions.push(i);
         }
@@ -301,10 +273,7 @@ export class BetTypesComponent implements OnInit, DoCheck {
     return checkedPositions;
   }
 
-  private handleNextFiveMinutesChecked(
-    betType: BetType,
-    directlyClick: boolean
-  ) {
+  private handleNextFiveMinutesChecked(betType: BetType, directlyClick: boolean) {
     const checkedPositions = this.listCheckedPositions(betType);
     const intervalsByPositions = betType.fastMarketResults.filter(
       (item) => checkedPositions.indexOf(item.position) !== -1
@@ -362,13 +331,14 @@ export class BetTypesComponent implements OnInit, DoCheck {
   }
 
   public onBetTypeCheckedChange(item: FastMarketResult, totalItems: number) {
+    const startPosition = item.position;
+    let endPosition;
     switch (item.betType) {
       case FastMarketBetType.nextOneMinute:
         this.handleEventCounterCheckbox(item.position);
         break;
       case FastMarketBetType.nextFiveMinutes:
-        const startPosition = item.position;
-        const endPosition = Math.min(
+        endPosition = Math.min(
           item.position + this.positionStep,
           totalItems
         );
@@ -383,24 +353,7 @@ export class BetTypesComponent implements OnInit, DoCheck {
   private handleEventCounterCheckbox(position: number) {
     const items: FastMarketResult[] = [];
     for (const betType of this.fastMarkets.betTypes) {
-      switch (betType.betTypeId) {
-        case FastMarketBetType.nextOneMinute:
-          const result = this.findFastMarketResult(betType, position);
-          if (result) {
-            items.push(result);
-          }
-          break;
-        case FastMarketBetType.nextFiveMinutes:
-          const startPosition = Math.max(position - this.positionStep, 0);
-          const endPosition = position;
-          for (let i = startPosition; i <= endPosition; i++) {
-            const resultNext = this.findFastMarketResult(betType, i);
-            if (resultNext) {
-              items.push(resultNext);
-            }
-          }
-          break;
-      }
+      this.verificationService.filterEventCounterByBetType(betType, items, position, this.positionStep);
     }
 
     const checkedItems = items.filter((item) => item.checked);
@@ -438,7 +391,7 @@ export class BetTypesComponent implements OnInit, DoCheck {
   }
 
   public onChangeBetType(betType: BetType) {
-    this.fastMatketsSelection(betType, betType.checked);
+    this.fastMarketsSelection(betType, betType.checked);
     if (
       betType.betTypeId === FastMarketBetType.nextOneMinute ||
       betType.betTypeId === FastMarketBetType.nextFiveMinutes
@@ -470,7 +423,7 @@ export class BetTypesComponent implements OnInit, DoCheck {
     this.onChangeEventCounter();
     for (const betType of this.fastMarkets.betTypes) {
       betType.checked = checked;
-      this.fastMatketsSelection(betType, checked);
+      this.fastMarketsSelection(betType, checked);
     }
   }
 
@@ -531,8 +484,7 @@ export class BetTypesComponent implements OnInit, DoCheck {
         .verifyChangedSettledTickets(
           this.fastMarkets.betTypes,
           getLastestResultQuery
-        )
-        .subscribe((needConfirm: boolean) => {
+        ).subscribe((needConfirm: boolean) => {
           if (needConfirm) {
             this.modalDialogMessage.title = Language.confirmationBoxTitle;
             this.modalDialogMessage.message = Language.recalculateNotification;
@@ -547,8 +499,7 @@ export class BetTypesComponent implements OnInit, DoCheck {
   }
 
   private confirmCalculation() {
-    this.modalDialogMessage.message =
-      "Are you sure you want to CALCULATE the selected result?";
+    this.modalDialogMessage.message = Language.calculateConfirmMessage;
     this.messageBoxService.confirm(this.modalDialogMessage, () =>
       this.doSubmitByAction("CAL")
     );
@@ -581,13 +532,7 @@ export class BetTypesComponent implements OnInit, DoCheck {
   }
 
   private showOrHideButton(item: FastMarketResult) {
-    const resultStatus = [
-      ResultStatus.completedAuto,
-      ResultStatus.completedManual,
-      ResultStatus.refund,
-      ResultStatus.refundWithDetermined,
-    ];
-
+    const resultStatus = [ResultStatus.completedAuto, ResultStatus.completedManual, ResultStatus.refund, ResultStatus.refundWithDetermined,];
     this.disabledCalculate = false;
 
     if (
@@ -629,14 +574,8 @@ export class BetTypesComponent implements OnInit, DoCheck {
   }
   private updateRadioResult(item: FastMarketResult) {
     if (this.isRadioResult(item)) {
-      item.resultItem.none = false;
-      item.resultItem.goal = false;
-      item.resultItem.corner = false;
-      item.resultItem.freeKick = false;
-      item.resultItem.goalKick = false;
-      item.resultItem.throwIn = false;
-      item.resultItem.bookings = false;
-      item.resultItem.penalty = false;
+      const resultProperties = ['none', 'goal', 'corner', 'freeKick', 'goalKick', 'throwIn', 'bookings', 'penalty'];
+      resultProperties.forEach(prop => item.resultItem[prop] = false);
 
       if (item.radioResult === this.resultType.none) {
         item.resultItem.none = true;
@@ -662,13 +601,7 @@ export class BetTypesComponent implements OnInit, DoCheck {
     return ControlType.radio.indexOf(item.betType) >= 0;
   }
 
-  private hasChoiceResult(
-    betType: number,
-    resultItem: ResultItem,
-    result?: number,
-    homeGoal = "",
-    awayGoal = ""
-  ) {
+  private hasChoiceResult(betType: number, resultItem: ResultItem, result?: number, homeGoal = "", awayGoal = "") {
     if (betType === FastMarketBetType.nextOneMinute) {
       return this.hasChoiceResultOfNextOneMinute(resultItem);
     } else if (betType === FastMarketBetType.nextFiveMinutes) {
@@ -787,10 +720,7 @@ export class BetTypesComponent implements OnInit, DoCheck {
     });
   }
 
-  private generateValidationItem(
-    betType: BetType,
-    item: FastMarketResult
-  ): ValidationItem {
+  private generateValidationItem(betType: BetType, item: FastMarketResult): ValidationItem {
     const validationItem = {};
     let eventResultItem: EventResultItem;
     let value: string;
@@ -843,12 +773,7 @@ export class BetTypesComponent implements OnInit, DoCheck {
     return validationItem as ValidationItem;
   }
 
-  private validNextFiveMinutesResultWithEventCounter(
-    isValid: boolean,
-    resultValue: number,
-    total: number,
-    checked: boolean
-  ) {
+  private validNextFiveMinutesResultWithEventCounter(isValid: boolean, resultValue: number, total: number, checked: boolean) {
     return (
       isValid &&
       ((total > resultValue && checked) || (total < resultValue && !checked))
@@ -891,7 +816,7 @@ export class BetTypesComponent implements OnInit, DoCheck {
       });
   }
 
-  private fastMatketsSelection(betType: BetType, checked: boolean) {
+  private fastMarketsSelection(betType: BetType, checked: boolean) {
     if (!_.isNil(betType)) {
       betType.checked = checked;
       for (const item of betType.fastMarketResults) {

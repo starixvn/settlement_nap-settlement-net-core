@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { LeagueSettingsStore } from '../../../services/league-settings.store';
+import { LeagueSettingsStore } from '../../../services/league-settings.store.native';
 import { distinctUntilChanged, map } from 'rxjs';
 
 @Component({

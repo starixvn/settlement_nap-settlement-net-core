@@ -45,11 +45,11 @@ export class MatchDetailComponent implements OnInit {
     }
 
     public get homeScore(): ResultDetail[] {
-        return _.filter(this.match.resultDetails, map => map.resourceId.substr(0, 1) === 'H');
+        return _.filter(this.match.resultDetails, map => map.resourceId.substring(0, 1) === 'H');
     }
 
     public get awayScore(): ResultDetail[] {
-        return _.filter(this.match.resultDetails, map => map.resourceId.substr(0, 1) === 'A');
+        return _.filter(this.match.resultDetails, map => map.resourceId.substring(0, 1) === 'A');
     }
 
     public getClass(resultDetail: ResultDetail) {

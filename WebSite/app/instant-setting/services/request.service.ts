@@ -2,7 +2,7 @@
 import { Injectable } from '@angular/core';
 import { HttpRequestService } from '../../shared/services';
 import { firstValueFrom } from 'rxjs';
-import { TimeSettingQuery, GetRemarkQuery, RemarkAndPermission } from '../models';
+import { TimeSettingQuery, GetRemarkQuery, ChangeSettingQuery, RemarkAndPermission, ChangeHoldMatchSettingQuery } from '../models';
 import { AutoSettingLeagueQuery, AutoSettingMatchQuery, Result } from '../../shared/models';
 import { LeagueSettings, ProviderSource, ResultSettings } from '../../shared/models/league-settings.model';
 
@@ -22,7 +22,7 @@ export class RequestService {
         return firstValueFrom(request);
     }
 
-    public changeHoldMatchSetting(param: any): Promise<RemarkAndPermission> {
+    public changeHoldMatchSetting(param: ChangeHoldMatchSettingQuery): Promise<RemarkAndPermission> {
        const request = this.httpRequestService.postJson<RemarkAndPermission>(param, `${this.settingApi}/update-holdmatch-setting`);
 
        return firstValueFrom(request);

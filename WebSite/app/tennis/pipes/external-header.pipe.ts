@@ -11,7 +11,7 @@ export class ExternalHeaderPipe implements PipeTransform {
     } else if (_.isEqual(resourceId, ResourcesIds.totalSets)) {
       return "Sets";
     } else {
-      const setNumber = resourceId.substr(1, 1);
+      const setNumber = resourceId.substring(1, 2);
       return `${setNumber}S`;
     }
   }

@@ -3,7 +3,7 @@ import { Component, Input, ChangeDetectionStrategy, ChangeDetectorRef, OnChanges
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { OnlyIntegerDirective } from '../../../../../shared/directives';
-import { LeagueSettingsStore } from '../../../../services/league-settings.store';
+import { LeagueSettingsStore } from '../../../../services/league-settings.store.native';
 import { distinctUntilChanged, map } from 'rxjs';
 import * as _ from 'lodash';
 import { ResultSettings } from '../../../../../shared/models/league-settings.model';

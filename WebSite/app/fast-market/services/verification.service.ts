@@ -398,13 +398,13 @@ export class VerificationService {
         const endMinutePosition = 6;
         const endSecondPosition = 9;
         if (timeType === TimeType.startMinute) {
-            return Number(positionName.substring(startMinutePosition, timeLength));
+            return Number(positionName.substring(startMinutePosition, startMinutePosition + timeLength));
         } else if (timeType === TimeType.startSecond) {
-            return Number(positionName.substring(startSecondPosition, timeLength));
+            return Number(positionName.substring(startSecondPosition, startMinutePosition + timeLength));
         } else if (timeType === TimeType.endMinute) {
-            return Number(positionName.substring(endMinutePosition, timeLength));
+            return Number(positionName.substring(endMinutePosition, startMinutePosition + timeLength));
         } else {
-            return Number(positionName.substring(endSecondPosition, timeLength));
+            return Number(positionName.substring(endSecondPosition, startMinutePosition + timeLength));
         }
     }
 
@@ -465,6 +465,35 @@ export class VerificationService {
             || oldResult.resultItem.throwIn !== newResult.resultItem.throwIn
             || oldResult.resultItem.bookings !== newResult.resultItem.bookings
             || oldResult.resultItem.penalty !== newResult.resultItem.penalty;
+    }   
+
+    filterEventCounterByBetType(betType: BetType, items: FastMarketResult[], position: number, positionStep: number) {
+        let resultNext: FastMarketResult;
+        let result: FastMarketResult;
+        switch (betType.betTypeId) {
+            case FastMarketBetType.nextOneMinute:
+                result = this.findFastMarketResult(betType, position);
+                result && items.push(result);
+                break;
+            case FastMarketBetType.nextFiveMinutes:
+                const startPosition = Math.max(position - positionStep, 0);
+                const endPosition = position;
+                for (let i = startPosition; i <= endPosition; i++) {
+                    resultNext = this.findFastMarketResult(betType, i);
+                    resultNext && items.push(resultNext);
+                }
+                break;
+        }
+    }
+
+    findFastMarketResult(betType: BetType, position: number): FastMarketResult {
+        for (const result of betType.fastMarketResults) {
+            if (result.position === position) {
+                return result;
+            }
+        }
+
+        return null;
     }
 
 }

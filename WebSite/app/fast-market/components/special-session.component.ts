@@ -50,7 +50,7 @@ export class SpecialSessionComponent implements OnChanges, OnInit {
     private readonly messageBoxService: MessageBoxService,
     private readonly toastrService: ToastrService,
 
-  ) {}
+  ) { }
 
   ngOnChanges(): void {
     this.verifyResult();
@@ -528,42 +528,22 @@ export class SpecialSessionComponent implements OnChanges, OnInit {
   }
 
   private getValidSpecialSessions() {
-    const validSessions = [];
-    if (
-      this.waterBreakOne.apply &&
-      !this.isWaterBreakTimeEmpty(this.waterBreakOne)
-    ) {
-      validSessions.push(this.waterBreakOne);
-    }
+    const sessions = [
+      this.waterBreakOne,
+      this.waterBreakTwo,
+      this.waterBreakThree,
+      this.waterBreakFour,
+      this.suspendedTime
+    ];
 
-    if (
-      this.waterBreakTwo.apply &&
-      !this.isWaterBreakTimeEmpty(this.waterBreakTwo)
-    ) {
-      validSessions.push(this.waterBreakTwo);
-    }
+    return sessions.filter(session => session.apply && !this.isTimeEmpty(session));
+  }
 
-    if (
-      this.waterBreakThree.apply &&
-      !this.isWaterBreakTimeEmpty(this.waterBreakThree)
-    ) {
-      validSessions.push(this.waterBreakThree);
+  private isTimeEmpty(session: SpecialSession) {
+    if (session === this.suspendedTime) {
+      return this.isSuspendedTimeEmpty(session);
+    } else {
+      return this.isWaterBreakTimeEmpty(session);
     }
-
-    if (
-      this.waterBreakFour.apply &&
-      !this.isWaterBreakTimeEmpty(this.waterBreakFour)
-    ) {
-      validSessions.push(this.waterBreakFour);
-    }
-
-    if (
-      this.suspendedTime.apply &&
-      !this.isSuspendedTimeEmpty(this.suspendedTime)
-    ) {
-      validSessions.push(this.suspendedTime);
-    }
-
-    return validSessions;
   }
 }

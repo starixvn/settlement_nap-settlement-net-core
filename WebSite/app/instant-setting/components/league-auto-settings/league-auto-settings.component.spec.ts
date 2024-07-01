@@ -1,7 +1,7 @@
 import { MessageBoxService } from './../../../shared/services/message-box.service.native';
 import { ComponentFixture, TestBed, tick, fakeAsync, flush } from '@angular/core/testing';
 import { LeagueAutoSettingsComponent } from './league-auto-settings.component';
-import { LeagueSettingsStore } from '../../services/league-settings.store';
+import { LeagueSettingsStore } from '../../services/league-settings.store.native';
 import { LeagueSettings } from '../../../shared/models/league-settings.model';
 import { RequestService } from '../../services/request.service';
 import { BlockUIService, HttpRequestService } from '../../../shared/services';

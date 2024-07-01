@@ -3,6 +3,7 @@ import {
   Remark,
   Permission,
   RemarkAndPermission,
+  ChangeHoldMatchSettingQuery,
 } from "../models";
 import { UrlHelper } from "../../helper";
 import { RequestService } from "../services/request.service";
@@ -91,7 +92,7 @@ export class RemarkSettingComponent implements OnInit {
   private async changeHoldMatchSetting() {
     const holdSettings = this.generateCurrentHoldSetting();
     const orgHoldSettings = this.generateHoldSetting(this.orgRemark);
-    const query = {
+    const query: ChangeHoldMatchSettingQuery = {
       matchId: this.matchId,
       remark: this.remark,
       holdSettings,

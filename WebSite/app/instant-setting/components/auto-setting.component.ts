@@ -111,11 +111,11 @@ export class AutoSettingComponent implements OnInit {
 
   private async changeMultiSettingMatch() {
     const listItem = this.getValueChanged();
-    for (const i in listItem) {
+    listItem.forEach(async (item, i) => {
       const params = new AutoSettingMatchQuery(
         this.matchId,
-        listItem[i].type,
-        listItem[i].isEnable,
+        item.type,
+        item.isEnable,
       );
 
       const result = await this.requestService.updateSettingMatch(params);
@@ -125,7 +125,7 @@ export class AutoSettingComponent implements OnInit {
       } else if (_.isEqual(Number(i), listItem.length - 1)) {
         parent.document.getElementById(this.dialogResponseElement).setAttribute('value', this.parseValueToResponse());
       }
-    }
+    });
     this.messageBoxService.closePopup();
   }
 
@@ -183,11 +183,11 @@ export class AutoSettingComponent implements OnInit {
 
   private async updateMultiSetting(isApplyAll: boolean) {
     const listItem = this.getValueChanged();
-    for (const i in listItem) {
+    listItem.forEach(async (item, i) => {
       const query = new AutoSettingLeagueQuery(
         this.leagueId,
-        listItem[i].type,
-        listItem[i].isEnable,
+        item.type,
+        item.isEnable,
         isApplyAll,
       );
       const result = await this.requestService.updateSettingLeague(query);
@@ -197,7 +197,7 @@ export class AutoSettingComponent implements OnInit {
       } else if (_.isEqual(Number(i), listItem.length - 1)) {
         parent.document.getElementById(this.dialogResponseElement).setAttribute('value', `${this.parseValueToResponse()},${isApplyAll}`);
       }
-    }
+    })
     this.messageBoxService.closePopup();
   }
 
