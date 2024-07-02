@@ -14,4 +14,4 @@ bootstrapApplication(AppSettingComponent, {
         importProvidersFrom(NoopAnimationsModule),
         provideHttpClient()
     ],
-  }).catch(err => console.error(err));
+  });

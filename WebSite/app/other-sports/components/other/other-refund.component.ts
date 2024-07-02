@@ -1,5 +1,4 @@
 import { Component, ViewChild } from '@angular/core';
-import * as _ from 'lodash';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import { ModalDialogMessage } from '../../../shared/models';
 import { CalculateAction,SportType } from '../../../shared/constants';

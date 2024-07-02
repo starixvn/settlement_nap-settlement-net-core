@@ -122,7 +122,8 @@ export class AutoSettingComponent implements OnInit {
       if (result.errCode > 0) {
         this.errorMessage = result.errMsg;
         return;
-      } else if (_.isEqual(Number(i), listItem.length - 1)) {
+      } 
+      if (_.isEqual(Number(i), listItem.length - 1)) {
         parent.document.getElementById(this.dialogResponseElement).setAttribute('value', this.parseValueToResponse());
       }
     });
@@ -194,7 +195,8 @@ export class AutoSettingComponent implements OnInit {
       if (result.errCode > 0) {
         this.errorMessage = result.errMsg;
         return;
-      } else if (_.isEqual(Number(i), listItem.length - 1)) {
+      }
+      if (_.isEqual(Number(i), listItem.length - 1)) {
         parent.document.getElementById(this.dialogResponseElement).setAttribute('value', `${this.parseValueToResponse()},${isApplyAll}`);
       }
     })

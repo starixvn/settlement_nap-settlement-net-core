@@ -19,7 +19,7 @@ import LogComponent from '../log.component';
     encapsulation: ViewEncapsulation.None,
 })
 export class LogPopupComponent implements OnInit {
-    private dialogRef: MatDialogRef<LogPopupComponent>;
+    private readonly dialogRef: MatDialogRef<LogPopupComponent>;
 
     public blockUI = true;
 

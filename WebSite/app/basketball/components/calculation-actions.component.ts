@@ -147,7 +147,7 @@ export class CalculationActionsComponent implements SportTemplate {
     );
     this.resetHomeAway(this.resultDetails);
     this.matchDetail = this.match.matchDetail;
-    this.fantasyMatch = (this.match as any).fantasyMatch;
+    this.fantasyMatch = this.match.fantasyMatch;
     this.hedgeMatchDetail = this.match.hedgeMatchDetail;
     this.applyHedgeMatch = this.hedgeMatchDetail != null;
     this.disableScoreDirect = this.verificationService.isTicketOnQuarter(
@@ -1020,9 +1020,9 @@ export class CalculationActionsComponent implements SportTemplate {
       const homeValue = (findScore.homeValue ?? "0").toString();
       const awayValue = (findScore.awayValue ?? "0").toString();
 
-      const externalScores = result.externalScores.map((score) => {
+      const externalScores = result.externalScores.map((x) => {
         if ([SourceIds.trader, SourceIds.screenshot].includes(score.sourceId)) {
-          return { ...score, homeValue, awayValue };
+          return { ...x, homeValue, awayValue };
         }
         return score;
       });
@@ -1042,10 +1042,10 @@ export class CalculationActionsComponent implements SportTemplate {
 
   private resetExternalScores() {
     this.resultDetails.forEach(result => {
-      result.externalScores.forEach(score => {
-        if ([SourceIds.trader, SourceIds.screenshot].includes(score.sourceId)) {
-          score.homeValue = null;
-          score.awayValue = null;
+      result.externalScores.forEach(x => {
+        if ([SourceIds.trader, SourceIds.screenshot].includes(x.sourceId)) {
+          x.homeValue = null;
+          x.awayValue = null;
         }
       })
     })

@@ -4,7 +4,7 @@ import { HttpRequestService } from "../../shared/services";
 
 @Injectable()
 export class QueryService {
-    private settingApi = '/api/setting';
+    private readonly settingApi = '/api/setting';
     constructor(private readonly httpRequestService: HttpRequestService) {}
 
     public getScoreSourcePermission() {

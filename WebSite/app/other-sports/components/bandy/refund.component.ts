@@ -1,9 +1,9 @@
 import { ToastContainerDirective } from "ngx-toastr";
 import { RefundActionBaseComponent } from "../../../shared/components/sportsbook-sop/refund-action-base.component";
-import { Permission, ResultDetail, SportTemplate } from "../../../shared/models/sportsbook-sop";
-import { Match, MatchAio } from "../../models";
-import { Component, ViewChild } from "@angular/core";
-import { ModalDialogMessage, ResultSettingModel } from "../../../shared/models";
+import { SportTemplate } from "../../../shared/models/sportsbook-sop";
+import {  MatchAio } from "../../models";
+import { Component, ViewChild, inject } from "@angular/core";
+import { ModalDialogMessage } from "../../../shared/models";
 import { Language } from "../../../shared/language.native";
 import { UrlHelper } from "../../../helper";
 import { MatchInfoCompoment } from "./match-info.compoment";
@@ -26,9 +26,11 @@ import { BetStatusService } from "./betstatus.service";
 export class BandyRefundComponent extends RefundActionBaseComponent implements SportTemplate {
   @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
   public match: MatchAio;
-  private apiKey = 'bandy';
+  private readonly apiKey = 'bandy';
 
   public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage(Language.confirmationBox);
+  private readonly bandyService = inject(BandyService);
+  private readonly betstatusService = inject(BetStatusService);
  
   async getMatch(matchId: number) {
     this.blockUIService.blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
@@ -45,13 +47,6 @@ export class BandyRefundComponent extends RefundActionBaseComponent implements S
 
     this.initData();
   }
-
-  constructor(
-    private bandyService: BandyService,
-    private betstatusService: BetStatusService
-    ) {
-      super();
-    }
 
   public get refundResultDetails() {
     return this.resultDetails.filter(x => [ResourceID.FirstHalf,ResourceID.Final].includes(x.resourceId))

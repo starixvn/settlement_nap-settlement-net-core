@@ -10,9 +10,9 @@ import { ResultOutright } from "../../outright/models/result-outright.model";
 
 @Injectable()
 export class OutrightService {
-    private outrightApi = "/api/outright";
+    private readonly outrightApi = "/api/outright";
 
-    constructor(private httpRequestService: HttpRequestService) { }
+    constructor(private readonly httpRequestService: HttpRequestService) { }
 
     public getSportLeague(sportLeagueRequest: SportLeagueRequest) {
         const request = this.httpRequestService.postJson<SportLeagueFilter>(sportLeagueRequest, `${this.outrightApi}/get-sport-league`, false);

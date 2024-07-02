@@ -128,7 +128,7 @@ export class ValidationService extends VerificationBaseService {
 
   public isInsufficientSOPLite(originalResultDetails: ResultDetail[], externalResult: ExternalResult) {
     const hasTrader = originalResultDetails.some(r => r.resultStatusId === ResultStatusId.TraderConfirm);
-    const hasProvider = externalResult && externalResult.resultDetails.some(x => this.hasScore(x));
+    const hasProvider =  externalResult?.resultDetails?.some(x => this.hasScore(x));
 
     return !hasTrader && !hasProvider;
   }
@@ -136,7 +136,7 @@ export class ValidationService extends VerificationBaseService {
 
   public isConsistentScoreSOPLite(resultDetails: ResultDetail[], confirmResultDetails: ResultDetail[], externalResult: ExternalResult) {
     const hasTrader = confirmResultDetails.some(r => r.resultStatusId === ResultStatusId.TraderConfirm);
-    const hasProvider = externalResult && externalResult.resultDetails.some(x => this.hasScore(x));
+    const hasProvider = externalResult?.resultDetails?.some(x => this.hasScore(x));
 
     let isConsistent = false;
     if (hasProvider && hasTrader) {
@@ -157,15 +157,13 @@ export class ValidationService extends VerificationBaseService {
 
   public verifyChangeInputScore(currentResult: ResultDetail, resultDetails: ResultDetail[], confirmResultDetails: ResultDetail[], externalResult: ExternalResult) {
     const hasTrader = confirmResultDetails.some(r => r.resultStatusId === ResultStatusId.TraderConfirm);
-    const hasProvider = externalResult && externalResult.resultDetails.some(x => this.hasScore(x));
+    const hasProvider = externalResult?.resultDetails?.some(x => this.hasScore(x));
 
     const finalResult = resultDetails.find(x => x.resourceId === ResourceID.Final);
 
     if(currentResult.isScoreMismatched || finalResult.isScoreMismatched) {
       return;
     }
-
-    //
 
     if (hasProvider) {
       if (hasTrader) {
@@ -219,11 +217,5 @@ export class ValidationService extends VerificationBaseService {
 
   private isNotEqualResult(result: GeneralResultDetail,otherResult: GeneralResultDetail) {
     return (!_.isEqual(result.homeValue,otherResult.homeValue) || !_.isEqual(result.awayValue,otherResult.awayValue));
-  }
-
-  private acceptableResult(result: ResultDetail,otherResult: ResultDetail) {
-    return (_.isEmpty(result.homeValue) && _.isEmpty(result.awayValue)) 
-      && (_.isEmpty(otherResult.homeValue) && _.isEmpty(otherResult.awayValue)
-          || _.isEqual(otherResult.homeValue,'0') && _.isEqual(otherResult.awayValue,'0'))
   }
 }

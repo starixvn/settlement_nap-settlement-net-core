@@ -4,7 +4,7 @@ import { HttpRequestService } from '../../shared/services';
 import { Ball, GetMatchesQuery, SettleQuery } from '../models';
 @Injectable()
 export class QueryService {
-    private numberGameApi = '/api/number-game';
+    private readonly numberGameApi = '/api/number-game';
     constructor(private readonly httpRequestService: HttpRequestService) {
     }
 
@@ -29,7 +29,7 @@ export class QueryService {
 
     public getAction(balls: Ball[]): string{
         const refundBalls  = balls.filter(ball => ball.isNA);
-        return refundBalls.length == balls.length ? CalculateAction.refund 
+        return refundBalls.length === balls.length ? CalculateAction.refund 
             : refundBalls.length > 0 ? CalculateAction.refundFullTime : CalculateAction.calculate;
     }
 }

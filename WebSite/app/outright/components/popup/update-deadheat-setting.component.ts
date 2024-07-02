@@ -35,7 +35,7 @@ export class UpdateDeadheatSettingComponent implements OnInit {
   leagueSettle: LeagueSettle;
   blockUI = true;
   readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
-
+  
   constructor(@Inject(MAT_DIALOG_DATA) public data: { deadHeatSetting: boolean, leagueId: number, sportType: number }) {
     
     this.confirmationDialogMessage.title = Language.confirmationBox;

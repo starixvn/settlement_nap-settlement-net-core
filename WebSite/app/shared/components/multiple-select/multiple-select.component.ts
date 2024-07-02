@@ -4,7 +4,7 @@ import { FormControl, FormsModule } from '@angular/forms';
 import { MaterialModule } from './../../material-module';
 import {
   Component, Input, ViewChild, ViewChildren, Output, ViewEncapsulation,
-  OnChanges, SimpleChanges, ChangeDetectorRef, QueryList, EventEmitter, ViewContainerRef, AfterViewInit, OnDestroy, ChangeDetectionStrategy
+  OnChanges, SimpleChanges, QueryList, EventEmitter, ViewContainerRef, ChangeDetectionStrategy
 } from '@angular/core';
 import { ItemsSelect, Group } from './../../models';
 import { MatOption } from '@angular/material/core';
@@ -131,7 +131,7 @@ export class NewMultipleSelectComponent implements OnChanges {
     }
   }
 
-  private handleClickOutside = (event: MouseEvent) => {
+  private readonly handleClickOutside = (event: MouseEvent) => {
     const ignoreClickOnMyElement = document.body.getElementsByClassName("mat-mdc-select-panel")[0];
     if (!this.isOpened || ignoreClickOnMyElement == null) {
       return;

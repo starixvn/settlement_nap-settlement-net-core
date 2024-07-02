@@ -48,12 +48,12 @@ export class CalculateService {
             return this.MessageInconsistentDeadheat(teamWonSelected.concat(teamWonSettled), Language.Outright.incorrectDeadHeatSetting);
         }
 
-        if (teamWonSelectedNoneDeadHeat.length === 1) {
-            if ((teamSettledNoneDeadHeat.length >= 1 && _.isEmpty(teamSettledDeadHeat)) ||
-                !_.isEmpty(teamSettledDeadHeat) ||
-                !_.isEmpty(teamWonSelectedDeadHeat)) {
-                return this.MessageInconsistentDeadheat(teamWonSelected.concat(teamWonSettled), Language.Outright.incorrectDeadHeatSetting);
-            }
+        if (teamWonSelectedNoneDeadHeat.length === 1 && ((teamSettledNoneDeadHeat.length >= 1 && _.isEmpty(teamSettledDeadHeat)) ||
+            !_.isEmpty(teamSettledDeadHeat) ||
+            !_.isEmpty(teamWonSelectedDeadHeat))) {
+
+            return this.MessageInconsistentDeadheat(teamWonSelected.concat(teamWonSettled), Language.Outright.incorrectDeadHeatSetting);
+
         }
 
         if (VerifyDeadHeatService.VerifyDeadheatSettingYes(teamWonSelected, teamWonSettled)) {

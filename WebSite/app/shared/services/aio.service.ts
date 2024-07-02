@@ -11,8 +11,8 @@ import { LeagueSettings } from '../models/league-settings.model';
 
 @Injectable()
 export class AioService {
-    private aioApi = `/api/aio`;
-    private leagueSettingApi = '/api/league-settings'
+    private readonly aioApi = `/api/aio`;
+    private readonly leagueSettingApi = '/api/league-settings'
 
     private readonly httpRequestService: HttpRequestService;
     public readonly warningDialogMessage: ModalDialogMessage = new ModalDialogMessage();
@@ -163,7 +163,7 @@ export class AioService {
 
     public generateDeterminedType(resultDetails: ResultDetail[]) {
         const roundBitStartAt = 3;
-        const bitArray = new Array(8).fill(0);
+        const bitArray = new Array<number>(8).fill(0);
         const resultWithoutFinal = resultDetails
             .filter(resultDetail => ![ResourceIds.fullTime, ResourceIds.halfTime].includes(resultDetail.resourceId))
             .map(resultDetail => resultDetail.resourceId);
@@ -183,7 +183,7 @@ export class AioService {
 
             bitArray[bitPosition] = resultDetail.checked && !_.isEmpty(resultDetail.homeValue) && !_.isEmpty(resultDetail.awayValue) ? 1 : 0;
         });
-
+        
         return parseInt(bitArray.reverse().join(''), 2);
     }
 

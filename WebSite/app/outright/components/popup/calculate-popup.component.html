@@ -72,7 +72,7 @@
 						</ngbd-date-picker>
 					</td>
 					<td class="code">
-						<input id="checkbox-map-{{ i + 1 }}" type="checkbox" [(ngModel)]="team.selected" (change)="onSelectTeam($event)" (click)="clearError()" />
+						<input id="checkbox-map-{{ i + 1 }}" type="checkbox" [(ngModel)]="team.selected" (change)="onSelectTeam()" (click)="clearError()" />
 					</td>
 				</tr>
 			</tbody>
@@ -109,7 +109,7 @@
 					<th class="code">
 						Select Team
 						<div>
-							<input type="checkbox" (click)="onSelectAllTeam($event)" [(ngModel)]="selectAllTeam" />
+							<input type="checkbox" (ngModelChange)="onSelectAllTeam($event)" [(ngModel)]="selectAllTeam" />
 						</div>
 					</th>
 				</tr>
