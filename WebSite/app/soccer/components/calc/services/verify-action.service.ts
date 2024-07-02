@@ -15,22 +15,30 @@ export class VerifyActionService {
   public async verifyFirstHalf(matchDetail: MatchDetail, relatedMatches: FantasyRelatedMatch[]) {
     if (this.verifyScoreGoalService.verifyScoreHalfTime(matchDetail)) {
       return Language.warningInputScore;
-    } else if (this.verifyScoreGoalService.goalRecordNotExistSemicolon(matchDetail)) {
+    }
+
+    if (this.verifyScoreGoalService.goalRecordNotExistSemicolon(matchDetail)) {
       matchDetail.isWarningGoalRecord = true;
       return Language.soccer.needSemicolonOnGoalRecord;
-    } else if (matchDetail.applyGoalRecord && this.verifyScoreGoalService.isHtGoalRecordInvalid(matchDetail)) {
+    }
+
+    if (matchDetail.applyGoalRecord && this.verifyScoreGoalService.isHtGoalRecordInvalid(matchDetail)) {
       matchDetail.isWarningGoalRecord = true;
       return Language.soccer.halfTimeGoalRecordNotConsistent;
-    } else if (matchDetail.isScoreInconsistent) {
-      return Language.soccer.confirmWithInconsistentScore;
-    } else if(matchDetail.isFantasyMatch && this.isFirstHalfRelatedMatchesNotCalc(relatedMatches)) {
-      return Language.fantasyMatch.relatedMatchesNotCalc;
-    }  else {
-      return this.checkNewStatus(matchDetail, CalculateAction.calculateHalfTime);
     }
+
+    if (matchDetail.isScoreInconsistent) {
+      return Language.soccer.confirmWithInconsistentScore;
+    }
+
+    if (matchDetail.isFantasyMatch && this.isFirstHalfRelatedMatchesNotCalc(relatedMatches)) {
+      return Language.fantasyMatch.relatedMatchesNotCalc;
+    }
+
+    return this.checkNewStatus(matchDetail, CalculateAction.calculateHalfTime);
   }
 
-  private isFirstHalfRelatedMatchesNotCalc(relatedMatches: FantasyRelatedMatch[] = [])  {
+  private isFirstHalfRelatedMatchesNotCalc(relatedMatches: FantasyRelatedMatch[] = []) {
     return relatedMatches.some(x => x.htSettlementStatusId !== SettlementStatusId.Calculated)
   }
 
@@ -39,107 +47,125 @@ export class VerifyActionService {
     return result.isSuccessful ? "" : result.errMsg;
   }
 
-  public async verifyFullTime(matchDetail: MatchDetail, selectedChildMatches: ChildMatch[],relatedMatches: FantasyRelatedMatch[]) {
+  public async verifyFullTime(matchDetail: MatchDetail, selectedChildMatches: ChildMatch[], relatedMatches: FantasyRelatedMatch[]) {
     if (this.verifyScoreGoalService.verifyScoreFullTime(matchDetail)) {
       return Language.warningInputScore;
-    } else if (this.verifyScoreGoalService.verifyScoreForChildMatch(matchDetail, selectedChildMatches)) {
+    }
+    if (this.verifyScoreGoalService.verifyScoreForChildMatch(matchDetail, selectedChildMatches)) {
       return Language.soccer.childMatchesErrorMessage;
-    } else if (this.verifyScoreGoalService.isRefundHalfTime(matchDetail)
+    }
+    if (this.verifyScoreGoalService.isRefundHalfTime(matchDetail)
       && this.verifyScoreGoalService.goalRecordExistSemicolon(matchDetail)) {
       matchDetail.isWarningGoalRecord = true;
       return Language.soccer.noNeedSemicolonOnGoalRecord;
-    } else if (!this.verifyScoreGoalService.isRefundHalfTime(matchDetail)
+    }
+    if (!this.verifyScoreGoalService.isRefundHalfTime(matchDetail)
       && this.verifyScoreGoalService.goalRecordNotExistSemicolon(matchDetail)) {
       matchDetail.isWarningGoalRecord = true;
       return Language.soccer.needSemicolonOnGoalRecord;
-    } else if (this.verifyScoreGoalService.isHTGoalRecordConsistent(matchDetail)) {
+    }
+    if (this.verifyScoreGoalService.isHTGoalRecordConsistent(matchDetail)) {
       matchDetail.isWarningGoalRecord = true;
       return Language.soccer.halfTimeGoalRecordNotConsistent;
-    } else if (this.verifyScoreGoalService.isFullTimeGoalRecordInvalid(matchDetail)) {
+    }
+    if (this.verifyScoreGoalService.isFullTimeGoalRecordInvalid(matchDetail)) {
       matchDetail.isWarningGoalRecord = true;
       return Language.soccer.goalRecordNotConsistent;
-    } else if (matchDetail.isScoreInconsistent) {
-      return Language.soccer.incorrectHalftimeAndFullTimeScore;
-    } 
-    else if(matchDetail.isFantasyMatch && this.isFullTimeRelatedMatchesNotCalc(relatedMatches)) {
-      return Language.fantasyMatch.relatedMatchesNotCalc;
-    } else {
-      return this.checkNewStatus(matchDetail, CalculateAction.calculateFullTime);
     }
+    if (matchDetail.isScoreInconsistent) {
+      return Language.soccer.incorrectHalftimeAndFullTimeScore;
+    }
+
+    if (matchDetail.isFantasyMatch && this.isFullTimeRelatedMatchesNotCalc(relatedMatches)) {
+      return Language.fantasyMatch.relatedMatchesNotCalc;
+    }
+    return this.checkNewStatus(matchDetail, CalculateAction.calculateFullTime);
+
   }
 
-  private isFullTimeRelatedMatchesNotCalc(relatedMatches: FantasyRelatedMatch[] = [])  {
+  private isFullTimeRelatedMatchesNotCalc(relatedMatches: FantasyRelatedMatch[] = []) {
     return relatedMatches.some(x => x.ftSettlementStatusId !== SettlementStatusId.Calculated)
   }
 
-  public async verifyAll(matchDetail: MatchDetail, selectedChildMatches: ChildMatch[],relatedMatches: FantasyRelatedMatch[]) {
+  public async verifyAll(matchDetail: MatchDetail, selectedChildMatches: ChildMatch[], relatedMatches: FantasyRelatedMatch[]) {
     if (this.verifyScoreGoalService.verifyScoreAll(matchDetail)) {
       return Language.warningInputScore;
-    } else if (this.verifyScoreGoalService.verifyScoreForChildMatch(matchDetail, selectedChildMatches)) {
+    }
+
+    if (this.verifyScoreGoalService.verifyScoreForChildMatch(matchDetail, selectedChildMatches)) {
       return Language.soccer.childMatchesErrorMessage;
-    } else if (this.verifyScoreGoalService.goalRecordNotExistSemicolon(matchDetail)) {
+    }
+
+    if (this.verifyScoreGoalService.goalRecordNotExistSemicolon(matchDetail)) {
       matchDetail.isWarningGoalRecord = true;
       return Language.soccer.needSemicolonOnGoalRecord;
-    } else if (this.verifyScoreGoalService.isHTGoalRecordConsistent(matchDetail)) {
+    }
+
+    if (this.verifyScoreGoalService.isHTGoalRecordConsistent(matchDetail)) {
       matchDetail.isWarningGoalRecord = true;
       return Language.soccer.halfTimeGoalRecordNotConsistent;
-    } else if (this.verifyScoreGoalService.isFullTimeGoalRecordInvalid(matchDetail)) {
+    }
+
+    if (this.verifyScoreGoalService.isFullTimeGoalRecordInvalid(matchDetail)) {
       matchDetail.isWarningGoalRecord = true;
       return Language.soccer.goalRecordNotConsistent;
-    } else if (matchDetail.isScoreInconsistent) {
+    }
+
+    if (matchDetail.isScoreInconsistent) {
       return Language.soccer.incorrectHalftimeAndFullTimeScore;
-    } 
-    else if(matchDetail.isFantasyMatch && this.isAllResultRelatedMatchesNotCalc(relatedMatches)) {
+    }
+
+    if (matchDetail.isFantasyMatch && this.isAllResultRelatedMatchesNotCalc(relatedMatches)) {
       return Language.fantasyMatch.relatedMatchesNotCalc;
 
-    }  
-    else {
-      return this.checkNewStatus(matchDetail, CalculateAction.calculate);
     }
+
+    return this.checkNewStatus(matchDetail, CalculateAction.calculate);
   }
 
-  private isAllResultRelatedMatchesNotCalc(relatedMatches: FantasyRelatedMatch[] = [])  {
+  private isAllResultRelatedMatchesNotCalc(relatedMatches: FantasyRelatedMatch[] = []) {
     return this.isFirstHalfRelatedMatchesNotCalc(relatedMatches) || this.isFullTimeRelatedMatchesNotCalc(relatedMatches);
   }
 
   public async isScoreChangedFirstHalf(matchDetail: MatchDetail, isReSettledTickets: boolean) {
     if (isReSettledTickets) {
       return false;
-    } else {
-      const lastestMatch = await this.requestService.getLastestMatchResult(matchDetail.matchId);
-
-      return _.isEqual(lastestMatch.htStatus, TicketStatusText.calculated)
-        && (this.verifyScoreGoalService.isSettledFirstHalf(lastestMatch.betStatus)
-          || this.verifyScoreGoalService.isResultChangedFirstHalf(matchDetail, lastestMatch)
-          || this.verifyScoreGoalService.isGoalRecordChangedFirstHalf(matchDetail, lastestMatch));
     }
+
+    const lastestMatch = await this.requestService.getLastestMatchResult(matchDetail.matchId);
+
+    return _.isEqual(lastestMatch.htStatus, TicketStatusText.calculated)
+      && (this.verifyScoreGoalService.isSettledFirstHalf(lastestMatch.betStatus)
+        || this.verifyScoreGoalService.isResultChangedFirstHalf(matchDetail, lastestMatch)
+        || this.verifyScoreGoalService.isGoalRecordChangedFirstHalf(matchDetail, lastestMatch));
+
   }
 
   public async isScoreChangedFullTime(matchDetail: MatchDetail, isReSettledTickets: boolean) {
     if (isReSettledTickets) {
       return false;
-    } else {
-      const lastestMatch = await this.requestService.getLastestMatchResult(matchDetail.matchId);
-
-      return _.isEqual(lastestMatch.ftStatus, TicketStatusText.calculated)
-        && (this.verifyScoreGoalService.isSettledFullTime(lastestMatch.betStatus)
-          || this.verifyScoreGoalService.isResultChangedFullTime(matchDetail, lastestMatch)
-          || this.verifyScoreGoalService.isGoalRecordChangedFullTime(matchDetail, lastestMatch));
     }
+    const lastestMatch = await this.requestService.getLastestMatchResult(matchDetail.matchId);
+
+    return _.isEqual(lastestMatch.ftStatus, TicketStatusText.calculated)
+      && (this.verifyScoreGoalService.isSettledFullTime(lastestMatch.betStatus)
+        || this.verifyScoreGoalService.isResultChangedFullTime(matchDetail, lastestMatch)
+        || this.verifyScoreGoalService.isGoalRecordChangedFullTime(matchDetail, lastestMatch));
+
   }
 
   public async isScoreChangedAll(matchDetail: MatchDetail, isReSettledTickets: boolean) {
     if (isReSettledTickets) {
       return false;
-    } else {
-      const lastestMatch = await this.requestService.getLastestMatchResult(matchDetail.matchId);
-
-      return (_.isEqual(lastestMatch.htStatus, TicketStatusText.calculated)
-        || _.isEqual(lastestMatch.ftStatus, TicketStatusText.calculated))
-        && (this.verifyScoreGoalService.isSettledAll(lastestMatch.betStatus)
-          || this.verifyScoreGoalService.isResultChangedFirstHalf(matchDetail, lastestMatch)
-          || this.verifyScoreGoalService.isResultChangedFullTime(matchDetail, lastestMatch)
-          || this.verifyScoreGoalService.isGoalRecordChangedAll(matchDetail, lastestMatch));
     }
+    const lastestMatch = await this.requestService.getLastestMatchResult(matchDetail.matchId);
+
+    return (_.isEqual(lastestMatch.htStatus, TicketStatusText.calculated)
+      || _.isEqual(lastestMatch.ftStatus, TicketStatusText.calculated))
+      && (this.verifyScoreGoalService.isSettledAll(lastestMatch.betStatus)
+        || this.verifyScoreGoalService.isResultChangedFirstHalf(matchDetail, lastestMatch)
+        || this.verifyScoreGoalService.isResultChangedFullTime(matchDetail, lastestMatch)
+        || this.verifyScoreGoalService.isGoalRecordChangedAll(matchDetail, lastestMatch));
+
   }
 }

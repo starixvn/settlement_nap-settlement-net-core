@@ -27,7 +27,7 @@ export class CalculationMatchDetailComponent implements OnInit {
     @Output() public readonly errorMsgEmitter = new EventEmitter<string>();
     public disableFinal = true;
     public disableGoalRecordCheckbox: boolean;
-    private dialogMessage = new ModalDialogMessage();
+    private readonly dialogMessage = new ModalDialogMessage();
 
     constructor(
         private readonly goalIconService: GoalIconService,

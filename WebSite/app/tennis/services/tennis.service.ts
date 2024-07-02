@@ -4,7 +4,6 @@ import { ResultDetail } from '../../shared/models/sportsbook-sop';
 import { ResourcesIds } from '../constants';
 import { ResultStatusId, SettlementStatusId } from '../../shared/constants';
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
-import { ModalContentDialogComponent } from '../../shared/components/modal-dialog/modal-content-dialog.component';
 
 @Injectable(
 )
@@ -25,7 +24,7 @@ export class TennisService {
       totalGames.settlementStatusId = SettlementStatusId.Refund;
     } else {
       const games = resultDetail.filter((game) => !_.isEmpty(game.homeValue) && !_.isEmpty(game.awayValue)
-        && (game.resultStatusId == ResultStatusId.ManualCompleted || game.resultStatusId == ResultStatusId.AutoCompleted));
+        && (game.resultStatusId === ResultStatusId.ManualCompleted || game.resultStatusId === ResultStatusId.AutoCompleted));
 
       totalGames.settlementStatusId = totalSets.settlementStatusId;
       if (games.length > 0) {
