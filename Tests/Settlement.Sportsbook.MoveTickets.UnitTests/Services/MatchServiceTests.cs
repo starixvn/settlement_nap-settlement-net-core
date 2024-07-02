@@ -67,7 +67,6 @@ public class MatchServiceTests
 
         Received.InOrder(() =>
         {
-            newInfoMatchService.TicketInfo(Arg.Is<Match>(item => item.MatchId == 100));
             newInfoMatchService.NewEventStatus(Arg.Is<Match>(item => item.MatchId == 100));
             newInfoMatchService.EventStatusColor(Arg.Is<Match>(item => item.MatchId == 100));
             newInfoMatchService.EarlySettlementStatus(Arg.Is<Match>(item => item.MatchId == 100));

@@ -5,10 +5,6 @@ using Settlement.Core.Models;
 
 public interface SiteMatchService
 {
-    bool IsExistMarkedTickets(Match match);
-
-    bool IsExistRunningTickets(Match match);
-
     string GetBackgroundCompletedStatus(Match match);
 
     string EarlySettlementStatus(Match match);
@@ -21,10 +17,6 @@ public interface SiteMatchService
 public class SiteMatchServiceImp : SiteMatchService
 {
     private const int MatchPen = 202;
-
-    public bool IsExistMarkedTickets(Match match) => match.IsExistMarkedTicket;
-
-    public bool IsExistRunningTickets(Match match) => !match.IsExistRunningTicket;
 
     public int? IsCalculatingSingle(Match match)
     {
@@ -111,16 +103,16 @@ public class SiteMatchServiceImp : SiteMatchService
 
     private string GetBackgroundRunningTicket(Match match)
     {
-        if (IsExistMarkedTickets(match))
+        if (match.IsExistMarkedTicket)
         {
             return Background.PinkBlinking;
         }
 
-        return IsExistRunningTickets(match) ? Background.Pink : string.Empty;
+        return match.IsExistRunningTicket ? Background.Pink : string.Empty;
     }
 
     private bool IsOnlyMarkedTicket(Match match)
     {
-        return IsExistMarkedTickets(match) && !IsExistRunningTickets(match);
+        return match.IsExistMarkedTicket && !match.IsExistRunningTicket;
     }
 }
