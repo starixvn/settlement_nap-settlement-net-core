@@ -1,5 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿using Fanex.Settlement.Converter.Services;
+using Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Client;
+using Newtonsoft.Json;
 using Settlement.Constants;
+using Settlement.Models;
 using Settlement.Sportsbook.Soccer.Constants;
 using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Requests;
@@ -16,11 +19,13 @@ public class InstantResourceServiceTests
 
     private readonly InstantResourceService service;
 
+    private readonly XmlConvertService xmlConvertService;
+
     public InstantResourceServiceTests()
     {
         instantGoalCheckingService = Substitute.For<IInstantGoalCheckingService>();
         goalRecordService = Substitute.For<IGoalRecordService>();
-        var xmlConvertService = Substitute.For<XmlConvertService>();
+        xmlConvertService = Substitute.For<XmlConvertService>();
         service = new InstantResourceServiceImp(instantGoalCheckingService, goalRecordService, xmlConvertService);
     }
 
@@ -117,6 +122,119 @@ public class InstantResourceServiceTests
 
         // Assert
         Assert.Empty(actual);
+    }
+
+    [Fact]
+    public void Halftime_IsExistHTFirstCornerIsTrue_ReturnCorrect()
+    {
+        // Arrange
+        var goalCondition = new InstantGoalCondition
+        {
+            IsExistHTFirstCorner = true
+        };
+        var expect = new List<XmlResource>
+        {
+          new ()
+          {
+              ResourceId = ResourceKey.HaftTimeFirstCorner,
+              ResultStatusId = ResultStatus.ManuallySettled,
+              SettlementStatusId = SettlementStatus.Completed,
+              HomeValue = "A"
+          }
+        };
+
+        goalRecordService.FirstGoalRecord(Arg.Any<string>(), Arg.Any<bool>()).Returns("A");
+
+        // Act
+        var actual = service.Halftime(goalCondition);
+
+        // Assert
+        Assert.Equal(JsonConvert.SerializeObject(expect), JsonConvert.SerializeObject(actual));
+    }
+
+    [Fact]
+    public void Halftime_IsExistFirstCornerIsTrue_ReturnCorrect()
+    {
+        // Arrange
+        var goalCondition = new InstantGoalCondition
+        {
+            IsExistFirstCorner = true
+        };
+        var expect = new List<XmlResource>
+        {
+          new ()
+          {
+              ResourceId = ResourceKey.FirstCorner,
+              ResultStatusId = ResultStatus.ManuallySettled,
+              SettlementStatusId = SettlementStatus.Completed,
+              HomeValue = "A"
+          }
+        };
+
+        goalRecordService.FirstGoalRecord(Arg.Any<string>(), Arg.Any<bool>()).Returns("A");
+
+        // Act
+        var actual = service.Halftime(goalCondition);
+
+        // Assert
+        Assert.Equal(JsonConvert.SerializeObject(expect), JsonConvert.SerializeObject(actual));
+    }
+
+    [Fact]
+    public void Halftime_IsExistHTCornerIsTrue_ReturnCorrect()
+    {
+        // Arrange
+        var goalCondition = new InstantGoalCondition
+        {
+            IsExistHTCorner = true
+        };
+        var expect = new List<XmlResource>
+        {
+          new ()
+          {
+              ResourceId = "48701",
+              ResultStatusId = ResultStatus.ManuallySettled,
+              SettlementStatusId = SettlementStatus.Completed,
+              HomeValue = "A"
+          }
+        };
+
+        goalRecordService.HalftimeGoal(Arg.Any<string>()).Returns("A");
+
+        // Act
+        var actual = service.Halftime(goalCondition);
+
+        // Assert
+        Assert.Equal(JsonConvert.SerializeObject(expect), JsonConvert.SerializeObject(actual));
+    }
+
+    [Fact]
+    public void Halftime_IsExistCornerIsTrue_ReturnCorrect()
+    {
+        // Arrange
+        var goalCondition = new InstantGoalCondition
+        {
+            IsExistCorner = true,
+            GoalRecord = "A"
+        };
+        var expect = new List<XmlResource>
+        {
+          new ()
+          {
+              ResourceId = "48601",
+              ResultStatusId = ResultStatus.ManuallySettled,
+              SettlementStatusId = SettlementStatus.Completed,
+              HomeValue = "A"
+          }
+        };
+
+        goalRecordService.HalftimeGoal(Arg.Any<string>()).Returns("A");
+
+        // Act
+        var actual = service.Halftime(goalCondition);
+
+        // Assert
+        Assert.Equal(JsonConvert.SerializeObject(expect), JsonConvert.SerializeObject(actual));
     }
 
     [Fact]
@@ -366,5 +484,42 @@ public class InstantResourceServiceTests
 
         //assert
         Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void GenerateResource_ResourcesListIsEmpty_ReturnsEmptyString()
+    {
+        // Arrange
+        var resources = new List<XmlResource>();
+
+        // Act
+        var result = service.GenerateResource(resources);
+
+        // Assert
+        Assert.Equal(string.Empty, result);
+    }
+
+    [Fact]
+    public void GenerateResource_ResourcesListIsNotEmpty_ReturnsSerializedString()
+    {
+        // Arrange
+        var resources = new List<XmlResource>
+        {
+            new()
+            {
+                ResourceId = ResourceKey.FullTimeFirstGoal,
+                ResultStatusId = ResultStatus.ManuallySettled,
+                SettlementStatusId =SettlementStatus.Completed,
+                HomeValue = "A"
+            }
+        };
+        var expectedSerializedString = "<XmlResults><Resources><XmlResource /></Resources></XmlResults>";
+        xmlConvertService.Serialize(Arg.Any<XmlResults>()).Returns(expectedSerializedString);
+
+        // Act
+        var result = service.GenerateResource(resources);
+
+        // Assert
+        Assert.Equal(expectedSerializedString, result);
     }
 }

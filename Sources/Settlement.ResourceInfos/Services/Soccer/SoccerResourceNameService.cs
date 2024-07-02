@@ -60,11 +60,11 @@ public class SoccerResourceNameService : IMapperService
         return betTypeId switch
         {
             SoccerBetType.ExtraTimeNextGoal => $"Goal {Convert.ToUInt32(Round(resourceId))}",
-            SoccerBetType.PenaltyShootoutBothOneNeither or SoccerBetType.PenaltyShootout1X2
-                or SoccerBetType.PenaltyWoodwork or SoccerBetType.HomePenaltyShootout
-                or SoccerBetType.AwayPenaltyShootout => refDataService.GetBetTypeName(betTypeId, Round(resourceId)),
+            SoccerBetType.PenaltyShootoutBothOneNeither or SoccerBetType.PenaltyShootout1X2 or SoccerBetType.PenaltyWoodwork
+            or SoccerBetType.AwayPenaltyShootout => refDataService.GetBetTypeName(betTypeId, Round(resourceId)),
             SoccerBetType.HomePenaltyShootoutOverUnder => "Penalty Shootout First 10 - Home Score",
             SoccerBetType.AwayPenaltyShootoutOverUnder => "Penalty Shootout First 10 - Away Score",
+            SoccerBetType.HomePenaltyShootout => refDataService.GetBetTypeName(betTypeId, Round(resourceId)),
             _ => refDataService.GetBetTypeName(betTypeId)
         };
     }

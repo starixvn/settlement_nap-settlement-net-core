@@ -41,9 +41,14 @@ public class BasketballBetTypeServiceImp(
             case otherBetTypeLength:
                 group = groupBetTypeService.GroupOtherBetType(resultDetail);
                 break;
+
             case QuarterBetTypeLength or HalfBetTypeLength:
                 group = GroupHalfBetType(resultDetail, group);
                 group = GroupQuarterBetType(resultDetail, group);
+                break;
+
+            default:
+                group = new GroupNameModel();
                 break;
         }
 
