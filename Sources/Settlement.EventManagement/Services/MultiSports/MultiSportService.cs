@@ -13,7 +13,7 @@ using System.Text;
 using System.Text.Json;
 using Match = Models.MultiSports.Match;
 
-using MatchTuple = (List<Models.MultiSports.Match> Matches, List<Models.MultiSports.MatchOverStatus> MatchOverStatuses);
+using MatchFilterTuple = (List<Models.MultiSports.Match> Matches, List<Models.MultiSports.MatchOverStatus> MatchOverStatuses, List<Models.MultiSports.ParentChildMatchFilter> ParentChildMatchFilters);
 
 public interface IMultiSportService
 {
@@ -122,7 +122,7 @@ public class MultiSportServiceImp(
         return baseMatches;
     }
 
-    private async Task<IEnumerable<SiteMatch>> GetOSTicketInfo(MatchTuple matchTuple, SportsbookCriteria filterCriteria)
+    private async Task<IEnumerable<SiteMatch>> GetOSTicketInfo(MatchFilterTuple matchTuple, SportsbookCriteria filterCriteria)
     {
         var matchesInfo = matchTuple.Matches.Select(x => new MatchRequest
         {
@@ -135,11 +135,13 @@ public class MultiSportServiceImp(
         });
 
         var matchesOverStatus = matchTuple.MatchOverStatuses;
+        var parentChildMatchFilters = matchTuple.ParentChildMatchFilters;
 
         var criteria = new OSTicketInfoSelCriteria
         {
             MatchInfo = JsonSerializer.Serialize(matchesInfo),
             MatchOverStatus = matchesOverStatus.Any() ? JsonSerializer.Serialize(matchesOverStatus) : string.Empty,
+            ChildMatchInfo = parentChildMatchFilters.Any() ? JsonSerializer.Serialize(parentChildMatchFilters) : string.Empty,
             OverStatus = filterCriteria.OverStatus,
             MatchCode = filterCriteria.MatchCode
         };
@@ -191,13 +193,11 @@ public class MultiSportServiceImp(
         return await repository.FetchAsync<SiteMatch>(criteria);
     }
 
-    private async Task<MatchTuple> GetMatches(SportsbookCriteria criteria)
+    private async Task<MatchFilterTuple> GetMatches(SportsbookCriteria criteria)
     {
-        var result = await repository.FetchMultipleAsync<Match, MatchOverStatus>(criteria);
-        var item1 = result.FirstResultSet.ToList();
-        var item2 = result.SecondResultSet.ToList();
+        var result = await repository.FetchMultipleAsync<Match, MatchOverStatus, ParentChildMatchFilter>(criteria);
 
-        return (result.FirstResultSet.ToList(), result.SecondResultSet.ToList());
+        return (result.FirstResultSet.ToList(), result.SecondResultSet.ToList(), result.ThirdResultSet.ToList());
     }
 
     private async Task<List<Match>> GetMatchesAllInfo(SportsbookCriteria criteria)
