@@ -6,8 +6,6 @@ using Settlement.Sportsbook.Aio.Models;
 
 namespace Settlement.Sportsbook.Aio.Services.Cricket;
 
-using Settlement.Services;
-
 public interface GenerateResultAmendmentService
 {
     (string, string) CreateWrongActualResults(List<ResultChanged> resultsChanged, List<ResourceItem> selectedResources);
