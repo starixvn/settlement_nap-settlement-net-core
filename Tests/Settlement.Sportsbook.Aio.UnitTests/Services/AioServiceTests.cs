@@ -146,8 +146,9 @@ public class AioServiceTests
     public async Task GetMatch_GetResultDetailsOnGameSession_ReturnsCorrectResultDetails()
     {
         // Arrange
+        short gameSession = 3;
         var request = new GetMatchRequest();
-        var fakeMatch = new Models.MatchDetail { MatchId = 1, SportType = SportType.Tennis, GameSession = 3 };
+        var fakeMatch = new Models.MatchDetail { MatchId = 1, SportType = SportType.Tennis, GameSession = gameSession };
         repository.GetAsync<Models.MatchDetail>(Arg.Any<ICriteria>()).Returns(fakeMatch);
 
         var listResultDetail = new List<Models.ResultDetail> {
@@ -174,7 +175,7 @@ public class AioServiceTests
         var result = await service.GetMatch(request);
 
         // Assert
-        Assert.Equal(4, result.ResultDetails.Count);
+        Assert.Equal(gameSession + 1, result.ResultDetails.Count);
     }
 
     [Fact]
