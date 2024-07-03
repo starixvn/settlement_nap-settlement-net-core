@@ -241,7 +241,8 @@ export class EarlySettlementComponent implements Soccer {
             const resourceItems = selectedResources.map(item => new ResourceItem(item.resourceId, item.resourceName, item.homeValue, item.awayValue))
 
             const query = new ResultSettingQuery(matchId, settingType, isEnabled, resourceIds, resourceItems);
-            return await this.aioService.changeResultSetting(query);
+            const result = await this.aioService.changeResultSetting(query);
+            return result;
         }
 
         return false;
@@ -249,12 +250,14 @@ export class EarlySettlementComponent implements Soccer {
 
     private async changeConfirmRefundSettleDetermined(matchId: number, isEnabled: boolean) {
         const selectedResourcesSdt = _.filter(this.selectedResources, item => item.isSettleDetermined);
-        return await this.changeConfirmResult(selectedResourcesSdt, ResultSettingType.confirmRefundSDT, matchId, isEnabled);
+        const result = await this.changeConfirmResult(selectedResourcesSdt, ResultSettingType.confirmRefundSDT, matchId, isEnabled);
+        return result;
     }
 
     private async changeConfirmRefundNormal(matchId: number, isEnabled: boolean) {
         const selectedResourcesNormal = _.filter(this.selectedResources, item => !item.isSettleDetermined);
-        return await this.changeConfirmResult(selectedResourcesNormal, ResultSettingType.confirmRefund, matchId, isEnabled);
+        const result = await this.changeConfirmResult(selectedResourcesNormal, ResultSettingType.confirmRefund, matchId, isEnabled);
+        return result;
     }
 
     private isExistedConfirmRefund() {

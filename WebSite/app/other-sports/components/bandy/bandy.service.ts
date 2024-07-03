@@ -12,7 +12,7 @@ type SettleRequestParams = {
   isReSettledTickets: boolean,
   isScoreDirect: boolean,
   isLeader: boolean,
-  refResultStatus: any,
+  refResultStatus: number | null,
   betStatus: string
 
 }  

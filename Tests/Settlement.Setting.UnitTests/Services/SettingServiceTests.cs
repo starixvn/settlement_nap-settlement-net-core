@@ -4,9 +4,11 @@ using Fanex.NAP.Client.Helpers.Web;
 using Microsoft.AspNetCore.Http;
 using Settlement.Criteria;
 using Settlement.Services;
+using Settlement.Setting.Constants;
 using Settlement.Setting.Criteria;
 using Settlement.Setting.Models;
 using Settlement.Setting.Requests;
+using Settlement.Setting.Services;
 
 namespace Settlement.Setting.UnitTests.Services;
 
@@ -105,5 +107,68 @@ public class SettingServiceTests
 
         // Assert
         await repository.Received(1).ExecuteAsync(Arg.Any<UpdateTimeSettingLeagueCriteria>());
+    }
+
+    [Fact]
+    public async Task ProcessUpdateHoldMatchSetting_WhenChangedSettingsIsNotEmpty_ShouldExecuteCriteria_()
+    {
+        // Arrange
+        var request = new UpdateHoldMatchSettingRequest
+        {
+            HoldSettings = new List<HoldSetting>
+                {
+                    new () { Name ="isMtdHold", IsApplyChild = true, Value = true }
+                },
+            OrgHoldSettings = new()
+        };
+
+        // Act
+        await service.ProcessUpdateHoldMatchSetting(request);
+
+        // Assert
+        repository.Received(1).ExecuteAsync(Arg.Any<UpdateHoldMatchSettingCriteria>());
+    }
+
+    [Fact]
+    public async Task ProcessUpdateHoldMatchSetting_WhenChangedSettingsIsEmpty_NotExecuteCriteria_()
+    {
+        // Arrange
+        var request = new UpdateHoldMatchSettingRequest
+        {
+            HoldSettings = new(),
+            OrgHoldSettings = new()
+        };
+
+        // Act
+        await service.ProcessUpdateHoldMatchSetting(request);
+
+        // Assert
+        repository.Received(0).ExecuteAsync(Arg.Any<UpdateHoldMatchSettingCriteria>());
+    }
+
+    [Fact]
+    public async Task GetSetting_ShouldReturnConvertedSetting()
+    {
+        // Arrange
+        var request = new GetSettingRequest
+        {
+            MatchId = 1,
+            LeagueId = 2
+        };
+
+        var criteria = new GetSettingCriteria
+        {
+            MatchId = request.MatchId,
+            LeagueId = request.LeagueId
+        };
+
+        var settingValue = 10;
+        repository.GetAsync<int?>(Arg.Any<GetSettingCriteria>()).Returns(settingValue);
+
+        // Act
+        var result = await service.GetSetting(request);
+
+        // Assert
+        Assert.Equal("0101", result);
     }
 }

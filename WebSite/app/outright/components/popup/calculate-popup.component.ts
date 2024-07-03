@@ -272,6 +272,7 @@ export class CalculatePopupComponent implements OnInit {
     }
 
     private async checkVoidTicket(teamHide: Team) {
-        return await this.outrightService.checkVoidTickets(+teamHide.orId)
+        const result = await this.outrightService.checkVoidTickets(+teamHide.orId);
+        return result;
     }
 }
