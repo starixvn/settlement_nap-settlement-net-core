@@ -159,8 +159,8 @@ public class MultiSportServiceImp(
         {
             var ticketInfo = siteMatches.Where(x => x.MatchId == item.MatchId).ToList();
 
-            item.SuspenderFullTime = ticketInfo.FirstOrDefault(x => string.IsNullOrEmpty(x.SuspenderFullTime))?.SuspenderFullTime;
-            item.SuspenderHalfTime = ticketInfo.FirstOrDefault(x => string.IsNullOrEmpty(x.SuspenderHalfTime))?.SuspenderHalfTime;
+            item.SuspenderFullTime = ticketInfo.FirstOrDefault(x => !string.IsNullOrEmpty(x.SuspenderFullTime))?.SuspenderFullTime;
+            item.SuspenderHalfTime = ticketInfo.FirstOrDefault(x => !string.IsNullOrEmpty(x.SuspenderHalfTime))?.SuspenderHalfTime;
 
             item.IsExistEarlyBetTypes = ticketInfo.Exists(x => x.IsExistEarlyBetTypes);
             item.IsRunningEarlyBetTypes = ticketInfo.Exists(x => x.IsRunningEarlyBetTypes);
