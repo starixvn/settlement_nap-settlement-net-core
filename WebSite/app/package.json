@@ -9,7 +9,7 @@
     "build": "ng build --configuration production",
     "start": "ng serve",
     "test": "jest --debug --no-cache badminton/components/calculate-actions.component.spec.ts",
-    "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand basketball/services/cash-out.service.spec.ts",
+    "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand badminton/components/calculate-actions.component.spec.ts",
     "test:watch": "jest --watch basketball/services/cash-out.service.spec.ts",
     "test:coverage": "jest --runInBand --coverage multi-sports/components/league.component.spec",
     "test-coverage": "jest --ci -u --coverage",
