@@ -1,4 +1,5 @@
-﻿using Fanex.Data.Repository;
+﻿using Fanex.Data;
+using Fanex.Data.Repository;
 
 namespace Settlement.Outright.Criteria;
 
@@ -8,7 +9,8 @@ public class UpdateDeadHeatSettingCriteria : NonQueryCommand
 
     public int AdminId { get; set; }
 
-    public bool DeadHeat { get; set; }
+    [SpParam(AllowNull = true)]
+    public bool? DeadHeat { get; set; }
 
     public override string GetSettingKey()
     {

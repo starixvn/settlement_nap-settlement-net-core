@@ -62,7 +62,7 @@ export class OutrightService {
         return this.httpRequestService.postJson<OutrightLog[]>(request, `${this.outrightApi}/get-log`, true)
     }
 
-    public updateDeatHeat(leagueId: number, deadHeat: boolean) {
+    public updateDeatHeat(leagueId: number, deadHeat: boolean | null) {
         const updateRequest = {
             leagueId,
             deadHeat
