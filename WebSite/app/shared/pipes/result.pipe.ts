@@ -6,7 +6,7 @@ import * as _ from 'lodash';
     standalone: true
 })
 export class ResultPipe implements PipeTransform {
-    public transform(result: string, isLeader = true) {
+    public transform(result: string, isLeader = true, resultStatusId = 0) {
         if(!isLeader) {
             return "-";
         }

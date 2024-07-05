@@ -12,6 +12,7 @@ import { Match } from "../models";
 import {
   BadmintonApiKeys,
   ResourcesIds,
+  TableTennisApiKeys,
   VolleyballApiKeys,
 } from "../constants";
 import { SettleQuery, SportTemplate } from "../../shared/models/sportsbook-sop";
@@ -55,9 +56,8 @@ export class RefundActionsComponent
   async getMatch(matchId: number): Promise<void> {
     this.initService();
     const sportType = Number(UrlHelper.getUrlParameter("sportType"));
-    this.apiKeys = sportType === SportType.tableTennis || sportType === SportType.volleyBall
-      ? VolleyballApiKeys
-      : BadmintonApiKeys;
+    this.getApiKeys(sportType);
+    
 
     const matchQuery = {
       matchId,
@@ -68,6 +68,23 @@ export class RefundActionsComponent
 
     this.match = (await this.aioService.getMatch(matchQuery)) as Match;
     this.init();
+  }
+
+  
+  private getApiKeys(sportType) {
+
+    if(sportType === SportType.tableTennis) {
+      this.apiKeys =  TableTennisApiKeys
+      return;
+    }
+
+    if(sportType === SportType.volleyBall) {
+      this.apiKeys =  VolleyballApiKeys
+      return;
+    }
+
+    
+    this.apiKeys =  BadmintonApiKeys;
   }
 
   public initService() {

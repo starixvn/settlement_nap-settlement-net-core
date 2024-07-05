@@ -36,7 +36,7 @@
         <tr>
           <td>{{ childMatch.matchId }}</td>
           <td class="away-team-name">{{ matchDetail.awayName }} ({{ childMatch.leagueName }})</td>
-          <td [ngClass]="getChildMatchesClass(childMatch)">{{ childMatch.awayValue | result }}</td>
+          <td [ngClass]="getChildMatchesClass(childMatch)">{{ childMatch.awayValue | result:isLeader }}</td>
         </tr>
       }
     </tbody>

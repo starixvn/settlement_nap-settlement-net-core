@@ -26,9 +26,9 @@ export class AppComponent extends AppBaseComponent implements OnInit {
     switch (pageType) {
       case PageType.ReCalculate:
         return CalculateActionsComponent;
-      case PageType.Refund:
+     case PageType.Refund:
         return RefundActionsComponent;
-      case PageType.EarlySettlement:
+       case PageType.EarlySettlement:
         return EarlySettlementComponent;
       default:
         throw new Error('Not implemented yet');
