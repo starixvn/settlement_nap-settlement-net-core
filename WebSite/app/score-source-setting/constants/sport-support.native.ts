@@ -13,6 +13,8 @@ export class Sport {
 export const sportSupport = {
     outsideSource: [new Sport(SportType.badminton, 'Badminton'), new Sport(SportType.basketBall, 'Basketball'),
                     new Sport(SportType.cricket, 'Cricket'), new Sport(SportType.eSports, 'E-sports'),
-                    new Sport(SportType.tennis, 'Tennis'), new Sport(SportType.volleyBall, 'Volleyball')],
+                    new Sport(SportType.tennis, 'Tennis'), 
+                    new Sport(SportType.volleyBall, 'Volleyball'),
+                    new Sport(SportType.tableTennis, 'Table Tennis')],
     gameTypes: [SportType.eSports]
 };

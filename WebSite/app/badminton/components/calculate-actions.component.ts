@@ -68,20 +68,26 @@ export class CalculateActionsComponent implements SportTemplate {
       settleType: "MNL"
     };
     this.match = await this.aioService.getMatch(matchQuery) as Match;
+
     this.isReadyMatch = this.match.matchDetail.playTime >= KickOffTime.playTime;
     this.cloneResultDetail();
     this.init();
   }
 
   private getApiKeys(sportType) {
+
+    if(sportType === SportType.tableTennis) {
+      this.apiKeys =  TableTennisApiKeys
+      return;
+    }
+
+    if(sportType === SportType.volleyBall) {
+      this.apiKeys =  VolleyballApiKeys
+      return;
+    }
+
     
-    const sportTypeToApiKeys = {
-      [SportType.tableTennis]: TableTennisApiKeys,
-      [SportType.volleyBall]: VolleyballApiKeys,
-      [sportType.badminton] : BadmintonApiKeys
-    };
-    
-    this.apiKeys = sportTypeToApiKeys[sportType];
+    this.apiKeys =  BadmintonApiKeys;
   }
 
   initService() {
@@ -111,7 +117,9 @@ export class CalculateActionsComponent implements SportTemplate {
     this.applyHedgeMatch = this.hedgeMatchDetail != null;
     this.permission = this.match.permission;
     this.match.resultDetails = this.badmintonService.getResultDetail(this.match.resultDetails);
-    this.verificationService.generateExternalScores(this.match, this.match.resultDetails, this.match.matchDetail.sportType, this.maxProviderCol);
+ 
+
+    this.verificationService.generateExternalScores(this.match, this.match.resultDetails, this.match.matchDetail.sportType, this.maxProviderCol);  
     this.resetHomeAway(this.noTotalPoints);
     this.enableUncalculate = this.enableUncalculateButton();
     this.disableScoreDirect = this.verificationService.isTicketOnGame(
