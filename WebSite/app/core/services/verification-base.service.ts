@@ -535,7 +535,6 @@ export class VerificationBaseService {
     public acceptCaseZero(orinalResult: GeneralResultDetail, result: ResultDetail) {
        return (result.awayValue === "0" && result.homeValue === "0" && _.isEmpty(orinalResult.homeValue) && _.isEmpty(orinalResult.awayValue));
     }
-
     public isValidTraderConfirmScore(result: ResultDetail) {
         const traderScore = result.externalScores.find((source) => source.sourceId === ScoreSourceType.trader);
 
@@ -543,5 +542,4 @@ export class VerificationBaseService {
             && !_.isEmpty(traderScore.homeValue) 
             && !_.isEmpty(traderScore.awayValue);
     }
-
 }
