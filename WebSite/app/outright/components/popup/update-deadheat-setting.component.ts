@@ -28,10 +28,12 @@ export class UpdateDeadheatSettingComponent implements OnInit {
   private messageBoxService = inject(MessageBoxService);
   private matDialog = inject(MatDialog);
   private dialogRef = inject(MatDialogRef<UpdateDeadheatSettingComponent>);
+  private blockUIService = inject(BlockUIService);
   outrightService = inject(OutrightService);
   expectedSetting: boolean | null;
   deadHeatOptions = DeadHeatOptions;
   leagueSettle: LeagueSettle;
+  blockUI = true;
   readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: { deadHeatSetting: boolean, leagueId: number, sportType: number }) {
@@ -41,13 +43,10 @@ export class UpdateDeadheatSettingComponent implements OnInit {
     this.dialogRef.disableClose = true;
   }
 
-  async ngOnInit() {
+   async ngOnInit() {
+    this.blockUIService.blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
     this.expectedSetting = this.data.deadHeatSetting;
     this.toastrService.overlayContainer = this.toastContainer;
-    await this.getMatches();
-  }
-
-  async getMatches() {
     this.leagueSettle = await this.outrightService.getMatches(this.data.leagueId, this.data.sportType, StatusId.runningAndCompleted);
   }
 
@@ -58,7 +57,7 @@ export class UpdateDeadheatSettingComponent implements OnInit {
   updateSetting() {
     this.clearError();
     let teamWonQuantity = this.leagueSettle.teams.filter(team => team.status.toLowerCase() === 'won').length;
-    if (this.expectedSetting != null && teamWonQuantity > 1) {
+    if (teamWonQuantity > 1) {
       this.toastrService.error(Language.Outright.multiTeamWon);
       return;
     }

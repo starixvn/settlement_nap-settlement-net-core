@@ -16,6 +16,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UncalculatePopupComponent } from '../popup/uncalculate-popup.component';
 import { CalculatePopupComponent } from '../popup/calculate-popup.component';
 import { of } from 'rxjs';
+import { ToastrModule } from 'ngx-toastr';
 
 describe('LeagueTeamComponent', () => {
     let component: LeagueTeamComponent;
@@ -45,7 +46,11 @@ describe('LeagueTeamComponent', () => {
             eventDate: '',
             dateTime: dateTime,
             oddsStatus: 'lost',
-            statusClass: ''
+            statusClass: '',
+            totalCal: 0,
+            totalRunning: 0,
+            totalHide: 0,
+            originalStatus: ''
         }],
         collapsed: false,
         eventDate: '',
@@ -60,7 +65,8 @@ describe('LeagueTeamComponent', () => {
                 DatepickerComponent,
                 HttpClientModule,
                 DynamicHeightDirective,
-                LeagueTeamComponent
+                LeagueTeamComponent,
+                ToastrModule.forRoot()
             ],
             providers: [OutrightService,
                 VerifyDateService,
@@ -95,7 +101,7 @@ describe('LeagueTeamComponent', () => {
     });
 
     it('should open popup called when call function viewLog', () => {
-        const data = { "data": { "leagueId": 1, "matchCode": "1", "matchId": null }, "hasBackdrop": true, "height": "650px", "panelClass": "log-modalbox", "width": "1000px" }
+        const data = { "data": { "leagueId": 1, "matchCode": "1", "matchId": null }, "hasBackdrop": true, "height": "650px", "panelClass": "log-modalbox", "width": "1200px" }
         component.viewLog(leagueMatch);
 
         expect(dialog.open).toHaveBeenCalledWith(LogPopupComponent, data);
@@ -104,7 +110,7 @@ describe('LeagueTeamComponent', () => {
 
     describe('calculatePopup', () => {
         it('should open popup called when call function unCalculatePopup', () => {
-            const data = { "data": { "leagueId": 1, "sportType": 1 }, "disableClose": true, "hasBackdrop": true, "height": "500px", "width": "800px" }
+            const data = { "data": { "leagueId": 1, "sportType": 1 }, "disableClose": true, "hasBackdrop": true, "height": "550px", "width": "800px" }
             component.uncalculatePopup(leagueMatch);
 
             expect(dialog.open).toHaveBeenCalledWith(UncalculatePopupComponent, data);

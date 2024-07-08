@@ -67,10 +67,10 @@ export class CalculatePopupComponent implements OnInit {
         this.dialogRef.disableClose = true;
     }
 
-    ngOnInit(): void {
+    async ngOnInit(): Promise<void> {
         this.blockUIService.blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
         this.toastrService.overlayContainer = this.toastContainer;
-        this.getMatches();
+        await this.getMatches();
         this.ticketsStatusSelect.items = this.calculateService.renderTicketStatus();
     }
 

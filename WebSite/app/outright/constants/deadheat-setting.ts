@@ -7,7 +7,7 @@ export const DeadHeatSettings = {
 export const DeadHeatOptions: DeadHeatOption[] = [
     {
         name: "Not Set",
-        description: "Cannot calculate any team as \"Won\".",
+        description: "Can only calculate 1 team as \"Won\".",
         value: null
     },
     {

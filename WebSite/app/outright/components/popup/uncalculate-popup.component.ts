@@ -24,26 +24,26 @@ export class UncalculatePopupComponent implements OnInit {
   @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
   private outrightService: OutrightService;
   private toastrService: ToastrService;
-  public dialogRef: MatDialogRef<UncalculatePopupComponent>;
-  public teams: Team[];
-  public leagueSettle: LeagueSettle;
-  public blockUI = true;
-  public teamJustSettled = "";
-  public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
+   dialogRef: MatDialogRef<UncalculatePopupComponent>;
+   teams: Team[];
+   leagueSettle: LeagueSettle;
+   blockUI = true;
+   teamJustSettled = "";
+   readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
   constructor(private readonly injector: Injector,
-    @Inject(MAT_DIALOG_DATA) public data: { leagueId: number, sportType: number }) {
+    @Inject(MAT_DIALOG_DATA)  public data: { leagueId: number, sportType: number }) {
     this.injector.get(MatDialog).closeAll();
     this.confirmationDialogMessage.title = Language.confirmationBox;
     this.dialogRef = this.injector.get(MatDialogRef<UncalculatePopupComponent>);
     this.dialogRef.disableClose = true;
   }
 
-  ngOnInit(): void {
+  async ngOnInit(){
     this.injector.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
     this.toastrService = this.injector.get(ToastrService);
     this.outrightService = this.injector.get(OutrightService);
     this.toastrService.overlayContainer = this.toastContainer;
-    this.getMatches();
+    await this.getMatches();
   }
 
   private async getMatches() {
@@ -51,11 +51,11 @@ export class UncalculatePopupComponent implements OnInit {
     this.teams = this.leagueSettle.teams;
   }
 
-  public clearError() {
+   clearError() {
     this.toastrService.clear();
   };
 
-  public close() {
+   close() {
     if (_.isEmpty(this.teamJustSettled)) {
       this.dialogRef.close();
     } else {
@@ -63,11 +63,11 @@ export class UncalculatePopupComponent implements OnInit {
     }
   }
 
-  public disableUncalculate() {
+   disableUncalculate() {
     return _.isEmpty(_.filter(this.teams, team => team.selected)) || !this.leagueSettle.permission.canUncalculateOutright;
   }
 
-  public async uncalculate() {
+   async uncalculate() {
     this.clearError();
     this.confirmationDialogMessage.message = Language.Outright.confirmUncalculate;
     this.injector.get(MessageBoxService).confirm(this.confirmationDialogMessage, async () => {

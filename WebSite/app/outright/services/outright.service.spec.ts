@@ -1,7 +1,6 @@
 import { HttpClientModule } from "@angular/common/http";
 import { NO_ERRORS_SCHEMA } from "@angular/core";
 import { getTestBed, TestBed } from "@angular/core/testing";
-import { LeagueRequest } from "../models/league-request.model";
 import { BlockUIService, HttpRequestService, MessageBoxService } from "../../shared/services";
 import { OutrightService } from "./outright.service";
 import { LogRequest } from "outright/models/log-request.model";
@@ -32,22 +31,8 @@ describe('Outright Service under TEST', () => {
         expect(outrightService).toBeTruthy();
     });
 
-    it(`getLeague - Call right Url and param`, () => {
-        const url = `outright/api/get-league`;
-        const request: LeagueRequest = {
-            sportType: 0,
-            fromDate: '',
-            toDate: '',
-        };
-
-        jest.spyOn(httpRequestService, 'postJson');
-        outrightService.getLeagues(request);
-
-        expect(httpRequestService.postJson).toHaveBeenCalledWith(request, url);
-    });
-
     it(`getFilterView - Call right Url `, () => {
-        const url = `outright/api/get-filter-view`;
+        const url = `/api/outright/get-filter-view`;
 
 
         jest.spyOn(httpRequestService, 'getJson');
@@ -58,7 +43,7 @@ describe('Outright Service under TEST', () => {
 
 
     it(`getMatches - Call right Url and param`, () => {
-        const url = `outright/api/get-league-info`;
+        const url = `/api/outright/get-league-info`;
         const query = {
             leagueId: 1,
             statusId: 1,
@@ -73,7 +58,7 @@ describe('Outright Service under TEST', () => {
 
 
     it(`getLogs - Call right Url and param`, () => {
-        const url = `outright/api/get-log`;
+        const url = `/api/outright/get-log`;
         const request: LogRequest = {
             matchCode: '',
             leagueId: 1,
@@ -84,6 +69,6 @@ describe('Outright Service under TEST', () => {
         jest.spyOn(httpRequestService, 'postJson');
         outrightService.getLogs(request);
 
-        expect(httpRequestService.postJson).toHaveBeenCalledWith(request, url);
+        expect(httpRequestService.postJson).toHaveBeenCalledWith(request, url, true);
     });
 });

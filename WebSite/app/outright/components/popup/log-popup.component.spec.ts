@@ -72,7 +72,7 @@ describe('LogPopupComponent', () => {
             teamId: 2,
             leagueId: 2,
             leagueName: 'ab',
-            outrightDetails: [
+            outrightLogDetails: [
                 {
                     logId: 1,
                     logDate: '2023-02-13T02:07:17.767',
@@ -111,7 +111,7 @@ describe('LogPopupComponent', () => {
             teamId: 2,
             leagueId: 2,
             leagueName: 'ab',
-            outrightDetails: [
+            outrightLogDetails: [
                 {
                     logId: 1,
                     logDate: '2023-02-13T02:07:17.767',

@@ -5,34 +5,37 @@
     </label>
     <button type="button" class="close dialog-close" (click)="close()" tabindex="8">X</button>
 </div>
-<div>
+<div [ngClass]="{ processing: blockUI }">
+    <div *ngIf="blockUI" class="loading"></div>
     <span toastContainer></span>
-    <table class="table-setting">
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Dead Heat Option</th>
-                <th>State</th>
-                <th>Description</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let option of deadHeatOptions; let i = index">
-                <td class="order">{{i + 1}}</td>
-                <td>{{option.name}}</td>
-                <td class="state">
-                    <input (click)="clearError()" type="radio" name="state" [value]="option.value"
-                        [(ngModel)]="expectedSetting" />
-                </td>
-                <td>{{option.description}}</td>
-            </tr>
-        </tbody>
-    </table>
+    <div *ngIf="leagueSettle">
+        <table class="table-setting">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Dead Heat Option</th>
+                    <th>State</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let option of deadHeatOptions; let i = index">
+                    <td class="order">{{i + 1}}</td>
+                    <td>{{option.name}}</td>
+                    <td class="state">
+                        <input (click)="clearError()" type="radio" name="state" [value]="option.value"
+                            [(ngModel)]="expectedSetting" />
+                    </td>
+                    <td>{{option.description}}</td>
+                </tr>
+            </tbody>
+        </table>
 
-    <div class="line"></div>
-    <div class="button-deadheat">
-        <button class="button" (click)="updateSetting()">Submit</button>
-        <button class="button" (click)="close()">Cancel</button>
+        <div class="line"></div>
+        <div class="button-deadheat">
+            <button class="button" (click)="updateSetting()">Submit</button>
+            <button class="button" (click)="close()">Cancel</button>
+        </div>
     </div>
 
 </div>

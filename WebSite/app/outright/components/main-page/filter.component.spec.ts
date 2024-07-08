@@ -1,6 +1,6 @@
 import { CommonModule, DatePipe } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
-import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, flush, TestBed, tick } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { OutrightService } from '../../services';
@@ -66,14 +66,13 @@ describe('FilterComponent', () => {
 
     beforeEach(() => {
         fixture = TestBed.createComponent(FilterComponent);
-        component = fixture.componentInstance;
-
         outrightService = fixture.debugElement.injector.get(OutrightService);
         verifyDateService = fixture.debugElement.injector.get(VerifyDateService);
         messageBoxService = fixture.debugElement.injector.get(MessageBoxService);
         jest.spyOn(messageBoxService, 'alert');
 
         fixture.detectChanges();
+        component = fixture.componentInstance;
     });
 
     it('should create', () => {
@@ -91,7 +90,7 @@ describe('FilterComponent', () => {
             const toDate: NgbDateStruct = { day: date.getUTCDay() + 1, month: date.getUTCMonth(), year: date.getUTCFullYear() };
 
             const sportLeague: SportLeagueFilter = { leagues: [league], sports: [sport] };
-            outrightService.getSportLeague = jest.fn().mockReturnValue(Promise.resolve(sportLeague));
+            outrightService.getSportLeague = jest.fn().mockResolvedValue(sportLeague);
             component.toDate = toDate;
 
             component.onSelectFromDate(fromDate);
@@ -105,7 +104,7 @@ describe('FilterComponent', () => {
             const toDate: NgbDateStruct = { day: date.getUTCDay() + 1, month: date.getUTCMonth(), year: date.getUTCFullYear() };
 
             const sportLeague: SportLeagueFilter = { leagues: [league], sports: [sport] };
-            outrightService.getSportLeague = jest.fn().mockReturnValue(Promise.resolve(sportLeague));
+            outrightService.getSportLeague = jest.fn().mockResolvedValue(sportLeague);
             component.fromDate = fromDate;
 
             component.onSelectToDate(toDate);
@@ -179,9 +178,9 @@ describe('FilterComponent', () => {
             outrightService.filter = jest.fn();
 
 
-            component.search();
-
-            expect(verifyDateService.validDate).not.toHaveBeenCalled();
+            component.search().then(() => {
+                expect(verifyDateService.validDate).not.toHaveBeenCalled();
+            });
         });
 
         it('should show error message when not select any sport.', () => {
