@@ -29,6 +29,8 @@ public class ChildMatchModel
         set => eventStatus = value;
     }
 
+    public string NewEventStatus { get; set; }
+
     public string BetStatus { get; set; }
 
     public string HomeValue { get; set; }

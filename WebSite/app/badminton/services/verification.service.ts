@@ -46,12 +46,21 @@ export class VerificationService extends VerificationBaseService  {
 
         return "";
     }
-
-     isChildMatchNotConsistent(resultDetails: ResultDetail[], childMatch: ChildMatch) {
-        const resultRelated = _.find(resultDetails, item => item.resourceId === childMatch.relatedResourceId);
-        const homeValue = _.isEmpty(resultRelated?.homeValue) ? null : resultRelated.homeValue;
-        const awayValue = _.isEmpty(resultRelated?.awayValue) ? null : resultRelated.awayValue;
-        return !resultRelated || !_.isEqual(homeValue, childMatch.homeValue) || !_.isEqual(awayValue, childMatch.awayValue);
+    public isChildMatchNotConsistent(resultDetails: ResultDetail[], childMatch: ChildMatch): boolean {
+        const resultRelated = resultDetails.find(item => item.resourceId === childMatch.relatedResourceId);
+    
+        if (!resultRelated) {
+            return true;
+        }
+    
+        const homeValue = resultRelated.homeValue || null;
+        const awayValue = resultRelated.awayValue || null;
+    
+        if (homeValue === null && awayValue === null) {
+            return false;
+        }
+    
+        return homeValue !== childMatch.homeValue || awayValue !== childMatch.awayValue;
     }
 
      verifyConsistentChildMatch(resultDetails: ResultDetail[], childMatch: ChildMatch[]) {

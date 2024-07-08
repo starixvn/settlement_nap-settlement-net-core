@@ -22,7 +22,7 @@ public class ChildMatchService : IMapperService
     private static IEnumerable<ChildMatchModel> VerifyChildMatches(IEnumerable<ChildMatchModel> childMatches, IEnumerable<ResultDetail> resultDetails)
     {
         var resourceIds = resultDetails.Select(x => x.ResourceId).ToArray();
-        string[] totalResourceIds = [.. resourceIds,totalPoints];
+        string[] totalResourceIds = [.. resourceIds, totalPoints];
 
         var newChildMatches = childMatches
             .Where(child => totalResourceIds.Contains(child.RelatedResourceId))
@@ -30,11 +30,11 @@ public class ChildMatchService : IMapperService
 
         foreach (var item in newChildMatches)
         {
-            if (item.SettlementStatusId == SettlementStatus.Refund)
-            {
-                item.HomeValue = "R";
-                item.AwayValue = "R";
-            }
+            bool isRefund = item.SettlementStatusId == SettlementStatus.Refund;
+
+            item.HomeValue = isRefund ? "R" : item.HomeValue;
+            item.AwayValue = isRefund ? "R" : item.AwayValue;
+            item.NewEventStatus = isRefund ? "Refund" : item.EventStatus;
         }
 
         return newChildMatches;

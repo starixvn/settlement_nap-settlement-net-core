@@ -133,7 +133,7 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
     this.match.originalResultDetail = _.cloneDeep(this.match.resultDetails);
     this.autoFillScoreOnLoad(this.match.resultDetails);
     this.generateOutsideTotalPoints();
-    this.checkConsistent();
+    this.checkChildrenMatchesConsistent();
   }
 
   get noTotalPoints(): ResultDetail[] {
@@ -542,7 +542,7 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
       this.verificationService.sumTotalResultWin(maps, ResourcesIds.GameOne, this.totalGames);
       this.verificationService.sumTotalScores(maps, ResourcesIds.GameOne, this.totalPoints);
     }
-    this.checkConsistent();
+    this.checkChildrenMatchesConsistent();
     this.totalGames.isScoreMismatched = this.verificationService.isMismatchedWarning(this.totalGames);
     this.totalPoints.isScoreMismatched = this.verificationService.isMismatchedWarning(this.totalPoints);
   }
@@ -633,7 +633,7 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
     this.match.resultDetails.forEach((map) => {
       map.checked = this.match.isScoreDirect && _.isEqual(map.resourceId, ResourcesIds.totalGames);
     });
-    this.checkConsistent();
+    this.checkChildrenMatchesConsistent();
     this.enableUncalculate = this.enableUncalculateButton();
   }
 
@@ -653,7 +653,7 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
     }
   }
 
-  private checkConsistent() {
+  private checkChildrenMatchesConsistent() {
     this.match.childMatches.forEach(item =>
       item.isNotConsistent = this.verificationService.isChildMatchNotConsistent(this.match.resultDetails, item)
     );

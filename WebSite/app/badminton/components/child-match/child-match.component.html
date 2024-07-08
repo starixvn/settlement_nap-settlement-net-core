@@ -24,7 +24,7 @@
           <td>{{ childMatch.matchCode }}</td>
           <td class="home-team-name">{{matchDetail.homeName }} ({{ childMatch.leagueName }})</td>
           <td [ngClass]="getChildMatchesClass(childMatch)">{{ childMatch.homeValue | scoreChildMatch:childMatch:isLeader }}</td>
-          <td rowspan="2">{{ childMatch.eventStatus }}</td>
+          <td rowspan="2">{{ childMatch.newEventStatus }}</td>
           <td rowspan="2" [style]="childMatch.isHold ? 'background-color: #ffff00': ''">{{ childMatch.isHold ? "YES" : "NO" }}</td>
          @if(showAction) {
           <td rowspan="2">
