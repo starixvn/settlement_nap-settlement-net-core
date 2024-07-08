@@ -6,20 +6,27 @@ namespace Settlement.Sportsbook.Aio.Services.TableTennis;
 
 public class ChildMatchService : IMapperService
 {
+    private const string totalPoints = "01";
+
     public void Decorate(dynamic obj)
     {
         if (obj is Tuple<List<ChildMatchModel>, List<ResultDetail>> tuple)
         {
-            var childMatchAfterFilter = VerifyChildMatches(tuple.Item1);
+            var childMatchAfterFilter = VerifyChildMatches(tuple.Item1, tuple.Item2);
 
             tuple.Item1.Clear();
             tuple.Item1.AddRange(childMatchAfterFilter);
         }
     }
 
-    private static IEnumerable<ChildMatchModel> VerifyChildMatches(IEnumerable<ChildMatchModel> childMatches)
+    private static IEnumerable<ChildMatchModel> VerifyChildMatches(IEnumerable<ChildMatchModel> childMatches, IEnumerable<ResultDetail> resultDetails)
     {
-        var newChildMatches = childMatches.OrderBy(child => child.ChildMatchType).ToList();
+        var resourceIds = resultDetails.Select(x => x.ResourceId).ToArray();
+        string[] totalResourceIds = [.. resourceIds,totalPoints];
+
+        var newChildMatches = childMatches
+            .Where(child => totalResourceIds.Contains(child.RelatedResourceId))
+            .OrderBy(child => child.ChildMatchType).ToList();
 
         foreach (var item in newChildMatches)
         {

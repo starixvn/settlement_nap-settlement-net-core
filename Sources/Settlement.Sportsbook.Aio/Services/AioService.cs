@@ -319,14 +319,14 @@ public class AioServiceImp(
         };
     }
 
-    private async Task<List<ChildMatchModel>> GetChildMatch(List<ResultDetail> resultDetail, GetMatchRequest request, string apiKey)
+    private async Task<List<ChildMatchModel>> GetChildMatch(List<ResultDetail> resultDetails, GetMatchRequest request, string apiKey)
     {
         var childMatchMapperService = mapperFactory.GetMapperService($"{apiKey}-{ApiKeyConstant.ChildMatchKey}");
         if (childMatchMapperService != null)
         {
             var getChildMatchCriteria = validateApiKeyService.CriteriaName(request, $"{apiKey}-{ApiKeyConstant.ChildMatchKey}");
             var childMatchList = await repository.FetchAsync<ChildMatchModel>(getChildMatchCriteria);
-            var childMatchTuple = new Tuple<List<ChildMatchModel>, List<ResultDetail>>(childMatchList.ToList(), resultDetail);
+            var childMatchTuple = new Tuple<List<ChildMatchModel>, List<ResultDetail>>(childMatchList.ToList(), resultDetails);
             childMatchMapperService.Decorate(childMatchTuple);
             return childMatchTuple.Item1.ToList();
         }

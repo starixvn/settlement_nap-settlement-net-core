@@ -141,6 +141,7 @@ export class RefundActionsComponent
 
   public async doRefund() {
     const query = this.generateRefundQuery(this.apiKeys.Settle);
+    query.isSettleRelated = this.isSettleRelated;
     query.childMatchIds = this.getChildrenMatch();
     const result = await this.aioService.push(query);
 

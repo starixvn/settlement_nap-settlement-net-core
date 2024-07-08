@@ -148,6 +148,6 @@ public static class SportGroup
     public static readonly int[] SOP =
     [
         SportType.BasketBall, SportType.Badminton, SportType.VolleyBall,
-        SportType.ESports, SportType.Cricket, SportType.Tennis
+        SportType.ESports, SportType.Cricket, SportType.Tennis, SportType.TableTennis,
     ];
 }
