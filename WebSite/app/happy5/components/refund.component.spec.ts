@@ -1,6 +1,7 @@
-import { TestBed, waitForAsync, ComponentFixture, fakeAsync, tick } from '@angular/core/testing';
+import { TestBed, waitForAsync, ComponentFixture, fakeAsync, tick,  flush } from '@angular/core/testing';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { RefundComponent } from './refund.component';
@@ -8,10 +9,8 @@ import { Ball, MatchDetail } from '../models';
 import * as _ from 'lodash';
 import { of } from 'rxjs';
 import { QueryService } from '../services';
-import {
-    ModalDialogComponent,
-    ModalContentDialogComponent,
-} from '../../shared/components';
+import { ModalDialogComponent } from "../../shared/components/modal-dialog/modal-dialog.component";
+import { ModalContentDialogComponent } from "../../shared/components/modal-dialog/modal-content-dialog.component";
 import {
     HttpRequestService,
     BlockUIService,
@@ -25,7 +24,6 @@ describe('Refund Component', () => {
     let toastrService: ToastrService;
     let component: RefundComponent;
     let queryService: QueryService;
-    let messageBoxService: MessageBoxService;
     let fixture: ComponentFixture<RefundComponent>;
     const balls: Ball[] = [];
     balls.push(new Ball(12345, 1, 9));
@@ -55,7 +53,7 @@ describe('Refund Component', () => {
             declarations: [
                 RefundComponent,
                 ModalDialogComponent,
-                ModalContentDialogComponent,
+                ModalContentDialogComponent
             ],
             providers: [
                 QueryService,
@@ -72,6 +70,8 @@ describe('Refund Component', () => {
                 FormsModule,
                 HttpClientModule,
                 NgbModule,
+                BrowserAnimationsModule,
+                NoopAnimationsModule,
                 ToastNoAnimationModule.forRoot(),
                 ToastContainerModule,
                 ToastrModule.forRoot()
@@ -85,9 +85,7 @@ describe('Refund Component', () => {
             component.balls = balls;
             queryService = fixture.debugElement.injector.get(QueryService);
             toastrService = fixture.debugElement.injector.get(ToastrService);
-            spyOn(toastrService, 'clear');
-
-            messageBoxService = fixture.debugElement.injector.get(MessageBoxService);
+            jest.spyOn(toastrService, 'clear');
         });
     }));
 
@@ -96,27 +94,26 @@ describe('Refund Component', () => {
     });
 
     it('should call close function when click close popup', () => {
-        spyOn(component.dialogRef, 'close').and.callThrough();
+        jest.spyOn(component.dialogRef, 'close').mockImplementation();
         component.closePopup();
         expect(component.dialogRef.close).toHaveBeenCalled();
     });
 
     describe('refund', () => {
         it('should set error message when result is unsuccessful', fakeAsync(() => {
-            spyOn(queryService, 'settle').and.returnValue(of(unSuccessfulResult));
-            spyOn(toastrService, 'error');
+            jest.spyOn(queryService, 'settle').mockReturnValue(of(unSuccessfulResult));
+            jest.spyOn(toastrService, 'error');
             component.refund();
-            tick();
             const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
             buttonYes.click();
-            tick();
-
+            tick(500);
             expect(toastrService.error).toHaveBeenCalledWith(unSuccessfulResult.errMsg);
+            flush();
         }));
 
         it('should not error message when result is successful', fakeAsync(() => {
-            spyOn(queryService, 'settle').and.returnValue(of(successfulResult));
-            spyOn(toastrService, 'error');
+            jest.spyOn(queryService, 'settle').mockReturnValue(of(successfulResult));
+            jest.spyOn(toastrService, 'error');
 
             component.refund();
             const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;

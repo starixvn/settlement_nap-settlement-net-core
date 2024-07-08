@@ -1,6 +1,7 @@
-import { TestBed, waitForAsync, ComponentFixture, fakeAsync, tick } from '@angular/core/testing';
+import { TestBed, waitForAsync, ComponentFixture, fakeAsync, tick, flush } from '@angular/core/testing';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { ReCalculationComponent } from './recalculation.component';
@@ -8,10 +9,8 @@ import { Ball, MatchDetail } from '../models';
 import * as _ from 'lodash';
 import { of } from 'rxjs';
 import { QueryService, VerifyBallService } from '../services';
-import {
-    ModalDialogComponent,
-    ModalContentDialogComponent,
-} from '../../shared/components';
+import { ModalDialogComponent } from "../../shared/components/modal-dialog/modal-dialog.component";
+import { ModalContentDialogComponent } from "../../shared/components/modal-dialog/modal-content-dialog.component";
 import {
     HttpRequestService,
     BlockUIService,
@@ -73,6 +72,8 @@ describe('Recalculation Component', () => {
                 { provide: MAT_DIALOG_DATA, useValue: match }
             ],
             imports: [
+                BrowserAnimationsModule,
+                NoopAnimationsModule,
                 FormsModule,
                 HttpClientModule,
                 NgbModule,
@@ -92,7 +93,7 @@ describe('Recalculation Component', () => {
             messageBoxService = fixture.debugElement.injector.get(MessageBoxService);
             modalService = fixture.debugElement.injector.get(NgbModal);
             toastrService = fixture.debugElement.injector.get(ToastrService);
-            spyOn(toastrService, 'clear');
+            jest.spyOn(toastrService, 'clear');
         });
     }));
 
@@ -102,39 +103,45 @@ describe('Recalculation Component', () => {
 
     describe('reCalculate', () => {
         it('should error message when list are existed numberBall empty', fakeAsync(() => {
-            spyOn(verifyBallService, 'emptyBall').and.returnValue(balls);
+            const balls = { matchId : null , seq : null };
+            
+            jest.spyOn(verifyBallService, 'emptyBall').mockReturnValue(balls);
 
-            spyOn(toastrService, 'error');
+            jest.spyOn(toastrService, 'error');
             component.reCalculate();
-
             expect(toastrService.error).toHaveBeenCalledWith(Language.gaming.emptyBall);
+            flush();
         }));
 
         it('should error message when numberball is out of range', fakeAsync(() => {
-            spyOn(verifyBallService, 'outOfRangeBall').and.returnValue(balls);
+            const balls = { matchId : null , seq : null };
 
-            spyOn(toastrService, 'error');
+            jest.spyOn(verifyBallService, 'outOfRangeBall').mockReturnValue(balls);
+
+            jest.spyOn(toastrService, 'error');
             component.reCalculate();
 
             const expectedMessage = Language.gaming.outOfRangeBall.replace(/MIN/g, "1").replace(/MAX/g, "20");
             expect(toastrService.error).toHaveBeenCalledWith(expectedMessage);
+            flush();
         }));
 
         it('should error message when numberball is duplicated ball', fakeAsync(() => {
-            spyOn(verifyBallService, 'isDuplicateBall').and.returnValue(true);
+            jest.spyOn(verifyBallService, 'isDuplicateBall').mockReturnValue(true);
 
-            spyOn(toastrService, 'error');
+            jest.spyOn(toastrService, 'error');
             component.reCalculate();
 
             const expectedMessage = Language.gaming.duplicationBalls;
             expect(toastrService.error).toHaveBeenCalledWith(expectedMessage);
+            flush();
         }));
 
         it('should not error message when result is successful', fakeAsync(() => {
-            spyOn(queryService, 'settle').and.returnValue(of(successfulResult));
-            spyOn(component.dialogRef, 'close').and.callThrough();
-            spyOn(queryService, 'getBallsByMatchId').and.returnValue(of(balls));
-            spyOn(toastrService, 'error');
+            jest.spyOn(queryService, 'settle').mockReturnValue(of(successfulResult));
+            jest.spyOn(component.dialogRef, 'close').mockImplementation();
+            jest.spyOn(queryService, 'getBallsByMatchId').mockReturnValue(of(balls));
+            jest.spyOn(toastrService, 'error');
 
             component.reCalculate();
             tick();
@@ -143,13 +150,14 @@ describe('Recalculation Component', () => {
             tick();
 
             expect(toastrService.error).not.toHaveBeenCalled();
+            flush();
         }));
 
         it('should error message when result is unsuccessful', fakeAsync(() => {
-            spyOn(queryService, 'settle').and.returnValue(of(unSuccessfulResult));
-            spyOn(component.dialogRef, 'close').and.callThrough();
-            spyOn(queryService, 'getBallsByMatchId').and.returnValue(of(balls));
-            spyOn(toastrService, 'error');
+            jest.spyOn(queryService, 'settle').mockReturnValue(of(unSuccessfulResult));
+            jest.spyOn(component.dialogRef, 'close').mockImplementation();
+            jest.spyOn(queryService, 'getBallsByMatchId').mockReturnValue(of(balls));
+            jest.spyOn(toastrService, 'error');
 
             component.reCalculate();
             tick();
@@ -158,6 +166,7 @@ describe('Recalculation Component', () => {
             tick();
 
             expect(toastrService.error).toHaveBeenCalledWith(unSuccessfulResult.errMsg);
+            flush();
         }));
     });
 

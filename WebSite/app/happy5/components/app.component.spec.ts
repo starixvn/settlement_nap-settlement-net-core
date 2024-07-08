@@ -1,6 +1,7 @@
 import { TestBed, waitForAsync, ComponentFixture, tick, fakeAsync } from '@angular/core/testing';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { of } from 'rxjs';
 import { HttpClientModule } from '@angular/common/http';
 import { BlockUIService, HttpRequestService, MessageBoxService, ReCheckInService, VerifyDateService } from '../../shared/services';
 import { BrowserModule } from '@angular/platform-browser';
@@ -13,7 +14,7 @@ import {
 } from './index';
 import {
     DatepickerComponent,
-} from '../../shared/components';
+} from '../../shared/components/date-picker/date-picker.component';
 import { QueryService } from '../services';
 import { HappyFive } from '../models';
 describe('Component: App', () => {
@@ -26,7 +27,6 @@ describe('Component: App', () => {
                 AppComponent,
                 FilterComponent,
                 MatchesComponent,
-                DatepickerComponent,
                 ReCalculationComponent,
                 RefundComponent
             ],
@@ -39,6 +39,7 @@ describe('Component: App', () => {
                 QueryService,
             ],
             imports: [
+                DatepickerComponent,
                 BrowserModule,
                 FormsModule,
                 ReactiveFormsModule,
@@ -59,7 +60,7 @@ describe('Component: App', () => {
     }));
 
     it('should call reCheckin function from re-checkin service.', fakeAsync(() => {
-        const spy = spyOn(reCheckInService, 'reCheckin');
+        const spy = jest.spyOn(reCheckInService, 'reCheckin').mockReturnValue();
         component.ngOnInit();
         tick(60000);
         component.ngOnDestroy();
