@@ -1,7 +1,7 @@
 import { CalculateMatchDetailComponent } from './calculate-match-detail.component';
 import { CalculateCommonModule } from './../../shared/modules/calculate-common.module';
 import { BlockUIService } from './../../shared/services/block-ui.service';
-import { Component, ViewChild, Injector } from '@angular/core';
+import { Component, ViewChild, Injector, OnInit } from '@angular/core';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import * as _ from 'lodash';
 import { MessageBoxService, AioService, IntervalCalculationService } from '../../shared/services';
@@ -25,9 +25,11 @@ import { ChildMatchComponent } from './child-match/child-match.component';
   imports: [CalculateCommonModule, ResultPipe, ResourceNameByIdPipe, CalculateMatchDetailComponent, ChildMatchComponent],
   providers: [BadmintonService, VerificationService, IntervalCalculationService]
 })
-export class CalculateActionsComponent implements SportTemplate {
+export class CalculateActionsComponent implements SportTemplate, OnInit {
 
-  @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
+  @ViewChild(ToastContainerDirective, { static: true }) 
+  toastContainer: ToastContainerDirective;
+
   private aioService: AioService;
   private messageBoxService: MessageBoxService;
   private badmintonService: BadmintonService;
@@ -53,6 +55,9 @@ export class CalculateActionsComponent implements SportTemplate {
 
   constructor(private readonly injector: Injector) {
     this.confirmationDialogMessage.title = Language.confirmationBox;
+  }
+  ngOnInit(): void {
+    this.toastrService.overlayContainer = this.toastContainer;
   }
 
   async getMatch(matchId: number) {
@@ -97,7 +102,7 @@ export class CalculateActionsComponent implements SportTemplate {
     this.verificationService = this.injector.get(VerificationService);
     this.toastrService = this.injector.get(ToastrService);
     this.injector.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
-    this.toastrService.overlayContainer = this.toastContainer;
+
   }
 
   private cloneResultDetail() {

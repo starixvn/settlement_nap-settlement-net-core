@@ -38,6 +38,7 @@ public class ChildMatchModel
     public int ChildMatchType { get; set; }
 
     public int ResultStatusId { get; set; }
+    public int SettlementStatusId { get; set; }
 
     public byte SettlementStatus { get; set; }
 

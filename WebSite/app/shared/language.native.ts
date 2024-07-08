@@ -314,6 +314,6 @@
   },
   TieBreakInconsistency:	"Cannot proceed due to Set 3 score is not consistent with match type (Tie-Break)",
   childMatchTennisInfo: '- Xth Set Game Winner: refund not played matches.',
-  childMatchTabbleTennisInfo: 'Matches List (Xth Set Winner, Points Handicap). Actions on corresponding matches Calculate played matches.',
-  chidMatchRefundTabbleTennisInfo: 'Refund related child-match: Xth Set Winner, Points Handicap.'
+  childMatchTabbleTennisInfo: 'Matches List: <br/> - Xth Set Winner. <br/> - Points Handicap.<br/> Actions on corresponding matches: <br/> - Calculate played matches.',
+  chidMatchRefundTabbleTennisInfo: 'Refund related child-match: <br/> - Xth Set Winner.<br/> - Points Handicap.'
 };

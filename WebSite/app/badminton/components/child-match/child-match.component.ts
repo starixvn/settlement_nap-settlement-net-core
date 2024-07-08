@@ -4,14 +4,14 @@ import { MatchDetail } from "../../models";
 import { ResultStatusId } from "../../../shared/constants";
 import * as _ from 'lodash';
 import { NgClass } from "@angular/common";
-import { ResultPipe } from "../../../shared/pipes/result.pipe";
 import { FormsModule } from "@angular/forms";
+import { ScoreChildMatchPipe } from "../../pipes/score-child-match.pipe";
 
 @Component({
   selector: 'tb-child-match',
   templateUrl: './child-match.component.html',
   standalone: true,
-  imports: [NgClass,ResultPipe,FormsModule]
+  imports: [NgClass,ScoreChildMatchPipe,FormsModule]
 })
 export class ChildMatchComponent {
   @Input() matches: ChildMatch[]  = [];

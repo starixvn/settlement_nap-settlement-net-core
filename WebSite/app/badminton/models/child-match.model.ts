@@ -18,6 +18,8 @@ export class ChildMatch {
     public childMatchType: number;
 
     public resultStatusId: number;
+    
+    public settleStatusId: number;
 
     public confirmFT: number;
 
