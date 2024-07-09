@@ -14,15 +14,16 @@ public class ChildMatchServiceTests
         // Arrange
         var childMatches = new List<ChildMatchModel>
             {
-                new() { ChildMatchType = 2 },
-                new() { ChildMatchType = 1 },
-                new() { ChildMatchType = 3 }
+                new() { ChildMatchType = 11, SportType = 18, },
+                new() { ChildMatchType = 12, SportType = 18  },
+                new() { ChildMatchType = 13 ,SportType = 18 }
             };
 
         var resultDetails = new List<ResultDetail>
             {
-                new() { ResourceId = "01"},
-                new() { ResourceId = ResourceType.Final }
+                new() { ResourceId = "0101"},
+                 new() { ResourceId = "0102"},
+                  new() { ResourceId = "0103"},
             };
 
         var tuple = new Tuple<List<ChildMatchModel>, List<ResultDetail>>(childMatches, resultDetails);
@@ -31,8 +32,7 @@ public class ChildMatchServiceTests
         service.Decorate(tuple);
 
         // Assert
-        Assert.Equal(1, tuple.Item1[0].ChildMatchType);
-        Assert.Equal(2, tuple.Item1[1].ChildMatchType);
-        Assert.Equal(3, tuple.Item1[2].ChildMatchType);
+        Assert.Equal(11, tuple.Item1[0].ChildMatchType);
+        Assert.Equal(12, tuple.Item1[1].ChildMatchType);
     }
 }

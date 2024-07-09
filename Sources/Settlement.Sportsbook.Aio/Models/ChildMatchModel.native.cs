@@ -14,7 +14,7 @@ public class ChildMatchModel
 
     private const string DefaultValue = "";
 
-    private string eventStatus;
+    private string eventStatus = "";
 
     public string MatchCode { get; set; }
 
