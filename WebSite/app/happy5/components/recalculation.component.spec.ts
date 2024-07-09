@@ -1,4 +1,4 @@
-import { TestBed, waitForAsync, ComponentFixture, fakeAsync, tick, flush } from '@angular/core/testing';
+import { TestBed, waitForAsync, ComponentFixture, fakeAsync, tick } from '@angular/core/testing';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
@@ -109,8 +109,9 @@ describe('Recalculation Component', () => {
 
             jest.spyOn(toastrService, 'error');
             component.reCalculate();
+            tick(6000);
+            
             expect(toastrService.error).toHaveBeenCalledWith(Language.gaming.emptyBall);
-            flush();
         }));
 
         it('should error message when numberball is out of range', fakeAsync(() => {
@@ -120,10 +121,10 @@ describe('Recalculation Component', () => {
 
             jest.spyOn(toastrService, 'error');
             component.reCalculate();
+            tick(6000);
 
             const expectedMessage = Language.gaming.outOfRangeBall.replace(/MIN/g, "1").replace(/MAX/g, "20");
             expect(toastrService.error).toHaveBeenCalledWith(expectedMessage);
-            flush();
         }));
 
         it('should error message when numberball is duplicated ball', fakeAsync(() => {
@@ -131,10 +132,10 @@ describe('Recalculation Component', () => {
 
             jest.spyOn(toastrService, 'error');
             component.reCalculate();
+            tick(6000);
 
             const expectedMessage = Language.gaming.duplicationBalls;
             expect(toastrService.error).toHaveBeenCalledWith(expectedMessage);
-            flush();
         }));
 
         it('should not error message when result is successful', fakeAsync(() => {
@@ -144,13 +145,12 @@ describe('Recalculation Component', () => {
             jest.spyOn(toastrService, 'error');
 
             component.reCalculate();
-            tick();
+           
             const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
             buttonYes.click();
-            tick();
+            tick(6000);
 
             expect(toastrService.error).not.toHaveBeenCalled();
-            flush();
         }));
 
         it('should error message when result is unsuccessful', fakeAsync(() => {
@@ -160,13 +160,12 @@ describe('Recalculation Component', () => {
             jest.spyOn(toastrService, 'error');
 
             component.reCalculate();
-            tick();
+            
             const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
             buttonYes.click();
-            tick();
+            tick(6000);
 
             expect(toastrService.error).toHaveBeenCalledWith(unSuccessfulResult.errMsg);
-            flush();
         }));
     });
 

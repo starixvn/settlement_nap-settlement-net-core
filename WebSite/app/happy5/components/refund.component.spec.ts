@@ -1,4 +1,4 @@
-import { TestBed, waitForAsync, ComponentFixture, fakeAsync, tick,  flush } from '@angular/core/testing';
+import { TestBed, waitForAsync, ComponentFixture, fakeAsync, tick } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -106,9 +106,8 @@ describe('Refund Component', () => {
             component.refund();
             const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
             buttonYes.click();
-            tick(500);
+            tick(6000);
             expect(toastrService.error).toHaveBeenCalledWith(unSuccessfulResult.errMsg);
-            flush();
         }));
 
         it('should not error message when result is successful', fakeAsync(() => {
