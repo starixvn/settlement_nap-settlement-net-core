@@ -16,6 +16,7 @@ import { LeagueMatch } from '../../models/league-match.model';
 import { UncalculatePopupComponent } from '../popup/uncalculate-popup.component';
 import * as _ from 'lodash';
 import { Status } from '../../constants';
+import { DeadHeatButton } from '../../constants/deatheat-button';
 
 @Component({
     selector: 'league-team',
@@ -44,17 +45,9 @@ export class LeagueTeamComponent implements OnChanges {
     ngOnChanges(changes: SimpleChanges): void {
         if (!changes.outright.firstChange) {
             this.outright.sportLeague.forEach(sport => {
-                sport.leagueMatch.forEach(league => {
-                    if (_.isNull(league.deadHeat)) {
-                        league.deadHeatClass = "button-not-set";
-                        return;
-                    }
-                    league.deadHeatClass = league.deadHeat ? 'button-yes' : 'button-no';
-                });
+                sport.leagueMatch.forEach(league => this.checkButtonClass(league));
             });
         }
-
-        this.cdRef.detectChanges();
     }
 
     collapse(sport: SportLeague) {
@@ -62,26 +55,25 @@ export class LeagueTeamComponent implements OnChanges {
     }
 
     collapseLeague(leagueMatch: LeagueMatch) {
-        {
-            leagueMatch.collapsed = !leagueMatch.collapsed;
-        }
+        leagueMatch.collapsed = !leagueMatch.collapsed;
     }
 
     changeSettingLeague(leagueMatch: LeagueMatch) {
         this.dialog.open(UpdateDeadheatSettingComponent, {
             data: {
                 leagueId: leagueMatch.leagueId,
-                deadHeatSetting: leagueMatch.deadHeat
+                deadHeatSetting: leagueMatch.deadHeat,
+                sportType: leagueMatch.teams[0].sportType
             },
-            width: '400px',
-            height: '150px',
+            width: '525px',
+            height: '250px',
             hasBackdrop: true
         }).afterClosed().subscribe(newSetting => {
             if (!_.isUndefined(newSetting)) {
                 leagueMatch.deadHeat = newSetting;
-                leagueMatch.deadHeatClass = leagueMatch.deadHeat ? 'button-yes' : 'button-no';
-                this.cdRef.detectChanges();
+                this.checkButtonClass(leagueMatch);
             }
+            this.cdRef.markForCheck();
         });
     }
 
@@ -127,7 +119,7 @@ export class LeagueTeamComponent implements OnChanges {
                     league.teams.find(t => _.isEqual(t.orId, team.matchId)).status = team.status;
                 });
             }
-            this.cdRef.detectChanges();
+            this.cdRef.markForCheck();
         });
     }
 
@@ -148,12 +140,20 @@ export class LeagueTeamComponent implements OnChanges {
                     league.teams.find(t => _.isEqual(t.orId.toString(), team)).status = this.runningStatus;
                 });
             }
-            this.cdRef.detectChanges();
+            this.cdRef.markForCheck();
         });
     }
 
     UpperCaseFirstChar(string: string) {
 
         return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
+    checkButtonClass(league: LeagueMatch) {
+        if (_.isNull(league.deadHeat)) {
+            league.deadHeatClass = DeadHeatButton.notSet;
+            return;
+        }
+        league.deadHeatClass = league.deadHeat ? DeadHeatButton.yes : DeadHeatButton.no;
     }
 }

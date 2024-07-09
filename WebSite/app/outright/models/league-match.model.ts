@@ -5,6 +5,6 @@ export class LeagueMatch {
     public teams: Team[];
     public collapsed: boolean;
     public eventDate: string;
-    public deadHeat: boolean;
+    public deadHeat: boolean | null;
     public deadHeatClass: string;
 }

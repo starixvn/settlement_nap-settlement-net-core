@@ -2,68 +2,85 @@ import { BlockUIService } from './../../../shared/services/block-ui.service';
 import { MessageBoxService } from './../../../shared/services/message-box.service.native';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
-import { Component, Inject, Injector, OnInit } from '@angular/core';
+import { Component, Inject, Injector, OnInit, ViewChild, inject, input } from '@angular/core';
 import { MatDialog, MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
 import * as _ from 'lodash';
 import { OutrightService } from '../../services';
 import { HttpRequestService } from '../../../shared/services';
+import { DeadHeatOptions } from '../../constants/deadheat-setting';
+import { FormsModule } from '@angular/forms';
+import { StatusId } from '../../constants';
+import { LeagueSettle } from '../../models';
+import { ToastContainerDirective, ToastContainerModule, ToastrService } from 'ngx-toastr';
+import { Language } from '../../../shared/language.native';
+import { ModalDialogMessage } from '../../../shared/models';
 
 @Component({
   selector: 'update-deadheat-setting',
   templateUrl: './update-deadheat-setting.component.html',
   standalone: true,
-  imports: [CommonModule, DragDropModule, MatDialogModule],
+  imports: [CommonModule, DragDropModule, MatDialogModule, FormsModule, ToastContainerModule],
   providers: [OutrightService, HttpRequestService, MessageBoxService, BlockUIService]
 })
 export class UpdateDeadheatSettingComponent implements OnInit {
+  @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
+  private toastrService = inject(ToastrService);
+  private messageBoxService = inject(MessageBoxService);
+  private matDialog = inject(MatDialog);
+  private dialogRef = inject(MatDialogRef<UpdateDeadheatSettingComponent>);
+  private blockUIService = inject(BlockUIService);
+  outrightService = inject(OutrightService);
+  expectedSetting: boolean | null;
+  deadHeatOptions = DeadHeatOptions;
+  leagueSettle: LeagueSettle;
+  blockUI = true;
+  readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
 
-  private dialogRef: MatDialogRef<UpdateDeadheatSettingComponent>;
-  currentStatus: string;
-  expectedStatus: string;
-  confirmChange: boolean;
-
-  no = "NO";
-  yes = "YES";
-  noSet = "NOT SET";
-  currentSetting: boolean;
-  expectedSetting: boolean;
-
-  constructor(protected injector: Injector,
-    @Inject(MAT_DIALOG_DATA) public data: { deadHeatSetting: number, leagueId: number }) {
-    this.injector.get(MatDialog).closeAll();
-    this.confirmChange = !_.isNull(this.data.deadHeatSetting);
-    this.dialogRef = this.injector.get(MatDialogRef<UpdateDeadheatSettingComponent>);
+  constructor(@Inject(MAT_DIALOG_DATA) public data: { deadHeatSetting: boolean, leagueId: number, sportType: number }) {
+    
+    this.confirmationDialogMessage.title = Language.confirmationBox;
+    this.matDialog.closeAll();
     this.dialogRef.disableClose = true;
   }
 
-  ngOnInit(): void {
-    if(!_.isNull(this.data.deadHeatSetting)){
-      this.currentSetting = this.data.deadHeatSetting == 0
-      this.currentStatus = this.currentSetting? this.no : this.yes; 
-      this.expectedStatus = this.currentSetting ? this.yes : this.no; 
-      this.expectedSetting = this.currentSetting ? true : false;
-    }
+   async ngOnInit() {
+    this.blockUIService.blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
+    this.expectedSetting = this.data.deadHeatSetting;
+    this.toastrService.overlayContainer = this.toastContainer;
+    this.leagueSettle = await this.outrightService.getMatches(this.data.leagueId, this.data.sportType, StatusId.runningAndCompleted);
   }
 
   close() {
     this.dialogRef.close();
   }
 
-  openConfirm(allowDeadheat: boolean) {
-    this.confirmChange = true;
-    this.currentStatus = this.noSet; 
-    if(allowDeadheat){
-      this.expectedStatus = this.yes; 
-      this.expectedSetting = true;
-    } else {
-      this.expectedStatus = this.no ; 
-      this.expectedSetting = false;
+  updateSetting() {
+    this.clearError();
+    let teamWonQuantity = this.leagueSettle.teams.filter(team => team.status.toLowerCase() === 'won').length;
+    if (teamWonQuantity > 1) {
+      this.toastrService.error(Language.Outright.multiTeamWon);
+      return;
     }
+    this.confirmationDialogMessage.message = this.getMessage();
+    this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
+      this.sendRequest();
+    });
   }
 
-  setSetting(){
-    this.injector.get(OutrightService).updateDeatHeat(this.data.leagueId, this.expectedSetting).then(() => {
+  private getMessage() {
+    const expectStatus = this.deadHeatOptions.find(option => option.value === this.expectedSetting);
+    const currentStatus = this.deadHeatOptions.find(option => option.value === this.data.deadHeatSetting);
+    return Language.Outright.confirmDeadHeatSetting.replace('@CURRENT', currentStatus.name).replace('@EXPECTED', expectStatus.name);
+  }
+
+  private sendRequest() {
+    this.outrightService.updateDeatHeat(this.data.leagueId, this.expectedSetting).then(() => {
       this.dialogRef.close(this.expectedSetting);
     });
+  }
+
+
+  clearError(){
+    this.toastrService.clear();
   }
 }

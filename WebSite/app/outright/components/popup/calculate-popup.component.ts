@@ -18,7 +18,7 @@ import { MatDialog, MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angu
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { ResultOutright } from '../../models/result-outright.model';
 import { DynamicHeightDirective } from '../../../shared/directives';
-import { DeadHeatSetting } from '../../constants/deadheat-setting';
+import { DeadHeatSettings } from '../../constants/deadheat-setting';
 import { NewMultipleSelectComponent } from '../../../shared/components/multiple-select/multiple-select.component';
 import { TicketStatusPipe } from '../../pipes/ticket-status-pipe';
 import { TicketStatusFilterPipe } from '../../pipes/ticket-status-filter-pipe';
@@ -37,45 +37,44 @@ export class CalculatePopupComponent implements OnInit {
     private outrightService = inject(OutrightService);
     private verifyDateService = inject(VerifyDateService);
     private calculateService = inject(CalculateService);
-    public dialogRef = inject(MatDialogRef<CalculatePopupComponent>);
+    private dialogRef = inject(MatDialogRef<CalculatePopupComponent>);
     private dialog = inject(MatDialog);
     private blockUIService = inject(BlockUIService);
     private messageBoxService = inject(MessageBoxService);
     private ticketStatusPipe = inject(TicketStatusFilterPipe);
     private statusPipe = inject(StatusPipe);
-    public blockUI = true;
-    public teams: Team[];
-    public selectAllTeam = false;
-    public originalTeam: Team[];
-    public leagueSettle: LeagueSettle;
-    public moveBetsDay: NgbDateStruct;
-    public today: NgbDateStruct;
-    public teamStatus = TeamStatuses;
-    public filterStatuses = FilterStatuses;
-    public statusSelected = FilterStatuses[1].toUpperCase();
-    public ticketsStatusSelect = new MultipleSelect();
-    public ticketStatusSelected: string;
-    public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
+    blockUI = true;
+    teams: Team[];
+    selectAllTeam = false;
+    originalTeam: Team[];
+    leagueSettle: LeagueSettle;
+    moveBetsDay: NgbDateStruct;
+    today: NgbDateStruct;
+    teamStatus = TeamStatuses;
+    filterStatuses = FilterStatuses;
+    statusSelected = FilterStatuses[1].toUpperCase();
+    ticketsStatusSelect = new MultipleSelect();
+    ticketStatusSelected: string;
+    readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
     private teamSettleWon: Team[];
-    public teamJustSettled: TeamSettle[] = [];
+    teamJustSettled: TeamSettle[] = [];
     private readonly completedStatus = "Completed";
     private readonly statusRunning = [Status.running, Status.closed, Status.internal];
 
-    constructor(
-        @Inject(MAT_DIALOG_DATA) public data: { leagueId: number, sportType: number, eventDate: string }) {
+    constructor(@Inject(MAT_DIALOG_DATA) public data: { leagueId: number, sportType: number, eventDate: string }) {
         this.confirmationDialogMessage.title = Language.confirmationBox;
         this.dialog.closeAll();
         this.dialogRef.disableClose = true;
     }
 
-    ngOnInit(): void {
+    async ngOnInit(): Promise<void> {
         this.blockUIService.blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
         this.toastrService.overlayContainer = this.toastContainer;
-        this.getMatches();
+        await this.getMatches();
         this.ticketsStatusSelect.items = this.calculateService.renderTicketStatus();
     }
 
-    public get teamSelected(): Team[] {
+    get teamSelected(): Team[] {
         return _.filter(this.teams, team => team.selected);
     }
 
@@ -94,7 +93,7 @@ export class CalculatePopupComponent implements OnInit {
         this.teams = this.leagueSettle.teams;
     }
 
-    public close() {
+    close() {
         if (_.isEmpty(this.teamJustSettled)) {
             this.dialogRef.close();
         } else {
@@ -102,33 +101,33 @@ export class CalculatePopupComponent implements OnInit {
         }
     }
 
-    public clearError() {
+    clearError() {
         this.toastrService.clear();
     };
 
-    public disableCalculate() {
+    disableCalculate() {
         return _.isEmpty(this.teamSelected) || !this.leagueSettle.permission.canCalculateOutright;
     }
 
-    public get viewRecalculate() {
+    get viewRecalculate() {
         return this.leagueSettle.permission.isLeader;
     }
 
-    public get disableRecalculate() {
+    get disableRecalculate() {
         return _.isEmpty(this.teamSelected)
     }
 
-    public selectStatus() {
+    selectStatus() {
         this.selectAllTeam = false;
         this.teams.forEach(team => team.selected = false);
     }
 
-    public onSelectTicketsStatus(value: ItemsSelect[]) {
+    onSelectTicketsStatus(value: ItemsSelect[]) {
         this.selectStatus();
         this.ticketStatusSelected = value.length > 0 ? value.map(item => item.value).join() : "";
     }
 
-    public changeStatus(team: Team) {
+    changeStatus(team: Team) {
         this.clearError();
 
         if (!_.isEqual(team.status, 'WON')) {
@@ -139,7 +138,7 @@ export class CalculatePopupComponent implements OnInit {
         team.disableDeadheat = false;
     }
 
-    public async calculate(isCalc: boolean = true) {
+    async calculate(isCalc: boolean = true) {
         this.clearError();
         await this.getLatestData();
         const teamWonSelected = _.filter(this.teamSelected, team => _.isEqual(team.status.toLowerCase(), Status.won));
@@ -149,12 +148,12 @@ export class CalculatePopupComponent implements OnInit {
         await this.validateBeforePush(teamWonSettled, teamWonSelected, teamHideSelected, isCalc)
     };
 
-    public onSelectDate(value: NgbDateStruct, team: Team) {
+    onSelectDate(value: NgbDateStruct, team: Team) {
         team.eventDate = this.verifyDateService.format(value);
     }
 
-    public onSelectAllTeam(e: any) {
-       
+    onSelectAllTeam(e: any) {
+
         const filteredTeams = this.fillteredTeam()
         this.teams.forEach(team => {
             const isShowed = filteredTeams.some(value => value.orId === team.orId);
@@ -162,7 +161,7 @@ export class CalculatePopupComponent implements OnInit {
         });
     }
 
-    public fillteredTeam() {
+    fillteredTeam() {
         const filterStatus = this.statusPipe.transform(this.teams, this.statusSelected);
         const filterTicketStatus = this.ticketStatusPipe.transform(filterStatus, this.ticketStatusSelected);
 
@@ -195,7 +194,7 @@ export class CalculatePopupComponent implements OnInit {
             this.toastrService.error(errorSettingMessage);
         } else if (!(await this.VerifyHideStatus(teamHideSelected))) {
             this.toastrService.error(Language.Outright.existHideTicketNotVoided)
-        } else if (setting === DeadHeatSetting.No && CalculateService.ConfirmDeadHeatNoSetting(teamWonSelected, teamWonSettled)) {
+        } else if (setting === DeadHeatSettings.No && CalculateService.ConfirmDeadHeatNoSetting(teamWonSelected, teamWonSettled)) {
             this.confirmCalcNonDeadheat();
         } else {
             this.doCalculate(this.teamSettleWon.length);
@@ -205,10 +204,10 @@ export class CalculatePopupComponent implements OnInit {
     private verifySetting(setting: number, teamWonSettled: Team[], teamWonSelected: Team[]) {
         let errorSettingMessage = "";
         switch (setting) {
-            case DeadHeatSetting.No:
+            case DeadHeatSettings.No:
                 errorSettingMessage = CalculateService.VerifyDeadHeatNoSetting(teamWonSelected, teamWonSettled);
                 break;
-            case DeadHeatSetting.Yes:
+            case DeadHeatSettings.Yes:
                 errorSettingMessage = CalculateService.VerifyDeadHeatYesSetting(teamWonSelected, teamWonSettled);
                 break;
             default: errorSettingMessage = CalculateService.VerifyDeadHeatNoSet(teamWonSelected, teamWonSettled);
@@ -256,14 +255,14 @@ export class CalculatePopupComponent implements OnInit {
         this.toastrService.error(result.errMsg);
     }
 
-    public makeBackgroundByStatus(status: string) {
+    makeBackgroundByStatus(status: string) {
         if (_.isEqual(status.toLocaleLowerCase(), 'running')) {
             return '';
         }
         return 'calculated';
     }
 
-    public async VerifyHideStatus(teamHideSelected: Team[]) {
+    async VerifyHideStatus(teamHideSelected: Team[]) {
         for (const team of teamHideSelected) {
             const result = await this.checkVoidTicket(team);
             if (!result) {

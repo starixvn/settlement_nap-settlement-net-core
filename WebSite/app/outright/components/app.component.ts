@@ -7,7 +7,7 @@ import { LogPopupComponent } from './popup/log-popup.component';
 import MainPageComponent from './main-page/main-page.component';
 import { PageType } from '../../shared/constants';
 import { MatDialogModule } from '@angular/material/dialog';
-import LogPageComponent from './main-page/log-page.component';
+import LogPageComponent from './main-page/log-page.component.native';
 
 @Component({
     selector: 'app-root',

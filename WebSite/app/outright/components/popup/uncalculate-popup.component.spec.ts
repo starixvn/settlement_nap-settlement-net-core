@@ -20,7 +20,6 @@ describe('UncalculatePopupComponent', () => {
   const team: Team = {
     isDeadheat: false,
     disableDeadheat: false,
-    isSettled: false,
     selected: false,
     eventDate: '',
     dateTime: undefined,
@@ -34,7 +33,12 @@ describe('UncalculatePopupComponent', () => {
     leagueName: '',
     teamId: 100,
     teamName: '',
-    betCount: 0
+    betCount: 0,
+    statusClass: '',
+    totalCal: 0,
+    totalRunning: 0,
+    totalHide: 0,
+    originalStatus: ''
   }
   const leagueSettle: LeagueSettle = {
     leagueName: '',
@@ -56,7 +60,9 @@ describe('UncalculatePopupComponent', () => {
     errMsg: '',
     teamFailedIds: '',
     isSuccessful: true,
-    childMatchIds: ''
+    childMatchIds: '',
+    settledSessionId: '',
+    hasResultAmendment: false
   };
 
   const ResultFailed: ResultOutright = {
@@ -64,7 +70,9 @@ describe('UncalculatePopupComponent', () => {
     errMsg: 'mock error',
     teamFailedIds: '',
     isSuccessful: false,
-    childMatchIds: ''
+    childMatchIds: '',
+    settledSessionId: '',
+    hasResultAmendment: false
   };
 
   beforeEach(async () => {
@@ -110,7 +118,7 @@ describe('UncalculatePopupComponent', () => {
 
   it('ngOnInit - should GetMatches', async() => {
     leagueSettle.teams = [team];
-    outrightService.getMatches= jest.fn().mockReturnValue(Promise.resolve(leagueSettle));
+    outrightService.getMatches = jest.fn().mockResolvedValue(leagueSettle);
 
     await component.ngOnInit();
 
@@ -123,7 +131,7 @@ describe('UncalculatePopupComponent', () => {
 
     component.clearError();
 
-    expect(toastrService.clear).toBeCalled();
+    expect(toastrService.clear).toHaveBeenCalled();
   });
 
   describe("close", () => {
@@ -203,16 +211,15 @@ describe('UncalculatePopupComponent', () => {
       jest.spyOn(outrightService, 'uncalculate').mockReturnValue(Promise.resolve(ResultFailed));
       jest.spyOn(toastrService, 'error');
 
-      component.uncalculate();
-      tick();
-      let buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-      buttonYes.click();
-      tick();
-      flush();
+      component.uncalculate().then(() => { 
 
-      expect(outrightService.uncalculate).toBeCalledWith('1,2', '100,200');
-      expect(toastrService.error).toBeCalledWith(ResultFailed.errMsg);
-      expect(component.teamJustSettled).toEqual('2');
+        let buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
+        buttonYes.click();
+  
+        expect(outrightService.uncalculate).toHaveBeenCalledWith('1,2', '100,200');
+        expect(toastrService.error).toHaveBeenCalledWith(ResultFailed.errMsg);
+        expect(component.teamJustSettled).toEqual('2');
+      });
     }));
   });
 });

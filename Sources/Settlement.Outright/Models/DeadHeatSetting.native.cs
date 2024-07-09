@@ -6,5 +6,5 @@ public class DeadHeatSetting
 
     public DateTime EventDate { get; set; }
 
-    public byte? DeadHeat { get; set; }
+    public bool? DeadHeat { get; set; }
 }

@@ -8,7 +8,7 @@ public class LeagueMatch
 
     public string LeagueName { get; set; }
 
-    public byte? DeadHeat { get; set; }
+    public bool? DeadHeat { get; set; }
 
     public DateTime EventDate { get; set; }
 

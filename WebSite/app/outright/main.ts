@@ -4,14 +4,14 @@ import { bootstrapApplication } from '@angular/platform-browser';
 import { environment } from '../environments/environment';
 import AppComponent from './components/app.component';
 import { ToastrModule } from 'ngx-toastr';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 if (environment.production) {
   enableProdMode();
 }
 
 bootstrapApplication(AppComponent, {
-  providers: [importProvidersFrom(NoopAnimationsModule),
+  providers: [importProvidersFrom(BrowserAnimationsModule),
   importProvidersFrom(ToastrModule.forRoot({
     disableTimeOut: true,
     enableHtml: true,
