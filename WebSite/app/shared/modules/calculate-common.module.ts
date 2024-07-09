@@ -38,10 +38,9 @@ import { OnlyIntegerDirective } from "../../shared/directives";
     OnlyIntegerDirective,
 
     ToastrModule.forRoot({
-      // timeOut: 10000,
-      positionClass: "inline",
-      disableTimeOut: true,
-      // inli
+      timeOut: 5000,
+      positionClass: "toast-top-full-width",
+      // disableTimeOut: true,
     }),
   ],
   providers: [

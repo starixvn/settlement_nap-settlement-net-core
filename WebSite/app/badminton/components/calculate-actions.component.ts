@@ -1,11 +1,11 @@
 import { CalculateMatchDetailComponent } from './calculate-match-detail.component';
 import { CalculateCommonModule } from './../../shared/modules/calculate-common.module';
 import { BlockUIService } from './../../shared/services/block-ui.service';
-import { Component, ViewChild, Injector, OnInit } from '@angular/core';
+import { Component, ViewChild, OnInit, inject } from '@angular/core';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import * as _ from 'lodash';
 import { MessageBoxService, AioService, IntervalCalculationService } from '../../shared/services';
-import { MatchResource, ModalDialogMessage, Result } from '../../shared/models';
+import { MatchResource, ModalDialogMessage } from '../../shared/models';
 import { Language } from '../../shared/language.native';
 import { SettlementStatusId, CalculateAction, SportType, ResultStatusId, ScoreSourceType, TicketStatusText, ResultStatus } from '../../shared/constants';
 import { Match, HedgeMatchDetail, SettleQuery, ChildMatch, SettleChildMatchQuery } from '../models';
@@ -29,12 +29,14 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
 
   @ViewChild(ToastContainerDirective, { static: true }) 
   toastContainer: ToastContainerDirective;
+  private readonly aioService = inject(AioService);
+  private readonly messageBoxService = inject(MessageBoxService);
+  private readonly badmintonService = inject(BadmintonService);
+  private readonly verificationService = inject(VerificationService);
+  private readonly toastrService = inject(ToastrService);
+  private readonly blockUIService = inject(BlockUIService);
+  public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
 
-  private aioService: AioService;
-  private messageBoxService: MessageBoxService;
-  private badmintonService: BadmintonService;
-  private verificationService: VerificationService;
-  private toastrService: ToastrService;
   readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
   readonly totalPointsId = ResourcesIds.totalPoints;
   match: Match;
@@ -53,15 +55,16 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
   public isSettleRelated = true;
   public sportTypes = SportType;
 
-  constructor(private readonly injector: Injector) {
-    this.confirmationDialogMessage.title = Language.confirmationBox;
+  constructor() { 
+    this.blockUIService.blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
   }
+
   ngOnInit(): void {
+    this.confirmationDialogMessage.title = Language.confirmationBox;
     this.toastrService.overlayContainer = this.toastContainer;
   }
 
   async getMatch(matchId: number) {
-    this.initService();
    
     const sportType = Number(UrlHelper.getUrlParameter('sportType'));
     this.getApiKeys(sportType);
@@ -95,15 +98,6 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
     this.apiKeys =  BadmintonApiKeys;
   }
 
-  initService() {
-    this.aioService = this.injector.get(AioService);
-    this.messageBoxService = this.injector.get(MessageBoxService);
-    this.badmintonService = this.injector.get(BadmintonService);
-    this.verificationService = this.injector.get(VerificationService);
-    this.toastrService = this.injector.get(ToastrService);
-    this.injector.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
-
-  }
 
   private cloneResultDetail() {
     this.match.resultDetails.forEach((map) => {

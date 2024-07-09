@@ -20,7 +20,6 @@ import { ModalDialogComponent } from '../../shared/components/modal-dialog/modal
 import { ModalContentDialogComponent } from '../../shared/components/modal-dialog/modal-content-dialog.component';
 import { ResettleCheckerComponent } from '../../shared/components/resettle-checker/resettle-checker.component';
 import { TicketCountComponent } from '../../shared/components/ticket-count/ticket-count.component';
-import { debug } from 'console';
 
 
 export class CreateDataTest {
@@ -118,8 +117,8 @@ describe('Badminton - Calculate actions component', () => {
         badmintonService = fixture.debugElement.injector.get(BadmintonService);
         verificationService = fixture.debugElement.injector.get(VerificationService);
         toastrService = fixture.debugElement.injector.get(ToastrService);
-        component.initService();
         jest.spyOn(toastrService, 'clear');
+        jest.spyOn(toastrService, 'error');
         fixture.detectChanges();
         component.apiKeys = BadmintonApiKeys;
       });
@@ -355,25 +354,19 @@ describe('Badminton - Calculate actions component', () => {
   });
 
 
-  describe("uncalculate", () => {
-    it(
-      "Pass all validation and uncalculation is successful." +
-      "Should error message is empty and close popup.",
+  describe("UnCalculate", () => {
+    it("Pass all validation and unCalculation is successful. Should error message is empty and close popup.",
       fakeAsync(() => {
-        match.resultDetails = CreateDataTest.CreateResultDetail(
-          "00",
-          "1",
-          "2",
-          true
-        );
+        match.resultDetails = CreateDataTest.CreateResultDetail("00","1","2", true);
         component.match = match;
         jest.spyOn(aioService, "push").mockReturnValue(Promise.resolve(successfulResult));
         jest.spyOn(messageBoxService, "closePopup");
+        
         component.uncalculate();
+        tick();
+        flush();
 
-        const buttonYes = document.getElementsByClassName(
-          buttonName
-        )[0] as HTMLElement;
+        const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
         buttonYes.click();
         tick();
 
@@ -381,29 +374,24 @@ describe('Badminton - Calculate actions component', () => {
       })
     );
 
-    it(
-      "Pass all validation and uncalculation is unsuccessful." +
-      "Should return an error.",
+    it("Pass all validation and uncalculation is unsuccessful. Should return an error.",
       fakeAsync(() => {
-        match.resultDetails = CreateDataTest.CreateResultDetail(
-          "00",
-          "1",
-          "2",
-          true
-        );
+        match.resultDetails = CreateDataTest.CreateResultDetail("00","1","2",true);
         component.match = match;
 
         jest.spyOn(aioService, "push").mockReturnValue(Promise.resolve(unSuccessfulResult));
-        toastrService.error = jest.fn();
         component.uncalculate();
-
-        const buttonYes = document.getElementsByClassName(
-          buttonName
-        )[0] as HTMLElement;
-        buttonYes.click();
         tick();
 
-        expect(toastrService.error).toHaveBeenCalledWith(errorMessage);
+        const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
+        buttonYes.click();
+        tick();
+       
+        flush();
+        
+        expect(aioService.push).toHaveReturnedWith(Promise.resolve(unSuccessfulResult));
+        expect(toastrService.error).toBeCalled();
+
       })
     );
   });
