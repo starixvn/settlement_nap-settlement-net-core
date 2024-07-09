@@ -1,6 +1,6 @@
 ﻿import { TestBed, waitForAsync, ComponentFixture } from '@angular/core/testing';
-import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { FormsModule } from '@angular/forms';
+import { DatePipe } from "@angular/common";
 import { HttpClientModule } from '@angular/common/http';
 import { of } from 'rxjs';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -25,7 +25,6 @@ describe('NumberGame - Filter Component', () => {
         TestBed.configureTestingModule({
             declarations: [
                 FilterComponent,
-                DatepickerComponent,
                 ModalDialogComponent,
             ],
             providers: [
@@ -33,9 +32,11 @@ describe('NumberGame - Filter Component', () => {
                 HttpRequestService,
                 VerifyDateService,
                 BlockUIService,
-                MessageBoxService
+                MessageBoxService,
+                DatePipe
             ],
             imports: [
+                DatepickerComponent,
                 FormsModule,
                 HttpClientModule,
                 NgbModule,
@@ -46,7 +47,7 @@ describe('NumberGame - Filter Component', () => {
                 fixture = TestBed.createComponent(FilterComponent);
                 component = fixture.componentInstance;
                 queryService = fixture.debugElement.injector.get(QueryService);
-                spyOn(queryService, 'filter').and.returnValue(of(filter));
+                jest.spyOn(queryService, 'filter').mockReturnValue(of(filter));
             });
     }));
 
@@ -64,8 +65,8 @@ describe('NumberGame - Filter Component', () => {
     });
 
     it('should call emit when click submit', () => {
-        spyOn(queryService, 'search').and.returnValue(of(""));
-        spyOn(component.searchAction, 'emit');
+        jest.spyOn(queryService, 'search').mockReturnValue(of(""));
+        jest.spyOn(component.searchAction, 'emit');
         fixture.detectChanges();
         component.search();
 

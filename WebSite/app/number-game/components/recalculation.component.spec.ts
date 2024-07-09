@@ -1,17 +1,16 @@
 import { TestBed, waitForAsync, ComponentFixture, fakeAsync, tick } from '@angular/core/testing';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { FormsModule } from '@angular/forms';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { HttpClientModule } from '@angular/common/http';
 import { ReCalculationComponent } from './recalculation.component';
 import { Ball, MatchDetail } from '../models';
 import * as _ from 'lodash';
 import { of } from 'rxjs';
 import { QueryService, VerifyBallService } from '../services';
-import {
-    ModalDialogComponent,
-    ModalContentDialogComponent,
-} from '../../shared/components';
+import { ModalDialogComponent } from "../../shared/components/modal-dialog/modal-dialog.component";
+import { ModalContentDialogComponent } from "../../shared/components/modal-dialog/modal-content-dialog.component";
 import {
     HttpRequestService,
     BlockUIService,
@@ -27,7 +26,6 @@ describe('NumberGame - Matches Component', () => {
     let component: ReCalculationComponent;
     let queryService: QueryService;
     let verifyBallService: VerifyBallService;
-    let messageBoxService: MessageBoxService;
     let toastrService: ToastrService;
     let fixture: ComponentFixture<ReCalculationComponent>;
     const balls: Ball[] = [];
@@ -74,6 +72,8 @@ describe('NumberGame - Matches Component', () => {
                 { provide: MAT_DIALOG_DATA, useValue: data }
             ],
             imports: [
+                BrowserAnimationsModule,
+                NoopAnimationsModule,
                 FormsModule,
                 HttpClientModule,
                 MaterialModule,
@@ -91,9 +91,8 @@ describe('NumberGame - Matches Component', () => {
                 component.matchDetail = match;
                 queryService = fixture.debugElement.injector.get(QueryService);
                 verifyBallService = fixture.debugElement.injector.get(VerifyBallService);
-                messageBoxService = fixture.debugElement.injector.get(MessageBoxService);
                 toastrService = fixture.debugElement.injector.get(ToastrService);
-                spyOn(toastrService, 'clear');
+                jest.spyOn(toastrService, 'clear');
               });
     }));
 
@@ -102,7 +101,7 @@ describe('NumberGame - Matches Component', () => {
     });
 
     it('should call close function when click close popup', () => {
-        spyOn(component.dialogRef, 'close').and.callThrough();
+        jest.spyOn(component.dialogRef, 'close').mockImplementation();
         component.closePopup();
         expect(component.dialogRef.close).toHaveBeenCalled();
     });
@@ -111,7 +110,7 @@ describe('NumberGame - Matches Component', () => {
         const listBalls: Ball[] = [];
         listBalls.push(new Ball(12345, 1, 9));
         listBalls.push(new Ball(12345, 2, 10));
-        spyOn(queryService, 'getBallsByMatchId').and.returnValue(of(listBalls));
+        jest.spyOn(queryService, 'getBallsByMatchId').mockReturnValue(of(listBalls));
 
         component.getBalls();
 
@@ -163,60 +162,63 @@ describe('NumberGame - Matches Component', () => {
 
     describe('reCalculate', () => {
         it('should error message when list are existed numberBall empty', fakeAsync(() => {
-            spyOn(verifyBallService, 'emptyBall').and.returnValue(balls);
+            const balls = { matchId : null , seq : null, color:null, eventStatus: null, isNA: false, isDisableCheckbox: false  };
+            jest.spyOn(verifyBallService, 'emptyBall').mockReturnValue(balls);
 
-            spyOn(toastrService, 'error');
+            jest.spyOn(toastrService, 'error');
             component.reCalculate();
+            tick(6000);
 
             expect(toastrService.error).toHaveBeenCalledWith(Language.gaming.emptyBall);
         }));
 
         it('should error message when numberball is out of range', fakeAsync(() => {
-            spyOn(verifyBallService, 'outOfRangeBall').and.returnValue(balls);
+            const balls = { matchId : null , seq : null, color:null, eventStatus: null, isNA: false, isDisableCheckbox: false  };
+            jest.spyOn(verifyBallService, 'outOfRangeBall').mockReturnValue(balls);
 
-            spyOn(toastrService, 'error');
+            jest.spyOn(toastrService, 'error');
             component.reCalculate();
+            tick(6000);
 
             const expectedMessage = Language.gaming.outOfRangeBall.replace(/MIN/g, "1").replace(/MAX/g, "75");
             expect(toastrService.error).toHaveBeenCalledWith(expectedMessage);
         }));
 
         it('should error message when numberball is duplicated ball', fakeAsync(() => {
-            spyOn(verifyBallService, 'isDuplicateBall').and.returnValue(true);
+            jest.spyOn(verifyBallService, 'isDuplicateBall').mockReturnValue(true);
 
-            spyOn(toastrService, 'error');
+            jest.spyOn(toastrService, 'error');
             component.reCalculate();
-
+            tick(6000);
+            
             const expectedMessage = Language.gaming.duplicationBalls;
             expect(toastrService.error).toHaveBeenCalledWith(expectedMessage);
         }));
 
         it('should not error message when result is successful', fakeAsync(() => {
-            spyOn(queryService, 'settle').and.returnValue(of(successfulResult));
-            spyOn(component.dialogRef, 'close').and.callThrough();
-            spyOn(queryService, 'getBallsByMatchId').and.returnValue(of(balls));
-            spyOn(toastrService, 'error');
+            jest.spyOn(queryService, 'settle').mockReturnValue(of(successfulResult));
+            jest.spyOn(component.dialogRef, 'close').mockImplementation();
+            jest.spyOn(queryService, 'getBallsByMatchId').mockReturnValue(of(balls));
+            jest.spyOn(toastrService, 'error');
 
             component.reCalculate();
-            tick();
             const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
             buttonYes.click();
-            tick();
+            tick(6000);
 
             expect(toastrService.error).not.toHaveBeenCalled();
         }));
 
         it('should error message when result is unsuccessful', fakeAsync(() => {
-            spyOn(queryService, 'settle').and.returnValue(of(unSuccessfulResult));
-            spyOn(component.dialogRef, 'close').and.callThrough();
-            spyOn(queryService, 'getBallsByMatchId').and.returnValue(of(balls));
-            spyOn(toastrService, 'error');
+            jest.spyOn(queryService, 'settle').mockReturnValue(of(unSuccessfulResult));
+            jest.spyOn(component.dialogRef, 'close').mockImplementation();
+            jest.spyOn(queryService, 'getBallsByMatchId').mockReturnValue(of(balls));
+            jest.spyOn(toastrService, 'error');
 
             component.reCalculate();
-            tick();
             const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
             buttonYes.click();
-            tick();
+            tick(6000);
 
             expect(toastrService.error).toHaveBeenCalledWith(unSuccessfulResult.errMsg);
         }));

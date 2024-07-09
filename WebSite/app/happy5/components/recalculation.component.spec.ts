@@ -25,8 +25,6 @@ describe('Recalculation Component', () => {
     let component: ReCalculationComponent;
     let queryService: QueryService;
     let verifyBallService: VerifyBallService;
-    let messageBoxService: MessageBoxService;
-    let modalService: NgbModal;
     let toastrService: ToastrService;
     let fixture: ComponentFixture<ReCalculationComponent>;
     const balls: Ball[] = [];
@@ -90,8 +88,6 @@ describe('Recalculation Component', () => {
             component.balls = balls;
             queryService = fixture.debugElement.injector.get(QueryService);
             verifyBallService = fixture.debugElement.injector.get(VerifyBallService);
-            messageBoxService = fixture.debugElement.injector.get(MessageBoxService);
-            modalService = fixture.debugElement.injector.get(NgbModal);
             toastrService = fixture.debugElement.injector.get(ToastrService);
             jest.spyOn(toastrService, 'clear');
         });

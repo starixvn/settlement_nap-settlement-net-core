@@ -12,9 +12,7 @@ import {
     ReCalculationComponent,
     RefundComponent
 } from './index';
-import {
-    DatepickerComponent,
-} from '../../shared/components/date-picker/date-picker.component';
+import { DatepickerComponent } from '../../shared/components/date-picker/date-picker.component';
 import { QueryService } from '../services';
 import { HappyFive } from '../models';
 describe('Component: App', () => {
