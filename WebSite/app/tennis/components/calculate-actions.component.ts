@@ -128,8 +128,21 @@ export class CalculateActionsComponent implements SportTemplate {
       this.toastrService.error(Resources.UnSelectedMapForCalculation);
     } else if (this.verificationService.invalidInputScore(this.selectedResources, this.match.isScoreDirect, ResourcesIds.totalSets)) {
       this.toastrService.error(this.isLeader ? Language.sop.leader.blankScore : Language.sop.nonLeader.blankScore);
+    } else if(this.verificationService.isFTDrawWithInputNormal(this.totalSets, this.match.isScoreDirect)) {
+        this.verifyScenarioWhenFTDraw();
     } else {
       this.verifyRunningOdds();
+    }
+  }
+
+  private verifyScenarioWhenFTDraw() {
+    if (this.match.permission.isLeader) {
+      this.confirmationDialogMessage.message = Language.sop.leader.finalIsDraw;
+      this.messageBoxService.confirm(this.confirmationDialogMessage, async () => {
+        this.verifyRunningOdds();
+      });
+    } else {
+      this.toastrService.error(Language.sop.nonLeader.finalIsDraw);
     }
   }
 

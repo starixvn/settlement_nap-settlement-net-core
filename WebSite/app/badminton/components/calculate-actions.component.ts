@@ -31,21 +31,21 @@ export class CalculateActionsComponent implements SportTemplate {
   private badmintonService: BadmintonService;
   private verificationService: VerificationService;
   private toastrService: ToastrService;
-  public match: Match;
-  public hedgeMatchDetail: HedgeMatchDetail;
-  public isReSettledTickets: boolean;
-  public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
-  public applyHedgeMatch: boolean;
-  public enableUncalculate: boolean;
-  public isLeader: boolean;
-  public disableScoreDirect: boolean;
-  public isReadyMatch: boolean;
-  public readonly totalPointsId = ResourcesIds.totalPoints;
-  public permission: Permission;
-  public apiKeys = null;
-  public collapse = false;
-  public blockUI = true;
-  public SOURCE_ID = SourceIds;
+  readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
+  readonly totalPointsId = ResourcesIds.totalPoints;
+  match: Match;
+  hedgeMatchDetail: HedgeMatchDetail;
+  isReSettledTickets: boolean;
+  applyHedgeMatch: boolean;
+  enableUncalculate: boolean;
+  isLeader: boolean;
+  disableScoreDirect: boolean;
+  isReadyMatch: boolean;
+  permission: Permission;
+  apiKeys = null;
+  collapse = false;
+  blockUI = true;
+  SOURCE_ID = SourceIds;
 
   constructor(private readonly injector: Injector) {
     this.confirmationDialogMessage.title = Language.confirmationBox;
@@ -67,7 +67,7 @@ export class CalculateActionsComponent implements SportTemplate {
     this.init();
   }
 
-  public initService() {
+  initService() {
     this.aioService = this.injector.get(AioService);
     this.messageBoxService = this.injector.get(MessageBoxService);
     this.badmintonService = this.injector.get(BadmintonService);
@@ -89,12 +89,12 @@ export class CalculateActionsComponent implements SportTemplate {
     });
   }
 
-  public init() {
+  init() {
     this.hedgeMatchDetail = this.match.hedgeMatchDetail;
     this.applyHedgeMatch = this.hedgeMatchDetail != null;
     this.permission = this.match.permission;
     this.match.resultDetails = this.badmintonService.getResultDetail(this.match.resultDetails);
-    this.verificationService.generateExternalScores(this.match, this.match.resultDetails, this.match.matchDetail.sportType,this.maxProviderCol);
+    this.verificationService.generateExternalScores(this.match, this.match.resultDetails, this.match.matchDetail.sportType, this.maxProviderCol);
     this.resetHomeAway(this.noTotalPoints);
     this.enableUncalculate = this.enableUncalculateButton();
     this.disableScoreDirect = this.verificationService.isTicketOnGame(
@@ -106,28 +106,28 @@ export class CalculateActionsComponent implements SportTemplate {
     this.checkConsistent();
   }
 
-  public get noTotalPoints(): ResultDetail[] {
+  get noTotalPoints(): ResultDetail[] {
     return _.filter(this.match.resultDetails, (map: ResultDetail) => !_.isEqual(map.resourceId, ResourcesIds.totalPoints));
   }
 
-  public get selectedResources(): ResultDetail[] {
+  get selectedResources(): ResultDetail[] {
     return _.filter(this.match.resultDetails, (map: ResultDetail) => map.checked);
   }
 
-  public get totalPoints(): ResultDetail {
+  get totalPoints(): ResultDetail {
     return _.find(this.match.resultDetails, (item: ResultDetail) => _.isEqual(item.resourceId, ResourcesIds.totalPoints));
   }
 
-  public get totalGames(): ResultDetail {
+  get totalGames(): ResultDetail {
     return _.find(this.match.resultDetails, (item: ResultDetail) => _.isEqual(item.resourceId, ResourcesIds.totalGames));
   }
 
-  public get outSideCount() {
-    return this.match.resultDetails[0].externalScores.filter(x => 
+  get outSideCount() {
+    return this.match.resultDetails[0].externalScores.filter(x =>
       x.sourceId !== ScoreSourceType.trader && x.sourceId >= ScoreSourceType.screenshot).length
   }
 
-  public get maxProviderCol() {
+  get maxProviderCol() {
     return this.match.matchDetail.providerCount > 2 ? 3 : 2;
   }
 
@@ -140,7 +140,7 @@ export class CalculateActionsComponent implements SportTemplate {
     });
   }
 
-  public selectedOnLastMap() {
+  selectedOnLastMap() {
     this.totalPoints.checked = this.totalGames.checked;
     const newFullTimeScore = this.verificationService.getNewFinalResource(this.noTotalPoints, ResourcesIds.totalGames, false);
     const confirmMessage = this.verificationService.verifyFinalResource(this.noTotalPoints,
@@ -154,23 +154,52 @@ export class CalculateActionsComponent implements SportTemplate {
     this.selectedOnMap();
   }
 
-  public async calculate() {
+  async calculate() {
     this.toastrService.clear();
     this.match.isClickOnCalculate = true;
     const existResultConfirmed = _.find(this.selectedResources, item => !_.isEqual(item.resourceId, ResourcesIds.totalPoints)
       && item.resultSettingData.isConfirmedRefund);
     if (_.isEmpty(this.selectedResources)) {
       this.toastrService.error(Resources.UnSelectedMapForCalculation);
-    } else if (!_.isNil(existResultConfirmed)) {
+      return;
+    }
+    if (!_.isNil(existResultConfirmed)) {
       this.toastrService.error(Language.confirmRefund.calculateResultNotConfirmed);
-    } else if (this.verificationService.invalidInputScore(this.selectedResources, this.match.isScoreDirect, ResourcesIds.totalGames)) {
+      return;
+    }
+    if (this.verificationService.invalidInputScore(this.selectedResources, this.match.isScoreDirect, ResourcesIds.totalGames)) {
       this.toastrService.error(this.isLeader ? Language.sop.leader.blankScore : Language.sop.nonLeader.blankScore);
-    } else if (this.childMatchSelected.length > 0) {
-      this.verifyChildMatch();
+      return;
+    }
+
+    if(this.verificationService.isFTDrawWithInputNormal(this.totalGames, this.match.isScoreDirect)) {
+      this.verifyScenarioWhenFTDraw();
+      return;
+    }
+
+    await this.ProcessBasedOnChildMatchSelected();
+  }
+
+  private verifyScenarioWhenFTDraw() {
+    if (this.permission.isLeader) {
+      this.confirmationDialogMessage.message = Language.sop.leader.finalIsDraw;
+      this.messageBoxService.confirm(this.confirmationDialogMessage, async () => {
+        await this.ProcessBasedOnChildMatchSelected();
+      });
     } else {
+      this.toastrService.error(Language.sop.nonLeader.finalIsDraw);
+    }
+  }
+
+  private async ProcessBasedOnChildMatchSelected(){
+    if (this.childMatchSelected.length > 0) {
+      this.verifyChildMatch();
+    }
+    else {
       await this.verifyRunningOdds();
     }
   }
+  
 
   private verifyChildMatch() {
     if (this.match.isScoreDirect) {
@@ -198,7 +227,7 @@ export class CalculateActionsComponent implements SportTemplate {
     }
   }
 
-  public uncalculate() {
+  uncalculate() {
     this.toastrService.clear();
     if (_.isEmpty(this.selectedResources)) {
       this.toastrService.error(Language.NotSelectUncalculationTypeMessage);
@@ -208,7 +237,7 @@ export class CalculateActionsComponent implements SportTemplate {
   }
 
   private verifyScoreSourcesAndCalculate() {
-    if(!this.verificationService.allMapHaveScreenshotSource(this.selectedResources)) {
+    if (!this.verificationService.allMapHaveScreenshotSource(this.selectedResources)) {
       this.toastrService.error(Language.sop.notScreenshot);
       return;
     }
@@ -217,7 +246,7 @@ export class CalculateActionsComponent implements SportTemplate {
       this.toastrService.error(Language.sop.mismatchedScreenshot);
       return;
     }
-    
+
     if (this.verificationService.allMapHaveScoreSources(this.selectedResources)) {
       this.confirmCalculateMismatchScores();
     } else {
@@ -272,7 +301,7 @@ export class CalculateActionsComponent implements SportTemplate {
     }
   }
 
-  public selectedOnMap() {
+  selectedOnMap() {
     this.enableUncalculate = this.enableUncalculateButton();
     this.match.isClickOnCalculate = false;
   }
@@ -348,7 +377,7 @@ export class CalculateActionsComponent implements SportTemplate {
     }
   }
 
-  public saveScore() {
+  saveScore() {
     this.toastrService.clear();
     this.confirmationDialogMessage.message = Language.eSports.saveScore;
     this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
@@ -428,11 +457,11 @@ export class CalculateActionsComponent implements SportTemplate {
     return this.match.resultDetails.filter((map) => map.checked).length > 0;
   }
 
-  public onResettleCheckboxChange(isChecked: boolean) {
+  onResettleCheckboxChange(isChecked: boolean) {
     this.isReSettledTickets = isChecked;
   }
 
-  public autoFillScoreOnLoad(resultDetails: ResultDetail[]) {
+  autoFillScoreOnLoad(resultDetails: ResultDetail[]) {
     const intervals = resultDetails.filter((map) => !_.isEqual(map.resourceId, ResourcesIds.totalGames)
       && !_.isEqual(map.resourceId, ResourcesIds.totalPoints));
     if (intervals.length > 0) {
@@ -455,11 +484,11 @@ export class CalculateActionsComponent implements SportTemplate {
     }
   }
 
-  public changeScore() {
+  changeScore() {
     const maps = this.match.resultDetails.filter((item) => !_.isEqual(item.resourceId, ResourcesIds.totalGames)
       && !_.isEqual(item.resourceId, ResourcesIds.totalPoints)
       && this.verificationService.isExistedHomeAwayScore(item.homeValue, item.awayValue));
-      
+
     if (!this.match.isScoreDirect) {
       this.verificationService.sumTotalResultWin(maps, ResourcesIds.GameOne, this.totalGames);
       this.verificationService.sumTotalScores(maps, ResourcesIds.GameOne, this.totalPoints);
@@ -469,7 +498,7 @@ export class CalculateActionsComponent implements SportTemplate {
     this.totalPoints.isScoreMismatched = this.verificationService.isMismatchedWarning(this.totalPoints);
   }
 
-  public verifyAndAutoFillScore(map: ResultDetail, isOnLoad = false) {
+  verifyAndAutoFillScore(map: ResultDetail, isOnLoad = false) {
     map.isScoreMismatched = this.verificationService.isMismatchedWarning(map);
     const originalGame = _.cloneDeep(map);
     this.verificationService.autoFillScore(map);
@@ -488,7 +517,7 @@ export class CalculateActionsComponent implements SportTemplate {
     }
   }
 
-  public generateOutsideTotalPoints() {
+  generateOutsideTotalPoints() {
     const firstSet = this.match.resultDetails[0];
     _.forEach(firstSet.externalScores, (score) => {
       this.updateOutsideScore(score.sourceId, true);
@@ -496,7 +525,7 @@ export class CalculateActionsComponent implements SportTemplate {
     this.totalPoints.isScoreMismatched = this.verificationService.isMismatchedWarning(this.totalPoints);
   }
 
-  public updateOutsideScore(sourceId: number, IsOnLoad = false) {
+  updateOutsideScore(sourceId: number, IsOnLoad = false) {
     const outsideResults: ExternalResultDetail[] = [];
     this.match.resultDetails.forEach((item) => {
       const outsideResult = _.find(item.externalScores, (score) => score.sourceId === sourceId);
@@ -521,12 +550,12 @@ export class CalculateActionsComponent implements SportTemplate {
     }
   }
 
-  public checkMapIsMatched(map: ResultDetail) {
+  checkMapIsMatched(map: ResultDetail) {
     map.isScoreMismatched = this.verificationService.isMismatchedWarning(map);
     this.changeScore();
   }
 
-  public getClass(resultDetail: ResultDetail) {
+  getClass(resultDetail: ResultDetail) {
     const className = this.verificationService.isFullTimeMismatched(this.noTotalPoints, this.match.isScoreDirect,
       ResourcesIds.totalGames, false)
       ? 'col-mismatched ' : '';
@@ -534,7 +563,7 @@ export class CalculateActionsComponent implements SportTemplate {
     return className + this.badmintonService.getIntervalBackground(resultDetail.settlementStatusId);
   }
 
-  public isFinalScoreDisabled(set: ResultDetail, outsideSource = false) {
+  isFinalScoreDisabled(set: ResultDetail, outsideSource = false) {
     if (_.isEqual(set.resourceId, ResourcesIds.totalPoints)) {
       return true;
     }
@@ -543,7 +572,7 @@ export class CalculateActionsComponent implements SportTemplate {
       ? !this.match.isScoreDirect : this.match.isScoreDirect : true;
   }
 
-  public isErrorOnVerification(resultDetail: ResultDetail, score: string) {
+  isErrorOnVerification(resultDetail: ResultDetail, score: string) {
     let disabled = this.match.isScoreDirect;
     if (resultDetail.resourceId === ResourcesIds.totalGames) {
       disabled = !this.match.isScoreDirect;
@@ -551,7 +580,7 @@ export class CalculateActionsComponent implements SportTemplate {
     return this.match.isClickOnCalculate && !disabled && resultDetail.checked && _.isEmpty(score);
   }
 
-  public changeInputDirectly() {
+  changeInputDirectly() {
     this.match.resultDetails.forEach((map) => {
       map.checked = this.match.isScoreDirect && _.isEqual(map.resourceId, ResourcesIds.totalGames);
     });
@@ -559,20 +588,20 @@ export class CalculateActionsComponent implements SportTemplate {
     this.enableUncalculate = this.enableUncalculateButton();
   }
 
-  public getTextTooltip(text: string, maxLength: number) {
+  getTextTooltip(text: string, maxLength: number) {
     return text?.length > maxLength ? text : null;
   }
 
-  public isSaveScoreDisabled() {
+  isSaveScoreDisabled() {
     return !this.match.resultDetails.find((map) => map.checked);
   }
 
-  public isConfirmed(resultDetail: ResultDetail) {
+  isConfirmed(resultDetail: ResultDetail) {
     if (_.isEqual(resultDetail.resourceId, ResourcesIds.totalPoints)) {
       return this.match.permission.isLeader && this.totalGames.resultSettingData.isConfirmedRefund;
     } else {
       return this.match.permission.isLeader && resultDetail.resultSettingData.isConfirmedRefund;
-    } 
+    }
   }
 
   private checkConsistent() {
@@ -584,7 +613,7 @@ export class CalculateActionsComponent implements SportTemplate {
     return _.filter(this.match.childMatches, item => item.checked);
   }
 
-  public getChildMatchesClass(child: ChildMatch) {
+  getChildMatchesClass(child: ChildMatch) {
     if (child.isNotConsistent) {
       return "not-consistent";
     } else {
@@ -593,7 +622,7 @@ export class CalculateActionsComponent implements SportTemplate {
     }
   }
 
-  public collapseChildMatch() {
+  collapseChildMatch() {
     this.collapse = !this.collapse;
   }
 

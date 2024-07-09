@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ResultStatusId, SettlementStatusId } from '../../../shared/constants';
 import { ResultDetail } from '../../../shared/models/sportsbook-sop';
 import * as _ from 'lodash';
-import {ResourcesIds } from '../../constants';
+import { ResourcesIds } from '../../constants';
 import { Language } from '../../../shared/language.native';
 import { ResourceNameByIdPipe } from '../../pipes/resource-name-by-id.pipe';
 import { IntervalBackgroundPipe } from '../../../shared/pipes/interval-background.pipe';
@@ -12,7 +12,7 @@ export class GameTotalService {
         private readonly intervalBackgroundPipe: IntervalBackgroundPipe,
         private readonly resourceNameByIdPipe: ResourceNameByIdPipe) { }
 
-    public getResultDetail(resultDetailList: ResultDetail[]): ResultDetail[] {
+    getResultDetail(resultDetailList: ResultDetail[]): ResultDetail[] {
         const resultDetail = resultDetailList.filter((map) => map.resourceId.length < 5);
         const last = resultDetail.pop();
         const totalPoints = new ResultDetail();
@@ -42,7 +42,7 @@ export class GameTotalService {
             && totalSets.settlementStatusId === SettlementStatusId.Refund;
     }
 
-    public resetHomeAway(resultDetails: ResultDetail[], isLeader: boolean) {
+    resetHomeAway(resultDetails: ResultDetail[], isLeader: boolean) {
         resultDetails.forEach((map) => {
             const showScore = (isLeader || map.settlementStatusId === SettlementStatusId.Calculated)
                 && map.settlementStatusId !== SettlementStatusId.Refund;
@@ -51,7 +51,7 @@ export class GameTotalService {
         });
     }
 
-    public changeTotalPoints(resultDetailList: ResultDetail[]) {
+    changeTotalPoints(resultDetailList: ResultDetail[]) {
         let finalHome = 0;
         let finalAway = 0;
         const withoutTotalSet = this.resultWithOutTotalSet(resultDetailList);
@@ -70,7 +70,7 @@ export class GameTotalService {
         return _.filter(resultDetailList, item => item.resourceId !== ResourcesIds.totalSets);
     }
 
-    public computeTotalSets(resultDetailList: ResultDetail[]) {
+    computeTotalSets(resultDetailList: ResultDetail[]) {
         let homeSet = 0;
         let awaySet = 0;
         const withoutTotalSet = this.resultWithOutTotalSet(resultDetailList);
@@ -93,7 +93,7 @@ export class GameTotalService {
         return totalSet;
     }
 
-    public getConfirmMessage(resultDetails: ResultDetail[]) {
+    getConfirmMessage(resultDetails: ResultDetail[]) {
         let confirmMessage = `${Language.CalculationConfirmMessage}<br/>${Language.CalculationAdditionalConfirmation}<br/>`;
         resultDetails.forEach((x: ResultDetail) => {
             const resourceName = this.resourceNameByIdPipe.transform(x.resourceId);
@@ -104,7 +104,7 @@ export class GameTotalService {
         return confirmMessage;
     }
 
-    public getClass(resultDetail: ResultDetail) {
+    getClass(resultDetail: ResultDetail) {
         let className = '';
         if (_.isEqual(resultDetail.resourceId, ResourcesIds.totalSets)) {
             className += 'final-score ';
@@ -113,5 +113,9 @@ export class GameTotalService {
         }
 
         return className + this.intervalBackgroundPipe.transform(resultDetail.settlementStatusId);
+    }
+
+    isFTDrawWithInputNormal(totalGames: ResultDetail, inputDirectly: boolean) {
+        return !inputDirectly && totalGames.homeValue.trim() === totalGames.awayValue.trim();
     }
 }

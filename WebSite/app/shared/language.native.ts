@@ -163,13 +163,15 @@
             insufficientSources: "WARNING! Insufficient Score Sources! Are you sure you want to proceed?",
             mismatchedScore: 'WARNING! There are inconsistent scores! Are you sure you want to proceed with "Final Score" values?',
             mismatchedResult: 'WARNING! There are inconsistent results! Are you sure you want to proceed with "Final Result" values?',
-        },
+            finalIsDraw: 'Are you sure you want to calculate FT = DRAW?'
+          },
         nonLeader: {
             blankScore: `WARNING! Selected intervals' "Final Score" must not be blank! Please check Score Sources or contact leaders.`,
             blankResult: `WARNING! Selected intervals' "Final Result" must not be blank! Please check Score Sources or contact leaders.`,
             insufficientSources: "WARNING! There are insufficient Source Scores! Please check Score Sources or contact leaders.",
             mismatchedScore: 'WARNING! There are inconsistent scores! Please check inputted values.',
-            mismatchedResult: 'WARNING! There are inconsistent results! Please check inputted values.'
+            mismatchedResult: 'WARNING! There are inconsistent results! Please check inputted values.',
+            finalIsDraw: 'Please contact Leader to Calculate FT = Draw.',
         },
         saveScore: 'Are you sure you want to save changes made to selected Outside Scores?',
         invalidResultByBetType: 'WARNING! Cannot continue due to invalid value inputted. Please check and try again.',
