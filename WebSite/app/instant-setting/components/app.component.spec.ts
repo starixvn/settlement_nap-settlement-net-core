@@ -9,7 +9,7 @@ import { RemarkSettingComponent } from './remark-setting.component';
 import { AppComponent } from './app.component';
 import { LeagueAutoSettingsComponent } from './league-auto-settings/league-auto-settings.component';
 import { HttpClientModule } from '@angular/common/http';
-import { ToastContainerModule, ToastNoAnimationModule, ToastrModule } from 'ngx-toastr';
+import { ToastNoAnimationModule, ToastrModule } from 'ngx-toastr';
 
 describe('AppComponent', () => {
   let component: AppComponent;
@@ -27,7 +27,6 @@ describe('AppComponent', () => {
         LeagueAutoSettingsComponent,
         HttpClientModule,
         ToastNoAnimationModule.forRoot(),
-        ToastContainerModule,
         ToastrModule.forRoot()
         BlockUIService
       ]

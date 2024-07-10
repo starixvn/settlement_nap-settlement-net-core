@@ -9,7 +9,7 @@ import { Permission, Leagues, NumberGame, MatchDetail } from '../models';
 import { MaterialModule } from '../../shared/material-module';
 import { PopupService } from '../services/popup.service';
 import { DialogBoxService } from '../../shared/services';
-import { ToastContainerDirective, ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
+import { ToastContainerDirective, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 
 describe('NumberGame - Matches Component', () => {
     let component: MatchesComponent;
@@ -36,7 +36,6 @@ describe('NumberGame - Matches Component', () => {
                 NgbModule,
                 MaterialModule,
                 ToastNoAnimationModule.forRoot(),
-                ToastContainerModule,
                 ToastrModule.forRoot()
             ],
         })
@@ -57,12 +56,14 @@ describe('NumberGame - Matches Component', () => {
 
     it('should returns true when have permission on Recal', () => {
         const isRecal = component.isRecalculate(true);
+        
         expect(isRecal).toBe(true);
     });
 
     it('should returns false when have not permission on Recal', () => {
         component.permission.canItAdmin = false;
         const isRecal = component.isRecalculate(false);
+        
         expect(isRecal).toBe(false);
     });
 

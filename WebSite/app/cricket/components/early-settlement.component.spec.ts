@@ -42,7 +42,7 @@ import { ResultByTeamNamePipe } from '../../shared/pipes/result-by-team-name.pip
 import { ResultStatusPipe } from '../../shared/pipes/result-status.pipe';
 import { TicketStatusPipe } from '../../shared/pipes/ticket-status.pipe';
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
-import { ToastContainerDirective, ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
+import { ToastContainerDirective, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 
 describe("Cricket - Early Settlement Component", () => {
   let component: EarlySettlementComponent;
@@ -141,7 +141,6 @@ describe("Cricket - Early Settlement Component", () => {
         NgbModule,
         MaterialModule,
         ToastNoAnimationModule.forRoot(),
-        ToastContainerModule,
         ToastrModule.forRoot()
       ],
     })

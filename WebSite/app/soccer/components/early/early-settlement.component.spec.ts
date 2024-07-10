@@ -44,7 +44,7 @@ import { Language } from '../../../shared/language.native';
 import { ResultSettingModel } from '../../../shared/models';
 import { MatchDetailComponent } from './match-detail.component';
 import { ScoreBySettlementPipe } from '../../../shared/pipes/score-by-settlement.pipe';
-import { ToastContainerDirective, ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
+import { ToastContainerDirective, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 
 describe('Soccer - EarlySettlementComponent', () => {
     let component: EarlySettlementComponent;
@@ -157,7 +157,6 @@ describe('Soccer - EarlySettlementComponent', () => {
                     HttpClientModule,
                     NgbModule,
                     ToastNoAnimationModule.forRoot(),
-                    ToastContainerModule,
                     ToastrModule.forRoot()
                 ],
             })

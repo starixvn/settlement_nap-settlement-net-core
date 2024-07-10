@@ -18,7 +18,7 @@ import {
 } from '../../shared/services';
 import { MaterialModule } from '../../shared/material-module';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { ToastContainerDirective, ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
+import { ToastContainerDirective, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 import { Language } from '../../shared/language.native';
 
 describe('NumberGame - Matches Component', () => {
@@ -79,7 +79,6 @@ describe('NumberGame - Matches Component', () => {
                 MaterialModule,
                 NgbModule,
                 ToastNoAnimationModule.forRoot(),
-                ToastContainerModule,
                 ToastrModule.forRoot()
             ],
         })

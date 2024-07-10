@@ -1,7 +1,7 @@
 import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
+import { ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 import { of } from 'rxjs';
 import { CalculateAction } from '../../../shared/constants';
 import { MaterialModule } from '../../../shared/material-module';
@@ -75,7 +75,6 @@ describe('ConfirmRefundComponent', () => {
         HttpClientModule,
         MaterialModule,
         ToastNoAnimationModule.forRoot(),
-        ToastContainerModule,
         ToastrModule.forRoot(),
       ]
     })

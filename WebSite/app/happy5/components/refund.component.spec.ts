@@ -16,7 +16,7 @@ import {
     BlockUIService,
     MessageBoxService,
 } from '../../shared/services';
-import { ToastContainerDirective, ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
+import { ToastContainerDirective, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 describe('Refund Component', () => {
@@ -73,7 +73,6 @@ describe('Refund Component', () => {
                 BrowserAnimationsModule,
                 NoopAnimationsModule,
                 ToastNoAnimationModule.forRoot(),
-                ToastContainerModule,
                 ToastrModule.forRoot()
             ],
         })

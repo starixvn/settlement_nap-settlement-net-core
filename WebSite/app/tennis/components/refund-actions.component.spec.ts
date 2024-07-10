@@ -27,7 +27,7 @@ import { MatchDetail, Permission, SettleQuery } from '../../shared/models/sports
 import { ResultDetail } from '../../shared/models/sportsbook-sop';
 import { ResultSettingModel } from '../../shared/models';
 import { VerificationService } from '../services';
-import { ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
+import { ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 import { MatchDetailComponent } from './match-detail.component';
 import { ScoreBySettlementPipe } from '../../shared/pipes/score-by-settlement.pipe';
 
@@ -90,7 +90,6 @@ describe('Tennis - Refund actions component', () => {
         HttpClientModule,
         NgbModule,
         ToastNoAnimationModule.forRoot(),
-        ToastContainerModule,
         ToastrModule.forRoot()
       ],
     })

@@ -14,7 +14,7 @@ import { CalculateAction, ResultSettingType, ResultStatusId, SettlementStatusId,
 import { of } from "rxjs";
 import { Language } from "../../language.native";
 import * as _ from "lodash";
-import { ToastContainerDirective, ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
+import { ToastContainerDirective, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 import { MaterialModule } from '../../../shared/material-module';
 
 describe("Early Base Component", () => {
@@ -83,7 +83,6 @@ describe("Early Base Component", () => {
                 NgbModule,
                 MaterialModule,
                 ToastNoAnimationModule.forRoot(),
-                ToastContainerModule,
                 ToastrModule.forRoot()],
         })
             .compileComponents()

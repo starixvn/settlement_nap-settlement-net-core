@@ -24,7 +24,7 @@ import { ResultSettingModel } from "../../shared/models";
 import { HedgeMatchDetail, MatchDetail, Permission, ResultDetail } from "../../shared/models/sportsbook-sop";
 import { VerificationService } from "../services";
 import { ResultByTeamNamePipe } from '../../shared/pipes/result-by-team-name.pipe';
-import { ToastContainerDirective, ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from "ngx-toastr";
+import { ToastContainerDirective, ToastNoAnimationModule, ToastrModule, ToastrService } from "ngx-toastr";
 import { MaterialModule } from "../../shared/material-module";
 import { ApiKeys } from "../constants";
 import { NO_ERRORS_SCHEMA } from "@angular/core";
@@ -99,7 +99,6 @@ describe("E-sport - Refund Component", () => {
         HttpClientModule,
         MaterialModule,
         ToastNoAnimationModule.forRoot(),
-        ToastContainerModule,
         ToastrModule.forRoot(),
         RefundActionsComponent,
         IntervalBackgroundPipe,

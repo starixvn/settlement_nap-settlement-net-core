@@ -7,7 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { RequestService } from '../../services/request.service';
 import { BlockUIService, ClosePopupService, HttpRequestService, MessageBoxService } from '../../../shared/services';
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
-import { ToastContainerDirective, ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
+import { ToastContainerDirective, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 import { Match, MatchDetail, OtherSportsMatch, Permission, QueryMatch } from '../../models';
 import { HedgeMatchDetail } from '../../../shared/models/sportsbook-sop/hedge-match-detail.model';
 import { of } from 'rxjs';
@@ -65,7 +65,6 @@ describe('OtherRefundComponent', () => {
                 NgbModule,
                 FormsModule,
                 ToastNoAnimationModule.forRoot(),
-                ToastContainerModule,
                 ToastrModule.forRoot()
             ],
             providers: [

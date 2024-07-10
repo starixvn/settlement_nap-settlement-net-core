@@ -2,7 +2,7 @@ import { Language } from '../../../shared/language.native';
 import { LeagueSettle, Team } from '../../models';
 import { CommonModule } from '@angular/common';
 import { Component, ViewChild, OnInit, Inject, Injector } from '@angular/core';
-import { ToastContainerDirective, ToastContainerModule, ToastrService } from 'ngx-toastr';
+import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import { OutrightService } from '../../services/outright.service';
 import { BlockUIService, HttpRequestService, MessageBoxService } from '../../../shared/services';
 import { FormsModule } from '@angular/forms';
@@ -17,7 +17,7 @@ import { ResultOutright } from '../../models/result-outright.model';
   selector: 'uncalculate-popup',
   templateUrl: './uncalculate-popup.component.html',
   standalone: true,
-  imports: [CommonModule, ToastContainerModule, MatDialogModule, DragDropModule, FormsModule],
+  imports: [CommonModule,  MatDialogModule, DragDropModule, FormsModule],
   providers: [OutrightService, HttpRequestService, BlockUIService, MessageBoxService],
 })
 export class UncalculatePopupComponent implements OnInit {

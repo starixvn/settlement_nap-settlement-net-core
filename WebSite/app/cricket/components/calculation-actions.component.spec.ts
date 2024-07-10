@@ -21,7 +21,7 @@ import { VerificationBaseService } from '../../core/services/verification-base.s
 import { ResultSettingModel } from '../../shared/models';
 import { ExternalSourceNamePipe } from '../../shared/pipes/external-source-name.pipe';
 import { ResultByTeamNamePipe } from '../../shared/pipes/result-by-team-name.pipe';
-import { ToastContainerDirective, ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
+import { ToastContainerDirective, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 
 export class CreateDataTest {
   public static CreateResultDetail(
@@ -119,7 +119,6 @@ describe('CalculationActionsComponent', () => {
         HttpClientModule,
         NgbModule,
         ToastNoAnimationModule.forRoot(),
-        ToastContainerModule,
         ToastrModule.forRoot()],
     })
       

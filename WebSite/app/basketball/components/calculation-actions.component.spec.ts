@@ -12,7 +12,7 @@ import { ResultSettingModel } from '../../shared/models';
 import { MatchDetail, Permission, ResultDetail, ExternalResultDetail } from '../../shared/models/sportsbook-sop';
 import { ExternalSourceNamePipe } from '../../shared/pipes/external-source-name.pipe';
 import { ResourcesIds } from '../constants';
-import { ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
+import { ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 import { Language } from '../../shared/language.native';
 import { TicketCountComponent } from '../../shared/components/ticket-count/ticket-count.component';
 import { ResettleCheckerComponent } from '../../shared/components/resettle-checker/resettle-checker.component';
@@ -87,7 +87,6 @@ describe('Basketball - Calculation Actions Component', () => {
             imports: [
                 HttpClientModule,
                 ToastNoAnimationModule.forRoot(),
-                ToastContainerModule,
                 ToastrModule.forRoot(),
                 ResourceNameByIdPipe,
                 ExternalSourceNamePipe,

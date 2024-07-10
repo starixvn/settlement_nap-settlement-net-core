@@ -9,7 +9,7 @@ import { PageType } from '../../shared/constants';
 import { CalculationComponent } from './calc/calculation.component'
 import { RefundComponent } from './refund/refund.component'
 import { EarlySettlementComponent } from './early/early-settlement.component'
-import { ToastContainerModule, ToastNoAnimationModule, ToastrModule } from 'ngx-toastr';
+import { ToastNoAnimationModule, ToastrModule } from 'ngx-toastr';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
@@ -30,7 +30,6 @@ describe(`Soccer - AppComponent`, () => {
                 HttpClientModule,
                 MaterialModule,
                 ToastNoAnimationModule.forRoot(),
-                ToastContainerModule,
                 ToastrModule.forRoot()
             ],
             declarations: [

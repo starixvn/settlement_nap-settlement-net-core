@@ -37,7 +37,7 @@ import { NO_ERRORS_SCHEMA } from "@angular/core";
 import { MatchDetail, Permission, ResultDetail } from "../../shared/models/sportsbook-sop";
 import { ApiKeys } from "../constants";
 import { ResultSettingModel } from "../../shared/models";
-import { ToastContainerDirective, ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from "ngx-toastr";
+import { ToastContainerDirective, ToastNoAnimationModule, ToastrModule, ToastrService } from "ngx-toastr";
 
 describe("Cricket - Refund Component", () => {
   let component: RefundActionsComponent;
@@ -124,7 +124,6 @@ describe("Cricket - Refund Component", () => {
         NgbModule,
         MaterialModule,
         ToastNoAnimationModule.forRoot(),
-        ToastContainerModule,
         ToastrModule.forRoot()
       ],
     })

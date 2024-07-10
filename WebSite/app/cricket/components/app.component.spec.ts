@@ -22,7 +22,7 @@ import { NewMultipleSelectComponent } from "../../shared/components/multiple-sel
 import { ExternalLinkPipe } from "../../score-source-setting/pipes";
 import { PipesModule } from '../../shared/pipes/pipes.module.native';
 import { ResultByPlayerNamePipe, ResultNameByIdPipe, ResultValuePipe } from '../pipes';
-import { ToastContainerModule, ToastNoAnimationModule, ToastrModule } from "ngx-toastr";
+import { ToastNoAnimationModule, ToastrModule } from "ngx-toastr";
 import { PageType } from '../../shared/constants';
 
 describe("Component: App", () => {
@@ -56,7 +56,6 @@ describe("Component: App", () => {
         MaterialModule,
         PipesModule,
         ToastNoAnimationModule.forRoot(),
-        ToastContainerModule,
         ToastrModule.forRoot()
       ],
       })

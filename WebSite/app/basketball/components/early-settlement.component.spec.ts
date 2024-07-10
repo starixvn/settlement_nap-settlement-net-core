@@ -13,7 +13,7 @@ import { MatchDetail, Permission, ResultDetail } from '../../shared/models/sport
 import { ExternalSourceNamePipe } from '../../shared/pipes/external-source-name.pipe';
 import { ResultByTeamNamePipe } from '../../shared/pipes/result-by-team-name.pipe';
 import { ExternalLinkPipe } from '../../score-source-setting/pipes';
-import {ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
+import {ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 import { ModalDialogComponent } from '../../shared/components/modal-dialog/modal-dialog.component';
 import { ModalContentDialogComponent } from '../../shared/components/modal-dialog/modal-content-dialog.component';
 import { ResettleCheckerComponent } from '../../shared/components/resettle-checker/resettle-checker.component';
@@ -81,7 +81,6 @@ describe('Component: EarlySettlementComponent', () => {
                 HttpClientModule,
                 PipesModule,
                 ToastNoAnimationModule.forRoot(),
-                ToastContainerModule,
                 ToastrModule.forRoot(),
                 EarlySettlementComponent,
                 IntervalBackgroundPipe,

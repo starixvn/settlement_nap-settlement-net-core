@@ -2,7 +2,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
+import { ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 import { MaterialModule } from '../../../shared/material-module';
 import { BlockUIService, HttpRequestService, MessageBoxService } from '../../../shared/services';
 import { VerificationBaseService } from '../../services/verification-base.service';
@@ -68,7 +68,6 @@ describe('ConfirmScoreComponent', () => {
         MaterialModule,
         FormsModule,
         ToastNoAnimationModule.forRoot(),
-        ToastContainerModule,
         ToastrModule.forRoot(),
       ]
 

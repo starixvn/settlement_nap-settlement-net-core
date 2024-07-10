@@ -6,7 +6,7 @@ import { LeagueSettings } from '../../../shared/models/league-settings.model';
 import { RequestService } from '../../services/request.service';
 import { BlockUIService, HttpRequestService } from '../../../shared/services';
 import { HttpClientModule } from '@angular/common/http';
-import { ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
+import { ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 import { Language } from '../../../shared/language.native';
 import { Result } from '../../../shared/models';
 
@@ -45,7 +45,6 @@ describe('LeagueAutoSettingsComponent', () => {
     await TestBed.configureTestingModule({
       imports: [ LeagueAutoSettingsComponent,  HttpClientModule ,
         ToastNoAnimationModule.forRoot(),
-        ToastContainerModule,
         ToastrModule.forRoot()],
       providers: [HttpRequestService, RequestService, BlockUIService, MessageBoxService]
     })

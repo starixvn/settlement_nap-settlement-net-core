@@ -12,7 +12,7 @@ import { Language } from '../../../shared/language.native';
 import { CalculateAction } from '../../../shared/constants';
 import { RequestService } from '../../services/request.service';
 import { FullTimeService } from './fulltime.service';
-import { ToastContainerDirective, ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
+import { ToastContainerDirective, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 
 describe('RefundActionsComponent', () => {
   let component: FullTimeRefundComponent;
@@ -85,7 +85,6 @@ describe('RefundActionsComponent', () => {
         HttpClientModule,
         NgbModule,
         ToastNoAnimationModule.forRoot(),
-        ToastContainerModule,
         ToastrModule.forRoot()
       ],
       providers: [

@@ -25,7 +25,7 @@ import {
 import { OnlyIntegerDirective, FocusDirective } from "../shared/directives";
 import { MaterialModule } from "../shared/material-module";
 import { CustomHttpRequestInterceptor } from "../shared/custom-httprequest-interceptor.native";
-import { ToastContainerModule, ToastNoAnimationModule } from "ngx-toastr";
+import { ToastNoAnimationModule } from "ngx-toastr";
 import { NewMultipleSelectComponent } from "../shared/components/multiple-select/multiple-select.component";
 
 import { ModalDialogComponent } from "../shared/components/modal-dialog/modal-dialog.component";
@@ -48,7 +48,6 @@ import { InputOuScoreComponent } from "./components/input-ou-score/input-ou-scor
       positionClass: "inline",
       maxOpened: 1,
     }),
-    ToastContainerModule,
     OnlyIntegerDirective,
     NoopAnimationsModule,
     NewMultipleSelectComponent,

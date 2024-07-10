@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testExecutions version="1">
+  <file path="D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\happy5\components\refund.component.spec.ts">
+    <testCase name="Refund Component should create" duration="159"/>
+    <testCase name="Refund Component should call close function when click close popup" duration="35"/>
+    <testCase name="Refund Component refund should set error message when result is unsuccessful" duration="180"/>
+    <testCase name="Refund Component refund should not error message when result is successful" duration="66"/>
+    <testCase name="Refund Component should returns Red or Blue ball color with ball number" duration="28"/>
+  </file>
+  <file path="D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\happy5\components\recalculation.component.spec.ts">
+    <testCase name="Recalculation Component should create" duration="167"/>
+    <testCase name="Recalculation Component reCalculate should error message when list are existed numberBall empty" duration="69"/>
+    <testCase name="Recalculation Component reCalculate should error message when numberball is out of range" duration="46"/>
+    <testCase name="Recalculation Component reCalculate should error message when numberball is duplicated ball" duration="42"/>
+    <testCase name="Recalculation Component reCalculate should not error message when result is successful" duration="131"/>
+    <testCase name="Recalculation Component reCalculate should error message when result is unsuccessful" duration="80"/>
+    <testCase name="Recalculation Component isWarningOnBall should return &quot;true&quot; when input out of range number" duration="20"/>
+    <testCase name="Recalculation Component isWarningOnBall should return &quot;true&quot; when input acceptable number" duration="15"/>
+  </file>
+  <file path="D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\happy5\components\app.component.spec.ts">
+    <testCase name="Component: App should create the app" duration="221"/>
+    <testCase name="Component: App should call reCheckin function from re-checkin service." duration="33"/>
+    <testCase name="Component: App should return right input value" duration="20"/>
+    <testCase name="Component: App should return one value" duration="20"/>
+  </file>
+  <file path="D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\happy5\components\filter.component.spec.ts">
+    <testCase name="Happy 5 - Filter Component should create the app" duration="166"/>
+    <testCase name="Happy 5 - Filter Component should return fromDate and toDate as expected" duration="65"/>
+    <testCase name="Happy 5 - Filter Component ngOnChanges() should call search when have change" duration="33"/>
+    <testCase name="Happy 5 - Filter Component ngOnChanges() should not call when there are not change" duration="29"/>
+    <testCase name="Happy 5 - Filter Component should emit on click submit" duration="32"/>
+    <testCase name="Happy 5 - Filter Component change fromDate on date picker should enable button search when fromDate is less than or equal to toDate" duration="32"/>
+    <testCase name="Happy 5 - Filter Component change fromDate on date picker should disable button search when fromDate is greater than toDate" duration="68"/>
+    <testCase name="Happy 5 - Filter Component change toDate on date picker should enable button search when toDate is greater than fromDate" duration="24"/>
+    <testCase name="Happy 5 - Filter Component change toDate on date picker should disable button search when toDate less than fromDate" duration="24"/>
+  </file>
+  <file path="D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\happy5\components\matches.component.spec.ts">
+    <testCase name="Happy 5 - Matches Component should create the app" duration="168"/>
+    <testCase name="Happy 5 - Matches Component should returns leagues and permission not null" duration="19"/>
+    <testCase name="Happy 5 - Matches Component should returns true when have permission on Recal" duration="16"/>
+    <testCase name="Happy 5 - Matches Component should returns false when have not permission on Recal" duration="19"/>
+    <testCase name="Happy 5 - Matches Component should returns true when have permission on Refund" duration="32"/>
+    <testCase name="Happy 5 - Matches Component should returns false when have not permission on Refund" duration="31"/>
+    <testCase name="Happy 5 - Matches Component should returns Red or Blue ball color with ball number" duration="33"/>
+    <testCase name="Happy 5 - Matches Component should returns calculated background when match is completed" duration="30"/>
+    <testCase name="Happy 5 - Matches Component should returns refund background when match is refund" duration="14"/>
+    <testCase name="Happy 5 - Matches Component should returns true when match is completed" duration="16"/>
+  </file>
+</testExecutions>

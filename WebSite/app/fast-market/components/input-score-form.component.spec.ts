@@ -15,7 +15,7 @@ import { Language } from '../../shared/language.native';
 import { of } from 'rxjs';
 import 'rxjs/add/operator/toPromise';
 import { observeOn } from 'rxjs/operators';
-import { ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
+import { ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 
 describe('InputScoreFormComponent', () => {
   let component: InputScoreFormComponent;
@@ -46,7 +46,6 @@ describe('InputScoreFormComponent', () => {
         NgbModule,
         MaterialModule,
         ToastNoAnimationModule.forRoot(),
-        ToastContainerModule,
         ToastrModule.forRoot()
       ],
     })
