@@ -36,8 +36,6 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
   private readonly toastrService = inject(ToastrService);
   private readonly blockUIService = inject(BlockUIService);
   public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
-
-  readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
   readonly totalPointsId = ResourcesIds.totalPoints;
   match: Match;
   hedgeMatchDetail: HedgeMatchDetail;
@@ -661,6 +659,11 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
     return [SportType.tableTennis].includes(this.match.matchDetail.sportType)
   }
 
+  collapseChildMatch() {
+    this.collapse = !this.collapse;
+  }
+
+  getChildMatchesClass(child: ChildMatch) {
     if (child.isNotConsistent) {
       return "not-consistent";
     } else {
@@ -669,9 +672,6 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
     }
   }
 
-  collapseChildMatch() {
-    this.collapse = !this.collapse;
-  }
 
   private createMatchResource() {
     if (this.match.matchDetail.sportType === SportType.volleyBall) {

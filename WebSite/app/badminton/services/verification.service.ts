@@ -82,4 +82,5 @@ export class VerificationService extends VerificationBaseService  {
     
     isFTDrawWithInputNormal(totalGames: ResultDetail, inputDirectly: boolean) {
         return totalGames.checked && !inputDirectly && totalGames.homeValue.trim() === totalGames.awayValue.trim();
+    }
 }

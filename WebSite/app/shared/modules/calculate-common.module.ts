@@ -40,7 +40,7 @@ import { OnlyIntegerDirective } from "../../shared/directives";
     ToastrModule.forRoot({
       timeOut: 5000,
       positionClass: "toast-top-full-width",
-      // disableTimeOut: true,
+      disableTimeOut: true,
     }),
   ],
   providers: [
