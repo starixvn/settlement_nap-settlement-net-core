@@ -381,6 +381,7 @@ public class AioServiceImp(
             (3, SportType.Tennis) => GamePlay.Three,
             (_, SportType.Tennis) => GamePlay.Five,
             (0, SportType.TableTennis) => GamePlay.Seven,
+            (6, SportType.TableTennis) => GamePlay.Five,
             (_, SportType.TableTennis) => matchDetail.GameSession,
             (_, _) => matchDetail.GameSession
         };
