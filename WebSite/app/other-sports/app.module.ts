@@ -30,11 +30,11 @@ import { SportTemplateModule } from './components/sport-template.module';
             maxOpened: 1,
         }),
         ToastContainerModule,
-    ],
-    declarations: [
-        AppComponent,
         ModalDialogComponent,
         ModalContentDialogComponent,
+    ],
+    declarations: [
+        AppComponent
     ],
     bootstrap: [AppComponent],
     providers: [
