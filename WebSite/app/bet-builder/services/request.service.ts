@@ -25,7 +25,6 @@ export class RequestService {
         return this.httpRequestService.postJson(query, `${this.betBuilderApi}/search`);
     }
 
-
     public getMatch(matchId: number) {
         const param = {
             matchId

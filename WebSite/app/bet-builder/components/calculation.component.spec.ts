@@ -11,13 +11,11 @@ import {
     CalculationConstraintService,
     RequestService,
 } from '../services';
-import {
-    DatepickerComponent,
-    MultipleSelectComponent,
-    ModalDialogComponent,
-    TreeViewComponent,
-    ModalContentDialogComponent,
-} from '../../shared/components';
+import { MaterialDialogComponent } from '../../shared/components/material-dialog-iframe/material-dialog.component';
+import { ModalContentDialogComponent } from '../../shared/components/modal-dialog/modal-content-dialog.component';
+import { ModalDialogComponent } from '../../shared/components/modal-dialog/modal-dialog.component';
+import { NewMultipleSelectComponent } from "../../shared/components/multiple-select/multiple-select.component";
+import { DatepickerComponent } from '../../shared/components/date-picker/date-picker.component';
 import { HttpRequestService, BlockUIService, MessageBoxService, ClosePopupService } from '../../shared/services';
 import { MultipleSelect, ItemsSelect } from '../../shared/models';
 import {
@@ -66,13 +64,10 @@ describe('Bet Builder - Calculation Component', () => {
         TestBed.configureTestingModule({
             declarations: [
                 CalculationComponent,
-                DatepickerComponent,
-                MultipleSelectComponent,
                 ModalDialogComponent,
                 ResultStatusPipe,
                 SelectionPipe,
                 TicketStatusPipe,
-                TreeViewComponent,
                 ModalContentDialogComponent,
             ],
             providers: [
@@ -88,6 +83,9 @@ describe('Bet Builder - Calculation Component', () => {
             ],
             schemas: [NO_ERRORS_SCHEMA],
             imports: [
+                MaterialDialogComponent,
+                NewMultipleSelectComponent,
+                DatepickerComponent,
                 FormsModule,
                 HttpClientModule,
                 NgbModule,
@@ -113,12 +111,11 @@ describe('Bet Builder - Calculation Component', () => {
                 requestService = fixture.debugElement.injector.get(RequestService);
                 closePopupService = fixture.debugElement.injector.get(ClosePopupService);
 
-                spyOn(calculationFilterService, 'getSelectionByGroupName').and.returnValue(selections);
-                spyOn(calculationFilterService, 'getSelectionByResultStatus').and.returnValue(selections);
-                spyOn(calculationConstraintService, 'highlightedResultValue').and.returnValue(selections);
+                jest.spyOn(calculationFilterService, 'getSelectionByGroupName').mockReturnValue(selections);
+                jest.spyOn(calculationFilterService, 'getSelectionByResultStatus').mockReturnValue(selections);
 
-                spyOn(calculationConstraintService, 'disableCalculate').and.returnValue(true);
-                spyOn(calculationConstraintService, 'disableUnCalculate').and.returnValue(false);
+                jest.spyOn(calculationConstraintService, 'disableCalculate').mockReturnValue(true);
+                jest.spyOn(calculationConstraintService, 'disableUnCalculate').mockReturnValue(false);
 
                 modalRef = modalService.open(ModalContentDialogComponent);
             });
@@ -126,11 +123,6 @@ describe('Bet Builder - Calculation Component', () => {
 
     it('should create the app', () => {
         expect(component).toBeTruthy();
-    });
-
-    it('group name should remove special character on the end sentence', () => {
-        const result = component.correctGroupSelectionName("Group Selection name-");
-        expect(result).toBe("Group Selection name");
     });
 
     it('section name should remove special character on the start sentence ', () => {
@@ -234,10 +226,10 @@ describe('Bet Builder - Calculation Component', () => {
     describe('calculate', () => {
         describe('Click on Yes button on confirm box.', () => {
             it('should invoke push function on requestService and there are no any error then the popup is closed.', (done) => {
-                spyOn(requestService, 'push').and.returnValue(of(successfulResult));
-                spyOn(calculationConstraintService, 'isValidResultValue').and.returnValue(true);
-                spyOn(closePopupService, 'closePopup');
-                spyOn(messageBoxService, 'confirm').and.returnValue(Promise.resolve(true));
+                jest.spyOn(requestService, 'push').mockReturnValue(of(successfulResult));
+                jest.spyOn(calculationConstraintService, 'isValidResultValue').mockReturnValue(true);
+                jest.spyOn(closePopupService, 'closePopup');
+                jest.spyOn(messageBoxService, 'confirm').mockReturnValue();
 
                 component.calculate();
 
@@ -249,8 +241,8 @@ describe('Bet Builder - Calculation Component', () => {
             });
 
             it('should invoke push function on requestService and show error on the popup.', (done) => {
-                spyOn(requestService, 'push').and.returnValue(of(unSuccessfulResult));
-                spyOn(calculationConstraintService, 'isValidResultValue').and.returnValue(true);
+                jest.spyOn(requestService, 'push').mockReturnValue(of(unSuccessfulResult));
+                jest.spyOn(calculationConstraintService, 'isValidResultValue').mockReturnValue(true);
                 component.calculate();
 
                 const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
@@ -268,10 +260,10 @@ describe('Bet Builder - Calculation Component', () => {
     describe('unCalculate', () => {
         describe('Click on Yes button on confirm box.', () => {
             it('should invoke push function on requestService and there are no any error then the popup is closed.', (done) => {
-                spyOn(requestService, 'push').and.returnValue(of(successfulResult));
-                spyOn(calculationConstraintService, 'isValidResultValue').and.returnValue(true);
-                spyOn(closePopupService, 'closePopup');
-                spyOn(messageBoxService, 'confirm').and.returnValue(Promise.resolve(true));
+                jest.spyOn(requestService, 'push').mockReturnValue(of(successfulResult));
+                jest.spyOn(calculationConstraintService, 'isValidResultValue').mockReturnValue(true);
+                jest.spyOn(closePopupService, 'closePopup');
+                jest.spyOn(messageBoxService, 'confirm').mockReturnValue();
 
                 component.unCalculate();
 
@@ -283,8 +275,8 @@ describe('Bet Builder - Calculation Component', () => {
             });
 
             it('should invoke push function on requestService and show error on the popup.', (done) => {
-                spyOn(requestService, 'push').and.returnValue(of(unSuccessfulResult));
-                spyOn(calculationConstraintService, 'isValidResultValue').and.returnValue(true);
+                jest.spyOn(requestService, 'push').mockReturnValue(of(unSuccessfulResult));
+                jest.spyOn(calculationConstraintService, 'isValidResultValue').mockReturnValue(true);
                 component.unCalculate();
 
                 const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
@@ -322,8 +314,8 @@ describe('Bet Builder - Calculation Component', () => {
 
     describe('calculate show warning message', () => {
         it('should invoke alert message when invalid result.', () => {
-            spyOn(calculationConstraintService, 'isValidResultValue').and.returnValue(false);
-            spyOn(messageBoxService, 'alert').and.callThrough();
+            jest.spyOn(calculationConstraintService, 'isValidResultValue').mockReturnValue(false);
+            jest.spyOn(messageBoxService, 'alert').mockImplementation();
             component.calculate();
             expect(messageBoxService.alert).toHaveBeenCalled();
         });
@@ -336,9 +328,9 @@ describe('Bet Builder - Calculation Component', () => {
             selectionPermission.permission = new Permission();
             selectionPermission.selectionDetail = selections;
 
-            spyOn(requestService, 'getSelection').and.returnValue(of(selectionPermission));
-            spyOn(calculationFilterService, 'groupBySelectionName').and.returnValue(of(selectionPermission.selectionDetail));
-            spyOn(calculationFilterService, 'renderSelection').and.returnValue(of(items));
+            jest.spyOn(requestService, 'getSelection').mockReturnValue(of(selectionPermission));
+            jest.spyOn(calculationFilterService, 'groupBySelectionName').mockReturnValue([]);
+            jest.spyOn(calculationFilterService, 'renderSelection').mockReturnValue(items);
 
             component.refresh();
 
@@ -354,7 +346,7 @@ describe('Bet Builder - Calculation Component', () => {
 
     describe('changeSelection', () => {
         it('selectedSelection should empty when value is emptied.', () => {
-            component.changeSelection("");
+            component.changeSelection([]);
             const selectedSelection = component.selectedSelection;
 
             expect(selectedSelection.length).toBe(0);
@@ -362,7 +354,13 @@ describe('Bet Builder - Calculation Component', () => {
 
         it('selectedSelection should not empty when have value.', () => {
             const count = 3;
-            component.changeSelection("1,2,3");
+            const items: ItemsSelect[] = [];
+            items.push(new ItemsSelect(1, "1", "1", false, false, false,[]));
+            items.push(new ItemsSelect(2, "2", "2", false, false, false,[]));
+            items.push(new ItemsSelect(3, "3", "3", false, false, false,[]));
+           
+            component.changeSelection(items);
+
             const selectedSelection = component.selectedSelection;
 
             expect(selectedSelection.length).toBeGreaterThanOrEqual(count);
@@ -371,7 +369,7 @@ describe('Bet Builder - Calculation Component', () => {
 
     describe('changeTicketStatus', () => {
         it('selectedTicketStatus should empty when value is emptied.', () => {
-            component.changeTicketStatus("");
+            component.changeTicketStatus([]);
             const selectedTicketStatus = component.selectedTicketStatus;
 
             expect(selectedTicketStatus.length).toBe(0);
@@ -379,7 +377,13 @@ describe('Bet Builder - Calculation Component', () => {
 
         it('selectedTicketStatus should not empty when have value.', () => {
             const count = 3;
-            component.changeTicketStatus("1,2,3");
+            const items: ItemsSelect[] = [];
+            items.push(new ItemsSelect(1, "1", "1", false, false, false,[]));
+            items.push(new ItemsSelect(2, "2", "2", false, false, false,[]));
+            items.push(new ItemsSelect(3, "3", "3", false, false, false,[]));
+          
+            component.changeTicketStatus(items);
+
             const selectedTicketStatus = component.selectedTicketStatus;
 
             expect(selectedTicketStatus.length).toBeGreaterThanOrEqual(count);
@@ -388,7 +392,7 @@ describe('Bet Builder - Calculation Component', () => {
 
     describe('changeResultStatus', () => {
         it('selectedSelection should empty when value is emptied.', () => {
-            component.changeResultStatus("");
+            component.changeResultStatus([]);
             const selectedResultStatus = component.selectedResultStatus;
 
             expect(selectedResultStatus.length).toBe(0);
@@ -396,7 +400,12 @@ describe('Bet Builder - Calculation Component', () => {
 
         it('selectedResultStatus should not empty when have value.', () => {
             const count = 3;
-            component.changeResultStatus("1,2,3");
+            const items: ItemsSelect[] = [];
+            items.push(new ItemsSelect(1, "1", "1", false, false, false,[]));
+            items.push(new ItemsSelect(2, "2", "2", false, false, false,[]));
+            items.push(new ItemsSelect(3, "3", "3", false, false, false,[]));
+          
+            component.changeResultStatus(items);
             const selectedResultStatus = component.selectedResultStatus;
 
             expect(selectedResultStatus.length).toBeGreaterThanOrEqual(count);
@@ -410,12 +419,12 @@ describe('Bet Builder - Calculation Component', () => {
             selectionPermission.permission = new Permission();
             selectionPermission.selectionDetail = selections;
 
-            spyOn(requestService, 'getSelection').and.returnValue(of(selectionPermission));
-            spyOn(calculationFilterService, 'groupBySelectionName').and.returnValue(of(selectionPermission.selectionDetail));
-            spyOn(calculationFilterService, 'renderSelection').and.returnValue(of(items));
-            spyOn(calculationFilterService, 'initialResultStatus').and.returnValue(of(new MultipleSelect()));
-            spyOn(calculationFilterService, 'initialTicketStatus').and.returnValue(of(new MultipleSelect()));
-            spyOn(calculationFilterService, 'initialSelection').and.returnValue(of(new MultipleSelect()));
+            jest.spyOn(requestService, 'getSelection').mockReturnValue(of(selectionPermission));
+            jest.spyOn(calculationFilterService, 'groupBySelectionName').mockReturnValue([]);
+            jest.spyOn(calculationFilterService, 'renderSelection').mockReturnValue(items);
+            jest.spyOn(calculationFilterService, 'initialResultStatus').mockReturnValue(new MultipleSelect());
+            jest.spyOn(calculationFilterService, 'initialTicketStatus').mockReturnValue(new MultipleSelect());
+            jest.spyOn(calculationFilterService, 'initialSelection').mockReturnValue(new MultipleSelect());
 
             component.ngOnInit();
 

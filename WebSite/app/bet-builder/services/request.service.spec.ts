@@ -36,7 +36,7 @@ describe('Bet Builder - RequestService', () => {
         const url = `${Url}/get-sports`;
         const query = {} as object;
 
-        spyOn(httpRequestService, 'postJson');
+        jest.spyOn(httpRequestService, 'postJson');
         service.getSport(query);
 
         expect(httpRequestService.postJson).toHaveBeenCalledWith(query, url, false);
@@ -46,16 +46,16 @@ describe('Bet Builder - RequestService', () => {
         const url = `${Url}/get-leagues`;
         const query = {} as object;
 
-        spyOn(httpRequestService, 'postJson');
+        jest.spyOn(httpRequestService, 'postJson');
         service.getLeague(query);
 
         expect(httpRequestService.postJson).toHaveBeenCalledWith(query, url, false);
     }));
 
-    it('getDate - Call exact Url and param',fakeAsync(() => {
+    it('getDate - Call exact Url and param',  fakeAsync(() => {
         const url = `${Url}/get-date`;
 
-        spyOn(httpRequestService, 'getJson');
+        jest.spyOn(httpRequestService, 'getJson');
         service.getDate();
 
         expect(httpRequestService.getJson).toHaveBeenCalledWith(url);
@@ -63,9 +63,9 @@ describe('Bet Builder - RequestService', () => {
 
     it('search - Call exact Url and param', fakeAsync(() => {
         const url = `${Url}/search`;
-        const query = {} as GetMatchesQuery;
+        const query = new GetMatchesQuery("aa", "", "1", "1", "","");
 
-        spyOn(httpRequestService, 'postJson');
+        jest.spyOn(httpRequestService, 'postJson');
         service.search(query);
 
         expect(httpRequestService.postJson).toHaveBeenCalledWith(query, url);
@@ -78,7 +78,7 @@ describe('Bet Builder - RequestService', () => {
             matchId,
         };
 
-        spyOn(httpRequestService, 'postJson');
+        jest.spyOn(httpRequestService, 'postJson');
         service.getMatch(matchId);
 
         expect(httpRequestService.postJson).toHaveBeenCalledWith(query, url);
@@ -91,7 +91,7 @@ describe('Bet Builder - RequestService', () => {
             matchId,
         };
 
-        spyOn(httpRequestService, 'postJson');
+        jest.spyOn(httpRequestService, 'postJson');
         service.getSelection(matchId);
 
         expect(httpRequestService.postJson).toHaveBeenCalledWith(query, url);
@@ -101,7 +101,7 @@ describe('Bet Builder - RequestService', () => {
         const url = `${Url}/settle`;
         const query = {} as object;
 
-        spyOn(httpRequestService, 'postJson');
+        jest.spyOn(httpRequestService, 'postJson');
         service.push(query);
 
         expect(httpRequestService.postJson).toHaveBeenCalledWith(query, url);
@@ -111,29 +111,29 @@ describe('Bet Builder - RequestService', () => {
         const url = `${Url}/refresh-matches`;
         const query = {} as MatchWaitingRequest;
 
-        spyOn(httpRequestService, 'postJson');
+        jest.spyOn(httpRequestService, 'postJson');
         service.refreshMatches(query);
 
         expect(httpRequestService.postJson).toHaveBeenCalledWith(query, url, false);
     }));
 
-    it('updateLeague - Call exact Url and param', fakeAsync(() => {
+    it('updateLeague - Call exact Url and param', () => {
         const url = `${urlApiSetting}/update-setting-league`;
         const query = {} as AutoSettingLeagueQuery;
 
-        spyOn(httpRequestService, 'postJson');
+        jest.spyOn(httpRequestService, 'postJson');
         service.updateLeague(query);
 
         expect(httpRequestService.postJson).toHaveBeenCalledWith(query, url);
-    }));
+    });
 
-    it('updateMatch - Call exact Url and param', fakeAsync(() => {
+    it('updateMatch - Call exact Url and param', () => {
         const url = `${urlApiSetting}/update-setting-match`;
-        const query = {} as AutoSettingMatchQuery;
+        const query = new AutoSettingMatchQuery(1, 1, true);
 
-        spyOn(httpRequestService, 'postJson');
+        jest.spyOn(httpRequestService, 'postJson');
         service.updateMatch(query);
 
         expect(httpRequestService.postJson).toHaveBeenCalledWith(query, url);
-    }));
+    });
 });

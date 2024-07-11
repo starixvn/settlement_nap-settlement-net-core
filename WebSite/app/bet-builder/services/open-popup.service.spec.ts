@@ -36,7 +36,7 @@ describe("MultiSport - PopupService", () => {
   });
 
   it("popupLog - should call dialogBoxService when called", () => {
-    spyOn(dialogBoxService, "popup");
+    jest.spyOn(dialogBoxService, "popup");
 
     popupService.popupLog(0, "", "");
 
@@ -46,7 +46,7 @@ describe("MultiSport - PopupService", () => {
   describe("popupCalc", () => {
 
     it("should call dialogBoxService when called", () => {
-      spyOn(dialogBoxService, "popup").and.returnValue(of(true));
+      jest.spyOn(dialogBoxService, "popup").mockReturnValue(of(true));
 
       popupService.popupCalc(match);
 
@@ -54,7 +54,7 @@ describe("MultiSport - PopupService", () => {
     });
 
     it("should change match when close popup by calc", () => {
-      spyOn(dialogBoxService, "popup").and.returnValue(of(true));
+      jest.spyOn(dialogBoxService, "popup").mockReturnValue(of(true));
 
       popupService.popupCalc(match);
 
