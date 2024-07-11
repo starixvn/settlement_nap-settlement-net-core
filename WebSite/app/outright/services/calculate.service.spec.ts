@@ -144,18 +144,67 @@ describe('CalculateService', () => {
     });
 
     describe('VerifyDeadHeatYesSetting', () => {
-        it('should return empty string when the dead heat setting is correct', () => { 
-            const actual = CalculateService.VerifyDeadHeatYesSetting([deadheatMatch], [deadheatMatch]);
+        it('should return empty string when the dead heat setting is correct', () => {
+            const actual = CalculateService.VerifyDeadHeatYesSetting([], [deadheatMatch]);
     
             expect(actual).toEqual('');
         });
     
-        // it('should return message when the dead heat setting is incorrect', () => {
-          
-        //     const expected = CalculateService.MessageInconsistentDeadheat(teamWonSelected.concat(teamWonSettled), Language.Outright.incorrectDeadHeatSetting);
-        //     const actual = CalculateService.VerifyDeadHeatYesSetting(teamWonSelected, teamWonSettled);
+        it('should return message when the dead heat setting is incorrect', () => {
+        
+            const expected = CalculateService.MessageInconsistentDeadheat([deadheatMatch, deadheatMatch], Language.Outright.inconsistentDeadheat);
+            const actual = CalculateService.VerifyDeadHeatYesSetting([deadheatMatch], [deadheatMatch]);
     
-        //     expect(actual).toEqual(expected);
-        // });
+            expect(actual).toEqual(expected);
+        });
+
+        it('should return message when select teams without Deadheat', () => {
+        
+            const expected = CalculateService.MessageInconsistentDeadheat([nonDeadHeatMatch, nonDeadHeatMatch], Language.Outright.incorrectDeadHeatSetting);
+            const actual = CalculateService.VerifyDeadHeatYesSetting([nonDeadHeatMatch, nonDeadHeatMatch], []);
+    
+            expect(actual).toEqual(expected);
+        });
+
+        it('should return message when select team without Deadheat and exist team settled with dead heat', () => {
+        
+            const expected = CalculateService.MessageInconsistentDeadheat([nonDeadHeatMatch, deadheatMatch], Language.Outright.incorrectDeadHeatSetting);
+            const actual = CalculateService.VerifyDeadHeatYesSetting([nonDeadHeatMatch], [deadheatMatch]);
+    
+            expect(actual).toEqual(expected);
+        });
+
+        it('should return message when select both team with and without Deadheat ', () => {
+        
+            const expected = CalculateService.MessageInconsistentDeadheat([nonDeadHeatMatch, deadheatMatch], Language.Outright.incorrectDeadHeatSetting);
+            const actual = CalculateService.VerifyDeadHeatYesSetting([nonDeadHeatMatch, deadheatMatch], []);
+    
+            expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('VerifyDeadHeatNOSetting', () => {
+        it('should return empty string when the dead heat setting is correct', () => {
+            const actual = CalculateService.VerifyDeadHeatNoSetting([nonDeadHeatMatch], [nonDeadHeatMatch]);
+    
+            expect(actual).toEqual('');
+        });
+    
+        it('should return message when select team won with deadheat', () => {
+        
+            const expected = CalculateService.MessageInconsistentDeadheat([deadheatMatch], Language.Outright.incorrectDeadHeatSetting);
+            const actual = CalculateService.VerifyDeadHeatNoSetting([deadheatMatch], []);
+    
+            expect(actual).toEqual(expected);
+        });
+
+        it('should return message when exist team settle with dead heat', () => {
+        
+            const expected = CalculateService.MessageInconsistentDeadheat([nonDeadHeatMatch, deadheatMatch], Language.Outright.inconsistentDeadheat);
+            const actual = CalculateService.VerifyDeadHeatNoSetting([nonDeadHeatMatch], [deadheatMatch]);
+    
+            expect(actual).toEqual(expected);
+        });
+
     });
 });
