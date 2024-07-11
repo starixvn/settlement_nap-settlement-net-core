@@ -153,6 +153,10 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
     return this.match.matchDetail.providerCount > 2 ? 3 : 2;
   }
 
+  get sportType() {
+    return this.match.matchDetail.sportType;
+  }
+
   private resetHomeAway(resultDetails: ResultDetail[]) {
     resultDetails.forEach((map) => {
       const hideScore = map.settlementStatusId === SettlementStatusId.Refund
@@ -165,8 +169,11 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
   public selectedOnLastMap(map: ResultDetail) {
     this.totalPoints.checked = this.totalGames.checked;
     const newFullTimeScore = this.verificationService.getNewFinalResource(this.noTotalPoints, ResourcesIds.totalGames, false);
-    const confirmMessage = this.verificationService.verifyFinalResource(this.noTotalPoints,
-      ResourcesIds.totalGames, newFullTimeScore, "Total Game");
+    const confirmMessage = this.verificationService.verifyFinalResource(
+      this.noTotalPoints,
+      ResourcesIds.totalGames, 
+      newFullTimeScore, 
+      this.sportType === SportType.tableTennis ? "Total Set" : "Total Game");
 
     if (!_.isEmpty(confirmMessage) && !this.match.isScoreDirect) {
       this.confirmationDialogMessage.message = confirmMessage;
@@ -358,7 +365,7 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
   private confirmChildMatchCalculation(resultDetails: ResultDetail[]) {
     const { sportType } = this.match.matchDetail;
 
-    if (sportType === SportType.tableTennis && this.isSettleRelated) {
+    if (sportType === SportType.tableTennis && this.isSettleRelated && this.childMatchSelected.length) {
       this.confirmationDialogMessage.message = Language.confirmRelatedChildMatch;
       this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
         this.confirmCalculation(resultDetails);
@@ -406,6 +413,8 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
       query.isLeader = this.isLeader;
       query.betStatus = betStatus;
       query.childMatchIds = childMatchIds;
+      query.isSettleRelated = this.isSettleRelated;
+
       const pushResult = await this.aioService.push(query);
       if (pushResult.isSuccessful) {
         await this.handleChildMatch(query, type);
@@ -472,6 +481,8 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
     query.isLeader = this.isLeader;
     query.betStatus = betStatus;
     query.childMatchIds = childMatchIds;
+    
+    console.log(query);
     const result = await this.aioService.push(query);
     if (result.errCode === 0) {
       await this.handleChildMatch(query, type);
@@ -656,7 +667,8 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
   }
 
   public get isSupportSettleRelated() {
-    return [SportType.tableTennis].includes(this.match.matchDetail.sportType)
+    return [SportType.tableTennis].includes(this.match.matchDetail.sportType) 
+      && this.match.matchDetail.parentId === 0;
   }
 
   collapseChildMatch() {
@@ -674,7 +686,9 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
 
 
   private createMatchResource() {
-    if (this.match.matchDetail.sportType === SportType.volleyBall) {
+    const { sportType } = this.match.matchDetail;
+    const sportHasChildMatch = [SportType.tableTennis, SportType.volleyBall];
+    if (sportHasChildMatch.includes(sportType)) {
       const list = [];
       this.childMatchSelected.forEach(item => {
         const childMatch = new MatchResource();
@@ -691,6 +705,8 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
     if (this.childMatchSelected.length > 0 && type === CalculateAction.calculate) {
       const settleChildMatchQuery = new SettleChildMatchQuery(this.childMatchSelected,
         settleQuery.actionName, settleQuery.isReSettledTickets, settleQuery.selectedResources);
+      settleChildMatchQuery.parentMatchId = settleQuery.matchId;
+      settleChildMatchQuery.sportType = settleQuery.sportType;
       await this.aioService.pushChildMatch(settleChildMatchQuery);
     }
   }

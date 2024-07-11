@@ -14,7 +14,8 @@ bootstrapApplication(AppComponent, {
     providers: [importProvidersFrom(BrowserAnimationsModule),
     provideHttpClient(),
     provideToastr({
-        // timeOut: 1000,
-    }), 
+        positionClass: "toast-top-full-width",
+        disableTimeOut: true,
+      }), 
     ],
   });

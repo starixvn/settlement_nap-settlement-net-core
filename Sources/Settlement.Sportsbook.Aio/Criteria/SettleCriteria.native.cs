@@ -33,6 +33,7 @@ public class SettleCriteria : NonQueryCommand
     public bool IsSettleRelated { get; set; }
 
     public string BroadcastSessionId { get; set; } = Guid.NewGuid().ToString();
+    public string RemarkInfo { get; set; }
 
     [SpParam(Ignored = true)]
     public int SportType { get; set; }

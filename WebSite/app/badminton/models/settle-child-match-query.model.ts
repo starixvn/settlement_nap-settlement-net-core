@@ -6,6 +6,8 @@ export class SettleChildMatchQuery {
     actionName: string;
     isReSettledTickets: boolean;
     selectedResources: ResultDetail[];
+    parentMatchId: number;
+    sportType: number;
     constructor(
         childMatches: ChildMatch[],
         actionName: string,

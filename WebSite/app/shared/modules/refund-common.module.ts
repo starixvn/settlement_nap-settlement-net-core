@@ -17,6 +17,7 @@ import { MatDialogModule } from '@angular/material/dialog';
         BlockUIService,
         HttpRequestService,
         AioService,
+        
         IntervalBackgroundPipe,
         ResultByTeamNamePipe]
 })

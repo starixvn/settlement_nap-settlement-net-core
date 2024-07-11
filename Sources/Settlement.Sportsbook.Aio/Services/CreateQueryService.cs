@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Settlement.Constants;
 using Settlement.Models;
 using Settlement.Services;
+using Settlement.Sportsbook.Aio.Constants;
 using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Requests;
@@ -43,7 +44,27 @@ public class CreateQueryServiceImp(
         criteria.AdminId = currentSession.UserId;
         criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
         criteria.SelectedResources = resourcesResult;
+        criteria.RemarkInfo = CreateSettleRelatedRemarkInfo(request);
         return criteria;
+    }
+
+    private string CreateSettleRelatedRemarkInfo(SettleRequest request)
+    {
+        var name = (request.SportType, request.ActionName, request.ParentId) switch
+        {
+            (SportType.Tennis, SettleType.Calculate, 0) => "RefundRelated",
+            (SportType.Tennis, SettleType.Refund, 0) => "RefundRelated",
+            (SportType.TableTennis, SettleType.Calculate, 0) => "calcRelated",
+            (SportType.TableTennis, SettleType.Refund, 0) => "RefundRelated",
+            _ => string.Empty
+        };
+
+        if (string.IsNullOrEmpty(name))
+        {
+            return string.Empty;
+        }
+
+        return $"""<r n="{name}" v="{(request.IsSettleRelated ? 1 : 0)}"/>""";
     }
 
     public SettleCriteria QuerySettleChildMatch(SettleChildMatchRequest request)
@@ -57,8 +78,19 @@ public class CreateQueryServiceImp(
         criteria.BroadcastSessionId = request.SportType == SportType.Cricket
             ? request.ParentSessionId
             : criteria.BroadcastSessionId;
+        criteria.RemarkInfo = CreateChildMatchRemarkInfo(request);
 
         return criteria;
+    }
+
+    private string CreateChildMatchRemarkInfo(SettleChildMatchRequest request)
+    {
+        if (request.SportType == SportType.TableTennis && request.ParentMatchId != 0)
+        {
+            return $"""<r n="parentID" v="{request.ParentMatchId}"/>""";
+        }
+
+        return string.Empty;
     }
 
     public string CreateResources<T>(List<T> selectedResources)

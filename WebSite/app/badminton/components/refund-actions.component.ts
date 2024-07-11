@@ -50,7 +50,8 @@ export class RefundActionsComponent
 
 
   public get isSupportSettleRelated() {
-    return [SportType.tableTennis].includes(this.matchDetail.sportType)
+    return [SportType.tableTennis].includes(this.matchDetail.sportType) 
+      && this.matchDetail.parentId === 0;
   }
 
   async getMatch(matchId: number): Promise<void> {

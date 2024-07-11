@@ -13,7 +13,7 @@ export class SettleQuery {
     childMatchIds: string;
     sportType: number;
     isHedgeMatch: boolean;
-
+    isSettleRelated: boolean;
     constructor(
         matchId: number,
         selectedResources: ResultDetail[],
