@@ -59,6 +59,7 @@ describe("Popup Service", () => {
       const mockDialogRef = {
         afterClosed: () => of(balls),
       }  as MatDialogRef<ReCalculationComponent>;
+      
       jest.spyOn(dialog, 'closeAll');
       jest.spyOn(dialog, 'open').mockReturnValue(mockDialogRef);
 

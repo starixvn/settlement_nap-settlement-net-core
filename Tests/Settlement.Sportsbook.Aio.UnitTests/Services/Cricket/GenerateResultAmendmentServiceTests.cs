@@ -51,18 +51,6 @@ public class GenerateResultAmendmentServiceTests
                 new () { ResourceId = "9401", HomeValue = "A", AwayValue = "H" }
             };
 
-        var expectedWrongResults = new List<CricketResultItem>
-            {
-                new() { ResourceId = "9400", Home = "H", Away = "A", RefBetTypeId = "9400" },
-                new() { ResourceId = "9401", Home = "A", Away = "H", RefBetTypeId = "9401" }
-            };
-
-        var expectedActualResults = new List<CricketResultItem>
-            {
-                new() { ResourceId = "9400", Home = "H", Away = "A", RefBetTypeId = "9400" },
-                new() { ResourceId = "9401", Home = "A", Away = "H", RefBetTypeId = "9401" }
-            };
-
         xmlConvertService.Serialize(Arg.Any<CricketResult>()).Returns("SerializedResult");
 
         // Act
@@ -350,17 +338,9 @@ public class GenerateResultAmendmentServiceTests
         // Arrange
         var resultsChanged = new List<ResultChanged>
             {
-                new() { ResourceId = "123", LogDate = new DateTime(2022, 1, 1) },
-                new() { ResourceId = "456", LogDate = new DateTime(2022, 1, 2) }
+                new() { ResourceId = "123", LogDate = new DateTimeOffset(2022, 1, 1, 1, 1, 0, new TimeSpan(5, 0, 0)) },
+                new() { ResourceId = "456", LogDate = new DateTimeOffset(2022, 1, 2,1, 1, 0, new TimeSpan(5, 0, 0)) }
             };
-
-        var expectedExtraInfoItems = new List<ExtraInfoItem>
-            {
-                new() { ResourceId = "123", CalcDateTime = "2022-01-01 00:00:00.000", ReCalcDateTime = "2022-01-01 00:00:00.000" },
-                new() { ResourceId = "456", CalcDateTime = "2022-01-02 00:00:00.000", ReCalcDateTime = "2022-01-02 00:00:00.000" }
-            };
-
-        var expectedExtraInfo = new ExtraInfo { ExtraInfoItems = expectedExtraInfoItems };
 
         xmlConvertService.Serialize(Arg.Any<ExtraInfo>()).Returns("SerializedExtraInfo");
 

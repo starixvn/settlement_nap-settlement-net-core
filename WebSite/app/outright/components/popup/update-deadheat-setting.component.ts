@@ -24,11 +24,11 @@ import { ModalDialogMessage } from '../../../shared/models';
 })
 export class UpdateDeadheatSettingComponent implements OnInit {
   @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
-  private toastrService = inject(ToastrService);
-  private messageBoxService = inject(MessageBoxService);
-  private matDialog = inject(MatDialog);
-  private dialogRef = inject(MatDialogRef<UpdateDeadheatSettingComponent>);
-  private blockUIService = inject(BlockUIService);
+  private readonly toastrService = inject(ToastrService);
+  private readonly messageBoxService = inject(MessageBoxService);
+  private readonly matDialog = inject(MatDialog);
+  private readonly dialogRef = inject(MatDialogRef<UpdateDeadheatSettingComponent>);
+  private readonly blockUIService = inject(BlockUIService);
   outrightService = inject(OutrightService);
   expectedSetting: boolean | null;
   deadHeatOptions = DeadHeatOptions;
@@ -56,7 +56,7 @@ export class UpdateDeadheatSettingComponent implements OnInit {
 
   updateSetting() {
     this.clearError();
-    let teamWonQuantity = this.leagueSettle.teams.filter(team => team.status.toLowerCase() === 'won').length;
+    const teamWonQuantity = this.leagueSettle.teams.filter(team => team.status.toLowerCase() === 'won').length;
     if (teamWonQuantity > 1) {
       this.toastrService.error(Language.Outright.multiTeamWon);
       return;

@@ -24,7 +24,7 @@ describe('QueryService', () => {
     injector = getTestBed();
     service = TestBed.inject(QueryService);
     httpRequestService = TestBed.inject(HttpRequestService);
-    spyOn(httpRequestService, 'postJson');
+    jest.spyOn(httpRequestService, 'postJson');
   });
 
   it('should be created', () => {
@@ -33,7 +33,7 @@ describe('QueryService', () => {
 
   it('getScoreSourcePermission - should get with correct param', () => {
     const url = '/api/setting/get-score-source-permission';
-    spyOn(httpRequestService, 'getJson');
+    jest.spyOn(httpRequestService, 'getJson');
     service.getScoreSourcePermission();
 
     expect(httpRequestService.getJson).toHaveBeenCalledWith(url);

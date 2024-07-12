@@ -5,11 +5,11 @@ using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Settlement.Models;
 using Settlement.Services;
-using Settlement.UnitTests;
 using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Requests;
 using Settlement.Sportsbook.Aio.Services;
+using Settlement.UnitTests;
 
 namespace Settlement.Sportsbook.Aio.UnitTests.Services;
 
@@ -65,7 +65,8 @@ public class CreateQueryServiceTests
             BetStatus = "",
             SelectedResources = "",
             IsReSettledTickets = false,
-            IsLeader = false
+            IsLeader = false,
+            RemarkInfo = ""
         };
 
         // Act
@@ -135,7 +136,8 @@ public class CreateQueryServiceTests
             SelectedResources = "",
             Ip = "1.0.0.0",
             IsDirectly = false,
-            IsChildMatch = true
+            IsChildMatch = true,
+            RemarkInfo = ""
         };
 
         var result = service.QuerySettleChildMatch(request);

@@ -1,7 +1,6 @@
 import { TestBed, waitForAsync, ComponentFixture, tick, fakeAsync } from '@angular/core/testing';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { of } from 'rxjs';
 import { HttpClientModule } from '@angular/common/http';
 import { BlockUIService, HttpRequestService, MessageBoxService, ReCheckInService, VerifyDateService } from '../../shared/services';
 import { BrowserModule } from '@angular/platform-browser';

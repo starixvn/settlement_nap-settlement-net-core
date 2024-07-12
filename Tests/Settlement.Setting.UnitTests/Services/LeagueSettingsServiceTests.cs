@@ -1,13 +1,13 @@
 ﻿using AutoMapper;
 using Fanex.Data.Repository;
-using Settlement.Services;
 using Fanex.RemotingRef;
-using Settlement.Setting.Requests.LeagueSettings;
+using Settlement.Criteria;
+using Settlement.Models;
+using Settlement.Services;
 using Settlement.Setting.Criteria.LeagueSettings;
 using Settlement.Setting.Models.LeagueSettings;
-using Settlement.Models;
-using Settlement.Criteria;
 using Settlement.Setting.Requests;
+using Settlement.Setting.Requests.LeagueSettings;
 
 namespace Settlement.Setting.UnitTests.Services;
 
@@ -102,7 +102,7 @@ public class LeagueSettingsServiceTests
         var result = await leagueSettingsService.UpdateLeagueSettings(request);
 
         // Assert
-        logService.Received(1).WriteLog(Arg.Any<string>(), Arg.Any<int>());
+        await logService.Received(1).WriteLog(Arg.Any<string>(), Arg.Any<int>());
         Assert.True(result.IsSuccessful);
     }
 }

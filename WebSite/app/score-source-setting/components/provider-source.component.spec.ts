@@ -7,10 +7,10 @@ import { FormsModule} from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { Game, ProviderSource } from '../models';
 import { of } from 'rxjs';
-import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
-import { ModalDialogComponent, ModalContentDialogComponent } from '../../shared/components';
 import { NgbModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { ModalDialogComponent } from "../../shared/components/modal-dialog/modal-dialog.component";
+import { ModalContentDialogComponent } from "../../shared/components/modal-dialog/modal-content-dialog.component";
 
 describe('ProviderSourceComponent', () => {
   let component: ProviderSourceComponent;
@@ -29,10 +29,9 @@ describe('ProviderSourceComponent', () => {
     isSuccessful: false,
   };
 
-  beforeEach(waitForAsync(() => {
+  beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [
-        ProviderSourceComponent,
         ModalDialogComponent,
         ModalContentDialogComponent
       ],
@@ -44,6 +43,7 @@ describe('ProviderSourceComponent', () => {
         NgbModal
       ],
       imports: [
+        ProviderSourceComponent,
         NgbModule,
         FormsModule,
         HttpClientModule,
@@ -51,7 +51,7 @@ describe('ProviderSourceComponent', () => {
       ]
     })
     
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ProviderSourceComponent);
@@ -63,14 +63,14 @@ describe('ProviderSourceComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('getPermission - should return permission', fakeAsync(() => {
-    spyOn(queryService, 'getScoreSourcePermission').and.returnValue(of(false));
-
-    component.getPermission();
-    tick();
-
-    expect(component.scoreSourcePermission).toBe(false);
-  }));
+  describe('ngOnInit',  () =>{
+    it('getPermission - should return permission', fakeAsync(() => {
+      jest.spyOn(queryService, 'getScoreSourcePermission').mockReturnValue(Promise.resolve(true));
+      component.ngOnInit();
+      tick(6000);
+      expect(component.scoreSourcePermission).toBe(true);
+    }));
+  });
 
   describe('getProviders', () => {
     it('should set provider list if return data', fakeAsync(() => {
@@ -79,7 +79,7 @@ describe('ProviderSourceComponent', () => {
         new ProviderSource(16, 'BetRadar'),
         new ProviderSource(201, 'abc')
       ];
-      spyOn(queryService, 'getProviders').and.returnValue(of(mockResult));
+      jest.spyOn(queryService, 'getProviders').mockReturnValue(of(mockResult));
 
       component.getProviders();
 
@@ -89,7 +89,7 @@ describe('ProviderSourceComponent', () => {
     it('should set empty provider when data is empty', fakeAsync(() => {
       component.selectedGame = new Game(1, 'Dota2');
       const mockResult = [];
-      spyOn(queryService, 'getProviders').and.returnValue(of(mockResult));
+      jest.spyOn(queryService, 'getProviders').mockReturnValue(of(mockResult));
 
       component.getProviders();
 
@@ -106,7 +106,7 @@ describe('ProviderSourceComponent', () => {
         new ProviderSource(201, 'abc')
       ];
       component.providers = providers;
-      spyOn(queryService, 'updateProvider').and.returnValue(of(successfulResult));
+      jest.spyOn(queryService, 'updateProvider').mockReturnValue(of(successfulResult));
 
       component.saveOrder();
       const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
@@ -125,7 +125,7 @@ describe('ProviderSourceComponent', () => {
         new ProviderSource(201, 'abc')
       ];
       component.providers = providers;
-      spyOn(queryService, 'updateProvider').and.returnValue(of(unSuccessfulResult));
+      jest.spyOn(queryService, 'updateProvider').mockReturnValue(of(unSuccessfulResult));
 
       component.saveOrder();
       const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
@@ -137,7 +137,7 @@ describe('ProviderSourceComponent', () => {
   });
 
   it('ngOnInit - should set game and get providers', () => {
-    spyOn(queryService, 'getProviders').and.returnValue(of([]));
+    jest.spyOn(queryService, 'getProviders').mockReturnValue(of([]));
 
     component.ngOnInit();
 

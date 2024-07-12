@@ -1,5 +1,4 @@
-﻿using Settlement.Constants;
-using Settlement.Sportsbook.Aio.Models;
+﻿using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Services.TableTennis;
 
 namespace Settlement.Sportsbook.Aio.UnitTests.Services.TableTennis;

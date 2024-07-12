@@ -4,11 +4,9 @@ using Fanex.NAP.Client.Helpers.Web;
 using Microsoft.AspNetCore.Http;
 using Settlement.Criteria;
 using Settlement.Services;
-using Settlement.Setting.Constants;
 using Settlement.Setting.Criteria;
 using Settlement.Setting.Models;
 using Settlement.Setting.Requests;
-using Settlement.Setting.Services;
 
 namespace Settlement.Setting.UnitTests.Services;
 
@@ -126,7 +124,7 @@ public class SettingServiceTests
         await service.ProcessUpdateHoldMatchSetting(request);
 
         // Assert
-        repository.Received(1).ExecuteAsync(Arg.Any<UpdateHoldMatchSettingCriteria>());
+        await repository.Received(1).ExecuteAsync(Arg.Any<UpdateHoldMatchSettingCriteria>());
     }
 
     [Fact]
@@ -135,15 +133,15 @@ public class SettingServiceTests
         // Arrange
         var request = new UpdateHoldMatchSettingRequest
         {
-            HoldSettings = new(),
-            OrgHoldSettings = new()
+            HoldSettings = [],
+            OrgHoldSettings = new List<HoldSetting>()
         };
 
         // Act
         await service.ProcessUpdateHoldMatchSetting(request);
 
         // Assert
-        repository.Received(0).ExecuteAsync(Arg.Any<UpdateHoldMatchSettingCriteria>());
+        await repository.Received(0).ExecuteAsync(Arg.Any<UpdateHoldMatchSettingCriteria>());
     }
 
     [Fact]
@@ -156,13 +154,7 @@ public class SettingServiceTests
             LeagueId = 2
         };
 
-        var criteria = new GetSettingCriteria
-        {
-            MatchId = request.MatchId,
-            LeagueId = request.LeagueId
-        };
-
-        var settingValue = 10;
+        const int settingValue = 10;
         repository.GetAsync<int?>(Arg.Any<GetSettingCriteria>()).Returns(settingValue);
 
         // Act

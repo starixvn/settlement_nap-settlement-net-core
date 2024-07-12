@@ -48,7 +48,7 @@ public class GenerateResultAmendmentServiceImp(XmlConvertService xmlConvertServi
         {
             ResourceId = x.ResourceId,
             CalcDateTime = x.LogDate.ToString("yyyy-MM-dd HH:mm:ss.fff"),
-            ReCalcDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff")
+            ReCalcDateTime = DateTimeOffset.Now.ToString("yyyy-MM-dd HH:mm:ss.fff")
         }).ToList();
 
         var extraInfo = new ExtraInfo { ExtraInfoItems = extraInfoItems };

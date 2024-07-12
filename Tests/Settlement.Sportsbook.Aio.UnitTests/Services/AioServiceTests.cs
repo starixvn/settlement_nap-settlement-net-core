@@ -1,5 +1,4 @@
-﻿using AutoFixture.Kernel;
-using AutoMapper;
+﻿using AutoMapper;
 using Fanex.Data.Repository;
 using Settlement.Constants;
 using Settlement.Models;
@@ -105,8 +104,6 @@ public class AioServiceTests
         repository.FetchMultipleAsync<FantasyMatchDetail, FantasyRelatedMatch>(Arg.Any<GetFantasyMatchCriteria>()).Returns((new List<FantasyMatchDetail>(), new List<FantasyRelatedMatch>
         {
             new()
-            {
-            }
         }));
 
         // Act

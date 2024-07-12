@@ -3,12 +3,13 @@ import { ManageLeagueComponent } from './manage-league.component';
 import { MessageBoxService, HttpRequestService, BlockUIService } from '../../shared/services';
 import { QueryService } from '../services';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { LeagueOutsideSource, OutsideSource, Game } from '../models';
+import { LeagueOutsideSource, OutsideSource } from '../models';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { ModalDialogComponent, ModalContentDialogComponent } from '../../shared/components';
-import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
+import { ModalDialogComponent } from "../../shared/components/modal-dialog/modal-dialog.component";
+import { ModalContentDialogComponent } from "../../shared/components/modal-dialog/modal-content-dialog.component";
+
 import { of } from 'rxjs';
 
 describe('ManageLeagueComponent', () => {
@@ -16,9 +17,9 @@ describe('ManageLeagueComponent', () => {
   let fixture: ComponentFixture<ManageLeagueComponent>;
   let messageBoxService: MessageBoxService;
   let queryService: QueryService;
-  let dialogRef: MatDialogRef<ManageLeagueComponent>;
   let outsideSourceList: OutsideSource[];
   let outsideSourceSort: OutsideSource[];
+  let dialogRef: MatDialogRef<ManageLeagueComponent>;
 
   const mockSource: OutsideSource = {
     pGid: 5,
@@ -63,7 +64,6 @@ describe('ManageLeagueComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [
-        ManageLeagueComponent,
         ModalDialogComponent,
         ModalContentDialogComponent,
       ],
@@ -78,7 +78,9 @@ describe('ManageLeagueComponent', () => {
         { provide: MatDialogRef, useValue: {} },
         { provide: MAT_DIALOG_DATA, useValue: data }
       ],
-      imports: [FormsModule, HttpClientModule, NgbModule],
+      imports: [
+        ManageLeagueComponent,
+        FormsModule, HttpClientModule, NgbModule],
     })
       .compileComponents()
       .then(() => {
@@ -108,7 +110,7 @@ describe('ManageLeagueComponent', () => {
   describe('addSource.', () => {
     it('should alert when source is on list.', () => {
       component.outsideSourceSort = data.outsideSourceSort;
-      spyOn(messageBoxService, 'alert');
+      jest.spyOn(messageBoxService, 'alert');
 
       component.addSource(mockSource);
 
@@ -156,7 +158,7 @@ describe('ManageLeagueComponent', () => {
 
   describe('save', () => {
     it('should show confirmbox when called.', () => {
-      spyOn(messageBoxService, 'confirm');
+      jest.spyOn(messageBoxService, 'confirm');
 
       component.save();
 
@@ -166,8 +168,8 @@ describe('ManageLeagueComponent', () => {
     it('should show alert when update is unsuccessful.', fakeAsync(() => {
       component.outsideSourceSort = data.outsideSourceSort;
       component.screenShotSource = mockScreenShotSource;
-      spyOn(messageBoxService, 'alert');
-      spyOn(queryService, 'updateLeagueSources').and.returnValue(of(unSuccessfulResult));
+      jest.spyOn(messageBoxService, 'alert');
+      jest.spyOn(queryService, 'updateLeagueSources').mockReturnValue(of(unSuccessfulResult));
 
       component.save();
       const buttonYes = document.getElementsByClassName('btn-danger')[0] as HTMLElement;

@@ -1,8 +1,5 @@
-﻿using Fanex.Settlement.Converter.Services;
-using Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Client;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Settlement.Constants;
-using Settlement.Models;
 using Settlement.Sportsbook.Soccer.Constants;
 using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Requests;

@@ -41,4 +41,17 @@ describe('Score by Settlement Pipe', () => {
         const result = pipe.transform("1", 999);
         expect(result).toEqual("-");
     });
+
+    it('should right score when SettlementStatusId = RefundSettleDetermined', () => {
+        const result = pipe.transform("7", SettlementStatusId.RefundSettleDetermined);
+        expect(result).toEqual("7");
+    });
+
+    it('should return "R" right score when score is empty or null', () => {
+        const result = pipe.transform("", SettlementStatusId.RefundSettleDetermined);
+        expect(result).toEqual("R");
+
+        const resultNull = pipe.transform(null, SettlementStatusId.RefundSettleDetermined);
+        expect(resultNull).toEqual("R");
+    });
 });

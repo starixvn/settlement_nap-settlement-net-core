@@ -48,7 +48,7 @@ public class CreateQueryServiceImp(
         return criteria;
     }
 
-    private string CreateSettleRelatedRemarkInfo(SettleRequest request)
+    private static string CreateSettleRelatedRemarkInfo(SettleRequest request)
     {
         var name = (request.SportType, request.ActionName, request.ParentId) switch
         {
@@ -74,7 +74,7 @@ public class CreateQueryServiceImp(
         criteria.AdminId = currentSession.UserId;
         criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
         criteria.SelectedResources = resourcesResult;
-        criteria.IsChildMatch = true;  //auto set
+        criteria.IsChildMatch = true;
         criteria.BroadcastSessionId = request.SportType == SportType.Cricket
             ? request.ParentSessionId
             : criteria.BroadcastSessionId;
@@ -83,7 +83,7 @@ public class CreateQueryServiceImp(
         return criteria;
     }
 
-    private string CreateChildMatchRemarkInfo(SettleChildMatchRequest request)
+    private static string CreateChildMatchRemarkInfo(SettleChildMatchRequest request)
     {
         if (request.SportType == SportType.TableTennis && request.ParentMatchId != 0)
         {

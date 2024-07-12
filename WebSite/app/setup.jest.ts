@@ -1,11 +1,11 @@
-﻿require('zone.js');
-require('zone.js/testing');
+﻿import 'zone.js';
+import 'zone.js/testing';
 
-const { getTestBed } = require('@angular/core/testing');
-const {
+import { getTestBed } from '@angular/core/testing';
+import {
     BrowserDynamicTestingModule,
     platformBrowserDynamicTesting,
-} = require('@angular/platform-browser-dynamic/testing');
+} from '@angular/platform-browser-dynamic/testing';
 
 const testEnvironmentOptions = globalThis.ngJest?.testEnvironmentOptions ?? Object.create(null);
 

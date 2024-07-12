@@ -1,17 +1,15 @@
 import { waitForAsync, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
-
 import { AddSourceDialogComponent } from './add-source-dialog.component';
-import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { HttpRequestService } from '../../shared/services';
 import { HttpClient, HttpHandler } from '@angular/common/http';
-import { MatDialogRef, MatDialogModule, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MaterialModule } from '../../shared/material-module';
 import { QueryService } from '../services';
-import { OutsideSource } from '../models';
 import { of } from 'rxjs';
-import { ModalDialogComponent, ModalContentDialogComponent } from '../../shared/components';
+import { ModalDialogComponent } from "../../shared/components/modal-dialog/modal-dialog.component";
+import { ModalContentDialogComponent } from "../../shared/components/modal-dialog/modal-content-dialog.component";
 import { NgbModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 describe('AddSourceDialogComponent', () => {
@@ -37,10 +35,9 @@ describe('AddSourceDialogComponent', () => {
     isSuccessful: false,
   };
 
-  beforeEach(waitForAsync(() => {
+  beforeEach(() => {
     TestBed.configureTestingModule({
         declarations: [
-          AddSourceDialogComponent,
           ModalDialogComponent,
           ModalContentDialogComponent
         ],
@@ -54,6 +51,7 @@ describe('AddSourceDialogComponent', () => {
           { provide: MAT_DIALOG_DATA, useValue: data }
         ],
         imports: [
+          AddSourceDialogComponent,
           BrowserModule,
           FormsModule,
           MaterialModule,
@@ -62,7 +60,7 @@ describe('AddSourceDialogComponent', () => {
     })
     
     .compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(AddSourceDialogComponent);
@@ -76,7 +74,7 @@ describe('AddSourceDialogComponent', () => {
   });
 
   it('closepopup', () => {
-    spyOn(component.dialogRef, 'close');
+    jest.spyOn(component.dialogRef, 'close');
 
     component.closePopup();
 
@@ -87,8 +85,8 @@ describe('AddSourceDialogComponent', () => {
     it('should push successfully', fakeAsync(() => {
       component.sourceName = 'test';
       component.sportSelected = 50;
-      spyOn(queryService, 'add').and.returnValue(of(successfulResult));
-      spyOn(component.dialogRef, 'close');
+      jest.spyOn(queryService, 'add').mockReturnValue(of(successfulResult));
+      jest.spyOn(component.dialogRef, 'close');
 
       component.addNewSource();
       const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
@@ -100,7 +98,7 @@ describe('AddSourceDialogComponent', () => {
 
     it('should push unsuccessfully and set error message', fakeAsync(() => {
       component.sourceName = 'test';
-      spyOn(queryService, 'add').and.returnValue(of(unSuccessfulResult));
+      jest.spyOn(queryService, 'add').mockReturnValue(of(unSuccessfulResult));
 
       component.addNewSource();
       const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;

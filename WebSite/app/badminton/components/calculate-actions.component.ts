@@ -494,7 +494,6 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
     query.betStatus = betStatus;
     query.childMatchIds = childMatchIds;
 
-    console.log(query);
     const result = await this.aioService.push(query);
     if (result.errCode === 0) {
       await this.handleChildMatch(query, type);

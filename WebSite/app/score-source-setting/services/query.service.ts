@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { GetOutsideSourceQuery, OutsideSource, UpdateLeagueSourceQuery, GetProviderQuery, UpdateProviderQuery } from "../models";
 import { HttpRequestService } from "../../shared/services";
+import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class QueryService {
@@ -8,7 +9,8 @@ export class QueryService {
     constructor(private readonly httpRequestService: HttpRequestService) {}
 
     public getScoreSourcePermission() {
-        return this.httpRequestService.getJson(`${this.settingApi}/get-score-source-permission`);
+        const request = this.httpRequestService.getJson<boolean>(`${this.settingApi}/get-score-source-permission`);
+        return firstValueFrom(request);
     }
 
     public getSources(query: GetOutsideSourceQuery) {

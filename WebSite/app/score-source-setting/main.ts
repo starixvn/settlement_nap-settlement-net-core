@@ -1,4 +1,4 @@
-﻿import { AppSettingComponent } from './components/app.component';
+﻿import { AppComponent } from './components/app.component';
 import { enableProdMode, importProvidersFrom } from '@angular/core';
 import { bootstrapApplication } from '@angular/platform-browser';
 import { environment } from '../environments/environment';
@@ -9,7 +9,7 @@ if (environment.production) {
     enableProdMode();
 }
 
-bootstrapApplication(AppSettingComponent, {
+bootstrapApplication(AppComponent, {
     providers: [
         importProvidersFrom(NoopAnimationsModule),
         provideHttpClient()

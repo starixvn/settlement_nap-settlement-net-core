@@ -1,8 +1,7 @@
-using Xunit;
 using Settlement.Setting.Criteria.LeagueSettings;
 using Settlement.Setting.Helpers;
 
-namespace Settlement.Setting.Tests.Helpers
+namespace Settlement.Setting.UnitTests.Helpers
 {
     public class LeagueSettingsHelperTests
     {
