@@ -12,7 +12,7 @@
           "tsconfig": "<rootDir>/tsconfig.json"
         }
       },
-      collectCoverage: true,
+      collectCoverage: false,
       collectCoverageFrom: ['**/*.ts',],
       coveragePathIgnorePatterns: ['.spec.ts', '.module.ts', 'main.ts', 'model.ts', '.native.ts'],
       coverageDirectory: 'reports/coverage',

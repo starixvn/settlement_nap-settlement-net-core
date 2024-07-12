@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { LeagueSettingsStore } from '../../../services/league-settings.store';
 import { distinctUntilChanged, map } from 'rxjs';
@@ -13,15 +13,15 @@ import { distinctUntilChanged, map } from 'rxjs';
 	<div class="content">
 		<div class="auto-settings">
 			<span>
-				<input type="radio" [ngModel]="autoSetting" (ngModelChange)="changeAutoSetting($event)" [value]="1" id="auto-payout" name="auto-setting" />
+				<input type="radio" [ngModel]="autoSetting()" (ngModelChange)="changeAutoSetting($event)" [value]="1" id="auto-payout" name="auto-setting" />
 				<label for="auto-payout">Auto Payout</label>
 			</span>
 			<span>
-				<input type="radio" [ngModel]="autoSetting" (ngModelChange)="changeAutoSetting($event)" [value]="5" id="direct-payout" name="auto-setting" />
+				<input type="radio" [ngModel]="autoSetting()" (ngModelChange)="changeAutoSetting($event)" [value]="5" id="direct-payout" name="auto-setting" />
 				<label for="direct-payout">Direct Payout</label>
 			</span>
 			<span>
-				<input type="radio" [ngModel]="autoSetting" (ngModelChange)="changeAutoSetting($event)" [value]="0" id="off" name="auto-setting" />
+				<input type="radio" [ngModel]="autoSetting()" (ngModelChange)="changeAutoSetting($event)" [value]="0" id="off" name="auto-setting" />
 				<label for="off">OFF</label>
 			</span>
 		</div>
@@ -31,18 +31,9 @@ import { distinctUntilChanged, map } from 'rxjs';
   imports: [FormsModule],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AutoTypeComponent implements OnInit {
-  public autoSetting: number;
-  constructor(private readonly store: LeagueSettingsStore) {
-    
-  }
-  ngOnInit(): void{
-    this.store.state$
-      .pipe(
-        map(state => state.autoSetting),
-				distinctUntilChanged((prev, curr) => prev == curr))
-      .subscribe(data => this.autoSetting = data);
-  }
+export class AutoTypeComponent {
+  autoSetting = input(0);
+	private readonly store = inject(LeagueSettingsStore);
 
   changeAutoSetting(value: number): void { 
     this.store.setState({ ...this.store.state, autoSetting: value});

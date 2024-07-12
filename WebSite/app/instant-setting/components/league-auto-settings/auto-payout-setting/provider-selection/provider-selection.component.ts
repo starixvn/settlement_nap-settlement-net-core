@@ -15,15 +15,15 @@ import { Language } from '../../../../../shared/language.native';
   imports: [MatDialogModule, DragDropModule, CommonModule, FormsModule]
 })
 export class ProviderSelectionComponent implements OnInit {
-  public providerSources: ProviderSource[];
+   providerSources: ProviderSource[];
   private resultSettings: ResultSettings;
   private primaryId = 1;
   private secondaryId = 2;
-  public errorMessage: string;
+   errorMessage: string;
   constructor(
     private readonly dialogRef: MatDialogRef<ProviderSelectionComponent>,
-    @Inject(MAT_DIALOG_DATA) public isEarly: boolean,
-    public store: LeagueSettingsStore) { 
+    @Inject(MAT_DIALOG_DATA) public  isEarly: boolean,
+    private readonly store: LeagueSettingsStore) { 
       this.dialogRef.disableClose = true;
     }
   ngOnInit(): void {

@@ -1,10 +1,10 @@
 import { LeagueSettingsStore } from '../../services/league-settings.store';
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { LeagueSettings, ResultSettings } from '../../../shared/models/league-settings.model';
 import { UrlHelper } from '../../../helper';
 import { AutoTypeComponent } from './auto-setting/auto-setting.component';
 import { CommonModule } from '@angular/common';
-import { DirectSettingComponent } from './direct-setting/direct-setting.component';
+import { TimeSettingComponent } from './time-setting/time-setting.component';
 import { AutoPayoutSettingComponent } from './auto-payout-setting/auto-payout-setting.component';
 import { Subject, distinctUntilChanged, map, takeUntil } from 'rxjs';
 import { RequestService } from '../../services/request.service';
@@ -18,19 +18,20 @@ import * as _ from 'lodash';
 @Component({
   selector: 'league-auto-settings',
   templateUrl: './league-auto-settings.component.html',
-  imports: [AutoTypeComponent, CommonModule, DirectSettingComponent,
+  imports: [AutoTypeComponent, CommonModule, TimeSettingComponent,
     AutoPayoutSettingComponent, ToastContainerModule],
   providers: [RequestService, ToastrService],
   standalone: true
 })
-export class LeagueAutoSettingsComponent implements OnInit, OnDestroy {
+export class LeagueAutoSettingsComponent implements OnInit {
   @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
   private leagueId: string;
   private sportType: string;
-  private waitingTime: number;
-  private autoSetting: number;
-  public leagueName: string;
-  ngUnsubscribe = new Subject();
+  waitingTime: number;
+  refundWaitingTime: number;
+  autoSetting: number;
+  leagueName: string;
+  retryTime: number;
 
   constructor(
     private readonly store: LeagueSettingsStore,
@@ -38,29 +39,23 @@ export class LeagueAutoSettingsComponent implements OnInit, OnDestroy {
     private readonly messageBoxService: MessageBoxService,
     private readonly toastrService: ToastrService) {
   }
-
-  ngOnDestroy() {
-    this.ngUnsubscribe.next(1);
-    this.ngUnsubscribe.complete();
-  }
-
   async ngOnInit(): Promise<void> {
     this.toastrService.overlayContainer = this.toastContainer;
     this.leagueId = UrlHelper.getUrlParameter('leagueId');
     this.sportType = UrlHelper.getUrlParameter('sportType');
     this.waitingTime = Number(UrlHelper.getUrlParameter('waitingTime'));
+    this.refundWaitingTime = Number(UrlHelper.getUrlParameter('refundWaitingTime'));
     this.autoSetting = Number(UrlHelper.getUrlParameter('autoSetting'));
     this.store.actionAfterUpdate = () => { this.toastrService.clear() };
-    this.store.state$
-      .pipe(
-        takeUntil(this.ngUnsubscribe),
-        map(state => state.leagueName),
-        distinctUntilChanged((prev, curr) => prev == curr))
-      .subscribe(data => this.leagueName = data);
-
     const leagueSettings = await this.requestService.getLeagueSetting(Number(this.leagueId), Number(this.sportType));
-
-    this.store.setState({ ...leagueSettings, waitingTime: this.waitingTime, autoSetting: this.autoSetting });
+    this.leagueName = leagueSettings.leagueName;
+    this.retryTime = leagueSettings.retryTime;
+    this.store.setState({
+      ...leagueSettings,
+      waitingTime: this.waitingTime,
+      refundWaitingTime: this.refundWaitingTime,
+      autoSetting: this.autoSetting
+    });
     this.store.originalState = _.cloneDeep(this.store.state);
   }
 
@@ -69,7 +64,7 @@ export class LeagueAutoSettingsComponent implements OnInit, OnDestroy {
   }
 
   submit() {
-    if (this.verifyQuantityProvider(this.store.state.mainResultSettings) || this.verifyQuantityProvider(this.store.state.earlyResultSettings) ) {
+    if (this.verifyQuantityProvider(this.store.state.mainResultSettings) || this.verifyQuantityProvider(this.store.state.earlyResultSettings)) {
       this.toastrService.error(Language.AutoPayoutSetting.MinimumSource);
       return;
     }
@@ -91,7 +86,8 @@ export class LeagueAutoSettingsComponent implements OnInit, OnDestroy {
         isApplyAll: isApplyAll,
         autoSetting: this.store.state.autoSetting,
         waitingTime: this.store.state.waitingTime,
-        retryTime: this.store.state.retryTime
+        retryTime: this.store.state.retryTime,
+        refundWaitingTime: this.store.state.refundWaitingTime
       }
       parent.document.getElementById('dialog-response').setAttribute('value', JSON.stringify(response));
       this.messageBoxService.closePopup();

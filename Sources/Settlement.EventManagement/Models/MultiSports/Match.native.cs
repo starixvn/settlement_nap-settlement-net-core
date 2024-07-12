@@ -51,6 +51,9 @@ public class Match : BaseMatch
     public int AutoWaitingTime { get; set; }
 
     [IgnoreMember]
+    public int RefundWaitingTime { get; set; }
+
+    [IgnoreMember]
     public int AutoRetryTime { get; set; }
 
     [Key("autoCalcSetting")]

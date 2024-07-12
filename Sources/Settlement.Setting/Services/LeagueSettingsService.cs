@@ -27,6 +27,8 @@ public class LeagueSettingsServiceImp
 
     private const int DirectSetting = 5;
 
+    private const int RefundSetting = 7;
+
     public async Task<LeagueSettings> GetLeagueSettings(GetLeagueSettingsRequest request)
     {
         var criteria = new GetLeagueSettings
@@ -76,12 +78,22 @@ public class LeagueSettingsServiceImp
 
     private async Task<Result> UpdateWaitingTime(UpdateLeagueSettingsRequest request)
     {
-        return await settingService.UpdateTimeSettingLeague(new TimeSettingRequest
+        var resultUpdateWaitingTime = await settingService.UpdateTimeSettingLeague(new TimeSettingRequest
         {
             AutoType = DirectSetting,
             LeagueId = request.NewSettings.LeagueId,
             WaitingTime = request.NewSettings.WaitingTime
         });
+
+        var resultUpdateRefundWaitingTime = await settingService.UpdateTimeSettingLeague(new TimeSettingRequest
+        {
+            AutoType = RefundSetting,
+            LeagueId = request.NewSettings.LeagueId,
+            WaitingTime = request.NewSettings.RefundWaitingTime
+        });
+
+        return resultUpdateWaitingTime.ErrCode + resultUpdateRefundWaitingTime.ErrCode > 0 ? new Result(1, $"{resultUpdateWaitingTime.ErrMsg}<br/>{resultUpdateRefundWaitingTime.ErrMsg}") : new Result();
+
     }
 
     private async Task<Result> UpdateAutoSetting(UpdateLeagueSettingsRequest request)

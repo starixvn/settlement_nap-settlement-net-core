@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testExecutions version="1">
-  <file path="D:\nap-settlement-net-core\WebSite\app\shared\components\multiple-select\multiple-select.component.spec.ts">
+  <file path="D:\nap-settlement-net-core\WebSite\app\instant-setting\components\remark-setting.component.spec.ts">
+    <testCase name="SettlementSettingComponent should create" duration="0"/>
+    <testCase name="SettlementSettingComponent ngOnInit - should set properties and get remark info" duration="0"/>
+    <testCase name="SettlementSettingComponent refreshRemarkStatusOnMainPage - should call refreshRemarkStatus on parent window" duration="0"/>
+    <testCase name="SettlementSettingComponent cancel - should close popup" duration="0"/>
+    <testCase name="SettlementSettingComponent submit should show confirmation box and call changeHoldMatchSetting" duration="0"/>
+    <testCase name="SettlementSettingComponent submit should call changeHoldMatchSetting with correct params" duration="57"/>
   </file>
 </testExecutions>

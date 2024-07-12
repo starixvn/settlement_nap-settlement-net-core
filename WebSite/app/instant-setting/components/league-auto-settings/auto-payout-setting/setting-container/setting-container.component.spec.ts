@@ -38,7 +38,8 @@ describe('SettingContainerComponent', () => {
       primaryProvider: '',
       secondaryProvider: ''
     },
-    providers: []
+    providers: [],
+    refundWaitingTime: 0
   }
 
   beforeEach(async () => {

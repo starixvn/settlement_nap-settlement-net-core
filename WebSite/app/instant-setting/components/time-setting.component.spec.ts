@@ -10,8 +10,6 @@ import { League } from '../models';
 import { UrlHelper } from '../../helper';
 import { Language } from '../../shared/language.native';
 import { AutoType } from '../constants/auto-type';
-import { ModalDialogComponent } from '../../shared/components/modal-dialog/modal-dialog.component';
-import { ModalContentDialogComponent } from '../../shared/components/modal-dialog/modal-content-dialog.component';
 
 describe('TimeSettingComponent', () => {
     let component: TimeSettingComponent;
@@ -119,6 +117,7 @@ describe('TimeSettingComponent', () => {
     describe('proceed', () => {
       it('should pass all validation and successfully close pop-up', fakeAsync(() => {
         component.time = 10;
+        component.autoType = AutoType.instant;
         jest.spyOn(requestService, 'proceed').mockResolvedValue(successfulResult);
         jest.spyOn(messageBoxService, 'closePopup');
         const element = document.createElement("dialog-response");

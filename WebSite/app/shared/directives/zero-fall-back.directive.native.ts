@@ -1,4 +1,5 @@
 import { Directive, HostListener, ElementRef } from '@angular/core';
+import { isNumber } from 'lodash';
 
 @Directive({
   selector: '[ZeroFallback]',

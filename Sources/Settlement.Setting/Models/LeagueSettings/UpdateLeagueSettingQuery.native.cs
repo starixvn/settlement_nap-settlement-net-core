@@ -9,6 +9,8 @@ public class UpdateLeagueSettingQuery
 
     public int WaitingTime { get; set; }
 
+    public int RefundWaitingTime { get; set; }
+
     public ResultSettings MainResultSettings { get; set; }
 
     public ResultSettings EarlyResultSettings { get; set; }

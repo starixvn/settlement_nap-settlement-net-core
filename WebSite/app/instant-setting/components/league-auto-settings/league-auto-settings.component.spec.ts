@@ -35,7 +35,8 @@ describe('LeagueAutoSettingsComponent', () => {
       primaryProvider: '',
       secondaryProvider: ''
     },
-    providers: [ {priority: 1, sourceName: 'temp', sourceId: 1}]
+    providers: [{ priority: 1, sourceName: 'temp', sourceId: 1 }],
+    refundWaitingTime: 0
   }
 
   const buttonName = "btn-danger";
@@ -109,7 +110,7 @@ describe('LeagueAutoSettingsComponent', () => {
          mainResultSettings: {minimumProvider: 2, hasTrader: false, primaryProvider: '', secondaryProvider: ''}});
       store.originalState = store.state;
       const element = document.createElement("dialog-response");
-      jest.spyOn(requestService, 'updateLeagueSetting').mockReturnValue(Promise.resolve({isSuccessful: true, errCode: 0, errMsg: '', childMatchIds:''}));
+      jest.spyOn(requestService, 'updateLeagueSetting').mockResolvedValue({isSuccessful: true, errCode: 0, errMsg: '', childMatchIds:''} as Result);
       jest.spyOn(messageBoxService, "closePopup");
       jest.spyOn(document, 'getElementById').mockReturnValue(element);
 
@@ -129,7 +130,7 @@ describe('LeagueAutoSettingsComponent', () => {
          earlyResultSettings: {minimumProvider: 2, hasTrader: false, primaryProvider: '', secondaryProvider: ''},
          mainResultSettings: {minimumProvider: 2, hasTrader: false, primaryProvider: '', secondaryProvider: ''}});
       store.originalState = store.state;
-      jest.spyOn(requestService, 'updateLeagueSetting').mockReturnValue(Promise.resolve({isSuccessful: false, errCode: 1, errMsg: 'message', childMatchIds:''}));
+      jest.spyOn(requestService, 'updateLeagueSetting').mockResolvedValue({isSuccessful: false, errCode: 1, errMsg: 'message', childMatchIds:''} as Result);
       jest.spyOn(messageBoxService, "closePopup");
       jest.spyOn(toastrService, "error");
 

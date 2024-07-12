@@ -15,6 +15,10 @@ public class League
     [Key("instantWaitingTime")]
     public int InstantWaitingTime { get; set; }
 
+    [Key("refundWaitingTime")]
+    public int RefundWaitingTime { get; set; }
+
+
     [Key("autoCalcSetting")]
     public AutoCalculationSetting AutoCalcSetting { get; set; } = new();
 

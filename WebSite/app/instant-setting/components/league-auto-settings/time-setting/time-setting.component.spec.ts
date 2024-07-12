@@ -1,15 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { DirectSettingComponent } from './direct-setting.component';
+import { TimeSettingComponent } from './time-setting.component';
 import { LeagueSettingsStore } from '../../../services/league-settings.store';
 import { LeagueSettings } from '../../../../shared/models/league-settings.model';
+import { input } from '@angular/core';
 
 describe('DirectSettingComponent', () => {
-  let component: DirectSettingComponent;
-  let fixture: ComponentFixture<DirectSettingComponent>;
-  let store : LeagueSettingsStore;
+  let component: TimeSettingComponent;
+  let fixture: ComponentFixture<TimeSettingComponent>;
+  let store: LeagueSettingsStore;
 
-  const leagueSettings : LeagueSettings = {
+  const leagueSettings: LeagueSettings = {
     leagueId: 0,
     leagueName: '',
     autoSetting: 0,
@@ -27,19 +28,20 @@ describe('DirectSettingComponent', () => {
       primaryProvider: '',
       secondaryProvider: ''
     },
-    providers: []
+    providers: [],
+    refundWaitingTime: 0
   }
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ DirectSettingComponent ]
+      imports: [TimeSettingComponent]
     })
-    .compileComponents();
+      .compileComponents();
 
-    fixture = TestBed.createComponent(DirectSettingComponent);
+    fixture = TestBed.createComponent(TimeSettingComponent);
     component = fixture.componentInstance;
-    store  = fixture.debugElement.injector.get(LeagueSettingsStore);
-    store.actionAfterUpdate = () => {};
+    store = fixture.debugElement.injector.get(LeagueSettingsStore);
+    store.actionAfterUpdate = () => { };
     store.setState(leagueSettings);
     fixture.detectChanges();
   });
@@ -48,20 +50,17 @@ describe('DirectSettingComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('ngOnInit - Waiting time always get on store', () => {
-    store.setState( {...store.state, waitingTime: 1 });
-    component.ngOnInit();
-
-    expect(component.waitingTime).toEqual(1);
-
-    store.setState( {...store.state, waitingTime: 2 });
-
-    expect(component.waitingTime).toEqual(2);
-  });
-
   it('changeWaiting - change waiting time on store', () => {
+    fixture.componentRef.setInput('directSetting', true);
     component.changeWaiting('5');
 
     expect(store.state.waitingTime).toEqual(5);
+  });
+
+  it('changeWaiting - change refund waiting time on store', () => {
+    fixture.componentRef.setInput('directSetting', false);
+    component.changeWaiting('5');
+
+    expect(store.state.refundWaitingTime).toEqual(5);
   });
 });

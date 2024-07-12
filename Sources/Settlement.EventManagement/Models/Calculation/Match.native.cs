@@ -63,6 +63,9 @@ public class Match : BaseMatch
     [Key("instantWaitingTime")]
     public int InstantWaitingTime { get; set; }
 
+    [Key("refundWaitingTime")]
+    public int RefundWaitingTime { get; set; }
+
     [Key("liveHomeScore")]
     public int? LiveHomeScore { get; set; }
 

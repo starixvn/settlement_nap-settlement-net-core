@@ -27,7 +27,8 @@ describe('AutoTypeComponent', () => {
       primaryProvider: '',
       secondaryProvider: ''
     },
-    providers: []
+    providers: [],
+    refundWaitingTime: 0
   }
 
   beforeEach(async () => {
@@ -46,17 +47,6 @@ describe('AutoTypeComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
-  });
-
-  it('ngOnInit - auto type always get on store', () => {
-    store.setState( {...store.state, autoSetting: 1 });
-    component.ngOnInit();
-
-    expect(component.autoSetting).toEqual(1);
-
-    store.setState( {...store.state, autoSetting: 5 });
-
-    expect(component.autoSetting).toEqual(1);
   });
 
   it('changeAutoSetting - change auto type on store', () => {

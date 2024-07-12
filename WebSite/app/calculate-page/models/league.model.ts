@@ -6,6 +6,7 @@ export class League {
     public name: string;
     public directWaitingTime: number;
     public instantWaitingTime: number;
+    public refundWaitingTime: number;
     public autoCalcSetting: AutoSetting;
     public matches: CalculationMatch[];
 }
