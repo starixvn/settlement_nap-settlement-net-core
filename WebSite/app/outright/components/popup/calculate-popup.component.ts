@@ -4,7 +4,7 @@ import { Component, Inject, OnInit, ViewChild, inject } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { BlockUIService, HttpRequestService, MessageBoxService, VerifyDateService } from '../../../shared/services';
 import { LeagueSettle, Team, TeamSettle } from '../../models';
-import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
+import { ToastContainerDirective, ToastContainerModule, ToastrService } from 'ngx-toastr';
 import { FormsModule } from '@angular/forms';
 import { DatepickerComponent } from '../../../shared/components/date-picker/date-picker.component';
 import { CustomNgbDateParserFormatter } from '../../../shared/components/date-picker/custom-ngb-date-parser-formatter';
@@ -27,7 +27,7 @@ import { TicketStatusFilterPipe } from '../../pipes/ticket-status-filter-pipe';
     selector: 'calculate-popup',
     templateUrl: './calculate-popup.component.html',
     standalone: true,
-    imports: [CommonModule, DynamicHeightDirective, FormsModule, DatepickerComponent, StatusPipe, TicketStatusPipe, TicketStatusFilterPipe, MatDialogModule, DragDropModule, NewMultipleSelectComponent],
+    imports: [CommonModule, DynamicHeightDirective, FormsModule, DatepickerComponent, StatusPipe, TicketStatusPipe, TicketStatusFilterPipe, MatDialogModule, DragDropModule, NewMultipleSelectComponent,ToastContainerModule],
     providers: [DatePipe, OutrightService, HttpRequestService, BlockUIService, MessageBoxService, VerifyDateService, CalculateService, StatusPipe, TicketStatusFilterPipe,
         { provide: NgbDateParserFormatter, useFactory: () => new CustomNgbDateParserFormatter('MMM dd, y') }],
 })

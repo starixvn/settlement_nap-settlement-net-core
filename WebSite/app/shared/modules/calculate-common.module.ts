@@ -2,7 +2,12 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { ToastrModule, ToastrService } from 'ngx-toastr';
+import {
+  ToastContainerModule,
+  ToastNoAnimationModule,
+  ToastrModule,
+  ToastrService,
+} from "ngx-toastr";
 import { TicketCountComponent } from "../components/ticket-count/ticket-count.component";
 import { ResettleCheckerComponent } from "../components/resettle-checker/resettle-checker.component";
 import { AioService, BlockUIService, HttpRequestService } from "../services";
@@ -19,7 +24,7 @@ import { OnlyIntegerDirective } from "../../shared/directives";
   exports: [
     FormsModule,
     CommonModule,
-    ToastrModule,
+    ToastContainerModule,
     ResettleCheckerComponent,
     TicketCountComponent,
     NotReadyMatchComponent,
@@ -36,12 +41,6 @@ import { OnlyIntegerDirective } from "../../shared/directives";
     ExternalSourceNamePipe,
     ExternalLinkPipe,
     OnlyIntegerDirective,
-
-    ToastrModule.forRoot({
-      timeOut: 5000,
-      positionClass: "toast-top-full-width",
-      disableTimeOut: true,
-    }),
   ],
   providers: [
     MessageBoxService,

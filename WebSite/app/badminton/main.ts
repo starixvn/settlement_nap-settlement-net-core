@@ -1,21 +1,31 @@
-import { provideHttpClient } from '@angular/common/http';
-import { enableProdMode, importProvidersFrom } from '@angular/core';
-import { bootstrapApplication } from '@angular/platform-browser';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { provideToastr } from 'ngx-toastr';
-import { environment } from '../environments/environment';
-import { AppComponent } from './components/app.component';
+import { provideHttpClient } from "@angular/common/http";
+import { enableProdMode, importProvidersFrom } from "@angular/core";
+import { bootstrapApplication } from "@angular/platform-browser";
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+// import { provideToastr } from 'ngx-toastr';
+import { environment } from "../environments/environment";
+import { AppComponent } from "./components/app.component";
+import { ToastrModule } from 'ngx-toastr';
+
 
 if (environment.production) {
-    enableProdMode();
+  enableProdMode();
 }
 
 bootstrapApplication(AppComponent, {
-    providers: [importProvidersFrom(BrowserAnimationsModule),
+  providers: [
+    importProvidersFrom(BrowserAnimationsModule),
     provideHttpClient(),
-    provideToastr({
-        positionClass: "toast-top-full-width",
-        disableTimeOut: true,
-      }), 
-    ],
-  });
+    importProvidersFrom(ToastrModule.forRoot({
+      disableTimeOut: true,
+      enableHtml: true,
+      tapToDismiss: false,
+      maxOpened: 1,
+    })),
+
+    // provideToastr({
+    //     positionClass: "toast-top-full-width",
+    //     disableTimeOut: true,
+    //   }),
+  ],
+});

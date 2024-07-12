@@ -18,7 +18,7 @@ import {
     RefundComponent
 } from './components';
 import { CustomHttpRequestInterceptor } from "../shared/custom-httprequest-interceptor.native";
-import { ToastNoAnimationModule } from 'ngx-toastr';
+import { ToastContainerModule, ToastNoAnimationModule } from 'ngx-toastr';
 
 @NgModule({
     imports: [
@@ -36,6 +36,7 @@ import { ToastNoAnimationModule } from 'ngx-toastr';
             positionClass: 'inline',
             maxOpened: 1,
         }),
+        ToastContainerModule,
         DatepickerComponent,
         OnlyIntegerDirective,
         MaterialDialogComponent

@@ -17,7 +17,7 @@ import {
 import { MaterialModule } from '../shared/material-module';
 import { MaterialDialogComponent } from '../shared/components/material-dialog-iframe/material-dialog.component';
 import { CustomHttpRequestInterceptor } from "../shared/custom-httprequest-interceptor.native";
-import { ToastNoAnimationModule } from 'ngx-toastr';
+import { ToastContainerModule, ToastNoAnimationModule } from 'ngx-toastr';
 
 @NgModule({
     imports: [
@@ -35,6 +35,7 @@ import { ToastNoAnimationModule } from 'ngx-toastr';
             positionClass: 'inline',
             maxOpened: 1,
         }),
+        ToastContainerModule,
         OnlyIntegerDirective,
         DatepickerComponent,
         MaterialDialogComponent,

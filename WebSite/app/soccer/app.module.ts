@@ -21,7 +21,7 @@ import {
 import { ScorePipe } from './pipes/score.pipe';
 import { MaterialModule } from '../shared/material-module';
 import { OnlyGoalRecordDirective } from './directives/only-goal-record.directive.native';
-import { ToastNoAnimationModule } from 'ngx-toastr';
+import { ToastContainerModule, ToastNoAnimationModule } from 'ngx-toastr';
 import { RefundComponent } from './components/refund/refund.component';
 import { RefundMatchDetailComponent } from './components/refund/refund-match-detail.component';
 import { SpecificBettypeComponent } from './components/refund/specific-bettype.component';
@@ -49,6 +49,7 @@ import { ModalDialogComponent } from '../shared/components/modal-dialog/modal-di
             positionClass: 'inline',
             maxOpened: 1,
         }),
+        ToastContainerModule,
         TicketCountComponent,
         ResettleCheckerComponent,
         NotReadyMatchComponent,
