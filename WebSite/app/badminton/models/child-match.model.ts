@@ -19,4 +19,5 @@ export class ChildMatch {
     public leagueName: string;
     public isNotConsistent: boolean;
     resultSettingData: ResultSettingModel;
+    kickOffTime: string;
 }

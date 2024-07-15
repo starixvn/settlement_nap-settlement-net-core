@@ -3,7 +3,7 @@ import { ChildMatch } from "../../models/child-match.model";
 import { MatchDetail } from "../../models";
 import { ResultStatusId } from "../../../shared/constants";
 import * as _ from 'lodash';
-import { NgClass } from "@angular/common";
+import { CommonModule, NgClass } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { ScoreChildMatchPipe } from "../../pipes/score-child-match.pipe";
 
@@ -11,7 +11,7 @@ import { ScoreChildMatchPipe } from "../../pipes/score-child-match.pipe";
   selector: 'tb-child-match',
   templateUrl: './child-match.component.html',
   standalone: true,
-  imports: [NgClass,ScoreChildMatchPipe,FormsModule]
+  imports: [NgClass,ScoreChildMatchPipe,FormsModule,CommonModule]
 })
 export class ChildMatchComponent {
   @Input() matches: ChildMatch[]  = [];

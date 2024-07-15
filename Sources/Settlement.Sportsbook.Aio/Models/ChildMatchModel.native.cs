@@ -48,6 +48,8 @@ public class ChildMatchModel
 
     public byte ConfirmFT { get; set; }
 
+    public DateTime KickOffTime { get; set; }
+
     public string LeagueName => ChildMatchConstant.LeagueName.TryGetValue(ChildMatchType, out leagueName) ? leagueName : DefaultValue;
 
     public string RelatedResourceId => ChildMatchConstant.ResourceRelated.TryGetValue((SportType, ChildMatchType), out relatedResourceId) ? relatedResourceId : DefaultValue;

@@ -8,6 +8,7 @@
     <thead>
       <tr>
         <th class="code">Match Code/ID</th>
+        <td class="kick-off-time">Kick-off Time</td>
         <th class="team-name">Team</th>
         <th>Final score</th>
         <th class="eventStatus">Event Status</th>
@@ -22,6 +23,11 @@
       @for (childMatch of matches; track $index) {
         <tr>
           <td>{{ childMatch.matchCode }}</td>
+          <td rowspan="2">
+            {{ matchDetail.kickOffTime | date: "mediumDate" }}
+            <br />
+            {{ matchDetail.kickOffTime | date: "hh:mm:ss a" }}
+          </td>
           <td class="home-team-name">{{matchDetail.homeName }} ({{ childMatch.leagueName }})</td>
           <td [ngClass]="getChildMatchesClass(childMatch)">{{ childMatch.homeValue | scoreChildMatch:childMatch:isLeader }}</td>
           <td rowspan="2">{{ childMatch.newEventStatus }}</td>
