@@ -1,4 +1,4 @@
-﻿using Settlement.Services;
+﻿using Settlement.Core.Services;
 using System.Text.Json.Serialization;
 
 namespace Settlement.FastMarkets.Models;

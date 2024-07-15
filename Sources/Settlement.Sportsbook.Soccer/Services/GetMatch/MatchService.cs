@@ -5,10 +5,10 @@ using Criteria;
 using Fanex.Data.Repository;
 using Models;
 using Requests;
-using Settlement.Constants;
-using Settlement.Models;
-using Settlement.Services;
-using Settlement.Services.SpecificService;
+using Settlement.Core.Constants;
+using Settlement.Core.Models;
+using Settlement.Core.Services;
+using Settlement.Core.Services.SpecificService;
 using Match = Models.Match;
 using MatchDetail = Models.MatchDetail;
 

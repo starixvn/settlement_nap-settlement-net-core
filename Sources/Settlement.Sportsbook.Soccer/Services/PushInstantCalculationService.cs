@@ -1,5 +1,6 @@
-﻿using Settlement.Models;
-using Settlement.Services;
+﻿using Settlement.Core.Constants;
+using Settlement.Core.Models;
+using Settlement.Core.Services;
 using Settlement.Sportsbook.Soccer.Criteria;
 
 namespace Settlement.Sportsbook.Soccer.Services;

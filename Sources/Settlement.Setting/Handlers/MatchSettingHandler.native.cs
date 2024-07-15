@@ -1,7 +1,7 @@
 ﻿using MediatR;
-using Settlement.Constants;
-using Settlement.Models;
-using Settlement.Services;
+using Settlement.Core.Constants;
+using Settlement.Core.Models;
+using Settlement.Core.Services;
 using Settlement.Setting.Models;
 using Settlement.Setting.Requests;
 using Settlement.Setting.Services;

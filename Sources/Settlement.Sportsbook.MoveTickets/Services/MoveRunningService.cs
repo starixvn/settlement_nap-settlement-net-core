@@ -9,8 +9,8 @@ using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Requests;
-using Settlement.Models;
-using Settlement.Services;
+using Settlement.Core.Models;
+using Settlement.Core.Services;
 
 public interface MoveRunningService
 {

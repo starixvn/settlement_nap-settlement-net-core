@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Fanex.Data.Repository;
-using Settlement.Services;
+using Settlement.Core.Services;
 using Settlement.Log.Criteria;
 using Settlement.Log.Models;
 using Settlement.Log.Requests;

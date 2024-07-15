@@ -1,7 +1,7 @@
 ﻿namespace Settlement.Sportsbook.OtherSports.Services;
 
-using Settlement.Constants;
-using Settlement.Models;
+using Settlement.Core.Constants;
+using Settlement.Core.Models;
 
 public interface MergeDataService
 {

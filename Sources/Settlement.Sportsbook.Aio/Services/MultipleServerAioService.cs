@@ -1,10 +1,10 @@
 ﻿using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.Extensions.Options;
-using Settlement.Constants;
-using Settlement.Criteria;
-using Settlement.Models;
-using Settlement.Services;
+using Settlement.Core.Constants;
+using Settlement.Core.Criteria;
+using Settlement.Core.Models;
+using Settlement.Core.Services;
 using Settlement.Sportsbook.Aio.Constants;
 using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.Criteria.Tennis;
@@ -187,7 +187,7 @@ public class MultipleServerAioServiceImp(
 
     private async Task InsIAutoRefundOSChildrenMatch(SettleRequest request)
     {
-        var isHasRefundChildMatch = request.IsSettleRelated 
+        var isHasRefundChildMatch = request.IsSettleRelated
             && request.SportType == SportType.TableTennis
             && request.ParentId == 0
             && request.ActionName == ActionType.RefundAll;

@@ -2,9 +2,9 @@
 using Fanex.Data.Repository;
 using Fanex.NAP.Client.Helpers.Web;
 using NSubstitute;
-using Settlement.Constants;
-using Settlement.Models;
-using Settlement.Services;
+using Settlement.Core.Constants;
+using Settlement.Core.Models;
+using Settlement.Core.Services;
 using Settlement.Outright;
 using Settlement.Outright.Criteria;
 using Settlement.Outright.Models;

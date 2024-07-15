@@ -1,4 +1,4 @@
-﻿using Settlement.Services;
+﻿using Settlement.Core.Services;
 using Settlement.Outright.Criteria;
 
 namespace Settlement.Outright.Services;

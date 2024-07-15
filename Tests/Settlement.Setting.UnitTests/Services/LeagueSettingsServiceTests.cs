@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using Fanex.Data.Repository;
 using Fanex.RemotingRef;
-using Settlement.Criteria;
-using Settlement.Models;
-using Settlement.Services;
+using Settlement.Core.Criteria;
+using Settlement.Core.Models;
+using Settlement.Core.Services;
 using Settlement.Setting.Criteria.LeagueSettings;
 using Settlement.Setting.Models.LeagueSettings;
 using Settlement.Setting.Requests;

@@ -1,14 +1,14 @@
 ﻿using AutoMapper;
 using Fanex.Data.Repository;
 using NSubstitute;
-using Settlement.Constants;
-using Settlement.Models;
 using Settlement.Outright;
 using Settlement.Outright.Criteria;
 using Settlement.Outright.Models;
 using Settlement.Outright.Requests;
 using Settlement.Outright.Services;
-using Settlement.Services;
+using Settlement.Core.Constants;
+using Settlement.Core.Models;
+using Settlement.Core.Services;
 
 namespace Settlement.Sportsbook.Outright.UnitTests.services;
 

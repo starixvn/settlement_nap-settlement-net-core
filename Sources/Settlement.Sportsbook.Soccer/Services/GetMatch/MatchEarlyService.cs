@@ -1,16 +1,14 @@
-﻿using Fanex.NAP.Client.Helpers.Common;
+﻿namespace Settlement.Sportsbook.Soccer.Services.GetMatch;
 
-namespace Settlement.Sportsbook.Soccer.Services.GetMatch;
-
+using Fanex.NAP.Client.Helpers.Common;
 using AutoMapper;
 using Criteria;
 using Fanex.Data.Repository;
 using Models;
-using Settlement.Constants;
-using Settlement.Models;
-using Settlement.Services;
-using Settlement.Services.SpecificService;
+using Settlement.Core.Services;
 using MatchDetail = Models.MatchDetail;
+using Settlement.Core.Models;
+using Settlement.Core.Services.SpecificService;
 
 public interface MatchEarlyService
 {

@@ -1,4 +1,4 @@
-﻿using Settlement.Services;
+﻿using Settlement.Core.Services;
 using Settlement.Gaming.Models.Happy5;
 using Settlement.Gaming.Requests;
 

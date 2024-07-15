@@ -1,14 +1,13 @@
 ﻿using Fanex.NAP.Client.Helpers.Common;
 using Microsoft.Extensions.Options;
-using Settlement.Models;
-using Settlement.Services;
+using Settlement.Core.Models;
+using Settlement.Core.Services;
 using Settlement.FastMarkets.Criteria;
 using Settlement.FastMarkets.Requests;
 using MatchDetail = Settlement.FastMarkets.Models.MatchDetail;
+using Settlement.Core.Services.SpecificService;
 
 namespace Settlement.FastMarkets.Services;
-
-using Settlement.Services.SpecificService;
 
 public interface IMatchDetailService
 {

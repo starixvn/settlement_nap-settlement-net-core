@@ -1,7 +1,7 @@
 ﻿using AutoFixture;
-using Settlement.Constants;
-using Settlement.Models;
-using Settlement.Services;
+using Settlement.Core.Constants;
+using Settlement.Core.Models;
+using Settlement.Core.Services;
 using Settlement.EventManagement.Services;
 
 namespace Settlement.EventManagement.UnitTests.Services;

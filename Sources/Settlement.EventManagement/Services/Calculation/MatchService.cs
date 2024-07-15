@@ -2,9 +2,9 @@
 
 using Criteria;
 using Requests;
-using Settlement.Criteria;
-using Settlement.Models;
-using Settlement.Services;
+using Settlement.Core.Criteria;
+using Settlement.Core.Models;
+using Settlement.Core.Services;
 using Settlement.EventManagement.Models.Calculation;
 using System.Security.Cryptography;
 using System.Text;

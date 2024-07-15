@@ -1,8 +1,8 @@
 ﻿using Fanex.NAP.Client.Helpers.Web;
 using Microsoft.AspNetCore.Http;
-using Settlement.Constants;
-using Settlement.Models;
-using Settlement.Services;
+using Settlement.Core.Constants;
+using Settlement.Core.Models;
+using Settlement.Core.Services;
 using Settlement.Sportsbook.Aio.Constants;
 using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.Models;

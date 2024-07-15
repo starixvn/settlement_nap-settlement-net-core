@@ -3,13 +3,12 @@ using Fanex.NAP.Client.Helpers.Web;
 using Fanex.Settlement.Converter.Services;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
-using Settlement.Models;
-using Settlement.Services;
+using Settlement.Core.Models;
+using Settlement.Core.Services;
 using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Requests;
 using Settlement.Sportsbook.Aio.Services;
-using Settlement.UnitTests;
 
 namespace Settlement.Sportsbook.Aio.UnitTests.Services;
 

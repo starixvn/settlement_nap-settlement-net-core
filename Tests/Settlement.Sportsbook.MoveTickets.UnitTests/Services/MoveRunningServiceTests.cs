@@ -6,8 +6,8 @@ using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
-using Settlement.Models;
-using Settlement.Services;
+using Settlement.Core.Models;
+using Settlement.Core.Services;
 using Settlement.Sportsbook.MoveTickets.Criteria;
 using Settlement.Sportsbook.MoveTickets.Requests;
 

@@ -1,7 +1,7 @@
 ﻿using Fanex.Data.Repository;
-using Settlement.Constants;
-using Settlement.Models;
-using Settlement.Services;
+using Settlement.Core.Constants;
+using Settlement.Core.Models;
+using Settlement.Core.Services;
 using Settlement.EventManagement.Criteria;
 using Settlement.EventManagement.Models;
 using Settlement.EventManagement.Services;
@@ -9,7 +9,7 @@ using Match = Settlement.EventManagement.Models.MultiSports.Match;
 
 namespace Settlement.EventManagement.UnitTests.Services;
 
-using Settlement.Services.SpecificService;
+using Settlement.Core.Services.SpecificService;
 
 public class NewInfoMatchServiceTests
 {

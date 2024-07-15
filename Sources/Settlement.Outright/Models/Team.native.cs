@@ -1,4 +1,4 @@
-﻿using Settlement.Services;
+﻿using Settlement.Core.Services;
 
 namespace Settlement.Outright.Models;
 

@@ -1,9 +1,10 @@
-﻿using Settlement.Models;
-using Settlement.Services;
+﻿using Settlement.Core.Models;
+using Settlement.Core.Services;
 
 namespace Settlement.Sportsbook.MoveTickets.Services;
 
 using MultipleServer;
+using Settlement.Core.Constants;
 
 public interface IMatchService
 {
@@ -23,7 +24,7 @@ public class MatchServiceImp(
 {
     public List<Match> GetScoreForMatchBySportType(List<Match> matches, List<ResultDetail> resultDetails, int sportType, int groupSport)
     {
-        if (sportType == Constants.SportType.Cricket)
+        if (sportType == SportType.Cricket)
         {
             return matchResultDetailService.CricketResultDetail(matches, resultDetails);
         }

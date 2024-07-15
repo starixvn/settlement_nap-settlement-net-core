@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Fanex.Data.Repository;
 using Microsoft.Extensions.Options;
-using Settlement.Models;
+using Settlement.Core.Models;
 using Settlement.Services;
 using Settlement.ThirdPartyProducts.Criteria;
 using Settlement.ThirdPartyProducts.Models;

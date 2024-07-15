@@ -1,8 +1,8 @@
 ﻿using Fanex.NAP.Client.Helpers.Common;
 using Fanex.Settlement.ScaleOut.Constants;
-using Settlement.Constants;
-using Settlement.Models;
-using Settlement.Services;
+using Settlement.Core.Constants;
+using Settlement.Core.Models;
+using Settlement.Core.Services;
 using Settlement.Sportsbook.Aio.Constants;
 using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.Criteria.Basketball;
@@ -11,7 +11,7 @@ using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Requests;
 using ResultDetail = Settlement.Sportsbook.Aio.Models.ResultDetail;
 using ResultTicket = (System.Collections.Generic.List<Settlement.Sportsbook.Aio.Models.ResultDetail> ResultDetails
-    , Settlement.Models.TicketCounts TicketCounts);
+    , Settlement.Core.Models.TicketCounts TicketCounts);
 
 namespace Settlement.Sportsbook.Aio.Services;
 
@@ -118,7 +118,7 @@ public class AioServiceImp(
 
     private async Task<List<ProviderInfo>> GetProviderInfos(int leagueId, int sportType)
     {
-        var criteria = new Settlement.Criteria.GetProviderInfoCriteria { LeagueId = leagueId, SportType = sportType };
+        var criteria = new Settlement.Core.Criteria.GetProviderInfoCriteria { LeagueId = leagueId, SportType = sportType };
         var providers = await repository.FetchAsync<ProviderInfo>(criteria);
 
         return providers.ToList();

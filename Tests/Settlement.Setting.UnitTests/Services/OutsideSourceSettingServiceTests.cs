@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Fanex.Data.Repository;
-using Settlement.Services;
+using Settlement.Core.Services;
 using Settlement.Setting.Criteria.OutsideSourceManager;
 using Settlement.Setting.Models.OutsideSourceManager;
 using Settlement.Setting.Requests.OutsideSourceManager;

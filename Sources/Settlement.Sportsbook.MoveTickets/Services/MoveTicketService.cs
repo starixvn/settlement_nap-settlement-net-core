@@ -3,9 +3,9 @@ using System.Text.Json;
 using AutoMapper;
 using Fanex.Data.Repository;
 using Microsoft.Extensions.Options;
-using Settlement.Constants;
+using Settlement.Core.Constants;
 using Settlement.Core.Criteria;
-using Settlement.Services;
+using Settlement.Core.Services;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.MoveTickets.Criteria;
@@ -23,13 +23,12 @@ public interface MoveTicketService
 }
 
 public class MoveTicketServiceImp(
-    private readonly SiteMatchService siteMatchService;
     IDynamicRepository repository,
     IRefDataService refDataService,
     IMapper mapper,
     IMatchService matchService,
         IOptions<AppSettingsKey> appSettingsKey,
-        SiteMatchService siteMatchService)
+        SiteMatchService siteMatchService):MoveTicketService
 {
     private readonly AppSettingsKey appSettingsKey = appSettingsKey.Value;
 

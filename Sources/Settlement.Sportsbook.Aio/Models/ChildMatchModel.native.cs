@@ -1,5 +1,4 @@
-﻿using Settlement.Models;
-using Settlement.Sportsbook.Aio.Constants;
+﻿using Settlement.Sportsbook.Aio.Constants;
 using System.Globalization;
 
 namespace Settlement.Sportsbook.Aio.Models;

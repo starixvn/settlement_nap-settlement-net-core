@@ -2,15 +2,14 @@
 using Fanex.Data.Repository;
 using Fanex.NAP.Client.Helpers.Web;
 using Microsoft.AspNetCore.Http;
-using Settlement.Criteria;
-using Settlement.Models;
+using Settlement.Core.Models;
 using Settlement.Setting.Constants;
 using Settlement.Setting.Criteria;
 using Settlement.Setting.Models;
 using Settlement.Setting.Models.LeagueSettings;
 using Settlement.Setting.Requests;
 using System.Text.Json;
-using LogService = Settlement.Services.LogService;
+using LogService = Settlement.Core.Services.LogService;
 
 namespace Settlement.Setting.Services;
 

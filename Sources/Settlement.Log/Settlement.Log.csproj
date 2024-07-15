@@ -12,7 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Settlement\Settlement.csproj" />
     <ProjectReference Include="..\Settlement.ResourceInfos\Settlement.ResourceInfos.csproj" />
   </ItemGroup>
 

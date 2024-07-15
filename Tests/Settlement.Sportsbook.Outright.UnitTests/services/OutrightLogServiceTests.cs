@@ -1,6 +1,6 @@
 ﻿using NSubstitute;
-using Settlement.Models;
-using Settlement.Services;
+using Settlement.Core.Models;
+using Settlement.Core.Services;
 using Settlement.Outright.Requests;
 using Settlement.Outright.Services;
 

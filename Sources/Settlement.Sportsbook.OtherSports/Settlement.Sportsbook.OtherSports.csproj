@@ -19,7 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Fanex.Settlement.ScaleOut\Fanex.Settlement.ScaleOut.csproj" />
-    <ProjectReference Include="..\Settlement.Core\Settlement.Core.csproj" />
+	<ProjectReference Include="..\Settlement.Core\Settlement.Core.csproj" />
   </ItemGroup>
 
 </Project>

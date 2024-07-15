@@ -1,6 +1,6 @@
 ﻿namespace Settlement.Sportsbook.MoveTickets.Services.MultipleServer;
 
-using Settlement.Models;
+using Settlement.Core.Models;
 
 public interface CompareMatchService
 {

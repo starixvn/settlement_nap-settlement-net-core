@@ -1,6 +1,6 @@
 ﻿using Fanex.NAP.Client.Helpers.Common;
-using Settlement.Criteria;
-using Settlement.Services;
+using Settlement.Core.Criteria;
+using Settlement.Core.Services;
 using Settlement.Sportsbook.OtherSports.Models;
 
 namespace Settlement.Sportsbook.OtherSports.Services;
@@ -13,8 +13,8 @@ using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.Extensions.Options;
 using Requests;
-using Settlement.Constants;
-using Settlement.Models;
+using Settlement.Core.Constants;
+using Settlement.Core.Models;
 
 public interface MultipleServerService
 {

@@ -1,7 +1,7 @@
 ﻿using Fanex.Caching;
 using Fanex.NAP.Client.Helpers.Web;
-using Settlement.Models;
-using Settlement.Services;
+using Settlement.Core.Models;
+using Settlement.Core.Services;
 using Settlement.FastMarkets.Handlers;
 using Settlement.FastMarkets.Models;
 using Settlement.FastMarkets.Requests;

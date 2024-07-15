@@ -1,5 +1,5 @@
-﻿using Settlement.Models;
-using Settlement.Services;
+﻿using Settlement.Core.Models;
+using Settlement.Core.Services;
 
 namespace Settlement.Sportsbook.MoveTickets.Models;
 

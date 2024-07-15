@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Fanex.NAP.Client.Helpers.Web;
 using Microsoft.AspNetCore.Http;
-using Settlement.Services;
+using Settlement.Core.Services;
 using Settlement.FastMarkets.Constants;
 using Settlement.FastMarkets.Criteria;
 using Settlement.FastMarkets.Models;

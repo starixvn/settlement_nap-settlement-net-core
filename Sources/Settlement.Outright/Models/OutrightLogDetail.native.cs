@@ -1,4 +1,4 @@
-﻿using Settlement.Services;
+﻿using Settlement.Core.Services;
 
 namespace Settlement.Outright.Models;
 
@@ -38,10 +38,10 @@ public class OutrightLogDetail
         {
             if (string.IsNullOrWhiteSpace(Remark))
             {
-                return string.Empty; 
+                return string.Empty;
             }
 
             return int.TryParse(Remark, out _) ? $"Dead Heat({Remark})" : Remark;
         }
-    } 
+    }
 }

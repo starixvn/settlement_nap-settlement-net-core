@@ -1,8 +1,8 @@
 ﻿using Fanex.Data.Repository;
 using Fanex.NAP.Client.Helpers.Web;
 using Microsoft.Extensions.Options;
-using Settlement.Models;
-using Settlement.Services;
+using Settlement.Core.Models;
+using Settlement.Core.Services;
 
 namespace Settlement.Setting.UnitTests.Services;
 

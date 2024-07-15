@@ -1,8 +1,8 @@
-﻿using Settlement.Models;
+﻿using Settlement.Core.Models;
 
 namespace Settlement.Sportsbook.Soccer.UnitTests.Services;
 
-using Settlement.Services.SpecificService;
+using Settlement.Core.Services.SpecificService;
 
 public class FirstGoalLastGoalServiceTests
 {

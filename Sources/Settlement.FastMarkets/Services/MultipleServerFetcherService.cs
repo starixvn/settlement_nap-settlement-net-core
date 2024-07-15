@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
-using Settlement.Models;
 using Settlement.FastMarkets.Criteria;
 using Settlement.FastMarkets.Models;
+using Settlement.Core.Models;
 
 namespace Settlement.FastMarkets.Services;
 

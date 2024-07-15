@@ -1,6 +1,6 @@
 ﻿using Fanex.RemotingRef;
-using Settlement.Constants;
-using Settlement.Services;
+using Settlement.Core.Constants;
+using Settlement.Core.Services;
 using Settlement.ResourceInfos.Constants;
 using Settlement.ResourceInfos.MapperFactory;
 
@@ -23,11 +23,12 @@ public class BasketballResourceNameService : IMapperService
         {
             case maxLength:
                 return (resourceId, GetResourceMain(resourceId));
+
             case >= maxLength + 1:
-            {
-                var betType = resourceId[..(maxLength + 1)];
-                return (betType, refDataService.GetBetTypeName(betType, resourceId[(maxLength + 1)..]));
-            }
+                {
+                    var betType = resourceId[..(maxLength + 1)];
+                    return (betType, refDataService.GetBetTypeName(betType, resourceId[(maxLength + 1)..]));
+                }
             default:
                 return (resourceId, resourceId);
         }

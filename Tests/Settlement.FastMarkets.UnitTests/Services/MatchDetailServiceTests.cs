@@ -1,7 +1,7 @@
 ﻿using Fanex.Data.Repository;
 using Microsoft.Extensions.Options;
-using Settlement.Models;
-using Settlement.Services;
+using Settlement.Core.Models;
+using Settlement.Core.Services;
 using Settlement.FastMarkets.Criteria;
 using Settlement.FastMarkets.Models;
 using Settlement.FastMarkets.Services;
@@ -9,7 +9,7 @@ using MatchDetail = Settlement.FastMarkets.Models.MatchDetail;
 
 namespace Settlement.FastMarkets.UnitTests.Services;
 
-using Settlement.Services.SpecificService;
+using Settlement.Core.Services.SpecificService;
 
 public class MatchDetailServiceTests
 {
