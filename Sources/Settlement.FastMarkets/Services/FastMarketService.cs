@@ -65,12 +65,11 @@ public class FastMarketServiceImp : IFastMarketService
     {
         var criteria = new GetFastMarketMatchDetailCriteria { MatchId = matchId };
 
-        var mappingTypes = new[] { typeof(EventCounter), typeof(string), typeof(FastMarketResult), typeof(ResultDetail) };
-        var fetchedData = await repository.FetchMultipleAsync(criteria, mappingTypes);
-        var eventCounter = fetchedData[0].Cast<EventCounter>().ToList();
-        var handicapValue = fetchedData[1].Cast<string>().FirstOrDefault();
-        var fastMarketResult = fetchedData[2].Cast<FastMarketResult>().ToList();
-        var resultDetail = fetchedData[3].Cast<ResultDetail>().ToList();
+        var fetchedData = await repository.FetchMultipleAsync<EventCounter, string, FastMarketResult, ResultDetail>(criteria);
+        var eventCounter = fetchedData.Item1.ToList();
+        var handicapValue = fetchedData.Item2.FirstOrDefault();
+        var fastMarketResult = fetchedData.Item3.ToList();
+        var resultDetail = fetchedData.Item4.ToList();
 
         var (fastMarketTicketDetails, ticketsCount) = await multipleServerFetcherService.GetFastMarketTicketDetail(matchId);
         MergeFastMarketTicketsToResults(fastMarketResult, fastMarketTicketDetails);
@@ -167,9 +166,8 @@ public class FastMarketServiceImp : IFastMarketService
     {
         var criteria = new GetFastMarketMatchDetailCriteria { MatchId = request.MatchId };
 
-        var mappingTypes = new[] { typeof(EventCounter), typeof(string), typeof(FastMarketResult), typeof(ResultDetail) };
-        var fetchedData = await repository.FetchMultipleAsync(criteria, mappingTypes);
-        var result = fetchedData[2].Cast<FastMarketResult>().ToList();
+        var fetchedData = await repository.FetchMultipleAsync<EventCounter, string, FastMarketResult, ResultDetail>(criteria);
+        var result = fetchedData.Item3.ToList();
 
         return result;
     }

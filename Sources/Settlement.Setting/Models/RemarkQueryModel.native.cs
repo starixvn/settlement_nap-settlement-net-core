@@ -41,9 +41,9 @@ public class RemarkQueryModel
         }
     }
 
-    protected byte SettlementStatus { get; set; }
+    public byte SettlementStatus { get; set; }
 
-    protected string BetStatus { get; set; }
+    public string BetStatus { get; set; }
 
     public RemarkSettingModel Remark => new(SettlementStatus);
 

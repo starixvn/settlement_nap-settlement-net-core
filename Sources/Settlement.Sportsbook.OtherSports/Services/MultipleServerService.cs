@@ -58,9 +58,8 @@ public class MultipleServerServiceImp : MultipleServerService
             IsRefundPage = request.IsRefundPage
         };
 
-        var mappingTypes = new[] { typeof(MatchDetail), typeof(object) };
-        var fetchedResult = await repository.FetchMultipleAsync(criteria, mappingTypes);
-        var matchDetail = fetchedResult[0].Cast<MatchDetail>().FirstOrDefault();
+        var fetchedResult = await repository.FetchMultipleAsync<MatchDetail, object>(criteria);
+        var matchDetail = fetchedResult.Item1.FirstOrDefault();
         Check.Argument.IsNotNull(matchDetail, $"Match ${criteria.MatchId} does not exist");
         var ticketInfoCriteria = new GetTicketInfoCriteria { MatchId = request.MatchId };
         var multipleTicketCounts = await GetTicketInfo(ticketInfoCriteria);
@@ -77,9 +76,8 @@ public class MultipleServerServiceImp : MultipleServerService
         foreach (var server in appSettingsKey.SiteDbServer)
         {
             criteria.DbServer = server;
-            var mappingTypes = new[] { typeof(object), typeof(TicketCounts) };
-            var ticketInfo = await repository.FetchMultipleAsync(criteria, mappingTypes);
-            multipleTickets.Add(ticketInfo[1].Cast<TicketCounts>().ToList());
+            var ticketInfo = await repository.FetchMultipleAsync<object, TicketCounts>(criteria);
+            multipleTickets.Add(ticketInfo.Item2.ToList());
         }
 
         return multipleTickets;

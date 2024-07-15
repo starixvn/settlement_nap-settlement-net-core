@@ -27,7 +27,7 @@ public class ResultDetailModel
 
     public virtual string ResultStatus => ResultStatusId.ResultName(SettlementStatusId);
 
-    protected byte ResultSetting { get; set; }
+    public byte ResultSetting { get; set; }
 
     public List<string> MultipleTicketStatus { get; } = new();
 

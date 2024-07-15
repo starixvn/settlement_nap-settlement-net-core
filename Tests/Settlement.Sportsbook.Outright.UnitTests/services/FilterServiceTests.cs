@@ -111,14 +111,14 @@ public class FilterServiceTests
         var teamOne = new Team { LeagueId = 1, SportType = 1 };
         var teamTwo = new Team { LeagueId = 1, SportType = 1 };
         var teamThree = new Team { LeagueId = 2, SportType = 1 };
-        var deadHeadSetting = new DeadHeatSetting { DeadHeat = 1, LeagueId = 1 };
+        var deadHeadSetting = new DeadHeatSetting { DeadHeat = true, LeagueId = 1 };
         repository.FetchMultipleAsync<DeadHeatSetting, Team>(Arg.Any<GetOutrightDetailCriteria>()).Returns((new List<DeadHeatSetting> { deadHeadSetting }, new List<Team> { teamOne, teamTwo, teamThree }));
         repository.FetchAsync<TeamTicketModel>(Arg.Any<GetTeamTicketCountCriteria>())
             .Returns(new List<TeamTicketModel>());
 
         var actual = await service.Filter(new FilterRequest());
 
-        Assert.Equal("1", actual.SportLeague.First().LeagueMatch.First().DeadHeat.ToString());
+        Assert.True(actual.SportLeague.First().LeagueMatch.First().DeadHeat);
     }
 
     [Fact]

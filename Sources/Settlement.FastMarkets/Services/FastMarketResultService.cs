@@ -43,9 +43,8 @@ public class FastMarketResultServiceImp : IFastMarketResultService
     public async Task<string> OldResults(List<BetType> betTypes, int matchId)
     {
         var criteria = new GetFastMarketMatchDetailCriteria { MatchId = matchId };
-        var mappingTypes = new[] { typeof(EventCounter), typeof(string), typeof(OldResult), typeof(ResultDetail) };
-        var fetchedData = await repository.FetchMultipleAsync(criteria, mappingTypes);
-        var oldResults = fetchedData[2].Cast<OldResult>().Where(result => result.BetType == 228).ToList();
+        var fetchedData = await repository.FetchMultipleAsync<EventCounter, string, OldResult, ResultDetail>(criteria);
+        var oldResults = fetchedData.Item3.Where(result => result.BetType == 228).ToList();
         var timeMachineBetType = betTypes.Find(betType => betType.BetTypeId == 228);
         var accumulatedScore = 0;
         foreach (var result in oldResults)

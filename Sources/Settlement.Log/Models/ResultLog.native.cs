@@ -21,9 +21,9 @@ public class ResultLog
 
     public DateTime CreateDate { get; set; }
 
-    private string HomeValue { get; set; }
+    public string HomeValue { get; set; }
 
-    private string AwayValue { get; set; }
+    public string AwayValue { get; set; }
 
     public string ResultValue
     {

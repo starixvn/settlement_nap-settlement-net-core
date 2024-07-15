@@ -41,7 +41,7 @@ public class ResultDetail
 
     public virtual bool IsNotExistedValue => SettlementStatusId == SettlementStatus.Running && string.IsNullOrWhiteSpace(HomeValue) && string.IsNullOrWhiteSpace(AwayValue);
 
-    protected byte ResultSetting { get; set; }
+    public byte ResultSetting { get; set; }
 
     public ResultDetailSetting ResultSettingData => new()
     {

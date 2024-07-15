@@ -74,6 +74,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		nap-settlement-net-core.sln.DotSettings = nap-settlement-net-core.sln.DotSettings
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fanex.Settlement.ScaleOut", "Sources\Fanex.Settlement.ScaleOut\Fanex.Settlement.ScaleOut.csproj", "{D5CF43E2-66C7-461E-82A5-5FD63349DE14}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -184,6 +186,10 @@ Global
 		{D6263B49-48B4-42CB-A578-C433937D732D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D6263B49-48B4-42CB-A578-C433937D732D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D6263B49-48B4-42CB-A578-C433937D732D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D5CF43E2-66C7-461E-82A5-5FD63349DE14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5CF43E2-66C7-461E-82A5-5FD63349DE14}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D5CF43E2-66C7-461E-82A5-5FD63349DE14}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D5CF43E2-66C7-461E-82A5-5FD63349DE14}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -217,6 +223,7 @@ Global
 		{D03DAB46-E71A-416F-8FB7-8FDA1DE7FDB2} = {A1FCD18B-3CAA-4629-A10D-F9EDCEF84670}
 		{19017E97-C7D1-412E-A344-45BAF1234FB1} = {F6E96605-6144-461A-85E9-4FE6D3D49CC8}
 		{D6263B49-48B4-42CB-A578-C433937D732D} = {0318FAF0-0F10-4D19-A03A-BA495310F4D4}
+		{D5CF43E2-66C7-461E-82A5-5FD63349DE14} = {0318FAF0-0F10-4D19-A03A-BA495310F4D4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F134C0FB-5844-4216-814B-BAE66FBB0195}
