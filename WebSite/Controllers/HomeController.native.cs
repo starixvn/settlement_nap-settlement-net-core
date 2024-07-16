@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ONEbook.UM.AspNetCore.Filters;
-using Settlement.Constants;
+using Settlement.Core.Constants;
 using Settlement.WebSites.Models;
 using System.Diagnostics;
 using System.Net;

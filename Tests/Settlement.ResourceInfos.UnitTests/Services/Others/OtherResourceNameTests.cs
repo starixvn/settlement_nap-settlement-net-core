@@ -1,4 +1,4 @@
-﻿using Settlement.Constants;
+﻿using Settlement.Core.Constants;
 using Settlement.ResourceInfos.Constants;
 using Settlement.ResourceInfos.Services.Others;
 

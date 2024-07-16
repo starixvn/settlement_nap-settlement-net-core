@@ -1,4 +1,4 @@
-﻿using Settlement.Models;
+﻿using Settlement.Core.Models;
 using System.Xml.Serialization;
 
 namespace Settlement.Sportsbook.Aio.Models;

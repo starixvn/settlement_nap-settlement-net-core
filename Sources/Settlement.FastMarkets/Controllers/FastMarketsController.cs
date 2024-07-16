@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Settlement.ActionFilters;
+using Settlement.Core.ActionFilters;
 using Settlement.FastMarkets.Models;
 using Settlement.FastMarkets.Requests;
 

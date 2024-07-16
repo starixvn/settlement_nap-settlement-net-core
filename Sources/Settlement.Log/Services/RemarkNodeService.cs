@@ -1,4 +1,4 @@
-﻿using Settlement.Constants;
+﻿using Settlement.Core.Constants;
 using Settlement.Log.Models.BetTypeElement;
 using Settlement.Log.Models.EventCounterElement;
 using System.Text;

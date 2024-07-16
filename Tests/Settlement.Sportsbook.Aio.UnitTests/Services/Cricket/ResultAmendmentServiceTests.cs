@@ -7,7 +7,7 @@ using Settlement.Sportsbook.Aio.Services.Cricket;
 
 namespace Settlement.Sportsbook.Aio.UnitTests.Services.Cricket;
 
-using Settlement.Models;
+using Settlement.Core.Models;
 
 public class ResultAmendmentServiceTests
 {

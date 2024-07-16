@@ -1,5 +1,5 @@
 ﻿using Fanex.Settlement.Converter.Services;
-using Settlement.Models;
+using Settlement.Core.Models;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Services.Cricket;
 

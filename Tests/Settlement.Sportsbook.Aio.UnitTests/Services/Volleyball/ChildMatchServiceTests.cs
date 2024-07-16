@@ -1,4 +1,4 @@
-﻿using Settlement.Constants;
+﻿using Settlement.Core.Constants;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Services.Volleyball;
 

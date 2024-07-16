@@ -1,4 +1,4 @@
-﻿using Settlement.Models;
+﻿using Settlement.Core.Models;
 using Settlement.Sportsbook.Aio.Models;
 
 namespace Settlement.Sportsbook.Aio.Requests;

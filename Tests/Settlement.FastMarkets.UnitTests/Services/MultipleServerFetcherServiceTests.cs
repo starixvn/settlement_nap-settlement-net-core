@@ -1,6 +1,6 @@
 ﻿using Fanex.Data.Repository;
 using Microsoft.Extensions.Options;
-using Settlement.Models;
+using Settlement.Core.Models;
 using Settlement.FastMarkets.Criteria;
 using Settlement.FastMarkets.Models;
 using Settlement.FastMarkets.Services;

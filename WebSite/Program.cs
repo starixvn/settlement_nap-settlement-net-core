@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
 using Microsoft.AspNetCore.Mvc;
 using ONEbook.UM.AspNetCore.Filters;
-using Settlement.Models;
+using Settlement.Core.Models;
 using Settlement.WebSites;
 using Settlement.WebSites.Middleware;
 

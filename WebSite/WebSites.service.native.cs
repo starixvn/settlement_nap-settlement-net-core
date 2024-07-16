@@ -23,7 +23,7 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
-using Settlement.Services;
+using Settlement.Core.Services;
 using Settlement.EventManagement;
 using Settlement.FastMarkets;
 using Settlement.Gaming;
@@ -41,8 +41,8 @@ using SharpRaven;
 using StackExchange.Redis;
 using System.IO.Compression;
 using ILogger = Fanex.Logging.ILogger;
-using LogService = Settlement.Services.LogService;
-using LogServiceImp = Settlement.Services.LogServiceImp;
+using LogService = Settlement.Core.Services.LogService;
+using LogServiceImp = Settlement.Core.Services.LogServiceImp;
 
 namespace Settlement.WebSites;
 

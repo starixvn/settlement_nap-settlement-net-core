@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
-using Settlement.Constants;
-using Settlement.Models;
+using Settlement.Core.Constants;
+using Settlement.Core.Models;
 
 namespace Settlement.Sportsbook.MoveTickets.UnitTests.Services;
 

@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Fanex.Data.Repository;
 using Fanex.RemotingRef;
-using Settlement.Core.Constants;
+using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Setting.Criteria.LeagueSettings;

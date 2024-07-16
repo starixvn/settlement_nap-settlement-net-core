@@ -1,4 +1,4 @@
-﻿using Settlement.Models;
+﻿using Settlement.Core.Models;
 using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Requests;
 using Settlement.Sportsbook.Soccer.Services;

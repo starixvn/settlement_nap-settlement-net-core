@@ -1,16 +1,16 @@
-﻿using AutoMapper;
+﻿using System.Net;
+using AutoMapper;
 using Fanex.Data.Repository;
 using Microsoft.Extensions.Options;
 using Moq;
 using Moq.Protected;
-using Settlement.Models;
-using Settlement.Services;
+using Settlement.Core.Models;
+using Settlement.Core.Services;
 using Settlement.Setting.Models.Notification;
 using Settlement.Setting.Services;
 using Settlement.ThirdPartyProducts.Criteria;
 using Settlement.ThirdPartyProducts.Requests;
 using Settlement.ThirdPartyProducts.Requests.CashOut;
-using System.Net;
 
 namespace Settlement.ThirdPartyProducts.UnitTests.Services;
 

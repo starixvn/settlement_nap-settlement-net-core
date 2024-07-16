@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Settlement.Criteria;
+using Settlement.Core.Criteria;
 using Settlement.Sportsbook.OtherSports.Criteria;
 using Settlement.Sportsbook.OtherSports.Requests;
 

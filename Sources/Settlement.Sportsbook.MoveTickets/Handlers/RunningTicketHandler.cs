@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using Settlement.Models;
+using Settlement.Core.Models;
 using Settlement.Sportsbook.MoveTickets.Models;
 using Settlement.Sportsbook.MoveTickets.Requests;
 using Settlement.Sportsbook.MoveTickets.Services;

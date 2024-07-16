@@ -1,4 +1,4 @@
-﻿using Settlement.Models;
+﻿using Settlement.Core.Models;
 using Settlement.Sportsbook.Aio.MapperFactory;
 
 namespace Settlement.Sportsbook.Aio.Services;

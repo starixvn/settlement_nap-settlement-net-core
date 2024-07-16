@@ -5,7 +5,6 @@ using Newtonsoft.Json;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
-using Settlement.Services;
 using Settlement.Setting.Models.Notification;
 using Settlement.Setting.Services;
 using Settlement.ThirdPartyProducts.Constants;

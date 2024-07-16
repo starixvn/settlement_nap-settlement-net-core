@@ -1,4 +1,4 @@
-﻿using Settlement.Models;
+﻿using Settlement.Core.Models;
 using Settlement.EventManagement.Services.Calculation;
 using Match = Settlement.EventManagement.Models.Calculation.Match;
 

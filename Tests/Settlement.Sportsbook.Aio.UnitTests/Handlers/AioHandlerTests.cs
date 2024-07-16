@@ -1,8 +1,8 @@
 ﻿using Fanex.Caching;
 using Fanex.NAP.Client.Helpers.Web;
 using Microsoft.Extensions.Options;
-using Settlement.Models;
-using Settlement.Services;
+using Settlement.Core.Models;
+using Settlement.Core.Services;
 using Settlement.Sportsbook.Aio.Criteria.Cricket;
 using Settlement.Sportsbook.Aio.Handlers;
 using Settlement.Sportsbook.Aio.Models;

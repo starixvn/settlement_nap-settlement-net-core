@@ -2,7 +2,7 @@
 
 namespace Settlement.Sportsbook.Aio.UnitTests.Services.ESport;
 
-using Settlement.Models;
+using Settlement.Core.Models;
 
 public class ProviderMapperServiceTests
 {

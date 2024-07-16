@@ -2,7 +2,7 @@
 
 using MediatR;
 using Models.ProviderManager;
-using Settlement.Models;
+using Settlement.Core.Models;
 
 public class UpdateProviderRequest : IRequest<Result>
 {

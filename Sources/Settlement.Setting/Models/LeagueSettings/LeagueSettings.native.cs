@@ -1,5 +1,5 @@
 ﻿using System.Text.Json.Serialization;
-using Settlement.Models;
+using Settlement.Core.Models;
 
 namespace Settlement.Setting.Models.LeagueSettings;
 

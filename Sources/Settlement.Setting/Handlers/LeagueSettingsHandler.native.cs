@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using Settlement.Models;
+using Settlement.Core.Models;
 using Settlement.Setting.Models.LeagueSettings;
 using Settlement.Setting.Requests.LeagueSettings;
 using Settlement.Setting.Services;

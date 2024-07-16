@@ -1,7 +1,7 @@
 ﻿using Fanex.NAP.Client.Configuration;
 using Fanex.NAP.Client.Helpers.Web;
 using Fanex.NAP.Client.Services;
-using Settlement.Models;
+using Settlement.Core.Models;
 
 namespace Settlement.ThirdPartyProducts.Services;
 

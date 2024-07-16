@@ -4,10 +4,10 @@ public class Match : BaseMatch
 {
     private readonly List<int> sportSupportDirect =
     [
-        Constants.SportType.VolleyBall,
-        Constants.SportType.Badminton,
-        Constants.SportType.Cricket,
-        Constants.SportType.Tennis
+        SportType.VolleyBall,
+        SportType.Badminton,
+        SportType.Cricket,
+        SportType.Tennis
     ];
 
     [Key("isHavingIntervalScore")]

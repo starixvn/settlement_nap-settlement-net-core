@@ -1,4 +1,4 @@
-﻿using Settlement.Models;
+﻿using Settlement.Core.Models;
 
 namespace Settlement.ThirdPartyProducts.Models;
 

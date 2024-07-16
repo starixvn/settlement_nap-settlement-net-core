@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Settlement.Constants;
+using Settlement.Core.Constants;
 
 namespace Settlement.WebSites.Controllers;
 

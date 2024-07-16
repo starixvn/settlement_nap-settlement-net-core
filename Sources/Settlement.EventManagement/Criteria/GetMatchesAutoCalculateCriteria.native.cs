@@ -1,4 +1,4 @@
-﻿using Settlement.Criteria;
+﻿using Settlement.Core.Criteria;
 
 namespace Settlement.EventManagement.Criteria;
 

@@ -7,4 +7,4 @@ global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.Extensions.Options;
 global using Settlement.Core.Constants;
 global using Settlement.Core.Models;
-global using Settlement.Services;
+global using Settlement.Core.Services;

@@ -2,7 +2,7 @@
 using Fanex.Data.Repository;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Models;
-using Settlement.Services;
+using Settlement.Core.Services;
 using Settlement.ThirdPartyProducts.Criteria;
 using Settlement.ThirdPartyProducts.Models;
 using Settlement.ThirdPartyProducts.Requests;

@@ -1,13 +1,12 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Settlement.ActionFilters;
+using Settlement.Core.ActionFilters;
 using Settlement.Sportsbook.OtherSports.Requests;
 
 namespace Settlement.Sportsbook.OtherSports.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-
 public class OtherSportsController(IMediator mediator) : ControllerBase
 {
     [Route("get-match"), HttpPost]

@@ -1,4 +1,4 @@
-﻿using Settlement.Constants;
+﻿using Settlement.Core.Constants;
 using Settlement.ResourceInfos.Constants;
 
 namespace Settlement.ResourceInfos.Services.Cricket;

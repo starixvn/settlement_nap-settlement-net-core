@@ -1,5 +1,5 @@
-﻿using Settlement.Models;
-using Settlement.Services;
+﻿using Settlement.Core.Models;
+using Settlement.Core.Services;
 using Settlement.Log.Handlers;
 using Settlement.Log.Models;
 using Settlement.Log.Requests;

@@ -1,13 +1,12 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Settlement.ActionFilters;
+using Settlement.Core.ActionFilters;
 using Settlement.Sportsbook.MoveTickets.Requests;
 
 namespace Settlement.Sportsbook.MoveTickets.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-
 public class MoveTicketController(IMediator mediator) : ControllerBase
 {
     [Route("get-match")]

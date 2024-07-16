@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Fanex.Data.Repository;
 using Microsoft.Extensions.Caching.Memory;
-using Settlement.Constants;
+using Settlement.Core.Constants;
 using Settlement.EventManagement.Criteria;
 using Settlement.EventManagement.Models.Calculation;
 using Settlement.EventManagement.Services.Calculation;
