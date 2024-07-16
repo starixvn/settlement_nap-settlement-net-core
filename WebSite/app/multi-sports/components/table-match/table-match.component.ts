@@ -35,6 +35,7 @@ export class TableMatchComponent implements OnInit {
       map(state => state.sports),
     ).subscribe(data => {
       this.sports = data;
+
       this.cd.markForCheck();
     });
     this.refreshMatches();
