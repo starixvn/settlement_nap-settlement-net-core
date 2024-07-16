@@ -137,6 +137,14 @@ public class GenerateResultAmendmentServiceImp : GenerateResultAmendmentService
 
         var (itemChanged, itemSelected) = CreateEarlyResultItemBase(resultChanged, resourceItem);
 
+        if (PatternResultType.EarlyTypeFourTwo.Contains(betTypeId))
+        {
+            itemChanged.MainGame = $"{inning}";
+            itemSelected.MainGame = $"{inning}";
+
+            return (itemChanged, itemSelected);
+        }
+
         itemChanged.Game = $"{inning}";
         itemSelected.Game = $"{inning}";
 
@@ -277,8 +285,7 @@ public class GenerateResultAmendmentServiceImp : GenerateResultAmendmentService
     private int GetInning(string resourceId)
     {
         var numberOfInnsPosition = 4;
-        var numberOfInnsLength = 1;
-
+        const int numberOfInnsLength = 1;
         if (resourceId.Length < 5)
         {
             numberOfInnsPosition = 1;
