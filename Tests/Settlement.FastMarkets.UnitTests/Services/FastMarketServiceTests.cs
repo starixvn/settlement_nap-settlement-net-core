@@ -4,6 +4,7 @@ using Fanex.Settlement.ScaleOut.Models;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.Extensions.Options;
+using NSubstitute;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.FastMarkets.Criteria;
@@ -66,21 +67,18 @@ public class FastMarketServiceTests
             }
         };
         var ticketsCount = new TicketCounts { GroupId = 1 };
-        var result = new IEnumerable<object>[5];
         var result1 = new IEnumerable<object>[0];
 
-        result[0] = new List<EventCounter> { new() { Position = 1 } };
-        result[1] = new List<string> { "a" };
-        result[2] = new List<FastMarketResult> { new() { Position = 1, BetType = 1 } };
-        result[3] = new List<ResultDetail> { new() { ResourceId = "1" } };
+        var item1 = new List<EventCounter> { new() { Position = 1 } };
+        var item2 = new List<string> { "a" };
+        var item3 = new List<FastMarketResult> { new() { Position = 1, BetType = 1 } };
+        var item4 = new List<ResultDetail> { new() { ResourceId = "1" } };
 
         multipleServerFetcherService.GetFastMarketTicketDetail(Arg.Any<int>())
             .Returns((fastMarketResult, ticketsCount));
         repository
-            .FetchMultipleAsync(Arg.Is<GetFastMarketMatchDetailCriteria>(x => x.MatchId == matchId),
-                Arg.Any<Type[]>())
-            .Returns((result, result1));
-
+            .FetchMultipleAsync<EventCounter, string, FastMarketResult, ResultDetail>(Arg.Any<GetFastMarketMatchDetailCriteria>())
+            .Returns((item1, item2, item3, item4));
         var betTypes = new List<BetType>
         {
             new()
@@ -144,17 +142,15 @@ public class FastMarketServiceTests
     public async Task GetLatestResult_Always_ReturnCorrectly()
     {
         const int matchId = 100;
-        var result = new IEnumerable<object>[4];
 
-        result[0] = new List<EventCounter> { new() };
-        result[1] = new List<string> { "a" };
-        result[2] = new List<FastMarketResult> { new() { Position = 1, BetType = 2 } };
-        result[3] = new List<ResultDetail> { new() };
+        var item1 = new List<EventCounter> { new() };
+        var item2 = new List<string> { "a" };
+        var item3 = new List<FastMarketResult> { new() { Position = 1, BetType = 2 } };
+        var item4 = new List<ResultDetail> { new() };
 
         repository
-            .FetchMultipleAsync(Arg.Is<GetFastMarketMatchDetailCriteria>(x => x.MatchId == matchId),
-                Arg.Any<Type[]>())
-            .Returns(result);
+            .FetchMultipleAsync<EventCounter, string, FastMarketResult, ResultDetail>(Arg.Is<GetFastMarketMatchDetailCriteria>(x => x.MatchId == matchId))
+            .Returns((item1, item2, item3, item4));
 
         var actual = await service.GetLatestResult(new GetLatestResultRequest { MatchId = matchId });
 
