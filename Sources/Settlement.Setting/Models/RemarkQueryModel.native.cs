@@ -1,4 +1,5 @@
 ﻿using Settlement.Core.Models;
+using CoreConsts = Settlement.Core.Constants;
 
 namespace Settlement.Setting.Models;
 
@@ -11,10 +12,10 @@ public class RemarkQueryModel
 
     private readonly List<string> eventStatusReasonTitles =
     [
-        Settlement.Constants.EventStatus.IrregularTime1H,
-        Settlement.Constants.EventStatus.IrregularTime,
-        Settlement.Constants.EventStatus.WrongTeamName,
-        Settlement.Constants.EventStatus.Suspended
+        CoreConsts.EventStatus.IrregularTime1H,
+       CoreConsts.EventStatus.IrregularTime,
+      CoreConsts.EventStatus.WrongTeamName,
+      CoreConsts.EventStatus.Suspended
     ];
 
     private readonly List<int> eventStatusReasons = [1, 2, 3, 4];
@@ -36,7 +37,7 @@ public class RemarkQueryModel
         {
             var status = EventStatusReason ?? 0;
 
-            return originalEventStatus.IgnoreCaseEquals(Settlement.Constants.EventStatus.Running) &&
+            return originalEventStatus.IgnoreCaseEquals(CoreConsts.EventStatus.Running) &&
                    eventStatusReasons.Contains(status) ? eventStatusReasonTitles[status - 1] : EventStatus;
         }
     }

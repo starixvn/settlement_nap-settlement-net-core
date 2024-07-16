@@ -9,6 +9,7 @@ using Settlement.Core.Services;
 using MatchDetail = Models.MatchDetail;
 using Settlement.Core.Models;
 using Settlement.Core.Services.SpecificService;
+using Settlement.Core.Constants;
 
 public interface MatchEarlyService
 {

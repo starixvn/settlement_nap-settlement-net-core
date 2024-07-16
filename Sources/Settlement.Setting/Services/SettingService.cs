@@ -2,6 +2,7 @@
 using Fanex.Data.Repository;
 using Fanex.NAP.Client.Helpers.Web;
 using Microsoft.AspNetCore.Http;
+using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Setting.Constants;
 using Settlement.Setting.Criteria;

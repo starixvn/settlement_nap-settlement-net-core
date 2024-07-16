@@ -206,7 +206,7 @@ public class MultipleServerAioServiceImp(
                 ResourceIds = "00"
             }).ToList();
 
-        var tasks = criteria.Select(repository.ExecuteAsync);
+        var tasks = criteria.Select(x => repository.ExecuteAsync(x));
         await Task.WhenAll(tasks);
     }
 

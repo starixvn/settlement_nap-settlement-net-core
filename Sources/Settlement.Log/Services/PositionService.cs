@@ -1,5 +1,5 @@
 ﻿using Settlement.Log.Models.BetTypeElement;
-using static Settlement.Constants.BetType;
+using static Settlement.Core.Constants.BetType;
 
 namespace Settlement.Log.Services;
 

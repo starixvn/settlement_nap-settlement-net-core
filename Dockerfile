@@ -1,7 +1,7 @@
 FROM hub.nexdev.net/base/dotnet/core/sdk:8.0-alpine AS builder
 
 WORKDIR /src
-COPY ./Sources/Settlement/*.csproj ./Sources/Settlement/
+COPY ./Sources/Settlement.Core/*.csproj ./Sources/Settlement.Core/
 COPY ./Sources/Settlement.ResourceInfos/*.csproj ./Sources/Settlement.ResourceInfos/
 COPY ./Sources/Settlement.EventManagement/*.csproj ./Sources/Settlement.EventManagement/
 COPY ./Sources/Settlement.FastMarkets/*.csproj ./Sources/Settlement.FastMarkets/

@@ -130,7 +130,7 @@ public class AioServiceTests
         multipleServerAioService.FetchResultDetails(Arg.Any<GetResultDetailCriteria>(), Arg.Any<int>()).Returns(resultAndTicket);
         validateApiKeyService.GetApiKey(Arg.Any<string>()).Returns("");
         validateApiKeyService.CriteriaName(Arg.Any<GetMatchRequest>(), $"-{ApiKeyConstant.ResultDetailKey}").Returns(new GetResultDetailCriteria());
-        repository.FetchAsync<ProviderInfo>(Arg.Any<Settlement.Criteria.GetProviderInfoCriteria>()).Returns(new List<ProviderInfo> { new() });
+        repository.FetchAsync<ProviderInfo>(Arg.Any<Settlement.Core.Criteria.GetProviderInfoCriteria>()).Returns(new List<ProviderInfo> { new() });
 
         // Act
         var result = await service.GetMatch(request);
@@ -159,7 +159,7 @@ public class AioServiceTests
         multipleServerAioService.FetchResultDetails(Arg.Any<GetResultDetailCriteria>(), Arg.Any<int>()).Returns(resultAndTicket);
         validateApiKeyService.GetApiKey(Arg.Any<string>()).Returns("");
         validateApiKeyService.CriteriaName(Arg.Any<GetMatchRequest>(), $"-{ApiKeyConstant.ResultDetailKey}").Returns(new GetResultDetailCriteria());
-        repository.FetchAsync<ProviderInfo>(Arg.Any<Settlement.Criteria.GetProviderInfoCriteria>()).Returns(new List<ProviderInfo> { new() });
+        repository.FetchAsync<ProviderInfo>(Arg.Any<Settlement.Core.Criteria.GetProviderInfoCriteria>()).Returns(new List<ProviderInfo> { new() });
         repository.FetchAsync<ResourceIndex>(Arg.Any<GetResourceIndexCriteria>()).Returns(new List<ResourceIndex> {
             new() { ResourceId="00" },
             new() { ResourceId="01",IntervalNo = 1 },
