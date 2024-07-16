@@ -192,7 +192,7 @@ public class MultipleServerAioServiceImp(
             && request.ParentId == 0
             && request.ActionName == ActionType.RefundAll;
 
-        if (!isHasRefundChildMatch)
+        if (!isHasRefundChildMatch || string.IsNullOrEmpty(request.ChildMatchIds))
         {
             return;
         }

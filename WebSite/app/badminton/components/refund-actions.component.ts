@@ -185,12 +185,12 @@ export class RefundActionsComponent
           _.includes(this.match.matchDetail.betStatus, EventStatus.refund))
         ? `${EventStatus.refund};`
         : "";
-    const submitedSets = this.match.resultDetails.filter(
+    const submittedSets = this.match.resultDetails.filter(
       (map) =>
         map.resourceId !== ResourcesIds.totalPoints &&
         map.resourceId !== ResourcesIds.totalGames
     );
-    submitedSets.forEach((map) => {
+    submittedSets.forEach((map) => {
       betStatus.push(
         map.checked
           ? `${Number(map.homeValue)}-${Number(map.awayValue)}`
@@ -216,15 +216,17 @@ export class RefundActionsComponent
 
     const { childMatches } = this.match;
     const selectedResourceIds = this.selectedResources.map(x => x.resourceId);
-    const newSelectedRourceIds = selectedResourceIds.includes(ResourcesIds.totalGames) 
+    const newSelectedSourceIds = selectedResourceIds.includes(ResourcesIds.totalGames) 
       ? [...selectedResourceIds,ResourcesIds.totalPoints] 
       : selectedResourceIds;
    
-    const childrenMatchRefund = childMatches.filter(x => newSelectedRourceIds.includes(x.relatedResourceId));
+    const selectedChildrenMatches = childMatches.filter(x => newSelectedSourceIds.includes(x.relatedResourceId));
+    const refundableChildrenMatches = selectedChildrenMatches.filter(x => !x.isHold 
+      && x.newEventStatus.toLowerCase() === EventStatus.running.toLowerCase());
     
-    const childrendMatchId = childrenMatchRefund.length ? childrenMatchRefund.map(x => x.matchId).join(',') : null;
+    const childrenMatchId = refundableChildrenMatches.length ? refundableChildrenMatches.map(x => x.matchId).join(',') : null;
 
-    return childrendMatchId;
+    return childrenMatchId;
   }
   
 }
