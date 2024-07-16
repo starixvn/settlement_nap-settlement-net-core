@@ -330,7 +330,7 @@ export class EarlyBaseComponent {
 
     public verifyAndAutoFillResult(resultDetail: ResultDetail) {
         this.matchDetail.isSavedScore = false;
-        if (resultDetail.resultStatusId !== ResultStatusId.ManualCompleted) {
+        if (resultDetail.settlementStatusId !== SettlementStatusId.Calculated) {
             resultDetail.homeValue = '';
             resultDetail.awayValue = '';
         }
