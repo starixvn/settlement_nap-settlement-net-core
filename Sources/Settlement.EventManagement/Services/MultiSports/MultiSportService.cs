@@ -197,7 +197,7 @@ public class MultiSportServiceImp(
     {
         var result = await repository.FetchMultipleAsync<Match, MatchOverStatus, ParentChildMatchFilter>(criteria);
 
-        return (result.FirstResultSet.ToList(), result.SecondResultSet.ToList(), result.ThirdResultSet.ToList());
+        return (result.Item1.ToList(), result.Item2.ToList(), result.Item3.ToList());
     }
 
     private async Task<List<Match>> GetMatchesAllInfo(SportsbookCriteria criteria)
