@@ -45,15 +45,15 @@ public class MultipleServerServiceTests
     public async Task GetMatchInfo_MatchDetailNotNull_CallAllRelatedMethod()
     {
         var fakeData = new IEnumerable<object>[2];
-        fakeData[0] = new List<MatchDetail> { new() };
-        fakeData[1] = new List<TicketCounts> { new() };
-        repository.FetchMultipleAsync(Arg.Any<GetSportsbookMatchDetailCriteria>(), Arg.Any<Type[]>())
-            .Returns(fakeData);
-        repository.FetchMultipleAsync(Arg.Any<GetTicketInfoCriteria>(), Arg.Any<Type[]>()).Returns(fakeData);
+        var item1 = new List<MatchDetail> { new() };
+        var item2 = new List<TicketCounts> { new() };
+        repository.FetchMultipleAsync<MatchDetail, object>(Arg.Any<GetSportsbookMatchDetailCriteria>())
+            .Returns((item1, item2));
+        repository.FetchMultipleAsync<MatchDetail, object>(Arg.Any<GetTicketInfoCriteria>()).Returns((item1, item2));
 
         await service.GetMatchInfo(new GetMatchRequest());
 
-        await repository.Received(2).FetchMultipleAsync(Arg.Any<GetTicketInfoCriteria>(), Arg.Any<Type[]>());
+        await repository.Received(2).FetchMultipleAsync<MatchDetail, object>(Arg.Any<GetTicketInfoCriteria>());
         mergeDataService.Received().MergeMatchDetail(Arg.Any<MatchDetail>(), Arg.Any<List<TicketCounts>>());
         mergeDataService.Received().GroupTicketCount(Arg.Any<List<TicketCounts>>());
     }
@@ -84,11 +84,10 @@ public class MultipleServerServiceTests
             BetRunningCount = runningBetType,
             GroupId = 1
         };
-        var fakeData = new IEnumerable<object>[2];
-        fakeData[0] = new List<MatchDetail> { new() };
-        fakeData[1] = new List<TicketCounts> { new() };
-        repository.FetchMultipleAsync(Arg.Any<GetTicketInfoCriteria>(), Arg.Any<Type[]>())
-            .Returns(fakeData);
+        var item1 = new List<MatchDetail> { new() };
+        var item2 = new List<TicketCounts> { new() };
+        repository.FetchMultipleAsync<MatchDetail, TicketCounts>(Arg.Any<GetTicketInfoCriteria>())
+            .Returns((item1, item2));
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
         mergeDataService.MergeTicketCounts(Arg.Any<List<List<TicketCounts>>>())
             .Returns([ticketHt]);
@@ -105,11 +104,10 @@ public class MultipleServerServiceTests
     [Fact]
     public async Task Calculate_ValidatePassedAndIsResettle_InsertLog()
     {
-        var fakeData = new IEnumerable<object>[2];
-        fakeData[0] = new List<MatchDetail> { new() };
-        fakeData[1] = new List<TicketCounts> { new() };
-        repository.FetchMultipleAsync(Arg.Any<GetTicketInfoCriteria>(), Arg.Any<Type[]>())
-            .Returns(fakeData);
+        var item1 = new List<MatchDetail> { new() };
+        var item2 = new List<TicketCounts> { new() };
+        repository.FetchMultipleAsync<MatchDetail, TicketCounts>(Arg.Any<GetTicketInfoCriteria>())
+            .Returns((item1, item2));
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
         mergeDataService.MergeTicketCounts(Arg.Any<List<List<TicketCounts>>>())
             .Returns([]);

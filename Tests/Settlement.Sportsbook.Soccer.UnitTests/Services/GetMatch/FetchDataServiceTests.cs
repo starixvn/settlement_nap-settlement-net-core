@@ -8,7 +8,9 @@ using Settlement.Sportsbook.Soccer.Requests;
 
 namespace Settlement.Sportsbook.Soccer.UnitTests.Services.GetMatch;
 
+using NSubstitute;
 using Soccer.Services.GetMatch;
+using MatchDetail = Models.MatchDetail;
 
 public class FetchDataServiceTests
 {
@@ -42,7 +44,7 @@ public class FetchDataServiceTests
 
         results[0] = matches;
         results[1] = Substitute.For<IEnumerable<ChildMatchModel>>();
-        repository.FetchMultipleAsync(Arg.Any<CriteriaBase>(), Arg.Any<Type[]>()).Returns(results);
+        repository.FetchMultipleAsync<MatchDetail, ChildMatchModel>(Arg.Any<CriteriaBase>()).Returns((matches, new List<ChildMatchModel>()));
 
         // Act
         var match = service.GetMatchInfo(new GetMatchRequest { MatchId = 1 });

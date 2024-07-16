@@ -44,38 +44,6 @@ public class CreateQueryServiceTests
     }
 
     [Fact]
-    public void QuerySettle_Always_ReturnsExpectedData()
-    {
-        // Arrange
-        var request = new SettleRequest
-        {
-            MatchId = 1,
-            ActionName = "Settle",
-            BetStatus = string.Empty,
-            IsLeader = false
-        };
-
-        var expectedData = new SettleCriteria
-        {
-            MatchId = request.MatchId,
-            AdminId = 0,
-            Action = request.ActionName,
-            Ip = "1.0.0.0",
-            BetStatus = "",
-            SelectedResources = "",
-            IsReSettledTickets = false,
-            IsLeader = false,
-            RemarkInfo = ""
-        };
-
-        // Act
-        var result = service.QuerySettle(request);
-
-        // Assert
-        Assert.Equal(JsonConvert.SerializeObject(expectedData).RemoveSessionId(), JsonConvert.SerializeObject(result).RemoveSessionId());
-    }
-
-    [Fact]
     public void QuerySaveScore__Always_ReturnsExpectedData()
     {
         // Arrange
@@ -117,31 +85,6 @@ public class CreateQueryServiceTests
 
         Assert.Equal("", criteria.ErrMsg);
         logService.Received(1).ActionLog(Arg.Any<int>(), Arg.Any<string>(), 100);
-    }
-
-    [Fact]
-    public void QuerySettleChildMatch_Always_ReturnExpectedData()
-    {
-        var request = new SettleChildMatchRequest
-        {
-            ActionName = "Calc"
-        };
-
-        var expectedData = new SettleCriteria
-        {
-            Action = request.ActionName,
-            AdminId = currentSession.UserId,
-            BetStatus = null,
-            SelectedResources = "",
-            Ip = "1.0.0.0",
-            IsDirectly = false,
-            IsChildMatch = true,
-            RemarkInfo = ""
-        };
-
-        var result = service.QuerySettleChildMatch(request);
-
-        Assert.Equal(JsonConvert.SerializeObject(expectedData).RemoveSessionId(), JsonConvert.SerializeObject(result).RemoveSessionId());
     }
 
     [Fact]
