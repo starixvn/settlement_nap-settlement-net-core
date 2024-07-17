@@ -3,6 +3,7 @@ import * as _ from 'lodash';
 import { Score } from '../../shared/models';
 @Pipe({
     name: 'intervalScore',
+    standalone: true
 })
 
 export class IntervalScorePipe implements PipeTransform {

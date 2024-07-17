@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Injector } from '@angular/core';
+import { Component, OnInit, OnDestroy, Injector, ChangeDetectionStrategy } from '@angular/core';
 import { DatePipe } from "@angular/common";
 import { Subscription } from "rxjs";
 import { interval } from 'rxjs';
@@ -13,7 +13,12 @@ import {
     GenerateFilterService
 } from '../../shared/services';
 import { MultiSportService, RefreshMatchService, PopupService, DetectChangesService, HandleActionsService, BackGroundService, SportMatchService } from '../services';
-import { MultiSport, MatchWaitingRequest } from '../models';
+import { MultiSport } from '../models';
+import { FilterComponent } from './filter.component';
+import { TableMatchComponent } from './table-match/table-match.component';
+import { CommonModule } from '@angular/common';
+import { MatchStateService } from '../services/match-state.service';
+import { IntervalScorePipe } from '../../shared/pipes/interval-score.pipe';
 
 @Component({
     selector: 'app-root',
@@ -34,19 +39,22 @@ import { MultiSport, MatchWaitingRequest } from '../models';
         DetectChangesService,
         HandleActionsService,
         SportMatchService,
-        BackGroundService
+        BackGroundService,
+        MatchStateService ,
+        IntervalScorePipe
     ],
+    standalone: true,
+    imports: [FilterComponent, TableMatchComponent, CommonModule],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppComponent implements OnInit, OnDestroy {
     private subscriber: Subscription;
     private readonly period = 60000;
-    private blockUIService: BlockUIService;
+    public blockUIService: BlockUIService;
     private reCheckInService: ReCheckInService;
     public blockUI = false;
     public multiSport = new MultiSport();
     public intervalTimer = interval(this.period);
-    public enableRefreshMatch = false;
-    public request: MatchWaitingRequest;
    
     constructor(protected injector: Injector) {
     }
@@ -54,7 +62,6 @@ export class AppComponent implements OnInit, OnDestroy {
     public ngOnInit() {
         this.blockUIService = this.injector.get(BlockUIService);
         this.reCheckInService = this.injector.get(ReCheckInService);
-        this.blockUIService.blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
         this.reCheckIn();
     }
 
@@ -68,17 +75,5 @@ export class AppComponent implements OnInit, OnDestroy {
         this.subscriber = this.intervalTimer.subscribe(() => {
             this.reCheckInService.reCheckin();
         });
-    }
-
-    public search(value: MultiSport) {
-        this.multiSport = value;
-    }
-
-    public getRequest(request: MatchWaitingRequest) {
-        this.request = request;
-    }
-
-    public getRefreshMatchFlag(enable: boolean) {
-        this.enableRefreshMatch = enable;
     }
 }

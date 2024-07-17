@@ -104,7 +104,7 @@
 			<ng-container *ngFor="let result of map.externalScores; let x = index">
 				<td *ngIf="x < (maxProviderCol +1) && isLeader">{{ result.homeValue }}-{{ result.awayValue }}</td>
 				<ng-container *ngIf="x >= (maxProviderCol +1)">
-					<td [ngClass]="{ striped: x % 2 === 1 }">
+					<td [ngClass]="{ 'striped': x % 2 === 1, 'can-settle': canSettleResult(map) }">
 						<input
 							type="text"
 							myOnlyInteger
@@ -114,7 +114,7 @@
 							(ngModelChange)="updateOutsideScore(result.sourceId)"
 						/>
 					</td>
-					<td [ngClass]="{ striped: x % 2 === 1 }">
+					<td [ngClass]="{ 'striped': x % 2 === 1, 'can-settle': canSettleResult(map)}">
 						<input
 							type="text"
 							myOnlyInteger

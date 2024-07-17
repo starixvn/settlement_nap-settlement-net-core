@@ -27,6 +27,8 @@ public class CalculateServiceTests
 
     private readonly LogService logService;
 
+    //private readonly MatchService matchService;
+
     public CalculateServiceTests()
     {
         repository = Substitute.For<IDynamicRepository>();

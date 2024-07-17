@@ -25,16 +25,7 @@ public class SportsbookCriteria : CriteriaBase
 
     public byte Page => 1;
 
-    [SpParam(Ignored = true)]
-    public string DbServer { get; set; }
+    public override string GetSettingKey() => $"NAP_Set_MatchOtherSportsSel";
 
-    public override string GetSettingKey()
-    {
-        return $"NAP_Set_MatchOtherSportsSel_{DbServer}";
-    }
-
-    public override bool IsValid()
-    {
-        return FromDate <= ToDate;
-    }
+    public override bool IsValid() => FromDate <= ToDate;
 }

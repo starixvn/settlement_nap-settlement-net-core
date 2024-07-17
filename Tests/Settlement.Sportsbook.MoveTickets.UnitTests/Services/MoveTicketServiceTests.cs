@@ -8,6 +8,8 @@ using Settlement.Core.Services;
 using Settlement.Sportsbook.MoveTickets.Criteria;
 using Settlement.Sportsbook.MoveTickets.Models;
 using Settlement.Sportsbook.MoveTickets.Requests;
+using Settlement.Sportsbook.MoveTickets.Services.MultipleServer;
+using Xunit.Sdk;
 
 namespace Settlement.Sportsbook.MoveTickets.UnitTests.Services;
 
@@ -17,6 +19,7 @@ public class MoveTicketServiceTests
     private readonly IRefDataService refDataService;
     private readonly IMatchService matchService;
     private readonly MoveTicketService service;
+    private readonly SiteMatchService siteMatchService;
 
     public MoveTicketServiceTests()
     {
@@ -24,6 +27,8 @@ public class MoveTicketServiceTests
         refDataService = Substitute.For<IRefDataService>();
         var accessor = Substitute.For<IHttpContextAccessor>();
         matchService = Substitute.For<IMatchService>();
+        siteMatchService = Substitute.For<SiteMatchService>();
+
         var context = new DefaultHttpContext
         {
             Connection =
@@ -38,7 +43,7 @@ public class MoveTicketServiceTests
         var mapper = new Mapper(config);
         var appSetting = new AppSettingsKey { SiteDbServer = new List<string> { "01", "02" } };
         var option = Options.Create(appSetting);
-        service = new MoveTicketServiceImp(repository, refDataService, mapper, matchService, option);
+        service = new MoveTicketServiceImp(repository, refDataService, mapper, matchService, option, siteMatchService);
     }
 
     private Match CreateMatch(int matchId, string eventStatus, bool isMarkedTicket)
@@ -65,7 +70,7 @@ public class MoveTicketServiceTests
         };
         var referenceAction = new ReferenceAction
         {
-            LogDate = new DateTime(2000, 1, 3, 7, 0, 0,DateTimeKind.Utc),
+            LogDate = new DateTime(2000, 1, 3, 7, 0, 0, DateTimeKind.Utc),
             MatchId = 1
         };
         var fakeReferenceAction = new List<ReferenceAction> { referenceAction };

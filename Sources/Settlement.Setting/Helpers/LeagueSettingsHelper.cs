@@ -1,4 +1,5 @@
 ﻿using Settlement.Setting.Criteria.LeagueSettings;
+using System.Text;
 
 namespace Settlement.Setting.Helpers;
 public static class LeagueSettingsHelper
@@ -20,7 +21,8 @@ public static class LeagueSettingsHelper
             { "Early: Secondary Provider", obj => obj.EAR_SecondaryProvider },
         };
 
-        var result = $"Update auto payout setting on leagueId: {firstObject.LeagueId}.";
+        var result = new StringBuilder();
+        result.Append($"Update auto payout setting on leagueId: {firstObject.LeagueId}.");
 
         foreach (var kvp in propertyDict)
         {
@@ -29,11 +31,11 @@ public static class LeagueSettingsHelper
 
             if (!val1.Equals(val2))
             {
-                result += ($"<br/>{kvp.Key}: {val1} -> {val2}");
+                result.Append($"<br/>{kvp.Key}: {val1} -> {val2}");
                 hasDifferentPropFlag = true;
             }
         }
 
-        return hasDifferentPropFlag ? result : string.Empty;
+        return hasDifferentPropFlag ? result.ToString() : string.Empty;
     }
 }

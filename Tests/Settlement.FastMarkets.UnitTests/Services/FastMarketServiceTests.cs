@@ -67,6 +67,7 @@ public class FastMarketServiceTests
         };
         var ticketsCount = new TicketCounts { GroupId = 1 };
         var result = new IEnumerable<object>[5];
+        var result1 = new IEnumerable<object>[0];
 
         result[0] = new List<EventCounter> { new() { Position = 1 } };
         result[1] = new List<string> { "a" };
@@ -78,7 +79,7 @@ public class FastMarketServiceTests
         repository
             .FetchMultipleAsync(Arg.Is<GetFastMarketMatchDetailCriteria>(x => x.MatchId == matchId),
                 Arg.Any<Type[]>())
-            .Returns(result);
+            .Returns((result, result1));
 
         var betTypes = new List<BetType>
         {

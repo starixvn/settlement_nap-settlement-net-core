@@ -48,10 +48,6 @@ export class GameTotalRefundComponent implements SportTemplate {
     return _.find(this.match.resultDetails, item => item.resourceId === ResourcesIds.totalSets);
   }
 
-  // public get isConfirmRefund() {
-  //   return this.totalSet.resultSettingData.isConfirmedRefund;
-  // }
-
   private mapValue() {
     this.toastrService.overlayContainer = this.toastContainer;
     this.hedgeMatchDetail = this.match.hedgeMatchDetail;

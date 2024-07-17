@@ -7,7 +7,7 @@ import * as _ from 'lodash';
 import { MessageBoxService, AioService, BlockUIService } from '../../shared/services';
 import { ModalDialogMessage } from '../../shared/models';
 import { Language } from '../../shared/language.native';
-import { SettlementStatusId, SportType, CalculateAction, ResultStatusId, ScoreSourceType } from '../../shared/constants';
+import { SettlementStatusId, SportType, CalculateAction, ResultStatusId, ScoreSourceType, TicketStatusText, ResultStatus } from '../../shared/constants';
 import {
     SettleQuery,
     MatchDetail,
@@ -23,7 +23,7 @@ import { VerificationBaseService } from '../../core/services/verification-base.s
 import { CalculateCommonModule } from '../../shared/modules/calculate-common.module';
 import { ResultByPlayerNamePipe, ResultNameByIdPipe, ResultValuePipe } from '../pipes';
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
-import { ProviderSource } from '../../shared/models/league-settings.model';
+
 @Component({
     selector: 'calculation-actions',
     templateUrl: 'calculation-actions.component.html',
@@ -477,4 +477,14 @@ export class CalculationActionsComponent implements SportTemplate {
             map.isScoreMismatched = this.verificationService.isMismatchedWarning(map, map.resourceId === ResourcesIds.final);
         }
     }
+
+    public canSettleResult(result: ResultDetail) {
+        const isRunning = _.isEqual(result.ticketStatus, TicketStatusText.running)
+          || _.isEqual(result.resultStatus, ResultStatus.noResult) 
+          || _.isEqual(result.resultStatus, ResultStatus.running);
+    
+        return isRunning 
+            && !result.isScoreMismatched 
+            && this.verificationService.isValidTraderConfirmScore(result);
+      }
 }

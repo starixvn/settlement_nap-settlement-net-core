@@ -6,12 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Constants\**" />
-    <EmbeddedResource Remove="Constants\**" />
-    <None Remove="Constants\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Remove="Models\AutoCalculateMatch.cs" />
     <Compile Remove="Models\BetStatusHelper.cs" />
     <Compile Remove="Models\Calculation\ResultDetail.cs" />
@@ -35,6 +29,10 @@
   <ItemGroup>
     <ProjectReference Include="..\Fanex.Settlement.ScaleOut\Fanex.Settlement.ScaleOut.csproj" />
     <ProjectReference Include="..\Settlement.Core\Settlement.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Repositories\" />
   </ItemGroup>
 
 </Project>

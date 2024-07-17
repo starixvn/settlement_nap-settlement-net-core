@@ -1,0 +1,68 @@
+@if(store.state.sports) {
+<div class="sportbook">
+  <ng-template *ngTemplateOutlet="header"></ng-template>
+  <ng-template *ngTemplateOutlet="body"></ng-template>
+</div>
+}
+
+<ng-template #header>
+  <div class="head-table">
+    <table class="table-calculation">
+      <thead>
+        <tr>
+          <th rowspan="2" class="code">Match Code/ID</th>
+          <th rowspan="2" class="kick-off-time">Kick-off Time</th>
+          <th rowspan="2" class="event">Event</th>
+          <th rowspan="2" class="interval-score">Interval Score</th>
+          <th rowspan="2" class="score">Total Games/ Points</th>
+          <th rowspan="2" class="score">HT Score</th>
+          <th rowspan="2" class="score">Final score</th>
+          <th rowspan="2" class="event-status">Early Settle Status</th>
+          <th rowspan="2" class="event-status">Event Status</th>
+          <th rowspan="2" class="header-action">Action</th>
+          <th colspan="2" class="confirm">Confirm</th>
+          <th rowspan="2" class="auto-instant">Instant Setting</th>
+          <th rowspan="2" class="remark">Hold Status</th>
+          <th rowspan="2" class="auto-setting">Auto Payout Setting</th>
+        </tr>
+        <tr>
+          <th class="confirm-score">Half Time</th>
+          <th class="confirm-score">Full Time</th>
+        </tr>
+      </thead>
+    </table>
+  </div>
+</ng-template>
+
+
+<ng-template #body>
+  <cdk-virtual-scroll-viewport dynamicHeight itemSize="20">
+    @for (sport of sports; track sport) {
+    <div>
+      <div (click)="collapseSport(sport)" class="sport-name">
+        <span class="collapse-icon" [ngClass]="sport.collapse ? 'collapsed' : ''"></span>
+        &nbsp;{{ sport.name }}
+      </div>
+
+      <div class="league" *ngIf="!sport.collapse">
+        <table class="table-calculation">
+          <tbody>
+            @for (league of sport.leagues; track league.leagueId) {
+            <tr league-row [league]="league" class="league-name"> </tr>
+            @for (match of league.matches; track match.matchId) {
+            <match [isShow]="!league.collapse" [match]="match"> </match>
+            }
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+    } @empty {
+    <div>
+      <div class="empty-data">
+        There is no information available
+      </div>
+    </div>
+    }
+  </cdk-virtual-scroll-viewport>
+</ng-template>

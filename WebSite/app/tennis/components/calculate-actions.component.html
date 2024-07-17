@@ -74,12 +74,12 @@
           {{result.homeValue}}-{{result.awayValue}}
         </td>
         <ng-container *ngIf="x >= (maxProviderCol +1)">
-          <td [ngClass]="{'striped': x % 2 === 1}">
+          <td [ngClass]="{'striped': x % 2 === 1, 'can-settle': canSettleResult(map)}">
             <input type="text" myOnlyInteger [(ngModel)]="result.homeValue" id="outside-{{i*2 + 1}}"
               [disabled]="isFinalScoreDisabled(map, true)" (change)="verifyAndAutoFillScore(map, last)"
               (ngModelChange)="updateOutsideScore(result.sourceId)" />
           </td>
-          <td [ngClass]="{'striped': x % 2 === 1}">
+          <td [ngClass]="{'striped': x % 2 === 1, 'can-settle': canSettleResult(map)}">
             <input type="text" myOnlyInteger [(ngModel)]="result.awayValue" id="outside-{{(i+1) * 2}}"
               [disabled]="isFinalScoreDisabled(map, true)" (change)="verifyAndAutoFillScore(map, last)"
               (ngModelChange)="updateOutsideScore(result.sourceId)" />

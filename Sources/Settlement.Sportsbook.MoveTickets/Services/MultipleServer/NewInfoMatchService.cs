@@ -10,8 +10,6 @@ public interface NewInfoMatchService
     string EventStatusColor(Match match);
 
     string EarlySettlementStatus(Match match);
-
-    void TicketInfo(Match match);
 }
 
 public class NewInfoMatchServiceImp : NewInfoMatchService
@@ -37,7 +35,7 @@ public class NewInfoMatchServiceImp : NewInfoMatchService
     {
         if (match.EventStatus.IgnoreCaseEquals(EventStatus.Postponed))
         {
-            return siteMatchService.IsExistMarkedTickets(match)
+            return match.IsExistMarkedTicket
                 ? Background.YellowBlinking
                 : Background.Yellow;
         }
@@ -49,12 +47,12 @@ public class NewInfoMatchServiceImp : NewInfoMatchService
 
         if (match.Remark.IsPending && match.EventStatus.IgnoreCaseEquals(EventStatus.ResultPending))
         {
-            return siteMatchService.IsExistMarkedTickets(match)
+            return match.IsExistMarkedTicket
                 ? Background.BrightYellowBlinking
                 : Background.BrightYellow;
         }
 
-        return siteMatchService.IsExistMarkedTickets(match) ? Background.WhiteBlinking : string.Empty;
+        return match.IsExistMarkedTicket ? Background.WhiteBlinking : string.Empty;
     }
 
     public string NewEventStatus(Match match)
@@ -71,13 +69,6 @@ public class NewInfoMatchServiceImp : NewInfoMatchService
     public string EarlySettlementStatus(Match match)
     {
         return siteMatchService.EarlySettlementStatus(match);
-    }
-
-    public void TicketInfo(Match match)
-    {
-        match.IsExistMarkedTicket = siteMatchService.IsExistMarkedTickets(match);
-        match.IsExistRunningTicket = siteMatchService.IsExistRunningTickets(match);
-        match.IsCalculatingSingle = siteMatchService.IsCalculatingSingle(match);
     }
 
     private bool IsCheckingEventStatusReasons(Match match)

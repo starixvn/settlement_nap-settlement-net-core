@@ -1,8 +1,7 @@
-import { NgbModule, NgbDateStruct, NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
-import { DateFilter } from '../models';
-import { waitForAsync, ComponentFixture, TestBed, tick, fakeAsync } from '@angular/core/testing';
+import { NgbModule, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
+import { DateFilter, MultiSport, SportMatch } from '../models';
+import { waitForAsync, ComponentFixture, TestBed, tick, fakeAsync, flush } from '@angular/core/testing';
 import { HttpClientModule } from '@angular/common/http';
-import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { FilterComponent } from './filter.component';
@@ -22,6 +21,8 @@ import { ModalDialogComponent } from '../../shared/components/modal-dialog/modal
 import { ModalContentDialogComponent } from '../../shared/components/modal-dialog/modal-content-dialog.component';
 import { DatepickerComponent } from '../../shared/components/date-picker/date-picker.component';
 import { NewMultipleSelectComponent } from '../../shared/components/multiple-select/multiple-select.component';
+import { MultiSportsStore } from '../services/multi-sports.store';
+import { filter } from 'rxjs';
 
 describe('MultiSport - FilterComponent', () => {
     let component: FilterComponent;
@@ -29,17 +30,12 @@ describe('MultiSport - FilterComponent', () => {
     let verifyDateService: VerifyDateService;
     let messageBoxService: MessageBoxService;
     let multiSportService: MultiSportService;
-    let generateFilterService: GenerateFilterService;
+    let store: MultiSportsStore;
 
     const item = new ItemsSelect(1, "1", "1", true, true, true, []);
 
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
-            declarations: [
-                FilterComponent,
-                ModalDialogComponent,
-                ModalContentDialogComponent
-            ],
             providers: [
                 VerifyDateService,
                 MessageBoxService,
@@ -48,6 +44,7 @@ describe('MultiSport - FilterComponent', () => {
                 MultiSportService,
                 BlockUIService,
                 GenerateFilterService,
+                MultiSportsStore
             ],
             imports: [
                 BrowserModule,
@@ -58,6 +55,9 @@ describe('MultiSport - FilterComponent', () => {
                 MaterialModule,
                 DatepickerComponent,
                 NewMultipleSelectComponent,
+                FilterComponent,
+                ModalDialogComponent,
+                ModalContentDialogComponent
             ],
         })
             .compileComponents()
@@ -67,8 +67,9 @@ describe('MultiSport - FilterComponent', () => {
                 verifyDateService = fixture.debugElement.injector.get(VerifyDateService);
                 messageBoxService = fixture.debugElement.injector.get(MessageBoxService);
                 multiSportService = fixture.debugElement.injector.get(MultiSportService);
-                generateFilterService = fixture.debugElement.injector.get(GenerateFilterService);
+                store = fixture.debugElement.injector.get(MultiSportsStore);
                 messageBoxService.alert = jest.fn().mockReturnValue(new ModalDialogMessage());
+                
             });
     }));
 
@@ -76,7 +77,7 @@ describe('MultiSport - FilterComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('should return date and number item as expected.', fakeAsync(() => {
+    it('should return date and number item as expected.', async () => {
         const dateServer: DateFilter = {
             fromDate: "2020/06/19 00:00:00",
             toDate: "2020/06/20 00:00:00",
@@ -85,20 +86,20 @@ describe('MultiSport - FilterComponent', () => {
         const sportServer: Sport[] = [{ sportType: 2, sportName: "Basketball", group: "All popular sport" }];
         multiSportService.getDate = jest.fn().mockReturnValue(Promise.resolve(dateServer));
         multiSportService.getSport = jest.fn().mockReturnValue(Promise.resolve(sportServer));
-        component.ngOnInit();
-        tick();
+        await component.ngOnInit();
+      
 
         fixture.whenStable()
             .then(() => {
                 expect(component.fromDate).toEqual({ year: 2020, month: 6, day: 19 });
                 expect(component.toDate).toEqual({ year: 2020, month: 6, day: 20 });
-                expect(component.sportSelect.items.length).toBeGreaterThanOrEqual(1);
+                expect(component.sportOptions$.value.items.length).toEqual(1);
                 expect(component.holdStatusSelect.items.length).toEqual(6);
                 expect(component.matchStatusSelect.items.length).toEqual(6);
                 expect(component.overStatusSelect.items.length).toEqual(4);
                 expect(component.autoPayoutSelect.items.length).toEqual(3);
             });
-    }));
+    });
 
     describe('search method', () => {
         it('should show error message date when select wrong from date and to date.', () => {
@@ -119,17 +120,20 @@ describe('MultiSport - FilterComponent', () => {
         });
 
         it('should call filter method and event emit when pass all validation.', async () => {
-            multiSportService.filter = jest.fn().mockReturnValue(Promise.resolve(""));
+            const multiSport = new MultiSport();
+            multiSport.sports = [new SportMatch()];
+            multiSportService.filter = jest.fn().mockReturnValue(Promise.resolve(multiSport));
             verifyDateService.validDate = jest.fn().mockReturnValue(true);
-            component.searchAction.emit = jest.fn()
-            component.requestEmitter.emit = jest.fn()
+            store.setState = jest.fn();
             component.sportTypesSelected = "2";
-            component.leaguesSelected = "1";
+            component.leaguesSelected = "1";;
+
             await component.search();
 
             expect(multiSportService.filter).toHaveBeenCalled();
-            expect(component.searchAction.emit).toHaveBeenCalled();
-            expect(component.requestEmitter.emit).toHaveBeenCalled();
+            expect(store.setState).toHaveBeenCalled();
+            expect(store.request).not.toBeNull();
+            expect(store.enableRefresh).toBeTruthy();
         });
     });
 
@@ -144,7 +148,7 @@ describe('MultiSport - FilterComponent', () => {
     describe('onSelectSport() method', () => {
         const items: ItemsSelect[] = [];
         items.push(item);
-        it('should return leagues when correct date.', fakeAsync(() => {
+        it('should return leagues when correct date.', (done) => {
             const league = new League();
             league.leagueId = 1;
             league.leagueName = "ABC";
@@ -153,16 +157,18 @@ describe('MultiSport - FilterComponent', () => {
             verifyDateService.validDate = jest.fn().mockReturnValue(true);
 
             component.onSelectSport(items);
-            tick();
 
-            expect(component.leagueSelect.items.length).toBeGreaterThanOrEqual(2);
-        }));
+            component.leagueOption$.pipe(filter(x => x.items.length > 0)).subscribe(s =>{
+                expect(s.items.length).toEqual(2);
+                done();
+            });
+        });
 
         it('should return empty leagues when incorrect date.', () => {
             verifyDateService.validDate = jest.fn().mockReturnValue(false);
             component.onSelectSport(items);
 
-            expect(component.leagueSelect.items.length).toEqual(0);
+            expect(component.leagueOption$.value.items.length).toEqual(0);
         });
     });
 
@@ -185,7 +191,7 @@ describe('MultiSport - FilterComponent', () => {
         });
     });
 
-    it('onSelectFromDate - should return right value sports correct date.', fakeAsync(() => {
+    it('onSelectFromDate - should return right value sports correct date.', (done) => {
         const sport = new Sport();
         const date = new Date();
         const fromDate: NgbDateStruct = { day: date.getUTCDay(), month: date.getUTCMonth(), year: date.getUTCFullYear() };
@@ -195,12 +201,14 @@ describe('MultiSport - FilterComponent', () => {
         multiSportService.getSport = jest.fn().mockReturnValue(Promise.resolve(sports));
 
         component.onSelectFromDate(fromDate);
-        tick();
 
-        expect(component.sportSelect.items.length).toEqual(2);
-    }));
+        component.sportOptions$.pipe(filter(x => x.items.length > 0)).subscribe(s =>{
+            expect(s.items.length).toEqual(2);
+            done();
+        });
+    });
 
-    it('onSelectToDate - should return right value sports correct date.', fakeAsync(() => {
+    it('onSelectToDate - should return right value sports correct date.', fakeAsync((done) => {
         const sport = new Sport();
         const date = new Date();
         const toDate: NgbDateStruct = { day: date.getUTCDay(), month: date.getUTCMonth(), year: date.getUTCFullYear() };
@@ -208,9 +216,12 @@ describe('MultiSport - FilterComponent', () => {
         sport.sportName = "mockName";
         const sports: Sport[] = [sport, sport];
         multiSportService.getSport = jest.fn().mockReturnValue(Promise.resolve(sports));
-        component.onSelectFromDate(toDate);
-        tick();
 
-        expect(component.sportSelect.items.length).toEqual(2);
+        component.onSelectFromDate(toDate);
+
+        component.sportOptions$.pipe(filter(x => x.items.length > 0)).subscribe(s =>{
+            expect(s.items.length).toEqual(2);
+            done();
+        });
     }));
 });

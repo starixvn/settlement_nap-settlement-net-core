@@ -4,7 +4,7 @@ import { MoreScore } from "../../shared/models/match-details/more-score.model";
 import { Score } from "../../shared/models/match-details/score.model";
 import { BackgroundColor, EventStatus, ResultType } from "../../shared/constants";
 import * as _ from 'lodash';
-import { Permission } from "../../shared/models/sportsbook-sop";
+import { Permission } from "../models/permission.model";
 
 @Injectable()
 export class SportMatchService {

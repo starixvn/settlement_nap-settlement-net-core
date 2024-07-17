@@ -1,6 +1,9 @@
-<filter (searchAction)="search($event)" (requestEmitter)="getRequest($event)" (enableRefresh)="getRefreshMatchFlag($event)"></filter>
-<league [multiSport]="multiSport" [request]="request" [enableRefresh]="enableRefreshMatch"></league>
-<div *ngIf="blockUI" class="in modal-backdrop">
-    <div class="loading">
-    </div>
+<filter></filter>
+<table-match></table-match>
+
+@if (blockUIService.blockUIEvent | async) {
+<div class="in modal-backdrop">
+  <div class="loading">
+  </div>
 </div>
+}

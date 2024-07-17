@@ -5,7 +5,7 @@ export * from './league.model';
 export * from './league-filter.model';
 export * from './multi-sport.model';
 export * from './sport-filter.model';
-export * from './match-waiting-request.model';
+export * from './match-request.model';
 export * from './change-setting-query.model';
 export * from './popup-properties.model';
 export * from './get-remark-query.model';

@@ -1,5 +1,5 @@
 import { AutoSettingPosition } from "./../constants/change-setting-type.native";
-import { Injectable } from "@angular/core";
+import { ChangeDetectorRef, Injectable } from "@angular/core";
 import {
   PopupProperties,
   Match,
@@ -21,7 +21,10 @@ import {
 import { AutoType } from "../constants";
 import { SportSingleAutoType } from "../constants/sport-instant";
 import { LeagueAutoSettings } from "../../shared/models/leagus-auto-settings.model";
-
+import { PopularSports } from "../constants/popular-sports.native";
+import { RefreshMatchService } from "./refresh-match.service";
+import { MatchState } from "../models/match-state.model";
+import { BehaviorSubject } from "rxjs";
 @Injectable()
 export class PopupService {
   private readonly generalWidthPopup = "845px";
@@ -37,9 +40,10 @@ export class PopupService {
   public properties = new PopupProperties();
   constructor(
     private readonly dialogBoxService: DialogBoxService,
+    private readonly multiSportService: MultiSportService,
     private readonly handleActionsService: HandleActionsService,
-    private readonly multiSportService: MultiSportService
-  ) {}
+    private readonly refreshMatchService: RefreshMatchService
+  ) { }
   public popupLog(matchCode: string, fromDate: string, toDate: string) {
     const src = `/home/log?matchCode=${encodeURIComponent(
       matchCode
@@ -48,57 +52,48 @@ export class PopupService {
     this.dialogBoxService.popup(dialogData, "1011px", "800px");
   }
 
-  public popupCalc(match: Match, sports: SportMatch[]) {
+  public popupCalc(match: Match, state$: BehaviorSubject<MatchState>) {
     this.properties.title = Language.CalcPopupTitle;
     this.setPopupSize(match.sportType);
 
     if (this.listNewSport.includes(match.sportType)) {
-      let sportName = sports
-        .find((item) => item.id === match.sportType)
-        .name.toLowerCase();
-      sportName = _.isEqual(sportName, "volleyball") ? "badminton" : sportName;
+      let sportName = PopularSports.get(match.sportType);
       this.properties.src = `/apps/${sportName}-recalculate?matchId=${match.matchId}&sportType=${match.sportType}`;
     } else {
       this.properties.src = `/apps/other-sports-recalculate?matchId=${match.matchId}&sportType=${match.sportType}`;
     }
 
-    this.openAndHandlePopup(this.properties, match);
+    this.openAndHandlePopup(this.properties, match, state$);
   }
 
-  public popupRefund(match: Match, sports: SportMatch[]) {
+  public popupRefund(match: Match, state$: BehaviorSubject<MatchState>) {
     this.properties.title = Language.RefundPopupTitle;
     this.setPopupRefundSize(match.sportType);
 
     if (_.includes(this.listNewSport, match.sportType)) {
-      let sportName = sports
-        .find((item) => item.id === match.sportType)
-        .name.toLowerCase();
-      sportName = _.isEqual(sportName, "volleyball") ? "badminton" : sportName;
+      let sportName = PopularSports.get(match.sportType);
       this.properties.src = `/apps/${sportName}-refund?matchId=${match.matchId}&sportType=${match.sportType}`;
     } else {
       this.properties.src = `/apps/other-sports-refund?matchId=${match.matchId}&sportType=${match.sportType}`;
     }
 
-    this.openAndHandlePopup(this.properties, match);
+    this.openAndHandlePopup(this.properties, match, state$);
   }
 
-  public popupEarly(match: Match, sports: SportMatch[]) {
+  public popupEarly(match: Match, state$: BehaviorSubject<MatchState>) {
     this.properties.title = Language.EarlyPopupTitle;
-    let sportName = sports
-      .find((item) => item.id === match.sportType)
-      .name.toLowerCase();
-    sportName = _.isEqual(sportName, "volleyball") ? "badminton" : sportName;
+    let sportName = PopularSports.get(match.sportType);
     this.properties.src = `/apps/${sportName}-early?matchId=${match.matchId}&sportType=${match.sportType}`;
     this.properties.width =
       match.sportType === SportType.cricket
         ? "1400px"
         : this.isPopupEarlySOP(match.sportType)
         ? "1570px"
-        : "845px";
+          : "845px";
     this.properties.height = this.isPopupEarlySOP(match.sportType)
       ? "958px"
       : "910px";
-    this.openAndHandlePopup(this.properties, match);
+    this.openAndHandlePopup(this.properties, match, state$);
   }
 
   private isPopupEarlySOP(sportType: number) {
@@ -114,42 +109,42 @@ export class PopupService {
     );
   }
 
-  public popupChangeRemark(match: Match) {
+  public popupChangeRemark(match: Match, state$: BehaviorSubject<MatchState>): void {
     this.properties.title = Language.remarkSettingTitle;
     this.properties.src = `/apps/remark-setting?matchId=${match.matchId}&matchCode=${match.matchCode}`;
     this.properties.width = "400px";
     this.properties.height = "250px";
     const frameSrc = encodeURI(this.properties.src);
     const dialogData = new DialogDataIframe(this.properties.title, frameSrc);
-    this.dialogBoxService
-      .popup(dialogData, this.properties.width, this.properties.height)
-      .subscribe(async () => {
-        const settingResult = await this.multiSportService.getRemarkInfo(
-          match.matchId
-        );
-        this.handleActionsService.handleChangeRemarkSetting(
-          settingResult,
-          match
-        );
-      });
+    this.dialogBoxService.popup(dialogData, this.properties.width, this.properties.height).subscribe(async () => {
+      const settingResult = await this.multiSportService.getRemarkInfo(
+        match.matchId
+      );
+      this.handleActionsService.handleChangeRemarkSetting(
+        settingResult,
+        match
+      );
+      this.refreshMatchService.refreshMatch(state$, match);
+    });
   }
 
-  public openAndHandlePopup(properties: PopupProperties, match: Match) {
+  public openAndHandlePopup(properties: PopupProperties, match: Match , state$: BehaviorSubject<MatchState>) {
     const frameSrc = encodeURI(properties.src);
     const dialogData = new DialogDataIframe(properties.title, frameSrc);
     this.dialogBoxService
       .popup(dialogData, properties.width, properties.height)
       .subscribe((result) => {
         if (result) {
-          this.handleChangedMatch(match);
+          this.handleChangedMatch(match, state$);
         }
       });
   }
 
-  public handleChangedMatch(match: Match) {
+  public handleChangedMatch(match: Match, state$: BehaviorSubject<MatchState>) {
     match.isCalculatingSingle = CalculationStatus.waiting;
     match.showLink = false;
     match.newEventStatus = EventStatus.waiting;
+    this.refreshMatchService.refreshMatch(state$, match);
   }
 
   private setPopupSize(sportType: number) {
@@ -213,8 +208,8 @@ export class PopupService {
       });
   }
 
-  public async openUpdatePayoutForLeague(league: LeagueMatch) {
-    const isMultiSelect = _.isNil(league.matches[0]) ? true :  !_.isEqual(league.matches[0].sportType, SportType.cricket);
+  public async openUpdatePayoutForLeague(league: LeagueMatch, triggerRerender: () => any) {
+    const isMultiSelect = _.isNil(league.matches[0]) ? true : !_.isEqual(league.matches[0].sportType, SportType.cricket);
     const autoSetting = await this.multiSportService.getSetting(
       league.leagueId,
       0
@@ -230,30 +225,32 @@ export class PopupService {
     this.dialogBoxService
       .popupHasResponse(dialogData, "500px", "270px")
       .subscribe((result) => {
-        if (!_.isNil(result)) {
-          this.applyNewSetting(
-            league.autoCalcSetting,
-            result.split(",")[0],
-            false,
-             !isMultiSelect
-          );
-          this.affectAutoPayoutForMatch(
-            league,
-            _.isEqual(result.split(",")[1], "true")
-          );
+        if (_.isNil(result)) {
+          return;
         }
-      });
+        this.applyNewSetting(
+          league.autoCalcSetting,
+          result.split(",")[0],
+          false,
+          !isMultiSelect
+        );
+        if (_.isEqual(result.split(",")[1], "true")) {
+          this.affectAutoPayoutForMatch(league);
+          triggerRerender();
+        }
+      }
+      );
   }
 
 
-  public async openUpdateNewPayoutForLeague(league: LeagueMatch) {
+  public async openUpdateNewPayoutForLeague(league: LeagueMatch, triggerRerender: () => any) {
     const setting = await this.multiSportService.getSetting(
       league.leagueId,
       0
     );
     this.applyNewSetting(league.autoCalcSetting, setting.setting, false);
     const currentState = league.autoCalcSetting.isAutoPayoutForLeague ? 1 : league.autoCalcSetting.isDirectPayoutForLeague ? 5 : 0;
-    const src =  `/apps/advanced-auto-setting-league?leagueId=${league.leagueId}&sportType=${league.sportType}&autoSetting=${currentState}&waitingTime=${league.autoWaitingTime}`;
+    const src = `/apps/advanced-auto-setting-league?leagueId=${league.leagueId}&sportType=${league.sportType}&autoSetting=${currentState}&waitingTime=${league.autoWaitingTime}`;
     const frameSrc = encodeURI(src);
     const dialogData = new DialogDataIframe(
       Language.payout.titlePopupForLeague,
@@ -262,54 +259,51 @@ export class PopupService {
     this.dialogBoxService
       .popupHasResponse(dialogData, "500px", "830px")
       .subscribe((result) => {
-        if (!_.isNil(result)) {
-          const setting = Object.assign(new LeagueAutoSettings(), JSON.parse(result));
-          this.applyNewSetting(
-            league.autoCalcSetting,
-            setting.autoSetting.toString(),
-            false,
-            true
-          );
-
-          league.autoWaitingTime = setting.waitingTime;
-          league.autoRetryTime = setting.retryTime;
-
-          this.affectAutoPayoutForMatch(
-            league,
-            setting.isApplyAll
-          );
+        if (_.isNil(result)) {
+          return;
         }
-      });
+        const setting = Object.assign(new LeagueAutoSettings(), JSON.parse(result));
+        this.applyNewSetting(
+          league.autoCalcSetting,
+          setting.autoSetting.toString(),
+          false,
+          true
+        );
+
+        league.autoWaitingTime = setting.waitingTime;
+        league.autoRetryTime = setting.retryTime;
+        if (setting.isApplyAll) {
+          this.affectAutoPayoutForMatch(league);
+          triggerRerender();
+        }
+      }
+      );
   }
 
-  private affectAutoPayoutForMatch(
-    leagueMatch: LeagueMatch,
-    isApplyAll: boolean
-  ) {
-    if (isApplyAll) {
-      leagueMatch.matches.forEach((item) => {
-        if (
-          _.isEqual(
-            item.eventStatus.toLowerCase(),
-            EventStatus.running.toLowerCase()
-          ) ||
-          _.isEqual(
-            item.eventStatus.toLowerCase(),
-            EventStatus.closed.toLowerCase()
-          )
-        ) {
-          item.autoCalcSetting.isAutoPayoutForMatch =
-            leagueMatch.autoCalcSetting.isAutoPayoutForLeague;
-          item.autoCalcSetting.isDirectPayoutForMatch =
-            leagueMatch.autoCalcSetting.isDirectPayoutForLeague;
-          item.autoCalcSetting.matchSetting =
-            leagueMatch.autoCalcSetting.leagueSetting;
-        }
-      });
-    }
+  private affectAutoPayoutForMatch(leagueMatch: LeagueMatch) {
+    leagueMatch.matches.forEach((item, index) => {
+      if (
+        _.isEqual(
+          item.eventStatus.toLowerCase(),
+          EventStatus.running.toLowerCase()
+        ) ||
+        _.isEqual(
+          item.eventStatus.toLowerCase(),
+          EventStatus.closed.toLowerCase()
+        )
+      ) {
+        item.autoCalcSetting.isAutoPayoutForMatch =
+          leagueMatch.autoCalcSetting.isAutoPayoutForLeague;
+        item.autoCalcSetting.isDirectPayoutForMatch =
+          leagueMatch.autoCalcSetting.isDirectPayoutForLeague;
+        item.autoCalcSetting.matchSetting =
+          leagueMatch.autoCalcSetting.leagueSetting;
+      }
+      leagueMatch.matches[index] = { ...item };
+    });
   }
 
-  public async openUpdatePayoutForMatch(match: Match) {
+  public async openUpdatePayoutForMatch(match: Match, state$: BehaviorSubject<MatchState>) {
     const isMultiSelect = !_.includes(SportSingleAutoType, match.sportType);
     const autoSetting = await this.multiSportService.getSetting(
       0,
@@ -328,6 +322,7 @@ export class PopupService {
       .subscribe((result) => {
         if (!_.isNil(result)) {
           this.applyNewSetting(match.autoCalcSetting, result, true, !isMultiSelect);
+          this.refreshMatchService.refreshMatch(state$, match);
         }
       });
   }

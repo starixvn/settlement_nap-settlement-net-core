@@ -5,6 +5,7 @@ namespace Settlement.EventManagement.Services.MultiSports;
 using Fanex.Settlement.ScaleOut.Services;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
+using Settlement.EventManagement.Constants;
 using Match = Models.MultiSports.Match;
 
 public interface IMatchService
@@ -12,6 +13,8 @@ public interface IMatchService
     List<Match> GetScoreForMatchBySportType(List<Match> matches, List<ResultDetail> resultDetails, int sportType, bool isLeader = false);
 
     void AddSiteInfo(List<Match> baseMatches, List<Match> siteMatches);
+
+    Task<List<Match>> SetNewOsMatchInfo(List<Match> matches, List<ResultDetail> listResultDetail);
 
     Task<List<Match>> SetNewMatchInfo(List<Match> matches, List<ResultDetail> listResultDetail);
 
@@ -28,6 +31,25 @@ public class MatchServiceImp(
     ScaleOutSettleService scaleOutSettleService)
     : IMatchService
 {
+    public async Task<List<Match>> SetNewOsMatchInfo(List<Match> matches, List<ResultDetail> listResultDetail)
+    {
+        foreach (var match in matches)
+        {
+            var listSourceByMatchId = listResultDetail.Where(m => m.MatchId == match.MatchId && m.SourceId != SourceType.Normal).ToList();
+            var currentResultDetail = listResultDetail.Where(m => m.MatchId == match.MatchId && m.SourceId == SourceType.Normal).ToList();
+
+            match.NewEventStatus = newInfoMatchService.NewEventStatus(match, currentResultDetail);
+            match.EventStatusColor = newInfoMatchService.OSEventStatusColor(match);
+            match.EarlySettleStatus = newInfoMatchService.EarlyOSSettlementStatus(match);
+            match.ConfirmHalfTimeScore = newInfoMatchService.ConfirmScore(listSourceByMatchId, ResourceType.Halftime);
+            match.ConfirmFullTimeScore = newInfoMatchService.ConfirmScore(listSourceByMatchId, ResourceType.Final);
+            match.IsExistsConfirmedEarly = newInfoMatchService.IsExistsConfirmedOSEarly(match);
+            match.RefDataService = refDataService;
+        }
+
+        return await newInfoMatchService.GetAutoSetting(matches);
+    }
+
     public async Task<List<Match>> SetNewMatchInfo(List<Match> matches, List<ResultDetail> listResultDetail)
     {
         foreach (var match in matches)
@@ -35,7 +57,6 @@ public class MatchServiceImp(
             var listSourceByMatchId = listResultDetail.Where(m => m.MatchId == match.MatchId && m.SourceId != SourceType.Normal).ToList();
             var currentResultDetail = listResultDetail.Where(m => m.MatchId == match.MatchId && m.SourceId == SourceType.Normal).ToList();
 
-            newInfoMatchService.TicketInfo(match);
             match.NewEventStatus = newInfoMatchService.NewEventStatus(match, currentResultDetail);
             match.EventStatusColor = newInfoMatchService.EventStatusColor(match);
             match.EarlySettleStatus = newInfoMatchService.EarlySettlementStatus(match);
@@ -65,80 +86,14 @@ public class MatchServiceImp(
         };
     }
 
-    private readonly List<int> fullTimeSports =
-    [
-        SportType.IceHockey,
-        SportType.VolleyBall,
-        SportType.TableTennis,
-        SportType.Handball,
-        SportType.Dart,
-        SportType.Swimming,
-        SportType.Politics,
-        SportType.WaterPolo,
-        SportType.Diving,
-        SportType.Boxing,
-        SportType.Archery,
-        SportType.Weightlifting,
-        SportType.Canoeing,
-        SportType.Gymnastics,
-        SportType.Athletics,
-        SportType.Equestrian,
-        SportType.Entertainment,
-        SportType.OtherSports,
-        SportType.Kabaddi,
-        SportType.Futsal,
-        SportType.UpcomingSport56,
-        SportType.Billard,
-        SportType.Golf,
-        SportType.Motorsports,
-        SportType.Winter,
-        SportType.Cycling,
-        SportType.Fencing,
-        SportType.Judo,
-        SportType.ModernPentathlon,
-        SportType.Rowing,
-        SportType.Sailing,
-        SportType.Shooting,
-        SportType.Taekwondo,
-        SportType.Triathlon,
-        SportType.Wrestling,
-        SportType.MuayThai,
-        SportType.BeachSoccer,
-        SportType.Poker,
-        SportType.Chess,
-        SportType.Olympic,
-        SportType.Finance,
-        SportType.FieldHockey,
-        SportType.Squash,
-        SportType.SepakTakraw,
-        SportType.AlpineSkiing,
-        SportType.Biathlon,
-        SportType.Curling,
-        SportType.FigureSkating,
-        SportType.FreestyleSkiing,
-        SportType.Luge,
-        SportType.Skeleton,
-        SportType.SkiJumping,
-        SportType.SpeedSkating
-    ];
-
-    private readonly List<int> halfTimeFullTimeSports =
-    [
-        SportType.Football,
-        SportType.BaseBall,
-        SportType.Rugby,
-        SportType.NetBall,
-        SportType.Bandy
-    ];
-
     private List<Match> LoadExternalResults(List<Match> matches, List<ResultDetail> resultDetails, int sportType)
     {
-        if (fullTimeSports.Contains(sportType))
+        if (Sports.FullTimeSports.Contains(sportType))
         {
             return matchResultDetailService.OtherSportsResultDetail(matches, resultDetails, false);
         }
 
-        if (halfTimeFullTimeSports.Contains(sportType))
+        if (Sports.HalfTimeFullTimeSports.Contains(sportType))
         {
             return matchResultDetailService.OtherSportsResultDetail(matches, resultDetails, true);
         }

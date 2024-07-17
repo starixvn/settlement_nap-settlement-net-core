@@ -29,10 +29,9 @@ public class NewInfoMatchServiceTests
         var match = new Match
         {
             EventStatus = eventStatus,
-            SettlementStatus = isPending
+            SettlementStatus = isPending,
+            IsExistMarkedTicket = isMarkedTicket
         };
-
-        siteMatchService.IsExistMarkedTickets(Arg.Any<Match>()).Returns(isMarkedTicket);
 
         var result = service.EventStatusColor(match);
 
@@ -44,10 +43,10 @@ public class NewInfoMatchServiceTests
     {
         var match = new Match
         {
-            EventStatus = EventStatus.Completed
+            EventStatus = EventStatus.Completed,
+            IsExistRunningTicket = false
         };
 
-        siteMatchService.IsExistMarkedTickets(Arg.Any<Match>()).Returns(false);
         siteMatchService.GetBackgroundCompletedStatus(Arg.Any<Match>()).Returns("Color");
 
         var result = service.EventStatusColor(match);
@@ -81,19 +80,5 @@ public class NewInfoMatchServiceTests
         service.EarlySettlementStatus(new Match());
 
         siteMatchService.Received().EarlySettlementStatus(Arg.Any<Match>());
-    }
-
-    [Fact]
-    public void TicketInfo_Always_ReturnCorrect()
-    {
-        var match = new Match();
-
-        siteMatchService.IsExistMarkedTickets(Arg.Any<Match>()).Returns(true);
-        siteMatchService.IsExistRunningTickets(Arg.Any<Match>()).Returns(true);
-        siteMatchService.IsCalculatingSingle(Arg.Any<Match>()).Returns(1);
-
-        service.TicketInfo(match);
-
-        Assert.True(match.IsExistMarkedTicket && match is { IsExistRunningTicket: true, IsCalculatingSingle: 1 });
     }
 }

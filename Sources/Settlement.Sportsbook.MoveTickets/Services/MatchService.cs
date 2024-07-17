@@ -11,7 +11,7 @@ public interface IMatchService
 
     List<Match> MergeMatches(List<Match> baseMatches, List<Match> siteMatches);
 
-    List<Match> SetNewMatchInfo(List<Match> matches);
+    void SetNewMatchInfo(List<Match> matches);
 }
 
 public class MatchServiceImp : IMatchService
@@ -52,18 +52,15 @@ public class MatchServiceImp : IMatchService
         return matches;
     }
 
-    public List<Match> SetNewMatchInfo(List<Match> matches)
+    public void SetNewMatchInfo(List<Match> matches)
     {
         foreach (var match in matches)
         {
-            newInfoMatchService.TicketInfo(match);
             match.NewEventStatus = newInfoMatchService.NewEventStatus(match);
             match.EventStatusColor = newInfoMatchService.EventStatusColor(match);
             match.EarlySettleStatus = newInfoMatchService.EarlySettlementStatus(match);
             match.RefDataService = refDataService;
         }
-
-        return matches;
     }
 
     public List<Match> MergeMatches(List<Match> baseMatches, List<Match> siteMatches)

@@ -11,7 +11,6 @@ export class VerificationService {
     constructor(private readonly requestService: RequestService) {}
 
     public isScoreInconsistent(matchDetail: MatchDetail) {
-        console.log(matchDetail);
         return !this.isScoreEmpty(matchDetail.halfTimeHomeScore, matchDetail.halfTimeAwayScore)
             && !this.isScoreEmpty(matchDetail.finalHomeScore, matchDetail.finalAwayScore)
             && (Number(matchDetail.halfTimeHomeScore) > Number(matchDetail.finalHomeScore) 

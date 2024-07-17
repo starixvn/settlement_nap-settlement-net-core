@@ -1,4 +1,4 @@
-export class MatchWaitingRequest {
+export class MatchRequest {
     public leagueIds: string;
     public matchIds: string;
     public fromDate: string;

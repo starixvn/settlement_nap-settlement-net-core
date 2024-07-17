@@ -484,7 +484,7 @@ export class SpecialSessionComponent implements OnChanges, OnInit {
   private verifyWaterBreakWithSuspendedTime(session: SpecialSession) {
     return (
       !this.isSuspendedTimeEmpty(this.originalSuspendedTime) &&
-      !this.isLessThanEndTime(session, this.originalSuspendedTime) // true
+      !this.isLessThanEndTime(session, this.originalSuspendedTime)
     );
   }
 

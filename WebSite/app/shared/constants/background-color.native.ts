@@ -7,6 +7,7 @@ export const BackgroundColor = {
     calculating: 'calculating',
     calculated: 'bg-calculated',
     halfTimeCalculated: 'bg-halftime',
+    resultConfirmed: 'bg-result-confirmed',
     calRefund: 'bg-refund',
     codeLink: 'code-link',
     running: 'running',
@@ -35,5 +36,6 @@ export const BackgroundColor = {
     brightYellow: "bg-pending",
     autoSettleCompleted: "bg-completed-blinking",
     autoSettleRunningBlinking:"bg-running-blinking",
-    scoreSdtNotConsistent: "not-consistent-score-sdt"
+    scoreSdtNotConsistent: "not-consistent-score-sdt",
+    earlyConfirm: 'bg-early-confirm'
 };

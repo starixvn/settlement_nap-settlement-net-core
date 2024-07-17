@@ -22,6 +22,7 @@ public class EventStatusServiceImp : EventStatusService
     public string CheckProcessingStatus(string eventStatus, BaseMatch match)
     {
         var newEventStatus = IsCheckingEventStatusReasons(match) ? eventStatusReasonTitles[match.EventStatusReason - 1] : eventStatus;
+
         if (match.IsCalculatingSingle != CalculateStatus.IsWaiting && match.IsCalculatingSingle != CalculateStatus.IsCalculating)
         {
             return newEventStatus;

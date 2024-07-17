@@ -156,6 +156,7 @@ public class BaseMatch
 
     [Key("suspenderHalfTime")]
     public string SuspenderHalfTime
+
     {
         get => string.IsNullOrEmpty(suspenderHalfTime) ? Dash : suspenderHalfTime;
 

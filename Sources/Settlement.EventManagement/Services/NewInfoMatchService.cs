@@ -13,7 +13,11 @@ public interface NewInfoMatchService
 
     string EventStatusColor(BaseMatch match);
 
+    string OSEventStatusColor(BaseMatch match);
+
     string EarlySettlementStatus(BaseMatch match);
+
+    string EarlyOSSettlementStatus(BaseMatch match);
 
     string FastMarketStatus(Match match);
 
@@ -26,6 +30,8 @@ public interface NewInfoMatchService
     void TicketInfo(BaseMatch match);
 
     bool IsExistsConfirmedEarly(MultiSportMatch match);
+
+    bool IsExistsConfirmedOSEarly(MultiSportMatch match);
 
     Task<List<T>> GetAutoSetting<T>(List<T> matches) where T : BaseMatch;
 }
@@ -62,6 +68,29 @@ public class NewInfoMatchServiceImp(
         return siteMatchService.IsExistMarkedTickets(match) ? Background.WhiteBlinking : string.Empty;
     }
 
+    public string OSEventStatusColor(BaseMatch match)
+    {
+        if (match.EventStatus.IgnoreCaseEquals(EventStatus.Postponed))
+        {
+            return match.IsExistMarkedTicket
+                ? Background.YellowBlinking
+                : Background.Yellow;
+        }
+
+        if (match.EventStatus.IgnoreCaseEquals(EventStatus.Completed))
+        {
+            return siteMatchService.GetOSBackgroundCompletedStatus(match);
+        }
+
+        if (match.Remark.IsPending)
+        {
+            return match.IsExistMarkedTicket
+                ? Background.BrightYellowBlinking
+                : Background.BrightYellow;
+        }
+        return match.IsExistMarkedTicket ? Background.WhiteBlinking : string.Empty;
+    }
+
     public string NewEventStatus(BaseMatch match, IEnumerable<ResultDetail> resultDetails = null)
     {
         var eventStatus = SportGroup.SupportSettleDetermine.Contains(match.SportType)
@@ -74,6 +103,11 @@ public class NewInfoMatchServiceImp(
     public string EarlySettlementStatus(BaseMatch match)
     {
         return siteMatchService.EarlySettlementStatus(match);
+    }
+
+    public string EarlyOSSettlementStatus(BaseMatch match)
+    {
+        return siteMatchService.EarlyOSSettlementStatus(match);
     }
 
     public string FastMarketStatus(Match match)
@@ -128,6 +162,11 @@ public class NewInfoMatchServiceImp(
     public bool IsExistsConfirmedEarly(MultiSportMatch match)
     {
         return siteMatchService.IsExistsConfirmedEarly(match);
+    }
+
+    public bool IsExistsConfirmedOSEarly(MultiSportMatch match)
+    {
+        return siteMatchService.IsExistsConfirmedOSEarly(match);
     }
 
     public async Task<List<T>> GetAutoSetting<T>(List<T> matches) where T : BaseMatch

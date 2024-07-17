@@ -76,7 +76,6 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         this.match.originalResultDetail = _.cloneDeep(this.resultDetails);
         this.hideTicketWaiting(this.groupMap);
         this.renderFilterSelect();
-        console.log(this.resultDetails[0].externalScores);
     }
 
     public hasNoneOption(betType: string) {

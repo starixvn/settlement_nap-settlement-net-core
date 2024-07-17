@@ -33,6 +33,8 @@
 }
 
 .league {
+    display: contents;
+
     .table-calculation {
         .league-name {
             cursor: pointer;
@@ -74,6 +76,10 @@
         .auto-setting-text:hover {
             color: #000;
         }
+    }
+
+    .cdk-virtual-scroll-viewport {
+        overflow-y: scroll;
     }
 
     .sport-name {
@@ -156,9 +162,6 @@
 }
 
 .content {
-    .table-matches-content {
-        overflow-y: scroll;
-    }
 
     .head-table,
     thead {
@@ -233,6 +236,7 @@
 
     .confirm-score {
         width: 100px;
+        min-width: 100px;
     }
 }
 
@@ -370,6 +374,10 @@
 
 .include-test {
     padding-top: 2px;
+}
+
+.bg-early-confirm {
+    background-color: #6FCF97;
 }
 
 .red {
