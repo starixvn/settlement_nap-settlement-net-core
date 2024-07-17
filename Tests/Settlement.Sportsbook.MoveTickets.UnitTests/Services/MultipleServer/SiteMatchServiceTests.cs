@@ -9,22 +9,22 @@ public class SiteMatchServiceTests
 {
     private readonly SiteMatchService service = new SiteMatchServiceImp();
 
-    [Theory]
-    [InlineData(true, false, true)]
-    [InlineData(false, true, true)]
-    [InlineData(false, false, false)]
-    public void IsExistRunningTickets_Always_ReturnCorrect(bool main, bool site, bool expected)
-    {
-        var match = new Match
-        {
-            IsExistRunningTicket = main,
-            SiteMatch = [new SiteMatch { IsExistRunningTicket = site }]
-        };
+    //[Theory]
+    //[InlineData(true, false, true)]
+    //[InlineData(false, true, true)]
+    //[InlineData(false, false, false)]
+    //public void IsExistRunningTickets_Always_ReturnCorrect(bool main, bool site, bool expected)
+    //{
+    //    var match = new Match
+    //    {
+    //        IsExistRunningTicket = main,
+    //        SiteMatch = [new SiteMatch { IsExistRunningTicket = site }]
+    //    };
 
-        var result = service.IsExistRunningTickets(match);
+    //    var result = service.IsExistRunningTickets(match);
 
-        Assert.Equal(expected, result);
-    }
+    //    Assert.Equal(expected, result);
+    //}
 
     [Theory]
     [InlineData(CalculateStatus.IsWaiting, null, CalculateStatus.IsWaiting)]

@@ -73,8 +73,7 @@ export class PopupService {
 
     if (_.includes(this.listNewSport, match.sportType)) {
       let sportName = PopularSports.get(match.sportType);
-        sportName = _.isEqual(sportName, "table tennis") || _.isEqual(sportName, "volleyball") ? "badminton" : sportName;
-        this.properties.src = `/apps/${sportName}-refund?matchId=${match.matchId}&sportType=${match.sportType}`;
+      this.properties.src = `/apps/${sportName}-refund?matchId=${match.matchId}&sportType=${match.sportType}`;
     } else {
       this.properties.src = `/apps/other-sports-refund?matchId=${match.matchId}&sportType=${match.sportType}`;
     }
