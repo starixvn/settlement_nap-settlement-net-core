@@ -22,11 +22,12 @@ public class ChildMatchService : IMapperService
     private static IEnumerable<ChildMatchModel> VerifyChildMatches(IEnumerable<ChildMatchModel> childMatches, IEnumerable<ResultDetail> resultDetails)
     {
         var resourceIds = resultDetails.Select(x => x.ResourceId).ToArray();
-        string[] totalResourceIds = [.. resourceIds, totalPoints];
+        var totalPointMatch = childMatches.Where(x => x.RelatedResourceId == totalPoints);
 
         var newChildMatches = childMatches
-            .Where(child => totalResourceIds.Contains(child.RelatedResourceId))
-            .OrderBy(child => child.ChildMatchType).ToList();
+            .Where(child => resourceIds.Contains(child.RelatedResourceId))
+            .OrderBy(child => child.ChildMatchType)
+            .Concat(totalPointMatch).ToList();
 
         foreach (var item in newChildMatches)
         {
