@@ -13,14 +13,14 @@ public static class ChildMatchConstant
             { (SportType.VolleyBall, 16), "0104" },
             { (SportType.VolleyBall, 17), "0105" },
 
-            { (SportType.TableTennis,11), "0101" },
-            { (SportType.TableTennis, 12), "0102" },
-            { (SportType.TableTennis, 14), "0103" },
-            { (SportType.TableTennis, 15), "0104" },
-            { (SportType.TableTennis, 16), "0105" },
-            { (SportType.TableTennis, 17), "0106" },
-            { (SportType.TableTennis, 18), "0107" },
-            { (SportType.TableTennis, 19), "01" }
+            { (SportType.TableTennis,12), "0101" },
+            { (SportType.TableTennis, 14), "0102" },
+            { (SportType.TableTennis, 15), "0103" },
+            { (SportType.TableTennis, 16), "0104" },
+            { (SportType.TableTennis, 17), "0105" },
+            { (SportType.TableTennis, 18), "0106" },
+            { (SportType.TableTennis, 19), "0107" },
+            { (SportType.TableTennis, 11), "01" }
         };
 
     public static Dictionary<int, string> LeagueName => new()
