@@ -54,6 +54,8 @@
     "zone.js": "^0.14.3"
   },
   "devDependencies": {
+    "@angular-devkit/build-angular": "^17.1.0",
+    "@angular/compiler-cli": "^17.1.0",
     "@types/babel__core": "^7.20.5",
     "@types/lodash": "^4.14.191",
     "@types/node": "^18.11.18",

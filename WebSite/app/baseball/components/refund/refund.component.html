@@ -1,0 +1,8 @@
+@if(match() != null) {
+<div class="padding">
+  <match-detail [matchDetail]="match().matchDetail" [permission]="match().permission"
+    [resultDetail]="match().resultDetails"></match-detail>
+  <table-result [match]="match()"> </table-result>
+</div>
+
+}

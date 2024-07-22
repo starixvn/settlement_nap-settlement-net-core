@@ -35,6 +35,7 @@ export class PopupService {
     SportType.cricket,
     SportType.volleyBall,
     SportType.tableTennis
+    SportType.baseBall
   ];
   public properties = new PopupProperties();
   constructor(
@@ -163,6 +164,9 @@ export class PopupService {
     } else if (sportType === SportType.basketBall) {
       this.properties.width = "1005px";
       this.properties.height = "820px";
+    }else if (sportType === SportType.baseBall) {
+      this.properties.width = "1005px";
+      this.properties.height = "1000px";
     } else {
       this.properties.width = "820px";
       this.properties.height = "500px";

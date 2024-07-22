@@ -14,6 +14,7 @@ public class CriteriaFactoryImp : CriteriaFactoryBase
         Basketball();
         Bandy();
         TableTennis();
+        StandardAIO();
     }
 
     private static void Tennis()
@@ -115,4 +116,17 @@ public class CriteriaFactoryImp : CriteriaFactoryBase
 
         CriteriaTypes.Add("tableTennis-settle", typeof(Criteria.SettleCriteria));
     }
+    
+     private static void StandardAIO()
+    {
+        CriteriaTypes.Add($"standard-{ApiKeyConstant.MatchInfoKey}", typeof(Criteria.GetMatchDetailCriteria));
+        CriteriaTypes.Add($"standard-{ApiKeyConstant.HedgeMatchInfoKey}", typeof(Criteria.GetHedgeMatchCriteria));
+        CriteriaTypes.Add($"standard-{ApiKeyConstant.ResultDetailKey}", typeof(Criteria.GetResultDetailCriteria));
+        CriteriaTypes.Add($"standard-{ApiKeyConstant.LatestResultKey}", typeof(Criteria.GetRecalResultCriteria));
+        CriteriaTypes.Add($"standard-{ApiKeyConstant.ProviderKey}", typeof(Criteria.GetProviderCriteria));
+        CriteriaTypes.Add($"standard-{ApiKeyConstant.SaveScore}", typeof(Criteria.SaveScoreCriteria));
+        CriteriaTypes.Add("standard-settle", typeof(Criteria.SettleCriteria));
+    }
+
+    
 }

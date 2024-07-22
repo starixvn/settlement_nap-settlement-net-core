@@ -1,0 +1,43 @@
+<div class="refund-actions">
+  <div class="normal-tickets">
+    <div class="icon">
+    </div>
+    Normal Tickets
+  </div>
+  <div *ngIf="hedgeMatchDetail" class="hedge-match">
+    <input type="checkbox" [(ngModel)]="applyHedgeMatch" id="ApplyHedgeMatch" />
+    <label for="ApplyHedgeMatch">Apply for hedge match '<strong>{{hedgeMatchDetail.matchCode}}</strong>' also.</label>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>Game/Match</th>
+        <th>
+          Select to Proceed
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let game of resultDetails; let last=last;"
+        [ngClass]="{'confirmed-refund': permission.isLeader && game.resultSettingData.isConfirmedRefund}">
+        @if(game.resourceId != extraInningId) {
+        <td>{{ game.resourceId | resourceName}}</td>
+        <td [ngClass]="game.ticketStatus.toLowerCase()">
+          <input type="checkbox" [(ngModel)]="game.checked" />
+        </td>
+        }
+      </tr>
+
+      <tr>
+        <td colspan="2">
+          <button *ngIf="permission.isLeader" [ngClass]="{'btn btn-outline-primary button-confirmed': true}"
+            [disabled]="selectedResources.length === 0" (click)="confirmRefund()">
+            Confirm/Undo-confirm Refund
+          </button>
+          <button [ngClass]="{'refund-button': true, 'button-disabled': selectedResources.length === 0}"
+            [disabled]="selectedResources.length === 0" (click)="refund()">Refund</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

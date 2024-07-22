@@ -9,7 +9,11 @@ import { MessageBoxService } from './message-box.service.native';
 import { ModalDialogMessage } from '../models/modal-dialog-message.model';
 import { decodeAsync } from '@msgpack/msgpack';
 
-@Injectable()
+@Injectable(
+    {
+        providedIn: 'root'
+    }
+)
 export class HttpRequestService {
     constructor(
         private readonly httpClient: HttpClient,

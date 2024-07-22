@@ -1,0 +1,57 @@
+@if(tableIsReady) {
+<tr *ngFor="let inning of innings; let i = index; let last = last"
+  [ngClass]="{ mismatched: inning.isScoreMismatched,'confirmed-refund': inning.resultState.isConfirmed, 'striped': (i === innings.length-1 ? i-1: i)  % 2 === 1}">
+  <td>{{ inning.resourceId | resourceName }}</td>
+  <td [ngClass]="inning.ticketStatus.toLowerCase()" class="set-status" *ngIf="inning.resultState.isInningRow">
+    {{ inning.ticketStatus }}</td>
+  <td [ngClass]="inning.ticketStatus.toLowerCase()" class="match-status" *ngIf="inning.resultState.isExtraInningRow"
+    rowspan="2">
+    {{ inning.ticketStatus }}
+  </td>
+  <td [ngClass]="inning.resultState.finalScoreClass">
+    <div class="score">
+      <label>{{getTeamName(matchDetail.homeName)}}&nbsp;</label>
+      <input type="text" myOnlyInteger [disabled]="inning.resultState.isFinalScoreDisabled"
+        [(ngModel)]="inning.homeValue" (ngModelChange)="checkInningIsMatched(inning)" [ngClass]="{
+          'final-score': inning.resultState.isFullTimeRow,
+            warning: inning.resultState.invalidHomeScore
+        }" />
+    </div>
+    <div class="score">
+      <label>{{getTeamName(matchDetail.awayName)}}&nbsp;</label>
+      <input type="text" myOnlyInteger [disabled]="inning.resultState.isFinalScoreDisabled"
+        [(ngModel)]="inning.awayValue" (ngModelChange)="checkInningIsMatched(inning)" [ngClass]="{
+          'final-score': inning.resultState.isFullTimeRow,
+          warning: inning.resultState.invalidAwayScore
+        }" />
+    </div>
+  </td>
+  <ng-container *ngFor="let result of inning.externalScores; let x = index">
+    <td *ngIf="x < (maxProviderCol +1) && isLeader">
+      <div> {{ result.homeValue == '' ? '-' : result.homeValue}}</div>
+      <div> {{ result.awayValue == '' ? '-' : result.awayValue}}</div>
+    </td>
+    <ng-container *ngIf="x >= (maxProviderCol +1)">
+      <td [ngClass]="{'map': true, 'can-settle': inning.resultState.canSettleResult }">
+        <div><input type="text" myOnlyInteger [(ngModel)]="result.homeValue"
+            [disabled]="inning.resultState.isOutSideSourceDisabled"
+            (ngModelChange)="updateOutsideScore(result.sourceId, inning); verifyAndAutoFillScore(inning, inning.resultState.isFullTimeRow)" />
+        </div>
+        <div>
+          <input type="text" myOnlyInteger [(ngModel)]="result.awayValue"
+            [disabled]="inning.resultState.isOutSideSourceDisabled"
+            (ngModelChange)="updateOutsideScore(result.sourceId, inning); verifyAndAutoFillScore(inning, inning.resultState.isFullTimeRow)" />
+        </div>
+      </td>
+    </ng-container>
+  </ng-container>
+  <td *ngIf="inning.resultState.isExtraInningRow" rowspan="2" class="status">
+    <input id="final-checkbox" type="checkbox" [(ngModel)]="innings[i + 1].checked"
+      [disabled]="inning.resultState.isCheckBoxDisabled" (ngModelChange)="selectedOnLastMap(inning)" />
+  </td>
+  <td *ngIf="inning.resultState.isInningRow" class="status">
+    <input type="checkbox" [(ngModel)]="inning.checked" [disabled]="inning.resultState.isCheckBoxDisabled"
+      (ngModelChange)="selectedOnMap(inning)" />
+  </td>
+</tr>
+}

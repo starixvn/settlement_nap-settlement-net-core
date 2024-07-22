@@ -1,0 +1,43 @@
+<div class="calculate-league">
+  <div class="icon"></div>
+  {{ matchDetail().sportName.toUpperCase() }} - {{ matchDetail().leagueName }}
+  <button *ngIf="permission().canChangeScoreSource" class="button manage-outside" (click)="manageOutSideSourcePopup()">
+    Manage Outside Source
+  </button>
+</div>
+<table>
+  <thead>
+    <tr>
+      <td class="code">Match Code/ID</td>
+      <td class="kick-off-time">Kick-off Time</td>
+      <td>Team</td>
+      <td *ngFor="let result of resultDetail()">{{result.resourceName}}</td>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>{{ matchDetail().matchCode }}</td>
+      <td rowspan="2">
+        {{ matchDetail().kickOffTime | date: "mediumDate" }}
+        <br />
+        {{ matchDetail().kickOffTime | date: "hh:mm:ss a" }}
+      </td>
+      <td class="home-team-name">{{ matchDetail().homeName }}</td>
+      <td *ngFor="let map of resultDetail(); let i= index; let last=last;" [ngClass]="map.className">
+        <ng-container *ngIf="map.isDisplayedForMember; else emptyScore">
+          {{map.homeValue | scoreBySettlement:map.settlementStatusId}}
+        </ng-container>
+      </td>
+    </tr>
+    <tr>
+      <td>{{ matchDetail().matchId }}</td>
+      <td class="away-team-name">{{ matchDetail().awayName }}</td>
+      <td *ngFor="let map of resultDetail(); let i= index; let last=last;" [ngClass]="map.className">
+        <ng-container *ngIf="map.isDisplayedForMember; else emptyScore">
+          {{map.awayValue | scoreBySettlement:map.settlementStatusId}}
+        </ng-container>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<ng-template #emptyScore>-</ng-template>

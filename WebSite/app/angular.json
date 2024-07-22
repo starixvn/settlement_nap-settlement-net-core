@@ -47,7 +47,7 @@
             "development": {
               "buildOptimizer": false,
               "optimization": false,
-              
+
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
@@ -121,14 +121,13 @@
             "development": {
               "buildOptimizer": false,
               "optimization": false,
-              
+
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
             }
           }
         },
-
 
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
@@ -163,10 +162,11 @@
             "tsConfig": "instant-setting/tsconfig.app.json",
             "polyfills": ["zone.js"],
             "styles": [
-              "instant-setting/style.less" ,
+              "instant-setting/style.less",
               "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
               "shared/styles/material.style.less",
-              "node_modules/ngx-toastr/toastr.css"],
+              "node_modules/ngx-toastr/toastr.css"
+            ],
             "allowedCommonJsDependencies": ["lodash"]
           },
           "configurations": {
@@ -196,7 +196,7 @@
             "development": {
               "buildOptimizer": false,
               "optimization": false,
-              
+
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
@@ -235,11 +235,7 @@
             "main": "log/main.ts",
             "tsConfig": "log/tsconfig.app.json",
             "polyfills": ["zone.js"],
-            "styles": [
-              "shared/styles/material.style.less",
-              "log/style.less",
-              "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css"
-            ],
+            "styles": ["shared/styles/material.style.less", "log/style.less", "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css"],
             "allowedCommonJsDependencies": ["lodash"]
           },
           "configurations": {
@@ -269,7 +265,7 @@
             "development": {
               "buildOptimizer": false,
               "optimization": false,
-              
+
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
@@ -344,7 +340,7 @@
             "development": {
               "buildOptimizer": false,
               "optimization": false,
-              
+
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
@@ -418,7 +414,7 @@
             "development": {
               "buildOptimizer": false,
               "optimization": false,
-              
+
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
@@ -491,7 +487,7 @@
             "development": {
               "buildOptimizer": false,
               "optimization": false,
-              
+
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
@@ -564,7 +560,7 @@
             "development": {
               "buildOptimizer": false,
               "optimization": false,
-              
+
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
@@ -636,7 +632,7 @@
             "development": {
               "buildOptimizer": false,
               "optimization": false,
-              
+
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
@@ -838,7 +834,7 @@
               "sourceMap": true,
               "namedChunks": true,
               "extractLicenses": false,
-              
+
               "buildOptimizer": false
             },
             "production": {
@@ -934,7 +930,7 @@
             "development": {
               "buildOptimizer": false,
               "optimization": false,
-              
+
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
@@ -1010,7 +1006,7 @@
             "development": {
               "buildOptimizer": false,
               "optimization": false,
-              
+
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
@@ -1085,7 +1081,7 @@
             "development": {
               "buildOptimizer": false,
               "optimization": false,
-              
+
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
@@ -1160,7 +1156,7 @@
             "development": {
               "buildOptimizer": false,
               "optimization": false,
-              
+
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
@@ -1235,7 +1231,7 @@
             "development": {
               "buildOptimizer": false,
               "optimization": false,
-              
+
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
@@ -1312,7 +1308,7 @@
             "development": {
               "buildOptimizer": false,
               "optimization": false,
-              
+
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
@@ -1387,7 +1383,7 @@
             "development": {
               "buildOptimizer": false,
               "optimization": false,
-              
+
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
@@ -1412,13 +1408,87 @@
           "defaultConfiguration": "development"
         }
       }
+    },
+    "baseball": {
+      "root": "",
+      "sourceRoot": "baseball",
+      "projectType": "application",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser-esbuild",
+          "options": {
+            "outputPath": "../wwwroot/baseball",
+            "index": "baseball/index.html",
+            "main": "baseball/main.ts",
+            "tsConfig": "baseball/tsconfig.app.json",
+            "polyfills": ["zone.js"],
+            "inlineStyleLanguage": "less",
+            "styles": [
+              "baseball/styles.less",
+              "shared/styles/styles.less",
+              "node_modules/ngx-toastr/toastr.css",
+              "shared/styles/material.style.less"
+            ],
+            "allowedCommonJsDependencies": ["lodash"]
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "4mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "4mb",
+                  "maximumError": "5mb"
+                }
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "environments/environment.ts",
+                  "with": "environments/environment.prod.ts"
+                }
+              ],
+              "outputHashing": "all",
+              "baseHref": "/baseball/",
+              "index": "baseball/index.cshtml"
+            },
+            "development": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "proxyConfig": "proxy.conf.js",
+            "port": 5001
+          },
+          "configurations": {
+            "production": {
+              "buildTarget": "baseball:build:production"
+            },
+            "development": {
+              "buildTarget": "baseball:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        }
+      }
     }
   },
   "schematics": {
     "@schematics/angular:component": {
       "inlineTemplate": false,
       "skipTests": false,
-      "project": "app"
+      "project": "baseball"
     }
   },
   "cli": {
