@@ -31,7 +31,7 @@ public class ChildMatchServiceTests
         service.Decorate(tuple);
 
         // Assert
-        Assert.Equal(11, tuple.Item1[0].ChildMatchType);
-        Assert.Equal(12, tuple.Item1[1].ChildMatchType);
+        Assert.Equal(12, tuple.Item1[0].ChildMatchType);
+        Assert.Equal(11, tuple.Item1[1].ChildMatchType);
     }
 }

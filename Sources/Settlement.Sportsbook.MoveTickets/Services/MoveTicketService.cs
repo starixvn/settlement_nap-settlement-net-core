@@ -1,17 +1,15 @@
-﻿using System.IO;
-using System.Text.Json;
-using AutoMapper;
+﻿using AutoMapper;
 using Fanex.Data.Repository;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Constants;
 using Settlement.Core.Criteria;
-using Settlement.Core.Services;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.MoveTickets.Criteria;
 using Settlement.Sportsbook.MoveTickets.Models;
 using Settlement.Sportsbook.MoveTickets.Requests;
 using Settlement.Sportsbook.MoveTickets.Services.MultipleServer;
+using System.Text.Json;
 
 namespace Settlement.Sportsbook.MoveTickets.Services;
 
@@ -28,7 +26,7 @@ public class MoveTicketServiceImp(
     IMapper mapper,
     IMatchService matchService,
         IOptions<AppSettingsKey> appSettingsKey,
-        SiteMatchService siteMatchService):MoveTicketService
+        SiteMatchService siteMatchService) : MoveTicketService
 {
     private readonly AppSettingsKey appSettingsKey = appSettingsKey.Value;
 
@@ -45,7 +43,7 @@ public class MoveTicketServiceImp(
             matches.Add(match);
         }));
 
-        GetReferenceAction(matches);
+        await GetReferenceAction(matches);
 
         var sportBooks = matches.GroupBy(match => new { match.SportName, match.SportType })
                                 .Select(sports => new SportModel
@@ -58,7 +56,7 @@ public class MoveTicketServiceImp(
         return sportBooks;
     }
 
-    private void GetReferenceAction(List<Match> data)
+    private async Task GetReferenceAction(List<Match> data)
     {
         var listMatchId = data.Select(match => match.MatchId).ToList();
         var matchIds = string.Join(',', listMatchId);
@@ -67,7 +65,7 @@ public class MoveTicketServiceImp(
             MatchIds = matchIds
         };
 
-        var referenceActions = repository.Fetch<ReferenceAction>(criteria).ToList();
+        var referenceActions = (await repository.FetchAsync<ReferenceAction>(criteria)).ToList();
 
         foreach (var match in data)
         {
@@ -157,13 +155,6 @@ public class MoveTicketServiceImp(
         };
     }
 
-    private async Task<List<Match>> GetMatches(SportsbookCriteria criteria)
-    {
-        var (matches, _) = await repository.FetchMultipleAsync<Match, object>(criteria);
-
-        return matches.ToList();
-    }
-
     private async Task<IEnumerable<SiteMatch>> GetTicketInfoAllDbSites(OSTicketInfoSelCriteria criteria)
     {
         var siteDbServer = appSettingsKey.SiteDbServer;
@@ -198,11 +189,7 @@ public class MoveTicketServiceImp(
             MatchInfo = JsonSerializer.Serialize(matchesInfo),
         };
 
-        var result = await GetTicketInfoAllDbSites(criteria);
-
-        var list = result.ToList();
-
-        return result;
+        return await GetTicketInfoAllDbSites(criteria);
     }
 
     private void SetMatchTicketInfo(List<Match> matches, List<SiteMatch> siteMatches)
@@ -225,7 +212,7 @@ public class MoveTicketServiceImp(
 
     private async Task<List<Match>> GetMatchesAllInfo(SportsbookCriteria criteria)
     {
-        var matches = await GetMatches(criteria);
+        var matches = (await repository.FetchAsync<Match>(criteria)).ToList();
         var siteMatches = (await GetOSTicketInfo(matches)).ToList();
 
         SetMatchTicketInfo(matches, siteMatches);

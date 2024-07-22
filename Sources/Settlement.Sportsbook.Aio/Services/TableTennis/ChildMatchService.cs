@@ -31,7 +31,7 @@ public class ChildMatchService : IMapperService
 
         foreach (var item in newChildMatches)
         {
-            bool isRefund = item.SettlementStatusId == SettlementStatus.Refund;
+            var isRefund = item.SettlementStatusId == SettlementStatus.Refund;
 
             item.HomeValue = isRefund ? "R" : item.HomeValue;
             item.AwayValue = isRefund ? "R" : item.AwayValue;
