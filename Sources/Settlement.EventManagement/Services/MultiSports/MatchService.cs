@@ -43,7 +43,6 @@ public class MatchServiceImp(
             match.EarlySettleStatus = newInfoMatchService.EarlyOSSettlementStatus(match);
             match.ConfirmHalfTimeScore = newInfoMatchService.ConfirmScore(listSourceByMatchId, ResourceType.Halftime);
             match.ConfirmFullTimeScore = newInfoMatchService.ConfirmScore(listSourceByMatchId, ResourceType.Final);
-            match.IsExistsConfirmedEarly = newInfoMatchService.IsExistsConfirmedOSEarly(match);
             match.RefDataService = refDataService;
         }
 

@@ -26,8 +26,6 @@ public interface SiteMatchService
 
     bool IsExistsConfirmedEarly(MultiSportMatch match);
 
-    bool IsExistsConfirmedOSEarly(MultiSportMatch match);
-
     int? IsCalculating(int? baseValue, List<int?> siteValues);
 
     int? IsCalculating(List<int?> siteValues);
@@ -53,11 +51,6 @@ public class SiteMatchServiceImp : SiteMatchService
     {
         var isExistsConfirmedEarly = match.SiteMatch.Exists(m => m.IsExistsConfirmedEarly);
         return match.IsExistsConfirmedEarly || isExistsConfirmedEarly;
-    }
-
-    public bool IsExistsConfirmedOSEarly(MultiSportMatch match)
-    {
-        return match.IsExistsConfirmedEarly;
     }
 
     public int? IsCalculating(int? baseValue, List<int?> siteValues)
