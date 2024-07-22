@@ -185,6 +185,7 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
   }
 
   async calculate() {
+    console.log(this.childMatchSelected);
     this.toastrService.clear();
     this.match.isClickOnCalculate = true;
     const existResultConfirmed = _.find(this.selectedResources, item => !_.isEqual(item.resourceId, ResourcesIds.totalPoints)
@@ -224,8 +225,7 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
   private async ProcessBasedOnChildMatchSelected() {
     if (this.childMatchSelected.length > 0) {
       this.verifyChildMatch();
-    }
-    else {
+    } else {
       await this.verifyRunningOdds();
     }
   }
@@ -646,6 +646,12 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
   changeInputDirectly() {
     this.match.resultDetails.forEach((map) => {
       map.checked = this.match.isScoreDirect && _.isEqual(map.resourceId, ResourcesIds.totalGames);
+    });
+    this.match.childMatches.forEach(item => {
+      item.checked = this.match.isScoreDirect 
+        && _.isEqual(item.relatedResourceId, ResourcesIds.totalPoints)
+        && this.isSettleRelated
+        && this.isSupportSettleRelated;
     });
     this.checkChildrenMatchesConsistent();
     this.enableUncalculate = this.enableUncalculateButton();
