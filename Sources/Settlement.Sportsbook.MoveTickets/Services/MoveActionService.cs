@@ -2,7 +2,6 @@
 
 namespace Settlement.Sportsbook.MoveTickets.Services;
 
-using Constants;
 using Criteria;
 using Fanex.Data.Repository;
 using Fanex.NAP.Client.Helpers.Web;

@@ -46,7 +46,7 @@ export class HandleActionsService {
     leagueMatch.matches.forEach((item,index) => {
       const eventStatus = item.eventStatus.toLocaleLowerCase();
       if (_.isEqual(eventStatus, EventStatus.running.toLocaleLowerCase()) || _.isEqual(eventStatus, EventStatus.closed.toLocaleLowerCase())) {
-        if(item.autoCalcSetting.isInstantForMatch != isAutoInstant) {
+        if(item.autoCalcSetting.isInstantForMatch !== isAutoInstant) {
           item.autoCalcSetting.isInstantForMatch = isAutoInstant;
           leagueMatch.matches[index]  = {...item};
         }

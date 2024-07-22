@@ -80,9 +80,9 @@ public class VoidBetApiServiceImp(
     {
         try
         {
-            var requestContent = new StringContent(JsonConvert.SerializeObject(request, new JsonSerializerSettings()
+            var requestContent = new StringContent(JsonConvert.SerializeObject(request, new JsonSerializerSettings
             {
-                ContractResolver = new IgnorePropertiesResolver(new[] { "Action" })
+                ContractResolver = new IgnorePropertiesResolver(["Action"])
             }), Encoding.UTF8, "application/json");
             var httpClient = httpClientFactory.CreateClient();
             return await httpClient.PostAsync(new Uri(apiUri), requestContent);

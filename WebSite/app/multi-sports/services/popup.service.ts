@@ -58,8 +58,7 @@ export class PopupService {
     this.setPopupSize(match.sportType);
 
     if (this.listNewSport.includes(match.sportType)) {
-      let sportName = PopularSports.get(match.sportType);
-      sportName = _.isEqual(sportName, "table tennis") || _.isEqual(sportName, "volleyball") ? "badminton" : sportName;
+      const sportName = PopularSports.get(match.sportType);
       this.properties.src = `/apps/${sportName}-recalculate?matchId=${match.matchId}&sportType=${match.sportType}`;
     } else {
       this.properties.src = `/apps/other-sports-recalculate?matchId=${match.matchId}&sportType=${match.sportType}`;
@@ -72,7 +71,7 @@ export class PopupService {
     this.setPopupRefundSize(match.sportType);
 
     if (_.includes(this.listNewSport, match.sportType)) {
-      let sportName = PopularSports.get(match.sportType);
+      const sportName = PopularSports.get(match.sportType);
       this.properties.src = `/apps/${sportName}-refund?matchId=${match.matchId}&sportType=${match.sportType}`;
     } else {
       this.properties.src = `/apps/other-sports-refund?matchId=${match.matchId}&sportType=${match.sportType}`;
@@ -83,7 +82,7 @@ export class PopupService {
 
   public popupEarly(match: Match, state$: BehaviorSubject<MatchState>) {
     this.properties.title = Language.EarlyPopupTitle;
-    let sportName = PopularSports.get(match.sportType);
+    const sportName = PopularSports.get(match.sportType);
     this.properties.src = `/apps/${sportName}-early?matchId=${match.matchId}&sportType=${match.sportType}`;
     this.properties.width =
       match.sportType === SportType.cricket

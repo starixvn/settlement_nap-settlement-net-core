@@ -201,7 +201,7 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
     const finalSelectedResult = this.match.isScoreDirect 
       ? this.selectedResources.filter(item => _.isEqual(item.resourceId, ResourcesIds.totalGames))
       : this.selectedResources;
-      
+
     if (this.verificationService.invalidInputScore(finalSelectedResult, this.match.isScoreDirect, ResourcesIds.totalGames)) {
       
       this.toastrService.error(this.isLeader ? Language.sop.leader.blankScore : Language.sop.nonLeader.blankScore);
@@ -743,7 +743,6 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
         && this.verificationService.isValidTraderConfirmScore(result);
   }
   private autoSelectChildMatch(result: ResultDetail) {
-    console.log(result);
     if (!this.isSupportSettleRelated || !this.isSettleRelated) {
       return;
     }
