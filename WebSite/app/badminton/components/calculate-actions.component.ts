@@ -168,7 +168,8 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
 
   public selectedOnLastMap(map: ResultDetail) {
     this.totalPoints.checked = this.totalGames.checked;
-    const newFullTimeScore = this.verificationService.getNewFinalResource(this.noTotalPoints, ResourcesIds.totalGames, false);
+    const newFullTimeScore = this.verificationService.getNewFinalResource(this.noTotalPoints, ResourcesIds.totalGames, false)
+
     const confirmMessage = this.verificationService.verifyFinalResource(
       this.noTotalPoints,
       ResourcesIds.totalGames,
@@ -185,7 +186,6 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
   }
 
   async calculate() {
-    console.log(this.childMatchSelected);
     this.toastrService.clear();
     this.match.isClickOnCalculate = true;
     const existResultConfirmed = _.find(this.selectedResources, item => !_.isEqual(item.resourceId, ResourcesIds.totalPoints)
@@ -198,7 +198,12 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
       this.toastrService.error(Language.confirmRefund.calculateResultNotConfirmed);
       return;
     }
-    if (this.verificationService.invalidInputScore(this.selectedResources, this.match.isScoreDirect, ResourcesIds.totalGames)) {
+    const finalSelectedResult = this.match.isScoreDirect 
+      ? this.selectedResources.filter(item => _.isEqual(item.resourceId, ResourcesIds.totalGames))
+      : this.selectedResources;
+      
+    if (this.verificationService.invalidInputScore(finalSelectedResult, this.match.isScoreDirect, ResourcesIds.totalGames)) {
+      
       this.toastrService.error(this.isLeader ? Language.sop.leader.blankScore : Language.sop.nonLeader.blankScore);
       return;
     }
@@ -738,6 +743,7 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
         && this.verificationService.isValidTraderConfirmScore(result);
   }
   private autoSelectChildMatch(result: ResultDetail) {
+    console.log(result);
     if (!this.isSupportSettleRelated || !this.isSettleRelated) {
       return;
     }
