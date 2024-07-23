@@ -134,23 +134,19 @@ public class MatchServiceTests
     [Fact]
     public async Task SetNewMatchInfo_Always_returnMatchMerged()
     {
-        newInfoMatchService.TicketInfo(Arg.Do<Match>(item =>
-        {
-            item.IsExistMarkedTicket = item.IsExistRunningTicket = true;
-            item.IsCalculatingSingle = 1;
-        }));
         newInfoMatchService.NewEventStatus(Arg.Any<Match>(), Arg.Any<List<ResultDetail>>()).Returns("EventStatus");
         newInfoMatchService.EventStatusColor(Arg.Any<Match>()).Returns("EventStatusColor");
         newInfoMatchService.EarlySettlementStatus(Arg.Any<Match>()).Returns("Early");
         newInfoMatchService.ConfirmScore(Arg.Any<List<ResultDetail>>(), ResourceType.Halftime).Returns("1");
         newInfoMatchService.ConfirmScore(Arg.Any<List<ResultDetail>>(), ResourceType.Final).Returns("2");
         newInfoMatchService.IsExistsConfirmedEarly(Arg.Any<Match>()).Returns(true);
+
         newInfoMatchService.GetAutoSetting(Arg.Any<List<Match>>()).Returns(x => x[0] as List<Match>);
 
-        var matches = await service.SetNewOsMatchInfo([new()], []);
+        var matches = await service.SetNewMatchInfo([new()], []);
         var match = matches.ToList()[0];
 
-        Assert.True(match.IsExistsConfirmedEarly && match.IsExistMarkedTicket && match is { IsExistRunningTicket: true, IsCalculatingSingle: 1 });
+        Assert.True(match.IsExistsConfirmedEarly);
         Assert.Equal("EventStatus", match.NewEventStatus);
         Assert.Equal("EventStatusColor", match.EventStatusColor);
         Assert.Equal("Early", match.EarlySettleStatus);

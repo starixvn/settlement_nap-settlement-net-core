@@ -4,7 +4,9 @@ using Microsoft.Extensions.Options;
 using Settlement.Core.Constants;
 using Settlement.Core.Criteria;
 using Settlement.Core.Models;
+
 using Settlement.Core.Services;
+
 using Settlement.Sportsbook.MoveTickets.Criteria;
 using Settlement.Sportsbook.MoveTickets.Models;
 using Settlement.Sportsbook.MoveTickets.Requests;
@@ -198,8 +200,8 @@ public class MoveTicketServiceImp(
         {
             var ticketInfo = siteMatches.Where(x => x.MatchId == item.MatchId).ToList();
 
-            item.SuspenderFullTime = ticketInfo.FirstOrDefault(x => string.IsNullOrEmpty(x.SuspenderFullTime))?.SuspenderFullTime;
-            item.SuspenderHalfTime = ticketInfo.FirstOrDefault(x => string.IsNullOrEmpty(x.SuspenderHalfTime))?.SuspenderHalfTime;
+            item.SuspenderFullTime = ticketInfo.Find(x => string.IsNullOrEmpty(x.SuspenderFullTime))?.SuspenderFullTime;
+            item.SuspenderHalfTime = ticketInfo.Find(x => string.IsNullOrEmpty(x.SuspenderHalfTime))?.SuspenderHalfTime;
 
             item.IsExistEarlyBetTypes = ticketInfo.Exists(x => x.IsExistEarlyBetTypes);
             item.IsRunningEarlyBetTypes = ticketInfo.Exists(x => x.IsRunningEarlyBetTypes);

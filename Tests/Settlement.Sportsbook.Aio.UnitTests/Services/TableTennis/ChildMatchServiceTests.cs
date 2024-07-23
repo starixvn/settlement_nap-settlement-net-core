@@ -13,9 +13,9 @@ public class ChildMatchServiceTests
         // Arrange
         var childMatches = new List<ChildMatchModel>
             {
-                new() { ChildMatchType = 11, SportType = 18, },
-                new() { ChildMatchType = 12, SportType = 18  },
-                new() { ChildMatchType = 13 ,SportType = 18 }
+                new() { ChildMatchType = 12, SportType = 18, },
+                new() { ChildMatchType = 14, SportType = 18  },
+                new() { ChildMatchType = 15 ,SportType = 18 }
             };
 
         var resultDetails = new List<ResultDetail>
@@ -32,6 +32,7 @@ public class ChildMatchServiceTests
 
         // Assert
         Assert.Equal(12, tuple.Item1[0].ChildMatchType);
-        Assert.Equal(11, tuple.Item1[1].ChildMatchType);
+        Assert.Equal(14, tuple.Item1[1].ChildMatchType);
+        Assert.Equal(15, tuple.Item1[2].ChildMatchType);
     }
 }

@@ -44,16 +44,19 @@ public class MultipleServerServiceTests
     [Fact]
     public async Task GetMatchInfo_MatchDetailNotNull_CallAllRelatedMethod()
     {
+        // Arrange
         var fakeData = new IEnumerable<object>[2];
         var item1 = new List<MatchDetail> { new() };
         var item2 = new List<TicketCounts> { new() };
         repository.FetchMultipleAsync<MatchDetail, object>(Arg.Any<GetSportsbookMatchDetailCriteria>())
             .Returns((item1, item2));
-        repository.FetchMultipleAsync<MatchDetail, object>(Arg.Any<GetTicketInfoCriteria>()).Returns((item1, item2));
+        repository.FetchMultipleAsync<object, TicketCounts>(Arg.Any<GetTicketInfoCriteria>()).Returns((item1, item2));
 
+        // Act
         await service.GetMatchInfo(new GetMatchRequest());
 
-        await repository.Received(2).FetchMultipleAsync<MatchDetail, object>(Arg.Any<GetTicketInfoCriteria>());
+        // Assert
+        await repository.Received(2).FetchMultipleAsync<object, TicketCounts>(Arg.Any<GetTicketInfoCriteria>());
         mergeDataService.Received().MergeMatchDetail(Arg.Any<MatchDetail>(), Arg.Any<List<TicketCounts>>());
         mergeDataService.Received().GroupTicketCount(Arg.Any<List<TicketCounts>>());
     }
@@ -79,6 +82,7 @@ public class MultipleServerServiceTests
     [InlineData(ActionType.CalculateAll, 0, false)]
     public async Task Calculate_ValidatePassed_CheckHTSettledAndSettle(string action, int runningBetType, bool expected)
     {
+        // Arrange
         var ticketHt = new TicketCounts
         {
             BetRunningCount = runningBetType,
@@ -86,14 +90,14 @@ public class MultipleServerServiceTests
         };
         var item1 = new List<MatchDetail> { new() };
         var item2 = new List<TicketCounts> { new() };
-        repository.FetchMultipleAsync<MatchDetail, TicketCounts>(Arg.Any<GetTicketInfoCriteria>())
-            .Returns((item1, item2));
+        repository.FetchMultipleAsync<object, TicketCounts>(Arg.Any<GetTicketInfoCriteria>()).Returns((item1, item2));
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
-        mergeDataService.MergeTicketCounts(Arg.Any<List<List<TicketCounts>>>())
-            .Returns([ticketHt]);
+        mergeDataService.MergeTicketCounts(Arg.Any<List<List<TicketCounts>>>()).Returns([ticketHt]);
 
+        // Act
         var result = await service.Calculate(new CalculateCriteria { Action = action, MatchId = 100, AdminId = 10, IsReSettledTickets = false, IsHedgeMatch = true }, new ScoreSetModel());
 
+        // Assert
         await scaleOutSettleService.Received().UpdateUnderSettlementFlag(100, 10, action);
         await scaleOutSettleService.Received().UpdateMatchInfo(Arg.Is<UpdateMatchInfoRequest>(item => item.IsHtTicketSettled == expected));
         await repository.Received(2).ExecuteAsync(Arg.Any<CalculateCriteria>());

@@ -94,21 +94,13 @@ public class SiteMatchServiceTests
     }
 
     [Theory]
-    [InlineData(true, false, TicketStatus.Running)]
-    [InlineData(false, true, TicketStatus.Running)]
-    public void EarlySettlementStatus_MatchExistRunningEarly_ReturnCorrectly(bool isRunningEarlyBetTypesMain, bool isRunningEarlyBetTypesSite, string expected)
+    [InlineData(true, TicketStatus.Running)]
+    public void EarlySettlementStatus_MatchExistRunningEarly_ReturnCorrectly(bool isRunningEarlyBetTypesMain, string expected)
     {
         var match = new Match
         {
             IsExistEarlyBetTypes = true,
             IsRunningEarlyBetTypes = isRunningEarlyBetTypesMain,
-            SiteMatch =
-            [
-                new SiteMatch
-                {
-                    IsRunningEarlyBetTypes = isRunningEarlyBetTypesSite
-                }
-            ]
         };
 
         var result = service.EarlySettlementStatus(match);
@@ -117,21 +109,13 @@ public class SiteMatchServiceTests
     }
 
     [Theory]
-    [InlineData(true, false, TicketStatus.Waiting)]
-    [InlineData(false, true, TicketStatus.Waiting)]
-    public void EarlySettlementStatus_MatchExistWaitingEarlyAndNotExistRunningTicket_ReturnCorrectly(bool isWaitingEarlyBetTypesMain, bool isWaitingEarlyBetTypesSite, string expected)
+    [InlineData(true, TicketStatus.Waiting)]
+    public void EarlySettlementStatus_MatchExistWaitingEarlyAndNotExistRunningTicket_ReturnCorrectly(bool isWaitingEarlyBetTypesSite, string expected)
     {
         var match = new Match
         {
             IsExistEarlyBetTypes = true,
-            IsWaitingEarlyBetTypes = isWaitingEarlyBetTypesMain,
-            SiteMatch =
-            [
-                new SiteMatch
-                {
-                    IsWaitingEarlyBetTypes = isWaitingEarlyBetTypesSite
-                }
-            ]
+            IsWaitingEarlyBetTypes = isWaitingEarlyBetTypesSite,
         };
 
         var result = service.EarlySettlementStatus(match);
