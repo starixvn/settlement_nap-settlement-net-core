@@ -72,12 +72,10 @@ public class MoveTicketServiceTests
         };
 
         var fakeMatches = new List<Match> {
-            //CreateMatch(2, "Completed", false),
             CreateMatch(1, "Completed", true),
-            //CreateMatch(3, "Result Pending", false),
         };
 
-        repository.FetchMultipleAsync<Match, object>(Arg.Any<SportsbookCriteria>()).Returns((fakeMatches, []));
+        repository.FetchAsync<Match>(Arg.Any<SportsbookCriteria>()).Returns(fakeMatches);
 
         repository.FetchAsync<ResultDetail>(Arg.Any<ICriteria>()).Returns(new List<ResultDetail> { resultDetail });
         repository.Fetch<ReferenceAction>(Arg.Any<ICriteria>()).Returns([]);
@@ -97,9 +95,7 @@ public class MoveTicketServiceTests
 
         // Assert
         var expectedMatches = new List<Match> {
-            //CreateMatch(3, "Result Pending", false),
             CreateMatch(1, "Completed", true),
-            //CreateMatch(2, "Completed", false),
         };
 
         Assert.Equal(JsonConvert.SerializeObject(expectedMatches), JsonConvert.SerializeObject(actualMatches));

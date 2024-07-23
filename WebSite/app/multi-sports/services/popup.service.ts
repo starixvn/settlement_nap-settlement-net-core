@@ -267,18 +267,18 @@ export class PopupService {
         if (_.isNil(result)) {
           return;
         }
-        const setting = Object.assign(new LeagueAutoSettings(), JSON.parse(result));
+        const leagueSettings = Object.assign(new LeagueAutoSettings(), JSON.parse(result));
         this.applyNewSetting(
           league.autoCalcSetting,
-          setting.autoSetting.toString(),
+          leagueSettings.autoSetting.toString(),
           false,
           true
         );
 
-        league.autoWaitingTime = setting.waitingTime;
-        league.refundWaitingTime = setting.refundWaitingTime;
-        league.autoRetryTime = setting.retryTime;
-        if (setting.isApplyAll) {
+        league.autoWaitingTime = leagueSettings.waitingTime;
+        league.autoRetryTime = leagueSettings.retryTime;
+        league.refundWaitingTime = leagueSettings.refundWaitingTime;
+        if (leagueSettings.isApplyAll) {
           this.affectAutoPayoutForMatch(league);
           triggerRerender();
         }

@@ -8,7 +8,7 @@ import { AioService } from "../../../shared/services";
 type SettleRequestParams = {
   type: string,
   matchDetail,
-  resultDetais: ResultDetail[],
+  resultDetails: ResultDetail[],
   isReSettledTickets: boolean,
   isScoreDirect: boolean,
   isLeader: boolean,
@@ -30,7 +30,7 @@ export class BandyService {
   public async sendSettleRequest({
     type,
     matchDetail,
-    resultDetais,
+    resultDetails,
     isReSettledTickets,
     isScoreDirect,
     isLeader = false, 
@@ -38,7 +38,7 @@ export class BandyService {
     betStatus = ''}: SettleRequestParams) {
     
     if (type === CalculateAction.unCalculate) {
-      resultDetais.forEach((item) => {
+      resultDetails.forEach((item) => {
         item.homeValue = "";
         item.awayValue = "";
       });
@@ -46,7 +46,7 @@ export class BandyService {
 
     const settleQuery = new SettleQuery(
       matchDetail,
-      resultDetais,
+      resultDetails,
       type,
       isReSettledTickets,
       isScoreDirect,

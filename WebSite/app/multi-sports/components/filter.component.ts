@@ -217,7 +217,7 @@ export class FilterComponent implements OnInit {
 
     private initLeague() {
         const showAllLeagues = "--- Show All Leagues ---";
-        let initLeagueSelect = new MultipleSelect();
+        const initLeagueSelect = new MultipleSelect();
         initLeagueSelect.allItemsCheckedText = showAllLeagues;
         initLeagueSelect.maxWidth = '85%';
         initLeagueSelect.enableSearchBox = true;
@@ -225,7 +225,7 @@ export class FilterComponent implements OnInit {
         initLeagueSelect.disableCheckAll = true;
         initLeagueSelect.disableSelectGroup = true;
         this.leagueOption$.next(initLeagueSelect);
-        let initSportSelect = new MultipleSelect();
+        const initSportSelect = new MultipleSelect();
         initSportSelect.maxWidth = this.widthMultiSelect;
         initSportSelect.haveGroup = true;
         initSportSelect.isCheckAll = true;
