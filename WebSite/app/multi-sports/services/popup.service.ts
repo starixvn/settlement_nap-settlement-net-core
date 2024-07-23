@@ -41,13 +41,13 @@ export class PopupService {
   constructor(
     private readonly dialogBoxService: DialogBoxService,
     private readonly multiSportService: MultiSportService,
-    private readonly handleActionsService: HandleActionsService
+    private readonly handleActionsService: HandleActionsService,
     private readonly refreshMatchService: RefreshMatchService
   ) { }
+
+
   public popupLog(matchCode: string, fromDate: string, toDate: string) {
-    const src = `/home/log?matchCode=${encodeURIComponent(
-      matchCode
-    )}&fromDate=${fromDate}&toDate=${toDate}&isShowMenu=false&productType=ALL`;
+    const src = `/home/log?matchCode=${encodeURIComponent(matchCode)}&fromDate=${fromDate}&toDate=${toDate}&isShowMenu=false&productType=ALL`;
     const dialogData = new DialogDataIframe(Language.SettlementLog, src);
     this.dialogBoxService.popup(dialogData, "1011px", "800px");
   }
@@ -88,7 +88,7 @@ export class PopupService {
       match.sportType === SportType.cricket
         ? "1400px"
         : this.isPopupEarlySOP(match.sportType)
-        ? "1570px"
+          ? "1570px"
           : "845px";
     this.properties.height = this.isPopupEarlySOP(match.sportType)
       ? "958px"
@@ -128,7 +128,7 @@ export class PopupService {
     });
   }
 
-  public openAndHandlePopup(properties: PopupProperties, match: Match , state$: BehaviorSubject<MatchState>) {
+  public openAndHandlePopup(properties: PopupProperties, match: Match, state$: BehaviorSubject<MatchState>) {
     const frameSrc = encodeURI(properties.src);
     const dialogData = new DialogDataIframe(properties.title, frameSrc);
     this.dialogBoxService
@@ -261,7 +261,7 @@ export class PopupService {
       Language.payout.titlePopupForLeague,
       frameSrc
     );
-    const subscribe =  this.dialogBoxService
+    const subscribe = this.dialogBoxService
       .popupHasResponse(dialogData, "500px", "930px")
       .subscribe((result) => {
         if (_.isNil(result)) {

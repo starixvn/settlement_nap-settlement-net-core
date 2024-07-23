@@ -6,11 +6,11 @@ import { Match } from "./match.model";
 
 export class MatchState {
   hasValue: boolean;
-  undecidedColor = '';
-  autoSettingBackgroundColor = '';
+  undecidedColor: string;
+  autoSettingBackgroundColor: string;
   instantSettingBackgroundColor: string;
-  resultAwayConfirmedBackgroundColor = '';
-  totalHomeGames = '';
+  resultHomeConfirmedBackgroundColor: string;
+  resultAwayConfirmedBackgroundColor: string;
   totalHomeGames: string;
   totalAwayGames: string;
   halfTimeConfirmBackgroundColor: string;
@@ -63,7 +63,6 @@ export class MatchState {
     this.remarkClass = service.isChangeSetting(match) ? 'act-change-setting title' : '';
     this.remarkState = service.getRemarkState(match.remark);
     this.autoSetting = service.getAutoSetting(match.autoCalcSetting);
-    this.autoSetting = this.service.getAutoSetting(match.autoCalcSetting);
   }
 }
 

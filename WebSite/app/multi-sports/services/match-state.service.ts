@@ -23,10 +23,11 @@ export class MatchStateService {
     return remark.isMtdHold || remark.isUndecided || remark.isUnderSettle || remark.isKeyHold ? BackgroundColor.undecidedRow : '';
   }
 
-  getBackgroundAutoSetting(match: Match, permission: Permission) {
+  getBackgroundAutoSetting(match: Match, permission: Permission, isPayout: boolean = true) {
     const enableLink = permission.canAutoPayout && isPayout ? BackgroundColor.codeLink : "";
-    const colorStatus = _.isEqual(match.autoPayoutStatus, this.autoSettingCompleted) ? 'auto-setting-completed' :
-      _.isEqual(match.autoPayoutStatus, this.autoSettingFailed) ? 'auto-setting-failed' : '';
+    const status = isPayout ? match.autoPayoutStatus : match.autoInstantStatus;
+    const colorStatus = _.isEqual(status, this.autoSettingCompleted) ? 'auto-setting-completed' :
+      _.isEqual(status, this.autoSettingFailed) ? 'auto-setting-failed' : '';
 
     return `${enableLink} ${colorStatus}`;
   }

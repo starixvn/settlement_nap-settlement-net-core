@@ -126,9 +126,4 @@ export class MatchComponent implements OnChanges, OnInit {
       this.messageBoxService.alert(this.dialogMessage);
     }
   }
-
-  triggerRerender() {
-    this.matchState.getState(this.match, this.store);
-    this.cd.detectChanges();
-  }
 }

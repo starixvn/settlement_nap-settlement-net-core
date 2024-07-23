@@ -37,34 +37,32 @@
 
 <ng-template #body>
   <cdk-virtual-scroll-viewport dynamicHeight itemSize="20">
-    <cdk-virtual-scroll-viewport itemSize="20" [style]="{'display': 'contents'}">
-      @for (sport of sports; track sport) {
-      <div>
+    @for (sport of sports; track sport) {
+    <div>
       <div (click)="collapseSport(sport)" class="sport-name">
-          <span class="collapse-icon" [ngClass]="sport.collapse ? 'collapsed' : ''"></span>
-          &nbsp;{{ sport.name }}
-        </div>
+        <span class="collapse-icon" [ngClass]="sport.collapse ? 'collapsed' : ''"></span>
+        &nbsp;{{ sport.name }}
+      </div>
 
       <div class="league" *ngIf="!sport.collapse">
-          <table class="table-calculation">
-            <tbody>
-              @for (league of sport.leagues; track league.leagueId) {
-              <tr league-row [league]="league" class="league-name"> </tr>
-              @for (match of league.matches; track match.matchId) {
+        <table class="table-calculation">
+          <tbody>
+            @for (league of sport.leagues; track league.leagueId) {
+            <tr league-row [league]="league" class="league-name"> </tr>
+            @for (match of league.matches; track match.matchId) {
             <match [isShow]="!league.collapse" [match]="match"> </match>
-              }
-              }
-            </tbody>
-          </table>
-        </div>
+            }
+            }
+          </tbody>
+        </table>
       </div>
-      } @empty {
-      <div>
-        <div class="empty-data">
-          There is no information available
-        </div>
+    </div>
+    } @empty {
+    <div>
+      <div class="empty-data">
+        There is no information available
       </div>
-      }
-    </cdk-virtual-scroll-viewport>
-  </div>
+    </div>
+    }
+  </cdk-virtual-scroll-viewport>
 </ng-template>
