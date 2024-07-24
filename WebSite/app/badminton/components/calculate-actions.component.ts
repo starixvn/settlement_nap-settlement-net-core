@@ -126,6 +126,7 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
     this.autoFillScoreOnLoad(this.match.resultDetails);
     this.generateOutsideTotalPoints();
     this.checkChildrenMatchesConsistent();
+    this.autoInputDirectly();
   }
 
   get noTotalPoints(): ResultDetail[] {
@@ -155,6 +156,19 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
 
   get sportType() {
     return this.match.matchDetail.sportType;
+  }
+
+  private autoInputDirectly() {
+    if(this.disableScoreDirect) {
+      return;
+    }
+    const {matchId, sportType} = this.match.matchDetail;
+   
+    if(matchId !== 0 && sportType === SportType.tableTennis) {
+      this.match.isScoreDirect = true;
+      this.changeInputDirectly();
+    }
+
   }
 
   private resetHomeAway(resultDetails: ResultDetail[]) {
