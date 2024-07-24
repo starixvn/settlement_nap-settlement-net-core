@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Settlement.ResourceInfos\Settlement.ResourceInfos.csproj" />
+    <ProjectReference Include="..\..\Sources\Settlement.ResourceInfos\Settlement.ResourceInfos.csproj" />
   </ItemGroup>
 
 </Project>

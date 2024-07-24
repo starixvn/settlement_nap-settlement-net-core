@@ -61,7 +61,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Settlement.Outright", "Sour
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Settlement.Sportsbook.Outright.UnitTests", "Tests\Settlement.Sportsbook.Outright.UnitTests\Settlement.Sportsbook.Outright.UnitTests.csproj", "{D03DAB46-E71A-416F-8FB7-8FDA1DE7FDB2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Settlement.ResourceInfos.UnitTests", "Sources\Settlement.BettypeName.UnitTests\Settlement.ResourceInfos.UnitTests.csproj", "{19017E97-C7D1-412E-A344-45BAF1234FB1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Settlement.ResourceInfos.UnitTests", "Tests\Settlement.ResourceInfos.UnitTests\Settlement.ResourceInfos.UnitTests.csproj", "{19017E97-C7D1-412E-A344-45BAF1234FB1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Settlement.ResourceInfos", "Sources\Settlement.ResourceInfos\Settlement.ResourceInfos.csproj", "{D6263B49-48B4-42CB-A578-C433937D732D}"
 EndProject
