@@ -14,6 +14,7 @@ COPY ./Sources/Settlement.Gaming/*.csproj ./Sources/Settlement.Gaming/
 COPY ./Sources/Settlement.ThirdPartyProducts/*.csproj ./Sources/Settlement.ThirdPartyProducts/
 COPY ./Sources/Settlement.Setting/*.csproj ./Sources/Settlement.Setting/
 COPY ./Sources/Settlement.Outright/*.csproj ./Sources/Settlement.Outright/
+COPY ./Sources/Fanex.Settlement.ScaleOut/*.csproj ./Sources/Fanex.Settlement.ScaleOut/
 COPY ./WebSite/Settlement.WebSites.csproj  ./WebSite/
 
 RUN dotnet nuget add source https://nuget.nexdev.net/api/v2
