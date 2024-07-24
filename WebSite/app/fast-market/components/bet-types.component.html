@@ -71,7 +71,7 @@
           </td>
         </tr>
         <tr
-          *ngFor="let event of fastMarkets.eventCounters | intervalFilter:selectedInterval| specialTimeEventCounterFilter:specialTimeFilter"
+          *ngFor="let event of fastMarkets.eventCounters | specialTimeEventCounterFilter:specialTimeFilter | intervalFilter:selectedInterval"
           [hidden]="fastMarkets.eventCounterCollapsed" [ngClass]="{'bg-auto-settle-running': event.hasBackground}">
           <td>{{event.positionName}}</td>
           <td></td>
@@ -134,10 +134,10 @@
                 [disabled]="bettype.collapsed" />
             </td>
           </tr>
-          <tr *ngFor="let item of bettype.fastMarketResults
+          <tr *ngFor="let item of bettype.fastMarketResults | specialTimeFilter:specialTimeFilter
                         | resultStatusFilter:selectedResultStatus | ticketStatusFilter:selectedTicketStatus
-                        | intervalFilter:selectedInterval | specialTimeFilter:specialTimeFilter; let j = index;"
-            [hidden]="bettype.collapsed" [ngClass]="{'bg-auto-settle-running': item.hasBackground,'result':1}">
+                        | intervalFilter:selectedInterval; let j = index;" [hidden]="bettype.collapsed"
+            [ngClass]="{'bg-auto-settle-running': item.hasBackground,'result':1}">
             <td>{{item.positionName}}</td>
             <td [ngClass]="ticketStatusBackground(item.ticketStatusName)">{{item.ticketStatusName}}</td>
             <td>

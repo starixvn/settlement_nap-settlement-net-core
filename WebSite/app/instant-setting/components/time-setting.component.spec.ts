@@ -144,16 +144,5 @@ describe('TimeSettingComponent', () => {
 
         expect(component.errorMessage).toEqual(errorMessage);
       }));
-
-      it('should alert when input time is out of range', () => {
-        component.time = 0;
-        jest.spyOn(messageBoxService, 'alert');
-
-        component.proceed();
-        const expectedMessage = Language.InstantSetting.InvalidTimeSetting;
-
-        expect(component.warningDialogMessage.message).toEqual(expectedMessage);
-        expect(messageBoxService.alert).toHaveBeenCalled();
-      });
     });
 });

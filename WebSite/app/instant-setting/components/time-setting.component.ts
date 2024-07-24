@@ -10,10 +10,11 @@ import { AutoType } from '../constants/auto-type';
 import { OnlyIntegerDirective } from '../../shared/directives';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { ZeroFallbackDirective } from '../../shared/directives/zero-fall-back.directive.native';
 @Component({
     selector: 'time-setting',
     templateUrl: './time-setting.component.html',
-    imports: [OnlyIntegerDirective, FormsModule, CommonModule],
+    imports: [ZeroFallbackDirective, OnlyIntegerDirective, FormsModule, CommonModule],
     providers: [RequestService],
     standalone: true,
 })
@@ -49,28 +50,11 @@ export class TimeSettingComponent implements OnInit {
         this.autoType = _.isEmpty(autoTypeByUrl) ? this.getAutoType() : Number(autoTypeByUrl);
     }
 
-    proceed() {
-        if (this.verifyTimeSetting()) {
-            this.confirmProceed();
-        }
-    }
-
     cancel() {
         this.messageBoxService.closePopupNotChanged();
     }
 
-    private verifyTimeSetting() {
-        const minTime = 1;
-        if (this.time < minTime) {
-            this.warningDialogMessage.message = Language.InstantSetting.InvalidTimeSetting;
-            this.messageBoxService.alert(this.warningDialogMessage);
-            return false;
-        }
-
-        return true;
-    }
-
-    private confirmProceed() {
+     proceed() {
         this.confirmationDialogMessage.message = Language.InstantSetting.ConfirmMessageSetting;
         this.messageBoxService.confirm(this.confirmationDialogMessage, async () => {
             await this.updateRefundTime();

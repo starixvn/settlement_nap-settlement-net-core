@@ -5,18 +5,19 @@
 	</div>
 	<div *ngIf="pageType === 'InstantTime'; else DirectTime">
 		<p>Please input new value of waiting-time setting for Auto Instant Calculation on this League</p>
-		<div>New waiting-time setting: <input type="text" [(ngModel)]="time" myOnlyInteger maxlength="4" /> seconds</div>
+		<div>New waiting-time setting: <input type="text" [(ngModel)]="time" zeroFallback myOnlyInteger maxlength="4" />
+			seconds</div>
 	</div>
 	<ng-template #DirectTime>
 		<div class="waiting-time">
 			<p>Please input new waiting-time values for this League</p>
 			<div [ngStyle]="{'display': 'flex'}">
 				<span class="title">Direct Payout: </span>
-				<input type="text" [(ngModel)]="time" myOnlyInteger maxlength="4" />&nbsp; seconds
+				<input type="text" [(ngModel)]="time" zeroFallback myOnlyInteger maxlength="4" />&nbsp; seconds
 			</div>
 			<div [ngStyle]="{'display': 'flex'}">
 				<span class="title">Auto Refund: </span>
-				<input type="text" [(ngModel)]="refundWaitingTime" myOnlyInteger maxlength="3" />&nbsp;seconds
+				<input type="text" zeroFallback myOnlyInteger [(ngModel)]="refundWaitingTime" maxlength="3" />&nbsp;seconds
 			</div>
 		</div>
 	</ng-template>

@@ -52,6 +52,7 @@ import { InputOuScoreComponent } from "./components/input-ou-score/input-ou-scor
     OnlyIntegerDirective,
     NoopAnimationsModule,
     NewMultipleSelectComponent,
+    ModalDialogComponent,
   ],
   declarations: [
     AppComponent,
@@ -61,7 +62,6 @@ import { InputOuScoreComponent } from "./components/input-ou-score/input-ou-scor
     ResultStatusPipe,
     TicketStatusPipe,
     IntervalPipe,
-    ModalDialogComponent,
     FocusDirective,
     SpecialSessionComponent,
     SpecialTimePipe,

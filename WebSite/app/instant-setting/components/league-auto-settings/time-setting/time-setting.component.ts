@@ -18,7 +18,7 @@ import { OnlyIntegerDirective } from '../../../../shared/directives';
 	<ul>
 		<li>
 			<label>Waiting-time:&nbsp;</label>
-			<input style="width: 40px;" type="text" ZeroFallback myOnlyInteger maxLength="4" (ngModelChange)="changeWaiting($event)" [ngModel]="waitingTime()" />
+			<input style="width: 40px;" type="text" zeroFallback myOnlyInteger [maxLength]="directSetting() ? 4 : 3" (ngModelChange)="changeWaiting($event)" [ngModel]="waitingTime()" />
 			<label>&nbsp;seconds. </label>
 		</li>
 	</ul>
