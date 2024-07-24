@@ -31,8 +31,6 @@ public interface NewInfoMatchService
 
     bool IsExistsConfirmedEarly(MultiSportMatch match);
 
-    bool IsExistsConfirmedOSEarly(MultiSportMatch match);
-
     Task<List<T>> GetAutoSetting<T>(List<T> matches) where T : BaseMatch;
 }
 
@@ -162,11 +160,6 @@ public class NewInfoMatchServiceImp(
     public bool IsExistsConfirmedEarly(MultiSportMatch match)
     {
         return siteMatchService.IsExistsConfirmedEarly(match);
-    }
-
-    public bool IsExistsConfirmedOSEarly(MultiSportMatch match)
-    {
-        return siteMatchService.IsExistsConfirmedOSEarly(match);
     }
 
     public async Task<List<T>> GetAutoSetting<T>(List<T> matches) where T : BaseMatch

@@ -96,8 +96,8 @@ public class MultiSportMatchWaiting
     [Key("exFullTimeScore")]
     public string ExFullTimeScore { get; set; }
 
-    [Key("isExistsConfirmedEarly")]
-    public bool IsExistsConfirmedEarly { get; set; }
+    //[Key("isExistsConfirmedEarly")]
+    //public bool IsExistsConfirmedEarly { get; set; }
 
     [Key("isNotConsistentExHtScore")]
     public bool IsNotConsistentExHtScore { get; set; }
