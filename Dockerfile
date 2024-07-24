@@ -19,7 +19,7 @@ COPY ./WebSite/Settlement.WebSites.csproj  ./WebSite/
 
 RUN dotnet nuget add source https://nuget.nexdev.net/api/v2
 RUN --mount=type=cache,target=/root/.nuget/packages \ 
-	dotnet restore -r linux-x64 WebSite/Settlement.WebSites.csproj 
+	dotnet restore -v n -r linux-x64 WebSite/Settlement.WebSites.csproj 
 
 COPY ./Sources/. ./Sources
 COPY ./WebSite/. ./WebSite
