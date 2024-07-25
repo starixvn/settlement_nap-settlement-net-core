@@ -65,6 +65,9 @@ public class Match : BaseMatch
     [IgnoreMember]
     public int ConfirmFT { get; set; }
 
+    [IgnoreMember]
+    public int ParentId { get; set; }
+
     public override bool Equals(object obj)
     {
         return obj is Match match && match.MatchId == MatchId;

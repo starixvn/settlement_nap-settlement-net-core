@@ -132,6 +132,7 @@ public class MultiSportServiceImp(
             SportType = x.SportType,
             ConfirmFT = x.ConfirmFT,
             ConfirmHT = x.ConfirmHT,
+            ParentId = x.ParentId
         });
 
         var matchesOverStatus = matchTuple.MatchOverStatuses;
