@@ -40,8 +40,8 @@ export class HalfTimeFullTimeCalculationComponent implements SportTemplate {
   public hasHalfTime = false;
   public applyHedgeMatch: boolean;
   public hedgeMatchDetail: HedgeMatchDetail;
-  private halfTimeOriginal: ResultDetail;
-  private fullTimeOriginal: ResultDetail;
+  public halfTimeOriginal: ResultDetail;
+  public fullTimeOriginal: ResultDetail;
 
   constructor(private readonly requestService: RequestService,
     private readonly verificationService: VerificationService,
@@ -196,22 +196,41 @@ export class HalfTimeFullTimeCalculationComponent implements SportTemplate {
     if (this.clickCalcHalfTime) {
       return this.halfTimeNode;
     }
+    
     return 0;
   }
 
   public isErrorOnVerification(resultDetail: ResultDetail, score: string) {
     if (_.isEqual(resultDetail.resourceId, ResourcesIds.halfTime)) {
-      return this.clickCalcHalfTime && _.isEmpty(score);
+      return this.isErrorOnHalfTimeVerification(score);
     }
+
     if (_.isEqual(resultDetail.resourceId, ResourcesIds.fullTime)) {
-      return this.clickCalcFullTime && _.isEmpty(score);
+      return this.isErrorOnFullTimeVerification(score);
     }
+
     if (_.isEqual(resultDetail.resourceId, ResourcesIds.ot)) {
-      return this.clickCalcFullTime && _.isEmpty(score) && (!_.isEmpty(resultDetail.homeValue) || !_.isEmpty(resultDetail.awayValue));
+      return this.isErrorOnOTVerification(resultDetail, score);
     }
+    
+    return this.isErrorOnOtherResultDetailVerification(resultDetail, score);
+  }
+
+  private isErrorOnHalfTimeVerification(score: string) {
+    return this.clickCalcHalfTime && _.isEmpty(score);
+  }
+  
+  private isErrorOnFullTimeVerification(score: string) {
+    return this.clickCalcFullTime && _.isEmpty(score);
+  }
+
+  private isErrorOnOTVerification(resultDetail: ResultDetail, score: string) {
+    return this.isErrorOnFullTimeVerification(score) && (!_.isEmpty(resultDetail.homeValue) || !_.isEmpty(resultDetail.awayValue));
+  }
+
+  private isErrorOnOtherResultDetailVerification(resultDetail: ResultDetail, score: string) {
     const index = this.resultWithoutOverTime.indexOf(resultDetail);
     return !(this.isScoreDirect || index < 0 || index >= this.numberNodeChecking()) && _.isEmpty(score);
-
   }
 
   public isFinalScoreDisabled(resourceId: string) {

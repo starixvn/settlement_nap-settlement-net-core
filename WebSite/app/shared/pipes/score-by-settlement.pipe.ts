@@ -7,7 +7,7 @@ import { Language } from '../language.native';
     standalone: true
 })
 export class ScoreBySettlementPipe implements PipeTransform {
-    private refundSymbolMap: Record<number, string> = {
+    private readonly refundSymbolMap: Record<number, string> = {
         [SettlementStatusId.RefundHalfTime]: Language.RefundSymbol.HalfTime,
         [SettlementStatusId.RefundFullTime]: Language.RefundSymbol.FullTime,
         [SettlementStatusId.Refund]: Language.RefundSymbol.All,

@@ -54,13 +54,12 @@ export class VerifyActionService {
     if (this.verifyScoreGoalService.verifyScoreForChildMatch(matchDetail, selectedChildMatches)) {
       return Language.soccer.childMatchesErrorMessage;
     }
-    if (this.verifyScoreGoalService.isRefundHalfTime(matchDetail)
-      && this.verifyScoreGoalService.goalRecordExistSemicolon(matchDetail)) {
+
+    if (this.isRefundHalfTimeAndHasSemicolon(matchDetail)) {
       matchDetail.isWarningGoalRecord = true;
       return Language.soccer.noNeedSemicolonOnGoalRecord;
     }
-    if (!this.verifyScoreGoalService.isRefundHalfTime(matchDetail)
-      && this.verifyScoreGoalService.goalRecordNotExistSemicolon(matchDetail)) {
+    if (this.isNotRefundHalfTimeAndHasNotSemicolon(matchDetail)) {
       matchDetail.isWarningGoalRecord = true;
       return Language.soccer.needSemicolonOnGoalRecord;
     }
@@ -76,11 +75,23 @@ export class VerifyActionService {
       return Language.soccer.incorrectHalftimeAndFullTimeScore;
     }
 
-    if (matchDetail.isFantasyMatch && this.isFullTimeRelatedMatchesNotCalc(relatedMatches)) {
+    if (this.isFantasyMatchAndRelatedMatches(matchDetail,relatedMatches)) {
       return Language.fantasyMatch.relatedMatchesNotCalc;
     }
     return this.checkNewStatus(matchDetail, CalculateAction.calculateFullTime);
 
+  }
+
+  private isNotRefundHalfTimeAndHasNotSemicolon(matchDetail: MatchDetail) {
+    return !this.verifyScoreGoalService.isRefundHalfTime(matchDetail) && this.verifyScoreGoalService.goalRecordNotExistSemicolon(matchDetail)
+  }
+
+  private isRefundHalfTimeAndHasSemicolon(matchDetail: MatchDetail) {
+   return this.verifyScoreGoalService.isRefundHalfTime(matchDetail) && this.verifyScoreGoalService.goalRecordExistSemicolon(matchDetail)
+  }
+
+  private isFantasyMatchAndRelatedMatches(matchDetail: MatchDetail, relatedMatches: FantasyRelatedMatch[]) {
+    return matchDetail.isFantasyMatch && this.isFullTimeRelatedMatchesNotCalc(relatedMatches);
   }
 
   private isFullTimeRelatedMatchesNotCalc(relatedMatches: FantasyRelatedMatch[] = []) {

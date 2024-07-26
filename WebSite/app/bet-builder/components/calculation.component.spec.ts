@@ -1,7 +1,6 @@
 ﻿import { TestBed, waitForAsync, ComponentFixture } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { NgbModalRef, NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { CalculationComponent } from '.';

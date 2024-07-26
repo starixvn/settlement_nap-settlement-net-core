@@ -1,7 +1,11 @@
-import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ResourceHeaderPipe, ScorePipe } from '../../pipes';
-import { ModalContentDialogComponent, ModalDialogComponent, NotReadyMatchComponent, ResettleCheckerComponent, TicketCountComponent } from '../../../shared/components';
-
+import { ModalContentDialogComponent } from '../../../shared/components/modal-dialog/modal-content-dialog.component';
+import { ModalDialogComponent } from '../../../shared/components/modal-dialog/modal-dialog.component';
+import { ResettleCheckerComponent } from '../../../shared/components/resettle-checker/resettle-checker.component';
+import { TicketCountComponent } from '../../../shared/components/ticket-count/ticket-count.component';
+import { NotReadyMatchComponent } from '../../../shared/components/not-ready-match/not-ready-match.component';
 import { HalfTimeFullTimeCalculationComponent } from './halftime-fulltime-calculation.component';
 import { HttpClientModule } from '@angular/common/http';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -10,7 +14,6 @@ import { RequestService } from '../../services/request.service';
 import { BlockUIService, HttpRequestService, MessageBoxService } from '../../../shared/services';
 import { HalfTimeFullTimeService } from './halftime-fulltime.service';
 import { VerificationService } from './verification.service';
-import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { ToastContainerDirective, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 import { Match, MatchDetail, OtherSportsMatch, Permission, QueryMatch } from '../../models';
 import { ResultDetail } from '../../../shared/models/sportsbook-sop/result-detail.model';
@@ -18,6 +21,7 @@ import { ResourcesIds } from '../../constants';
 import { HedgeMatchDetail } from '../../../shared/models/sportsbook-sop/hedge-match-detail.model';
 import { of } from 'rxjs';
 import { Language } from '../../../shared/language.native';
+import { debug } from 'console';
 
 describe('HalfTimeFullTimeCalculationComponent', () => {
   let component: HalfTimeFullTimeCalculationComponent;
@@ -29,10 +33,13 @@ describe('HalfTimeFullTimeCalculationComponent', () => {
   let messageBoxService: MessageBoxService;
 
   const matchDetail = new MatchDetail();
+  matchDetail.exFTHomeScore = 1;
   const halfTime = new ResultDetail();
   halfTime.resourceId = ResourcesIds.halfTime;
+
   const fullTime = new ResultDetail();
   fullTime.resourceId = ResourcesIds.fullTime;
+
   const match: Match = {
     matchDetail,
     resultDetails: [halfTime, fullTime],
@@ -50,26 +57,33 @@ describe('HalfTimeFullTimeCalculationComponent', () => {
     errCode: 0,
     errMsg: null,
     isSuccessful: true,
+    childMatchIds: '',
+    settledSessionId: "",
+    hasResultAmendment: false
   };
   const unSuccessfulResult = {
     errCode: 1,
     errMsg: errorMessage,
     isSuccessful: false,
+    childMatchIds: '',
+    settledSessionId: "",
+    hasResultAmendment: false
   };
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
       declarations: [
         HalfTimeFullTimeCalculationComponent,
-        ModalDialogComponent,
-        ModalContentDialogComponent,
-        TicketCountComponent,
-        ResettleCheckerComponent,
-        NotReadyMatchComponent,
         ScorePipe,
         ResourceHeaderPipe
       ],
       imports: [
+        ModalContentDialogComponent,
+        ModalDialogComponent,
+        TicketCountComponent,
+        ResettleCheckerComponent,
+        NotReadyMatchComponent,
+        NoopAnimationsModule,
         HttpClientModule,
         NgbModule,
         FormsModule,
@@ -89,7 +103,7 @@ describe('HalfTimeFullTimeCalculationComponent', () => {
       ]
     })
       .compileComponents();
-  });
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(HalfTimeFullTimeCalculationComponent);
@@ -106,17 +120,17 @@ describe('HalfTimeFullTimeCalculationComponent', () => {
     expect(component).toBeTruthy();
   });
   it('getMatch - Always call function get match and all function related', fakeAsync(() => {
-    spyOn(requestService, 'getMatch').and.returnValue(of(otherSportsMatch));
-    spyOn(halfTimeFullTimeService, 'processScore');
-    spyOn(halfTimeFullTimeService, 'isReadyMatch');
-    spyOn(halfTimeFullTimeService, 'numberSetOnHalfTime');
-    spyOn(halfTimeFullTimeService, 'sumScore');
-    spyOn(halfTimeFullTimeService, 'autoFillOnload');
-    spyOn(verificationService, 'isScoreHTInconsistent');
-    spyOn(verificationService, 'isScoreFTInconsistent');
-    spyOn(verificationService, 'isScoreMismatched');
-    spyOn(halfTimeFullTimeService, 'fullTimeConfirmed');
-    spyOn(halfTimeFullTimeService, 'halfTimeConfirmed');
+    jest.spyOn(requestService, 'getMatch').mockReturnValue(Promise.resolve(otherSportsMatch));
+    jest.spyOn(halfTimeFullTimeService, 'processScore');
+    jest.spyOn(halfTimeFullTimeService, 'isReadyMatch');
+    jest.spyOn(halfTimeFullTimeService, 'numberSetOnHalfTime');
+    jest.spyOn(halfTimeFullTimeService, 'sumScore');
+    jest.spyOn(halfTimeFullTimeService, 'autoFillOnload');
+    jest.spyOn(verificationService, 'isScoreHTInconsistent');
+    jest.spyOn(verificationService, 'isScoreFTInconsistent');
+    jest.spyOn(verificationService, 'isScoreMismatched');
+    jest.spyOn(halfTimeFullTimeService, 'fullTimeConfirmed');
+    jest.spyOn(halfTimeFullTimeService, 'halfTimeConfirmed');
     const query = new QueryMatch(1, false);
 
     component.getMatch(1);
@@ -159,14 +173,18 @@ describe('HalfTimeFullTimeCalculationComponent', () => {
   it('should clear error, clear score of sets and call function related', () => {
     component.matchDetail = matchDetail;
     const resultDetail = new ResultDetail();
-    resultDetail.resourceId = "1";
+    resultDetail.resourceId = ResourcesIds.fullTime;
     resultDetail.homeValue = "2";
+    resultDetail.awayValue = "0";
     component.originalResultDetail = [resultDetail];
     component.isScoreDirect = true;
-    spyOn(toastrService, 'clear');
-    spyOn(verificationService, 'isScoreFTInconsistent');
-    spyOn(halfTimeFullTimeService, 'sumScore');
-    spyOn(verificationService, 'isScoreMismatched');
+    component.fullTimeOriginal = fullTime;
+    component.halfTimeOriginal = halfTime;
+
+    jest.spyOn(toastrService, 'clear');
+    jest.spyOn(verificationService, 'isScoreFTInconsistent');
+    jest.spyOn(halfTimeFullTimeService, 'sumScore');
+    jest.spyOn(verificationService, 'isScoreMismatched');
 
     component.changeInputDirectly();
 
@@ -174,14 +192,14 @@ describe('HalfTimeFullTimeCalculationComponent', () => {
     expect(verificationService.isScoreFTInconsistent).toHaveBeenCalled();
     expect(toastrService.clear).toHaveBeenCalled();
     expect(verificationService.isScoreMismatched).toHaveBeenCalled();
-    expect(component.resultDetails[0].homeValue).toBe("");
-    expect(component.resultDetails[0].awayValue).toBe("");
+    expect(component.resultDetails[0].homeValue).toBe("2");
+    expect(component.resultDetails[0].awayValue).toBe("0");
   });
 
   describe('actionCopyScore', () => {
     it('should always clear error', () => {
       component.isScoreDirect = false;
-      spyOn(toastrService, 'clear');
+      jest.spyOn(toastrService, 'clear');
 
       component.actionCopyScore();
 
@@ -192,7 +210,7 @@ describe('HalfTimeFullTimeCalculationComponent', () => {
       component.isScoreDirect = true;
       component.matchDetail = matchDetail;
       component.matchDetail.isFullTimeSettled = true;
-      spyOn(toastrService, 'error');
+      jest.spyOn(toastrService, 'error');
 
       component.actionCopyScore();
 
@@ -204,7 +222,7 @@ describe('HalfTimeFullTimeCalculationComponent', () => {
       component.matchDetail = matchDetail;
       component.matchDetail.isFullTimeSettled = false;
       component.matchDetail.isHalfTimeSettled = true;
-      spyOn(toastrService, 'error');
+      jest.spyOn(toastrService, 'error');
 
       component.actionCopyScore();
 
@@ -220,7 +238,7 @@ describe('HalfTimeFullTimeCalculationComponent', () => {
       matchDetail.externalSourceName = "abc"
       component.matchDetail = matchDetail;
       component.resultDetails = [fullTime];
-      spyOn(halfTimeFullTimeService, 'copyScore');
+      jest.spyOn(halfTimeFullTimeService, 'copyScore');
 
       component.actionCopyScore();
 
@@ -234,7 +252,7 @@ describe('HalfTimeFullTimeCalculationComponent', () => {
       matchDetail.isHalfTimeSettled = false;
       matchDetail.isFullTimeSettled = false;
       component.matchDetail = matchDetail;
-      spyOn(toastrService, 'error');
+      jest.spyOn(toastrService, 'error');
 
       component.actionCopyScore();
 
@@ -250,7 +268,7 @@ describe('HalfTimeFullTimeCalculationComponent', () => {
       matchDetail.isFullTimeSettled = false;
       component.matchDetail = matchDetail;
       component.resultDetails = [fullTime];
-      spyOn(halfTimeFullTimeService, 'copyScore');
+      jest.spyOn(halfTimeFullTimeService, 'copyScore');
 
       component.actionCopyScore();
 
@@ -265,7 +283,7 @@ describe('HalfTimeFullTimeCalculationComponent', () => {
       matchDetail.isFullTimeSettled = false;
       component.matchDetail = matchDetail;
       component.resultDetails = [fullTime, halfTime];
-      spyOn(halfTimeFullTimeService, 'copyScore');
+      jest.spyOn(halfTimeFullTimeService, 'copyScore');
 
       component.actionCopyScore();
 
@@ -282,7 +300,7 @@ describe('HalfTimeFullTimeCalculationComponent', () => {
       matchDetail.isFullTimeSettled = false;
       component.matchDetail = matchDetail;
       component.resultDetails = [fullTime, halfTime];
-      spyOn(halfTimeFullTimeService, 'copyAllScore');
+      jest.spyOn(halfTimeFullTimeService, 'copyAllScore');
 
       component.actionCopyScore();
 
@@ -292,12 +310,15 @@ describe('HalfTimeFullTimeCalculationComponent', () => {
 
   it('checkConsistentScore - should call correct function of service', () => {
     const resultDetail = new ResultDetail();
+    resultDetail.homeValue = '1';
     resultDetail.awayValue = '1';
     component.hasHalfTime = true;
     component.matchDetail = matchDetail;
-    spyOn(halfTimeFullTimeService, 'sumScore').and.returnValue(resultDetail);
-    spyOn(verificationService, 'isScoreHTInconsistent');
-    spyOn(verificationService, 'isScoreFTInconsistent');
+    component.resultDetails = [halfTime, fullTime];
+
+    jest.spyOn(halfTimeFullTimeService, 'sumScore').mockReturnValue(resultDetail);
+    jest.spyOn(verificationService, 'isScoreHTInconsistent');
+    jest.spyOn(verificationService, 'isScoreFTInconsistent');
 
     component.checkConsistentScore();
 
@@ -407,9 +428,13 @@ describe('HalfTimeFullTimeCalculationComponent', () => {
     it('should check consistent when change score final', () => {
       component.isScoreDirect = true;
       component.matchDetail = matchDetail;
-      spyOn(halfTimeFullTimeService, 'sumScore');
-      spyOn(verificationService, 'isScoreFTInconsistent');
-      spyOn(verificationService, 'isScoreMismatched');
+      component.resultDetails = [fullTime, halfTime];
+      component.halfTimeOriginal = halfTime;
+      component.fullTimeOriginal = fullTime;
+
+      jest.spyOn(halfTimeFullTimeService, 'sumScore');
+      jest.spyOn(verificationService, 'isScoreFTInconsistent');
+      jest.spyOn(verificationService, 'isScoreMismatched');
 
       component.changeScore();
 
@@ -423,11 +448,13 @@ describe('HalfTimeFullTimeCalculationComponent', () => {
       const resultDetail = new ResultDetail();
       resultDetail.homeValue = "1";
       resultDetail.awayValue = "1";
+      resultDetail.resourceId =  ResourcesIds.fullTime;
+      component.fullTimeOriginal = fullTime;
       component.resultDetails = [fullTime];
       component.isScoreFTInconsistent = true;
-      spyOn(halfTimeFullTimeService, 'sumScore').and.returnValue(resultDetail);
-      spyOn(verificationService, 'isScoreMismatched');
-
+      jest.spyOn(halfTimeFullTimeService, 'sumScore').mockReturnValue(resultDetail);
+      jest.spyOn(verificationService, 'isScoreMismatched');
+   
       component.changeScore();
 
       expect(component.isScoreFTInconsistent).toBeFalsy();
@@ -455,9 +482,9 @@ describe('HalfTimeFullTimeCalculationComponent', () => {
   describe('calculateHalfTime', () => {
     it('should show error when score halfTime not valid', () => {
       component.matchDetail = matchDetail;
-      spyOn(toastrService, 'clear');
-      spyOn(toastrService, 'error');
-      spyOn(verificationService, 'verifyHalfTimeScore').and.returnValue(true);
+      jest.spyOn(toastrService, 'clear');
+      jest.spyOn(toastrService, 'error');
+      jest.spyOn(verificationService, 'verifyHalfTimeScore').mockReturnValue(true);
 
       component.calculateHalfTime();
 
@@ -469,8 +496,8 @@ describe('HalfTimeFullTimeCalculationComponent', () => {
     it('should show error when score halfTime inconsistent', () => {
       component.matchDetail = matchDetail;
       component.isScoreHTInconsistent = true;
-      spyOn(toastrService, 'error');
-      spyOn(verificationService, 'verifyHalfTimeScore').and.returnValue(false);
+      jest.spyOn(toastrService, 'error');
+      jest.spyOn(verificationService, 'verifyHalfTimeScore').mockReturnValue(false);
 
       component.calculateHalfTime();
 
@@ -482,10 +509,10 @@ describe('HalfTimeFullTimeCalculationComponent', () => {
       component.isScoreHTInconsistent = false;
       permission.isLeader = false;
       component.permission = permission;
-      spyOn(toastrService, 'error');
-      spyOn(verificationService, 'verifyHalfTimeScore').and.returnValue(false);
-      spyOn(verificationService, 'isSourceSufficient').and.returnValue(false);
-      spyOn(verificationService, 'isConsistent').and.returnValue(true);
+      jest.spyOn(toastrService, 'error');
+      jest.spyOn(verificationService, 'verifyHalfTimeScore').mockReturnValue(false);
+      jest.spyOn(verificationService, 'isSourceSufficient').mockReturnValue(false);
+      jest.spyOn(verificationService, 'isConsistent').mockReturnValue(true);
 
       component.calculateHalfTime();
 
@@ -497,10 +524,10 @@ describe('HalfTimeFullTimeCalculationComponent', () => {
       component.isScoreHTInconsistent = false;
       permission.isLeader = true;
       component.permission = permission;
-      spyOn(messageBoxService, 'confirm');
-      spyOn(verificationService, 'verifyHalfTimeScore').and.returnValue(false);
-      spyOn(verificationService, 'isSourceSufficient').and.returnValue(false);
-      spyOn(verificationService, 'isConsistent').and.returnValue(true);
+      jest.spyOn(messageBoxService, 'confirm');
+      jest.spyOn(verificationService, 'verifyHalfTimeScore').mockReturnValue(false);
+      jest.spyOn(verificationService, 'isSourceSufficient').mockReturnValue(false);
+      jest.spyOn(verificationService, 'isConsistent').mockReturnValue(true);
 
       component.calculateHalfTime();
 
@@ -510,10 +537,10 @@ describe('HalfTimeFullTimeCalculationComponent', () => {
     it('should show confirm when score changed ', fakeAsync(() => {
       component.matchDetail = matchDetail;
       component.isScoreHTInconsistent = false;
-      spyOn(verificationService, 'verifyHalfTimeScore').and.returnValue(false);
-      spyOn(verificationService, 'isSourceSufficient').and.returnValue(true);
-      spyOn(verificationService, 'isConsistent').and.returnValue(false);
-      spyOn(verificationService, 'VerifyChangedSettledTickets').and.returnValue(of(true));
+      jest.spyOn(verificationService, 'verifyHalfTimeScore').mockReturnValue(false);
+      jest.spyOn(verificationService, 'isSourceSufficient').mockReturnValue(true);
+      jest.spyOn(verificationService, 'isConsistent').mockReturnValue(false);
+      jest.spyOn(verificationService, 'VerifyChangedSettledTickets').mockReturnValue(Promise.resolve(true));
 
       component.calculateHalfTime();
       tick();
@@ -527,12 +554,12 @@ describe('HalfTimeFullTimeCalculationComponent', () => {
     it('should call api calc after pass all validation and two confirm box', fakeAsync(() => {
       component.matchDetail = matchDetail;
       component.isScoreHTInconsistent = false;
-      spyOn(verificationService, 'verifyHalfTimeScore').and.returnValue(false);
-      spyOn(verificationService, 'isSourceSufficient').and.returnValue(true);
-      spyOn(verificationService, 'isConsistent').and.returnValue(false);
-      spyOn(verificationService, 'VerifyChangedSettledTickets').and.returnValue(of(false));
-      spyOn(requestService, 'calculate').and.returnValue(of(successfulResult));
-      spyOn(messageBoxService, 'closePopup');
+      jest.spyOn(verificationService, 'verifyHalfTimeScore').mockReturnValue(false);
+      jest.spyOn(verificationService, 'isSourceSufficient').mockReturnValue(true);
+      jest.spyOn(verificationService, 'isConsistent').mockReturnValue(false);
+      jest.spyOn(verificationService, 'VerifyChangedSettledTickets').mockReturnValue(Promise.resolve(false));
+      jest.spyOn(requestService, 'sendRequest').mockReturnValue(Promise.resolve(successfulResult));
+      jest.spyOn(messageBoxService, 'closePopup');
 
       component.calculateHalfTime();
       tick();
@@ -543,19 +570,19 @@ describe('HalfTimeFullTimeCalculationComponent', () => {
       buttonYes.click();
       tick();
 
-      expect(requestService.calculate).toHaveBeenCalled();
+      expect(requestService.sendRequest).toHaveBeenCalled();
       expect(messageBoxService.closePopup).toHaveBeenCalled();
     }));
 
     it('should show error when calculate fail', fakeAsync(() => {
       component.matchDetail = matchDetail;
       component.isScoreHTInconsistent = false;
-      spyOn(verificationService, 'verifyHalfTimeScore').and.returnValue(false);
-      spyOn(verificationService, 'isSourceSufficient').and.returnValue(true);
-      spyOn(verificationService, 'isConsistent').and.returnValue(false);
-      spyOn(verificationService, 'VerifyChangedSettledTickets').and.returnValue(of(false));
-      spyOn(requestService, 'calculate').and.returnValue(of(unSuccessfulResult));
-      spyOn(toastrService, 'error');
+      jest.spyOn(verificationService, 'verifyHalfTimeScore').mockReturnValue(false);
+      jest.spyOn(verificationService, 'isSourceSufficient').mockReturnValue(true);
+      jest.spyOn(verificationService, 'isConsistent').mockReturnValue(false);
+      jest.spyOn(verificationService, 'VerifyChangedSettledTickets').mockReturnValue(Promise.resolve(false));
+      jest.spyOn(requestService, 'sendRequest').mockReturnValue(Promise.resolve(unSuccessfulResult));
+      jest.spyOn(toastrService, 'error');
 
       component.calculateHalfTime();
       tick();
@@ -564,9 +591,9 @@ describe('HalfTimeFullTimeCalculationComponent', () => {
       tick();
       buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
       buttonYes.click();
-      tick();
+      tick(6000);
 
-      expect(requestService.calculate).toHaveBeenCalled();
+      expect(requestService.sendRequest).toHaveBeenCalled();
       expect(toastrService.error).toHaveBeenCalledWith(unSuccessfulResult.errMsg);
     }));
   });
@@ -574,9 +601,9 @@ describe('HalfTimeFullTimeCalculationComponent', () => {
   describe('calculateFullTime', () => {
     it('should show error when score not valid', () => {
       component.matchDetail = matchDetail;
-      spyOn(toastrService, 'clear');
-      spyOn(toastrService, 'error');
-      spyOn(verificationService, 'verifyAllScore').and.returnValue(true);
+      jest.spyOn(toastrService, 'clear');
+      jest.spyOn(toastrService, 'error');
+      jest.spyOn(verificationService, 'verifyAllScore').mockReturnValue(true);
 
       component.calculateFullTime();
 
@@ -588,8 +615,8 @@ describe('HalfTimeFullTimeCalculationComponent', () => {
     it('should show error when score inconsistent', () => {
       component.matchDetail = matchDetail;
       component.isScoreFTInconsistent = true;
-      spyOn(toastrService, 'error');
-      spyOn(verificationService, 'verifyAllScore').and.returnValue(false);
+      jest.spyOn(toastrService, 'error');
+      jest.spyOn(verificationService, 'verifyAllScore').mockReturnValue(false);
 
       component.calculateFullTime();
 
@@ -600,9 +627,9 @@ describe('HalfTimeFullTimeCalculationComponent', () => {
   describe('calculateAll', () => {
     it('should show error when score not valid', () => {
       component.matchDetail = matchDetail;
-      spyOn(toastrService, 'clear');
-      spyOn(toastrService, 'error');
-      spyOn(verificationService, 'verifyAllScore').and.returnValue(true);
+      jest.spyOn(toastrService, 'clear');
+      jest.spyOn(toastrService, 'error');
+      jest.spyOn(verificationService, 'verifyAllScore').mockReturnValue(true);
 
       component.calculateAll();
 
@@ -614,8 +641,8 @@ describe('HalfTimeFullTimeCalculationComponent', () => {
     it('should show error when score inconsistent', () => {
       component.matchDetail = matchDetail;
       component.isScoreHTInconsistent = true;
-      spyOn(toastrService, 'error');
-      spyOn(verificationService, 'verifyAllScore').and.returnValue(false);
+      jest.spyOn(toastrService, 'error');
+      jest.spyOn(verificationService, 'verifyAllScore').mockReturnValue(false);
 
       component.calculateAll();
 
@@ -624,8 +651,8 @@ describe('HalfTimeFullTimeCalculationComponent', () => {
   });
   it('unCalculate - should call api calculate after pass 2 confirm box', fakeAsync(() => {
     component.matchDetail = matchDetail;
-    spyOn(requestService, 'calculate').and.returnValue(of(successfulResult));
-    spyOn(messageBoxService, 'closePopup');
+    jest.spyOn(requestService, 'sendRequest').mockReturnValue(Promise.resolve(successfulResult));
+    jest.spyOn(messageBoxService, 'closePopup');
 
     component.unCalculate();
     tick();
@@ -636,7 +663,7 @@ describe('HalfTimeFullTimeCalculationComponent', () => {
     buttonYes.click();
     tick();
 
-    expect(requestService.calculate).toHaveBeenCalled();
+    expect(requestService.sendRequest).toHaveBeenCalled();
     expect(messageBoxService.closePopup).toHaveBeenCalled();
   }));
 
@@ -645,8 +672,8 @@ describe('HalfTimeFullTimeCalculationComponent', () => {
       component.hasHalfTime = false;
       halfTime.className = "";
       component.resultDetails = [halfTime, fullTime];
-      spyOn(halfTimeFullTimeService, 'fullTimeConfirmed').and.returnValue(true);
-      spyOn(halfTimeFullTimeService, 'halfTimeConfirmed')
+      jest.spyOn(halfTimeFullTimeService, 'fullTimeConfirmed').mockReturnValue(true);
+      jest.spyOn(halfTimeFullTimeService, 'halfTimeConfirmed')
 
       component.getConfirmedBackground();
 
@@ -659,8 +686,8 @@ describe('HalfTimeFullTimeCalculationComponent', () => {
     it('call function check confirmed for both ht-ft when halftime exist', () =>{
       component.hasHalfTime = true;
       component.resultDetails = [halfTime, fullTime];
-      spyOn(halfTimeFullTimeService, 'fullTimeConfirmed').and.returnValue(true);
-      spyOn(halfTimeFullTimeService, 'halfTimeConfirmed').and.returnValue(false)
+      jest.spyOn(halfTimeFullTimeService, 'fullTimeConfirmed').mockReturnValue(true);
+      jest.spyOn(halfTimeFullTimeService, 'halfTimeConfirmed').mockReturnValue(false)
 
       component.getConfirmedBackground();
 

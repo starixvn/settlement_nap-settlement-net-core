@@ -1,49 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testExecutions version="1">
-  <file path="D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\happy5\components\refund.component.spec.ts">
-    <testCase name="Refund Component should create" duration="159"/>
-    <testCase name="Refund Component should call close function when click close popup" duration="35"/>
-    <testCase name="Refund Component refund should set error message when result is unsuccessful" duration="180"/>
-    <testCase name="Refund Component refund should not error message when result is successful" duration="66"/>
-    <testCase name="Refund Component should returns Red or Blue ball color with ball number" duration="28"/>
-  </file>
-  <file path="D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\happy5\components\recalculation.component.spec.ts">
-    <testCase name="Recalculation Component should create" duration="167"/>
-    <testCase name="Recalculation Component reCalculate should error message when list are existed numberBall empty" duration="69"/>
-    <testCase name="Recalculation Component reCalculate should error message when numberball is out of range" duration="46"/>
-    <testCase name="Recalculation Component reCalculate should error message when numberball is duplicated ball" duration="42"/>
-    <testCase name="Recalculation Component reCalculate should not error message when result is successful" duration="131"/>
-    <testCase name="Recalculation Component reCalculate should error message when result is unsuccessful" duration="80"/>
-    <testCase name="Recalculation Component isWarningOnBall should return &quot;true&quot; when input out of range number" duration="20"/>
-    <testCase name="Recalculation Component isWarningOnBall should return &quot;true&quot; when input acceptable number" duration="15"/>
-  </file>
-  <file path="D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\happy5\components\app.component.spec.ts">
-    <testCase name="Component: App should create the app" duration="221"/>
-    <testCase name="Component: App should call reCheckin function from re-checkin service." duration="33"/>
-    <testCase name="Component: App should return right input value" duration="20"/>
-    <testCase name="Component: App should return one value" duration="20"/>
-  </file>
-  <file path="D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\happy5\components\filter.component.spec.ts">
-    <testCase name="Happy 5 - Filter Component should create the app" duration="166"/>
-    <testCase name="Happy 5 - Filter Component should return fromDate and toDate as expected" duration="65"/>
-    <testCase name="Happy 5 - Filter Component ngOnChanges() should call search when have change" duration="33"/>
-    <testCase name="Happy 5 - Filter Component ngOnChanges() should not call when there are not change" duration="29"/>
-    <testCase name="Happy 5 - Filter Component should emit on click submit" duration="32"/>
-    <testCase name="Happy 5 - Filter Component change fromDate on date picker should enable button search when fromDate is less than or equal to toDate" duration="32"/>
-    <testCase name="Happy 5 - Filter Component change fromDate on date picker should disable button search when fromDate is greater than toDate" duration="68"/>
-    <testCase name="Happy 5 - Filter Component change toDate on date picker should enable button search when toDate is greater than fromDate" duration="24"/>
-    <testCase name="Happy 5 - Filter Component change toDate on date picker should disable button search when toDate less than fromDate" duration="24"/>
-  </file>
-  <file path="D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\happy5\components\matches.component.spec.ts">
-    <testCase name="Happy 5 - Matches Component should create the app" duration="168"/>
-    <testCase name="Happy 5 - Matches Component should returns leagues and permission not null" duration="19"/>
-    <testCase name="Happy 5 - Matches Component should returns true when have permission on Recal" duration="16"/>
-    <testCase name="Happy 5 - Matches Component should returns false when have not permission on Recal" duration="19"/>
-    <testCase name="Happy 5 - Matches Component should returns true when have permission on Refund" duration="32"/>
-    <testCase name="Happy 5 - Matches Component should returns false when have not permission on Refund" duration="31"/>
-    <testCase name="Happy 5 - Matches Component should returns Red or Blue ball color with ball number" duration="33"/>
-    <testCase name="Happy 5 - Matches Component should returns calculated background when match is completed" duration="30"/>
-    <testCase name="Happy 5 - Matches Component should returns refund background when match is refund" duration="14"/>
-    <testCase name="Happy 5 - Matches Component should returns true when match is completed" duration="16"/>
+  <file path="D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\other-sports\components\halftime-fulltime\halftime-fulltime-calculation.component.spec.ts">
+    <testCase name="HalfTimeFullTimeCalculationComponent should create" duration="141"/>
+    <testCase name="HalfTimeFullTimeCalculationComponent getMatch - Always call function get match and all function related" duration="38"/>
+    <testCase name="HalfTimeFullTimeCalculationComponent onResettleCheckboxChange - should change resettle status" duration="22"/>
+    <testCase name="HalfTimeFullTimeCalculationComponent externalSourceName should return external SourceName when exist" duration="25"/>
+    <testCase name="HalfTimeFullTimeCalculationComponent externalSourceName should return dash when not exist source name" duration="17"/>
+    <testCase name="HalfTimeFullTimeCalculationComponent should clear error, clear score of sets and call function related" duration="13"/>
+    <testCase name="HalfTimeFullTimeCalculationComponent actionCopyScore should always clear error" duration="16"/>
+    <testCase name="HalfTimeFullTimeCalculationComponent actionCopyScore should show error when full time is settled" duration="31"/>
+    <testCase name="HalfTimeFullTimeCalculationComponent actionCopyScore should show error when half time is settled and external Ft not exist" duration="21"/>
+    <testCase name="HalfTimeFullTimeCalculationComponent actionCopyScore should call func copy score for fulltime when half time is settled and external Ft exist" duration="71"/>
+    <testCase name="HalfTimeFullTimeCalculationComponent actionCopyScore should show error when final not settle and external score not exist" duration="19"/>
+    <testCase name="HalfTimeFullTimeCalculationComponent actionCopyScore should call func copy score for fulltime when final not settle and external score exist full time" duration="27"/>
+    <testCase name="HalfTimeFullTimeCalculationComponent actionCopyScore should call func copy score for fulltime when final not settle and external score exist half time" duration="19"/>
+    <testCase name="HalfTimeFullTimeCalculationComponent actionCopyScore should call func copy score for fulltime when final not settle and external score exist both halftime and fulltime" duration="15"/>
+    <testCase name="HalfTimeFullTimeCalculationComponent checkConsistentScore - should call correct function of service" duration="11"/>
+    <testCase name="HalfTimeFullTimeCalculationComponent getClass should return class include mismatched when result mismatch" duration="17"/>
+    <testCase name="HalfTimeFullTimeCalculationComponent getClass should return class include not-consistent when result not consistent" duration="14"/>
+    <testCase name="HalfTimeFullTimeCalculationComponent getClass should return empty or default class of result when result is normal" duration="15"/>
+    <testCase name="HalfTimeFullTimeCalculationComponent isErrorOnVerification should return true when result is half time and empty" duration="14"/>
+    <testCase name="HalfTimeFullTimeCalculationComponent isErrorOnVerification should return true when result is full time and empty" duration="15"/>
+    <testCase name="HalfTimeFullTimeCalculationComponent isErrorOnVerification should return true when result is one of Half time result  and empty" duration="14"/>
+    <testCase name="HalfTimeFullTimeCalculationComponent isFinalScoreDisabled return false when result is final and checked score direct" duration="14"/>
+    <testCase name="HalfTimeFullTimeCalculationComponent isFinalScoreDisabled return true when result is normal and checked score direct" duration="16"/>
+    <testCase name="HalfTimeFullTimeCalculationComponent changeScore should check consistent when change score final" duration="18"/>
+    <testCase name="HalfTimeFullTimeCalculationComponent changeScore should auto sum score set for final when change score" duration="14"/>
+    <testCase name="HalfTimeFullTimeCalculationComponent halftimeTicketStatusBackground - fullTimeTicketStatusBackground should return calculated background when status is calculated" duration="14"/>
+    <testCase name="HalfTimeFullTimeCalculationComponent halftimeTicketStatusBackground - fullTimeTicketStatusBackground should return marked background when status is marked" duration="16"/>
+    <testCase name="HalfTimeFullTimeCalculationComponent calculateHalfTime should show error when score halfTime not valid" duration="17"/>
+    <testCase name="HalfTimeFullTimeCalculationComponent calculateHalfTime should show error when score halfTime inconsistent" duration="15"/>
+    <testCase name="HalfTimeFullTimeCalculationComponent calculateHalfTime should show error when score Insufficient and user is member" duration="15"/>
+    <testCase name="HalfTimeFullTimeCalculationComponent calculateHalfTime should show confirm when score Insufficient and user is leader" duration="18"/>
+    <testCase name="HalfTimeFullTimeCalculationComponent calculateHalfTime should show confirm when score changed " duration="42"/>
+    <testCase name="HalfTimeFullTimeCalculationComponent calculateHalfTime should call api calc after pass all validation and two confirm box" duration="51"/>
+    <testCase name="HalfTimeFullTimeCalculationComponent calculateHalfTime should show error when calculate fail" duration="52"/>
+    <testCase name="HalfTimeFullTimeCalculationComponent calculateFullTime should show error when score not valid" duration="22"/>
+    <testCase name="HalfTimeFullTimeCalculationComponent calculateFullTime should show error when score inconsistent" duration="19"/>
+    <testCase name="HalfTimeFullTimeCalculationComponent calculateAll should show error when score not valid" duration="13"/>
+    <testCase name="HalfTimeFullTimeCalculationComponent calculateAll should show error when score inconsistent" duration="15"/>
+    <testCase name="HalfTimeFullTimeCalculationComponent unCalculate - should call api calculate after pass 2 confirm box" duration="39"/>
+    <testCase name="HalfTimeFullTimeCalculationComponent getConfirmedBackground always call function check confirmed with fulltime" duration="19"/>
+    <testCase name="HalfTimeFullTimeCalculationComponent getConfirmedBackground call function check confirmed for both ht-ft when halftime exist" duration="15"/>
   </file>
 </testExecutions>
