@@ -6,7 +6,7 @@ import { AioService,BlockUIService,MessageBoxService } from "../../../shared/ser
 import { Language } from "../../../shared/language.native";
 import * as _ from "lodash";
 import { KickOffTime, RefResultStatus } from "../../constants";
-import { SportTemplate } from "../../../shared/models/sportsbook-sop";
+import { SportTemplate } from "../../../shared/models/sportsbook-sop/sport-template.model";
 import { LeagueType, ResourceID } from "./constant";
 import { UrlHelper } from "../../../helper/url-helper";
 import { IntervalBackgroundPipe } from "../../../shared/pipes/interval-background.pipe";
@@ -42,7 +42,7 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
 
   public externalResult: ExternalResult | null = null;
   public providerResultDetails: ExternalResultDetail[] = [];
-  public externalSourceName: string = '-';
+  public externalSourceName = '-';
 
   public isReSettledTickets: boolean;
   private refResultStatus: number | null = null;

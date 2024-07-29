@@ -1,9 +1,8 @@
 import { Injectable } from "@angular/core";
 import { VerificationBaseService } from "../../../core/services/verification-base.service";
 import { ExternalResult, ExternalResultDetail, ResultDetail } from "../../../shared/models/sportsbook-sop";
-
 import * as _ from "lodash";
-import { LeagueType, ResourceID } from "./constant";
+import { ResourceID } from "./constant";
 import { ResultByTeamNamePipe } from "../../../shared/pipes/result-by-team-name.pipe";
 import { GeneralResultDetail } from "../../../shared/models";
 import { ResultStatusId, SettlementStatusId } from "../../../shared/constants";
@@ -193,26 +192,36 @@ export class ValidationService extends VerificationBaseService {
     });
   }
 
-  public verifyResultChanged(resultsChanged:ResultDetail[],confirmResults: ResultDetail[],providerResutls:ExternalResultDetail[]) {
+  public verifyResultChanged(resultsChanged:ResultDetail[], confirmResults: ResultDetail[], providerResults:ExternalResultDetail[]) {
     _.forEach(resultsChanged,currentResult => {
-      let notMatch = false;
-      const confirmResult = confirmResults.find(x => x.resourceId === currentResult.resourceId);
-      const providerResult = providerResutls.find(x => x.resourceId === currentResult.resourceId);
-
-      if(providerResult && confirmResult) {
-        notMatch = this.hasScore(providerResult) && this.hasScore(confirmResult) && this.isNotEqualResult(providerResult,confirmResult);
-      }
-
-      if(!notMatch && providerResult) {
-        notMatch = (!_.isEmpty(currentResult.homeValue) && !_.isEmpty(currentResult.awayValue)) && this.hasScore(providerResult) && this.isNotEqualResult(currentResult,providerResult);
-      }
-
-      if(!notMatch && confirmResult) {
-        notMatch =(!_.isEmpty(currentResult.homeValue) && !_.isEmpty(currentResult.awayValue)) && this.hasScore(confirmResult) && this.isNotEqualResult(currentResult,confirmResult);
-      }
-
-      currentResult.isScoreMismatched = notMatch;
+      const confirmResult = this.findConfirmResult(confirmResults, currentResult.resourceId);
+      const providerResult = this.findProviderResult(providerResults, currentResult.resourceId);
+      currentResult.isScoreMismatched = this.isScoreMismatched(currentResult, confirmResult, providerResult);
     });
+  }
+
+  private isScoreMismatched(currentResult: ResultDetail, confirmResult: ResultDetail, providerResult: ExternalResultDetail) {
+    if (providerResult && confirmResult) {
+      return this.hasScore(providerResult) && this.hasScore(confirmResult) && this.isNotEqualResult(providerResult, confirmResult);
+    }
+  
+    if (providerResult && !confirmResult) {
+      return (!_.isEmpty(currentResult.homeValue) && !_.isEmpty(currentResult.awayValue)) && this.hasScore(providerResult) && this.isNotEqualResult(currentResult, providerResult);
+    }
+  
+    if (!providerResult && confirmResult) {
+      return (!_.isEmpty(currentResult.homeValue) && !_.isEmpty(currentResult.awayValue)) && this.hasScore(confirmResult) && this.isNotEqualResult(currentResult, confirmResult);
+    }
+  
+    return false;
+  }
+
+  private findConfirmResult(confirmResults: ResultDetail[], currentResourceId: string) {
+    return confirmResults.find((x) => x.resourceId === currentResourceId);
+  }
+  
+  private findProviderResult(providerResults: ExternalResultDetail[], currentResourceId: string) {
+    return providerResults.find((x) => x.resourceId === currentResourceId);
   }
 
   private isNotEqualResult(result: GeneralResultDetail,otherResult: GeneralResultDetail) {
