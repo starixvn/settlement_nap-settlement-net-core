@@ -181,7 +181,7 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
   }
 
   public selectedOnLastMap(map: ResultDetail) {
-    this.totalPoints.checked = this.totalGames.checked;
+    this.totalPoints.checked = !this.match.isScoreDirect && this.totalGames.checked;
     const newFullTimeScore = this.verificationService.getNewFinalResource(this.noTotalPoints, ResourcesIds.totalGames, false)
 
     const confirmMessage = this.verificationService.verifyFinalResource(
@@ -212,12 +212,9 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
       this.toastrService.error(Language.confirmRefund.calculateResultNotConfirmed);
       return;
     }
-    const finalSelectedResult = this.match.isScoreDirect 
-      ? this.selectedResources.filter(item => _.isEqual(item.resourceId, ResourcesIds.totalGames))
-      : this.selectedResources;
 
-    if (this.verificationService.invalidInputScore(finalSelectedResult, this.match.isScoreDirect, ResourcesIds.totalGames)) {
-      
+    console.log(this.selectedResources);
+    if (this.verificationService.invalidInputScore(this.selectedResources, this.match.isScoreDirect, ResourcesIds.totalGames)) {  
       this.toastrService.error(this.isLeader ? Language.sop.leader.blankScore : Language.sop.nonLeader.blankScore);
       return;
     }
@@ -618,7 +615,7 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
       }
     });
     const totalPointsOutside = _.find(this.totalPoints.externalScores, (score) => score.sourceId === sourceId);
-    const totalGameOutside = _.find(this.totalGames.externalScores.slice(3), (score) => score.sourceId === sourceId);
+    const totalGameOutside = _.find(this.totalGames.externalScores.slice(this.maxProviderCol + 1), (score) => score.sourceId === sourceId);
     if (totalPointsOutside) {
       this.verificationService.sumTotalScores(outsideResults, ResourcesIds.GameOne, totalPointsOutside);
       this.verifyAndAutoFillScore(this.totalPoints, false);
