@@ -13,7 +13,7 @@ using System.Text;
 using System.Text.Json;
 using Match = Models.MultiSports.Match;
 
-using MatchFilterTuple = (List<Models.MultiSports.Match> Matches, List<Models.MultiSports.MatchOverStatus> MatchOverStatuses, List<Models.MultiSports.ParentChildMatchFilter> ParentChildMatchFilters);
+using MatchFilterTuple = (List<Models.MultiSports.Match> Matches, List<MatchOverStatus> MatchOverStatuses, List<ParentChildMatchFilter> ParentChildMatchFilters);
 
 public interface IMultiSportService
 {

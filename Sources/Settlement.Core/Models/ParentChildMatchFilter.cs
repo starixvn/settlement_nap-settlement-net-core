@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Settlement.EventManagement.Models.MultiSports;
+namespace Settlement.Core.Models;
 
 public class ParentChildMatchFilter
 {

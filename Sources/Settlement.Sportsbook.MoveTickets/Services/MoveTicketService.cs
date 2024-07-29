@@ -4,9 +4,7 @@ using Microsoft.Extensions.Options;
 using Settlement.Core.Constants;
 using Settlement.Core.Criteria;
 using Settlement.Core.Models;
-
 using Settlement.Core.Services;
-
 using Settlement.Sportsbook.MoveTickets.Criteria;
 using Settlement.Sportsbook.MoveTickets.Models;
 using Settlement.Sportsbook.MoveTickets.Requests;
@@ -176,19 +174,20 @@ public class MoveTicketServiceImp(
         return await repository.FetchAsync<SiteMatch>(criteria);
     }
 
-    private async Task<IEnumerable<SiteMatch>> GetOSTicketInfo(List<Match> matches)
+    private async Task<IEnumerable<SiteMatch>> GetOSTicketInfo(List<Match> matches, List<ParentChildMatchFilter> parentChildMatchFilters)
     {
         var matchesInfo = matches.Select(x => new MatchRequest
         {
             MatchId = x.MatchId,
             ChildMatchType = x.ChildMatchType,
             EventStatus = x.EventStatus,
-            SportType = x.SportType,
+            SportType = x.SportType
         });
 
         var criteria = new OSTicketInfoSelCriteria
         {
             MatchInfo = JsonSerializer.Serialize(matchesInfo),
+            ChildMatchInfo = parentChildMatchFilters.Any() ? JsonSerializer.Serialize(parentChildMatchFilters) : string.Empty,
         };
 
         return await GetTicketInfoAllDbSites(criteria);
@@ -214,8 +213,12 @@ public class MoveTicketServiceImp(
 
     private async Task<List<Match>> GetMatchesAllInfo(SportsbookCriteria criteria)
     {
-        var matches = (await repository.FetchAsync<Match>(criteria)).ToList();
-        var siteMatches = (await GetOSTicketInfo(matches)).ToList();
+        var result = await repository.FetchMultipleAsync<Match, MatchOverStatus, ParentChildMatchFilter>(criteria);
+
+        var matches = result.Item1.ToList();
+        var parentChildMatchFilters = result.Item3.ToList();
+
+        var siteMatches = (await GetOSTicketInfo(matches, parentChildMatchFilters)).ToList();
 
         SetMatchTicketInfo(matches, siteMatches);
 
