@@ -13,10 +13,10 @@
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="12.0.1" />
-    <PackageReference Include="Fanex.NAP.Client" Version="2.0.0" />
+    <PackageReference Include="AutoMapper" Version="13.0.1" />
+    <PackageReference Include="Fanex.NAP.Client" Version="2.0.0.1" />
     <PackageReference Include="Fanex.Settlement.Converter" Version="1.0.0.1" />
-    <PackageReference Include="MediatR" Version="12.2.0" />
+    <PackageReference Include="MediatR" Version="12.4.0" />
   </ItemGroup>
 
   <ItemGroup>

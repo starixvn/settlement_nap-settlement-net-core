@@ -184,7 +184,8 @@ export class AioService {
             bitArray[bitPosition] = resultDetail.checked && !_.isEmpty(resultDetail.homeValue) && !_.isEmpty(resultDetail.awayValue) ? 1 : 0;
         });
         
-        return parseInt(bitArray.reverse().join(''), 2);
+        const reversedBitArray = bitArray.toReversed();
+        return parseInt(reversedBitArray.join(''), 2);
     }
 
     private async confirmHedgeMatch(query: ResultSettingQuery, hedgeMatchDetail: HedgeMatchDetail) {

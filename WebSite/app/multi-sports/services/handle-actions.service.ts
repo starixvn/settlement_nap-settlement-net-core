@@ -45,11 +45,11 @@ export class HandleActionsService {
   public handleAutoInstantForMatch(leagueMatch: LeagueMatch, isAutoInstant: boolean) {
     leagueMatch.matches.forEach((item,index) => {
       const eventStatus = item.eventStatus.toLocaleLowerCase();
-      if (_.isEqual(eventStatus, EventStatus.running.toLocaleLowerCase()) || _.isEqual(eventStatus, EventStatus.closed.toLocaleLowerCase())) {
-        if(item.autoCalcSetting.isInstantForMatch !== isAutoInstant) {
-          item.autoCalcSetting.isInstantForMatch = isAutoInstant;
-          leagueMatch.matches[index]  = {...item};
-        }
+      if ((_.isEqual(eventStatus, EventStatus.running.toLocaleLowerCase()) ||
+          _.isEqual(eventStatus, EventStatus.closed.toLocaleLowerCase())) &&
+        item.autoCalcSetting.isInstantForMatch !== isAutoInstant) {
+        item.autoCalcSetting.isInstantForMatch = isAutoInstant;
+        leagueMatch.matches[index] = { ...item };
       }
     });
   }

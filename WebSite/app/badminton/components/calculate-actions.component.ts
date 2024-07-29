@@ -213,7 +213,6 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
       return;
     }
 
-    console.log(this.selectedResources);
     if (this.verificationService.invalidInputScore(this.selectedResources, this.match.isScoreDirect, ResourcesIds.totalGames)) {  
       this.toastrService.error(this.isLeader ? Language.sop.leader.blankScore : Language.sop.nonLeader.blankScore);
       return;

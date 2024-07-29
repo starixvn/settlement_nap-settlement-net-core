@@ -1,5 +1,4 @@
-﻿using AutoFixture.Kernel;
-using AutoMapper;
+﻿using AutoMapper;
 using Fanex.Data.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
@@ -11,7 +10,6 @@ using Settlement.Sportsbook.MoveTickets.Criteria;
 using Settlement.Sportsbook.MoveTickets.Models;
 using Settlement.Sportsbook.MoveTickets.Requests;
 using Settlement.Sportsbook.MoveTickets.Services.MultipleServer;
-using Xunit.Sdk;
 
 namespace Settlement.Sportsbook.MoveTickets.UnitTests.Services;
 
@@ -75,7 +73,7 @@ public class MoveTicketServiceTests
             CreateMatch(1, "Completed", true),
         };
 
-        repository.FetchAsync<Match>(Arg.Any<SportsbookCriteria>()).Returns(fakeMatches);
+        repository.FetchMultipleAsync<Match, MatchOverStatus, ParentChildMatchFilter>(Arg.Any<SportsbookCriteria>()).Returns((fakeMatches, [], []));
 
         repository.FetchAsync<ResultDetail>(Arg.Any<ICriteria>()).Returns(new List<ResultDetail> { resultDetail });
         repository.Fetch<ReferenceAction>(Arg.Any<ICriteria>()).Returns([]);

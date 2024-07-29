@@ -202,18 +202,30 @@ export class ValidationService extends VerificationBaseService {
 
   private isScoreMismatched(currentResult: ResultDetail, confirmResult: ResultDetail, providerResult: ExternalResultDetail) {
     if (providerResult && confirmResult) {
-      return this.hasScore(providerResult) && this.hasScore(confirmResult) && this.isNotEqualResult(providerResult, confirmResult);
+      return this.isProviderAndConfirmResult(confirmResult, providerResult);
     }
   
     if (providerResult && !confirmResult) {
-      return (!_.isEmpty(currentResult.homeValue) && !_.isEmpty(currentResult.awayValue)) && this.hasScore(providerResult) && this.isNotEqualResult(currentResult, providerResult);
+      return this.isProviderResult(currentResult, providerResult);
     }
   
     if (!providerResult && confirmResult) {
-      return (!_.isEmpty(currentResult.homeValue) && !_.isEmpty(currentResult.awayValue)) && this.hasScore(confirmResult) && this.isNotEqualResult(currentResult, confirmResult);
+      return this.isConfirmResult(currentResult, confirmResult);
     }
   
     return false;
+  }
+
+  private isConfirmResult(currentResult: ResultDetail, confirmResult: ResultDetail) {
+    return (!_.isEmpty(currentResult.homeValue) && !_.isEmpty(currentResult.awayValue)) && this.hasScore(confirmResult) && this.isNotEqualResult(currentResult, confirmResult);
+  }
+
+  private isProviderResult(currentResult: ResultDetail, providerResult: ExternalResultDetail) {
+    return (!_.isEmpty(currentResult.homeValue) && !_.isEmpty(currentResult.awayValue)) && this.hasScore(providerResult) && this.isNotEqualResult(currentResult, providerResult);
+  }
+
+  private isProviderAndConfirmResult(confirmResult: ResultDetail, providerResult: ExternalResultDetail) {
+    return this.hasScore(providerResult) && this.hasScore(confirmResult) && this.isNotEqualResult(providerResult, confirmResult);
   }
 
   private findConfirmResult(confirmResults: ResultDetail[], currentResourceId: string) {
