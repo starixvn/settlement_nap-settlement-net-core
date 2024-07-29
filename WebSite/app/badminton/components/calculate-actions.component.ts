@@ -162,9 +162,9 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
     if(this.disableScoreDirect) {
       return;
     }
-    const {matchId, sportType} = this.match.matchDetail;
+    const {parentId, sportType} = this.match.matchDetail;
    
-    if(matchId !== 0 && sportType === SportType.tableTennis) {
+    if(parentId !== 0 && sportType === SportType.tableTennis) {
       this.match.isScoreDirect = true;
       this.changeInputDirectly();
     }
