@@ -26,7 +26,7 @@ import { BehaviorSubject } from 'rxjs';
   templateUrl: './match.component.html',
   standalone: true,
   imports: [CommonModule, FormsModule, MatTooltipModule, PipesModule, NgbTooltip],
-  providers: [IntervalScorePipe],
+  providers: [IntervalScorePipe, MatchStateService],
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: [' :host { display: contents; } ']
 })

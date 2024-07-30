@@ -3,6 +3,7 @@ export class LeagueSettings {
   leagueName: string;
   autoSetting: number;
   waitingTime: number;
+  refundWaitingTime:number;
   retryTime: number;
   mainResultSettings: ResultSettings;
   earlyResultSettings: ResultSettings;

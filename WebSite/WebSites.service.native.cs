@@ -166,7 +166,6 @@ public static class WebSites
     public static void AddCoreServices(this IServiceCollection services)
     {
         services.AddScoped<IDynamicRepository, DynamicRepository>();
-        services.AddScoped<IRemotingRefService, RemotingRefService>();
         services.AddTransient<IRefDataService, RefDataService>();
         services.AddSingleton<PermissionService, PermissionServiceImp>();
         services.AddSingleton<XmlConvertService, XmlConvertServiceImp>();

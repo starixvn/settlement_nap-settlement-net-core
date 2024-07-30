@@ -1,12 +1,13 @@
-import { Directive, HostListener, ElementRef } from '@angular/core';
+import { Directive, HostListener, ElementRef, input } from '@angular/core';
+import { isNaN } from 'lodash';
 
 @Directive({
-  selector: '[ZeroFallback]',
+  selector: '[zeroFallback]',
   standalone: true
 })
 export class ZeroFallbackDirective {
 
-  constructor(private el: ElementRef<HTMLInputElement>) {}
+  constructor(private el: ElementRef<HTMLInputElement>) { }
 
   @HostListener('input', ['$event']) onInput(event: Event): void {
     const inputElement = this.el.nativeElement;
@@ -14,6 +15,11 @@ export class ZeroFallbackDirective {
 
     if (inputValue === '') {
       inputElement.value = '0';
+      inputElement.dispatchEvent(new Event('input'));
+    }
+
+    if (inputElement.value.length > 1 && inputElement.value.startsWith('0')) {
+      inputElement.value = (Number(inputElement.value)).toString();
       inputElement.dispatchEvent(new Event('input'));
     }
   }

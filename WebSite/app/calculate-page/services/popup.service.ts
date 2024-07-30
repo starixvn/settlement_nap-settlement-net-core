@@ -103,16 +103,19 @@ export class PopupService {
 
     public openUpdateTime(league: League, isInstant: boolean) {
         const time = isInstant ? league.instantWaitingTime : league.directWaitingTime;
+        const refundWaitingTime = league.refundWaitingTime ?? 0;
         const page = isInstant ? 'InstantTime' : 'DirectTime';
-        const src = `/apps/change-waiting-time?leagueId=${league.leagueId}&time=${time}&pageType=${page}`;
+        const src = `/apps/change-waiting-time?leagueId=${league.leagueId}&time=${time}&refundWaitingTime=${refundWaitingTime}&pageType=${page}`;
         const frameSrc = encodeURI(src);
         const dialogData = new DialogDataIframe(Language.payout.titlePopupForLeague, frameSrc);
         this.dialogBoxService.popupHasResponse(dialogData, '600px', '310px').subscribe(result => {
             if (!_.isUndefined(result)) {
+                const results = result.split(',');
                 if (isInstant) {
-                    league.instantWaitingTime = Number(result) ?? 0;
+                    league.instantWaitingTime = Number(results[0]) ?? 0;
                 } else {
-                    league.directWaitingTime = Number(result) ?? 0;
+                    league.directWaitingTime = Number(results[0]) ?? 0;
+                    league.refundWaitingTime = Number(results[1]) ?? 0;
                 }
             }
         }

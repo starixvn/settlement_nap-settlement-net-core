@@ -40,6 +40,7 @@ public class LeagueServiceImp(IDynamicRepository repository, IMapper mapper) : L
                     LeagueId = match.LeagueId,
                     AutoCalcSetting = match.AutoCalcSetting,
                     InstantWaitingTime = match.InstantWaitingTime,
+                    RefundWaitingTime = match.RefundWaitingTime,
                     DirectWaitingTime = match.DirectWaitingTime
                 };
 

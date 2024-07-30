@@ -3,4 +3,5 @@ export class LeagueAutoSettings {
   waitingTime: number;
   retryTime: number;
   isApplyAll: boolean;
+  refundWaitingTime: number;
 }

@@ -34,7 +34,9 @@ describe('AutoSettingComponent', () => {
     errCode: 0,
     errMsg: "",
     isSuccessful: true,
-    childMatchIds: ''
+    childMatchIds: '',
+    settledSessionId: '',
+    hasResultAmendment: false
   };
 
   const mockFailResult = {
@@ -46,10 +48,6 @@ describe('AutoSettingComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [
-        ModalDialogComponent,
-        ModalContentDialogComponent
-      ],
       providers: [
         RequestService,
         MessageBoxService,
@@ -64,6 +62,8 @@ describe('AutoSettingComponent', () => {
         FormsModule,
         HttpClientModule,
         NgbModule,
+        ModalDialogComponent,
+        ModalContentDialogComponent
       ],
     })
       .compileComponents();

@@ -1,14 +1,27 @@
-﻿<div class="time-container">
-	<div class="league" ng-bind-html="">
+﻿<div class="time-container" *ngIf="leagueName">
+	<div class="league">
 		<div class="icon"></div>
 		{{ leagueName }}
 	</div>
 	<div *ngIf="pageType === 'InstantTime'; else DirectTime">
-		Please input new value of waiting-time setting for Auto Instant Calculation on this League
+		<p>Please input new value of waiting-time setting for Auto Instant Calculation on this League</p>
+		<div>New waiting-time setting: <input type="text" [(ngModel)]="time" zeroFallback myOnlyInteger maxlength="4" />
+			seconds</div>
 	</div>
-	<ng-template #DirectTime><div>Please input new value of waiting-time setting for Direct Settlement on this League</div></ng-template>
-	<div>New waiting-time setting: <input type="text" [(ngModel)]="time" myOnlyInteger maxlength="4" /> seconds</div>
-	<div>
+	<ng-template #DirectTime>
+		<div class="waiting-time">
+			<p>Please input new waiting-time values for this League</p>
+			<div [ngStyle]="{'display': 'flex'}">
+				<span class="title">Direct Payout: </span>
+				<input type="text" [(ngModel)]="time" zeroFallback myOnlyInteger maxlength="4" />&nbsp; seconds
+			</div>
+			<div [ngStyle]="{'display': 'flex'}">
+				<span class="title">Auto Refund: </span>
+				<input type="text" zeroFallback myOnlyInteger [(ngModel)]="refundWaitingTime" maxlength="3" />&nbsp;seconds
+			</div>
+		</div>
+	</ng-template>
+	<div [ngClass]="pageType !== 'InstantTime' ? 'button-waiting-time' : ''">
 		<button class="button" (click)="proceed()">
 			Proceed
 		</button>

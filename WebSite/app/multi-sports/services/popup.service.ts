@@ -44,10 +44,10 @@ export class PopupService {
     private readonly handleActionsService: HandleActionsService,
     private readonly refreshMatchService: RefreshMatchService
   ) { }
+
+
   public popupLog(matchCode: string, fromDate: string, toDate: string) {
-    const src = `/home/log?matchCode=${encodeURIComponent(
-      matchCode
-    )}&fromDate=${fromDate}&toDate=${toDate}&isShowMenu=false&productType=ALL`;
+    const src = `/home/log?matchCode=${encodeURIComponent(matchCode)}&fromDate=${fromDate}&toDate=${toDate}&isShowMenu=false&productType=ALL`;
     const dialogData = new DialogDataIframe(Language.SettlementLog, src);
     this.dialogBoxService.popup(dialogData, "1011px", "800px");
   }
@@ -88,7 +88,7 @@ export class PopupService {
       match.sportType === SportType.cricket
         ? "1400px"
         : this.isPopupEarlySOP(match.sportType)
-        ? "1570px"
+          ? "1570px"
           : "845px";
     this.properties.height = this.isPopupEarlySOP(match.sportType)
       ? "958px"
@@ -128,7 +128,7 @@ export class PopupService {
     });
   }
 
-  public openAndHandlePopup(properties: PopupProperties, match: Match , state$: BehaviorSubject<MatchState>) {
+  public openAndHandlePopup(properties: PopupProperties, match: Match, state$: BehaviorSubject<MatchState>) {
     const frameSrc = encodeURI(properties.src);
     const dialogData = new DialogDataIframe(properties.title, frameSrc);
     this.dialogBoxService
@@ -189,26 +189,30 @@ export class PopupService {
     }
   }
 
-  public openUpdateTime(league: LeagueMatch) {
+  public openUpdateTime(league: LeagueMatch, triggerRerender: () => void) {
     const autoType = _.isEqual(league.matches[0].sportType, SportType.cricket)
       ? AutoType.autoPayout
       : AutoType.direct;
-    const src = `/apps/change-waiting-time?leagueId=${league.leagueId}&time=${league.autoWaitingTime}&pageType=DirectTime&autoType=${autoType}`;
+    const src = `/apps/change-waiting-time?leagueId=${league.leagueId}&time=${league.autoWaitingTime}&refundWaitingTime=${league.refundWaitingTime}&pageType=DirectTime&autoType=${autoType}`;
     const frameSrc = encodeURI(src);
     const dialogData = new DialogDataIframe(
       Language.payout.titlePopupForLeague,
       frameSrc
     );
-    this.dialogBoxService
+    const subscribe = this.dialogBoxService
       .popupHasResponse(dialogData, "600px", "310px")
       .subscribe((result) => {
         if (!_.isUndefined(result)) {
-          league.autoWaitingTime = Number(result) ?? 0;
+          const results = result.split(",");
+          league.autoWaitingTime = Number(results[0]) ?? 0;
+          league.refundWaitingTime = Number(results[1]) ?? 0;
+          triggerRerender();
         }
+        subscribe.unsubscribe();
       });
   }
 
-  public async openUpdatePayoutForLeague(league: LeagueMatch, triggerRerender: () => any) {
+  public async openUpdatePayoutForLeague(league: LeagueMatch, triggerRerender: () => void) {
     const isMultiSelect = _.isNil(league.matches[0]) ? true : !_.isEqual(league.matches[0].sportType, SportType.cricket);
     const autoSetting = await this.multiSportService.getSetting(
       league.leagueId,
@@ -222,7 +226,7 @@ export class PopupService {
       Language.payout.titlePopupForLeague,
       frameSrc
     );
-    this.dialogBoxService
+    const subscribe = this.dialogBoxService
       .popupHasResponse(dialogData, "500px", "270px")
       .subscribe((result) => {
         if (_.isNil(result)) {
@@ -238,26 +242,27 @@ export class PopupService {
           this.affectAutoPayoutForMatch(league);
           triggerRerender();
         }
+        subscribe.unsubscribe();
       }
       );
   }
 
 
-  public async openUpdateNewPayoutForLeague(league: LeagueMatch, triggerRerender: () => any) {
+  public async openUpdateNewPayoutForLeague(league: LeagueMatch, triggerRerender: () => void) {
     const setting = await this.multiSportService.getSetting(
       league.leagueId,
       0
     );
     this.applyNewSetting(league.autoCalcSetting, setting.setting, false);
     const currentState = league.autoCalcSetting.isAutoPayoutForLeague ? 1 : league.autoCalcSetting.isDirectPayoutForLeague ? 5 : 0;
-    const src = `/apps/advanced-auto-setting-league?leagueId=${league.leagueId}&sportType=${league.sportType}&autoSetting=${currentState}&waitingTime=${league.autoWaitingTime}`;
+    const src = `/apps/advanced-auto-setting-league?leagueId=${league.leagueId}&sportType=${league.sportType}&autoSetting=${currentState}&waitingTime=${league.autoWaitingTime}&refundWaitingTime=${league.refundWaitingTime}`;
     const frameSrc = encodeURI(src);
     const dialogData = new DialogDataIframe(
       Language.payout.titlePopupForLeague,
       frameSrc
     );
-    this.dialogBoxService
-      .popupHasResponse(dialogData, "500px", "830px")
+    const subscribe = this.dialogBoxService
+      .popupHasResponse(dialogData, "500px", "930px")
       .subscribe((result) => {
         if (_.isNil(result)) {
           return;
@@ -271,11 +276,14 @@ export class PopupService {
         );
 
         league.autoWaitingTime = setting.waitingTime;
+        league.refundWaitingTime = setting.refundWaitingTime;
         league.autoRetryTime = setting.retryTime;
         if (setting.isApplyAll) {
           this.affectAutoPayoutForMatch(league);
           triggerRerender();
         }
+
+        subscribe.unsubscribe();
       }
       );
   }
@@ -317,13 +325,14 @@ export class PopupService {
       Language.payout.titlePopup,
       frameSrc
     );
-    this.dialogBoxService
+    const subscribe = this.dialogBoxService
       .popupHasResponse(dialogData, "500px", "270px")
       .subscribe((result) => {
         if (!_.isNil(result)) {
           this.applyNewSetting(match.autoCalcSetting, result, true, !isMultiSelect);
           this.refreshMatchService.refreshMatch(state$, match);
         }
+        subscribe.unsubscribe();
       });
   }
 

@@ -10,4 +10,5 @@ export class LeagueMatch {
     public autoWaitingTime: number;
     public autoRetryTime: number;
     public autoCalcSetting: AutoSetting;
+    public refundWaitingTime: number;
 }

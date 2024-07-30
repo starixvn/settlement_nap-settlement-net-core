@@ -90,7 +90,7 @@ export class LeagueComponent implements OnInit, OnDestroy {
       autoCalcSetting.isInstantForLeague = !autoCalcSetting.isInstantForLeague;
       if (isApplyAll) {
         this.handleActionService.handleAutoInstantForMatch(leagueMatch, autoCalcSetting.isInstantForLeague);
-        this.cd.markForCheck();
+        this.cd.detectChanges();
       }
     } else {
       this.store.dialogMessage.message = result.errMsg;
@@ -100,15 +100,15 @@ export class LeagueComponent implements OnInit, OnDestroy {
 
   openUpdateTime() {
     if (this.permission.canAutoPayout) {
-      this.popupService.openUpdateTime(this.league);
+      this.popupService.openUpdateTime(this.league,() => { this.cd.markForCheck() });
     }
   }
 
   changeAutoLeague() {
     if (this.permission.canAutoPayout) {
       SportNewAutoPayout.includes(this.league.sportType) ?
-        this.popupService.openUpdateNewPayoutForLeague(this.league, () => { this.cd.markForCheck() })
-        : this.popupService.openUpdatePayoutForLeague(this.league, () => { this.cd.markForCheck() });
+        this.popupService.openUpdateNewPayoutForLeague(this.league,() => { this.cd.markForCheck() })
+        : this.popupService.openUpdatePayoutForLeague(this.league,() => { this.cd.markForCheck() });
     }
 
   }
@@ -126,5 +126,4 @@ export class LeagueComponent implements OnInit, OnDestroy {
 
     return "OFF";
   }
-
 }

@@ -6,9 +6,10 @@
 	</div>
 	<div class="line"></div>
 	<div class="content">
-		<auto-setting> </auto-setting>
-		<direct-setting> </direct-setting>
-		<auto-payout-setting> </auto-payout-setting>
+		<auto-setting [autoSetting]="autoSetting" />
+		<time-setting [directSetting]="true" [waitingTime]="waitingTime" />
+		<time-setting [directSetting]="false" [waitingTime]="refundWaitingTime" />
+		<auto-payout-setting [retryTime]="retryTime"> </auto-payout-setting>
 	</div>
 	<div class="line"></div>
 	<div class="bottom">

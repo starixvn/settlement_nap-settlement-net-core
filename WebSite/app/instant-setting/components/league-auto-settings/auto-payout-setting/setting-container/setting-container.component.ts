@@ -1,4 +1,4 @@
-import { DoCheck } from '@angular/core';
+import { DoCheck, inject } from '@angular/core';
 import { Component, Input, ChangeDetectionStrategy, ChangeDetectorRef, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -21,12 +21,10 @@ import { ProviderSelectionComponent } from '../provider-selection/provider-selec
 export class SettingContainerComponent {
   @Input() isEarly: boolean = false;
   public resultSettings: ResultSettings;
+  private readonly store = inject(LeagueSettingsStore);
+  private readonly dialog = inject(MatDialog);
+  private readonly cd = inject(ChangeDetectorRef);
 
-  constructor(
-    private readonly store: LeagueSettingsStore,
-    private readonly dialog: MatDialog,
-    private readonly cd: ChangeDetectorRef) {
-  }
 
   ngOnInit(): void {
     this.store.state$.pipe(
@@ -34,7 +32,7 @@ export class SettingContainerComponent {
       distinctUntilChanged((prev, curr) => _.isEqual(prev,curr)))
       .subscribe(data => {
         this.resultSettings = data;
-        this.cd.detectChanges();
+        this.cd.markForCheck();
       });
   }
 

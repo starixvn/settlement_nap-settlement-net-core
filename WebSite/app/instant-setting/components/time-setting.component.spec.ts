@@ -10,8 +10,6 @@ import { League } from '../models';
 import { UrlHelper } from '../../helper';
 import { Language } from '../../shared/language.native';
 import { AutoType } from '../constants/auto-type';
-import { ModalDialogComponent } from '../../shared/components/modal-dialog/modal-dialog.component';
-import { ModalContentDialogComponent } from '../../shared/components/modal-dialog/modal-content-dialog.component';
 
 describe('TimeSettingComponent', () => {
     let component: TimeSettingComponent;
@@ -119,6 +117,7 @@ describe('TimeSettingComponent', () => {
     describe('proceed', () => {
       it('should pass all validation and successfully close pop-up', fakeAsync(() => {
         component.time = 10;
+        component.autoType = AutoType.instant;
         jest.spyOn(requestService, 'proceed').mockResolvedValue(successfulResult);
         jest.spyOn(messageBoxService, 'closePopup');
         const element = document.createElement("dialog-response");
@@ -145,16 +144,5 @@ describe('TimeSettingComponent', () => {
 
         expect(component.errorMessage).toEqual(errorMessage);
       }));
-
-      it('should alert when input time is out of range', () => {
-        component.time = 0;
-        jest.spyOn(messageBoxService, 'alert');
-
-        component.proceed();
-        const expectedMessage = Language.InstantSetting.InvalidTimeSetting;
-
-        expect(component.warningDialogMessage.message).toEqual(expectedMessage);
-        expect(messageBoxService.alert).toHaveBeenCalled();
-      });
     });
 });

@@ -27,7 +27,8 @@ describe('AutoPayoutSettingComponent', () => {
       primaryProvider: '',
       secondaryProvider: ''
     },
-    providers: []
+    providers: [],
+    refundWaitingTime: 0
   }
 
   beforeEach(async () => {
@@ -46,17 +47,6 @@ describe('AutoPayoutSettingComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
-  });
-
-  it('ngOnInit - retryTime always get on store', () => {
-    store.setState( {...store.state, retryTime: 1 });
-    component.ngOnInit();
-
-    expect(component.retryTime).toEqual(1);
-
-    store.setState( {...store.state, retryTime: 2 });
-
-    expect(component.retryTime).toEqual(2);
   });
 
   it('changeWaiting - change retryTime on store', () => {

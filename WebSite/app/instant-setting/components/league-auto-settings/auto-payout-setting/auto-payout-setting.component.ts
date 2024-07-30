@@ -1,5 +1,5 @@
 
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { SettingContainerComponent } from './setting-container/setting-container.component';
@@ -21,7 +21,7 @@ import { OnlyIntegerDirective } from '../../../../shared/directives';
 	<ul>
 		<li>
 			<label>Retry-time: </label>
-			<input style="width: 40px;" type="text" ZeroFallback myOnlyInteger maxLength="4" [ngModel]="retryTime"  (ngModelChange)="changeRetryTime($event)" />
+			<input style="width: 40px;" type="text" ZeroFallback myOnlyInteger maxLength="4" [ngModel]="retryTime()"  (ngModelChange)="changeRetryTime($event)" />
 			<label>&nbsp;seconds. </label>
 		</li>
 		<li>
@@ -38,19 +38,9 @@ import { OnlyIntegerDirective } from '../../../../shared/directives';
 })
 
 
-export class AutoPayoutSettingComponent implements OnInit {
-  public retryTime: number;
-  constructor(private readonly store: LeagueSettingsStore, private readonly cd: ChangeDetectorRef) {
-  }
-
-  ngOnInit(): void {
-    this.store.state$.pipe(
-      map(state =>  state.retryTime),
-      distinctUntilChanged((prev, curr) => prev == curr))
-      .subscribe(data => {
-        this.retryTime = data;
-      });
-  }
+export class AutoPayoutSettingComponent {
+  retryTime = input(0);
+  private readonly store = inject(LeagueSettingsStore);
 
   changeRetryTime(retryTime: string): void {
     this.store.setState({ ... this.store.state, retryTime: Number(retryTime)});

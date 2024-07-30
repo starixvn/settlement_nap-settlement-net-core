@@ -10,22 +10,26 @@ import { AutoType } from '../constants/auto-type';
 import { OnlyIntegerDirective } from '../../shared/directives';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { ZeroFallbackDirective } from '../../shared/directives/zero-fall-back.directive.native';
 @Component({
     selector: 'time-setting',
     templateUrl: './time-setting.component.html',
-    imports: [OnlyIntegerDirective, FormsModule, CommonModule],
+    imports: [ZeroFallbackDirective, OnlyIntegerDirective, FormsModule, CommonModule],
     providers: [RequestService],
     standalone: true,
 })
 export class TimeSettingComponent implements OnInit {
-    public pageType: string;
-    public leagueId: number;
-    public time: number;
-    public leagueName: string;
-    public autoType: number;
-    public errorMessage: string;
+    pageType: string;
+    leagueId: number;
+    time: number;
+    leagueName: string;
+    autoType: number;
+    errorMessage: string;
+    refundWaitingTime: number
+    originalRefundWaitingTime: number;
+    originalTime: number;
     private readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
-    public readonly warningDialogMessage: ModalDialogMessage = new ModalDialogMessage();
+    readonly warningDialogMessage: ModalDialogMessage = new ModalDialogMessage();
     constructor(
         private readonly requestService: RequestService,
         private readonly messageBoxService: MessageBoxService) {
@@ -33,55 +37,51 @@ export class TimeSettingComponent implements OnInit {
         this.confirmationDialogMessage.title = Language.confirmationBox;
     }
 
-    public async ngOnInit() {
+    async ngOnInit() {
         this.pageType = UrlHelper.getUrlParameter("pageType");
         this.leagueId = Number(UrlHelper.getUrlParameter("leagueId"));
         this.leagueName = await this.requestService.getLeagueName(this.leagueId).then((league: League) => {
             return league.leagueName;
         });
 
-        this.time = Number(UrlHelper.getUrlParameter("time"));
+        this.time = this.originalTime =  Number(UrlHelper.getUrlParameter("time"));
+        this.refundWaitingTime = this.originalRefundWaitingTime = Number(UrlHelper.getUrlParameter("refundWaitingTime"));
         const autoTypeByUrl = UrlHelper.getUrlParameter("autoType");
         this.autoType = _.isEmpty(autoTypeByUrl) ? this.getAutoType() : Number(autoTypeByUrl);
     }
 
-    public proceed() {
-        if (this.verifyTimeSetting()) {
-            this.confirmProceed();
-        }
-    }
-
-    public cancel() {
+    cancel() {
         this.messageBoxService.closePopupNotChanged();
     }
 
-    private verifyTimeSetting() {
-        const minTime = 1;
-        if (this.time < minTime) {
-            this.warningDialogMessage.message = Language.InstantSetting.InvalidTimeSetting;
-            this.messageBoxService.alert(this.warningDialogMessage);
-            return false;
-        }
-
-        return true;
-    }
-
-    private confirmProceed() {
+     proceed() {
         this.confirmationDialogMessage.message = Language.InstantSetting.ConfirmMessageSetting;
-        this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
-            const query = new TimeSettingQuery(this.leagueId, this.time, this.autoType);
-            this.requestService.proceed(query).then((result: Result) => {
-                if (result.isSuccessful) {
-                    parent.document.getElementById('dialog-response').setAttribute('value', query.waitingTime.toString());
-                   this.messageBoxService.closePopup();
-                } else {
-                    this.errorMessage = result.errMsg;
-                }
-            });
+        this.messageBoxService.confirm(this.confirmationDialogMessage, async () => {
+            await this.updateRefundTime();
+            await this.updateTime();
         });
     }
 
     private getAutoType() {
-        return this.pageType === 'DirectTime' ? AutoType.direct : this.pageType === "AutoPayOut"? AutoType.autoPayout :  AutoType.instant;
+        return this.pageType === 'DirectTime' ? AutoType.direct : this.pageType === "AutoPayOut" ? AutoType.autoPayout : AutoType.instant;
+    }
+
+    private async updateRefundTime() {
+        if ((this.autoType === AutoType.autoPayout || this.autoType === AutoType.direct) && this.refundWaitingTime !== this.originalRefundWaitingTime) {
+            const query = new TimeSettingQuery(this.leagueId, this.refundWaitingTime, AutoType.refund);
+            await this.requestService.proceed(query);
+        }
+    }
+
+    private async updateTime(){
+        const query = new TimeSettingQuery(this.leagueId, this.time, this.autoType);
+        this.requestService.proceed(query).then((result: Result) => {
+            if (result.isSuccessful) {
+                parent.document.getElementById('dialog-response').setAttribute('value', `${query.waitingTime}, ${this.refundWaitingTime}`);
+                this.messageBoxService.closePopup();
+            } else {
+                this.errorMessage = result.errMsg;
+            }
+        });
     }
 }
