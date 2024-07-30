@@ -31,16 +31,34 @@ export class DetectChangesService {
     }
 
     private isStatusDifferent(oldMatch: Match, newMatch: MatchWaiting) {
-        return oldMatch.isCalculatingSingle !== newMatch.isCalculatingSingle
-            || oldMatch.isCalculatingMP !== newMatch.isCalculatingMP
-            || oldMatch.isCalculated !== newMatch.isCalculated
-            || oldMatch.isMultiCaled !== newMatch.isMultiCaled
-            || oldMatch.isRefund !== newMatch.isRefund
-            || oldMatch.isCalRefund !== newMatch.isCalRefund
-            || oldMatch.isExistRunningTicket !== newMatch.isExistRunningTicket
-            || oldMatch.isExistMarkedTicket !== newMatch.isExistMarkedTicket
-            || oldMatch.isHalfTimeCal !== newMatch.isHalfTimeCal
-            || oldMatch.isNotConsistentExFtScore !== newMatch.isNotConsistentExFtScore
+        return (
+            this.isCalculatingDifferent(oldMatch, newMatch) ||
+            this.isCalculatedDifferent(oldMatch, newMatch) ||
+            this.isRefundDifferent(oldMatch, newMatch) ||
+            this.isTicketDifferent(oldMatch, newMatch) ||
+            this.isScoreExternalDifferent(oldMatch, newMatch)
+        );
+    }
+
+    private isCalculatingDifferent(oldMatch: Match, newMatch: MatchWaiting) {
+        return oldMatch.isCalculatingSingle !== newMatch.isCalculatingSingle || oldMatch.isCalculatingMP !== newMatch.isCalculatingMP;
+    }
+
+    private isCalculatedDifferent(oldMatch: Match, newMatch: MatchWaiting) {
+        return oldMatch.isCalculated !== newMatch.isCalculated || oldMatch.isMultiCaled !== newMatch.isMultiCaled;
+    }
+
+    private isRefundDifferent(oldMatch: Match, newMatch: MatchWaiting) {
+        return oldMatch.isRefund !== newMatch.isRefund || oldMatch.isCalRefund !== newMatch.isCalRefund;
+    }
+
+    private isTicketDifferent(oldMatch: Match, newMatch: MatchWaiting) {
+        return oldMatch.isExistRunningTicket !== newMatch.isExistRunningTicket || oldMatch.isExistMarkedTicket !== newMatch.isExistMarkedTicket;
+    }
+
+    private isScoreExternalDifferent(oldMatch: Match, newMatch: MatchWaiting) {
+        return oldMatch.isHalfTimeCal !== newMatch.isHalfTimeCal 
+            || oldMatch.isNotConsistentExFtScore !== newMatch.isNotConsistentExFtScore 
             || oldMatch.isNotConsistentExHtScore !== newMatch.isNotConsistentExHtScore;
     }
 

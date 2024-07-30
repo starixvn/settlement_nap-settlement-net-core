@@ -1,46 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testExecutions version="1">
-  <file path="D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\other-sports\components\halftime-fulltime\halftime-fulltime-calculation.component.spec.ts">
-    <testCase name="HalfTimeFullTimeCalculationComponent should create" duration="141"/>
-    <testCase name="HalfTimeFullTimeCalculationComponent getMatch - Always call function get match and all function related" duration="38"/>
-    <testCase name="HalfTimeFullTimeCalculationComponent onResettleCheckboxChange - should change resettle status" duration="22"/>
-    <testCase name="HalfTimeFullTimeCalculationComponent externalSourceName should return external SourceName when exist" duration="25"/>
-    <testCase name="HalfTimeFullTimeCalculationComponent externalSourceName should return dash when not exist source name" duration="17"/>
-    <testCase name="HalfTimeFullTimeCalculationComponent should clear error, clear score of sets and call function related" duration="13"/>
-    <testCase name="HalfTimeFullTimeCalculationComponent actionCopyScore should always clear error" duration="16"/>
-    <testCase name="HalfTimeFullTimeCalculationComponent actionCopyScore should show error when full time is settled" duration="31"/>
-    <testCase name="HalfTimeFullTimeCalculationComponent actionCopyScore should show error when half time is settled and external Ft not exist" duration="21"/>
-    <testCase name="HalfTimeFullTimeCalculationComponent actionCopyScore should call func copy score for fulltime when half time is settled and external Ft exist" duration="71"/>
-    <testCase name="HalfTimeFullTimeCalculationComponent actionCopyScore should show error when final not settle and external score not exist" duration="19"/>
-    <testCase name="HalfTimeFullTimeCalculationComponent actionCopyScore should call func copy score for fulltime when final not settle and external score exist full time" duration="27"/>
-    <testCase name="HalfTimeFullTimeCalculationComponent actionCopyScore should call func copy score for fulltime when final not settle and external score exist half time" duration="19"/>
-    <testCase name="HalfTimeFullTimeCalculationComponent actionCopyScore should call func copy score for fulltime when final not settle and external score exist both halftime and fulltime" duration="15"/>
-    <testCase name="HalfTimeFullTimeCalculationComponent checkConsistentScore - should call correct function of service" duration="11"/>
-    <testCase name="HalfTimeFullTimeCalculationComponent getClass should return class include mismatched when result mismatch" duration="17"/>
-    <testCase name="HalfTimeFullTimeCalculationComponent getClass should return class include not-consistent when result not consistent" duration="14"/>
-    <testCase name="HalfTimeFullTimeCalculationComponent getClass should return empty or default class of result when result is normal" duration="15"/>
-    <testCase name="HalfTimeFullTimeCalculationComponent isErrorOnVerification should return true when result is half time and empty" duration="14"/>
-    <testCase name="HalfTimeFullTimeCalculationComponent isErrorOnVerification should return true when result is full time and empty" duration="15"/>
-    <testCase name="HalfTimeFullTimeCalculationComponent isErrorOnVerification should return true when result is one of Half time result  and empty" duration="14"/>
-    <testCase name="HalfTimeFullTimeCalculationComponent isFinalScoreDisabled return false when result is final and checked score direct" duration="14"/>
-    <testCase name="HalfTimeFullTimeCalculationComponent isFinalScoreDisabled return true when result is normal and checked score direct" duration="16"/>
-    <testCase name="HalfTimeFullTimeCalculationComponent changeScore should check consistent when change score final" duration="18"/>
-    <testCase name="HalfTimeFullTimeCalculationComponent changeScore should auto sum score set for final when change score" duration="14"/>
-    <testCase name="HalfTimeFullTimeCalculationComponent halftimeTicketStatusBackground - fullTimeTicketStatusBackground should return calculated background when status is calculated" duration="14"/>
-    <testCase name="HalfTimeFullTimeCalculationComponent halftimeTicketStatusBackground - fullTimeTicketStatusBackground should return marked background when status is marked" duration="16"/>
-    <testCase name="HalfTimeFullTimeCalculationComponent calculateHalfTime should show error when score halfTime not valid" duration="17"/>
-    <testCase name="HalfTimeFullTimeCalculationComponent calculateHalfTime should show error when score halfTime inconsistent" duration="15"/>
-    <testCase name="HalfTimeFullTimeCalculationComponent calculateHalfTime should show error when score Insufficient and user is member" duration="15"/>
-    <testCase name="HalfTimeFullTimeCalculationComponent calculateHalfTime should show confirm when score Insufficient and user is leader" duration="18"/>
-    <testCase name="HalfTimeFullTimeCalculationComponent calculateHalfTime should show confirm when score changed " duration="42"/>
-    <testCase name="HalfTimeFullTimeCalculationComponent calculateHalfTime should call api calc after pass all validation and two confirm box" duration="51"/>
-    <testCase name="HalfTimeFullTimeCalculationComponent calculateHalfTime should show error when calculate fail" duration="52"/>
-    <testCase name="HalfTimeFullTimeCalculationComponent calculateFullTime should show error when score not valid" duration="22"/>
-    <testCase name="HalfTimeFullTimeCalculationComponent calculateFullTime should show error when score inconsistent" duration="19"/>
-    <testCase name="HalfTimeFullTimeCalculationComponent calculateAll should show error when score not valid" duration="13"/>
-    <testCase name="HalfTimeFullTimeCalculationComponent calculateAll should show error when score inconsistent" duration="15"/>
-    <testCase name="HalfTimeFullTimeCalculationComponent unCalculate - should call api calculate after pass 2 confirm box" duration="39"/>
-    <testCase name="HalfTimeFullTimeCalculationComponent getConfirmedBackground always call function check confirmed with fulltime" duration="19"/>
-    <testCase name="HalfTimeFullTimeCalculationComponent getConfirmedBackground call function check confirmed for both ht-ft when halftime exist" duration="15"/>
+  <file path="D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\core\services\verification-base.service.spec.ts">
+    <testCase name="VerificationBaseService should create a service" duration="19"/>
+    <testCase name="VerificationBaseService invalidInputScore - return true when exist map has score" duration="3"/>
+    <testCase name="VerificationBaseService getCalculationConfirmMessage - return correct message" duration="6"/>
+    <testCase name="VerificationBaseService isTicketOnGame return true when exist result set has ticket" duration="2"/>
+    <testCase name="VerificationBaseService isTicketOnGame return true when exist result Match with special bettype" duration="2"/>
+    <testCase name="VerificationBaseService isExistMismatchScore - return true when exist result mismatch" duration="2"/>
+    <testCase name="VerificationBaseService allMapHaveScoreSources should return true when all maps have score sources" duration="3"/>
+    <testCase name="VerificationBaseService allMapHaveScoreSources should return false when map missing score source" duration="4"/>
+    <testCase name="VerificationBaseService isExistedHomeAwayScore - return false when exist value" duration="3"/>
+    <testCase name="VerificationBaseService autoFillScore should fill home and away when all condition passed" duration="3"/>
+    <testCase name="VerificationBaseService autoFillScore should fill blank for home and away when scores are mismatch" duration="2"/>
+    <testCase name="VerificationBaseService isScoreConsecutive should return true when score is consecutive" duration="2"/>
+    <testCase name="VerificationBaseService isScoreConsecutive should return true when score is empty" duration="2"/>
+    <testCase name="VerificationBaseService isScoreConsecutive should return false when only 1 score existed" duration="3"/>
+    <testCase name="VerificationBaseService isScoreConsecutive should return false when score is not consecutive" duration="2"/>
+    <testCase name="VerificationBaseService isOutsideScoreConsecutive should return true when score is consecutive" duration="2"/>
+    <testCase name="VerificationBaseService isOutsideScoreConsecutive should return true when score is empty" duration="2"/>
+    <testCase name="VerificationBaseService isOutsideScoreConsecutive should return false when only 1 score existed" duration="1"/>
+    <testCase name="VerificationBaseService isOutsideScoreConsecutive should return false when score is not consecutive" duration="2"/>
+    <testCase name="VerificationBaseService isMismatchedWarning should return false when result detail is empty" duration="2"/>
+    <testCase name="VerificationBaseService isMismatchedWarning should return false when external score is empty" duration="3"/>
+    <testCase name="VerificationBaseService isMismatchedWarning should return true when exist a mismatch score" duration="2"/>
+    <testCase name="VerificationBaseService isMismatchedWarning should return false when all scores are matched" duration="2"/>
+    <testCase name="VerificationBaseService isMismatchedWarning should return false when no result detail but external scores are match" duration="2"/>
+    <testCase name="VerificationBaseService verifyFinalResource - return message when score not equal" duration="2"/>
+    <testCase name="VerificationBaseService changeToNewFinalResource - should set new value" duration="3"/>
+    <testCase name="VerificationBaseService getNewFinalResource return sum of value" duration="2"/>
+    <testCase name="VerificationBaseService getNewFinalResource return count win set" duration="3"/>
+    <testCase name="VerificationBaseService isEarlyMismatchedWarning should return false when result detail is empty" duration="2"/>
+    <testCase name="VerificationBaseService isEarlyMismatchedWarning should return false when external score is empty" duration="1"/>
+    <testCase name="VerificationBaseService isEarlyMismatchedWarning should return true when exist a mismatch score" duration="4"/>
+    <testCase name="VerificationBaseService isEarlyMismatchedWarning should return false when all scores are matched" duration="2"/>
+    <testCase name="VerificationBaseService isEarlyMismatchedWarning should return false when no result detail but external scores are match" duration="2"/>
+    <testCase name="VerificationBaseService autoFillEarlyResult should fill home value when all condition passed" duration="2"/>
+    <testCase name="VerificationBaseService autoFillEarlyResult should fill blank for home value when scores are mismatch" duration="2"/>
+    <testCase name="VerificationBaseService allResultsHaveScoreSources should return true when all results have score sources" duration="3"/>
+    <testCase name="VerificationBaseService allResultsHaveScoreSources should return false when result missing score source" duration="2"/>
+    <testCase name="VerificationBaseService isFullTimeMismatched should return true when fulltime score is mismatch" duration="2"/>
+    <testCase name="VerificationBaseService isFullTimeMismatched should return false when fulltime is match" duration="2"/>
+    <testCase name="VerificationBaseService isFullTimeMismatched should return false when input fulltime score directly" duration="2"/>
+    <testCase name="VerificationBaseService getOutsideScores - should get all valid outside sources and map score" duration="2"/>
+    <testCase name="VerificationBaseService getChangedScores - should get only changed score" duration="3"/>
+    <testCase name="VerificationBaseService generateExternalScores should generate external score for result detail" duration="3"/>
+    <testCase name="VerificationBaseService generateExternalScores should generate trader and external score for tennis result detail" duration="2"/>
+    <testCase name="VerificationBaseService generateExternalScores should generate trader and external score for e-sports result detail" duration="1"/>
   </file>
 </testExecutions>

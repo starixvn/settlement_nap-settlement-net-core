@@ -1,11 +1,10 @@
 ﻿namespace Settlement.EventManagement.Constants;
+
 public static class Sports
 {
-    public static readonly List<int> FullTimeSports = new()
-    {
+    public static readonly List<int> FullTimeSports =
+    [
         SportType.IceHockey,
-        SportType.VolleyBall,
-        SportType.TableTennis,
         SportType.Handball,
         SportType.Dart,
         SportType.Swimming,
@@ -56,14 +55,14 @@ public static class Sports
         SportType.Skeleton,
         SportType.SkiJumping,
         SportType.SpeedSkating
-    };
+    ];
 
-    public static readonly List<int> HalfTimeFullTimeSports = new()
-    {
+    public static readonly List<int> HalfTimeFullTimeSports =
+    [
         SportType.Football,
         SportType.BaseBall,
         SportType.Rugby,
         SportType.NetBall,
         SportType.Bandy
-    };
+    ];
 }

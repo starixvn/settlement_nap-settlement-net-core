@@ -2,10 +2,10 @@
 
 namespace Settlement.EventManagement.Services.MultiSports;
 
+using Constants;
 using Fanex.Settlement.ScaleOut.Services;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
-using Settlement.EventManagement.Constants;
 using Match = Models.MultiSports.Match;
 
 public interface IMatchService
@@ -70,20 +70,38 @@ public class MatchServiceImp(
 
     public List<Match> GetScoreForMatchBySportType(List<Match> matches, List<ResultDetail> resultDetails, int sportType, bool isLeader = false)
     {
-        return sportType switch
+        switch (sportType)
         {
-            SportType.Tennis => matchResultDetailService.TennisResultDetail(matches, resultDetails, isLeader),
-            SportType.BasketBall => matchResultDetailService.BasketballResultDetail(matches, resultDetails, isLeader),
-            SportType.ESports => matchResultDetailService.ESportsResultDetail(matches, resultDetails, isLeader),
-            SportType.Badminton => matchResultDetailService.BadmintonResultDetail(matches, resultDetails, isLeader),
-            SportType.Cricket => matchResultDetailService.CricketResultDetail(matches, resultDetails, isLeader),
-            SportType.BeachVolleyball => matchResultDetailService.BeachVolleyballResultDetail(matches, resultDetails,
-                isLeader),
-            SportType.VolleyBall => matchResultDetailService.VolleyballResultDetail(matches, resultDetails, isLeader),
-            SportType.Bandy => matchResultDetailService.BandyResultDetail(matches, resultDetails, isLeader),
-            SportType.TableTennis => matchResultDetailService.TableTennisResultDetail(matches, resultDetails, isLeader),
-            _ => LoadExternalResults(matches, resultDetails, sportType)
-        };
+            case SportType.Tennis:
+                return matchResultDetailService.TennisResultDetail(matches, resultDetails, isLeader);
+
+            case SportType.BasketBall:
+                return matchResultDetailService.BasketballResultDetail(matches, resultDetails, isLeader);
+
+            case SportType.ESports:
+                return matchResultDetailService.ESportsResultDetail(matches, resultDetails, isLeader);
+
+            case SportType.Badminton:
+                return matchResultDetailService.BadmintonResultDetail(matches, resultDetails, isLeader);
+
+            case SportType.Cricket:
+                return matchResultDetailService.CricketResultDetail(matches, resultDetails, isLeader);
+
+            case SportType.BeachVolleyball:
+                return matchResultDetailService.BeachVolleyballResultDetail(matches, resultDetails, isLeader);
+
+            case SportType.VolleyBall:
+                return matchResultDetailService.VolleyballResultDetail(matches, resultDetails, isLeader);
+
+            case SportType.Bandy:
+                return matchResultDetailService.BandyResultDetail(matches, resultDetails, isLeader);
+
+            case SportType.TableTennis:
+                return matchResultDetailService.TableTennisResultDetail(matches, resultDetails, isLeader);
+
+            default:
+                return LoadExternalResults(matches, resultDetails, sportType);
+        }
     }
 
     private List<Match> LoadExternalResults(List<Match> matches, List<ResultDetail> resultDetails, int sportType)
