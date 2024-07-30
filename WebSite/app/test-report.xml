@@ -1,50 +1,89 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testExecutions version="1">
-  <file path="D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\core\services\verification-base.service.spec.ts">
-    <testCase name="VerificationBaseService should create a service" duration="19"/>
-    <testCase name="VerificationBaseService invalidInputScore - return true when exist map has score" duration="3"/>
-    <testCase name="VerificationBaseService getCalculationConfirmMessage - return correct message" duration="6"/>
-    <testCase name="VerificationBaseService isTicketOnGame return true when exist result set has ticket" duration="2"/>
-    <testCase name="VerificationBaseService isTicketOnGame return true when exist result Match with special bettype" duration="2"/>
-    <testCase name="VerificationBaseService isExistMismatchScore - return true when exist result mismatch" duration="2"/>
-    <testCase name="VerificationBaseService allMapHaveScoreSources should return true when all maps have score sources" duration="3"/>
-    <testCase name="VerificationBaseService allMapHaveScoreSources should return false when map missing score source" duration="4"/>
-    <testCase name="VerificationBaseService isExistedHomeAwayScore - return false when exist value" duration="3"/>
-    <testCase name="VerificationBaseService autoFillScore should fill home and away when all condition passed" duration="3"/>
-    <testCase name="VerificationBaseService autoFillScore should fill blank for home and away when scores are mismatch" duration="2"/>
-    <testCase name="VerificationBaseService isScoreConsecutive should return true when score is consecutive" duration="2"/>
-    <testCase name="VerificationBaseService isScoreConsecutive should return true when score is empty" duration="2"/>
-    <testCase name="VerificationBaseService isScoreConsecutive should return false when only 1 score existed" duration="3"/>
-    <testCase name="VerificationBaseService isScoreConsecutive should return false when score is not consecutive" duration="2"/>
-    <testCase name="VerificationBaseService isOutsideScoreConsecutive should return true when score is consecutive" duration="2"/>
-    <testCase name="VerificationBaseService isOutsideScoreConsecutive should return true when score is empty" duration="2"/>
-    <testCase name="VerificationBaseService isOutsideScoreConsecutive should return false when only 1 score existed" duration="1"/>
-    <testCase name="VerificationBaseService isOutsideScoreConsecutive should return false when score is not consecutive" duration="2"/>
-    <testCase name="VerificationBaseService isMismatchedWarning should return false when result detail is empty" duration="2"/>
-    <testCase name="VerificationBaseService isMismatchedWarning should return false when external score is empty" duration="3"/>
-    <testCase name="VerificationBaseService isMismatchedWarning should return true when exist a mismatch score" duration="2"/>
-    <testCase name="VerificationBaseService isMismatchedWarning should return false when all scores are matched" duration="2"/>
-    <testCase name="VerificationBaseService isMismatchedWarning should return false when no result detail but external scores are match" duration="2"/>
-    <testCase name="VerificationBaseService verifyFinalResource - return message when score not equal" duration="2"/>
-    <testCase name="VerificationBaseService changeToNewFinalResource - should set new value" duration="3"/>
-    <testCase name="VerificationBaseService getNewFinalResource return sum of value" duration="2"/>
-    <testCase name="VerificationBaseService getNewFinalResource return count win set" duration="3"/>
-    <testCase name="VerificationBaseService isEarlyMismatchedWarning should return false when result detail is empty" duration="2"/>
-    <testCase name="VerificationBaseService isEarlyMismatchedWarning should return false when external score is empty" duration="1"/>
-    <testCase name="VerificationBaseService isEarlyMismatchedWarning should return true when exist a mismatch score" duration="4"/>
-    <testCase name="VerificationBaseService isEarlyMismatchedWarning should return false when all scores are matched" duration="2"/>
-    <testCase name="VerificationBaseService isEarlyMismatchedWarning should return false when no result detail but external scores are match" duration="2"/>
-    <testCase name="VerificationBaseService autoFillEarlyResult should fill home value when all condition passed" duration="2"/>
-    <testCase name="VerificationBaseService autoFillEarlyResult should fill blank for home value when scores are mismatch" duration="2"/>
-    <testCase name="VerificationBaseService allResultsHaveScoreSources should return true when all results have score sources" duration="3"/>
-    <testCase name="VerificationBaseService allResultsHaveScoreSources should return false when result missing score source" duration="2"/>
-    <testCase name="VerificationBaseService isFullTimeMismatched should return true when fulltime score is mismatch" duration="2"/>
-    <testCase name="VerificationBaseService isFullTimeMismatched should return false when fulltime is match" duration="2"/>
-    <testCase name="VerificationBaseService isFullTimeMismatched should return false when input fulltime score directly" duration="2"/>
-    <testCase name="VerificationBaseService getOutsideScores - should get all valid outside sources and map score" duration="2"/>
-    <testCase name="VerificationBaseService getChangedScores - should get only changed score" duration="3"/>
-    <testCase name="VerificationBaseService generateExternalScores should generate external score for result detail" duration="3"/>
-    <testCase name="VerificationBaseService generateExternalScores should generate trader and external score for tennis result detail" duration="2"/>
-    <testCase name="VerificationBaseService generateExternalScores should generate trader and external score for e-sports result detail" duration="1"/>
+  <file path="D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\shared\services\aio.service.spec.ts">
+    <testCase name="AioService should create a service" duration="41"/>
+    <testCase name="AioService getMatch - Call exact Url and param" duration="27"/>
+    <testCase name="AioService push - Call exact Url and param" duration="5"/>
+    <testCase name="AioService saveScore - Call exact Url and param" duration="4"/>
+    <testCase name="AioService verifyChangedSettledTickets should return false when no need to check for recalc tickets" duration="6"/>
+    <testCase name="AioService verifyChangedSettledTickets should return true when need to check for recalc tickets" duration="3"/>
+    <testCase name="AioService undoConfirmedResult should show alert when exist result not confirmed" duration="4"/>
+    <testCase name="AioService undoConfirmedResult should show confirm when all result confirmed" duration="5"/>
+    <testCase name="AioService undoConfirmedResult should push request when click ok on confirm box" duration="114"/>
+    <testCase name="AioService changeConfirmResultSDTSetting show correct confirm when enbale is true" duration="5">
+      <failure message="TypeError: Cannot read properties of undefined (reading &apos;resourceName&apos;)"><![CDATA[TypeError: Cannot read properties of undefined (reading 'resourceName')
+    at AioService.changeConfirmResultSDTSetting (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\shared\services\aio.service.ts:137:82)
+    at D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\shared\services\aio.service.spec.ts:172:15
+    at _ZoneDelegate.invoke (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone.umd.js:412:32)
+    at ProxyZoneSpec.Object.<anonymous>.ProxyZoneSpec.onInvoke (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone-testing.umd.js:2164:43)
+    at _ZoneDelegate.invoke (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone.umd.js:411:38)
+    at ZoneImpl.run (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone.umd.js:147:47)
+    at wrappedFunc (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone-testing.umd.js:450:38)
+    at Object.<anonymous> (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\jest-each\build\bind.js:81:13)
+    at Promise.then.completed (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\jest-circus\build\utils.js:298:28)
+    at new Promise (<anonymous>)
+    at callAsyncCircusFn (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\jest-circus\build\utils.js:231:10)
+    at _callCircusTest (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\jest-circus\build\run.js:316:40)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at _runTest (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\jest-circus\build\run.js:252:3)
+    at _runTestsForDescribeBlock (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\jest-circus\build\run.js:126:9)
+    at _runTestsForDescribeBlock (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\jest-circus\build\run.js:121:9)
+    at _runTestsForDescribeBlock (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\jest-circus\build\run.js:121:9)
+    at run (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\jest-circus\build\run.js:71:3)
+    at runAndTransformResultsToJestFormat (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:122:21)]]></failure>
+    </testCase>
+    <testCase name="AioService changeConfirmResultSDTSetting show correct confirm when enbale is false" duration="4"/>
+    <testCase name="AioService changeConfirmResultSDTSetting should change push request and close popup when click ok on confirm box" duration="4">
+      <failure message="TypeError: Cannot read properties of undefined (reading &apos;resourceName&apos;)"><![CDATA[TypeError: Cannot read properties of undefined (reading 'resourceName')
+    at AioService.changeConfirmResultSDTSetting (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\shared\services\aio.service.ts:137:82)
+    at D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\shared\services\aio.service.spec.ts:184:15
+    at fakeAsyncFn (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone-testing.umd.js:1789:30)
+    at _ZoneDelegate.invoke (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone.umd.js:412:32)
+    at ProxyZoneSpec.Object.<anonymous>.ProxyZoneSpec.onInvoke (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone-testing.umd.js:2164:43)
+    at _ZoneDelegate.invoke (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone.umd.js:411:38)
+    at ZoneImpl.run (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone.umd.js:147:47)
+    at Object.wrappedFunc (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone-testing.umd.js:450:38)
+    at Promise.then.completed (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\jest-circus\build\utils.js:298:28)
+    at new Promise (<anonymous>)
+    at callAsyncCircusFn (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\jest-circus\build\utils.js:231:10)
+    at _callCircusTest (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\jest-circus\build\run.js:316:40)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at _runTest (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\jest-circus\build\run.js:252:3)
+    at _runTestsForDescribeBlock (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\jest-circus\build\run.js:126:9)
+    at _runTestsForDescribeBlock (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\jest-circus\build\run.js:121:9)
+    at _runTestsForDescribeBlock (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\jest-circus\build\run.js:121:9)
+    at run (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\jest-circus\build\run.js:71:3)
+    at runAndTransformResultsToJestFormat (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:122:21)]]></failure>
+    </testCase>
+    <testCase name="AioService changeConfirmResultSDTSetting should change setting for hedgeMatch when select hedgeMatch" duration="4">
+      <failure message="TypeError: Cannot read properties of undefined (reading &apos;resourceName&apos;)"><![CDATA[TypeError: Cannot read properties of undefined (reading 'resourceName')
+    at AioService.changeConfirmResultSDTSetting (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\shared\services\aio.service.ts:137:82)
+    at D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\shared\services\aio.service.spec.ts:199:15
+    at fakeAsyncFn (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone-testing.umd.js:1789:30)
+    at _ZoneDelegate.invoke (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone.umd.js:412:32)
+    at ProxyZoneSpec.Object.<anonymous>.ProxyZoneSpec.onInvoke (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone-testing.umd.js:2164:43)
+    at _ZoneDelegate.invoke (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone.umd.js:411:38)
+    at ZoneImpl.run (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone.umd.js:147:47)
+    at Object.wrappedFunc (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone-testing.umd.js:450:38)
+    at Promise.then.completed (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\jest-circus\build\utils.js:298:28)
+    at new Promise (<anonymous>)
+    at callAsyncCircusFn (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\jest-circus\build\utils.js:231:10)
+    at _callCircusTest (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\jest-circus\build\run.js:316:40)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at _runTest (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\jest-circus\build\run.js:252:3)
+    at _runTestsForDescribeBlock (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\jest-circus\build\run.js:126:9)
+    at _runTestsForDescribeBlock (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\jest-circus\build\run.js:121:9)
+    at _runTestsForDescribeBlock (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\jest-circus\build\run.js:121:9)
+    at run (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\jest-circus\build\run.js:71:3)
+    at runAndTransformResultsToJestFormat (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:122:21)]]></failure>
+    </testCase>
+    <testCase name="AioService changeConfirmResultSetting should show confirm box " duration="4"/>
+    <testCase name="AioService changeConfirmResultSetting should change push request and close popup when click ok on confirm box" duration="24"/>
+    <testCase name="AioService changeConfirmResultSetting should change setting for hedgeMatch when select hedgeMatch" duration="23"/>
+    <testCase name="AioService changeConfirmResultSetting should change setting for old match and hedgeMatch when select old match and hedgeMatch" duration="21"/>
+    <testCase name="AioService generateDeterminedType should generate the determined type for full-time result" duration="3"/>
+    <testCase name="AioService generateDeterminedType should generate the determined type for half-time result" duration="6"/>
+    <testCase name="AioService generateDeterminedType should generate the determined type for other results" duration="4"/>
+    <testCase name="AioService generateDeterminedType should generate the determined type when no results are checked" duration="3"/>
   </file>
 </testExecutions>

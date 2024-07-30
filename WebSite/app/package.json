@@ -8,7 +8,7 @@
     "ng": "ng",
     "build": "ng build --configuration production",
     "start": "ng serve",
-    "test": "jest --debug --no-cache core/services",
+    "test": "jest --debug --no-cache shared/services/aio.service.spec.ts",
     "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand other-sports/components/halftime-fulltime/halftime-fulltime-calculation.component.spec.ts",
     "test:watch": "jest --watch happy5/components/happy5/components/matches.component.spec.ts",
     "test:coverage": "jest --runInBand --coverage multi-sports/components/league.component.spec",

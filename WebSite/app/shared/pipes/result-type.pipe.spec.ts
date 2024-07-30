@@ -15,7 +15,7 @@ describe('Pipe: ResultTypePipe', () => {
 
         const item2 = new ResultDetail();
         item2.resultStatus = "Group 2";
-        const filterGroupName = ['Group 1'];
+        const filterGroupName = 'Group 1';
 
         const expectedList = new ResultDetail();
         expectedList.groupName = "Group 1";
@@ -30,7 +30,7 @@ describe('Pipe: ResultTypePipe', () => {
         item1.groupName = "Group 1";
         const item2 = new ResultDetail();
         item2.resultStatus = "Group 2";
-        const filterGroupName = ['Group Test'];
+        const filterGroupName = 'Group Test';
         const items = [item1, item2];
         expect(pipe.transform(items, filterGroupName)).toEqual([]);
     });

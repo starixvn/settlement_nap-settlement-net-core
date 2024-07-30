@@ -1,11 +1,11 @@
 import { TestBed, inject, fakeAsync, tick } from '@angular/core/testing';
 import { HttpClientModule } from '@angular/common/http';
+import { DatePipe } from "@angular/common";
 import { AioService } from './aio.service';
 import { HttpRequestService, BlockUIService, MessageBoxService } from '../../shared/services';
 import { HedgeMatchDetail, ResultDetail, SaveScoreQuery } from '../models/sportsbook-sop';
 import { GeneralResultDetail, ResultSettingModel, ResultSettingQuery } from '../models';
 import { ResourceIds, ResultSettingType } from '../constants';
-import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ClosePopupService } from './close-popup.service.native';
 import { ModalDialogComponent } from '../../shared/components/modal-dialog/modal-dialog.component';
@@ -21,10 +21,10 @@ describe('AioService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [
-        ModalDialogComponent,
-        ModalContentDialogComponent
+       
       ],
       providers: [
+        DatePipe,
         AioService,
         HttpRequestService,
         BlockUIService,
@@ -33,6 +33,8 @@ describe('AioService', () => {
         { provide: MessageBoxService, useClass: MessageBoxService },
       ],
       imports: [
+        ModalDialogComponent,
+        ModalContentDialogComponent,
         HttpClientModule,
         NgbModule
       ],
