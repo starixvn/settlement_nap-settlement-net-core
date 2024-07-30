@@ -46,11 +46,7 @@ public class NewInfoMatchServiceImp(
     {
         if (match.EventStatus.IgnoreCaseEquals(EventStatus.Postponed))
         {
-            //return siteMatchService.IsExistMarkedTickets(match)
-            //    ? Background.YellowBlinking
-            //    : Background.Yellow;
-
-            return match.IsExistMarkedTicket
+            return siteMatchService.IsExistMarkedTickets(match)
                 ? Background.YellowBlinking
                 : Background.Yellow;
         }
@@ -62,7 +58,7 @@ public class NewInfoMatchServiceImp(
 
         if (match.Remark.IsPending)
         {
-            return match.IsExistMarkedTicket
+            return siteMatchService.IsExistMarkedTickets(match)
                 ? Background.BrightYellowBlinking
                 : Background.BrightYellow;
         }
