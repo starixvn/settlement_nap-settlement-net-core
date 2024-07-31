@@ -1,12 +1,10 @@
-import { LeagueSettingsStore } from '../../services/league-settings.store';
-import { Component, OnDestroy, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
-import { LeagueSettings, ResultSettings } from '../../../shared/models/league-settings.model';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ResultSettings } from '../../../shared/models/league-settings.model';
 import { UrlHelper } from '../../../helper';
 import { AutoTypeComponent } from './auto-setting/auto-setting.component';
 import { CommonModule } from '@angular/common';
 import { TimeSettingComponent } from './time-setting/time-setting.component';
 import { AutoPayoutSettingComponent } from './auto-payout-setting/auto-payout-setting.component';
-import { Subject, distinctUntilChanged, map, takeUntil } from 'rxjs';
 import { RequestService } from '../../services/request.service';
 import { MessageBoxService } from '../../../shared/services';
 import { ToastContainerDirective, ToastContainerModule, ToastrService } from 'ngx-toastr';
@@ -14,6 +12,7 @@ import { Language } from '../../../shared/language.native';
 import { ModalDialogMessage } from '../../../shared/models';
 import { LeagueAutoSettings } from '../../../shared/models/leagus-auto-settings.model';
 import * as _ from 'lodash';
+import { LeagueSettingsStore } from '../../services/league-settings.store.native';
 
 @Component({
   selector: 'league-auto-settings',
@@ -79,7 +78,7 @@ export class LeagueAutoSettingsComponent implements OnInit {
     });
   }
 
-  private async updateSetting(isApplyAll: boolean = false) {
+  private async updateSetting(isApplyAll = false) {
     const result = await this.requestService.updateLeagueSetting(this.store.originalState, this.store.state, isApplyAll);
     if (result.isSuccessful) {
       const response: LeagueAutoSettings = {
@@ -97,6 +96,6 @@ export class LeagueAutoSettingsComponent implements OnInit {
   }
 
   private verifyQuantityProvider(resultSettings: ResultSettings) {
-    return !resultSettings.hasTrader && resultSettings.minimumProvider == 1;
+    return !resultSettings.hasTrader && resultSettings.minimumProvider === 1;
   }
 }

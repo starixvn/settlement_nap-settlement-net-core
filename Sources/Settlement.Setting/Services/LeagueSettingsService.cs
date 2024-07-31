@@ -92,8 +92,9 @@ public class LeagueSettingsServiceImp
             WaitingTime = request.NewSettings.RefundWaitingTime
         });
 
-        return resultUpdateWaitingTime.ErrCode + resultUpdateRefundWaitingTime.ErrCode > 0 ? new Result(1, $"{resultUpdateWaitingTime.ErrMsg}<br/>{resultUpdateRefundWaitingTime.ErrMsg}") : new Result();
-
+        return resultUpdateWaitingTime.ErrCode + resultUpdateRefundWaitingTime.ErrCode > 0
+            ? new Result(1, $"{resultUpdateWaitingTime.ErrMsg}<br/>{resultUpdateRefundWaitingTime.ErrMsg}")
+            : new Result();
     }
 
     private async Task<Result> UpdateAutoSetting(UpdateLeagueSettingsRequest request)

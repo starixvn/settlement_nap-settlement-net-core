@@ -17,8 +17,8 @@ import { Language } from '../../../../../shared/language.native';
 export class ProviderSelectionComponent implements OnInit {
    providerSources: ProviderSource[];
   private resultSettings: ResultSettings;
-  private primaryId = 1;
-  private secondaryId = 2;
+  private readonly primaryId = 1;
+  private readonly secondaryId = 2;
    errorMessage: string;
   constructor(
     private readonly dialogRef: MatDialogRef<ProviderSelectionComponent>,
@@ -48,8 +48,8 @@ export class ProviderSelectionComponent implements OnInit {
 
   submit() {
     this.errorMessage = "";
-    this.resultSettings.primaryProvider = this.providerSources.filter(p => p.priority == this.primaryId).map(p => p.sourceName).join(', ');
-    this.resultSettings.secondaryProvider = this.providerSources.filter(p => p.priority == this.secondaryId).map(p => p.sourceName).join(', ');
+    this.resultSettings.primaryProvider = this.providerSources.filter(p => p.priority === this.primaryId).map(p => p.sourceName).join(', ');
+    this.resultSettings.secondaryProvider = this.providerSources.filter(p => p.priority === this.secondaryId).map(p => p.sourceName).join(', ');
     if(this.validateSources()) {
       if (this.isEarly) {
         this.store.setState({ ... this.store.state, earlyResultSettings: { ...this.resultSettings } });
