@@ -1,6 +1,4 @@
-﻿using Settlement.Core.Models;
-
-namespace Settlement.EventManagement.Services;
+﻿namespace Settlement.EventManagement.Services;
 
 public interface ScoreService
 {

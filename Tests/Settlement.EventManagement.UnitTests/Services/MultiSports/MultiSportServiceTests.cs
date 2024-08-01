@@ -1,13 +1,10 @@
-﻿using AutoFixture.Kernel;
-using AutoMapper;
+﻿using AutoMapper;
 using Fanex.Data.Repository;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
-using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.EventManagement.Criteria;
-using Settlement.EventManagement.Models.MultiSports;
 using Settlement.EventManagement.Requests;
 using Settlement.EventManagement.Services;
 using Settlement.EventManagement.Services.MultiSports;
@@ -25,14 +22,12 @@ public class MultiSportServiceTests
 
     private readonly IRefDataService refDataService;
 
-    private readonly SiteMatchService siteMatchService;
-
     public MultiSportServiceTests()
     {
         repository = Substitute.For<IDynamicRepository>();
         matchService = Substitute.For<IMatchService>();
 
-        siteMatchService = Substitute.For<SiteMatchService>();
+        var siteMatchService = Substitute.For<SiteMatchService>();
         var cacheService = Substitute.For<IMemoryCache>();
 
         var mapperConfig = new MapperConfigurationExpression();

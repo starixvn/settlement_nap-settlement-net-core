@@ -1,5 +1,4 @@
-﻿using System.Text;
-using Settlement.Setting.Criteria.LeagueSettings;
+﻿using Settlement.Setting.Criteria.LeagueSettings;
 using System.Text;
 
 namespace Settlement.Setting.Helpers;

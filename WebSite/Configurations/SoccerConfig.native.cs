@@ -6,7 +6,7 @@ using Settlement.Sportsbook.Soccer.Services.InstantCalculate;
 
 namespace Settlement.WebSites.Configurations;
 
-using Settlement.Core.Services.SpecificService;
+using Core.Services.SpecificService;
 using Sportsbook.Soccer.Services.GetMatch;
 
 public static class SoccerConfig

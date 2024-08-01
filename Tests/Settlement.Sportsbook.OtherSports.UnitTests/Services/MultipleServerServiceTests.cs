@@ -45,7 +45,6 @@ public class MultipleServerServiceTests
     public async Task GetMatchInfo_MatchDetailNotNull_CallAllRelatedMethod()
     {
         // Arrange
-        var fakeData = new IEnumerable<object>[2];
         var item1 = new List<MatchDetail> { new() };
         var item2 = new List<TicketCounts> { new() };
         repository.FetchMultipleAsync<MatchDetail, object>(Arg.Any<GetSportsbookMatchDetailCriteria>())

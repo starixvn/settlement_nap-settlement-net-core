@@ -37,7 +37,7 @@ public class FetchDataServiceTests
     public void GetMatchInfo_Always_ReturnsNotNull()
     {
         // Arrange
-        IEnumerable<Models.MatchDetail> matches = new List<Models.MatchDetail> {
+        IEnumerable<MatchDetail> matches = new List<MatchDetail> {
             new() { MatchId = 123 }
         };
         var results = new IEnumerable<object>[4];

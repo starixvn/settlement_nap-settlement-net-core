@@ -4,7 +4,6 @@ using Fanex.Settlement.ScaleOut.Models;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.Extensions.Options;
-using NSubstitute;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.FastMarkets.Criteria;
@@ -67,7 +66,6 @@ public class FastMarketServiceTests
             }
         };
         var ticketsCount = new TicketCounts { GroupId = 1 };
-        var result1 = new IEnumerable<object>[0];
 
         var item1 = new List<EventCounter> { new() { Position = 1 } };
         var item2 = new List<string> { "a" };

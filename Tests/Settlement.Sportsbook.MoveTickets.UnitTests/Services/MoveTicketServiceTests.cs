@@ -19,7 +19,6 @@ public class MoveTicketServiceTests
     private readonly IRefDataService refDataService;
     private readonly IMatchService matchService;
     private readonly MoveTicketService service;
-    private readonly SiteMatchService siteMatchService;
 
     public MoveTicketServiceTests()
     {
@@ -27,7 +26,7 @@ public class MoveTicketServiceTests
         refDataService = Substitute.For<IRefDataService>();
         var accessor = Substitute.For<IHttpContextAccessor>();
         matchService = Substitute.For<IMatchService>();
-        siteMatchService = Substitute.For<SiteMatchService>();
+        var siteMatchService = Substitute.For<SiteMatchService>();
 
         var context = new DefaultHttpContext
         {
