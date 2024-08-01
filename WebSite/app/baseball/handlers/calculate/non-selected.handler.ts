@@ -1,3 +1,4 @@
+import { Store } from './../../services/store.service';
 import { isEmpty } from "lodash";
 import { Language } from "../../../shared/language.native";
 import { CalculateStore } from "../../services/calculate/calculate.store";
@@ -7,18 +8,17 @@ import { inject } from "@angular/core";
 
 export class NonSelectedHandler implements BaseHandler {
   private nextHandler: BaseHandler;
-  private store = inject(CalculateStore);
   private notifyService = inject(NotifyService);
 
   setNextHandler(handler: BaseHandler) {
     this.nextHandler = handler;
   }
 
-  handle() {
-    if (isEmpty(this.store.getResultChecked())) {
+  handle(store: Store) {
+    if (isEmpty(store.getResultChecked())) {
       this.notifyService.error(Language.sop.inning.NonSelectedResult);
     } else {
-      this.nextHandler.handle();
+      this.nextHandler.handle(store);
     }
 }
 }

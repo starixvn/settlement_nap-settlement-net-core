@@ -10,6 +10,8 @@ public static class ResourceType
 
     public const string OverTime = "OT";
 
+    public const string ExtraInning = "EI";
+
     public const string FullTimeFirstGoal = "14F";
 
     public const string FullTimeLastGoal = "14L";

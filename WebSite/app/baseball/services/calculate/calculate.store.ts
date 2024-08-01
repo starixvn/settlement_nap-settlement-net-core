@@ -7,6 +7,7 @@ import { VerificationBaseService } from "../../../core/services/verification-bas
 import { CalculateAction, ResourceIds, ResultStatusId, SettlementStatusId } from "../../../shared/constants";
 import { ResultDetailBaseBall } from "../../models/result-detail.model";
 import { cloneDeep } from "lodash";
+import { Store } from "../store.service";
 
 @Injectable(
   {
@@ -14,9 +15,9 @@ import { cloneDeep } from "lodash";
   }
 )
 
-export class CalculateStore{
-  private aioService = inject(AioService);
-  private VerificationBaseService = inject(VerificationBaseService);
+export class CalculateStore implements Store{
+  #aioService = inject(AioService);
+  #verificationBaseService = inject(VerificationBaseService);
 
   #match = signal<Match>(null);
   #isScoreDirect = signal<boolean>(false);
@@ -27,11 +28,7 @@ export class CalculateStore{
   #actionSubmit = '';
 
   isScoreDirect = this.#isScoreDirect.asReadonly();
-  match = this.#match.asReadonly();
   isReSettledTickets = this.#isReSettledTickets.asReadonly();
-  isApplyHedgeMatch = this.#isApplyHedgeMatch.asReadonly();
-  isClickOnCalculate = this.#isClickOnCalculate;
-  actionSubmit = this.#actionSubmit;
 
   fulltimeResult: ResultDetailBaseBall;
   maxProviderCol: number;
@@ -44,8 +41,8 @@ export class CalculateStore{
       sportType,
       settleType: "MNL"
     };
-    const matchFetched = (await this.aioService.getMatch(matchQuery)) as Match;
-    this.VerificationBaseService.generateExternalScores(matchFetched, matchFetched.resultDetails, matchFetched.matchDetail.sportType, matchFetched.matchDetail.providerCount > 2 ? 3 : 2);
+    const matchFetched = (await this.#aioService.getMatch(matchQuery)) as Match;
+    this.#verificationBaseService.generateExternalScores(matchFetched, matchFetched.resultDetails, matchFetched.matchDetail.sportType, matchFetched.matchDetail.providerCount > 2 ? 3 : 2);
     this.#match.set(matchFetched);
     this.maxProviderCol = matchFetched.matchDetail.providerCount > 2 ? 3 : 2;
     this.fulltimeResult = this.getFullTime();
@@ -87,6 +84,10 @@ export class CalculateStore{
 
   setIsApplyHedgeMatch = (isApplyHedgeMatch: boolean) => this.#isApplyHedgeMatch.set(isApplyHedgeMatch);
 
+  getMatch = () => this.#match();
+  
+  getApplyingHedgeMatch = () => this.#isApplyHedgeMatch();
+
   onSubmitCalculate () {
     this.#isClickOnCalculate = true;
     this.#actionSubmit = CalculateAction.calculate;
@@ -96,5 +97,9 @@ export class CalculateStore{
     this.#isClickOnCalculate = false;
     this.#actionSubmit = CalculateAction.unCalculate;
   }
+
+  getActionSubmit = () => this.#actionSubmit;
+
+  getIsClickOnCalculate = () => this.#isClickOnCalculate;
 }
 

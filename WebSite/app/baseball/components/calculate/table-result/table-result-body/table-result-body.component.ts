@@ -13,11 +13,12 @@ import { SettlementStatusId } from '../../../../../shared/constants';
 import { NotifyService } from '../../../../services/notify.service';
 import { ResultState } from '../../../../models/result-state.model';
 import { ResultDetailBaseBall } from '../../../../models/result-detail.model';
+import { ResultByTeamNamePipe } from "../../../../../shared/pipes/result-by-team-name.pipe";
 
 @Component({
   selector: 'tbody[table-result-body]',
   standalone: true,
-  imports: [CommonModule, FormsModule, ResourceNamePipe],
+  imports: [CommonModule, FormsModule, ResourceNamePipe, ResultByTeamNamePipe],
   templateUrl: './table-result-body.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -35,7 +36,9 @@ export class TableResultBodyComponent implements OnInit{
   fullTimeId = ResourceIds.fullTime;
   maxProviderCol = this.store.maxProviderCol;
   tableIsReady = false;
-  maxTeamName = 15;
+  #maxTeamName = 15;
+  homeName = this.getTeamName(this.matchDetail.homeName);
+  awayName = this.getTeamName(this.matchDetail.awayName);
 
   constructor(){
     effect(() => {
@@ -149,6 +152,6 @@ export class TableResultBodyComponent implements OnInit{
   }
 
   getTeamName(teamName: string) {
-    return teamName.length > this.maxTeamName ? `${teamName.substring(0, this.maxTeamName)}...` : teamName;
+    return teamName.length > this.#maxTeamName ? `${teamName.substring(0, this.#maxTeamName)}...` : teamName;
   }
 }

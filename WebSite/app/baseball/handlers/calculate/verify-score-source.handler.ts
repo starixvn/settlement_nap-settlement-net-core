@@ -1,3 +1,4 @@
+import { Store } from './../../services/store.service';
 import { CalculateStore } from "../../services/calculate/calculate.store";
 import { NotifyService } from "../../services/notify.service";
 import { BaseHandler } from "../base.handler.native";
@@ -8,29 +9,29 @@ import { Language } from "../../../shared/language.native";
 export class VerifyScoreSourceHandler implements BaseHandler {
   private nextHandler: BaseHandler;
   private verify = inject(VerificationBaseService);
-  private store = inject(CalculateStore);
   private notifyService = inject(NotifyService);
 
   setNextHandler(handler: BaseHandler) {
     this.nextHandler = handler;
   }
 
-  async handle() {
-    if (!this.verify.allMapHaveScreenshotSource(this.store.getResultDetails())) {
+  async handle(store: Store) {
+    const selectedResult = store.getResultChecked();
+    if (!this.verify.allMapHaveScreenshotSource(selectedResult)) {
       this.notifyService.error(Language.sop.notScreenshot);
       return;
     }
 
-    if (this.verify.isExistMismatchedScoreScreenshot(this.store.getResultDetails())) {
+    if (this.verify.isExistMismatchedScoreScreenshot(selectedResult)) {
       this.notifyService.error(Language.sop.mismatchedScreenshot);
       return;
     }
 
-    if (this.verify.allMapHaveScoreSources(this.store.getResultDetails())) {
-      this.nextHandler.handle();
+    if (this.verify.allMapHaveScoreSources(selectedResult)) {
+      this.nextHandler.handle(store);
     } else {
-      if (this.store.isLeader()) {
-        this.notifyService.confirm(Language.eSports.leader.insufficientSources, () => this.nextHandler.handle());
+      if (store.isLeader()) {
+        this.notifyService.confirm(Language.eSports.leader.insufficientSources, () => this.nextHandler.handle(store));
       } else {
         this.notifyService.error(Language.eSports.nonLeader.insufficientSources);
       }

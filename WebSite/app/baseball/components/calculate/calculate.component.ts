@@ -14,6 +14,7 @@ import { TableResultFooterComponent } from './table-result/table-result-footer/t
 import { IntervalBackgroundPipe } from '../../../shared/pipes/interval-background.pipe';
 import { ResultRowStateService } from '../../services/result-row-state.service';
 import { ResourceNamePipe } from '../../pipes/resource-name.pipe';
+import { Match } from '../../models/match.model';
 @Component({
   selector: 'calculate',
   standalone: true,
@@ -23,22 +24,23 @@ import { ResourceNamePipe } from '../../pipes/resource-name.pipe';
   templateUrl: './calculate.component.html'
 })
 export class CalculateComponent implements SportTemplate {
-  private store = inject(CalculateStore);
+  #store = inject(CalculateStore);
   isReadyMatch = false;
   applyHedgeMatch: boolean;
-  isResettleTickets = this.store.isReSettledTickets();
-  match = this.store.match;
+  isResettleTickets = this.#store.isReSettledTickets();
+  match: Match;
   async getMatch(matchId: number) {
-    await this.store.fetchMatch(matchId);
-    this.isReadyMatch = this.match().matchDetail.playTime >= KickOffTime.playTime;
-    this.store.resetHomeAway();
+    await this.#store.fetchMatch(matchId);
+    this.isReadyMatch = this.#store.getMatchDetail().playTime >= KickOffTime.playTime;
+    this.#store.resetHomeAway();
+    this.match = this.#store.getMatch();
   }
 
   onResettleCheckboxChange(isChecked: boolean) {
-    this.store.setReSettledTickets(isChecked);
+    this.#store.setReSettledTickets(isChecked);
   }
 
   changeApplyHedgeMatch(isChecked: boolean) {
-    this.store.setIsApplyHedgeMatch(isChecked);
+    this.#store.setIsApplyHedgeMatch(isChecked);
   }
 }

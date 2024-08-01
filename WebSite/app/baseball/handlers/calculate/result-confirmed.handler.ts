@@ -1,3 +1,4 @@
+import { Store } from './../../services/store.service';
 import { find, isEqual } from "lodash";
 import { Language } from "../../../shared/language.native";
 import { ResourceIds } from "../../constants/resource-id.constant";
@@ -8,22 +9,21 @@ import { inject } from "@angular/core";
 
 export class ResultConfirmedHandler implements BaseHandler {
   private nextHandler: BaseHandler;
-  private store = inject(CalculateStore);
   private notifyService = inject(NotifyService);
 
   setNextHandler(handler: BaseHandler) {
     this.nextHandler = handler;
   }
 
-  handle() {
+  handle(store: Store) {
     const existResultConfirmed = find(
-      this.store.getResultChecked(), 
+      store.getResultChecked(), 
       (item) =>item.resultSettingData.isConfirmedRefund && !isEqual(item.resourceId, ResourceIds.extraInning)
     );
     if (existResultConfirmed) {
-      this.notifyService.error(Language.NotSelectCalculationTypeMessage);
+      this.notifyService.error(Language.confirmRefund.calculateResultNotConfirmed);
     } else {
-      this.nextHandler.handle();
+      this.nextHandler.handle(store);
     }
 }
 }

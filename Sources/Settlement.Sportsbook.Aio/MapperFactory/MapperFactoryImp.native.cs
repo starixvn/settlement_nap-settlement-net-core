@@ -24,5 +24,6 @@ public class MapperFactoryImp : MapperFactoryBase
         AddMapperService($"tableTennis-{ApiKeyConstant.ChildMatchKey}", typeof(Services.TableTennis.ChildMatchService));
 
         AddMapperService($"standard-{ApiKeyConstant.ProviderKey}", typeof(Services.ProviderMapperService));
+        AddMapperService($"standard-{ApiKeyConstant.ResultDetailKey}", typeof(Services.Standard.ResultDetailMapperServiceImp));
     }
 }

@@ -10,7 +10,7 @@
   </td>
   <td [ngClass]="inning.resultState.finalScoreClass">
     <div class="score">
-      <label>{{getTeamName(matchDetail.homeName)}}&nbsp;</label>
+      <label>{{homeName}}&nbsp;</label>
       <input type="text" myOnlyInteger [disabled]="inning.resultState.isFinalScoreDisabled"
         [(ngModel)]="inning.homeValue" (ngModelChange)="checkInningIsMatched(inning)" [ngClass]="{
           'final-score': inning.resultState.isFullTimeRow,
@@ -18,7 +18,7 @@
         }" />
     </div>
     <div class="score">
-      <label>{{getTeamName(matchDetail.awayName)}}&nbsp;</label>
+      <label>{{awayName}}&nbsp;</label>
       <input type="text" myOnlyInteger [disabled]="inning.resultState.isFinalScoreDisabled"
         [(ngModel)]="inning.awayValue" (ngModelChange)="checkInningIsMatched(inning)" [ngClass]="{
           'final-score': inning.resultState.isFullTimeRow,
@@ -28,8 +28,8 @@
   </td>
   <ng-container *ngFor="let result of inning.externalScores; let x = index">
     <td *ngIf="x < (maxProviderCol +1) && isLeader">
-      <div> {{ result.homeValue == '' ? '-' : result.homeValue}}</div>
-      <div> {{ result.awayValue == '' ? '-' : result.awayValue}}</div>
+      <div> {{ result.homeValue | resultByTeamName: null: 3}}</div>
+      <div> {{ result.awayValue | resultByTeamName: null: 3}}</div>
     </td>
     <ng-container *ngIf="x >= (maxProviderCol +1)">
       <td [ngClass]="{'map': true, 'can-settle': inning.resultState.canSettleResult }">

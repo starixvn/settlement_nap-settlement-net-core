@@ -14,11 +14,11 @@ import { CalculateStore } from '../../../../services/calculate/calculate.store';
 })
 export class TableResultHeaderComponent{
   private store = inject(CalculateStore);
-  match = this.store.match;
+  match = this.store.getMatch();
   SOURCE_ID = ScoreSourceType;
 
   get maxProviderCol() {
-    return this.match().matchDetail.providerCount > 2 ? 3 : 2;
+    return this.match.matchDetail.providerCount > 2 ? 3 : 2;
   }
 
   getTextTooltip(text: string, maxLength: number) {
@@ -26,7 +26,7 @@ export class TableResultHeaderComponent{
   }
 
   get outSideCount() {
-    return this.match().resultDetails[0].externalScores.filter(x =>
+    return this.match.resultDetails[0].externalScores.filter(x =>
       x.sourceId !== ScoreSourceType.trader && x.sourceId >= ScoreSourceType.screenshot).length
   }
 }

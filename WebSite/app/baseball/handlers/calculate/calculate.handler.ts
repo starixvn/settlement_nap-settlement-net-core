@@ -5,28 +5,28 @@ import { BaseballApiKeys } from "../../constants/api-keys.constant";
 import { CalculateStore } from "../../services/calculate/calculate.store";
 import { NotifyService } from "../../services/notify.service";
 import { BaseHandler } from "../base.handler.native";
+import { Store } from "../../services/store.service";
 
 export class CalculateHandler implements BaseHandler {
   private nextHandler: BaseHandler;
   private aioService = inject(AioService);
-  private store = inject(CalculateStore);
   private notifyService = inject(NotifyService);
   setNextHandler(handler: BaseHandler) {
     this.nextHandler = handler;
   }
 
-  async handle(): Promise<void> {
-    const query = this.createRequestQuery(this.store);
+  async handle(store: Store): Promise<void> {
+    const query = this.createRequestQuery(store);
     const result = await this.aioService.push(query);
     if (result.isSuccessful) {
-      this.calculateHedgeMatch(query);
+      this.calculateHedgeMatch(query, store);
     } else {
       this.notifyService.error(result.errMsg);
     }
   }
 
-  private calculateHedgeMatch(query: SettleQuery) {
-    const hedgeMatchId = this.store.isApplyHedgeMatch() ? this.store.match().hedgeMatchDetail.matchId
+  private calculateHedgeMatch(query: SettleQuery, store: Store) {
+    const hedgeMatchId = store.getApplyingHedgeMatch() ? store.getMatch().hedgeMatchDetail.matchId
       : 0;
     if (hedgeMatchId > 0) {
       query.matchId = hedgeMatchId;
@@ -39,11 +39,11 @@ export class CalculateHandler implements BaseHandler {
     }
   }
 
-  private createRequestQuery(store: CalculateStore) {
+  private createRequestQuery(store: Store) {
     const query = new SettleQuery(
       store.getMatchDetail(),
       store.getResultChecked(),
-      store.actionSubmit,
+      store.getActionSubmit(),
       store.isReSettledTickets(),
       "",
       BaseballApiKeys.Settle,

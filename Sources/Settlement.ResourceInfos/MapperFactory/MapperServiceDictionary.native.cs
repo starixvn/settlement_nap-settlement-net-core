@@ -14,6 +14,7 @@ public static class MapperServiceDictionary
         { KeyConstants.SoccerKey, typeof(Services.Soccer.SoccerResourceNameService)},
         { KeyConstants.GameTotalKey, typeof(Services.Others.GameTotalResourceName)},
         { KeyConstants.OtherKey, typeof(Services.Others.OtherResourceName)},
-        { KeyConstants.TennisKey, typeof(Services.Tennis.TennisResourceNameService)}
+        { KeyConstants.TennisKey, typeof(Services.Tennis.TennisResourceNameService)},
+        { KeyConstants.BaseballKey, typeof(Services.BasketBall.BaseballResourceNameService) }
     };
 }

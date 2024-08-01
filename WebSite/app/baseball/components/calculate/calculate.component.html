@@ -1,14 +1,14 @@
-@if(match() != null) {
+@if(match != null) {
 <div class="padding">
   @if(isReadyMatch) {
-  <match-detail [matchDetail]="match().matchDetail" [permission]="match().permission"></match-detail>
-  <ticket-count [ticketCounts]="match().ticketCounts"></ticket-count>
+  <match-detail [matchDetail]="match.matchDetail" [permission]="match.permission"></match-detail>
+  <ticket-count [ticketCounts]="match.ticketCounts"></ticket-count>
   <div class="calculation-actions">
-    @if(match().hedgeMatchDetail) {
+    @if(match.hedgeMatchDetail) {
     <div class="hedge-match">
       <input type="checkbox" [(ngModel)]="applyHedgeMatch" (ngModelChange)="changeApplyHedgeMatch($event)"
         id="ApplyHedgeMatch" />
-      <label for="ApplyHedgeMatch">Apply for hedge match '<strong>{{ match().hedgeMatchDetail.matchCode }}</strong>'
+      <label for="ApplyHedgeMatch">Apply for hedge match '<strong>{{ match.hedgeMatchDetail.matchCode }}</strong>'
         also.</label>
     </div>
     }
@@ -18,7 +18,7 @@
       <tfoot table-result-footer></tfoot>
     </table>
     <resettle-checker (proceedEvent)="onResettleCheckboxChange($event)"
-      [checked]="isResettleTickets"></resettle-checker>
+      [(checked)]="isResettleTickets"></resettle-checker>
   </div>
   } @else{
   <not-ready-match></not-ready-match>

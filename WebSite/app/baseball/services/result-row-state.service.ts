@@ -45,7 +45,7 @@ export class ResultRowStateService {
 
     let disabled = resultDetail.resourceId === ResourceIds.fullTime ? !this.store.isScoreDirect() : this.store.isScoreDirect();
 
-    return this.store.isClickOnCalculate && !disabled && resultDetail.checked && isEmpty(isHome ? resultDetail.homeValue : resultDetail.awayValue);
+    return this.store.getIsClickOnCalculate() && !disabled && resultDetail.checked && isEmpty(isHome ? resultDetail.homeValue : resultDetail.awayValue);
   }
 
   canSettleResult(result: ResultDetail) {

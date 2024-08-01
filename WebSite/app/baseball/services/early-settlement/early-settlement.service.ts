@@ -1,0 +1,109 @@
+
+import { inject, Injectable } from "@angular/core";
+import { GroupMap, ResultDetail } from "../../../shared/models/sportsbook-sop";
+import { find, isEmpty, isEqual, isNil, uniqBy } from "lodash";
+import { BackgroundColor, ResultStatusId, ScoreSourceType, TicketStatusText } from "../../../shared/constants";
+import { InputType } from "../../constants/input-type.constant";
+import { Match } from "../../models/match.model";
+import { Language } from "../../../shared/language.native";
+import { ResultConfirmedHandler } from "../../handlers/calculate/result-confirmed.handler";
+import { InvalidInputHandler } from "../../handlers/calculate/invalid-input.handler";
+import { VerifyRunningOddsHandler } from "../../handlers/calculate/verify-running-odds.handler";
+import { VerifyScoreSourceHandler } from "../../handlers/calculate/verify-score-source.handler";
+import { ConfirmMismatchScoreHandler } from "../../handlers/calculate/confirm-mismatch-score.handler";
+import { ConfirmChangedResultHandler } from "../../handlers/calculate/confirm-changed-result.handler";
+import { ConfirmCalculateHandler } from "../../handlers/calculate/confirm-calculate.handler";
+import { SaveScoreHandler } from "../../handlers/calculate/save-score.handler";
+import { CalculateHandler } from "../../handlers/calculate/calculate.handler";
+import { ConfirmUnCalculateHandler } from "../../handlers/uncalculate/confirm-uncalculate.handler";
+import { EarlySettlementStore } from "./early-settlement.store";
+import { CheckMarkedTicketHandler } from "../../handlers/refund/check-marked-ticket.handler";
+import { NotifyService } from "../notify.service";
+import { AioService } from "../../../shared/services";
+
+@Injectable()
+
+export class EarlySettlementService {
+  #store = inject(EarlySettlementStore);
+  #aioService = inject(AioService);
+  #notifyService = inject(NotifyService);
+  #resultConfirmedHandler = new ResultConfirmedHandler();
+  #invalidInputHandler = new InvalidInputHandler();
+  #verifyRunningOddsHandler = new VerifyRunningOddsHandler();
+  #verifyScoreSourceHandler = new VerifyScoreSourceHandler();
+  #confirmMismatchScoreHandler = new ConfirmMismatchScoreHandler();
+  #confirmChangedResultHandler = new ConfirmChangedResultHandler();
+  #confirmCalculateHandler = new ConfirmCalculateHandler();
+  #saveScoreHandler = new SaveScoreHandler();
+  #calculateHandler = new CalculateHandler();
+  #confirmUncalculateHandler = new ConfirmUnCalculateHandler();
+  #checkMarkedTicket = new CheckMarkedTicketHandler();
+  #saveScoreOnly = new SaveScoreHandler();
+
+
+  constructor() {
+    this.#resultConfirmedHandler.setNextHandler(this.#invalidInputHandler);
+    this.#invalidInputHandler.setNextHandler(this.#verifyRunningOddsHandler);
+    this.#verifyRunningOddsHandler.setNextHandler(this.#verifyScoreSourceHandler);
+    this.#verifyScoreSourceHandler.setNextHandler(this.#confirmMismatchScoreHandler);
+    this.#confirmMismatchScoreHandler.setNextHandler(this.#confirmChangedResultHandler);
+    this.#confirmChangedResultHandler.setNextHandler(this.#confirmCalculateHandler);
+    this.#confirmCalculateHandler.setNextHandler(this.#saveScoreHandler);
+    this.#saveScoreHandler.setNextHandler(this.#calculateHandler);
+    this.#confirmUncalculateHandler.setNextHandler(this.#calculateHandler);
+    this.#checkMarkedTicket.setNextHandler(this.#calculateHandler);
+  }
+
+  calculate() {
+    this.#resultConfirmedHandler.handle(this.#store)
+  }
+
+  unCalculate() {
+    this.#confirmUncalculateHandler.handle(this.#store);
+  }
+
+  refund() {
+    this.#checkMarkedTicket.handle(this.#store);
+  }
+
+  saveScore() {
+    this.#saveScoreOnly.handle(this.#store);
+  }
+
+  confirmResult(resourceIds: string) {
+    this.#aioService.changeConfirmResultSetting(Language.confirmRefund.confirmRefund,
+      this.#store.getMatchDetail().matchId, resourceIds, true, null);
+  }
+
+  unConfirmResult(resourceIds: string) {
+    const resultNotConfirmed = find(this.#store.getResultChecked(), item => !item.resultSettingData.isConfirmedRefund);
+    if (isNil(resultNotConfirmed)) {
+      this.#aioService.changeConfirmResultSetting(Language.confirmRefund.undoConfirm, this.#store.getMatchDetail().matchId, resourceIds, false, null);
+    } else {
+      this.#notifyService.error(Language.confirmRefund.differentStates);
+    }
+  }
+
+  isExistInhouseResult(result: ResultDetail) {
+    return result.inputType === InputType.coupleScore
+      ? find(result.externalScores, (source) => source.sourceId < ScoreSourceType.screenshot
+        && this.isExistedHomeAwayScore(source.homeValue, source.awayValue))
+      : find(result.externalScores, (source) => source.sourceId < ScoreSourceType.screenshot && !isEmpty(source.homeValue));
+  }
+
+  isExistedHomeAwayScore(homeValue: string, awayValue: string) {
+    return !isEmpty(homeValue) && !isEmpty(awayValue);
+  }
+
+  getUncalculateMessage(resultDetails: ResultDetail[]) {
+    const isRunningResultStatus = find(resultDetails,
+      (x: ResultDetail) =>
+        x.resultStatusId === ResultStatusId.RunningZero
+        || x.resultStatusId === ResultStatusId.RunningOne
+        || x.resultStatusId === ResultStatusId.RunningThree || x.resultStatusId === null);
+
+    return isRunningResultStatus
+      ? Language.UnCalculationConfirmMessageEarly2
+      : Language.UnCalculationConfirmMessageEarly1;
+  }
+}

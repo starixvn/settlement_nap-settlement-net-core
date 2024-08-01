@@ -2,7 +2,7 @@ import { inject, Injectable } from "@angular/core";
 import { NonSelectedHandler } from "../../handlers/calculate/non-selected.handler";
 import { ResultConfirmedHandler } from "../../handlers/calculate/result-confirmed.handler";
 import { InvalidInputHandler } from "../../handlers/calculate/invalid-input.handler";
-import { VerifyRunningOddsHandler } from "../../handlers/calculate/verify-runnins-odds.handler";
+import { VerifyRunningOddsHandler } from "../../handlers/calculate/verify-running-odds.handler";
 import { VerifyScoreSourceHandler } from "../../handlers/calculate/verify-score-source.handler";
 import { ConfirmMismatchScoreHandler } from "../../handlers/calculate/confirm-mismatch-score.handler";
 import { ConfirmChangedResultHandler } from "../../handlers/calculate/confirm-changed-result.handler";
@@ -51,11 +51,11 @@ export class CalculateService {
   }
 
   calculate() {
-    this.nonSelectedHandler.handle();
+    this.nonSelectedHandler.handle(this.store);
   }
 
   unCalculate() {
-    this.confirmUncalculateHandler.handle();
+    this.confirmUncalculateHandler.handle(this.store);
   }
 
   async saveScore() {

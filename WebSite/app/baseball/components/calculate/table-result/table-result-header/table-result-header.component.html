@@ -2,16 +2,16 @@
   <th scope="col" rowspan="2" class="map">Result Name</th>
   <th scope="col" rowspan="2" class="ticket-status">Ticket Status</th>
   <th scope="col" rowspan="2" colspan="1" class="score">Final Score</th>
-  <th scope="col" rowspan="2" class="map" *ngIf="match().permission.isLeader">Trader Score</th>
-  <th scope="col" [colSpan]="maxProviderCol" class="map" *ngIf="match().permission.isLeader">Provider Score</th>
+  <th scope="col" rowspan="2" class="map" *ngIf="match.permission.isLeader">Trader Score</th>
+  <th scope="col" [colSpan]="maxProviderCol" class="map" *ngIf="match.permission.isLeader">Provider Score</th>
   <th scope="col" [colSpan]="outSideCount">Outside Score</th>
   <th scope="col" rowspan="2" class="status">
     Select to Proceed
   </th>
 </tr>
 <tr>
-  <ng-container *ngFor="let result of match().resultDetails[0].externalScores | slice: 1; let i = index">
-    <th class="map" *ngIf="i < maxProviderCol && match().permission.isLeader">{{ result.sourceName |
+  <ng-container *ngFor="let result of match.resultDetails[0].externalScores | slice: 1; let i = index">
+    <th class="map" *ngIf="i < maxProviderCol && match.permission.isLeader">{{ result.sourceName |
       externalSourceName }}</th>
     <th class="map" colspan="1" *ngIf="i >= maxProviderCol">
       @if(result.sourceId === SOURCE_ID.screenshot) {

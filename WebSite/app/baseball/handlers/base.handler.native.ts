@@ -1,7 +1,6 @@
-import { CalculateStore } from "../services/calculate/calculate.store";
-import { NotifyService } from "../services/notify.service";
+import { Store } from "../services/store.service";
 
 export interface BaseHandler {
   setNextHandler(handler: BaseHandler): void;
-  handle(): void ;
+  handle(store: Store): void ;
 }

@@ -11,7 +11,7 @@
       <td class="code">Match Code/ID</td>
       <td class="kick-off-time">Kick-off Time</td>
       <td>Team</td>
-      <td *ngFor="let result of resultDetail()">{{result.resourceName}}</td>
+      <td *ngFor="let result of resultDetail()" [style.width.px]="25">{{result.resourceName}}</td>
     </tr>
   </thead>
   <tbody>
