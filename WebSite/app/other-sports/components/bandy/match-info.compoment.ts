@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnInit, inject } from "@angular/core";
 import { MatchDetail } from "../../models";
 import { CommonModule } from "@angular/common";
 import { ScoreBySettlementPipe } from "../../../shared/pipes/score-by-settlement.pipe";
@@ -19,22 +19,22 @@ import { ResultDetailsService } from "./resultdetails.service";
 
 })
 export class MatchInfoCompoment implements OnInit {
+  @Input() matchDetail: MatchDetail;
+  @Input() resultDetails: ResultDetail[] = [];
+  @Input() showResultDetails = false;
+  @Input() permission: Permission;
+
+  private readonly bandyService = inject(BandyService);
+  private readonly resultDetailService = inject(ResultDetailsService);
+
+  public getIntervalBackground(settlementStatusId: number) {
+    return this.bandyService.getIntervalBackground(settlementStatusId)
+  }
+
   ngOnInit(): void {
     this.showResultDetails && this.resultDetails.forEach(item => {
       item.isDisplayedForMember = this.resultDetailService.isShowScore(item,this.permission?.isLeader) || item.settlementStatusId === SettlementStatusId.Refund;
     });
   }
-  @Input() matchDetail: MatchDetail;
-  @Input() resultDetails: ResultDetail[] = [];
-  @Input() showResultDetails: boolean = false;
-  @Input() permission: Permission;
 
-  constructor(private bandyService: BandyService,
-    private resultDetailService: ResultDetailsService
-    ) {
-    }
-
-  public getIntervalBackground(settlementStatusId: number) {
-    return this.bandyService.getIntervalBackground(settlementStatusId)
-  }
 }

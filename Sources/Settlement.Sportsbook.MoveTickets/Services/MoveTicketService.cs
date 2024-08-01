@@ -1,6 +1,4 @@
-﻿using System.IO;
-using System.Text.Json;
-using AutoMapper;
+﻿using AutoMapper;
 using Fanex.Data.Repository;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Constants;
@@ -11,6 +9,7 @@ using Settlement.Sportsbook.MoveTickets.Criteria;
 using Settlement.Sportsbook.MoveTickets.Models;
 using Settlement.Sportsbook.MoveTickets.Requests;
 using Settlement.Sportsbook.MoveTickets.Services.MultipleServer;
+using System.Text.Json;
 
 namespace Settlement.Sportsbook.MoveTickets.Services;
 
@@ -21,30 +20,15 @@ public interface MoveTicketService
     Task<List<MoveTicketsMatchDetail>> GetMoveTicketsMatches(GetMoveTicketsMatchesRequest request);
 }
 
-public class MoveTicketServiceImp : MoveTicketService
-{
-    private readonly IDynamicRepository repository;
-    private readonly IRefDataService refDataService;
-    private readonly IMapper mapper;
-    private readonly IMatchService matchService;
-    private readonly SiteMatchService siteMatchService;
-    private readonly AppSettingsKey appSettingsKey;
-
-    public MoveTicketServiceImp(
-        IDynamicRepository repository,
-        IRefDataService refDataService,
-        IMapper mapper,
-        IMatchService matchService,
+public class MoveTicketServiceImp(
+    IDynamicRepository repository,
+    IRefDataService refDataService,
+    IMapper mapper,
+    IMatchService matchService,
         IOptions<AppSettingsKey> appSettingsKey,
-        SiteMatchService siteMatchService)
-    {
-        this.repository = repository;
-        this.refDataService = refDataService;
-        this.mapper = mapper;
-        this.matchService = matchService;
-        this.appSettingsKey = appSettingsKey.Value;
-        this.siteMatchService = siteMatchService;
-    }
+        SiteMatchService siteMatchService) : MoveTicketService
+{
+    private readonly AppSettingsKey appSettingsKey = appSettingsKey.Value;
 
     public async Task<List<SportModel>> GetSportBook(GetMatchRequest request)
     {
@@ -59,7 +43,7 @@ public class MoveTicketServiceImp : MoveTicketService
             matches.Add(match);
         }));
 
-        GetReferenceAction(matches);
+        await GetReferenceAction(matches);
 
         var sportBooks = matches.GroupBy(match => new { match.SportName, match.SportType })
                                 .Select(sports => new SportModel
@@ -72,7 +56,7 @@ public class MoveTicketServiceImp : MoveTicketService
         return sportBooks;
     }
 
-    private void GetReferenceAction(List<Match> data)
+    private async Task GetReferenceAction(List<Match> data)
     {
         var listMatchId = data.Select(match => match.MatchId).ToList();
         var matchIds = string.Join(',', listMatchId);
@@ -81,7 +65,7 @@ public class MoveTicketServiceImp : MoveTicketService
             MatchIds = matchIds
         };
 
-        var referenceActions = repository.Fetch<ReferenceAction>(criteria).ToList();
+        var referenceActions = (await repository.FetchAsync<ReferenceAction>(criteria)).ToList();
 
         foreach (var match in data)
         {
@@ -171,13 +155,6 @@ public class MoveTicketServiceImp : MoveTicketService
         };
     }
 
-    private async Task<List<Match>> GetMatches(SportsbookCriteria criteria)
-    {
-        var (matches, _) = await repository.FetchMultipleAsync<Match, object>(criteria);
-
-        return matches.ToList();
-    }
-
     private async Task<IEnumerable<SiteMatch>> GetTicketInfoAllDbSites(OSTicketInfoSelCriteria criteria)
     {
         var siteDbServer = appSettingsKey.SiteDbServer;
@@ -197,26 +174,23 @@ public class MoveTicketServiceImp : MoveTicketService
         return await repository.FetchAsync<SiteMatch>(criteria);
     }
 
-    private async Task<IEnumerable<SiteMatch>> GetOSTicketInfo(List<Match> matches)
+    private async Task<IEnumerable<SiteMatch>> GetOSTicketInfo(List<Match> matches, List<ParentChildMatchFilter> parentChildMatchFilters)
     {
         var matchesInfo = matches.Select(x => new MatchRequest
         {
             MatchId = x.MatchId,
             ChildMatchType = x.ChildMatchType,
             EventStatus = x.EventStatus,
-            SportType = x.SportType,
+            SportType = x.SportType
         });
 
         var criteria = new OSTicketInfoSelCriteria
         {
             MatchInfo = JsonSerializer.Serialize(matchesInfo),
+            ChildMatchInfo = parentChildMatchFilters.Any() ? JsonSerializer.Serialize(parentChildMatchFilters) : string.Empty,
         };
 
-        var result = await GetTicketInfoAllDbSites(criteria);
-
-        var list = result.ToList();
-
-        return result;
+        return await GetTicketInfoAllDbSites(criteria);
     }
 
     private void SetMatchTicketInfo(List<Match> matches, List<SiteMatch> siteMatches)
@@ -225,8 +199,8 @@ public class MoveTicketServiceImp : MoveTicketService
         {
             var ticketInfo = siteMatches.Where(x => x.MatchId == item.MatchId).ToList();
 
-            item.SuspenderFullTime = ticketInfo.FirstOrDefault(x => string.IsNullOrEmpty(x.SuspenderFullTime))?.SuspenderFullTime;
-            item.SuspenderHalfTime = ticketInfo.FirstOrDefault(x => string.IsNullOrEmpty(x.SuspenderHalfTime))?.SuspenderHalfTime;
+            item.SuspenderFullTime = ticketInfo.Find(x => string.IsNullOrEmpty(x.SuspenderFullTime))?.SuspenderFullTime;
+            item.SuspenderHalfTime = ticketInfo.Find(x => string.IsNullOrEmpty(x.SuspenderHalfTime))?.SuspenderHalfTime;
 
             item.IsExistEarlyBetTypes = ticketInfo.Exists(x => x.IsExistEarlyBetTypes);
             item.IsRunningEarlyBetTypes = ticketInfo.Exists(x => x.IsRunningEarlyBetTypes);
@@ -239,8 +213,12 @@ public class MoveTicketServiceImp : MoveTicketService
 
     private async Task<List<Match>> GetMatchesAllInfo(SportsbookCriteria criteria)
     {
-        var matches = await GetMatches(criteria);
-        var siteMatches = (await GetOSTicketInfo(matches)).ToList();
+        var result = await repository.FetchMultipleAsync<Match, MatchOverStatus, ParentChildMatchFilter>(criteria);
+
+        var matches = result.Item1.ToList();
+        var parentChildMatchFilters = result.Item3.ToList();
+
+        var siteMatches = (await GetOSTicketInfo(matches, parentChildMatchFilters)).ToList();
 
         SetMatchTicketInfo(matches, siteMatches);
 

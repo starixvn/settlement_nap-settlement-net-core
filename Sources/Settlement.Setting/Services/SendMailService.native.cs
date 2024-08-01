@@ -1,4 +1,4 @@
-﻿using Fanex.MailDeliver.Model;
+﻿using Fanex.MailDeliver.MailClient.Model;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using RazorEngine;

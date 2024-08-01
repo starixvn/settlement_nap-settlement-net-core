@@ -5,12 +5,7 @@ namespace Settlement.FastMarkets.UnitTests.Services;
 
 public class ResultLabelServiceTests
 {
-    private readonly ResultLabelService service;
-
-    public ResultLabelServiceTests()
-    {
-        service = new ResultLabelServiceImp();
-    }
+    private readonly ResultLabelService service = new ResultLabelServiceImp();
 
     [Fact]
     public void NextOneMinuteSetPiece_Always_ReturnsRightExpectedResultItem()

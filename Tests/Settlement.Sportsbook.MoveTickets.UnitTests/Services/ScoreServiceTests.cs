@@ -9,8 +9,8 @@ public class ScoreServiceTests
 
     private readonly IScoreService service;
 
-    private static List<ResultDetail> EmptyResultDetail => new();
-    private static List<string> Resources => new() { "00", "01" };
+    private static List<ResultDetail> EmptyResultDetail => [];
+    private static List<string> Resources => ["00", "01"];
 
     public ScoreServiceTests()
     {

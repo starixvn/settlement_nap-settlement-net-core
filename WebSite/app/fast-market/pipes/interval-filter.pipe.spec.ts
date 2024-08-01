@@ -1,5 +1,5 @@
 import { FastMarketResult } from '../models';
-import { IntervalPipe } from './interval-filter.pipe';
+import { IntervalPipe } from './interval-filter.pipe.native';
 
 describe('Pipe: IntervalPipe', () => {
     let pipe: IntervalPipe;

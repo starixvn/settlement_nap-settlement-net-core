@@ -2,16 +2,16 @@ import { Injectable } from "@angular/core";
 import { FilterQuery, League, Calculation, UpdateInstantQuery, MatchCheckingResult, CalculationMatch, FilterAutoQuery } from "../models";
 import { firstValueFrom, Observable } from "rxjs";
 import { HttpRequestService } from "../../shared/services";
-import { AutoSettingLeagueQuery, AutoSettingMatchQuery, ChangeSettingResult, DateFilter, Result } from "../../shared/models";
+import { AutoSettingLeagueQuery, AutoSettingMatchQuery, ChangeSettingResult, DateFilter, Result,League as BaseLeague } from "../../shared/models";
 import * as _ from 'lodash';
 import { BackGroundService } from "./back-ground.service";
 import { DetectChangesService } from "./detect-changes.service";
-import { League as BaseLeague } from "../../shared/models";
+
 @Injectable()
 export class RequestService {
-    private calculationApi = '/api/calculation';
-    private settingApi = '/api/setting';
-    private soccerApi = '/api/soccer';
+    private readonly calculationApi = '/api/calculation';
+    private readonly settingApi = '/api/setting';
+    private readonly soccerApi = '/api/soccer';
 
     constructor(private readonly httpRequestService: HttpRequestService,
         private readonly backGroundService: BackGroundService,

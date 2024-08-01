@@ -104,7 +104,7 @@ public class GenerateServiceTests
         var request = new CalculateRequest
         {
             IsScoreDirect = true,
-            SelectedResources = new List<ResourceItem> { fullTimeResult }
+            SelectedResources = [fullTimeResult]
         };
 
         var result = service.GenerateBetStatus(request);
@@ -125,7 +125,7 @@ public class GenerateServiceTests
         };
         var request = new CalculateRequest
         {
-            SelectedResources = new List<ResourceItem> { resourceItem, resourceItem, resourceItem, resourceItem },
+            SelectedResources = [resourceItem, resourceItem, resourceItem, resourceItem],
             Action = ActionType.CalculateHalfTime
         };
 
@@ -150,7 +150,7 @@ public class GenerateServiceTests
         };
         var request = new CalculateRequest
         {
-            SelectedResources = new List<ResourceItem> { resourceItem, resourceItem, resourceItem, resourceItem },
+            SelectedResources = [resourceItem, resourceItem, resourceItem, resourceItem],
             Action = ActionType.CalculateFullTime
         };
 

@@ -15,7 +15,7 @@ import { OnlyIntegerDirective, FocusDirective } from '../../shared/directives';
 import { BrowserModule } from '@angular/platform-browser';
 import { MaterialModule } from '../../shared/material-module';
 import { SpecialSessionComponent } from './special-session.component';
-import { ToastContainerDirective, ToastContainerModule, ToastNoAnimationModule, ToastrModule } from 'ngx-toastr';
+import { ToastContainerDirective, ToastNoAnimationModule, ToastrModule } from 'ngx-toastr';
 
 describe('Component: AppComponent', () => {
     let component: AppComponent;

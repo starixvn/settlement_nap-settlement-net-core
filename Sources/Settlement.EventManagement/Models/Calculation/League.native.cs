@@ -23,5 +23,5 @@ public class League
     public AutoCalculationSetting AutoCalcSetting { get; set; } = new();
 
     [Key("matches")]
-    public List<Match> Matches { get; set; } = new();
+    public List<Match> Matches { get; set; } = [];
 }

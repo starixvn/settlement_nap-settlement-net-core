@@ -1,4 +1,4 @@
-import { MatchDetail } from '../models/match.model';
+import { MatchDetail, FantasyRelatedMatch } from '../models/match.model';
 
 export class CreateDataTest {
     public static MatchDetail() : MatchDetail {
@@ -49,6 +49,30 @@ export class CreateDataTest {
             isScoreInconsistent:false,
             originalGoalRecord: "",
             leagueId: null
+        };
+
+        return matchDetail;
+    }
+
+    public static FantasyMatch() : FantasyRelatedMatch {
+        const  matchDetail: FantasyRelatedMatch = {
+            matchId: null,
+            matchCode: null,
+            kickOffTime: null,
+            homeName: null,
+            awayName: null,
+            homeId: null,
+            awayId: null,
+            htHomeScore: null,
+            htAwayScore: null,
+            finalHomeScore: null,
+            finalAwayScore: null,
+            remark: null,
+            eventStatus: null,
+            betStatus: null,
+            isDeleted: false,
+            ftSettlementStatusId: 0,
+            htSettlementStatusId: 0
         };
 
         return matchDetail;

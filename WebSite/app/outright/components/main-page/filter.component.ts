@@ -49,7 +49,7 @@ export class FilterComponent implements OnInit {
     originalLeagues: League[];
     leagueOptions$ = new BehaviorSubject(new MultipleSelect());
 
-    statusOptions: any[] = Statuses;
+    statusOptions: { value: number, text: string }[] = Statuses;
     statusSelected: number;
 
     isIncludeTestLeague = false
@@ -59,8 +59,6 @@ export class FilterComponent implements OnInit {
     warningDialogMessage: ModalDialogMessage = new ModalDialogMessage();
 
     constructor(protected injector: Injector) { }
-
-    trackByFn = (index: number, item: any) => item.leagueId;
 
 
     async ngOnInit(): Promise<void> {

@@ -14,11 +14,11 @@ public class EventCounterResultServiceTests
     public EventCounterResultServiceTests()
     {
         service = new EventCounterResultServiceImp();
-        eventCounters = new List<EventCounter>
-        {
+        eventCounters =
+        [
             NewEventCounter(1, "12345678"),
             NewEventCounter(3, "95684201")
-        };
+        ];
     }
 
     private EventCounter NewEventCounter(int position, string result)

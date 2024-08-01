@@ -97,7 +97,7 @@ export default class LogComponent {
         this.search(true);
     }
 
-    public search(isSubmit: boolean = false) {
+    public search(isSubmit = false) {
         const fromDate = this.verifyDateService.format(this.fromDate);
         const toDate = this.verifyDateService.format(this.toDate);
         if (!this.matchCode) {
@@ -127,8 +127,8 @@ export default class LogComponent {
     }
 
     private adjustRemark(OutrightLogs: OutrightLog[]){
-        OutrightLogs.forEach( OutrightLog => {
-            OutrightLog.outrightLogDetails.forEach(log => {
+        OutrightLogs.forEach(x => {
+            x.outrightLogDetails.forEach(log => {
                 if(_.isEqual(log.result.toLowerCase(), Status.won) && _isNumberValue(log.remark)){
                     log.remarkName = Number(log.remark)> 0 ? `isDeadHeat(yes:${Number(log.remark)})` : `isDeadHeat(no)`;
                     return;

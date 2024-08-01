@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
-using Settlement.Core.Models;
 using Settlement.FastMarkets.Criteria;
 using Settlement.FastMarkets.Models;
+using Settlement.Core.Models;
 
 namespace Settlement.FastMarkets.Services;
 
@@ -10,22 +10,13 @@ public interface MultipleServerFetcherService
     Task<(List<FastMarketResult> ticketDetails, TicketCounts ticketCounts)> GetFastMarketTicketDetail(int matchId);
 }
 
-public class MultipleServerFetcherServiceImp : MultipleServerFetcherService
+public class MultipleServerFetcherServiceImp(
+    IDynamicRepository repository,
+    MergeDataService mergeDataService,
+    IOptions<AppSettingsKey> appSettingsKey)
+    : MultipleServerFetcherService
 {
-    private readonly IDynamicRepository repository;
-
-    private readonly AppSettingsKey appSettingsKey;
-
-    private readonly MergeDataService mergeDataService;
-
-    public MultipleServerFetcherServiceImp(IDynamicRepository repository,
-        MergeDataService mergeDataService,
-        IOptions<AppSettingsKey> appSettingsKey)
-    {
-        this.repository = repository;
-        this.appSettingsKey = appSettingsKey.Value;
-        this.mergeDataService = mergeDataService;
-    }
+    private readonly AppSettingsKey appSettingsKey = appSettingsKey.Value;
 
     public async Task<(List<FastMarketResult> ticketDetails, TicketCounts ticketCounts)> GetFastMarketTicketDetail(int matchId)
     {

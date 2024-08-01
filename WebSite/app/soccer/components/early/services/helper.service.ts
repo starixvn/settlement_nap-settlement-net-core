@@ -6,7 +6,7 @@ import { Result } from '../../../../shared/models';
 import { GroupBetTypeService } from "./group-bettpe.service";
 @Injectable()
 export class HelperService {
-    private soccerApi = '/api/soccer';
+    private readonly soccerApi = '/api/soccer';
     constructor(
         private readonly httpRequestService: HttpRequestService,
         private readonly closePopupService: ClosePopupService,

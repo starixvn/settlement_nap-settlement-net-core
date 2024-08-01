@@ -4,7 +4,7 @@ using Settlement.CalculationSetting.Controllers;
 using Settlement.CalculationSetting.Models;
 using Settlement.CalculationSetting.Requests;
 using Settlement.CalculationSetting.Services;
-using Settlement.Core.Models;
+using Settlement.Models;
 using System.Threading.Tasks;
 
 namespace Settlement.CalculationSetting.UnitTests.Controllers

@@ -22,11 +22,9 @@ public class GroupBetTypeServiceImp : IGroupBetTypeService
         {
             return "Other";
         }
-        else
-        {
-            var set = Convert.ToInt32(resultDetail.ResourceId.Substring(4, 2));
-            return $"Set {set}";
-        }
+
+        var set = Convert.ToInt32(resultDetail.ResourceId.Substring(4, 2));
+        return $"Set {set}";
     }
 
     private static int GetInputType(int betTypeId)
@@ -41,11 +39,6 @@ public class GroupBetTypeServiceImp : IGroupBetTypeService
             return InputType.HomeAwayNoneId;
         }
 
-        if (InputType.YesNo.Contains(betTypeId))
-        {
-            return InputType.YesNoId;
-        }
-
-        return InputType.CoupleScoreId;
+        return InputType.YesNo.Contains(betTypeId) ? InputType.YesNoId : InputType.CoupleScoreId;
     }
 }

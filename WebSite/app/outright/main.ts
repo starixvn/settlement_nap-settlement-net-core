@@ -20,4 +20,4 @@ bootstrapApplication(AppComponent, {
   })),
   importProvidersFrom(HttpClientModule)
   ],
-}).catch(err => console.error(err));
+});

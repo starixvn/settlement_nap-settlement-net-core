@@ -27,22 +27,22 @@ import { TicketStatusFilterPipe } from '../../pipes/ticket-status-filter-pipe';
     selector: 'calculate-popup',
     templateUrl: './calculate-popup.component.html',
     standalone: true,
-    imports: [CommonModule, DynamicHeightDirective, FormsModule, DatepickerComponent, ToastContainerModule, StatusPipe, TicketStatusPipe, TicketStatusFilterPipe, MatDialogModule, DragDropModule, NewMultipleSelectComponent],
+    imports: [CommonModule, DynamicHeightDirective, FormsModule, DatepickerComponent, StatusPipe, TicketStatusPipe, TicketStatusFilterPipe, MatDialogModule, DragDropModule, NewMultipleSelectComponent,ToastContainerModule],
     providers: [DatePipe, OutrightService, HttpRequestService, BlockUIService, MessageBoxService, VerifyDateService, CalculateService, StatusPipe, TicketStatusFilterPipe,
         { provide: NgbDateParserFormatter, useFactory: () => new CustomNgbDateParserFormatter('MMM dd, y') }],
 })
 export class CalculatePopupComponent implements OnInit {
     @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
-    private toastrService = inject(ToastrService);
-    private outrightService = inject(OutrightService);
-    private verifyDateService = inject(VerifyDateService);
-    private calculateService = inject(CalculateService);
-    private dialogRef = inject(MatDialogRef<CalculatePopupComponent>);
-    private dialog = inject(MatDialog);
-    private blockUIService = inject(BlockUIService);
-    private messageBoxService = inject(MessageBoxService);
-    private ticketStatusPipe = inject(TicketStatusFilterPipe);
-    private statusPipe = inject(StatusPipe);
+    private readonly toastrService = inject(ToastrService);
+    private readonly outrightService = inject(OutrightService);
+    private readonly verifyDateService = inject(VerifyDateService);
+    private readonly calculateService = inject(CalculateService);
+    public readonly dialogRef = inject(MatDialogRef<CalculatePopupComponent>);
+    private readonly dialog = inject(MatDialog);
+    private readonly blockUIService = inject(BlockUIService);
+    private readonly messageBoxService = inject(MessageBoxService);
+    private readonly ticketStatusPipe = inject(TicketStatusFilterPipe);
+    private readonly statusPipe = inject(StatusPipe);
     blockUI = true;
     teams: Team[];
     selectAllTeam = false;
@@ -138,7 +138,7 @@ export class CalculatePopupComponent implements OnInit {
         team.disableDeadheat = false;
     }
 
-    async calculate(isCalc: boolean = true) {
+    public async calculate(isCalc = true) {
         this.clearError();
         await this.getLatestData();
         const teamWonSelected = _.filter(this.teamSelected, team => _.isEqual(team.status.toLowerCase(), Status.won));
@@ -152,12 +152,11 @@ export class CalculatePopupComponent implements OnInit {
         team.eventDate = this.verifyDateService.format(value);
     }
 
-    onSelectAllTeam(e: any) {
-
+    public onSelectAllTeam(e: boolean) {
         const filteredTeams = this.fillteredTeam()
         this.teams.forEach(team => {
             const isShowed = filteredTeams.some(value => value.orId === team.orId);
-            team.selected = isShowed ? e.target.checked : false;
+            team.selected = isShowed ? e : false;
         });
     }
 
@@ -168,14 +167,14 @@ export class CalculatePopupComponent implements OnInit {
         return filterTicketStatus;
     }
 
-    onSelectTeam(e: any) {
+    onSelectTeam() {
         const filteredTeams = this.fillteredTeam()
         const selectedTeams = filteredTeams.every(team => team.selected);
         this.selectAllTeam = selectedTeams;
 
     }
 
-    private async validateBeforePush(teamWonSettled: Team[], teamWonSelected: Team[], teamHideSelected: Team[], isCalc: boolean = true) {
+    private async validateBeforePush(teamWonSettled: Team[], teamWonSelected: Team[], teamHideSelected: Team[], isCalc = true) {
         if (isCalc && CalculateService.VerifySettledSelected(this.teamSelected, this.originalTeam)) {
             this.toastrService.error(Language.Outright.existTeamSettled);
         } else if (CalculateService.ExistRunningStatus(this.teamSelected)) {
@@ -273,6 +272,7 @@ export class CalculatePopupComponent implements OnInit {
     }
 
     private async checkVoidTicket(teamHide: Team) {
-        return await this.outrightService.checkVoidTickets(+teamHide.orId)
+        const result = await this.outrightService.checkVoidTickets(+teamHide.orId);
+        return result;
     }
 }

@@ -6,15 +6,8 @@ namespace Settlement.Gaming.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class Happy5Controller : ControllerBase
+public class Happy5Controller(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator mediator;
-
-    public Happy5Controller(IMediator mediator)
-    {
-        this.mediator = mediator;
-    }
-
     [Route("filter-default"), HttpGet]
     public async Task<IActionResult> Filter() => Ok
     (

@@ -50,21 +50,16 @@ public class EarlyBetTypeNameServiceImp(IRefDataService refDataService) : EarlyB
     {
         const int penaltyShootoutFirstTen = 6;
 
-        switch (betTypeId)
+        return betTypeId switch
         {
-            case SoccerBetType.PenaltyShootoutOddEven:
-            case SoccerBetType.PenaltyShootoutExactTotalGoals:
-            case SoccerBetType.HomePenaltyShootoutOverUnder:
-            case SoccerBetType.AwayPenaltyShootoutOverUnder:
-            case SoccerBetType.PenaltyShootoutCombo:
-                return penaltyShootoutFirstTen;
-
-            case SoccerBetType.PenaltyShootoutSuddenDead:
-                return PenaltyShootoutSuddenDeadGroup;
-
-            default:
-                return GetPenaltyShootoutRound(resourceId);
-        }
+            SoccerBetType.PenaltyShootoutOddEven => penaltyShootoutFirstTen,
+            SoccerBetType.PenaltyShootoutExactTotalGoals => penaltyShootoutFirstTen,
+            SoccerBetType.HomePenaltyShootoutOverUnder => penaltyShootoutFirstTen,
+            SoccerBetType.AwayPenaltyShootoutOverUnder => penaltyShootoutFirstTen,
+            SoccerBetType.PenaltyShootoutCombo => penaltyShootoutFirstTen,
+            SoccerBetType.PenaltyShootoutSuddenDead => PenaltyShootoutSuddenDeadGroup,
+            _ => GetPenaltyShootoutRound(resourceId)
+        };
     }
 
     private static int OtherGroup(int betTypeId)
@@ -72,43 +67,27 @@ public class EarlyBetTypeNameServiceImp(IRefDataService refDataService) : EarlyB
         const int extraTimeNextGoalGroup = 7;
         const int goalGroup = 9;
         const int cornerGroup = 10;
-        switch (betTypeId)
+        return betTypeId switch
         {
-            case SoccerBetType.ExtraTimeNextGoal:
-                return extraTimeNextGoalGroup;
-
-            case SoccerBetType.FirstGoalMethod:
-            case SoccerBetType.TimeOfFirstGoal:
-                return goalGroup;
-
-            default:
-                return cornerGroup;
-        }
+            SoccerBetType.ExtraTimeNextGoal => extraTimeNextGoalGroup,
+            SoccerBetType.FirstGoalMethod or SoccerBetType.TimeOfFirstGoal => goalGroup,
+            _ => cornerGroup
+        };
     }
 
     public string GetBetTypeName(int betTypeId, string resourceId)
     {
-        switch (betTypeId)
+        return betTypeId switch
         {
-            case SoccerBetType.ExtraTimeNextGoal:
-                return $"Goal {Convert.ToUInt32(Round(resourceId))}";
-
-            case SoccerBetType.PenaltyShootoutBothOneNeither:
-            case SoccerBetType.PenaltyShootout1X2:
-            case SoccerBetType.PenaltyWoodwork:
-            case SoccerBetType.HomePenaltyShootout:
-            case SoccerBetType.AwayPenaltyShootout:
-                return refDataService.GetBetTypeName(betTypeId, Round(resourceId));
-
-            case SoccerBetType.HomePenaltyShootoutOverUnder:
-                return "Penalty Shootout First 10 - Home Score";
-
-            case SoccerBetType.AwayPenaltyShootoutOverUnder:
-                return "Penalty Shootout First 10 - Away Score";
-
-            default:
-                return refDataService.GetBetTypeName(betTypeId);
-        }
+            SoccerBetType.ExtraTimeNextGoal => $"Goal {Convert.ToUInt32(Round(resourceId))}",
+            SoccerBetType.HomePenaltyShootout => refDataService.GetBetTypeName(betTypeId, Round(resourceId)),
+            SoccerBetType.PenaltyShootoutBothOneNeither or SoccerBetType.PenaltyShootout1X2
+                or SoccerBetType.PenaltyWoodwork => refDataService.GetBetTypeName(betTypeId, Round(resourceId)),
+            SoccerBetType.HomePenaltyShootoutOverUnder => "Penalty Shootout First 10 - Home Score",
+            SoccerBetType.AwayPenaltyShootoutOverUnder => "Penalty Shootout First 10 - Away Score",
+            SoccerBetType.AwayPenaltyShootout => refDataService.GetBetTypeName(betTypeId, Round(resourceId)),
+            _ => refDataService.GetBetTypeName(betTypeId)
+        };
     }
 
     private static string Round(string resourceId)

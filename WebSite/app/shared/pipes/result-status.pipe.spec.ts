@@ -17,7 +17,7 @@ describe('Pipe: ResultStatusPipe', () => {
         const item2 = new ResultDetail();
         item2.resultStatus = "No Result";
 
-        const filterResultStatus = ['Running'];
+        const filterResultStatus = 'Running';
         const items = [item1, item2];
 
         const expectedList = new ResultDetail();
@@ -34,7 +34,7 @@ describe('Pipe: ResultStatusPipe', () => {
         const item2 = new ResultDetail();
         item2.resultStatus = "No Result";
 
-        const filterResultStatus = ['Completed'];
+        const filterResultStatus = 'Completed';
         const items = [item1, item2];
 
         expect(pipe.transform(items, filterResultStatus)).toEqual([]);
@@ -53,7 +53,7 @@ describe('Pipe: ResultStatusPipe', () => {
         item2.resultSettingData = new ResultSettingModel();
 
 
-        const filterResultStatus = ['Confirmed'];
+        const filterResultStatus = 'Confirmed';
         const items = [item1, item2];
 
         const expectedList = new ResultDetail();

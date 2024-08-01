@@ -26,20 +26,17 @@ public class MatchResultDetailServiceTests
             scoreService);
     }
 
-    private static List<Match> Matches => new()
-    {
-        new Match { MatchId = 1 }
-    };
+    private static List<Match> Matches => [new Match { MatchId = 1 }];
 
-    private static List<ResultDetail> ResultDetail => new();
+    private static List<ResultDetail> ResultDetail => [];
 
-    private readonly bool isLeader = true;
+    private const bool isLeader = true;
 
     [Fact]
     public void TennisResultDetail_EmptyMatch_ReturnsEmpty()
     {
         // Act
-        var actual = service.TennisResultDetail(new List<Match>(), ResultDetail, isLeader);
+        var actual = service.TennisResultDetail([], ResultDetail, isLeader);
 
         // Assert
         Assert.Empty(actual);
@@ -65,7 +62,7 @@ public class MatchResultDetailServiceTests
     public void BasketballResultDetail_EmptyMatch_ReturnsEmpty()
     {
         // Act
-        var actual = service.BasketballResultDetail(new List<Match>(), ResultDetail, isLeader);
+        var actual = service.BasketballResultDetail([], ResultDetail, isLeader);
 
         // Assert
         Assert.Empty(actual);
@@ -92,7 +89,7 @@ public class MatchResultDetailServiceTests
     public void CricketResultDetail_EmptyMatch_ReturnsEmpty()
     {
         // Act
-        var actual = service.CricketResultDetail(new List<Match>(), ResultDetail, isLeader);
+        var actual = service.CricketResultDetail([], ResultDetail, isLeader);
 
         // Assert
         Assert.Empty(actual);
@@ -119,7 +116,7 @@ public class MatchResultDetailServiceTests
     public void BadmintonResultDetail_EmptyMatch_ReturnsEmpty()
     {
         // Act
-        var actual = service.BadmintonResultDetail(new List<Match>(), ResultDetail, isLeader);
+        var actual = service.BadmintonResultDetail([], ResultDetail, isLeader);
 
         // Assert
         Assert.Empty(actual);
@@ -146,7 +143,7 @@ public class MatchResultDetailServiceTests
     public void ESportsResultDetail_EmptyMatch_ReturnsEmpty()
     {
         // Act
-        var actual = service.ESportsResultDetail(new List<Match>(), ResultDetail, isLeader);
+        var actual = service.ESportsResultDetail([], ResultDetail, isLeader);
 
         // Assert
         Assert.Empty(actual);
@@ -176,7 +173,7 @@ public class MatchResultDetailServiceTests
     public void BeachVolleyballResultDetail_EmptyMatch_ReturnsEmpty()
     {
         // Act
-        var actual = service.BeachVolleyballResultDetail(new List<Match>(), ResultDetail, isLeader);
+        var actual = service.BeachVolleyballResultDetail([], ResultDetail, isLeader);
 
         // Assert
         Assert.Empty(actual);
@@ -204,7 +201,7 @@ public class MatchResultDetailServiceTests
     public void VolleyballResultDetail_EmptyMatch_ReturnsEmpty()
     {
         // Act
-        var actual = service.VolleyballResultDetail(new List<Match>(), ResultDetail, isLeader);
+        var actual = service.VolleyballResultDetail([], ResultDetail, isLeader);
 
         // Assert
         Assert.Empty(actual);
@@ -231,7 +228,7 @@ public class MatchResultDetailServiceTests
     public void OtherSportsResultDetail_EmptyMatch_ReturnsEmpty()
     {
         // Act
-        var actual = service.OtherSportsResultDetail(new List<Match>(), ResultDetail, false);
+        var actual = service.OtherSportsResultDetail([], ResultDetail, false);
 
         // Assert
         Assert.Empty(actual);

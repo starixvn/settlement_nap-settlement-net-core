@@ -31,7 +31,7 @@ public class SettleEarlyServiceTests
         scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
         logService = Substitute.For<LogService>();
 
-        var appSettings = new AppSettingsKey { SiteDbServer = new List<string> { "DB01", "DB02" } };
+        var appSettings = new AppSettingsKey { SiteDbServer = ["DB01", "DB02"] };
         var appSettingsOptions = Options.Create(appSettings);
         service = new SettleEarlyServiceImp(
             createCriteriaService, appSettingsOptions,

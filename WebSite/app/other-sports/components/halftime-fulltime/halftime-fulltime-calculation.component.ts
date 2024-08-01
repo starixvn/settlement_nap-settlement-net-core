@@ -40,8 +40,8 @@ export class HalfTimeFullTimeCalculationComponent implements SportTemplate {
   public hasHalfTime = false;
   public applyHedgeMatch: boolean;
   public hedgeMatchDetail: HedgeMatchDetail;
-  private halfTimeOriginal: ResultDetail;
-  private fullTimeOriginal: ResultDetail;
+  public halfTimeOriginal: ResultDetail;
+  public fullTimeOriginal: ResultDetail;
 
   constructor(private readonly requestService: RequestService,
     private readonly verificationService: VerificationService,
@@ -72,7 +72,7 @@ export class HalfTimeFullTimeCalculationComponent implements SportTemplate {
     this.matchDetail = this.match.matchDetail;
     this.resultDetails = this.match.resultDetails;
     this.hedgeMatchDetail = this.match.hedgeMatchDetail;
-    this.applyHedgeMatch = this.hedgeMatchDetail != null;
+    this.applyHedgeMatch = this.hedgeMatchDetail !== null;
     this.hasHalfTime = _.isObject(this.halfTime);
     this.isReadyMatch = this.halfTimeFullTimeService.isReadyMatch(this.matchDetail);
     this.halfTimeNode = this.halfTimeFullTimeService.numberSetOnHalfTime(this.matchDetail.sportType);
@@ -131,9 +131,10 @@ export class HalfTimeFullTimeCalculationComponent implements SportTemplate {
 
     if (this.matchDetail.isFullTimeSettled) {
       this.toastrService.error(Language.scoreSettledWarning);
-    } else {
-      this.checkStatusHalfTime();
+      return;
     }
+
+    this.checkStatusHalfTime();
   }
 
   private checkStatusHalfTime() {
@@ -180,7 +181,8 @@ export class HalfTimeFullTimeCalculationComponent implements SportTemplate {
     }
     if (_.isEqual(resultDetail.resourceId, ResourcesIds.halfTime)) {
       return resultDetail.className + (this.isScoreHTInconsistent ? ' not-consistent' : "");
-    } else if (_.isEqual(resultDetail.resourceId, ResourcesIds.fullTime)) {
+    }
+    if (_.isEqual(resultDetail.resourceId, ResourcesIds.fullTime)) {
       return resultDetail.className + (this.isScoreFTInconsistent ? ' not-consistent' : "");
     }
     return resultDetail.className ?? "";
@@ -189,23 +191,46 @@ export class HalfTimeFullTimeCalculationComponent implements SportTemplate {
   private numberNodeChecking() {
     if (this.clickCalcFullTime) {
       return this.resultWithoutOverTime.length;
-    } else if (this.clickCalcHalfTime) {
+    }
+
+    if (this.clickCalcHalfTime) {
       return this.halfTimeNode;
     }
+    
     return 0;
   }
 
   public isErrorOnVerification(resultDetail: ResultDetail, score: string) {
     if (_.isEqual(resultDetail.resourceId, ResourcesIds.halfTime)) {
-      return this.clickCalcHalfTime && _.isEmpty(score);
-    } else if (_.isEqual(resultDetail.resourceId, ResourcesIds.fullTime)) {
-      return this.clickCalcFullTime && _.isEmpty(score);
-    } else if (_.isEqual(resultDetail.resourceId, ResourcesIds.ot)) {
-      return this.clickCalcFullTime && _.isEmpty(score) && (!_.isEmpty(resultDetail.homeValue) || !_.isEmpty(resultDetail.awayValue));
-    } else {
-      const index = this.resultWithoutOverTime.indexOf(resultDetail);
-      return !(this.isScoreDirect || index < 0 || index >= this.numberNodeChecking()) && _.isEmpty(score);
+      return this.isErrorOnHalfTimeVerification(score);
     }
+
+    if (_.isEqual(resultDetail.resourceId, ResourcesIds.fullTime)) {
+      return this.isErrorOnFullTimeVerification(score);
+    }
+
+    if (_.isEqual(resultDetail.resourceId, ResourcesIds.ot)) {
+      return this.isErrorOnOTVerification(resultDetail, score);
+    }
+    
+    return this.isErrorOnOtherResultDetailVerification(resultDetail, score);
+  }
+
+  private isErrorOnHalfTimeVerification(score: string) {
+    return this.clickCalcHalfTime && _.isEmpty(score);
+  }
+  
+  private isErrorOnFullTimeVerification(score: string) {
+    return this.clickCalcFullTime && _.isEmpty(score);
+  }
+
+  private isErrorOnOTVerification(resultDetail: ResultDetail, score: string) {
+    return this.isErrorOnFullTimeVerification(score) && (!_.isEmpty(resultDetail.homeValue) || !_.isEmpty(resultDetail.awayValue));
+  }
+
+  private isErrorOnOtherResultDetailVerification(resultDetail: ResultDetail, score: string) {
+    const index = this.resultWithoutOverTime.indexOf(resultDetail);
+    return !(this.isScoreDirect || index < 0 || index >= this.numberNodeChecking()) && _.isEmpty(score);
   }
 
   public isFinalScoreDisabled(resourceId: string) {
@@ -257,11 +282,16 @@ export class HalfTimeFullTimeCalculationComponent implements SportTemplate {
     this.clickCalcHalfTime = true;
     if (this.verificationService.verifyHalfTimeScore(this.halfTime, this.resultDetails, this.isScoreDirect, this.halfTimeNode)) {
       this.toastrService.error(Language.warningInputScore);
-    } else if (this.isScoreHTInconsistent) {
-      this.toastrService.error(Language.inconsistentValues);
-    } else {
-      this.confirmScoreSource(CalculateAction.calculateHalfTime);
+      return;
     }
+
+    if (this.isScoreHTInconsistent) {
+      this.toastrService.error(Language.inconsistentValues);
+      return;
+
+    }
+    this.confirmScoreSource(CalculateAction.calculateHalfTime);
+
   }
 
   private confirmScoreSource(actionType: string) {
@@ -290,11 +320,12 @@ export class HalfTimeFullTimeCalculationComponent implements SportTemplate {
   private async confirmChangedResult(actionType: string) {
     if (this.isReSettledTickets) {
       this.confirmCalculation(actionType);
-    } else {
-      const needConfirm = await this.verificationService.VerifyChangedSettledTickets(this.matchDetail.matchId,
-        this.resultDetails, this.isScoreDirect, actionType, this.halfTimeNode);
-      this.processAfterCheckChangedScore(needConfirm, actionType);
+      return;
     }
+    const needConfirm = await this.verificationService.VerifyChangedSettledTickets(this.matchDetail.matchId,
+      this.resultDetails, this.isScoreDirect, actionType, this.halfTimeNode);
+    this.processAfterCheckChangedScore(needConfirm, actionType);
+
   }
 
   private processAfterCheckChangedScore(needConfirm: boolean, actionType: string) {
@@ -322,7 +353,7 @@ export class HalfTimeFullTimeCalculationComponent implements SportTemplate {
 
   private async sendRequest(type: string) {
     const hedgeMatchId = this.applyHedgeMatch ? this.match.hedgeMatchDetail.matchId : 0;
-    
+
     const settleQuery = new RequestSettleWithInterval(this.matchDetail, this.resultDetails, type,
       this.isReSettledTickets, this.isScoreDirect, hedgeMatchId, this.refResultStatus);
 
@@ -334,18 +365,19 @@ export class HalfTimeFullTimeCalculationComponent implements SportTemplate {
     }
   }
 
-  private 
-
   public calculateFullTime() {
     this.clearStatus();
     this.clickCalcFullTime = true;
     if (this.verificationService.verifyAllScore(this.halfTime, this.fullTime, this.results, this.isScoreDirect)) {
       this.toastrService.error(Language.warningInputScore);
-    } else if (this.isScoreFTInconsistent) {
-      this.toastrService.error(Language.inconsistentValues);
-    } else {
-      this.confirmScoreSource(CalculateAction.calculateFullTime);
+      return;
     }
+
+    if (this.isScoreFTInconsistent) {
+      this.toastrService.error(Language.inconsistentValues);
+      return;
+    }
+    this.confirmScoreSource(CalculateAction.calculateFullTime);
   }
 
   public calculateAll() {
@@ -354,11 +386,13 @@ export class HalfTimeFullTimeCalculationComponent implements SportTemplate {
     this.clickCalcFullTime = true;
     if (this.verificationService.verifyAllScore(this.halfTime, this.fullTime, this.results, this.isScoreDirect, true)) {
       this.toastrService.error(Language.warningInputScore);
-    } else if (this.isScoreFTInconsistent || this.isScoreHTInconsistent) {
-      this.toastrService.error(Language.inconsistentValues);
-    } else {
-      this.confirmScoreSource(CalculateAction.calculate);
+      return;
     }
+    if (this.isScoreFTInconsistent || this.isScoreHTInconsistent) {
+      this.toastrService.error(Language.inconsistentValues);
+      return;
+    }
+    this.confirmScoreSource(CalculateAction.calculate);
   }
 
   private clearStatus() {

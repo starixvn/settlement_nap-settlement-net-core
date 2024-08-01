@@ -185,7 +185,7 @@ public class BaseMatch
     public int ChildMatchType { get; set; }
 
     [IgnoreMember]
-    public List<SiteMatch> SiteMatch { get; set; } = new();
+    public List<SiteMatch> SiteMatch { get; set; } = [];
 
     [Key("offerLive")]
     public bool OfferLive { get; set; }

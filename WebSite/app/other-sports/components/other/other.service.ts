@@ -2,7 +2,6 @@ import { Injectable } from "@angular/core";
 import { Language } from "../../../shared/language.native";
 import { CalculateAction, MatchStatus, SportType } from "../../../shared/constants";
 import * as _ from 'lodash';
-import { Result } from "../../../shared/models";
 import { RequestService } from "../../services/request.service";
 import { HedgeMatchDetail, } from "../../../shared/models/sportsbook-sop";
 import { MatchDetail, Permission, RequestSettle } from "../../models";
@@ -19,7 +18,7 @@ export class OtherService {
 
     }
 
-    public async sendRequest(matchDetail: MatchDetail, hedgeMatchDetail: HedgeMatchDetail,
+    public sendRequest(matchDetail: MatchDetail, hedgeMatchDetail: HedgeMatchDetail,
         action: string) {
         const param = {
             matchId: matchDetail.matchId,
@@ -29,7 +28,7 @@ export class OtherService {
             sportType: matchDetail.sportType
         };
 
-        return await this.requestService.sendRequest(param);
+        return this.requestService.sendRequest(param);
     }
 
     public isReadyMatch(matchDetail: MatchDetail) {
@@ -77,7 +76,7 @@ export class OtherService {
                 : Language.checkAgainCalculateAll;
     }
 
-    public async settle(type: string, isReSettledTickets: boolean, matchDetail: MatchDetail, refResultStatus: number = null,
+    public settle(type: string, isReSettledTickets: boolean, matchDetail: MatchDetail, refResultStatus: number = null,
         hedgeMatchId = 0) {
         const betStatus = this.getBetStatus(matchDetail, type);
         const query = new RequestSettle(matchDetail, type, isReSettledTickets, betStatus, refResultStatus);
@@ -86,7 +85,7 @@ export class OtherService {
         query.hedgeMatchId = hedgeMatchId;
         query.isApplyHedging = hedgeMatchId > 0;
 
-        return await this.requestService.sendRequest(query);
+        return this.requestService.sendRequest(query);
     }
 
     public copyHalfTimeScore(matchDetail: MatchDetail) {

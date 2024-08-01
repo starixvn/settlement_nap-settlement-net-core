@@ -3,7 +3,7 @@ using NUnit.Framework;
 using Settlement.CalculationSetting.Handlers.OutsideSourceManager;
 using Settlement.CalculationSetting.Requests;
 using Settlement.CalculationSetting.Services;
-using Settlement.Core.Models;
+using Settlement.Models;
 using System.Threading;
 using System.Threading.Tasks;
 

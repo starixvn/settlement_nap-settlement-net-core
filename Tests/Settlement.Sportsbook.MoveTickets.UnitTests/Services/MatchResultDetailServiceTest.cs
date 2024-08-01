@@ -25,7 +25,7 @@ public class MatchResultDetailServiceTest
     public void BadmintonResultDetail_EmptyMatch_ReturnsEmpty()
     {
         // Act
-        var actual = service.CricketResultDetail(new List<Match>(), Arg.Any<List<ResultDetail>>());
+        var actual = service.CricketResultDetail([], Arg.Any<List<ResultDetail>>());
 
         // Assert
         Assert.Empty(actual);

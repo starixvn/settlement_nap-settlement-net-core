@@ -28,7 +28,7 @@ import { ExternalSourceNamePipe } from '../../shared/pipes/external-source-name.
 import { ResultByTeamNamePipe } from '../../shared/pipes/result-by-team-name.pipe';
 import { MaterialModule } from "../../shared/material-module";
 import { ResultSettingModel } from "../../shared/models";
-import { ToastContainerDirective, ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
+import { ToastContainerDirective, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 import { VerificationBaseService } from '../../core/services/verification-base.service';
 import { Resources } from '../constants';
 import { Language } from '../../shared/language.native';
@@ -100,7 +100,6 @@ describe("Esport - Calculation Actions Component", () => {
       imports: [
         HttpClientModule,
         ToastNoAnimationModule.forRoot(),
-        ToastContainerModule,
         ToastrModule.forRoot(),
         ResettleCheckerComponent,
         ExternalSourceNamePipe,

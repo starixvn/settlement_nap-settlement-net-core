@@ -19,32 +19,14 @@ public interface SettlementActionsService
     Task<MarkedTickets> CheckMarkedTickets(CheckingMarkedTicketsRequest request);
 }
 
-public class SettlementActionsServiceImp : SettlementActionsService
+public class SettlementActionsServiceImp(
+    IHttpContextAccessor accessor,
+    INapSession currentSession,
+    IMapper mapper,
+    GenerateService generateService,
+    MultipleServerService multipleServerService)
+    : SettlementActionsService
 {
-    private readonly INapSession currentSession;
-
-    private readonly IHttpContextAccessor accessor;
-
-    private readonly IMapper mapper;
-
-    private readonly GenerateService generateService;
-
-    private readonly MultipleServerService multipleServerService;
-
-    public SettlementActionsServiceImp(
-        IHttpContextAccessor accessor,
-        INapSession currentSession,
-        IMapper mapper,
-        GenerateService generateService,
-        MultipleServerService multipleServerService)
-    {
-        this.currentSession = currentSession;
-        this.accessor = accessor;
-        this.mapper = mapper;
-        this.generateService = generateService;
-        this.multipleServerService = multipleServerService;
-    }
-
     public async Task<Result> Calculate(CalculateRequest request)
     {
         request.SelectedResources = generateService.GenerateResources(request);

@@ -52,9 +52,7 @@ public class EventCounter
                 Penalty = resultArray[PositionResult.Penalty].ToString()
             };
         }
-        else
-        {
-            return new EventResultItem();
-        }
+
+        return new EventResultItem();
     }
 }

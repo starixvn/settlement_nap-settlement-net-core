@@ -13,15 +13,8 @@ public interface GenerateResultAmendmentService
     string CreateExtraInfo(List<ResultChanged> resultsChanged);
 }
 
-public class GenerateResultAmendmentServiceImp : GenerateResultAmendmentService
+public class GenerateResultAmendmentServiceImp(XmlConvertService xmlConvertService) : GenerateResultAmendmentService
 {
-    private readonly XmlConvertService xmlConvertService;
-
-    public GenerateResultAmendmentServiceImp(XmlConvertService xmlConvertService)
-    {
-        this.xmlConvertService = xmlConvertService;
-    }
-
     public (string, string) CreateWrongActualResults(List<ResultChanged> resultsChanged, List<ResourceItem> selectedResources)
     {
         var wrongResults = new List<CricketResultItem>();
@@ -51,14 +44,11 @@ public class GenerateResultAmendmentServiceImp : GenerateResultAmendmentService
 
     public string CreateExtraInfo(List<ResultChanged> resultsChanged)
     {
-        var extraInfoItems = resultsChanged.Select(x =>
+        var extraInfoItems = resultsChanged.Select(x => new ExtraInfoItem
         {
-            return new ExtraInfoItem
-            {
-                ResourceId = x.ResourceId,
-                CalcDateTime = x.LogDate.ToString("yyyy-MM-dd HH:mm:ss.fff"),
-                ReCalcDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"),
-            };
+            ResourceId = x.ResourceId,
+            CalcDateTime = x.LogDate.ToString("yyyy-MM-dd HH:mm:ss.fff"),
+            ReCalcDateTime = DateTimeOffset.Now.ToString("yyyy-MM-dd HH:mm:ss.fff")
         }).ToList();
 
         var extraInfo = new ExtraInfo { ExtraInfoItems = extraInfoItems };
@@ -68,12 +58,7 @@ public class GenerateResultAmendmentServiceImp : GenerateResultAmendmentService
 
     private (CricketResultItem, CricketResultItem) CreateMainResultItem(ResultChanged resultChanged, ResourceItem resourceItem)
     {
-        if (resultChanged.ResourceId == ResourceType.Final)
-        {
-            return CreateResultItemBase(resultChanged, resourceItem);
-        }
-
-        return CreateMainInningResultItem(resultChanged, resourceItem);
+        return resultChanged.ResourceId == ResourceType.Final ? CreateResultItemBase(resultChanged, resourceItem) : CreateMainInningResultItem(resultChanged, resourceItem);
     }
 
     private (CricketResultItem, CricketResultItem) CreateMainInningResultItem(ResultChanged resultChanged, ResourceItem resourceItem)
@@ -105,12 +90,7 @@ public class GenerateResultAmendmentServiceImp : GenerateResultAmendmentService
 
         if (PatternResultType.EarlyTypeOne.Contains(betTypeId))
         {
-            itemChanged.Home = itemChanged.Home == "N" ? "None" : itemChanged.Home;
-            itemChanged.TeamIds = resultChanged.HomeValue == "H" ? $"{resourceItem.HomeId}" : (resultChanged.HomeValue == "A" ? $"{resourceItem.AwayId}" : "");
-
-            itemSelected.Home = itemSelected.Home == "N" ? "None" : itemSelected.Home;
-            itemSelected.TeamIds = resourceItem.HomeValue == "H" ? $"{resourceItem.HomeId}" : (resourceItem.HomeValue == "A" ? $"{resourceItem.AwayId}" : "");
-
+            ProcessTypeOne(itemChanged, itemSelected, resultChanged, resourceItem);
             return (itemChanged, itemSelected);
         }
 
@@ -121,13 +101,38 @@ public class GenerateResultAmendmentServiceImp : GenerateResultAmendmentService
 
         if (PatternResultType.EarlyTypeThree.Contains(betTypeId))
         {
-            itemChanged.TeamIds = resultChanged.HomeValue == "H" ? $"{resourceItem.HomeId}" : (resultChanged.HomeValue == "A" ? $"{resourceItem.AwayId}" : "");
-            itemSelected.TeamIds = resourceItem.HomeValue == "H" ? $"{resourceItem.HomeId}" : (resourceItem.HomeValue == "A" ? $"{resourceItem.AwayId}" : "");
-
+            ProcessTypeThree(itemChanged, itemSelected, resultChanged, resourceItem);
             return (itemChanged, itemSelected);
         }
 
         return CreateEarlyFourResultItem(resultChanged, resourceItem);
+    }
+
+    private void ProcessTypeOne(CricketResultItem itemChanged, CricketResultItem itemSelected, ResultChanged resultChanged, ResourceItem resourceItem)
+    {
+        itemChanged.Home = NormalizeHomeValue(itemChanged.Home);
+        itemChanged.TeamIds = GetTeamIds(resultChanged.HomeValue, resourceItem);
+
+        itemSelected.Home = NormalizeHomeValue(itemSelected.Home);
+        itemSelected.TeamIds = GetTeamIds(resourceItem.HomeValue, resourceItem);
+    }
+
+    private void ProcessTypeThree(CricketResultItem itemChanged, CricketResultItem itemSelected, ResultChanged resultChanged, ResourceItem resourceItem)
+    {
+        itemChanged.TeamIds = GetTeamIds(resultChanged.HomeValue, resourceItem);
+        itemSelected.TeamIds = GetTeamIds(resourceItem.HomeValue, resourceItem);
+    }
+
+    private string NormalizeHomeValue(string homeValue) => homeValue == "N" ? "None" : homeValue;
+
+    private string GetTeamIds(string value, ResourceItem resourceItem)
+    {
+        return value switch
+        {
+            "H" => $"{resourceItem.HomeId}",
+            "A" => $"{resourceItem.AwayId}",
+            _ => ""
+        };
     }
 
     private (CricketResultItem, CricketResultItem) CreateEarlyFourResultItem(ResultChanged resultChanged, ResourceItem resourceItem)
@@ -229,12 +234,8 @@ public class GenerateResultAmendmentServiceImp : GenerateResultAmendmentService
 
     private int GetBetType(string resourceId)
     {
-        if (resourceId.Length < 5)
-        {
-            return Convert.ToInt32(resourceId);
-        }
-
-        return Convert.ToInt32(resourceId.Substring(0, 4));
+        const int inningPosition = 4;
+        return Convert.ToInt32(resourceId.Length < 5 ? resourceId : resourceId[..inningPosition]);
     }
 
     private (CricketResultItem, CricketResultItem) CreateResultItemBase(ResultChanged resultChanged, ResourceItem resourceItem)
@@ -263,7 +264,7 @@ public class GenerateResultAmendmentServiceImp : GenerateResultAmendmentService
             ResourceId = resultChanged.ResourceId,
             Home = resultChanged.HomeValue,
             Away = resultChanged.AwayValue,
-            RefBetTypeId = betTypeId,
+            RefBetTypeId = betTypeId
         };
 
         return itemChanged;
@@ -276,7 +277,7 @@ public class GenerateResultAmendmentServiceImp : GenerateResultAmendmentService
             ResourceId = resourceItem.ResourceId,
             Home = resourceItem.HomeValue,
             Away = resourceItem.AwayValue,
-            RefBetTypeId = betTypeId,
+            RefBetTypeId = betTypeId
         };
 
         return itemChanged;

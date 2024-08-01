@@ -1,4 +1,5 @@
 ﻿using Settlement.Core.Models;
+using CoreConsts = Settlement.Core.Constants;
 
 namespace Settlement.Setting.Models;
 
@@ -9,15 +10,15 @@ public class RemarkQueryModel
     private AutoCalculationSetting autoCalcSetting;
     private const int ConvertToBase = 2;
 
-    private readonly List<string> eventStatusReasonTitles = new()
-    {
-        Core.Constants.EventStatus.IrregularTime1H,
-        Core.Constants.EventStatus.IrregularTime,
-        Core.Constants.EventStatus.WrongTeamName,
-        Core.Constants.EventStatus.Suspended
-    };
+    private readonly List<string> eventStatusReasonTitles =
+    [
+        CoreConsts.EventStatus.IrregularTime1H,
+       CoreConsts.EventStatus.IrregularTime,
+      CoreConsts.EventStatus.WrongTeamName,
+      CoreConsts.EventStatus.Suspended
+    ];
 
-    private readonly List<int> eventStatusReasons = new() { 1, 2, 3, 4 };
+    private readonly List<int> eventStatusReasons = [1, 2, 3, 4];
 
     public string EventStatus
     {
@@ -36,7 +37,7 @@ public class RemarkQueryModel
         {
             var status = EventStatusReason ?? 0;
 
-            return originalEventStatus.IgnoreCaseEquals(Core.Constants.EventStatus.Running) &&
+            return originalEventStatus.IgnoreCaseEquals(CoreConsts.EventStatus.Running) &&
                    eventStatusReasons.Contains(status) ? eventStatusReasonTitles[status - 1] : EventStatus;
         }
     }
@@ -51,8 +52,15 @@ public class RemarkQueryModel
 
     public int AutoSetting { get; set; }
 
-    public AutoCalculationSetting AutoCalcSetting => autoCalcSetting ?? (autoCalcSetting = new AutoCalculationSetting
+    public AutoCalculationSetting AutoCalcSetting => autoCalcSetting ?? getDefaultAutoCalculationSetting();
+
+    private AutoCalculationSetting getDefaultAutoCalculationSetting()
     {
-        MatchSetting = Convert.ToString(AutoSetting, ConvertToBase).Reverse()
-    });
+        autoCalcSetting = new AutoCalculationSetting
+        {
+            MatchSetting = Convert.ToString(AutoSetting, ConvertToBase).Reverse()
+        };
+
+        return autoCalcSetting;
+    }
 }

@@ -21,7 +21,7 @@ public class CachingMatchesServiceTests
     [InlineData("1234,567", CacheSettings.Keys.WaitingBetBuilderCacheKey + "-1234,567")]
     public void SetToCache_Always_SetLongAndShortCache(string leagueIds, string logKey)
     {
-        service.SetToCache(leagueIds, new List<MatchDetailModel>());
+        service.SetToCache(leagueIds, []);
 
         cacheService.Received().CreateEntry(logKey);
         cacheService.Received().CreateEntry(logKey + "-long");

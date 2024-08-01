@@ -1,33 +1,44 @@
 import { Injectable } from "@angular/core";
-
-import { CalculateAction, ResultStatusId, SettlementStatusId, SportType } from '../../../shared/constants';
+import { CalculateAction } from '../../../shared/constants';
 import { IntervalBackgroundPipe } from '../../../shared/pipes/interval-background.pipe';
 import { ResultDetail } from "../../../shared/models/sportsbook-sop/result-detail.model";
 import { SettleQuery } from "../../models";
 import { AioService } from "../../../shared/services";
 
+type SettleRequestParams = {
+  type: string,
+  matchDetail,
+  resultDetails: ResultDetail[],
+  isReSettledTickets: boolean,
+  isScoreDirect: boolean,
+  isLeader: boolean,
+  refResultStatus: number | null,
+  betStatus: string
+
+}  
+
 @Injectable()
 export class BandyService {
-  constructor(private readonly intervalBackgroundPipe: IntervalBackgroundPipe,   private readonly aioService: AioService,
-    ) {
-   
-  }
+  constructor(
+    private readonly intervalBackgroundPipe: IntervalBackgroundPipe,
+    private readonly aioService: AioService) {}
 
   public getIntervalBackground(settlementStatusId: number) {
     return this.intervalBackgroundPipe.transform(settlementStatusId);
   }
 
-  public async sendSettleRequest(type: string,
+  public async sendSettleRequest({
+    type,
     matchDetail,
-    resultDetais: ResultDetail[],
-    isReSettledTickets: boolean,
-    isScoreDirect: boolean,
+    resultDetails,
+    isReSettledTickets,
+    isScoreDirect,
     isLeader = false, 
     refResultStatus = null,
-    betStatus = '') {
+    betStatus = ''}: SettleRequestParams) {
     
     if (type === CalculateAction.unCalculate) {
-      resultDetais.forEach((item) => {
+      resultDetails.forEach((item) => {
         item.homeValue = "";
         item.awayValue = "";
       });
@@ -35,7 +46,7 @@ export class BandyService {
 
     const settleQuery = new SettleQuery(
       matchDetail,
-      resultDetais,
+      resultDetails,
       type,
       isReSettledTickets,
       isScoreDirect,

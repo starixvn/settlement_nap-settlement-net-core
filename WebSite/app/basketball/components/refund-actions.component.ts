@@ -68,14 +68,14 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
     init() {
         this.matchId = this.match.matchDetail.matchId;
         this.hedgeMatchDetail = this.match.hedgeMatchDetail;
-        this.applyHedgeMatch = this.hedgeMatchDetail != null;
+        this.applyHedgeMatch = this.hedgeMatchDetail !== null;
         this.resultDetails = this.basketballService.getResultDetail(this.match.resultDetails);
         this.resultDetailDisableInput = new Array(this.resultDetails.length).fill(true);
         this.matchDetail = this.match.matchDetail;
         this.permission = this.match.permission;
         this.resourceConfirmedSdt = this.match.externalResults.find(r => r.sourceId === ScoreSourceType.confirmRefundSource)?.resultDetails ?? [];
         this.basketballService.getResourceExternalRefund(this.permission.isLeader, this.match.externalResults, this.resultDetails);
-        this.isConfirmRefund = this.resultDetails.findIndex(result => result.resultSettingData.isConfirmedRefund || result.resultSettingData.isConfirmedRefundSdt) == -1;
+        this.isConfirmRefund = this.resultDetails.findIndex(result => result.resultSettingData.isConfirmedRefund || result.resultSettingData.isConfirmedRefundSdt) === -1;
         this.isSDTSettle = this.permission.isLeader ? this.initSDTSettle() : false;
         this.disableScoreDirect = this.verificationService.isTicketOnQuarter(this.resultDetails, this.match.resultDetails);
         this.resetHomeAwayAndAddClass(this.resultDetails);
@@ -179,7 +179,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
 
     changeScore(resultDetail: ResultDetail) {
         const firstResourceIndex = this.resultDetails.indexOf(resultDetail);
-        const resultDetailAfter = this.resultDetails.slice(firstResourceIndex != -1 ? firstResourceIndex + 1 : 0);
+        const resultDetailAfter = this.resultDetails.slice(firstResourceIndex !== -1 ? firstResourceIndex + 1 : 0);
         resultDetailAfter.forEach(resource => {
             if (resource.resourceId !== resultDetail.resourceId) {
                 resource.awayValue = "";
@@ -216,7 +216,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
         }
     }
 
-    enableInput(resultDetail: ResultDetail = null, isFullTime: boolean = false) {
+    enableInput(resultDetail: ResultDetail = null, isFullTime = false) {
         if (_.isNull(resultDetail)) {
             for (let i = 0; i < this.resultDetails.length; i++) {
                 this.resultDetailDisableInput[i] = !this.isEnableResult(this.resultDetails[i]);
@@ -246,7 +246,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
             return this.isSDTSettle && this.isDirectly && resultDetail.checked;
         }
 
-        if (resultDetail.resourceId == this.overTimeId) {
+        if (resultDetail.resourceId === this.overTimeId) {
             return this.isSDTSettle && !this.isDirectly && this.overTimeResult.checked;
         }
         return this.isSDTSettle && resultDetail.checked && !this.isDirectly;

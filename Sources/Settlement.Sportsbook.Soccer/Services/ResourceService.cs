@@ -40,7 +40,7 @@ public class ResourceServiceImp(IActionResourceService actionResourceService, IG
         var halftimeGoal = goalRecordService.HalftimeGoal(goalCondition.GoalRecord);
 
         var goalAction = CreateGoalAction(halftimeGoal, settlementStatusId);
-        var resources = goalCondition.IsExistHtFgLg ? actionResourceService.HalftimeResources(goalAction) : new List<XmlResource>();
+        var resources = goalCondition.IsExistHtFgLg ? actionResourceService.HalftimeResources(goalAction) : [];
 
         if (goalCondition.IsExistFgNg && !string.IsNullOrWhiteSpace(halftimeGoal))
         {
@@ -64,7 +64,7 @@ public class ResourceServiceImp(IActionResourceService actionResourceService, IG
         var fullTime = goalRecordService.FullTimeGoal(goalCondition.GoalRecord);
         var fullTimeGoal = $"{halftime}{fullTime}";
         var goalAction = CreateGoalAction(fullTimeGoal, settlementStatusId);
-        var resources = goalCondition.IsExistFgLg ? actionResourceService.FullTimeResources(goalAction) : new List<XmlResource>();
+        var resources = goalCondition.IsExistFgLg ? actionResourceService.FullTimeResources(goalAction) : [];
 
         if (goalCondition.IsEnabledGoalRecordFt)
         {
@@ -80,7 +80,7 @@ public class ResourceServiceImp(IActionResourceService actionResourceService, IG
         var halftime = goalRecordService.HalftimeGoal(goalCondition.GoalRecord);
 
         var goalAction = CreateGoalAction(halftime, settlementStatusId);
-        var resources = goalCondition.IsExistHtFgLg ? actionResourceService.HalftimeResources(goalAction) : new List<XmlResource>();
+        var resources = goalCondition.IsExistHtFgLg ? actionResourceService.HalftimeResources(goalAction) : [];
 
         if (goalCondition.IsExistFgLg)
         {
@@ -294,11 +294,11 @@ public class ResourceServiceImp(IActionResourceService actionResourceService, IG
 
     public List<ResourceItem> UnCalculateLogResources()
     {
-        return new List<ResourceItem>
-        {
-            new() { ResourceId = ResourceType.Halftime, AwayValue = string.Empty, HomeValue = string.Empty },
-            new() { ResourceId = ResourceType.Final, AwayValue = string.Empty, HomeValue = string.Empty }
-        };
+        return
+        [
+            new ResourceItem { ResourceId = ResourceType.Halftime, AwayValue = string.Empty, HomeValue = string.Empty },
+            new ResourceItem { ResourceId = ResourceType.Final, AwayValue = string.Empty, HomeValue = string.Empty }
+        ];
     }
 
     private static XmlResource InitialResource(string resourceId)

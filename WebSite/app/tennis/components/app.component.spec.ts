@@ -19,7 +19,7 @@ import {
 } from '../pipes';
 import { MaterialModule } from '../../shared/material-module';
 import { PipesModule } from '../../shared/pipes/pipes.module.native';
-import { ToastContainerModule, ToastNoAnimationModule, ToastrModule } from 'ngx-toastr';
+import { ToastNoAnimationModule, ToastrModule } from 'ngx-toastr';
 import { PageType } from '../../shared/constants';
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 
@@ -51,7 +51,6 @@ describe('AppComponent', () => {
         MaterialModule,
         PipesModule,
         ToastNoAnimationModule.forRoot(),
-        ToastContainerModule,
         ToastrModule.forRoot()
       ],
     })

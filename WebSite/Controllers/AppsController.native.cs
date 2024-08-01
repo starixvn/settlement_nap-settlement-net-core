@@ -4,15 +4,8 @@ using Settlement.Core.Constants;
 namespace Settlement.WebSites.Controllers;
 
 [Route("[controller]")]
-public class AppsController : Controller
+public class AppsController(IConfiguration configuration) : Controller
 {
-    private readonly IConfiguration configuration;
-
-    public AppsController(IConfiguration configuration)
-    {
-        this.configuration = configuration;
-    }
-
     [HttpGet("change-waiting-time")]
     public IActionResult ChangeWaitingTime(string pageType)
     {

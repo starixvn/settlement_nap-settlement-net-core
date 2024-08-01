@@ -13,22 +13,14 @@ public interface IBasketballBetTypeService
     ResultDetail CheckValue(ResultDetail item);
 }
 
-public class BasketballBetTypeServiceImp : IBasketballBetTypeService
+public class BasketballBetTypeServiceImp(
+    IGroupBetTypeService groupBetTypeService,
+    IResourceNameService resourceNameService)
+    : IBasketballBetTypeService
 {
-    private readonly IGroupBetTypeService groupBetTypeService;
-    private readonly IResourceNameService resourceNameService;
-
     private const int HalfBetTypeLength = 5;
     private const int BetTypeIndexLength = 2;
     private const int QuarterBetTypeLength = 7;
-
-    public BasketballBetTypeServiceImp(
-        IGroupBetTypeService groupBetTypeService,
-        IResourceNameService resourceNameService)
-    {
-        this.groupBetTypeService = groupBetTypeService;
-        this.resourceNameService = resourceNameService;
-    }
 
     public ResultDetail GetBetTypeNameAndGroup(ResultDetail item)
     {
@@ -44,15 +36,20 @@ public class BasketballBetTypeServiceImp : IBasketballBetTypeService
         const int otherBetTypeLength = 3;
         var resourceId = resultDetail.ResourceId;
         var group = new GroupNameModel();
-        if (resourceId.Length == otherBetTypeLength)
+        switch (resourceId.Length)
         {
-            group = groupBetTypeService.GroupOtherBetType(resultDetail);
-        }
+            case otherBetTypeLength:
+                group = groupBetTypeService.GroupOtherBetType(resultDetail);
+                break;
 
-        if (resourceId.Length is QuarterBetTypeLength or HalfBetTypeLength)
-        {
-            group = GroupHalfBetType(resultDetail, group);
-            group = GroupQuarterBetType(resultDetail, group);
+            case QuarterBetTypeLength or HalfBetTypeLength:
+                group = GroupHalfBetType(resultDetail, group);
+                group = GroupQuarterBetType(resultDetail, group);
+                break;
+
+            default:
+                group = new GroupNameModel();
+                break;
         }
 
         resultDetail.GroupName = group.GroupName;

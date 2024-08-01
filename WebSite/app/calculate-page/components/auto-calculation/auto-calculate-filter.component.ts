@@ -83,7 +83,7 @@ export class AutoCalculateFilterComponent extends FilterBaseComponent implements
         if (this.verifyDateService.validDate(this.fromDate, this.toDate)) {
             const fromDateValue = this.verifyDateService.dateFormat(fromDate);
             const toDateValue = this.verifyDateService.dateFormat(toDate);
-            var query = new LeagueQuery(fromDateValue, toDateValue);
+            const query = new LeagueQuery(fromDateValue, toDateValue);
             const league = await this.requestService.getLeague(query);
             this.leagues = [allLeague, ...league];
         } else {

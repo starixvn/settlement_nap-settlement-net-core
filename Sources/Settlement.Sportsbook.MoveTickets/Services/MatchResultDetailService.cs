@@ -9,20 +9,11 @@ public interface IMatchResultDetailService
     List<Match> CricketResultDetail(List<Match> matches, List<ResultDetail> resultDetails);
 }
 
-public class MatchResultDetailServiceImp : IMatchResultDetailService
+public class MatchResultDetailServiceImp(
+    IRefDataService refDataService,
+    IScoreService scoreService)
+    : IMatchResultDetailService
 {
-    private readonly IRefDataService refDataService;
-
-    private readonly IScoreService scoreService;
-
-    public MatchResultDetailServiceImp(
-        IRefDataService refDataService,
-        IScoreService scoreService)
-    {
-        this.refDataService = refDataService;
-        this.scoreService = scoreService;
-    }
-
     public List<Match> CricketResultDetail(List<Match> matches, List<ResultDetail> resultDetails)
     {
         var resources = new List<string> { "H1", "H2", "A1", "A2" };

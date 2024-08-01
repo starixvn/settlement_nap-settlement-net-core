@@ -1,5 +1,7 @@
 ﻿namespace Settlement.Sportsbook.Soccer.Criteria;
 
+using CoreConstants = Core.Constants;
+
 public class CalculateEarlyCriteria : NonQueryCommand
 {
     public int AdminId { get; set; }
@@ -27,7 +29,7 @@ public class CalculateEarlyCriteria : NonQueryCommand
     public string SpName => "NAP_Admin_Settlement_Auto_1s_Push";
 
     [SpParam(Ignored = true)]
-    public int SportType { get; } = Core.Constants.SportType.Soccer;
+    public int SportType => CoreConstants.SportType.Soccer;
 
     public override string GetSettingKey() => $"NAP_Admin_Settlement_Auto_1s_Push_{DbServer}";
 

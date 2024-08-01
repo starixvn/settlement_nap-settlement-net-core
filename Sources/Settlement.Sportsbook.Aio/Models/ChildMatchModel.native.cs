@@ -14,11 +14,12 @@ public class ChildMatchModel
 
     private const string DefaultValue = "";
 
-    private string eventStatus;
+    private string eventStatus = "";
 
     public string MatchCode { get; set; }
 
     public int MatchId { get; set; }
+    public short SportType { get; set; }
 
     public string ResourceId { get; set; }
 
@@ -27,6 +28,8 @@ public class ChildMatchModel
         get => CultureInfo.CurrentCulture.TextInfo.ToTitleCase(eventStatus.ToLowerInvariant());
         set => eventStatus = value;
     }
+
+    public string NewEventStatus { get; set; }
 
     public string BetStatus { get; set; }
 
@@ -37,6 +40,7 @@ public class ChildMatchModel
     public int ChildMatchType { get; set; }
 
     public int ResultStatusId { get; set; }
+    public int SettlementStatusId { get; set; }
 
     public byte SettlementStatus { get; set; }
 
@@ -44,9 +48,11 @@ public class ChildMatchModel
 
     public byte ConfirmFT { get; set; }
 
-    public string LeagueName => ChildMatchConstant.LeagueName.TryGetValue(ChildMatchType, out leagueName) ? leagueName : DefaultValue;
+    public DateTime KickOffTime { get; set; }
 
-    public string RelatedResourceId => ChildMatchConstant.ResourceRelated.TryGetValue(ChildMatchType, out relatedResourceId) ? relatedResourceId : DefaultValue;
+    public string LeagueName => ChildMatchConstant.LeagueName.TryGetValue((SportType, ChildMatchType), out leagueName) ? leagueName : DefaultValue;
+
+    public string RelatedResourceId => ChildMatchConstant.ResourceRelated.TryGetValue((SportType, ChildMatchType), out relatedResourceId) ? relatedResourceId : DefaultValue;
 
     public ResultDetailSetting ResultSettingData => new()
     {
@@ -60,10 +66,10 @@ public class ChildMatchModel
         get
         {
             bool[] settingMatch =
-            {
-                    Remark.IsKeyHold, Remark.IsMtdHold, Remark.IsPending, Remark.IsUndecided,
+            [
+                Remark.IsKeyHold, Remark.IsMtdHold, Remark.IsPending, Remark.IsUndecided,
                     Remark.IsUnderSettle
-                };
+            ];
             return settingMatch.ToList().Exists(item => item);
         }
     }

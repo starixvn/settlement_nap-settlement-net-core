@@ -4,12 +4,7 @@ namespace Settlement.Log.UnitTests.Services;
 
 public class ResultServiceTests
 {
-    private readonly ResultService service;
-
-    public ResultServiceTests()
-    {
-        service = new ResultServiceImp();
-    }
+    private readonly ResultService service = new ResultServiceImp();
 
     [Theory]
     [InlineData(null)]

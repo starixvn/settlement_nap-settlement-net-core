@@ -59,7 +59,7 @@ public class AioControllerTests
     public async Task GetRecalResult_Always_ReturnOkStatus()
     {
         var request = new GetRecalResultRequest();
-        mediator.Send(Arg.Any<GetRecalResultRequest>()).Returns(new List<Models.ResultDetail>());
+        mediator.Send(Arg.Any<GetRecalResultRequest>()).Returns([]);
 
         var actual = await controller.GetRecalResult(request) as OkObjectResult;
 
@@ -100,6 +100,30 @@ public class AioControllerTests
         var actual = await controller.SaveScore(request) as OkObjectResult;
 
         Assert.IsType<Result>(actual?.Value);
+        Assert.Equal(200, actual.StatusCode);
+    }
+
+    [Fact]
+    public async Task UpdateSettlementResultHistoryStatus_Always_ReturnOkStatus()
+    {
+        var request = new UpdateSettlementResultHistoryStatusRequest();
+        mediator.Send(Arg.Any<UpdateSettlementResultHistoryStatusRequest>()).Returns(true);
+
+        var actual = await controller.UpdateSettlementResultHistoryStatus(request) as OkObjectResult;
+
+        Assert.IsType<bool>(actual?.Value);
+        Assert.Equal(200, actual.StatusCode);
+    }
+
+    [Fact]
+    public async Task ResultSetting_Always_ReturnOkStatus()
+    {
+        var request = new ResultSettingRequest();
+        mediator.Send(Arg.Any<ResultSettingRequest>()).Returns(true);
+
+        var actual = await controller.ResultSetting(request) as OkObjectResult;
+
+        Assert.IsType<bool>(actual?.Value);
         Assert.Equal(200, actual.StatusCode);
     }
 }

@@ -2,7 +2,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
+import { ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 import { of } from 'rxjs';
 import { Language } from '../../../shared/language.native';
 import { MaterialModule } from '../../../shared/material-module';
@@ -55,7 +55,6 @@ describe('MoveBetComponent', () => {
         MaterialModule,
         FormsModule,
         ToastNoAnimationModule.forRoot(),
-        ToastContainerModule,
         ToastrModule.forRoot(),
       ]
     })

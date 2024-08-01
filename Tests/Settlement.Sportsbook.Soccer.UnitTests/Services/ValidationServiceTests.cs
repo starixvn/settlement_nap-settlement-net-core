@@ -5,12 +5,7 @@ namespace Settlement.Sportsbook.Soccer.UnitTests.Services;
 
 public class ValidationServiceTests
 {
-    private readonly IValidationService service;
-
-    public ValidationServiceTests()
-    {
-        service = new ValidationServiceImp();
-    }
+    private readonly IValidationService service = new ValidationServiceImp();
 
     [Theory]
     [InlineData("", 0, -1, false)]

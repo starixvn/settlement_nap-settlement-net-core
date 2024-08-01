@@ -18,16 +18,16 @@ public class MergeMatchInfoTests
                 new()
                 {
                     MatchId = 1,
-                    SiteMatch = new List<SiteMatch>
-                    {
-                        new()
+                    SiteMatch =
+                    [
+                        new SiteMatch
                         {
                             TotalTickets = 0,
                             TotalTicketsRunning = 0,
                             QueueStatus = 1,
                             MatchId = 1
                         }
-                    }
+                    ]
                 }
             };
 
@@ -55,14 +55,14 @@ public class MergeMatchInfoTests
     {
         var match = new MatchDetailModel
         {
-            SiteMatch = new List<SiteMatch>
+            SiteMatch =
+            [
+                new SiteMatch
                 {
-                    new()
-                    {
-                        TotalTicketsRunning = totalTicketRunning,
-                        TotalTickets = totalTicket
-                    }
+                    TotalTicketsRunning = totalTicketRunning,
+                    TotalTickets = totalTicket
                 }
+            ]
         };
 
         var result = service.ParlayStatus(match);
@@ -80,13 +80,13 @@ public class MergeMatchInfoTests
     {
         var match = new MatchDetailModel
         {
-            SiteMatch = new List<SiteMatch>
+            SiteMatch =
+            [
+                new SiteMatch
                 {
-                    new()
-                    {
-                        QueueStatus = statusSite
-                    }
+                    QueueStatus = statusSite
                 }
+            ]
         };
 
         var result = service.QueueStatus(match, statusMain);

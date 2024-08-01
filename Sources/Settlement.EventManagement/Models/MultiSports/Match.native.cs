@@ -2,13 +2,13 @@
 
 public class Match : BaseMatch
 {
-    private readonly List<int> sportSupportDirect = new()
-    {
+    private readonly List<int> sportSupportDirect =
+    [
         Core.Constants.SportType.VolleyBall,
         Core.Constants.SportType.Badminton,
         Core.Constants.SportType.Cricket,
         Core.Constants.SportType.Tennis
-    };
+    ];
 
     [Key("isHavingIntervalScore")]
     public bool IsHavingIntervalScore { get; set; }
@@ -64,6 +64,9 @@ public class Match : BaseMatch
 
     [IgnoreMember]
     public int ConfirmFT { get; set; }
+
+    [IgnoreMember]
+    public int ParentId { get; set; }
 
     public override bool Equals(object obj)
     {

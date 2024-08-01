@@ -3,7 +3,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { ToastContainerModule, ToastrService } from "ngx-toastr";
+import { ToastrModule, ToastrService } from "ngx-toastr";
 import { TicketCountComponent } from "../components/ticket-count/ticket-count.component";
 import { ResettleCheckerComponent } from "../components/resettle-checker/resettle-checker.component";
 import { AioService, BlockUIService, HttpRequestService } from "../services";
@@ -18,7 +18,7 @@ import { ExternalSourceNamePipe } from '../pipes/external-source-name.pipe';
 import { OnlyIntegerDirective } from '../../shared/directives';
 
 @NgModule({
-    exports: [FormsModule, CommonModule, ToastContainerModule, ResettleCheckerComponent, TicketCountComponent,
+    exports: [FormsModule, CommonModule, ToastrModule, ResettleCheckerComponent, TicketCountComponent,
         NotReadyMatchComponent, MatTooltipModule, NewMultipleSelectComponent, PipesModule, ExternalLinkPipe, ExternalSourceNamePipe, OnlyIntegerDirective],
     imports: [ResettleCheckerComponent, TicketCountComponent, NotReadyMatchComponent, NewMultipleSelectComponent, ExternalLinkPipe, ExternalSourceNamePipe, OnlyIntegerDirective],
     providers: [

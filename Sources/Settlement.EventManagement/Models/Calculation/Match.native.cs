@@ -1,5 +1,7 @@
 ﻿namespace Settlement.EventManagement.Models.Calculation;
 
+using CoreConst = Settlement.Core.Constants;
+
 [MessagePackObject]
 public class Match : BaseMatch
 {
@@ -111,23 +113,17 @@ public class Match : BaseMatch
             {
                 return "LIVE! - 1H";
             }
-            else if (IsFullTime)
+
+            if (IsFullTime)
             {
                 return "LIVE! - 2H";
             }
-            else if (IsBreakTime)
-            {
-                return "LIVE!";
-            }
-            else
-            {
-                return string.Empty;
-            }
+            return IsBreakTime ? "LIVE!" : string.Empty;
         }
     }
 
     [IgnoreMember]
-    private string TypeName => InstantCalculationType == Core.Constants.InstantCalculationType.CalcHt ? "HT" : "FT";
+    private string TypeName => InstantCalculationType == CoreConst.InstantCalculationType.CalcHt ? "HT" : "FT";
 
     [IgnoreMember]
     private string ConfirmScore => $"{InstantHomeScore}-{InstantAwayScore} ({TypeName})";
@@ -136,18 +132,18 @@ public class Match : BaseMatch
     private bool RemarkSetting => !Remark.IsUndecided && !Remark.IsPending && !Remark.IsMtdHold && !Remark.IsKeyHold;
 
     [IgnoreMember]
-    private bool IsInstantLive => EventStatus.Equals(Core.Constants.EventStatus.Running)
-        && InstantStatusId == Core.Constants.InstantStatus.Live && RemarkSetting;
+    private bool IsInstantLive => EventStatus.Equals(CoreConst.EventStatus.Running)
+        && InstantStatusId == Settlement.Core.Constants.InstantStatus.Live && RemarkSetting;
 
     [IgnoreMember]
-    private bool CheckEventStatus => NewEventStatus.Equals(Core.Constants.EventStatus.Waiting)
-                                     || NewEventStatus.Equals(Core.Constants.EventStatus.Calculating)
-                                     || EventStatus.Equals(Core.Constants.EventStatus.Running)
-                                     || EventStatus.IgnoreCaseEquals(Core.Constants.EventStatus.RefundHt);
+    private bool CheckEventStatus => NewEventStatus.Equals(CoreConst.EventStatus.Waiting)
+                                     || NewEventStatus.Equals(CoreConst.EventStatus.Calculating)
+                                     || EventStatus.Equals(CoreConst.EventStatus.Running)
+                                     || EventStatus.IgnoreCaseEquals(CoreConst.EventStatus.RefundHt);
 
     [IgnoreMember]
-    private bool ConfirmCompleted => InstantStatusId == Core.Constants.InstantStatus.Complete
-        || (InstantStatusId == Core.Constants.InstantStatus.Confirm && CheckEventStatus);
+    private bool ConfirmCompleted => InstantStatusId == CoreConst.InstantStatus.Complete
+        || (InstantStatusId == CoreConst.InstantStatus.Confirm && CheckEventStatus);
 
     [Key("instantStatus")]
     public string InstantStatus
@@ -158,14 +154,8 @@ public class Match : BaseMatch
             {
                 return Live;
             }
-            else if (ConfirmCompleted)
-            {
-                return ConfirmScore;
-            }
-            else
-            {
-                return string.Empty;
-            }
+
+            return ConfirmCompleted ? ConfirmScore : string.Empty;
         }
     }
 

@@ -1,12 +1,13 @@
 ﻿import { TestBed, waitForAsync, ComponentFixture } from '@angular/core/testing';
 import { NgbModule, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
-import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
+import { DatePipe } from "@angular/common";
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { of } from 'rxjs';
 import { FilterComponent } from '.';
 import { DatepickerComponent } from '../../shared/components/date-picker/date-picker.component';
-import { ModalDialogComponent, NewMultipleSelectComponent } from "../../shared/components";
+import { ModalDialogComponent } from '../../shared/components/modal-dialog/modal-dialog.component';
+import { NewMultipleSelectComponent } from "../../shared/components/multiple-select/multiple-select.component";
 import { HttpRequestService, BlockUIService, MessageBoxService, VerifyDateService } from '../../shared/services';
 import { ItemsSelect } from '../../shared/models';
 import { SportType, MultiSports } from '../models';
@@ -24,10 +25,8 @@ describe('Bet Builder - Filter Component', () => {
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             declarations: [
-                FilterComponent,
-                DatepickerComponent,
                 ModalDialogComponent,
-                NewMultipleSelectComponent
+                FilterComponent
             ],
             providers: [
                 VerifyDateService,
@@ -36,8 +35,11 @@ describe('Bet Builder - Filter Component', () => {
                 GenerateListService,
                 BlockUIService,
                 MessageBoxService,
+                DatePipe
             ],
             imports: [
+                DatepickerComponent,
+                NewMultipleSelectComponent,
                 FormsModule,
                 HttpClientModule,
                 NgbModule,
@@ -68,8 +70,8 @@ describe('Bet Builder - Filter Component', () => {
 
         it('should emit on click submit', () => {
             const multiSports = {} as MultiSports;
-            spyOn(requestService, 'search').and.returnValue(of(multiSports));
-            spyOn(component.searchAction, 'emit');
+            jest.spyOn(requestService, 'search').mockReturnValue(of(multiSports));
+            jest.spyOn(component.searchAction, 'emit');
 
             component.search();
 
@@ -78,8 +80,8 @@ describe('Bet Builder - Filter Component', () => {
         });
 
         it('should show alert when date is not valid.', () => {
-            spyOn(verifyDateService, 'validDate').and.returnValue(false);
-            spyOn(messageBoxService, 'alert');
+            jest.spyOn(verifyDateService, 'validDate').mockReturnValue(false);
+            jest.spyOn(messageBoxService, 'alert');
 
             component.search();
 
@@ -88,7 +90,7 @@ describe('Bet Builder - Filter Component', () => {
 
         it('should show alert when sport selected is empty.', () => {
             component.sportTypesSelected = '';
-            spyOn(messageBoxService, 'alert');
+            jest.spyOn(messageBoxService, 'alert');
 
             component.search();
 
@@ -97,7 +99,7 @@ describe('Bet Builder - Filter Component', () => {
 
         it('should show alert when leagueSelected is empty.', () => {
             component.leaguesSelected = '';
-            spyOn(messageBoxService, 'alert');
+            jest.spyOn(messageBoxService, 'alert');
 
             component.search();
 
@@ -119,9 +121,9 @@ describe('Bet Builder - Filter Component', () => {
         const mockItemOne = new ItemsSelect(1, '1', '', true, true, true, []);
         const mockItemTwo = new ItemsSelect(2, '2', '', true, true, true, []);
         const sportExpect = '1,2';
-        spyOn(verifyDateService, 'validDate').and.returnValue(true);
-        spyOn(requestService, 'getLeague').and.returnValue(of(""));
-        spyOn(generateListService, 'renderLeagues');
+        jest.spyOn(verifyDateService, 'validDate').mockReturnValue(true);
+        jest.spyOn(requestService, 'getLeague').mockReturnValue(of(""));
+        jest.spyOn(generateListService, 'renderLeagues').mockReturnValue([]);
 
         component.onSelectSport([mockItemOne, mockItemTwo]);
 
@@ -136,7 +138,7 @@ describe('Bet Builder - Filter Component', () => {
         sport.sportType = 1;
         sport.sportName = "mockName";
         const sports: SportType[] = [sport, sport];
-        spyOn(requestService, 'getSport').and.returnValue(of(sports));
+        jest.spyOn(requestService, 'getSport').mockReturnValue(of(sports));
 
         component.onSelectFromDate(fromDate);
 
@@ -150,7 +152,7 @@ describe('Bet Builder - Filter Component', () => {
         sport.sportType = 1;
         sport.sportName = "mockName";
         const sports: SportType[] = [sport, sport];
-        spyOn(requestService, 'getSport').and.returnValue(of(sports));
+        jest.spyOn(requestService, 'getSport').mockReturnValue(of(sports));
 
         component.onSelectFromDate(toDate);
 

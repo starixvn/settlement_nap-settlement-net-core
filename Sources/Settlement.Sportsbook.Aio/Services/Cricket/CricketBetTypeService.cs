@@ -13,25 +13,14 @@ public interface ICricketBetTypeService
     void GroupBetTypesAndGenerateNames(List<ResultDetail> resultDetails);
 }
 
-public class CricketBetTypeService : ICricketBetTypeService
+public class CricketBetTypeService(
+    IDynamicRepository repository,
+    IResourceNameService resourceNameService,
+    IGroupNameService groupNameService,
+    InputTypeService inputTypeService)
+    : ICricketBetTypeService
 {
-    private readonly IDynamicRepository repository;
-    private readonly IResourceNameService resourceNameService;
-    private readonly IGroupNameService groupNameService;
-    private readonly InputTypeService inputTypeService;
     private const int InnsBetTypeMinLength = 5;
-
-    public CricketBetTypeService(
-        IDynamicRepository repository,
-        IResourceNameService resourceNameService,
-        IGroupNameService groupNameService,
-        InputTypeService inputTypeService)
-    {
-        this.repository = repository;
-        this.resourceNameService = resourceNameService;
-        this.groupNameService = groupNameService;
-        this.inputTypeService = inputTypeService;
-    }
 
     public void GroupBetTypesAndGenerateNames(List<ResultDetail> resultDetails)
     {

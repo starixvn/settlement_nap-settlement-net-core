@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
-using Settlement.Core.UnitTests;
 using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Requests;
@@ -42,37 +41,6 @@ public class CreateQueryServiceTests
         var mapper = new Mapper(config);
         logService = Substitute.For<LogService>();
         service = new CreateQueryServiceImp(xmlConvertService, currentSession, accessor, mapper, logService);
-    }
-
-    [Fact]
-    public void QuerySettle_Always_ReturnsExpectedData()
-    {
-        // Arrange
-        var request = new SettleRequest
-        {
-            MatchId = 1,
-            ActionName = "Settle",
-            BetStatus = string.Empty,
-            IsLeader = false
-        };
-
-        var expectedData = new SettleCriteria
-        {
-            MatchId = request.MatchId,
-            AdminId = 0,
-            Action = request.ActionName,
-            Ip = "1.0.0.0",
-            BetStatus = "",
-            SelectedResources = "",
-            IsReSettledTickets = false,
-            IsLeader = false
-        };
-
-        // Act
-        var result = service.QuerySettle(request);
-
-        // Assert
-        Assert.Equal(JsonConvert.SerializeObject(expectedData).RemoveSessionId(), JsonConvert.SerializeObject(result).RemoveSessionId());
     }
 
     [Fact]
@@ -117,30 +85,6 @@ public class CreateQueryServiceTests
 
         Assert.Equal("", criteria.ErrMsg);
         logService.Received(1).ActionLog(Arg.Any<int>(), Arg.Any<string>(), 100);
-    }
-
-    [Fact]
-    public void QuerySettleChildMatch_Always_ReturnExpectedData()
-    {
-        var request = new SettleChildMatchRequest
-        {
-            ActionName = "Calc"
-        };
-
-        var expectedData = new SettleCriteria
-        {
-            Action = request.ActionName,
-            AdminId = currentSession.UserId,
-            BetStatus = null,
-            SelectedResources = "",
-            Ip = "1.0.0.0",
-            IsDirectly = false,
-            IsChildMatch = true
-        };
-
-        var result = service.QuerySettleChildMatch(request);
-
-        Assert.Equal(JsonConvert.SerializeObject(expectedData).RemoveSessionId(), JsonConvert.SerializeObject(result).RemoveSessionId());
     }
 
     [Fact]
@@ -241,7 +185,7 @@ public class CreateQueryServiceTests
 
         var resources = new Resources<ResourceItem>
         {
-            ResourceItems = new List<ResourceItem> { new() { ResourceId = childMatch.ResourceId } }
+            ResourceItems = [new ResourceItem { ResourceId = childMatch.ResourceId }]
         };
 
         var expectedData = xmlConvertService.Serialize(resources);

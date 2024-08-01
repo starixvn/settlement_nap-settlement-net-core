@@ -19,7 +19,7 @@ public class MultipleServerFetcherServiceTests
     {
         repository = Substitute.For<IDynamicRepository>();
         mergeDataService = Substitute.For<MergeDataService>();
-        var appSettings = new AppSettingsKey { SiteDbServer = new List<string> { "01", "02" } };
+        var appSettings = new AppSettingsKey { SiteDbServer = ["01", "02"] };
         var options = Options.Create(appSettings);
         service = new MultipleServerFetcherServiceImp(repository, mergeDataService, options);
     }

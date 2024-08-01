@@ -1,7 +1,7 @@
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { LeagueSettingsStore } from '../../../../services/league-settings.store';
+import { LeagueSettingsStore } from '../../../../services/league-settings.store.native';
 import { ProviderSource, ResultSettings } from '../../../../../shared/models/league-settings.model';
 import * as _ from 'lodash';
 import { CommonModule } from '@angular/common';
@@ -17,8 +17,8 @@ import { Language } from '../../../../../shared/language.native';
 export class ProviderSelectionComponent implements OnInit {
    providerSources: ProviderSource[];
   private resultSettings: ResultSettings;
-  private primaryId = 1;
-  private secondaryId = 2;
+  private readonly primaryId = 1;
+  private readonly secondaryId = 2;
    errorMessage: string;
   constructor(
     private readonly dialogRef: MatDialogRef<ProviderSelectionComponent>,
@@ -48,8 +48,8 @@ export class ProviderSelectionComponent implements OnInit {
 
   submit() {
     this.errorMessage = "";
-    this.resultSettings.primaryProvider = this.providerSources.filter(p => p.priority == this.primaryId).map(p => p.sourceName).join(', ');
-    this.resultSettings.secondaryProvider = this.providerSources.filter(p => p.priority == this.secondaryId).map(p => p.sourceName).join(', ');
+    this.resultSettings.primaryProvider = this.providerSources.filter(p => p.priority === this.primaryId).map(p => p.sourceName).join(', ');
+    this.resultSettings.secondaryProvider = this.providerSources.filter(p => p.priority === this.secondaryId).map(p => p.sourceName).join(', ');
     if(this.validateSources()) {
       if (this.isEarly) {
         this.store.setState({ ... this.store.state, earlyResultSettings: { ...this.resultSettings } });

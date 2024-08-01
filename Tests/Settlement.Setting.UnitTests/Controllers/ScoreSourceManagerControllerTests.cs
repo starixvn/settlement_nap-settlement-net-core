@@ -1,5 +1,5 @@
 ﻿using NSubstitute;
-using Settlement.Core.Models;
+using Settlement.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Settlement.Setting.Controllers;

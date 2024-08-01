@@ -56,7 +56,5 @@ export class VerificationService extends VerificationBaseService {
         }
 
         return false;
-
-        // return  this.isEarlyMismatchedWarning(map) || this.isMismatchedScoreScreenshot(map);
     }
 }

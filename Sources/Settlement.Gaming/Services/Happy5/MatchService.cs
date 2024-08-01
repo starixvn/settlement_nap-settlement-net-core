@@ -12,31 +12,21 @@ public interface MatchService
     Task<List<MatchDetail>> Matches(Happy5MatchRequest request);
 }
 
-public class MatchServiceImp : MatchService
+public class MatchServiceImp(
+    IDynamicRepository repository,
+    BallService ballService,
+    IMapper mapper)
+    : MatchService
 {
-    private readonly IDynamicRepository repository;
-
-    private readonly BallService ballService;
-
-    private readonly IMapper mapper;
-
-    public MatchServiceImp(
-        IDynamicRepository repository,
-        BallService ballService,
-        IMapper mapper)
-    {
-        this.repository = repository;
-        this.ballService = ballService;
-        this.mapper = mapper;
-    }
-
     public async Task<List<MatchDetail>> Matches(Happy5MatchRequest request)
     {
         var criteria = mapper.Map<Happy5MatchRequest, GetMatchesCriteria>(request);
         var matches = (await repository.FetchAsync<MatchDetail>(criteria)).ToList();
         var balls = await GetBallsByMatchIds(matches);
 
-        matches.ForEach(m => m.Balls = balls.TryGetValue(m.MatchId, out var ball) ? ballService.CorrectNumberBall(m.MatchId, ball) : new List<BallModel>());
+        matches.ForEach(m => m.Balls = balls.TryGetValue(m.MatchId, out var ball) ? ballService.CorrectNumberBall(m.MatchId, ball) :
+        [
+        ]);
 
         return matches;
     }
@@ -50,9 +40,7 @@ public class MatchServiceImp : MatchService
             return balls.GroupBy(b => b.MatchId)
                 .ToDictionary(m => m.Key, m => m.ToList());
         }
-        else
-        {
-            return new Dictionary<int, List<BallModel>>();
-        }
+
+        return new Dictionary<int, List<BallModel>>();
     }
 }

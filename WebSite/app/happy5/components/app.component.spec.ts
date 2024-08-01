@@ -11,9 +11,7 @@ import {
     ReCalculationComponent,
     RefundComponent
 } from './index';
-import {
-    DatepickerComponent,
-} from '../../shared/components';
+import { DatepickerComponent } from '../../shared/components/date-picker/date-picker.component';
 import { QueryService } from '../services';
 import { HappyFive } from '../models';
 describe('Component: App', () => {
@@ -26,7 +24,6 @@ describe('Component: App', () => {
                 AppComponent,
                 FilterComponent,
                 MatchesComponent,
-                DatepickerComponent,
                 ReCalculationComponent,
                 RefundComponent
             ],
@@ -39,6 +36,7 @@ describe('Component: App', () => {
                 QueryService,
             ],
             imports: [
+                DatepickerComponent,
                 BrowserModule,
                 FormsModule,
                 ReactiveFormsModule,
@@ -59,7 +57,7 @@ describe('Component: App', () => {
     }));
 
     it('should call reCheckin function from re-checkin service.', fakeAsync(() => {
-        const spy = spyOn(reCheckInService, 'reCheckin');
+        const spy = jest.spyOn(reCheckInService, 'reCheckin').mockReturnValue();
         component.ngOnInit();
         tick(60000);
         component.ngOnDestroy();

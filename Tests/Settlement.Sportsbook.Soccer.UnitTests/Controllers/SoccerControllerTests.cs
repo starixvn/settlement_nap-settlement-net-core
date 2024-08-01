@@ -120,7 +120,7 @@ public class SoccerControllerTests
     public async Task ThirdPartyBetTicketsChecking_Always_ReturnOkStatus()
     {
         var request = new GetMatchDetailThirdPartyBetTicketsRequest();
-        mediator.Send(Arg.Any<GetMatchDetailThirdPartyBetTicketsRequest>()).Returns(new List<MatchMoveBetTicket>());
+        mediator.Send(Arg.Any<GetMatchDetailThirdPartyBetTicketsRequest>()).Returns([]);
 
         var actual = await controller.ThirdPartyBetTicketsChecking(request) as OkObjectResult;
 

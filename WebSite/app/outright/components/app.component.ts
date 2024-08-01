@@ -44,11 +44,10 @@ export default class AppComponent implements OnInit {
 
     private getComponentFactory(): ComponentFactory<OnInit> {
         const pageType = this.elementRef.nativeElement.getAttribute('page-type');
-        switch (pageType) {
-            case PageType.OutrightLog:
-                return this.componentFactoryResolver.resolveComponentFactory(LogPageComponent);
-            default:
-                return this.componentFactoryResolver.resolveComponentFactory(MainPageComponent);
+        if (pageType === PageType.OutrightLog) {
+            return this.componentFactoryResolver.resolveComponentFactory(LogPageComponent);
         }
+
+        return this.componentFactoryResolver.resolveComponentFactory(MainPageComponent);
     }
 }

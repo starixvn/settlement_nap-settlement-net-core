@@ -34,12 +34,12 @@ export class GameTotalCalculationComponent implements SportTemplate {
   private resultDetailsToAction: ResultDetail[];
   totalSetOriginal: ResultDetail;
   resultDetailsOriginal: ResultDetail[];
-  externalSourceName: string = '-';
+  public externalSourceName = '-';
   hedgeMatchDetail: HedgeMatchDetail;
   applyHedgeMatch: boolean;
   readonly confirmDialogMessage: ModalDialogMessage = new ModalDialogMessage();
   collapse = false;
-  private refResultStatus: number = null;
+  private refResultStatus: number | null = null;
 
   constructor(private readonly messageBoxService: MessageBoxService,
     private readonly aioService: AioService,

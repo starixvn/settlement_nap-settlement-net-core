@@ -1,6 +1,6 @@
 ﻿namespace Settlement.Sportsbook.MoveTickets.Services.MultipleServer;
 
-using Core.Constants;
+using Settlement.Core.Constants;
 using Settlement.Core.Models;
 
 public interface SiteMatchService
@@ -17,6 +17,7 @@ public interface SiteMatchService
 public class SiteMatchServiceImp : SiteMatchService
 {
     private const int MatchPen = 202;
+
 
     public int? IsCalculatingSingle(Match match)
     {
@@ -87,12 +88,7 @@ public class SiteMatchServiceImp : SiteMatchService
             return TicketStatus.Running;
         }
 
-        if (IsExistedWaitingEarlyBetTypes(match))
-        {
-            return TicketStatus.Waiting;
-        }
-
-        return TicketStatus.Completed;
+        return IsExistedWaitingEarlyBetTypes(match) ? TicketStatus.Waiting : TicketStatus.Completed;
     }
 
     private static bool IsExistedWaitingEarlyBetTypes(Match match) => match.IsWaitingEarlyBetTypes;

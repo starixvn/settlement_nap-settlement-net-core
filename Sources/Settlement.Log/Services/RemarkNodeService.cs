@@ -17,21 +17,12 @@ public interface RemarkNodeService
     string EventCounter(string content);
 }
 
-public class RemarkNodeServiceImp : RemarkNodeService
+public class RemarkNodeServiceImp(PositionService positionService, XmlConvertService xmlConvertService)
+    : RemarkNodeService
 {
-    private static readonly string[] EventCounterLabels = { "", "G", "C", "FK", "GK", "T", "", "P" };
+    private static readonly string[] EventCounterLabels = ["", "G", "C", "FK", "GK", "T", "", "P"];
 
     private const int MaxLength = 6;
-
-    private readonly PositionService positionService;
-
-    private readonly XmlConvertService xmlConvertService;
-
-    public RemarkNodeServiceImp(PositionService positionService, XmlConvertService xmlConvertService)
-    {
-        this.positionService = positionService;
-        this.xmlConvertService = xmlConvertService;
-    }
 
     public string EventCounterLogs(IEnumerable<ItemElement> items)
     {
@@ -100,7 +91,7 @@ public class RemarkNodeServiceImp : RemarkNodeService
         Array.Reverse(charArray);
         for (var i = 0; i < charArray.Length; i++)
         {
-            if (i != 0 && i != MaxLength) //NOSONAR
+            if (i != 0 && i != MaxLength)
             {
                 var c = charArray[i];
                 if (c != '0')

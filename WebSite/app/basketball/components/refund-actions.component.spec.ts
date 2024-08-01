@@ -10,7 +10,7 @@ import { MessageBoxService, AioService } from '../../shared/services';
 import { Language } from '../../shared/language.native';
 import { BackgroundColor, ResultStatusId, SettlementStatusId, SportType } from '../../shared/constants';
 import { ExternalResult, ExternalResultDetail, MatchDetail, Permission, ResultDetail } from '../../shared/models/sportsbook-sop';
-import { ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
+import { ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 import { ModalContentDialogComponent } from '../../shared/components/modal-dialog/modal-content-dialog.component';
 import { ModalDialogComponent } from '../../shared/components/modal-dialog/modal-dialog.component';
 import * as _ from 'lodash';
@@ -71,7 +71,6 @@ describe('Component: RefundActionsComponent', () => {
             imports: [
                 HttpClientModule,
                 ToastNoAnimationModule.forRoot(),
-                ToastContainerModule,
                 ToastrModule.forRoot(),
                 RefundActionsComponent
             ],

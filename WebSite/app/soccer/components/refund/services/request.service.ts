@@ -6,7 +6,7 @@ import { MatchMoveBet, Match } from "../model/match.model";
 import { RefundQuery } from "../model/query.model";
 @Injectable()
 export class RequestService {
-    private soccerApi = '/api/soccer';
+    private readonly soccerApi = '/api/soccer';
     constructor(private readonly httpRequestService: HttpRequestService) {}
 
     public getMatch(matchId: number) {

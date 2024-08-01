@@ -23,32 +23,27 @@ public interface GenerateService
     public List<ResourceItem> GenerateResources(CalculateRequest request);
 }
 
-public class GenerateServiceImp : GenerateService
+public class GenerateServiceImp(IDynamicRepository repository, XmlConvertService xmlConvertService)
+    : GenerateService
 {
     private const int BaseballHtNode = 5;
 
     private const int FootballHtNode = 2;
 
-    private readonly IDynamicRepository repository;
+    private static readonly List<string> ResourceHalfTimeAction =
+        [ActionType.UnCalculate, ActionType.RefundHalfTime, ActionType.CalculateHalfTime, ActionType.RefundAll];
 
-    private readonly XmlConvertService xmlConvertService;
-
-    private static readonly List<string> ResourceHalfTimeAction = new() { ActionType.UnCalculate, ActionType.RefundHalfTime, ActionType.CalculateHalfTime, ActionType.RefundAll };
-
-    private static readonly List<string> ResourceFullTimeAction = new() { ActionType.UnCalculate, ActionType.RefundFullTime, ActionType.CalculateFullTime,
-                                                                     ActionType.CalculateAll, ActionType.RefundAll };
-
-    public GenerateServiceImp(IDynamicRepository repository, XmlConvertService xmlConvertService)
-    {
-        this.repository = repository;
-        this.xmlConvertService = xmlConvertService;
-    }
+    private static readonly List<string> ResourceFullTimeAction =
+    [
+        ActionType.UnCalculate, ActionType.RefundFullTime, ActionType.CalculateFullTime,
+        ActionType.CalculateAll, ActionType.RefundAll
+    ];
 
     public string CreateResources(List<ResourceItem> selectedResources, string action)
     {
         var resources = new Resources<ResourceItem>
         {
-            ResourceItems = new List<ResourceItem>()
+            ResourceItems = []
         };
         var halfTime = selectedResources.Find(item => item.ResourceId == ResourceType.Halftime);
         if (halfTime is not null && (ResourceHalfTimeAction.Exists(item => item == action)
@@ -183,7 +178,7 @@ public class GenerateServiceImp : GenerateService
         const int twoLength = 2;
         if (string.IsNullOrWhiteSpace(betStatus))
         {
-            return new string[] { };
+            return [];
         }
 
         return betStatus.IndexOf(';') > -1 && betStatus.Split(';').Length >= twoLength

@@ -67,14 +67,14 @@ import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 })
 export class EarlySettlementComponent implements Soccer {
     @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
-    private verifyCalculateService: VerifyCalculateService;
-    private messageBoxService: MessageBoxService;
-    private autoFillService: AutoFillService;
-    private penaltyShootoutService: PenaltyShootoutService;
-    private penaltyWoodWorkService: PenaltyWoodWorkService;
-    private helperService: HelperService;
-    private toastrService: ToastrService;
-    private aioService: AioService;
+    private readonly verifyCalculateService: VerifyCalculateService;
+    private readonly messageBoxService: MessageBoxService;
+    private readonly autoFillService: AutoFillService;
+    private readonly penaltyShootoutService: PenaltyShootoutService;
+    private readonly penaltyWoodWorkService: PenaltyWoodWorkService;
+    private readonly helperService: HelperService;
+    private readonly toastrService: ToastrService;
+    private readonly aioService: AioService;
     public match: Match;
     public isReSettledTickets: boolean;
     public isDisabledCalculate = true;
@@ -84,9 +84,7 @@ export class EarlySettlementComponent implements Soccer {
     public matchId = Number(UrlHelper.getUrlParameter('matchId'));
     public groupMap: GroupMap[];
     public isShowRefundButton = false;
-    private originalResultDetail: ResultDetail[];
-    constructor(protected injector: Injector)
-    {
+    constructor(protected injector: Injector) {
         this.confirmationDialogMessage.title = Language.confirmationBox;
         this.verifyCalculateService = this.injector.get(VerifyCalculateService);
         this.messageBoxService = this.injector.get(MessageBoxService);
@@ -105,10 +103,9 @@ export class EarlySettlementComponent implements Soccer {
         this.generateConfirmRefundSettleDetermined();
     }
 
-    private generateConfirmRefundSettleDetermined()
-    {
-        var listResultDetailSdt = _.filter(this.resultDetails, item => item.resultSettingData.isConfirmedRefundSdt || item.resultSettingData.isConfirmedRefund);
-        if(this.permission.isLeader) {
+    private generateConfirmRefundSettleDetermined() {
+        const listResultDetailSdt = _.filter(this.resultDetails, item => item.resultSettingData.isConfirmedRefundSdt || item.resultSettingData.isConfirmedRefund);
+        if (this.permission.isLeader) {
             listResultDetailSdt.forEach(resultDetail => {
                 const resource = this.match.externalResults.find(item => item.sourceId === ScoreSourceType.confirmRefundSource && item.resourceId === resultDetail.resourceId);
                 if (resource) {
@@ -118,8 +115,8 @@ export class EarlySettlementComponent implements Soccer {
                     resultDetail.isSettleDeterminedOriginal = _.clone(resultDetail.isSettleDetermined);
                 }
             });
-       }
-       
+        }
+
     }
     public get resultDetails(): ResultDetail[] {
         return this.match.resultDetail;
@@ -170,8 +167,8 @@ export class EarlySettlementComponent implements Soccer {
     public disableCalculateAndUnCalculate() {
         const canCalculate = _.find(this.resultDetails,
             (x: ResultDetail) => x.checked);
-        this.isDisabledCalculate =  _.isEmpty(canCalculate);
-        this.isDisabledUnCalculate =  _.isEmpty(canCalculate);
+        this.isDisabledCalculate = _.isEmpty(canCalculate);
+        this.isDisabledUnCalculate = _.isEmpty(canCalculate);
     }
 
     public unCalculate() {
@@ -220,7 +217,7 @@ export class EarlySettlementComponent implements Soccer {
         const resultConfirmed = _.filter(resultDetails, item => (item.resultSettingData.isConfirmedRefund || item.resultSettingData.isConfirmedRefundSdt));
         if (resultConfirmed.length === resultDetails.length) {
             this.selectedResources.forEach(resultDetail => {
-                resultDetail.isSettleDetermined =  resultDetail.isSettleDeterminedOriginal;
+                resultDetail.isSettleDetermined = resultDetail.isSettleDeterminedOriginal;
             });
 
             this.changeConfirmResultSetting(Language.confirmRefund.undoConfirm, matchId, false);
@@ -231,7 +228,7 @@ export class EarlySettlementComponent implements Soccer {
 
     private changeConfirmResultSetting(message: string, matchId: number, isEnabled: boolean) {
         this.confirmationDialogMessage.message = message;
-        this.messageBoxService.confirm(this.confirmationDialogMessage, async() => {
+        this.messageBoxService.confirm(this.confirmationDialogMessage, async () => {
             await this.changeConfirmRefundSettleDetermined(matchId, isEnabled);
             await this.changeConfirmRefundNormal(matchId, isEnabled);
             this.messageBoxService.closePopupNotChanged();
@@ -242,20 +239,25 @@ export class EarlySettlementComponent implements Soccer {
         if (selectedResources.length > 0) {
             const resourceIds = _.join(selectedResources.map(item => item.resourceId), ',');
             const resourceItems = selectedResources.map(item => new ResourceItem(item.resourceId, item.resourceName, item.homeValue, item.awayValue))
-       
+
             const query = new ResultSettingQuery(matchId, settingType, isEnabled, resourceIds, resourceItems);
-            return await this.aioService.changeResultSetting(query);
+            const result = await this.aioService.changeResultSetting(query);
+            return result;
         }
+
+        return false;
     }
 
     private async changeConfirmRefundSettleDetermined(matchId: number, isEnabled: boolean) {
         const selectedResourcesSdt = _.filter(this.selectedResources, item => item.isSettleDetermined);
-        return await this.changeConfirmResult(selectedResourcesSdt, ResultSettingType.confirmRefundSDT, matchId, isEnabled);
+        const result = await this.changeConfirmResult(selectedResourcesSdt, ResultSettingType.confirmRefundSDT, matchId, isEnabled);
+        return result;
     }
 
     private async changeConfirmRefundNormal(matchId: number, isEnabled: boolean) {
         const selectedResourcesNormal = _.filter(this.selectedResources, item => !item.isSettleDetermined);
-        return await this.changeConfirmResult(selectedResourcesNormal, ResultSettingType.confirmRefund, matchId, isEnabled);
+        const result = await this.changeConfirmResult(selectedResourcesNormal, ResultSettingType.confirmRefund, matchId, isEnabled);
+        return result;
     }
 
     private isExistedConfirmRefund() {
@@ -268,7 +270,7 @@ export class EarlySettlementComponent implements Soccer {
     public async refund() {
         this.clearErrorMessage();
         if (this.isExistedConfirmRefund()) {
-           await this.doRefund();
+            await this.doRefund();
         } else {
             this.toastrService.error(Language.confirmRefund.refundResultNotConfirmed);
         }
@@ -276,23 +278,26 @@ export class EarlySettlementComponent implements Soccer {
 
     private async doRefund() {
         const resultStatus = await this.helperService.checkingStatus(this.matchId, CalculateAction.refund);
-        if(resultStatus.isSuccessful) {
-            const selectedResultDetails = this.selectedResources;
-            this.correctSettleDeterminedForRefund(selectedResultDetails);
-            const errorMessage = await this.verifyBeforeRefund(selectedResultDetails);
-            if (_.isEmpty(errorMessage)) {
-                this.confirmationDialogMessage.message = Language.RefundConfirmMessageEarly;
-                this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
-                    const query = new SettleQuery(this.matchId,
-                        CalculateAction.refund, selectedResultDetails, this.isReSettledTickets);
-                    this.push(query);
-                });
-            } else {
-                this.toastrService.error(errorMessage);
-            }
-        } else {
+        if (!resultStatus.isSuccessful) {
             this.toastrService.error(resultStatus.errMsg);
+            return;
         }
+
+        const selectedResultDetails = this.selectedResources;
+        this.correctSettleDeterminedForRefund(selectedResultDetails);
+        const errorMessage = await this.verifyBeforeRefund(selectedResultDetails);
+        
+        if (!_.isEmpty(errorMessage)) {
+            this.toastrService.error(errorMessage);
+            return;
+        }
+
+        this.confirmationDialogMessage.message = Language.RefundConfirmMessageEarly;
+        this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
+            const query = new SettleQuery(this.matchId,
+                CalculateAction.refund, selectedResultDetails, this.isReSettledTickets);
+            this.push(query);
+        });
     }
 
     private async verifyBeforeRefund(selectedResultDetails: ResultDetail[]) {
@@ -303,8 +308,8 @@ export class EarlySettlementComponent implements Soccer {
 
         const result = await this.aioService.checkMarkedTickets(query);
         return result.isExistMarkedTicket
-                ? Language.MarkedTicket
-                : this.verifyCalculateService.verifyPenaltyBettypeBeforeRefund(selectedResultDetails,  this.resultDetails, this.match.externalResults);
+            ? Language.MarkedTicket
+            : this.verifyCalculateService.verifyPenaltyBettypeBeforeRefund(selectedResultDetails, this.resultDetails, this.match.externalResults);
     }
 
     public async calculate() {
@@ -312,7 +317,7 @@ export class EarlySettlementComponent implements Soccer {
         const selectedResultDetails = this.selectedResources;
         const resultStatus = await this.helperService.checkingStatus(this.matchId, CalculateAction.calculate);
 
-        if(resultStatus.isSuccessful) {
+        if (resultStatus.isSuccessful) {
             const errorMessage = this.verifyBeforeCalculation(selectedResultDetails);
             if (_.isEmpty(errorMessage)) {
                 this.confirmChangedResults(selectedResultDetails);
@@ -356,7 +361,7 @@ export class EarlySettlementComponent implements Soccer {
                     this.isReSettledTickets = true;
                 });
             } else {
-               await this.confirmCalculation(resultDetails);
+                await this.confirmCalculation(resultDetails);
             }
         }
     }
@@ -512,8 +517,8 @@ export class EarlySettlementComponent implements Soccer {
             !resultDetail.resultSettingData.isHoldResult, resultDetail.resourceId);
         this.confirmationDialogMessage.message = Language.holdResultConfirmMessage;
 
-        this.messageBoxService.confirm(this.confirmationDialogMessage, async() => {
-            const result = await this.aioService.changeResultSetting(query) as boolean;
+        this.messageBoxService.confirm(this.confirmationDialogMessage, async () => {
+            const result = await this.aioService.changeResultSetting(query);
             this.setValueResult(resultDetail, groupMap, result);
         });
     }
@@ -525,7 +530,7 @@ export class EarlySettlementComponent implements Soccer {
         this.confirmationDialogMessage.message = Language.holdResultGroupConfirmMessage;
 
         this.messageBoxService.confirm(this.confirmationDialogMessage, async () => {
-            const result = await this.aioService.changeResultSetting(query) as boolean;
+            const result = await this.aioService.changeResultSetting(query);
             this.setValueGroup(groupMap, result);
         });
     }

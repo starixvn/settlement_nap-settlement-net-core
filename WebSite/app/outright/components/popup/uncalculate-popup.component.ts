@@ -17,7 +17,7 @@ import { ResultOutright } from '../../models/result-outright.model';
   selector: 'uncalculate-popup',
   templateUrl: './uncalculate-popup.component.html',
   standalone: true,
-  imports: [CommonModule, ToastContainerModule, MatDialogModule, DragDropModule, FormsModule],
+  imports: [CommonModule,  MatDialogModule, DragDropModule, FormsModule,ToastContainerModule],
   providers: [OutrightService, HttpRequestService, BlockUIService, MessageBoxService],
 })
 export class UncalculatePopupComponent implements OnInit {

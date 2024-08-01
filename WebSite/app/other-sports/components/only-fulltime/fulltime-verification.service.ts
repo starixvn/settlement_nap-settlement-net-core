@@ -13,14 +13,12 @@ export class FullTimeVerificationService {
     }
 
     public checkScoreMuayThai(matchDetail: MatchDetail) {
-        if(matchDetail.sportType !== SportType.muayThai) {
+        if (matchDetail.sportType !== SportType.muayThai) {
             return '';
         }
 
         const finalScore = `${matchDetail.finalHomeScore}-${matchDetail.finalAwayScore}`;
-        if (finalScore.length > 3 || (finalScore.indexOf("1-0") === -1 && finalScore.indexOf("0-1") === -1 &&
-            finalScore.indexOf("3-0") === -1 && finalScore.indexOf("0-3") === -1 && finalScore.indexOf("3-3") === -1 &&
-            finalScore.indexOf("5-0") === -1 && finalScore.indexOf("0-5") === -1 && finalScore.indexOf("5-5") === -1)) {
+        if (this.checkFinalScore(finalScore)) {
             return "Please input the correct Final Score.";
         }
 
@@ -32,25 +30,31 @@ export class FullTimeVerificationService {
         return '';
     }
 
+    private checkFinalScore(finalScore) {
+        return finalScore.length > 3 || (finalScore.indexOf("1-0") === -1 && finalScore.indexOf("0-1") === -1 &&
+            finalScore.indexOf("3-0") === -1 && finalScore.indexOf("0-3") === -1 && finalScore.indexOf("3-3") === -1 &&
+            finalScore.indexOf("5-0") === -1 && finalScore.indexOf("0-5") === -1 && finalScore.indexOf("5-5") === -1)
+    }
+
     public verifyCopyScore(matchDetail: MatchDetail) {
         if (matchDetail.isFullTimeSettled) {
             return Language.scoreSettledWarning;
         }
 
-        if(_.isEmpty(matchDetail.exFTHomeScore?.toString()) || _.isEmpty(matchDetail.exFTAwayScore?.toString())) {
+        if (_.isEmpty(matchDetail.exFTHomeScore?.toString()) || _.isEmpty(matchDetail.exFTAwayScore?.toString())) {
             return Language.missingScoreWarning;
         }
 
         return "";
     }
 
-    public verifyChangedSettledTickets(match: MatchDetail, query: object){
-        const request =  this.requestService.getLastestResult(query).pipe(map((lastestMatch: Match) => {
+    public verifyChangedSettledTickets(match: MatchDetail, query: object) {
+        const request = this.requestService.getLastestResult(query).pipe(map((lastestMatch: Match) => {
             let needConfirm = false;
             if (_.isEqual(lastestMatch.matchDetail.ftStatus, TicketStatusText.calculated)
                 && (!_.isEqual(match.finalHomeScore.toString(), lastestMatch.matchDetail.finalHomeScore?.toString())
-                || !_.isEqual(match.finalAwayScore.toString(), lastestMatch.matchDetail.finalAwayScore?.toString())
-                || lastestMatch.matchDetail.betStatus.includes('Refund'))) {
+                    || !_.isEqual(match.finalAwayScore.toString(), lastestMatch.matchDetail.finalAwayScore?.toString())
+                    || lastestMatch.matchDetail.betStatus.includes('Refund'))) {
                 needConfirm = true;
             }
 
@@ -62,7 +66,7 @@ export class FullTimeVerificationService {
 
     public isFinalScoreConfirmed(matchDetail: MatchDetail) {
         return matchDetail.confirmFT > 0 && matchDetail.originalFinalHomeScore !== null
-          && matchDetail.originalFinalAwayScore !== null;
+            && matchDetail.originalFinalAwayScore !== null;
     }
 
     public isExistInputScore(matchDetail: MatchDetail) {
@@ -83,18 +87,18 @@ export class FullTimeVerificationService {
         const isExistProviderScore = this.isExistProviderScore(matchDetail);
         let isInconsistent = false;
         if (isExistInputScore) {
-          if (isExistTraderScore) {
-            isInconsistent = Number(matchDetail.finalHomeScore) !== matchDetail.originalFinalHomeScore
-             || Number(matchDetail.finalAwayScore) !== matchDetail.originalFinalAwayScore;
-          }
+            if (isExistTraderScore) {
+                isInconsistent = Number(matchDetail.finalHomeScore) !== matchDetail.originalFinalHomeScore
+                    || Number(matchDetail.finalAwayScore) !== matchDetail.originalFinalAwayScore;
+            }
 
-          if (!isInconsistent && isExistProviderScore) {
-            isInconsistent = Number(matchDetail.finalHomeScore) !== matchDetail.exFTHomeScore
-             || Number(matchDetail.finalAwayScore) !== matchDetail.exFTAwayScore;
-          }
+            if (!isInconsistent && isExistProviderScore) {
+                isInconsistent = Number(matchDetail.finalHomeScore) !== matchDetail.exFTHomeScore
+                    || Number(matchDetail.finalAwayScore) !== matchDetail.exFTAwayScore;
+            }
         } else if (isExistTraderScore && isExistProviderScore) {
-          isInconsistent = matchDetail.originalFinalHomeScore !== matchDetail.exFTHomeScore
-           || matchDetail.originalFinalAwayScore !== matchDetail.exFTAwayScore;
+            isInconsistent = matchDetail.originalFinalHomeScore !== matchDetail.exFTHomeScore
+                || matchDetail.originalFinalAwayScore !== matchDetail.exFTAwayScore;
         }
 
         return isInconsistent;

@@ -16,7 +16,7 @@ public class OutrightTicketServiceTests
 
     public OutrightTicketServiceTests()
     {
-        var appSettingKey = new AppSettingsKey { SiteDbServer = new List<string> { "01", "02" } };
+        var appSettingKey = new AppSettingsKey { SiteDbServer = ["01", "02"] };
         var option = Options.Create(appSettingKey);
         repository = Substitute.For<IDynamicRepository>();
         service = new OutrightTicketServiceImp(repository, option);
@@ -46,7 +46,7 @@ public class OutrightTicketServiceTests
                 TotalCal = 2,
                 TotalRunning = 3,
                 TotalHide = 4,
-                TotalTicket = 5,
+                TotalTicket = 5
             }
         });
 

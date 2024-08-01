@@ -44,7 +44,7 @@ export class AppComponent implements OnInit, OnDestroy {
     private readonly reCheckInService: ReCheckInService,
     private readonly blockUIService: BlockUIService,
     private readonly elementRef: ElementRef<HTMLElement>,
-    private viewContainerRef: ViewContainerRef
+    private readonly viewContainerRef: ViewContainerRef
   ) {}
 
   public ngOnInit() {

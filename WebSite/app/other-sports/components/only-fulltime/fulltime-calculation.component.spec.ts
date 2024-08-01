@@ -14,7 +14,7 @@ import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/t
 import { ScorePipe } from '../../pipes';
 import { RequestService } from '../..//services/request.service';
 import { FullTimeService } from './fulltime.service';
-import { ToastContainerDirective, ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
+import { ToastContainerDirective, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 
 describe('FullTimeCalculationComponent', () => {
   let component: FullTimeCalculationComponent;
@@ -94,7 +94,6 @@ describe('FullTimeCalculationComponent', () => {
         NgbModule,
         FormsModule,
         ToastNoAnimationModule.forRoot(),
-        ToastContainerModule,
         ToastrModule.forRoot()
       ],
       providers: [

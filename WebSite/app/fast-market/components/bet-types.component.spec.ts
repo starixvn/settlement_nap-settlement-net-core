@@ -32,7 +32,7 @@ import { ResultItemLabel } from '../models/result-item-label.model';
 import { TimeMachineService, VerificationService } from '../services';
 import { SpecialSessionComponent } from './special-session.component';
 import { MaterialModule } from '../../shared/material-module';
-import { ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
+import { ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 
 describe('Component: BetTypesComponent', () => {
     let component: BetTypesComponent;
@@ -185,7 +185,6 @@ describe('Component: BetTypesComponent', () => {
                 NgbModule,
                 MaterialModule,
                 ToastNoAnimationModule.forRoot(),
-                ToastContainerModule,
                 ToastrModule.forRoot()
             ],
         })

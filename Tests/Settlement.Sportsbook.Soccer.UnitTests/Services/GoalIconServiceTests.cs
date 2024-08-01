@@ -2,7 +2,7 @@
 
 namespace Settlement.Sportsbook.Soccer.UnitTests.Services;
 
-using Core.Services.SpecificService;
+using Settlement.Core.Services.SpecificService;
 
 public class GoalIconServiceTests
 {

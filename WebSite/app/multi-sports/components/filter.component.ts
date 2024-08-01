@@ -37,11 +37,11 @@ import { BehaviorSubject } from "rxjs";
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FilterComponent implements OnInit {
-    private multiSportService = inject(MultiSportService);
-    private generateFilterService = inject(GenerateFilterService);
-    private verifyDateService = inject(VerifyDateService);
-    private messageBoxService = inject(MessageBoxService);
-    private multiSportsStore = inject(MultiSportsStore);
+    private readonly multiSportService = inject(MultiSportService);
+    private readonly generateFilterService = inject(GenerateFilterService);
+    private readonly verifyDateService = inject(VerifyDateService);
+    private readonly messageBoxService = inject(MessageBoxService);
+    private readonly multiSportsStore = inject(MultiSportsStore);
     readonly warningDialogMessage = new ModalDialogMessage();
     matchCode = "";
     fromDate: NgbDateStruct;
@@ -217,7 +217,7 @@ export class FilterComponent implements OnInit {
 
     private initLeague() {
         const showAllLeagues = "--- Show All Leagues ---";
-        let initLeagueSelect = new MultipleSelect();
+        const initLeagueSelect = new MultipleSelect();
         initLeagueSelect.allItemsCheckedText = showAllLeagues;
         initLeagueSelect.maxWidth = '85%';
         initLeagueSelect.enableSearchBox = true;
@@ -225,7 +225,7 @@ export class FilterComponent implements OnInit {
         initLeagueSelect.disableCheckAll = true;
         initLeagueSelect.disableSelectGroup = true;
         this.leagueOption$.next(initLeagueSelect);
-        let initSportSelect = new MultipleSelect();
+        const initSportSelect = new MultipleSelect();
         initSportSelect.maxWidth = this.widthMultiSelect;
         initSportSelect.haveGroup = true;
         initSportSelect.isCheckAll = true;

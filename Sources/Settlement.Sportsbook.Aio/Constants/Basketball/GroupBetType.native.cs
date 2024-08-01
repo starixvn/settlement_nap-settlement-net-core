@@ -17,38 +17,17 @@ public static class GroupBetType
     public const int QuarterFourId = 5;
     public const int SecondHalfId = 6;
 
-    public static List<int> Other => new()
-    {
-            605, 604
-        };
+    public static List<int> Other => [605, 604];
 
-    public static List<int> FirstHalf => new()
-    {
-            606
-        };
+    public static List<int> FirstHalf => [606];
 
-    public static List<int> SecondHalf => new()
-    {
-            607
-        };
+    public static List<int> SecondHalf => [607];
 
-    public static List<int> QuarterOne => new()
-    {
-            61701, 61301
-        };
+    public static List<int> QuarterOne => [61701, 61301];
 
-    public static List<int> QuarterTwo => new()
-    {
-            61702, 61302
-        };
+    public static List<int> QuarterTwo => [61702, 61302];
 
-    public static List<int> QuarterThree => new()
-    {
-            61703, 61303
-        };
+    public static List<int> QuarterThree => [61703, 61303];
 
-    public static List<int> QuarterFour => new()
-    {
-            61704, 61304
-        };
+    public static List<int> QuarterFour => [61704, 61304];
 }

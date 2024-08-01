@@ -6,7 +6,7 @@ namespace Settlement.ThirdPartyProducts.UnitTests.Services;
 
 public class ScoreServiceTests
 {
-    private static List<ResultDetail> EmptyResultDetail => new();
+    private static List<ResultDetail> EmptyResultDetail => [];
 
     [Fact]
     public void ScoreOfSets_EmptyResultDetail_ReturnsHyphenOnAllQuarter()

@@ -1,6 +1,6 @@
 ﻿namespace Settlement.Sportsbook.MoveTickets.Services.MultipleServer;
 
-using Core.Constants;
+using Settlement.Core.Constants;
 using Settlement.Core.Models;
 
 public interface NewInfoMatchService
@@ -12,24 +12,17 @@ public interface NewInfoMatchService
     string EarlySettlementStatus(Match match);
 }
 
-public class NewInfoMatchServiceImp : NewInfoMatchService
+public class NewInfoMatchServiceImp(SiteMatchService siteMatchService) : NewInfoMatchService
 {
-    private readonly List<int> eventStatusReasons = new() { 1, 2, 3, 4 };
+    private readonly List<int> eventStatusReasons = [1, 2, 3, 4];
 
-    private readonly List<string> eventStatusReasonTitles = new()
-    {
+    private readonly List<string> eventStatusReasonTitles =
+    [
         EventStatus.IrregularTime1H,
         EventStatus.IrregularTime,
         EventStatus.WrongTeamName,
         EventStatus.Suspended
-    };
-
-    private readonly SiteMatchService siteMatchService;
-
-    public NewInfoMatchServiceImp(SiteMatchService siteMatchService)
-    {
-        this.siteMatchService = siteMatchService;
-    }
+    ];
 
     public string EventStatusColor(Match match)
     {

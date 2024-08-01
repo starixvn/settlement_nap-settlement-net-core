@@ -22,7 +22,7 @@ import { of } from 'rxjs';
 import { VerifyMatchService } from './services/verify-match.service';
 import { RequestService } from './services/request.service';
 import { VerifyActionService } from './services/verify-action.service';
-import { ToastContainerDirective, ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
+import { ToastContainerDirective, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 import { ModalDialogMessage } from '../../../shared/models';
 import { Language } from '../../../shared/language.native';
 import { SettleQuery } from './models/query.model';
@@ -109,7 +109,6 @@ describe('CalculationComponent', () => {
         PipesModule,
         MaterialModule,
         ToastNoAnimationModule.forRoot(),
-        ToastContainerModule,
         ToastrModule.forRoot(),
         ResettleCheckerComponent,
         NotReadyMatchComponent,

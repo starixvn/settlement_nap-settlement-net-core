@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Net;
+using AutoMapper;
 using Fanex.Data.Repository;
 using Microsoft.Extensions.Options;
 using Moq;
@@ -10,7 +11,6 @@ using Settlement.Setting.Services;
 using Settlement.ThirdPartyProducts.Criteria;
 using Settlement.ThirdPartyProducts.Requests;
 using Settlement.ThirdPartyProducts.Requests.CashOut;
-using System.Net;
 
 namespace Settlement.ThirdPartyProducts.UnitTests.Services;
 
@@ -42,7 +42,7 @@ public class CashOutServiceTests
             JackTimeTicket = "https://www.google.com/"
         };
 
-        var appSetting = new AppSettingsKey { ThirdPartyUri = thirdPartySettingKeys, SiteDbServer = new List<string> { "01", "02" } };
+        var appSetting = new AppSettingsKey { ThirdPartyUri = thirdPartySettingKeys, SiteDbServer = ["01", "02"] };
         var option = Options.Create(appSetting);
         service = new VoidBetApiServiceImp(repository, xmlConvertService, mapper, sendMailService,
             refDataService, httpClientFactory, option);
@@ -66,7 +66,7 @@ public class CashOutServiceTests
     [Fact]
     public async Task VoidBetApi_VoidBetInfosIsEmptied_NotCallAnyMethod()
     {
-        var request = new VoidBetRequest() { MatchId = 123, VoidBetInfos = new List<VoidBetInfo>() };
+        var request = new VoidBetRequest { MatchId = 123, VoidBetInfos = [] };
         repository.FetchAsync<VoidBetInfo>(Arg.Any<GetTicketInfoCriteria>()).Returns(new List<VoidBetInfo>());
         await service.VoidBet(request);
 
@@ -77,13 +77,14 @@ public class CashOutServiceTests
     [Fact]
     public async Task VoidBetApi_HaveTwoActionNameOnListVoidBetInfo_CreateClientTwoTimes()
     {
-        var request = new VoidBetRequest()
+        var request = new VoidBetRequest
         {
             MatchId = 123,
-            VoidBetInfos = new List<VoidBetInfo> {
-                 new() { TransId = "123", Action = "Undo"},
-                 new() { TransId = "1234", Action = "Void" }
-            }
+            VoidBetInfos =
+            [
+                new VoidBetInfo { TransId = "123", Action = "Undo" },
+                new VoidBetInfo { TransId = "1234", Action = "Void" }
+            ]
         };
 
         var mockHttpMessageHandler = new Mock<HttpMessageHandler>();
@@ -101,12 +102,10 @@ public class CashOutServiceTests
     [Fact]
     public async Task VoidBetApi_3rdAPIFailed_SendMail()
     {
-        var request = new VoidBetRequest()
+        var request = new VoidBetRequest
         {
             MatchId = 123,
-            VoidBetInfos = new List<VoidBetInfo> {
-                new() { TransId = "1234", Action = "Void" }
-            }
+            VoidBetInfos = [new VoidBetInfo { TransId = "1234", Action = "Void" }]
         };
         var mockHttpMessageHandler = new Mock<HttpMessageHandler>();
         mockHttpMessageHandler.Protected()

@@ -19,18 +19,19 @@ public class BasketballResourceNameService : IMapperService
     public (string, string) GetResourceName(string resourceId, int sportType)
     {
         const int maxLength = 2;
-        if (resourceId.Length == maxLength)
+        switch (resourceId.Length)
         {
-            return (resourceId, GetResourceMain(resourceId));
-        }
+            case maxLength:
+                return (resourceId, GetResourceMain(resourceId));
 
-        if (resourceId.Length >= maxLength + 1)
-        {
-            var betType = resourceId[..(maxLength + 1)];
-            return (betType, refDataService.GetBetTypeName(betType, resourceId[(maxLength + 1)..]));
+            case >= maxLength + 1:
+                {
+                    var betType = resourceId[..(maxLength + 1)];
+                    return (betType, refDataService.GetBetTypeName(betType, resourceId[(maxLength + 1)..]));
+                }
+            default:
+                return (resourceId, resourceId);
         }
-
-        return (resourceId, resourceId);
     }
 
     private static string GetResourceMain(string resourceId)

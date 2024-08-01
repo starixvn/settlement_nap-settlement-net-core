@@ -7,7 +7,7 @@ public class MatchStatusModel
 
     private int instantStatus;
 
-    private readonly int failStatus = 3;
+    private const int failStatus = 3;
 
     public int MatchId { get; set; }
 

@@ -1,5 +1,4 @@
-﻿using Fanex.Data;
-using Fanex.Data.Repository;
+﻿using Fanex.Data.Repository;
 
 namespace Settlement.Sportsbook.MoveTickets.Criteria;
 
@@ -25,7 +24,7 @@ public class SportsbookCriteria : CriteriaBase
 
     public byte Page => 1;
 
-    public override string GetSettingKey() => $"NAP_Set_MatchOtherSportsSel";
+    public override string GetSettingKey() => "NAP_Set_MatchOtherSportsSel";
 
     public override bool IsValid() => FromDate <= ToDate;
 }

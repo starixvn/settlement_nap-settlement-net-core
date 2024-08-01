@@ -21,33 +21,14 @@ public interface SportsbookService
     Task<MatchResultDetail> GetLatestResult(GetLatestResultRequest request);
 }
 
-public class SportsbookServiceImp : SportsbookService
+public class SportsbookServiceImp(
+    IDynamicRepository repository,
+    IRefDataService refDataService,
+    IMapper mapper,
+    GenerateService generateService,
+    MultipleServerService multipleServerService)
+    : SportsbookService
 {
-    private readonly IDynamicRepository repository;
-
-    private readonly IRefDataService refDataService;
-
-    private readonly IMapper mapper;
-
-    private readonly GenerateService generateService;
-
-    private readonly MultipleServerService multipleServerService;
-
-    public SportsbookServiceImp(
-        IDynamicRepository repository,
-        IRefDataService refDataService,
-        IMapper mapper,
-        GenerateService generateService,
-        MultipleServerService multipleServerService
-        )
-    {
-        this.repository = repository;
-        this.refDataService = refDataService;
-        this.mapper = mapper;
-        this.generateService = generateService;
-        this.multipleServerService = multipleServerService;
-    }
-
     public async Task<MatchResultDetail> GetMatch(GetMatchRequest request)
     {
         var (matchDetail, ticketCounts) = await multipleServerService.GetMatchInfo(request);
@@ -78,7 +59,7 @@ public class SportsbookServiceImp : SportsbookService
 
     private async Task<List<ResultDetail>> GetResultDetail(int matchId)
     {
-        var resultDetailCriteria = new GetResultDetailCriteria { MatchidList = matchId.ToString() };
+        var resultDetailCriteria = new GetResultDetailCriteria { MatchIdList = matchId.ToString() };
         return (await repository.FetchAsync<ResultDetail>(resultDetailCriteria)).ToList();
     }
 
@@ -127,7 +108,7 @@ public class SportsbookServiceImp : SportsbookService
         var matchDetail = await repository.GetAsync<MatchDetail>(criteria);
         matchDetail.RefDataService = refDataService;
         var resultDetails = IsModifyResultDetailGroup(matchDetail.SportType)
-            ? generateService.GenerateResultDetail(matchDetail) : new List<ResultDetail>();
+            ? generateService.GenerateResultDetail(matchDetail) : [];
 
         return new MatchResultDetail
         {

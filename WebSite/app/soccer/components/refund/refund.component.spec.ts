@@ -10,7 +10,7 @@ import { RequestService } from './services/request.service';
 import { VerifyActionService } from './services/verify-action.service';
 import { VerifyMatchService } from './services/verify-match.service';
 import { BlockUIService, HttpRequestService, MessageBoxService } from '../../../shared/services';
-import { ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
+import { ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 import { HttpClientModule } from '@angular/common/http';
 import { MainRefundButtonStatus } from './model/button-status';
 import { BetDaq, BetFair, MatchDetail, Match, HedgeMatchDetail } from './model/match.model';
@@ -86,7 +86,6 @@ describe('RefundComponent', () => {
         MaterialModule,
         HttpClientModule,
         ToastNoAnimationModule.forRoot(),
-        ToastContainerModule,
         ToastrModule.forRoot(),
       ]
     })

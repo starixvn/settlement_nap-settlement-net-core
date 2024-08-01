@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, input, O
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { SettingContainerComponent } from './setting-container/setting-container.component';
-import { LeagueSettingsStore } from '../../../services/league-settings.store';
+import { LeagueSettingsStore } from '../../../services/league-settings.store.native';
 import { distinctUntilChanged, map } from 'rxjs';
 import { ZeroFallbackDirective } from '../../../../shared/directives/zero-fall-back.directive.native';
 import { OnlyIntegerDirective } from '../../../../shared/directives';

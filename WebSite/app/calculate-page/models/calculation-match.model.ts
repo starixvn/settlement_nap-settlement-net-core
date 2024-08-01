@@ -4,7 +4,7 @@ export class CalculationMatch extends Match {
     autoCalcSetting: AutoSetting;
     instantScoreDiff: number;
     instantStatus: string;
-    instantStatusId: Number;
+    instantStatusId: number;
     instantCalculationType: number;
     isFtCalculated: boolean;
     instantHomeScore: string;

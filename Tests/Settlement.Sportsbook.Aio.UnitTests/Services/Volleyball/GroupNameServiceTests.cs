@@ -5,12 +5,7 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services.Volleyball;
 
 public class GroupBetTypeServiceTests
 {
-    private readonly IGroupBetTypeService service;
-
-    public GroupBetTypeServiceTests()
-    {
-        service = new GroupBetTypeServiceImp();
-    }
+    private readonly IGroupBetTypeService service = new GroupBetTypeServiceImp();
 
     [Theory]
     [InlineData(3901, "Other", 2, "3901")]

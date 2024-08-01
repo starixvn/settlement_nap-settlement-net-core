@@ -6,40 +6,35 @@ namespace Settlement.Log.UnitTests.Services;
 
 public class MergeLogServiceTests
 {
-    private readonly MergeLogService service;
-
-    public MergeLogServiceTests()
-    {
-        service = new MergeLogServiceImp();
-    }
+    private readonly MergeLogService service = new MergeLogServiceImp();
 
     private IEnumerable<RootElement> CreateLogs(string name, string type, string firstLogValue, string secondLogValue, string thirdLogValue)
     {
         return new List<RootElement>
         {
-            new RootElement
+            new()
             {
-                Logs = new LogItem[]
-                {
-                    new()
+                Logs =
+                [
+                    new LogItem
                     {
                         Type = type,
                         Value = firstLogValue,
                         Name = name
                     },
-                    new()
+                    new LogItem
                     {
                         Type = type,
                         Value = secondLogValue,
                         Name = name
                     },
-                    new()
+                    new LogItem
                     {
                         Type = type,
                         Value = thirdLogValue,
                         Name = name
                     }
-                }
+                ]
             }
         };
     }
@@ -77,10 +72,10 @@ public class MergeLogServiceTests
 
     public static IEnumerable<object[]> TestCases()
     {
-        yield return new object[] { "TC", LogType.Sum, "10", "20", "3d14", "TC: 33" };
-        yield return new object[] { "Duration", LogType.Max, "10ms", "20ms", "50ms", "Duration: 50ms" };
-        yield return new object[] { "Duration", LogType.Min, "10ms", "20ms", "50ms", "Duration: 10ms" };
-        yield return new object[] { "TC", LogType.Min, "Not_Valid_Value", "md5", "abc", "TC: 0" };
+        yield return ["TC", LogType.Sum, "10", "20", "3d14", "TC: 33"];
+        yield return ["Duration", LogType.Max, "10ms", "20ms", "50ms", "Duration: 50ms"];
+        yield return ["Duration", LogType.Min, "10ms", "20ms", "50ms", "Duration: 10ms"];
+        yield return ["TC", LogType.Min, "Not_Valid_Value", "md5", "abc", "TC: 0"];
     }
 
     [Fact]
@@ -88,16 +83,16 @@ public class MergeLogServiceTests
     {
         var distinctLogs = new List<DistinctElement>
         {
-            new DistinctElement
+            new()
             {
-                Logs = new []
-                {
-                    new LogItem()
+                Logs =
+                [
+                    new LogItem
                     {
                         Name = "name",
-                        Value = "value",
+                        Value = "value"
                     }
-                }
+                ]
             }
         };
 

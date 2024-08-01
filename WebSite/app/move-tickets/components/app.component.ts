@@ -13,7 +13,7 @@ export class AppComponent implements OnInit {
     public component: ComponentRef<OnInit>;
     constructor(
         private readonly blockUIService: BlockUIService,
-        private viewContainerRef: ViewContainerRef) {
+        private  readonly viewContainerRef: ViewContainerRef) {
     }
 
     public ngOnInit() {

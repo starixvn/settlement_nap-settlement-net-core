@@ -1,5 +1,5 @@
-﻿using Settlement.Core.Models;
-using Settlement.FastMarkets.Models;
+﻿using Settlement.FastMarkets.Models;
+using Settlement.Core.Models;
 
 namespace Settlement.FastMarkets.Services;
 

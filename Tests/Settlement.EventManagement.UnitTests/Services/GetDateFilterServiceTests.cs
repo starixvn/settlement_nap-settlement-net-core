@@ -29,13 +29,13 @@ public class GetDateFilterServiceTests
         service = new GetDataFilterServiceImp(mapper, repository, refDataService);
     }
 
-    private static List<LeagueTypeModel> FakeLeagues => new()
-    {
-        new LeagueTypeModel { SportType = SportType.Diving},
-        new LeagueTypeModel { SportType = SportType.Badminton},
-        new LeagueTypeModel { SportType = SportType.Badminton},
+    private static List<LeagueTypeModel> FakeLeagues =>
+    [
+        new LeagueTypeModel { SportType = SportType.Diving },
+        new LeagueTypeModel { SportType = SportType.Badminton },
+        new LeagueTypeModel { SportType = SportType.Badminton },
         new LeagueTypeModel { SportType = SportType.OtherSports }
-    };
+    ];
 
     [Fact]
     public async Task GetSport_Always_ReturnSportSorted()

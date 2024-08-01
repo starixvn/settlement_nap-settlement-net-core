@@ -53,7 +53,7 @@ public class ResultLog
             {
                 CalculateStatus.IsFailed => remark,
                 CalculateStatus.IsSuccess => "success",
-                _ => Dash,
+                _ => Dash
             };
         }
 

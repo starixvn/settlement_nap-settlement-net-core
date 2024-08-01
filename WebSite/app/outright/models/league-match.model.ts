@@ -8,3 +8,4 @@ export class LeagueMatch {
     public deadHeat: boolean | null;
     public deadHeatClass: string;
 }
+

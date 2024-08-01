@@ -4,7 +4,6 @@ import { MatchSettingService, RequestService } from './';
 import { HttpRequestService, BlockUIService, MessageBoxService } from '../../shared/services';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { MatchDetail, AutoSetting } from '../models';
-import { of } from 'rxjs';
 
 describe('BetBuilder - Match setting Service', () => {
     let service: MatchSettingService = null;
@@ -16,13 +15,20 @@ describe('BetBuilder - Match setting Service', () => {
         errCode: 0,
         errMsg: "",
         isSuccessful: true,
+         childMatchIds: "",
+        settledSessionId: "",
+        hasResultAmendment: false
     };
 
     const unSuccessfulResult = {
         errCode: 1,
         errMsg: errorMessage,
         isSuccessful: false,
+        childMatchIds: "",
+        settledSessionId: "",
+        hasResultAmendment: false
     };
+
     const mockMatch = new MatchDetail();
     mockMatch.autoCalcSetting = new  AutoSetting();
 
@@ -53,7 +59,7 @@ describe('BetBuilder - Match setting Service', () => {
     });
     describe('updateMatch', () => {
         it('should set right value isAutoSettingForMatch when update success', async() => {
-            spyOn(requestService, 'updateMatch').and.returnValue(of(successfulResult));
+            jest.spyOn(requestService, 'updateMatch').mockReturnValue(Promise.resolve(successfulResult));
             mockMatch.autoCalcSetting.isAutoSettingForMatch = true;
 
             await service.updateMatch(mockMatch);
@@ -62,8 +68,8 @@ describe('BetBuilder - Match setting Service', () => {
         });
 
         it('should show alert when update request is unsuccess.', async() => {
-            spyOn(requestService, 'updateMatch').and.returnValue(of(unSuccessfulResult));
-            spyOn(messageBoxService , 'alert');
+            jest.spyOn(requestService, 'updateMatch').mockReturnValue(Promise.resolve(unSuccessfulResult));
+            jest.spyOn(messageBoxService , 'alert');
 
             await service.updateMatch(mockMatch);
 

@@ -36,7 +36,7 @@ export class LeagueTeamComponent implements OnChanges {
 
     private readonly settledStatus = [Status.won, Status.lose, Status.hide];
     constructor(public dialog: MatDialog,
-        private cdRef: ChangeDetectorRef) { }
+        private readonly cdRef: ChangeDetectorRef) { }
 
     public get permission() {
         return this.outright.permission;

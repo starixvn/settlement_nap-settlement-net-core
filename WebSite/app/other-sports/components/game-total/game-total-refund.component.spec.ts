@@ -17,7 +17,7 @@ import { ApiKeys } from "../../constants";
 import { of } from "rxjs";
 import { ResourceHeaderPipe, ScoreByPermissionPipe } from "../../pipes";
 import { ResultSettingModel } from "../../../shared/models";
-import { ToastContainerDirective, ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from "ngx-toastr";
+import { ToastContainerDirective, ToastNoAnimationModule, ToastrModule, ToastrService } from "ngx-toastr";
 
 describe('GameTotalRefundComponent', () => {
     let component: GameTotalRefundComponent;
@@ -89,7 +89,6 @@ describe('GameTotalRefundComponent', () => {
                 NgbModule,
                 FormsModule,
                 ToastNoAnimationModule.forRoot(),
-                ToastContainerModule,
                 ToastrModule.forRoot()
             ],
             providers: [

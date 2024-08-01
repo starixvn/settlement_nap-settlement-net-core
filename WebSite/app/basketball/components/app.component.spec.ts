@@ -17,7 +17,7 @@ import { ExternalLinkPipe } from '../../score-source-setting/pipes';
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { PipesModule } from '../../shared/pipes/pipes.module.native';
 import { PageType } from '../../shared/constants';
-import { ToastContainerModule, ToastNoAnimationModule, ToastrModule } from 'ngx-toastr';
+import { ToastNoAnimationModule, ToastrModule } from 'ngx-toastr';
 import { NotReadyMatchComponent } from '../../shared/components/not-ready-match/not-ready-match.component';
 import { NewMultipleSelectComponent } from '../../shared/components/multiple-select/multiple-select.component';
 import { TicketCountComponent } from '../../shared/components/ticket-count/ticket-count.component';
@@ -38,7 +38,6 @@ describe('Component: App', () => {
                 MaterialModule,
                 PipesModule,
                 ToastNoAnimationModule.forRoot(),
-                ToastContainerModule,
                 ToastrModule.forRoot(),
                 NewMultipleSelectComponent,
                 NotReadyMatchComponent,

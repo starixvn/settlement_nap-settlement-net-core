@@ -64,7 +64,7 @@ public class MultiSportControllerTests
     public async Task GetSports_Always_ReturnsListSports()
     {
         var request = new SportRequest();
-        mediator.Send(Arg.Any<SportRequest>()).Returns(new List<Sport>());
+        mediator.Send(Arg.Any<SportRequest>()).Returns([]);
 
         var actual = await controller.GetSports(request) as OkObjectResult;
 
@@ -76,7 +76,7 @@ public class MultiSportControllerTests
     public async Task GetLeagues_Always_ReturnsListLeagues()
     {
         var request = new LeagueRequest();
-        mediator.Send(Arg.Any<LeagueRequest>()).Returns(new List<LeagueTypeModel>());
+        mediator.Send(Arg.Any<LeagueRequest>()).Returns([]);
 
         var actual = await controller.GetLeagues(request) as OkObjectResult;
 

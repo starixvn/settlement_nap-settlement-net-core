@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import { ProviderService } from '../../services';
 import { ModalDialogMessage, MultipleSelect, ItemsSelect } from '../../../shared/models';
 import { MessageBoxService } from '../../../shared/services';
-import { ProviderResultLog, ProviderFilter, ProviderName, ProviderLog } from '../../models';
+import {  ProviderFilter, ProviderName, ProviderLog } from '../../models';
 
 @Component({
     selector: 'provider-filter',
@@ -59,6 +59,8 @@ export class ProviderFilterComponent implements OnInit {
         if (_.isEmpty(this.filter.matchId)) {
             return "Please input the Match ID.";
         }
+
+        return "";
     }
 
     private showWarningMessage() {

@@ -30,10 +30,10 @@ export class ProviderSourceComponent implements OnInit {
     private readonly queryService: QueryService
   ) { }
 
-  ngOnInit(): void {
+  async ngOnInit():  Promise<void> {
     this.selectedGame = this.games.find((game) => game.gameType === 1);
     this.getProviders();
-    this.getPermission();
+    this.scoreSourcePermission = await this.queryService.getScoreSourcePermission();
     this.confirmationDialogMessage.title = Language.Settings.ConfirmationTitle;
   }
 
@@ -41,11 +41,6 @@ export class ProviderSourceComponent implements OnInit {
     moveItemInArray(this.providers, event.previousIndex, event.currentIndex);
   }
 
-  public getPermission() {
-    this.queryService.getScoreSourcePermission().toPromise().then((scoreSource: boolean) => {
-      this.scoreSourcePermission = scoreSource;
-    });
-  }
 
   public getProviders() {
     const query: GetProviderQuery = {

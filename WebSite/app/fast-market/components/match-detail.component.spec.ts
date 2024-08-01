@@ -11,7 +11,7 @@ import { MatchDetail, AutoSettingIcon } from '../models';
 import { MessageBoxService, HttpRequestService, BlockUIService } from '../../shared/services';
 import { RequestService } from '../services/request.service';
 import { UrlHelper } from '../../helper';
-import { ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
+import { ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 
 describe('Component: MatchDetailComponent', () => {
     let component: MatchDetailComponent;
@@ -65,7 +65,6 @@ describe('Component: MatchDetailComponent', () => {
                 HttpClientModule,
                 NgbModule,
                 ToastNoAnimationModule.forRoot(),
-                ToastContainerModule,
                 ToastrModule.forRoot()
             ],
         })

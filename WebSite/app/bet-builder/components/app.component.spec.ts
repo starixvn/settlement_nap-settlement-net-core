@@ -5,15 +5,11 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { BlockUIService } from '../../shared/services';
 import { ScoreBySettlementPipe } from '../../shared/pipes/score-by-settlement.pipe';
-import {
-    DatepickerComponent,
-    MultipleSelectComponent,
-    TreeViewComponent,
-    ModalContentDialogComponent,
-    MaterialDialogComponent,
-    ModalDialogComponent,
-    NewMultipleSelectComponent,
-} from '../../shared/components';
+import { MaterialDialogComponent } from '../../shared/components/material-dialog-iframe/material-dialog.component';
+import { ModalContentDialogComponent } from '../../shared/components/modal-dialog/modal-content-dialog.component';
+import { ModalDialogComponent } from '../../shared/components/modal-dialog/modal-dialog.component';
+import { NewMultipleSelectComponent } from "../../shared/components/multiple-select/multiple-select.component";
+import { DatepickerComponent } from '../../shared/components/date-picker/date-picker.component';
 import {
     FilterComponent,
     MatchesComponent,
@@ -36,14 +32,8 @@ describe('Component: App', () => {
                 MatchesComponent,
                 MatchDetailComponent,
                 CalculationComponent,
-                DatepickerComponent,
                 ModalDialogComponent,
                 ModalContentDialogComponent,
-                MultipleSelectComponent,
-                TreeViewComponent,
-                NewMultipleSelectComponent,
-                MaterialDialogComponent,
-                ScoreBySettlementPipe,
                 ResultStatusPipe,
                 SelectionPipe,
                 TicketStatusPipe,
@@ -52,6 +42,10 @@ describe('Component: App', () => {
                 { provide: BlockUIService },
             ],
             imports: [
+                ScoreBySettlementPipe,
+                MaterialDialogComponent,
+                NewMultipleSelectComponent,
+                DatepickerComponent,
                 BrowserModule,
                 FormsModule,
                 ReactiveFormsModule,

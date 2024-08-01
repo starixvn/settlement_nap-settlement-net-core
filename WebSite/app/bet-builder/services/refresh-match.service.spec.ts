@@ -80,7 +80,7 @@ describe('BetBuilder - Calculation Filter Sevice', () => {
 
     describe('refreshMatches', () => {
         it('should get matches and change info after refresh', fakeAsync(() => {
-            spyOn(requestService, 'refreshMatches').and.returnValue(of([matchWaiting]));
+            jest.spyOn(requestService, 'refreshMatches').mockReturnValue(of([matchWaiting]));
 
             service.refreshMatches([sport], request);
 
@@ -91,7 +91,7 @@ describe('BetBuilder - Calculation Filter Sevice', () => {
             matchWaiting.queueStatus = 0;
             expectedMatch.parlayStatus = 'Waiting';
             matchWaiting.parlayStatus = 'Waiting';
-            spyOn(requestService, 'refreshMatches').and.returnValue(of([matchWaiting]));
+            jest.spyOn(requestService, 'refreshMatches').mockReturnValue(of([matchWaiting]));
 
             service.refreshMatches([sport], request);
 
@@ -102,7 +102,7 @@ describe('BetBuilder - Calculation Filter Sevice', () => {
             matchWaiting.queueStatus = 1;
             expectedMatch.parlayStatus = 'Calculating';
             matchWaiting.parlayStatus = 'Calculating';
-            spyOn(requestService, 'refreshMatches').and.returnValue(of([matchWaiting]));
+            jest.spyOn(requestService, 'refreshMatches').mockReturnValue(of([matchWaiting]));
 
             service.refreshMatches([sport], request);
 

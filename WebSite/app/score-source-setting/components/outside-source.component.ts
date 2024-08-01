@@ -39,12 +39,8 @@ export class OutsideSourceComponent implements OnInit {
               private readonly queryService: QueryService,
               public dialog: MatDialog) { }
 
-  ngOnInit(): void {
-    this.initFilterData();
-  }
-
-  private initFilterData() {
-    this.getPermission();
+  async ngOnInit(): Promise<void> {
+    this.scoreSourcePermission = await this.queryService.getScoreSourcePermission();
     this.gameSelect.items = this.generateFilterService.renderGames();
     this.gameSelect.isCheckAll = true;
     this.gamesSelected = this.gameSelect.items.map(item => Number(item.value)).join();
@@ -52,12 +48,6 @@ export class OutsideSourceComponent implements OnInit {
     this.statusSelect.isCheckAll = true;
     this.statusSelected = DefaultFilterValue.allStatusChecked;
     this.sports = sportSupport.outsideSource;
-  }
-
-  public getPermission() {
-    this.queryService.getScoreSourcePermission().toPromise().then((scoreSource: boolean) => {
-      this.scoreSourcePermission = scoreSource;
-    });
   }
 
   public selectGame(value: ItemsSelect[]) {

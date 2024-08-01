@@ -2,13 +2,7 @@
 
 public static class GroupBetType
 {
-    public static List<int> Main => new()
-    {
-            101, 102, 103, 104, 105, 00
-        };
+    public static List<int> Main => [101, 102, 103, 104, 105, 00];
 
-    public static List<int> Other => new()
-    {
-            3901, 3914
-        };
+    public static List<int> Other => [3901, 3914];
 }

@@ -38,7 +38,7 @@ public class SportsbookServiceTests
     {
         var matchDetail = new MatchDetail { SportType = SportType.Badminton };
         multipleServerService.GetMatchInfo(Arg.Any<GetMatchRequest>())
-            .Returns((matchDetail, new List<TicketCounts>()));
+            .Returns((matchDetail, []));
 
         var result = await service.GetMatch(new GetMatchRequest());
 
@@ -53,7 +53,7 @@ public class SportsbookServiceTests
     {
         var matchDetail = new MatchDetail { SportType = SportType.Football };
         multipleServerService.GetMatchInfo(Arg.Any<GetMatchRequest>())
-            .Returns((matchDetail, new List<TicketCounts>()));
+            .Returns((matchDetail, []));
 
         var result = await service.GetMatch(new GetMatchRequest());
 
@@ -87,7 +87,7 @@ public class SportsbookServiceTests
 
         var matchDetail = new MatchDetail { SportType = SportType.Football };
         multipleServerService.GetMatchInfo(Arg.Any<GetMatchRequest>())
-            .Returns((matchDetail, new List<TicketCounts>()));
+            .Returns((matchDetail, []));
         generateService.GenerateResultDetail(Arg.Any<MatchDetail>());
         repository.Fetch<ResultDetail>(Arg.Any<GetExternalResultCriteria>()).Returns(resultDetails);
 

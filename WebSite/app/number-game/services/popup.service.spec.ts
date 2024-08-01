@@ -6,6 +6,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { ReCalculationModel, Ball, MatchDetail} from '../models';
 import { BlockUIService, DialogBoxService } from "../../shared/services";
 import { MaterialModule } from "../../shared/material-module";
+import { ReCalculationComponent } from '../components/recalculation.component';
+import { MatDialogRef } from '@angular/material/dialog';
+
 describe("Popup Service", () => {
     let injector: TestBed;
     let dialogBoxService: DialogBoxService;
@@ -33,7 +36,7 @@ describe("Popup Service", () => {
     });
 
     it("should call Popup function with right dialogData content when called", () => {
-        spyOn(dialogBoxService, "popup");
+        jest.spyOn(dialogBoxService, "popup");
         const matchId = 123;
         const fromDate = "07-09-2020";
         const toDate = "08-09-2020";
@@ -54,10 +57,11 @@ describe("Popup Service", () => {
       const ball4 = new Ball(1, 4, 6);
       const balls : Ball[] = [ball1, ball2, ball3, ball4];
       const mockDialogRef = {
-        afterClosed: () => of(balls)
-      };
-      spyOn(dialog, 'closeAll');
-      spyOn(dialog, 'open').and.returnValue(mockDialogRef);
+        afterClosed: () => of(balls),
+      }  as MatDialogRef<ReCalculationComponent>;
+      
+      jest.spyOn(dialog, 'closeAll');
+      jest.spyOn(dialog, 'open').mockReturnValue(mockDialogRef);
 
       popupService.popupReCalc(model);
 

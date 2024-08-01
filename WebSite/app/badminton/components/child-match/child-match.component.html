@@ -1,0 +1,53 @@
+<div class="child-match">
+  <span class="collapse-icon" role="button" [ngClass]="collapse ? 'collapsed' : ''" (click)="collapseChildMatch()"></span>
+  <span style="margin-left: 5px;">Related Matches</span>
+</div>
+@if(!collapse) {
+<div class="table-child-match">
+  <table >
+    <thead>
+      <tr>
+        <th class="code">Match Code/ID</th>
+        <td class="kick-off-time">Kick-off Time</td>
+        <th class="team-name">Team</th>
+        <th>Final score</th>
+        <th class="eventStatus">Event Status</th>
+        <th>Hold Status</th>
+        @if(showAction) {
+          <th>Select To Calculate</th>
+        }
+        
+      </tr>
+    </thead>
+    <tbody>
+      @for (childMatch of matches; track $index) {
+        <tr>
+          <td>{{ childMatch.matchCode }}</td>
+          <td rowspan="2">
+            {{ matchDetail.kickOffTime | date: "mediumDate" }}
+            <br />
+            {{ matchDetail.kickOffTime | date: "hh:mm:ss a" }}
+          </td>
+          <td class="home-team-name">{{matchDetail.homeName }} ({{ childMatch.leagueName }})</td>
+          <td [ngClass]="getChildMatchesClass(childMatch)">{{ childMatch.homeValue | scoreChildMatch:childMatch:isLeader }}</td>
+          <td rowspan="2">{{ childMatch.newEventStatus }}</td>
+          <td rowspan="2" [style]="childMatch.isHold ? 'background-color: #ffff00': ''">{{ childMatch.isHold ? "YES" : "NO" }}</td>
+         @if(showAction) {
+          <td rowspan="2">
+            <input type="checkbox" [(ngModel)]="childMatch.checked"  [disabled]="childMatch.isHold" />
+          </td>
+         }
+        </tr>
+  
+        <tr>
+          <td>{{ childMatch.matchId }}</td>
+          <td class="away-team-name">{{ matchDetail.awayName }} ({{ childMatch.leagueName }})</td>
+          <td [ngClass]="getChildMatchesClass(childMatch)">{{ childMatch.awayValue |  scoreChildMatch:childMatch:isLeader  }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+  <span>- Marked tickets will not be settled.</span><br />
+  <span>- Matches that are on-hold will not be settled along side main match.</span>
+</div>
+}

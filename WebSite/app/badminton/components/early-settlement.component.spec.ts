@@ -2,7 +2,6 @@ import { TestBed, fakeAsync, ComponentFixture, tick, flush } from '@angular/core
 import { EarlyConstraintService, VerificationService } from '../services';
 import { EarlySettlementComponent } from './early-settlement.component';
 import { HttpClientModule } from '@angular/common/http';
-import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import {
   MessageBoxService,
   AioService,
@@ -16,7 +15,7 @@ import { ExternalLinkPipe } from '../../score-source-setting/pipes';
 import { ExternalSourceNamePipe } from '../../shared/pipes/external-source-name.pipe';
 import { ResultByTeamNamePipe } from '../../shared/pipes/result-by-team-name.pipe';
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
-import { ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
+import {ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 import { BadmintonApiKeys } from '../constants';
 import { ModalDialogComponent } from '../../shared/components/modal-dialog/modal-dialog.component';
 import { ModalContentDialogComponent } from '../../shared/components/modal-dialog/modal-content-dialog.component';
@@ -42,15 +41,17 @@ describe('EarlySettlementComponent', () => {
     errCode: 0,
     errMsg: "",
     isSuccessful: true,
-
+    settledSessionId: '',
+    hasResultAmendment: false,
     childMatchIds: ''
   };
   const unSuccessfulResult: Result = {
     errCode: 1,
     errMsg: errorMessage,
     isSuccessful: false,
-
-    childMatchIds: ''
+    childMatchIds: '',
+    settledSessionId: '',
+    hasResultAmendment: false,
   };
   const existMarkedTicket: MarkedTicketsModel = {
     isExistMarkedTicket: true,
@@ -85,7 +86,6 @@ describe('EarlySettlementComponent', () => {
         EarlySettlementComponent,
         HttpClientModule,
         ToastNoAnimationModule.forRoot(),
-        ToastContainerModule,
         ToastrModule.forRoot(),
         ResettleCheckerComponent,
         TicketCountComponent,

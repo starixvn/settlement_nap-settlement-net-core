@@ -5,12 +5,7 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services.Cricket;
 
 public class InputTypeServiceTests
 {
-    private readonly InputTypeService service;
-
-    public InputTypeServiceTests()
-    {
-        service = new InputTypeServiceImp();
-    }
+    private readonly InputTypeService service = new InputTypeServiceImp();
 
     [Theory]
     [InlineData(9400, 0)]

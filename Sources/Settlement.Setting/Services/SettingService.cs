@@ -29,35 +29,16 @@ public interface SettingService
     Task ProcessUpdateHoldMatchSetting(UpdateHoldMatchSettingRequest request);
 }
 
-public class SettingServiceImp : SettingService
+public class SettingServiceImp(
+    IDynamicRepository repository,
+    INapSession currentSession,
+    IHttpContextAccessor accessor,
+    IMapper mapper,
+    LogService logService,
+    XmlConvertService xmlConvertService)
+    : SettingService
 {
-    private readonly IDynamicRepository repository;
-
-    private readonly INapSession currentSession;
-
-    private readonly IHttpContextAccessor accessor;
-
-    private readonly IMapper mapper;
-    private readonly LogService logService;
-    private readonly XmlConvertService xmlConvertService;
-
     private const int holdMatchActionId = 81049;
-
-    public SettingServiceImp(
-        IDynamicRepository repository,
-        INapSession currentSession,
-        IHttpContextAccessor accessor,
-        IMapper mapper,
-        LogService logService,
-        XmlConvertService xmlConvertService)
-    {
-        this.repository = repository;
-        this.currentSession = currentSession;
-        this.accessor = accessor;
-        this.mapper = mapper;
-        this.logService = logService;
-        this.xmlConvertService = xmlConvertService;
-    }
 
     public async Task<Result> UpdateSettingLeague(SettingLeagueRequest query)
     {
@@ -119,7 +100,7 @@ public class SettingServiceImp : SettingService
             MatchId = request.MatchId,
             RemarkJson = JsonSerializer.Serialize(remarkLogs),
             ActionId = holdMatchActionId,
-            UserId = currentSession.UserId,
+            UserId = currentSession.UserId
         };
         logService.WriteLog(logCriteria);
     }
@@ -141,14 +122,14 @@ public class SettingServiceImp : SettingService
 
     private List<RemarkLog> CreateChildMatchRemarkLogs(List<HoldSetting> changedSettings, string childMatches)
     {
-        var changedChildMatchSettings = changedSettings.Where(x => x.IsApplyChild);
+        var changedChildMatchSettings = changedSettings.Where(x => x.IsApplyChild).ToList();
         if (changedChildMatchSettings.Any() && !string.IsNullOrEmpty(childMatches))
         {
             var childMatch = JsonSerializer.Deserialize<List<ChildMatchRemark>>(childMatches);
 
             return childMatch.Select(x =>
             {
-                var changedNames = string.Join(",", changedChildMatchSettings.Select(x => $"{x.Description}({(x.Value ? "yes" : "no")})"));
+                var changedNames = string.Join(",", changedChildMatchSettings.Select(c => $"{c.Description}({(c.Value ? "yes" : "no")})"));
                 var parentMatchRemark = $"parent({x.ParentMatchId})";
 
                 return new RemarkLog
@@ -159,7 +140,7 @@ public class SettingServiceImp : SettingService
             }).ToList();
         }
 
-        return new List<RemarkLog>();
+        return [];
     }
 
     private async Task<string> UpdateHoldMatchSetting(UpdateHoldMatchSettingCriteria criteria)
@@ -171,13 +152,12 @@ public class SettingServiceImp : SettingService
 
     private string GenerateChildMatchRemark(List<HoldSetting> changedSettings, string childMatches)
     {
-        if (!changedSettings.Any(x => x.Type == HoldPosition.IsUndecided
-            || x.Type == HoldPosition.IsMtdHold))
+        if (!changedSettings.Exists(x => x.Type is HoldPosition.IsUndecided or HoldPosition.IsMtdHold))
         {
             return string.Empty;
         }
 
-        if (changedSettings.All(x => !x.IsApplyChild))
+        if (changedSettings.TrueForAll(x => !x.IsApplyChild))
         {
             return " child(off)";
         }
@@ -200,8 +180,8 @@ public class SettingServiceImp : SettingService
             {
                 Type = x.Type,
                 IsApplyChild = x.IsApplyChild,
-                Value = x.Value,
-            }).ToList(),
+                Value = x.Value
+            }).ToList()
         };
 
         var criteria = new UpdateHoldMatchSettingCriteria

@@ -6,12 +6,7 @@ using MoveTickets.Services.MultipleServer;
 
 public class CompareMatchServiceTests
 {
-    private readonly CompareMatchService service;
-
-    public CompareMatchServiceTests()
-    {
-        service = new CompareMatchServiceImp();
-    }
+    private readonly CompareMatchService service = new CompareMatchServiceImp();
 
     [Theory]
     [InlineData(true, false, 1)]
@@ -32,7 +27,7 @@ public class CompareMatchServiceTests
             IsCalculatingSingle = isCalculatingSingle
         };
 
-        var result = service.GetDifferentMatchSiteInfo(match, new List<Match> { siteMatch });
+        var result = service.GetDifferentMatchSiteInfo(match, [siteMatch]);
 
         Assert.NotNull(result);
     }
@@ -59,7 +54,7 @@ public class CompareMatchServiceTests
             IsWaitingEarlyBetTypes = isWaitingEarlyBetTypes
         };
 
-        var result = service.GetDifferentMatchSiteInfo(match, new List<Match> { siteMatch });
+        var result = service.GetDifferentMatchSiteInfo(match, [siteMatch]);
 
         Assert.NotNull(result);
     }

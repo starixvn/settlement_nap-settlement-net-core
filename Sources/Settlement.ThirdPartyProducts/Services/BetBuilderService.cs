@@ -22,39 +22,17 @@ public interface BetBuilderService
     Task<string> GetResourcesMarket(int matchId);
 }
 
-public class BetBuilderServiceImp : BetBuilderService
+public class BetBuilderServiceImp(
+    IDynamicRepository repository,
+    IRefDataService refDataService,
+    IMapper mapper,
+    ScoreService scoreService,
+    XmlConvertService xmlConvertService,
+    MergeMatchInfo mergeMatchInfo,
+    IOptions<AppSettingsKey> appSettingsKey)
+    : BetBuilderService
 {
-    private readonly IDynamicRepository repository;
-
-    private readonly IRefDataService refDataService;
-
-    private readonly IMapper mapper;
-
-    private readonly ScoreService scoreService;
-
-    private readonly XmlConvertService xmlConvertService;
-
-    private readonly MergeMatchInfo mergeMatchInfo;
-
-    private readonly AppSettingsKey appSettingsKey;
-
-    public BetBuilderServiceImp(
-        IDynamicRepository repository,
-        IRefDataService refDataService,
-        IMapper mapper,
-        ScoreService scoreService,
-        XmlConvertService xmlConvertService,
-        MergeMatchInfo mergeMatchInfo,
-        IOptions<AppSettingsKey> appSettingsKey)
-    {
-        this.repository = repository;
-        this.refDataService = refDataService;
-        this.mapper = mapper;
-        this.scoreService = scoreService;
-        this.xmlConvertService = xmlConvertService;
-        this.mergeMatchInfo = mergeMatchInfo;
-        this.appSettingsKey = appSettingsKey.Value;
-    }
+    private readonly AppSettingsKey appSettingsKey = appSettingsKey.Value;
 
     public async Task<List<Sport>> GetSports(SportRequest request)
     {
@@ -82,15 +60,8 @@ public class BetBuilderServiceImp : BetBuilderService
 
     public List<LeagueModel> CreateLeagues(List<MatchDetailModel> matches)
     {
-        var leagueIds = matches.GroupBy(m => m.LeagueId).Select(m => m.Key).ToList();
-        var leagues = new List<LeagueModel>();
-        foreach (var leagueId in leagueIds)
-        {
-            var matchesByLeagueId = matches.Where(m => m.LeagueId == leagueId).ToList();
-            var league = LeagueItem(leagueId, matchesByLeagueId);
-            leagues.Add(league);
-        }
-
+        var matchesByLeagueIds = matches.GroupBy(m => m.LeagueId).ToDictionary(m => m.Key, m => m.ToList());
+        var leagues = matchesByLeagueIds.Select(l => LeagueItem(l.Key, l.Value)).ToList();
         return leagues.OrderBy(item => item.SportType).ToList();
     }
 

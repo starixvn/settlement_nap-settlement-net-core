@@ -7,7 +7,7 @@ export class VerifyDateService {
     private readonly ngbDateParserFormatter: NgbDateParserFormatter;
 
     constructor(ngbDateParserFormatter: NgbDateParserFormatter,
-        private datePipe: DatePipe) {
+        private readonly datePipe: DatePipe) {
         this.ngbDateParserFormatter = ngbDateParserFormatter;
     }
 

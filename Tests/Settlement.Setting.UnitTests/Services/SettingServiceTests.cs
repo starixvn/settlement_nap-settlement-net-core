@@ -106,4 +106,61 @@ public class SettingServiceTests
         // Assert
         await repository.Received(1).ExecuteAsync(Arg.Any<UpdateTimeSettingLeagueCriteria>());
     }
+
+    [Fact]
+    public async Task ProcessUpdateHoldMatchSetting_WhenChangedSettingsIsNotEmpty_ShouldExecuteCriteria_()
+    {
+        // Arrange
+        var request = new UpdateHoldMatchSettingRequest
+        {
+            HoldSettings = new List<HoldSetting>
+                {
+                    new () { Name ="isMtdHold", IsApplyChild = true, Value = true }
+                },
+            OrgHoldSettings = new()
+        };
+
+        // Act
+        await service.ProcessUpdateHoldMatchSetting(request);
+
+        // Assert
+        await repository.Received(1).ExecuteAsync(Arg.Any<UpdateHoldMatchSettingCriteria>());
+    }
+
+    [Fact]
+    public async Task ProcessUpdateHoldMatchSetting_WhenChangedSettingsIsEmpty_NotExecuteCriteria_()
+    {
+        // Arrange
+        var request = new UpdateHoldMatchSettingRequest
+        {
+            HoldSettings = [],
+            OrgHoldSettings = new List<HoldSetting>()
+        };
+
+        // Act
+        await service.ProcessUpdateHoldMatchSetting(request);
+
+        // Assert
+        await repository.Received(0).ExecuteAsync(Arg.Any<UpdateHoldMatchSettingCriteria>());
+    }
+
+    [Fact]
+    public async Task GetSetting_ShouldReturnConvertedSetting()
+    {
+        // Arrange
+        var request = new GetSettingRequest
+        {
+            MatchId = 1,
+            LeagueId = 2
+        };
+
+        const int settingValue = 10;
+        repository.GetAsync<int?>(Arg.Any<GetSettingCriteria>()).Returns(settingValue);
+
+        // Act
+        var result = await service.GetSetting(request);
+
+        // Assert
+        Assert.Equal("0101", result);
+    }
 }

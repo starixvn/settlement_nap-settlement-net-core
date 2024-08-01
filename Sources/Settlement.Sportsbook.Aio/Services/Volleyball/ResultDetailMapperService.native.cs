@@ -8,15 +8,9 @@ namespace Settlement.Sportsbook.Aio.Services.Volleyball;
 
 public class ResultDetailMapperServiceImp : IMapperService
 {
-    private readonly IResourceNameService resourceNameService;
+    private readonly IResourceNameService resourceNameService = new ResourceNameService(new ResourceInfos.MapperFactory.MapperFactoryBase());
 
-    private readonly IGroupBetTypeService groupBetTypeService;
-
-    public ResultDetailMapperServiceImp()
-    {
-        resourceNameService = new ResourceNameService(new ResourceInfos.MapperFactory.MapperFactoryBase());
-        groupBetTypeService = new GroupBetTypeServiceImp();
-    }
+    private readonly IGroupBetTypeService groupBetTypeService = new GroupBetTypeServiceImp();
 
     public void Decorate(dynamic obj)
     {

@@ -94,23 +94,23 @@ public class ResourceServiceTests
             }
         };
 
-        actionResourceService.HalftimeResources(Arg.Any<GoalAction>()).Returns(new List<XmlResource>
-        {
-            new()
+        actionResourceService.HalftimeResources(Arg.Any<GoalAction>()).Returns([
+            new XmlResource
             {
-                HomeValue="H",
-                ResourceId=ResourceKey.HalftimeFirstGoal,
-                ResultStatusId=ResultStatus.ManuallySettled,
-                SettlementStatusId=SettlementStatus.Completed
+                HomeValue = "H",
+                ResourceId = ResourceKey.HalftimeFirstGoal,
+                ResultStatusId = ResultStatus.ManuallySettled,
+                SettlementStatusId = SettlementStatus.Completed
             },
-            new()
+
+            new XmlResource
             {
-                HomeValue="A",
-                ResourceId=ResourceKey.HalftimeLastGoal,
-                ResultStatusId=ResultStatus.ManuallySettled,
-                SettlementStatusId=SettlementStatus.Completed
+                HomeValue = "A",
+                ResourceId = ResourceKey.HalftimeLastGoal,
+                ResultStatusId = ResultStatus.ManuallySettled,
+                SettlementStatusId = SettlementStatus.Completed
             }
-        });
+        ]);
 
         actionResourceService.HalftimeGoalRecord(Arg.Any<string>(), Arg.Any<int>()).Returns(new XmlResource
         {
@@ -252,23 +252,23 @@ public class ResourceServiceTests
             }
         };
 
-        actionResourceService.FullTimeResources(Arg.Any<GoalAction>()).Returns(new List<XmlResource>
-        {
-            new()
+        actionResourceService.FullTimeResources(Arg.Any<GoalAction>()).Returns([
+            new XmlResource
             {
-                HomeValue="H",
-                ResourceId=ResourceKey.FullTimeFirstGoal,
-                ResultStatusId=ResultStatus.ManuallySettled,
-                SettlementStatusId=SettlementStatus.Completed
+                HomeValue = "H",
+                ResourceId = ResourceKey.FullTimeFirstGoal,
+                ResultStatusId = ResultStatus.ManuallySettled,
+                SettlementStatusId = SettlementStatus.Completed
             },
-            new()
+
+            new XmlResource
             {
-                HomeValue="A",
-                ResourceId=ResourceKey.FullTimeLastGoal,
-                ResultStatusId=ResultStatus.ManuallySettled,
-                SettlementStatusId=SettlementStatus.Completed
+                HomeValue = "A",
+                ResourceId = ResourceKey.FullTimeLastGoal,
+                ResultStatusId = ResultStatus.ManuallySettled,
+                SettlementStatusId = SettlementStatus.Completed
             }
-        });
+        ]);
 
         actionResourceService.FullTimeGoalRecord(Arg.Any<string>(), Arg.Any<int>()).Returns(new XmlResource
         {
@@ -358,7 +358,7 @@ public class ResourceServiceTests
             LastGoalSettlementStatusId = SettlementStatus.Abandoned2H
         };
 
-        actionResourceService.FullTimeResources(Arg.Any<GoalAction>()).Returns(new List<XmlResource>());
+        actionResourceService.FullTimeResources(Arg.Any<GoalAction>()).Returns([]);
         goalRecordService.HalftimeGoal(Arg.Is("AHAH;HA")).Returns("AHAH");
         goalRecordService.FullTimeGoal(Arg.Is("AHAH;HA")).Returns("HA");
 
@@ -428,23 +428,23 @@ public class ResourceServiceTests
         };
 
         actionResourceService.FullTimeResources(Arg.Any<GoalAction>()).Returns(
-            new List<XmlResource>
+        [
+            new XmlResource
             {
-                new()
-                {
-                    ResourceId = ResourceKey.FullTimeFirstGoal,
-                    ResultStatusId = ResultStatus.ManuallySettled,
-                    SettlementStatusId = SettlementStatus.Completed,
-                    HomeValue = "A"
-                },
-                new()
-                {
-                    ResourceId = ResourceKey.FullTimeLastGoal,
-                    ResultStatusId = ResultStatus.ManuallySettled,
-                    SettlementStatusId = SettlementStatus.Abandoned2H,
-                    HomeValue = "H"
-                }
-            });
+                ResourceId = ResourceKey.FullTimeFirstGoal,
+                ResultStatusId = ResultStatus.ManuallySettled,
+                SettlementStatusId = SettlementStatus.Completed,
+                HomeValue = "A"
+            },
+
+            new XmlResource
+            {
+                ResourceId = ResourceKey.FullTimeLastGoal,
+                ResultStatusId = ResultStatus.ManuallySettled,
+                SettlementStatusId = SettlementStatus.Abandoned2H,
+                HomeValue = "H"
+            }
+        ]);
 
         actionResourceService.FullTimeGoalRecord(Arg.Any<string>(), Arg.Any<int>()).Returns(
             new XmlResource
@@ -473,7 +473,7 @@ public class ResourceServiceTests
             GoalRecord = "AHAH;HA"
         };
 
-        actionResourceService.FullTimeResources(Arg.Any<GoalAction>()).Returns(new List<XmlResource>());
+        actionResourceService.FullTimeResources(Arg.Any<GoalAction>()).Returns([]);
 
         // Act
 
@@ -565,16 +565,15 @@ public class ResourceServiceTests
         };
 
         actionResourceService.FullTimeResources(Arg.Any<GoalAction>()).Returns(
-            new List<XmlResource>
+        [
+            new XmlResource
             {
-                new()
-                {
-                    HomeValue="AHHAHA",
-                    ResourceId = ResourceKey.FullTimeGoalRecord,
-                    ResultStatusId = ResultStatus.ManuallySettled,
-                    SettlementStatusId = SettlementStatus.Abandoned2H
-                }
-            });
+                HomeValue = "AHHAHA",
+                ResourceId = ResourceKey.FullTimeGoalRecord,
+                ResultStatusId = ResultStatus.ManuallySettled,
+                SettlementStatusId = SettlementStatus.Abandoned2H
+            }
+        ]);
 
         actionResourceService.HalftimeGoalRecord(Arg.Any<string>(), Arg.Any<int>()).Returns(
             new XmlResource
@@ -638,7 +637,7 @@ public class ResourceServiceTests
             LastGoalSettlementStatusId = SettlementStatus.Abandoned1H
         };
 
-        actionResourceService.HalftimeResources(Arg.Any<GoalAction>()).Returns(new List<XmlResource>());
+        actionResourceService.HalftimeResources(Arg.Any<GoalAction>()).Returns([]);
 
         // Act
 
@@ -674,7 +673,7 @@ public class ResourceServiceTests
         };
 
         goalRecordService.HalftimeGoal(Arg.Any<string>()).Returns("A");
-        actionResourceService.HalftimeResources(Arg.Any<GoalAction>()).Returns(new List<XmlResource>());
+        actionResourceService.HalftimeResources(Arg.Any<GoalAction>()).Returns([]);
 
         // Actual
 
@@ -707,7 +706,7 @@ public class ResourceServiceTests
             LastGoalSettlementStatusId = SettlementStatus.Abandoned1H
         };
 
-        actionResourceService.FullTimeResources(Arg.Any<GoalAction>()).Returns(new List<XmlResource>());
+        actionResourceService.FullTimeResources(Arg.Any<GoalAction>()).Returns([]);
 
         // Act
 
@@ -743,7 +742,7 @@ public class ResourceServiceTests
         };
 
         goalRecordService.HalftimeGoal(Arg.Any<string>()).Returns("A");
-        actionResourceService.FullTimeResources(Arg.Any<GoalAction>()).Returns(new List<XmlResource>());
+        actionResourceService.FullTimeResources(Arg.Any<GoalAction>()).Returns([]);
 
         // Actual
 
@@ -814,41 +813,41 @@ public class ResourceServiceTests
 
         goalRecordService.HalftimeGoal(Arg.Any<string>()).Returns("AHAHA");
         actionResourceService.HalftimeResources(Arg.Any<GoalAction>()).Returns(
-            new List<XmlResource>
+        [
+            new XmlResource
             {
-                new()
-                {
-                    HomeValue = "A",
-                    ResourceId=ResourceKey.HalftimeFirstGoal,
-                    ResultStatusId=ResultStatus.ManuallySettled,
-                    SettlementStatusId=SettlementStatus.Completed
-                },
-                new()
-                {
-                    HomeValue = "A",
-                    ResourceId=ResourceKey.HalftimeLastGoal,
-                    ResultStatusId=ResultStatus.ManuallySettled,
-                    SettlementStatusId=SettlementStatus.Abandoned1H
-                }
-            });
-
-        actionResourceService.FullTimeResources(Arg.Any<GoalAction>()).Returns(new List<XmlResource>
-        {
-            new()
-            {
-                HomeValue = "H",
-                ResourceId=ResourceKey.FullTimeFirstGoal,
-                ResultStatusId=ResultStatus.ManuallySettled,
-                SettlementStatusId=SettlementStatus.Completed
+                HomeValue = "A",
+                ResourceId = ResourceKey.HalftimeFirstGoal,
+                ResultStatusId = ResultStatus.ManuallySettled,
+                SettlementStatusId = SettlementStatus.Completed
             },
-            new()
+
+            new XmlResource
+            {
+                HomeValue = "A",
+                ResourceId = ResourceKey.HalftimeLastGoal,
+                ResultStatusId = ResultStatus.ManuallySettled,
+                SettlementStatusId = SettlementStatus.Abandoned1H
+            }
+        ]);
+
+        actionResourceService.FullTimeResources(Arg.Any<GoalAction>()).Returns([
+            new XmlResource
             {
                 HomeValue = "H",
-                ResourceId=ResourceKey.FullTimeLastGoal,
-                ResultStatusId=ResultStatus.ManuallySettled,
-                SettlementStatusId=SettlementStatus.Abandoned1H
+                ResourceId = ResourceKey.FullTimeFirstGoal,
+                ResultStatusId = ResultStatus.ManuallySettled,
+                SettlementStatusId = SettlementStatus.Completed
+            },
+
+            new XmlResource
+            {
+                HomeValue = "H",
+                ResourceId = ResourceKey.FullTimeLastGoal,
+                ResultStatusId = ResultStatus.ManuallySettled,
+                SettlementStatusId = SettlementStatus.Abandoned1H
             }
-        });
+        ]);
 
         actionResourceService.HalftimeGoalRecord(Arg.Any<string>(), Arg.Any<int>()).Returns(
             new XmlResource

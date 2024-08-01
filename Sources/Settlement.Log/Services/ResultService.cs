@@ -11,7 +11,7 @@ public interface ResultService
 
 public class ResultServiceImp : ResultService
 {
-    private static readonly string[] EventCounterLabels = { "N", "G", "C", "FK", "GK", "T", "B", "P" };
+    private static readonly string[] EventCounterLabels = ["N", "G", "C", "FK", "GK", "T", "B", "P"];
 
     public string MinuteSetPieceResultName(string position, string result)
     {

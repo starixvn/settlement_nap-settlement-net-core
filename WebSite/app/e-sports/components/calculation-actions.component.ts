@@ -47,7 +47,7 @@ export class CalculationActionsComponent implements SportTemplate {
     public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
     public SOURCE_ID = SourceIds;
 
-    constructor(private injector: Injector) {
+    constructor(private readonly injector: Injector) {
         this.confirmationDialogMessage.title = Language.confirmationBox;
     }
 

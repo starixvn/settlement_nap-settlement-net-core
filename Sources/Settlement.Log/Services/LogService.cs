@@ -16,25 +16,14 @@ public interface LogService
     Task<List<LogModel>> GetLogDetail(List<LogModel> logs, string productType);
 }
 
-public class LogServiceImp : LogService
+public class LogServiceImp(
+    IDynamicRepository repository,
+    LogDetailService logDetailService,
+    IMapper mapper,
+    IRefDataService refDataService)
+    : LogService
 {
-    private readonly IDynamicRepository repository;
-    private readonly LogDetailService logDetailService;
-    private readonly IRefDataService refDataService;
-    private readonly IMapper mapper;
     private const string ResettleType = "RES";
-
-    public LogServiceImp(
-        IDynamicRepository repository,
-        LogDetailService logDetailService,
-        IMapper mapper,
-        IRefDataService refDataService)
-    {
-        this.repository = repository;
-        this.logDetailService = logDetailService;
-        this.mapper = mapper;
-        this.refDataService = refDataService;
-    }
 
     public async Task<IEnumerable<LogModel>> GetLog(LogRequest request)
     {

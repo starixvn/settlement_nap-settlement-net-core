@@ -28,7 +28,11 @@ import { FantasyScoreService } from "../../services/fantasy-score.service";
 export class RelatedMatchesComponent {
   @Input() fantasyMatch: FantasyMatch;
   @Input() isSupportCopyScore = false;
-  @Output() public readonly autoFillScore = new EventEmitter<any>();
+  @Output() public readonly autoFillScore = new EventEmitter<{
+    resourceId: string;
+    homeValue: string;
+    awayValue: string;
+}[]>();
   @Output() public readonly errorMsgEmitter = new EventEmitter<string>();
 
   private readonly dialogMessage = new ModalDialogMessage();
@@ -81,6 +85,8 @@ export class RelatedMatchesComponent {
     if (_.isEqual(resourceId, ResourcesIds.htScore)) {
       return "color-ht-score ";
     }
+
+    return "";
   }
 
   getEventStatusClass(eventStatus: string) {

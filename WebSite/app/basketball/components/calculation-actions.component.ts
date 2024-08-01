@@ -5,7 +5,7 @@ import {
   AioService,
   BlockUIService,
 } from "../../shared/services";
-import { League, ModalDialogMessage } from "../../shared/models";
+import {  ModalDialogMessage } from "../../shared/models";
 import { Language } from "../../shared/language.native";
 import {
   CalculateAction,
@@ -74,15 +74,15 @@ import { VerificationFantasyMatchService } from "../services/verification-fantas
 export class CalculationActionsComponent implements SportTemplate {
   @ViewChild(ToastContainerDirective, { static: true })
   toastContainer: ToastContainerDirective;
-  private basketballService = inject(BasketballService);
-  private messageBoxService = inject(MessageBoxService);
-  private betStatusService = inject(BetStatusService);
-  private aioService = inject(AioService);
-  private cashOutService = inject(CashOutService);
-  private verificationService = inject(VerificationService);
-  private  verificationFantasyMatchService = inject(VerificationFantasyMatchService);
-  private toastrService = inject(ToastrService);
-  private blockUiService = inject(BlockUIService);
+  private readonly basketballService = inject(BasketballService);
+  private readonly messageBoxService = inject(MessageBoxService);
+  private readonly betStatusService = inject(BetStatusService);
+  private readonly aioService = inject(AioService);
+  private readonly cashOutService = inject(CashOutService);
+  private  readonly verificationService = inject(VerificationService);
+  private readonly verificationFantasyMatchService = inject(VerificationFantasyMatchService);
+  private  readonly toastrService = inject(ToastrService);
+  private readonly blockUiService = inject(BlockUIService);
   readonly overTimeId = ResourcesIds.ot;
   blockUI = false;
   match: Match;
@@ -147,7 +147,7 @@ export class CalculationActionsComponent implements SportTemplate {
     );
     this.resetHomeAway(this.resultDetails);
     this.matchDetail = this.match.matchDetail;
-    this.fantasyMatch = (this.match as any).fantasyMatch;
+    this.fantasyMatch = this.match.fantasyMatch;
     this.hedgeMatchDetail = this.match.hedgeMatchDetail;
     this.applyHedgeMatch = this.hedgeMatchDetail != null;
     this.disableScoreDirect = this.verificationService.isTicketOnQuarter(
@@ -1010,7 +1010,7 @@ export class CalculationActionsComponent implements SportTemplate {
 
     this.resultDetails = this.resultDetails.map((result) => {
       const findScore = score.find(
-        (score) => score.resourceId == result.resourceId
+        x => x.resourceId === result.resourceId
       );
 
       if (!findScore) {
@@ -1020,9 +1020,9 @@ export class CalculationActionsComponent implements SportTemplate {
       const homeValue = (findScore.homeValue ?? "0").toString();
       const awayValue = (findScore.awayValue ?? "0").toString();
 
-      const externalScores = result.externalScores.map((score) => {
+      const externalScores = result.externalScores.map((x) => {
         if ([SourceIds.trader, SourceIds.screenshot].includes(score.sourceId)) {
-          return { ...score, homeValue, awayValue };
+          return { ...x, homeValue, awayValue };
         }
         return score;
       });
@@ -1042,10 +1042,10 @@ export class CalculationActionsComponent implements SportTemplate {
 
   private resetExternalScores() {
     this.resultDetails.forEach(result => {
-      result.externalScores.forEach(score => {
-        if ([SourceIds.trader, SourceIds.screenshot].includes(score.sourceId)) {
-          score.homeValue = null;
-          score.awayValue = null;
+      result.externalScores.forEach(x => {
+        if ([SourceIds.trader, SourceIds.screenshot].includes(x.sourceId)) {
+          x.homeValue = null;
+          x.awayValue = null;
         }
       })
     })

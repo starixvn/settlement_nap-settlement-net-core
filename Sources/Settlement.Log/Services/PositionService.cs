@@ -8,20 +8,13 @@ public interface PositionService
     string PositionName(int betTypeId, BetTypeItemElement item);
 }
 
-public class PositionServiceImp : PositionService
+public class PositionServiceImp(ResultService resultService) : PositionService
 {
-    private readonly ResultService resultService;
-
     private const int TimeMachineHandicapScoreRange = 10;
 
     private const int InjuryTime = 45;
 
     private const string InjuryText = "44+";
-
-    public PositionServiceImp(ResultService resultService)
-    {
-        this.resultService = resultService;
-    }
 
     public string PositionName(int betTypeId, BetTypeItemElement item)
     {
@@ -39,12 +32,7 @@ public class PositionServiceImp : PositionService
 
         var arrayPosition = item.Position.Split(',');
         var arrayResult = item.Result.Split(',');
-        var positionName = new List<string>();
-        for (var i = 0; i < arrayResult.Length; i++)
-        {
-            var value = PositionAndResultName(betTypeId, arrayPosition[i], arrayResult[i]);
-            positionName.Add(value);
-        }
+        var positionName = arrayResult.Select((t, i) => PositionAndResultName(betTypeId, arrayPosition[i], t)).ToList();
 
         if (betTypeId is FastMarketBetType.TimeMachineHandicap or FastMarketBetType.TimeMachineOverUnder)
         {

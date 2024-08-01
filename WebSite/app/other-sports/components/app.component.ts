@@ -34,8 +34,8 @@ export class AppComponent extends AppBaseComponent implements OnInit {
     constructor(
         protected blockUIService: BlockUIService,
         protected elementRef: ElementRef<HTMLElement>,
-        protected ViewContainerRef: ViewContainerRef) {
-        super(elementRef, ViewContainerRef);
+        protected viewContainerRef: ViewContainerRef) {
+        super(elementRef, viewContainerRef);
     }
 
     public ngOnInit() {

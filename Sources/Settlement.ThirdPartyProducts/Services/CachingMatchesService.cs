@@ -13,15 +13,8 @@ public interface CachingMatchesService
     void SetToCache(string leagueIds, List<MatchDetailModel> matches);
 }
 
-public class CachingMatchesServiceImp : CachingMatchesService
+public class CachingMatchesServiceImp(IMemoryCache cacheService) : CachingMatchesService
 {
-    private readonly IMemoryCache cacheService;
-
-    public CachingMatchesServiceImp(IMemoryCache cacheService)
-    {
-        this.cacheService = cacheService;
-    }
-
     public List<MatchDetailModel> MatchesOnShortCaching(string leagueIds)
     {
         var shortCachingKey = ShortCachingKey(leagueIds);

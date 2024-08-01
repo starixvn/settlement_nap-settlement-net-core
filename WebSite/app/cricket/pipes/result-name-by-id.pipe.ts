@@ -11,11 +11,11 @@ export class ResultNameByIdPipe implements PipeTransform {
   public transform(resourceId: string, matchDetail: MatchDetail) {
     if (_.isEqual(resourceId, ResourcesIds.final)) {
       return "Match Winner";
-    } else if (_.isEqual(resourceId.substr(0, 1), "A")) {
-      const inningNumber = resourceId.substr(1, 1);
+    } else if (_.isEqual(resourceId.substring(0, 1), "A")) {
+      const inningNumber = resourceId.substring(1, 2);
       return `Innings ${inningNumber} - ${matchDetail.awayName}`;
     } else {
-      const inningNumber = resourceId.substr(1, 1);
+      const inningNumber = resourceId.substring(1, 2);
       return `Innings ${inningNumber} - ${matchDetail.homeName}`;
     }
   }

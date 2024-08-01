@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { ComponentFixture, TestBed, fakeAsync, tick, flush } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { ToastContainerDirective, ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
+import { ToastContainerDirective, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 import { StatusPipe } from '../../pipes/status-pipe';
 import { CalculateService, OutrightService } from '../../services';
 import { DatepickerComponent } from '../../../shared/components/date-picker/date-picker.component';
@@ -94,7 +94,6 @@ describe('CalculatePopupComponent', () => {
         MatDialogModule,
         DragDropModule,
         ToastNoAnimationModule.forRoot(),
-        ToastContainerModule,
         ToastrModule.forRoot(),
         HttpClientModule
       ],

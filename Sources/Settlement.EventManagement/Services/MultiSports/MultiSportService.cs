@@ -13,7 +13,7 @@ using System.Text;
 using System.Text.Json;
 using Match = Models.MultiSports.Match;
 
-using MatchFilterTuple = (List<Models.MultiSports.Match> Matches, List<Models.MultiSports.MatchOverStatus> MatchOverStatuses, List<Models.MultiSports.ParentChildMatchFilter> ParentChildMatchFilters);
+using MatchFilterTuple = (List<Models.MultiSports.Match> Matches, List<MatchOverStatus> MatchOverStatuses, List<ParentChildMatchFilter> ParentChildMatchFilters);
 
 public interface IMultiSportService
 {
@@ -132,6 +132,7 @@ public class MultiSportServiceImp(
             SportType = x.SportType,
             ConfirmFT = x.ConfirmFT,
             ConfirmHT = x.ConfirmHT,
+            ParentId = x.ParentId
         });
 
         var matchesOverStatus = matchTuple.MatchOverStatuses;
@@ -148,8 +149,6 @@ public class MultiSportServiceImp(
 
         var result = await GetTicketInfoAllDbSites(criteria);
 
-        var list = result.ToList();
-
         return result;
     }
 
@@ -159,8 +158,8 @@ public class MultiSportServiceImp(
         {
             var ticketInfo = siteMatches.Where(x => x.MatchId == item.MatchId).ToList();
 
-            item.SuspenderFullTime = ticketInfo.FirstOrDefault(x => !string.IsNullOrEmpty(x.SuspenderFullTime))?.SuspenderFullTime;
-            item.SuspenderHalfTime = ticketInfo.FirstOrDefault(x => !string.IsNullOrEmpty(x.SuspenderHalfTime))?.SuspenderHalfTime;
+            item.SuspenderFullTime = ticketInfo.Find(x => !string.IsNullOrEmpty(x.SuspenderFullTime))?.SuspenderFullTime;
+            item.SuspenderHalfTime = ticketInfo.Find(x => !string.IsNullOrEmpty(x.SuspenderHalfTime))?.SuspenderHalfTime;
 
             item.IsExistEarlyBetTypes = ticketInfo.Exists(x => x.IsExistEarlyBetTypes);
             item.IsRunningEarlyBetTypes = ticketInfo.Exists(x => x.IsRunningEarlyBetTypes);
@@ -206,7 +205,7 @@ public class MultiSportServiceImp(
         var siteMatches = (await GetOSTicketInfo(matchTuple, criteria)).ToList();
 
         var matches = matchTuple.Matches.ToList();
-        var filteredMatches = matches.Where(x => siteMatches.Any(z => x.MatchId == z.MatchId)).ToList();
+        var filteredMatches = matches.Where(x => siteMatches.Exists(z => x.MatchId == z.MatchId)).ToList();
 
         SetMatchTicketInfo(filteredMatches, siteMatches);
 
@@ -290,8 +289,8 @@ public class MultiSportServiceImp(
                     AutoWaitingTime = match.AutoWaitingTime,
                     AutoRetryTime = match.AutoRetryTime,
                     AutoCalcSetting = match.AutoCalcSetting,
+                    Matches = [],
                     RefundWaitingTime = match.RefundWaitingTime,
-                    Matches = new List<Match>(),
                     SportType = match.SportType
                 };
 

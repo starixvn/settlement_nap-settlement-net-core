@@ -129,12 +129,7 @@ public class SiteMatchServiceImp : SiteMatchService
             return TicketStatus.Running;
         }
 
-        if (IsExistedWaitingEarlyBetTypes(match))
-        {
-            return TicketStatus.Waiting;
-        }
-
-        return TicketStatus.Completed;
+        return IsExistedWaitingEarlyBetTypes(match) ? TicketStatus.Waiting : TicketStatus.Completed;
     }
 
     public string EarlyOSSettlementStatus(BaseMatch match)

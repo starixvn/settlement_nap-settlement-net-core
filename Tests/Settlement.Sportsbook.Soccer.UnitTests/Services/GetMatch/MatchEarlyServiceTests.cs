@@ -12,7 +12,7 @@ using MatchDetail = Settlement.Sportsbook.Soccer.Models.MatchDetail;
 
 namespace Settlement.Sportsbook.Soccer.UnitTests.Services.GetMatch;
 
-using Core.Services.SpecificService;
+using Settlement.Core.Services.SpecificService;
 using Soccer.Services.GetMatch;
 
 public class MatchEarlyServiceTests
@@ -108,7 +108,7 @@ public class MatchEarlyServiceTests
         repository.GetAsync<MatchDetail>(Arg.Any<GetMatchDetailEarlyCriteria>()).Returns(new MatchDetail());
         repository.FetchAsync<ResultDetailModel>(Arg.Any<GetResultDetailEarlyCriteria>()).Returns(listResult);
         fetchDataService.GetEarlyTicketDetails(Arg.Any<GetResultDetailEarlyCriteria>())
-            .Returns((new List<ResultDetailModel>(), new TicketCounts()));
+            .Returns(([], new TicketCounts()));
 
         var match = await service.GetMatch(1);
         var resultDetail = match.ResultDetail[0];
@@ -145,7 +145,7 @@ public class MatchEarlyServiceTests
         repository.GetAsync<MatchDetail>(Arg.Any<GetMatchDetailEarlyCriteria>()).Returns(new MatchDetail());
         repository.FetchAsync<ResultDetailModel>(Arg.Any<GetResultDetailEarlyCriteria>()).Returns(listResult);
         fetchDataService.GetEarlyTicketDetails(Arg.Any<GetResultDetailEarlyCriteria>())
-            .Returns((new List<ResultDetailModel>(), new TicketCounts()));
+            .Returns(([], new TicketCounts()));
         earlyBetTypeNameService.GetGroupMap(betType, resourceId).Returns(1);
         earlyBetTypeNameService.GetBetTypeName(betType, resourceId).Returns("betTypeName");
 

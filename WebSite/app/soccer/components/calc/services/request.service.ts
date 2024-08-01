@@ -7,7 +7,7 @@ import { Match, MatchDetail, UndoChecking } from "../models/match.model";
 
 @Injectable()
 export class RequestService {
-    private soccerApi = '/api/soccer';
+    private readonly soccerApi = '/api/soccer';
     constructor(private readonly httpRequestService: HttpRequestService) { }
 
     public getMatch(matchId: number) {

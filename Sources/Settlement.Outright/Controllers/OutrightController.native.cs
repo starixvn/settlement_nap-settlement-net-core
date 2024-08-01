@@ -6,18 +6,8 @@ namespace Settlement.Outright.Controllers;
 
 [ApiController]
 [Route("api/outright/")]
-public class OutrightController : ControllerBase
+public class OutrightController(IMediator mediator, FilterService getDataFilterService) : ControllerBase
 {
-    private readonly IMediator mediator;
-
-    private readonly FilterService getDataFilterService;
-
-    public OutrightController(IMediator mediator, FilterService getDataFilterService)
-    {
-        this.mediator = mediator;
-        this.getDataFilterService = getDataFilterService;
-    }
-
     [HttpGet]
     [Route("get-filter-view")]
     public IActionResult GetFilerView() => Ok(getDataFilterService.GetFilterView());
@@ -57,6 +47,6 @@ public class OutrightController : ControllerBase
 
     [HttpPost]
     [Route("get-deadheat-setting")]
-    public async Task<IActionResult> GetDeadHeatSetting(GetDeatHeadLeagueSettingRequest request)
+    public async Task<IActionResult> GetDeadHeatSetting(GetDeadHeadLeagueSettingRequest request)
        => Ok(await mediator.Send(request).ConfigureAwait(false));
 }

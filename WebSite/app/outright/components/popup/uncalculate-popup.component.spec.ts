@@ -4,7 +4,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed, tick, fakeAsync, flush } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { ToastContainerDirective, ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
+import { ToastContainerDirective, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 import { CalculateService, OutrightService } from '../../services';
 import { BlockUIService, HttpRequestService, MessageBoxService } from '../../../shared/services';
 import { LeagueSettle, Permission, ResultOutright, Team } from '../../models';
@@ -84,7 +84,6 @@ describe('UncalculatePopupComponent', () => {
         MatDialogModule,
         DragDropModule,
         ToastNoAnimationModule.forRoot(),
-        ToastContainerModule,
         ToastrModule.forRoot(),
         HttpClientModule
       ],

@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { Injectable, PipeTransform } from "@angular/core";
-import { ExternalResultDetail, ResultDetail, GeneralMatch, ExternalResult, MatchDetail } from "../../shared/models/sportsbook-sop";
+import { ExternalResultDetail, ResultDetail, GeneralMatch, ExternalResult } from "../../shared/models/sportsbook-sop";
 import { ResultStatusId, TicketStatusText, ScoreSourceType, SettlementStatusId, SportType } from "../../shared/constants";
 import { Language } from "../../shared/language.native";
 import { ResultByTeamNamePipe } from '../../shared/pipes/result-by-team-name.pipe';
@@ -73,7 +73,7 @@ export class VerificationBaseService {
     }
 
     public allMapHaveScreenshotSource(resultDetails: ResultDetail[]) {
-        const checkedResults = resultDetails.filter((result: ResultDetail) => result.checked);
+        const checkedResults = resultDetails.filter((x) => x.checked);
         let result = true;
         _.forEach(checkedResults, (map) => {
             if (!this.isExistScreenshotSource(map)) {
@@ -147,19 +147,34 @@ export class VerificationBaseService {
     }
 
     public isMismatchedScoreScreenshot(map: ResultDetail) {  
-        const screenshotScore = map.externalScores.find(x => x.sourceId === ScoreSourceType.screenshot);
+        const screenshotScore = this.getScreenshotScore(map);
 
         if(this.hasScore(map) || this.hasScore(screenshotScore)) {
-            return !(_.isEmpty(map.homeValue) && _.isEmpty(map.awayValue)) && !(_.isEmpty(screenshotScore.homeValue) && _.isEmpty(screenshotScore.awayValue))
-                && (!_.isEqual(map.homeValue,screenshotScore?.homeValue) || !_.isEqual(map.awayValue,screenshotScore.awayValue));
+            return this.areScoresDifferent(map, screenshotScore);
         }
 
-        if((!_.isEmpty(screenshotScore.homeValue) && _.isEmpty(screenshotScore?.awayValue)) 
-            || (!_.isEmpty(map.homeValue) && _.isEmpty(map.awayValue))) {
-            return !_.isEmpty(map.homeValue) && !_.isEqual(map.homeValue,screenshotScore.homeValue)
-        }
-        
-        return false;
+        return this.isPartiallyMismatched(map, screenshotScore);
+    }
+
+    private isPartiallyMismatched(map: ResultDetail, screenshotScore: ExternalResultDetail) {
+        return (
+          (!_.isEmpty(screenshotScore?.homeValue) && _.isEmpty(screenshotScore?.awayValue)) ||
+          (!_.isEmpty(map.homeValue) && _.isEmpty(map.awayValue))
+        ) && !_.isEmpty(map.homeValue) && !_.isEqual(map.homeValue, screenshotScore?.homeValue);
+      }
+
+    private areScoresDifferent(map: ResultDetail, screenshotScore: ExternalResultDetail) {
+        return (
+          !_.isEmpty(map.homeValue) &&
+          !_.isEmpty(map.awayValue) &&
+          !_.isEmpty(screenshotScore?.homeValue) &&
+          !_.isEmpty(screenshotScore?.awayValue) &&
+          (!_.isEqual(map.homeValue, screenshotScore?.homeValue) || !_.isEqual(map.awayValue, screenshotScore?.awayValue))
+        );
+      }
+
+    private getScreenshotScore(map: ResultDetail) {
+        return map.externalScores.find(x => x.sourceId === ScoreSourceType.screenshot);
     }
 
     public isScoreConsecutive(resultDetails: GeneralResultDetail[], firstResourceId: string) {
@@ -368,7 +383,7 @@ export class VerificationBaseService {
 
     public generateExternalScores(match: GeneralMatch, resultDetails: ResultDetail[], sportType: number,maximumProvider = 2) {
         const listGroupExternalResult = this.groupExternalResult(match.externalResults, sportType,maximumProvider);
-        const newSportsSOP = [SportType.tennis, SportType.cricket, SportType.badminton, SportType.basketBall, SportType.volleyBall, SportType.beachVolleyball, SportType.eSports];
+        const newSportsSOP = [SportType.tennis, SportType.cricket, SportType.badminton, SportType.basketBall, SportType.volleyBall, SportType.beachVolleyball, SportType.eSports,SportType.tableTennis];
         _.forEach(resultDetails, (map: ResultDetail) => {
             const scores: ExternalResultDetail[] = [];
             _.forEach(listGroupExternalResult, (result: ExternalResult) => {
@@ -535,7 +550,6 @@ export class VerificationBaseService {
     public acceptCaseZero(orinalResult: GeneralResultDetail, result: ResultDetail) {
        return (result.awayValue === "0" && result.homeValue === "0" && _.isEmpty(orinalResult.homeValue) && _.isEmpty(orinalResult.awayValue));
     }
-
     public isValidTraderConfirmScore(result: ResultDetail) {
         const traderScore = result.externalScores.find((source) => source.sourceId === ScoreSourceType.trader);
 
@@ -543,5 +557,4 @@ export class VerificationBaseService {
             && !_.isEmpty(traderScore.homeValue) 
             && !_.isEmpty(traderScore.awayValue);
     }
-
 }

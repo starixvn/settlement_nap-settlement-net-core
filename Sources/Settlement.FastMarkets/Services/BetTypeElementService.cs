@@ -15,15 +15,7 @@ public class BetTypeElementServiceImp : IBetTypeElementService
 {
     public List<BetTypeElement> GetBetTypes(List<BetType> betTypeList, string action)
     {
-        var betTypes = new List<BetTypeElement>();
-
-        foreach (var betType in betTypeList)
-        {
-            var betTypeElement = CreateBetTypeElement(betType.FastMarketResults, action);
-            betTypes.Add(betTypeElement);
-        }
-
-        return betTypes;
+        return betTypeList.Select(betType => CreateBetTypeElement(betType.FastMarketResults, action)).ToList();
     }
 
     private static string GetResult(FastMarketResult fastMarket, string actionName)
@@ -37,14 +29,8 @@ public class BetTypeElementServiceImp : IBetTypeElementService
         {
             return fastMarket.Result.ToString();
         }
-        else if (fastMarket.BetType == FastMarketBetType.NextOneMinuteSetPiece)
-        {
-            return NextOneMinuteSetPiece(fastMarket.ResultItem).ToString();
-        }
-        else
-        {
-            return fastMarket.ResultItem.Value.ToString();
-        }
+
+        return fastMarket.BetType == FastMarketBetType.NextOneMinuteSetPiece ? NextOneMinuteSetPiece(fastMarket.ResultItem).ToString() : fastMarket.ResultItem.Value.ToString();
     }
 
     private static int NextOneMinuteSetPiece(ResultItem item)

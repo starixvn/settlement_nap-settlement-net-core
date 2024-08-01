@@ -8,12 +8,7 @@ namespace Settlement.EventManagement.UnitTests.Services;
 
 public class SiteMatchServiceTests
 {
-    private readonly SiteMatchService service;
-
-    public SiteMatchServiceTests()
-    {
-        service = new SiteMatchServiceImp();
-    }
+    private readonly SiteMatchService service = new SiteMatchServiceImp();
 
     [Theory]
     [InlineData(true, false, true)]
@@ -24,10 +19,7 @@ public class SiteMatchServiceTests
         var match = new BaseMatch
         {
             IsExistRunningTicket = main,
-            SiteMatch = new List<SiteMatch>
-            {
-                new () { IsExistRunningTicket = site }
-            }
+            SiteMatch = [new SiteMatch { IsExistRunningTicket = site }]
         };
 
         var result = service.IsExistRunningTickets(match);
@@ -44,10 +36,7 @@ public class SiteMatchServiceTests
         var match = new Match
         {
             IsExistsConfirmedEarly = main,
-            SiteMatch = new List<SiteMatch>
-            {
-                new () { IsExistsConfirmedEarly = site }
-            }
+            SiteMatch = [new SiteMatch { IsExistsConfirmedEarly = site }]
         };
 
         var result = service.IsExistsConfirmedEarly(match);
@@ -77,10 +66,7 @@ public class SiteMatchServiceTests
         var match = new Match
         {
             IsCalculatingSingle = mainStatus,
-            SiteMatch = new List<SiteMatch>
-            {
-                new() { IsCalculatingSingle = siteStatus }
-            }
+            SiteMatch = [new SiteMatch { IsCalculatingSingle = siteStatus }]
         };
 
         var result = service.IsCalculating(match.IsCalculatingSingle, match.SiteMatch.Select(i => i.IsCalculatingSingle).ToList());
@@ -123,15 +109,15 @@ public class SiteMatchServiceTests
             IsExistFastMarket = mainIsExistFastMarket,
             IsRunningFastMarket = mainIsRunningFastMarket,
             IsExistFastMarketResult = mainIsExistFastMarketResult,
-            SiteMatch = new List<SiteMatch>
-            {
-                new()
+            SiteMatch =
+            [
+                new SiteMatch
                 {
                     IsExistFastMarket = siteIsExistFastMarket,
                     IsRunningFastMarket = siteIsRunningFastMarket,
                     IsExistFastMarketResult = siteIsExistFastMarketResult
                 }
-            }
+            ]
         };
 
         var result = service.FastMarketStatus(match);
@@ -148,10 +134,7 @@ public class SiteMatchServiceTests
         var match = new Models.Calculation.Match
         {
             IsExistFgLg = main,
-            SiteMatch = new List<SiteMatch>
-            {
-                new () { IsExistFgLg = site }
-            }
+            SiteMatch = [new SiteMatch { IsExistFgLg = site }]
         };
 
         var result = service.IsExistFgLg(match);
@@ -168,10 +151,7 @@ public class SiteMatchServiceTests
         var match = new Models.Calculation.Match
         {
             IsExistHtFgLg = main,
-            SiteMatch = new List<SiteMatch>
-            {
-                new () { IsExistHtFgLg = site }
-            }
+            SiteMatch = [new SiteMatch { IsExistHtFgLg = site }]
         };
 
         var result = service.IsExistHtFgLg(match);

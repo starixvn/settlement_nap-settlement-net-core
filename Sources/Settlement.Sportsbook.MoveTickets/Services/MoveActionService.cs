@@ -2,7 +2,6 @@
 
 namespace Settlement.Sportsbook.MoveTickets.Services;
 
-using Core.Constants;
 using Criteria;
 using Fanex.Data.Repository;
 using Fanex.NAP.Client.Helpers.Web;
@@ -10,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Models;
 using Requests;
+using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 
@@ -18,13 +18,15 @@ public interface MoveActionService
     Task<Result> MoveTicket(MoveTicketRequest request);
 }
 
-public class MoveActionServiceImp : MoveActionService
+public class MoveActionServiceImp(
+    IDynamicRepository repository,
+    INapSession currentSession,
+    IHttpContextAccessor accessor,
+    LogService logService,
+    IOptions<AppSettingsKey> appSettingsKey)
+    : MoveActionService
 {
-    private readonly IDynamicRepository repository;
-    private readonly INapSession currentSession;
-    private readonly IHttpContextAccessor accessor;
-    private readonly LogService logService;
-    private readonly AppSettingsKey appSettingsKey;
+    private readonly AppSettingsKey appSettingsKey = appSettingsKey.Value;
 
     private const string NotExistValidTicketToMove =
         "WARNING! Cannot continue due to current has no valid ticket to move.";
@@ -32,20 +34,6 @@ public class MoveActionServiceImp : MoveActionService
     private const int NotExistValidTicketToMoveCode = 1_001_049;
     private const int ActionIdMoveTicketFailed = 81026;
     private const int ActionIdMoveTicket = 81025;
-
-    public MoveActionServiceImp(
-        IDynamicRepository repository,
-        INapSession currentSession,
-        IHttpContextAccessor accessor,
-        LogService logService,
-        IOptions<AppSettingsKey> appSettingsKey)
-    {
-        this.repository = repository;
-        this.currentSession = currentSession;
-        this.accessor = accessor;
-        this.logService = logService;
-        this.appSettingsKey = appSettingsKey.Value;
-    }
 
     public async Task<Result> MoveTicket(MoveTicketRequest request)
     {

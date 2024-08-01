@@ -6,7 +6,6 @@ import { CalculateMatchDetailComponent } from './calculate-match-detail.componen
 import { HttpClientModule } from '@angular/common/http';
 import { HttpRequestService, BlockUIService, MessageBoxService, AioService, ClosePopupService } from '../../shared/services';
 import { Match } from '../models';
-import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { MatchDetail } from '../../shared/models/sportsbook-sop';
 import { MatDialog } from '@angular/material/dialog';
 import { LeagueOutsideSource } from '../../score-source-setting/models';

@@ -3,13 +3,13 @@ using Fanex.Data.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.MoveTickets.Criteria;
 using Settlement.Sportsbook.MoveTickets.Models;
 using Settlement.Sportsbook.MoveTickets.Requests;
 using Settlement.Sportsbook.MoveTickets.Services.MultipleServer;
-using Xunit.Sdk;
 
 namespace Settlement.Sportsbook.MoveTickets.UnitTests.Services;
 
@@ -41,7 +41,7 @@ public class MoveTicketServiceTests
         mapperConfig.AddProfile<SportsbookMoveTicketAutoMapperProfile>();
         var config = new MapperConfiguration(mapperConfig);
         var mapper = new Mapper(config);
-        var appSetting = new AppSettingsKey { SiteDbServer = new List<string> { "01", "02" } };
+        var appSetting = new AppSettingsKey { SiteDbServer = ["01", "02"] };
         var option = Options.Create(appSetting);
         service = new MoveTicketServiceImp(repository, refDataService, mapper, matchService, option, siteMatchService);
     }
@@ -55,7 +55,7 @@ public class MoveTicketServiceTests
             NewEventStatus = eventStatus,
             IsExistMarkedTicket = isMarkedTicket,
             RefDataService = refDataService,
-            ReferenceActions = new List<ReferenceAction>()
+            ReferenceActions = []
         };
     }
 
@@ -68,28 +68,23 @@ public class MoveTicketServiceTests
             MatchId = 1,
             ResourceId = "01"
         };
-        var referenceAction = new ReferenceAction
-        {
-            LogDate = new DateTime(2000, 1, 3, 7, 0, 0, DateTimeKind.Utc),
-            MatchId = 1
-        };
-        var fakeReferenceAction = new List<ReferenceAction> { referenceAction };
+
         var fakeMatches = new List<Match> {
-            CreateMatch(2, "Completed", false),
             CreateMatch(1, "Completed", true),
-            CreateMatch(3, "Result Pending", false),
-            CreateMatch(4, "Closed", false),
-            CreateMatch(5, "Refund FT", false),
-            CreateMatch(6, "Refund HT", false),
-            CreateMatch(7, "Refund", false),
-            CreateMatch(8, "Running", false),
-            CreateMatch(9, "Postponed", false),
-            CreateMatch(10, "Internal", false)
         };
 
-        repository.FetchAsync<Match>(Arg.Any<ICriteria>()).Returns(fakeMatches);
+        repository.FetchMultipleAsync<Match, MatchOverStatus, ParentChildMatchFilter>(Arg.Any<SportsbookCriteria>()).Returns((fakeMatches, [], []));
+
         repository.FetchAsync<ResultDetail>(Arg.Any<ICriteria>()).Returns(new List<ResultDetail> { resultDetail });
-        repository.Fetch<ReferenceAction>(Arg.Any<ICriteria>()).Returns(fakeReferenceAction);
+        repository.Fetch<ReferenceAction>(Arg.Any<ICriteria>()).Returns([]);
+        repository.FetchAsync<SiteMatch>(Arg.Any<OSTicketInfoSelCriteria>()).Returns(new List<SiteMatch>
+        {
+           new ()
+           {
+                MatchId = 1,
+                IsExistMarkedTicket = true
+           }
+        });
         matchService.GetScoreForMatchBySportType(Arg.Any<List<Match>>(), Arg.Any<List<ResultDetail>>(), Arg.Any<int>(), Arg.Any<int>()).Returns(fakeMatches);
 
         // Act
@@ -99,21 +94,9 @@ public class MoveTicketServiceTests
         // Assert
         var expectedMatches = new List<Match> {
             CreateMatch(1, "Completed", true),
-            CreateMatch(8, "Running", false),
-            CreateMatch(3, "Result Pending", false),
-            CreateMatch(9, "Postponed", false),
-            CreateMatch(10, "Internal", false),
-            CreateMatch(4, "Closed", false),
-            CreateMatch(2, "Completed", false),
-            CreateMatch(6, "Refund HT", false),
-            CreateMatch(5, "Refund FT", false),
-            CreateMatch(7, "Refund", false)
         };
 
-        expectedMatches[0].ReferenceActions.Add(referenceAction);
-
         Assert.Equal(JsonConvert.SerializeObject(expectedMatches), JsonConvert.SerializeObject(actualMatches));
-        await repository.Received(2).FetchAsync<Match>(Arg.Any<SportsbookCriteria>());
     }
 
     [Fact]

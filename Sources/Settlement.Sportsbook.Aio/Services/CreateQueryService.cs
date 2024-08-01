@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
+using Settlement.Sportsbook.Aio.Constants;
 using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Requests;
@@ -28,31 +29,14 @@ public interface ICreateQueryService
     void WriteLogChildMatch(SettleCriteria criteria, Result result);
 }
 
-public class CreateQueryServiceImp : ICreateQueryService
+public class CreateQueryServiceImp(
+    XmlConvertService xmlConvertService,
+    INapSession currentSession,
+    IHttpContextAccessor accessor,
+    IMapper mapper,
+    LogService logService)
+    : ICreateQueryService
 {
-    private readonly XmlConvertService xmlConvertService;
-
-    private readonly INapSession currentSession;
-
-    private readonly IHttpContextAccessor accessor;
-
-    private readonly IMapper mapper;
-
-    private readonly LogService logService;
-
-    public CreateQueryServiceImp(XmlConvertService xmlConvertService,
-                                INapSession currentSession,
-                                IHttpContextAccessor accessor,
-                                IMapper mapper,
-                                LogService logService)
-    {
-        this.xmlConvertService = xmlConvertService;
-        this.currentSession = currentSession;
-        this.accessor = accessor;
-        this.mapper = mapper;
-        this.logService = logService;
-    }
-
     public SettleCriteria QuerySettle(SettleRequest request)
     {
         var resourcesResult = CreateResources(request.SelectedResources);
@@ -60,7 +44,27 @@ public class CreateQueryServiceImp : ICreateQueryService
         criteria.AdminId = currentSession.UserId;
         criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
         criteria.SelectedResources = resourcesResult;
+        criteria.RemarkInfo = CreateSettleRelatedRemarkInfo(request);
         return criteria;
+    }
+
+    private static string CreateSettleRelatedRemarkInfo(SettleRequest request)
+    {
+        var name = (request.SportType, request.ActionName, request.ParentId) switch
+        {
+            (SportType.Tennis, SettleType.Calculate, 0) => "RefundRelated",
+            (SportType.Tennis, SettleType.Refund, 0) => "RefundRelated",
+            (SportType.TableTennis, SettleType.Calculate, 0) => "calcRelated",
+            (SportType.TableTennis, SettleType.Refund, 0) => "RefundRelated",
+            _ => string.Empty
+        };
+
+        if (string.IsNullOrEmpty(name))
+        {
+            return string.Empty;
+        }
+
+        return $"""<r n="{name}" v="{(request.IsSettleRelated ? 1 : 0)}"/>""";
     }
 
     public SettleCriteria QuerySettleChildMatch(SettleChildMatchRequest request)
@@ -70,12 +74,23 @@ public class CreateQueryServiceImp : ICreateQueryService
         criteria.AdminId = currentSession.UserId;
         criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
         criteria.SelectedResources = resourcesResult;
-        criteria.IsChildMatch = true;  //auto set
+        criteria.IsChildMatch = true;
         criteria.BroadcastSessionId = request.SportType == SportType.Cricket
             ? request.ParentSessionId
             : criteria.BroadcastSessionId;
+        criteria.RemarkInfo = CreateChildMatchRemarkInfo(request);
 
         return criteria;
+    }
+
+    private static string CreateChildMatchRemarkInfo(SettleChildMatchRequest request)
+    {
+        if (request.SportType == SportType.TableTennis && request.ParentMatchId != 0)
+        {
+            return $"""<r n="parentID" v="{request.ParentMatchId}"/>""";
+        }
+
+        return string.Empty;
     }
 
     public string CreateResources<T>(List<T> selectedResources)
@@ -102,7 +117,7 @@ public class CreateQueryServiceImp : ICreateQueryService
     {
         var resource = new Resources<ResourceItem>
         {
-            ResourceItems = new List<ResourceItem> { mapper.Map<ChildMatchModel, ResourceItem>(childMatch) }
+            ResourceItems = [mapper.Map<ChildMatchModel, ResourceItem>(childMatch)]
         };
 
         return xmlConvertService.Serialize(resource);

@@ -7,25 +7,38 @@ import { Language } from '../language.native';
     standalone: true
 })
 export class ScoreBySettlementPipe implements PipeTransform {
-    public transform(score: string, settlementStatusId: number = -1) {
-        switch (settlementStatusId) {
-            case SettlementStatusId.Running: 
-            case SettlementStatusId.Calculated:
-                return score === null || score === '' ? '-' : score;
+    private readonly refundSymbolMap: Record<number, string> = {
+        [SettlementStatusId.RefundHalfTime]: Language.RefundSymbol.HalfTime,
+        [SettlementStatusId.RefundFullTime]: Language.RefundSymbol.FullTime,
+        [SettlementStatusId.Refund]: Language.RefundSymbol.All,
+      };
 
-            case SettlementStatusId.Refund:
-                return Language.RefundSymbol.All;
-            case SettlementStatusId.RefundSettleDetermined:
-                return score === null || score === "" ? Language.RefundSymbol.All : score;
-
-            case SettlementStatusId.RefundHalfTime:
-                return Language.RefundSymbol.HalfTime;
-
-            case SettlementStatusId.RefundFullTime:
-                return Language.RefundSymbol.FullTime;
-
-            default:
-                return '-';
+    public transform(score: string, settlementStatusId = -1) {
+        const refundSymbol = this.refundSymbolMap[settlementStatusId];
+        if (refundSymbol) {
+          return refundSymbol;
         }
+        
+        if (this.isRunningOrCalculatedStatus(settlementStatusId)) {
+            return this.getScoreOrDash(score);
+        }
+
+        if (settlementStatusId === SettlementStatusId.RefundSettleDetermined) {
+            return this.getScoreOrRefundSymbol(score);
+        }
+
+        return '-';
+    }
+
+    private isRunningOrCalculatedStatus(statusId: number) {
+        return statusId === SettlementStatusId.Running || statusId === SettlementStatusId.Calculated;
+    }
+
+    private getScoreOrDash(score: string) {
+        return score === null || score === '' ? '-' : score;
+    }
+
+    private getScoreOrRefundSymbol(score: string) {
+        return score === null || score === "" ? Language.RefundSymbol.All : score;
     }
 }

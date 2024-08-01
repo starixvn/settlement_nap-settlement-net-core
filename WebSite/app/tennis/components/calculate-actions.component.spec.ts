@@ -29,7 +29,7 @@ import { ResultSettingModel } from '../../shared/models';
 import { ExternalSourceNamePipe } from '../../shared/pipes/external-source-name.pipe';
 import { ResultByTeamNamePipe } from '../../shared/pipes/result-by-team-name.pipe';
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
-import { ToastContainerDirective, ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
+import { ToastContainerDirective, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 import { CalculateMatchDetailComponent } from './calculate-match-detail.component';
 import { Language } from '../../shared/language.native';
 
@@ -106,7 +106,6 @@ describe('Tennis - Calculate actions component', () => {
         NgbModule,
         MaterialModule,
         ToastNoAnimationModule.forRoot(),
-        ToastContainerModule,
         ToastrModule.forRoot()
       ],
     })

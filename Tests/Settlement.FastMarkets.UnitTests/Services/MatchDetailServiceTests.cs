@@ -9,7 +9,7 @@ using MatchDetail = Settlement.FastMarkets.Models.MatchDetail;
 
 namespace Settlement.FastMarkets.UnitTests.Services;
 
-using Core.Services.SpecificService;
+using Settlement.Core.Services.SpecificService;
 
 public class MatchDetailServiceTests
 {

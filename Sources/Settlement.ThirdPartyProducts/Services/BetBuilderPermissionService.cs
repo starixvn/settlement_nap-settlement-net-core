@@ -1,32 +1,19 @@
 ﻿using Fanex.NAP.Client.Configuration;
 using Fanex.NAP.Client.Helpers.Web;
 using Fanex.NAP.Client.Services;
+using Settlement.Core.Configurations;
 using Settlement.Core.Models;
 
 namespace Settlement.ThirdPartyProducts.Services;
-
-using Core.Configurations;
 
 public interface PermissionService
 {
     public Permission Permission { get; }
 }
 
-public class BetBuilderPermissionServiceImp : PermissionService
+public class BetBuilderPermissionServiceImp(INapSession session, IUserService userService, INapSettings siteSettings)
+    : PermissionService
 {
-    private readonly INapSession session;
-
-    private readonly IUserService userService;
-
-    private readonly INapSettings siteSettings;
-
-    public BetBuilderPermissionServiceImp(INapSession session, IUserService userService, INapSettings siteSettings)
-    {
-        this.session = session;
-        this.userService = userService;
-        this.siteSettings = siteSettings;
-    }
-
     public Permission Permission => new()
     {
         CanCalculate = HasPermission(SettlementFunctionKeys.BetBuilder, Constant.Policy.Host),

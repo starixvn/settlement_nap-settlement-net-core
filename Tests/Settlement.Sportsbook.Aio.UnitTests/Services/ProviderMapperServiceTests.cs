@@ -5,12 +5,7 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services;
 
 public class ProviderMapperServiceTests
 {
-    private readonly ProviderMapperService service;
-
-    public ProviderMapperServiceTests()
-    {
-        service = new ProviderMapperService();
-    }
+    private readonly ProviderMapperService service = new();
 
     [Fact]
     public void Decorate_Always_FetchCorrectResultsAndGroupThem()
@@ -21,7 +16,7 @@ public class ProviderMapperServiceTests
             new(),
             new()
         };
-        var input = new Tuple<List<ExternalResultDetailModel>, List<ExternalResultModel>>(fakeList, new List<ExternalResultModel>());
+        var input = new Tuple<List<ExternalResultDetailModel>, List<ExternalResultModel>>(fakeList, []);
 
         service.Decorate(input);
 

@@ -8,15 +8,9 @@ public interface IEventCounterElementService
     List<EventCounterElement> GetEventCounters(List<EventCounter> eventCounters);
 }
 
-public class EventCounterElementServiceImp : IEventCounterElementService
+public class EventCounterElementServiceImp(IEventCounterResultService eventCounterResultService)
+    : IEventCounterElementService
 {
-    private readonly IEventCounterResultService eventCounterResultService;
-
-    public EventCounterElementServiceImp(IEventCounterResultService eventCounterResultService)
-    {
-        this.eventCounterResultService = eventCounterResultService;
-    }
-
     public List<EventCounterElement> GetEventCounters(List<EventCounter> eventCounters)
     {
         var eventCountersElement = new List<EventCounterElement>();

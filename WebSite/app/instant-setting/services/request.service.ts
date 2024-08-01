@@ -1,16 +1,15 @@
 ﻿import * as _ from 'lodash';
 import { Injectable } from '@angular/core';
 import { HttpRequestService } from '../../shared/services';
-import { Observable, firstValueFrom } from 'rxjs';
-import { TimeSettingQuery, GetRemarkQuery, ChangeSettingQuery, RemarkAndPermission } from '../models';
+import { firstValueFrom } from 'rxjs';
+import { TimeSettingQuery, GetRemarkQuery, ChangeSettingQuery, RemarkAndPermission, ChangeHoldMatchSettingQuery } from '../models';
 import { AutoSettingLeagueQuery, AutoSettingMatchQuery, Result } from '../../shared/models';
-import { SettingType } from '../constants';
 import { LeagueSettings, ProviderSource, ResultSettings } from '../../shared/models/league-settings.model';
 
 @Injectable()
 export class RequestService {
-    private settingApi = '/api/setting';
-    private leagueSettingApi = '/api/league-settings'
+    private readonly settingApi = '/api/setting';
+    private readonly leagueSettingApi = '/api/league-settings'
     constructor(private readonly httpRequestService: HttpRequestService) {
     }
 
@@ -23,7 +22,7 @@ export class RequestService {
         return firstValueFrom(request);
     }
 
-    public changeHoldMatchSetting(param: any): Promise<RemarkAndPermission> {
+    public changeHoldMatchSetting(param: ChangeHoldMatchSettingQuery): Promise<RemarkAndPermission> {
        const request = this.httpRequestService.postJson<RemarkAndPermission>(param, `${this.settingApi}/update-holdmatch-setting`);
 
        return firstValueFrom(request);
@@ -62,7 +61,7 @@ export class RequestService {
         this.modifyLeagueSettingsQuery(oldSettings);
         this.modifyLeagueSettingsQuery(newSettings);
 
-        let query = {
+        const query = {
             oldSettings,
             newSettings,
             isApplyAll
@@ -87,7 +86,7 @@ export class RequestService {
     }
 
     private parseProvider(providerNames: string, providers: ProviderSource[]): string {
-        let listNames = providerNames.split(', ');
+        const listNames = providerNames.split(', ');
         return providers.filter(p => listNames.indexOf(p.sourceName) !== -1).map(p => p.sourceId).join(',');
     }
 }

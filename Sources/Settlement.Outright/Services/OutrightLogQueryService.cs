@@ -12,15 +12,8 @@ public interface OutrightLogQueryService
     Task<IEnumerable<OutrightLogDetail>> GetOutrightLogDetails(GetOutrightLogDetailCriteria criteria);
 }
 
-public class OutrightLogQueryServiceImp : OutrightLogQueryService
+public class OutrightLogQueryServiceImp(IDynamicRepository repository) : OutrightLogQueryService
 {
-    private readonly IDynamicRepository repository;
-
-    public OutrightLogQueryServiceImp(IDynamicRepository repository)
-    {
-        this.repository = repository;
-    }
-
     public async Task<OutrightLog> GetOutrightLog(GetLogRequest request)
     {
         var criteria = new GetOutrightLogCriteria

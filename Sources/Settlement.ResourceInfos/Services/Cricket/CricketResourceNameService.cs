@@ -6,31 +6,26 @@ namespace Settlement.ResourceInfos.Services.Cricket;
 
 public class CricketResourceNameService : IMapperService
 {
-    private readonly IResourceNameService betTypeNameService;
+    private readonly IResourceNameService betTypeNameService = new ResourceNameService();
     private const int InnsBetTypeMinLength = 5;
     private const int ResourceMainLength = 2;
 
-    public CricketResourceNameService()
-    {
-        betTypeNameService = new ResourceNameService();
-    }
-
     public (string, string) GetResourceName(string resourceId, int sportType)
     {
-        if (resourceId.Length == ResourceMainLength)
+        switch (resourceId.Length)
         {
-            return (resourceId, GetResourceMain(resourceId));
-        }
-
-        if (resourceId.Length < InnsBetTypeMinLength)
-        {
-            var betTypeId = Convert.ToInt32(resourceId);
-            return (betTypeId.ToString(), betTypeNameService.GetNonInnsBetTypeName(betTypeId));
-        }
-        else
-        {
-            var betTypeId = SplitBetType(resourceId, 0, 4);
-            return (betTypeId.ToString(), betTypeNameService.GetInnsBetTypeName(betTypeId, resourceId));
+            case ResourceMainLength:
+                return (resourceId, GetResourceMain(resourceId));
+            case < InnsBetTypeMinLength:
+            {
+                var betTypeId = Convert.ToInt32(resourceId);
+                return (betTypeId.ToString(), betTypeNameService.GetNonInnsBetTypeName(betTypeId));
+            }
+            default:
+            {
+                var betTypeId = SplitBetType(resourceId, 0, 4);
+                return (betTypeId.ToString(), betTypeNameService.GetInnsBetTypeName(betTypeId, resourceId));
+            }
         }
     }
 

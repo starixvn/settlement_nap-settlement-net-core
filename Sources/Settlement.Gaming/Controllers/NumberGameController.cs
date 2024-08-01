@@ -6,15 +6,8 @@ namespace Settlement.Gaming.Controllers;
 
 [ApiController]
 [Route("api/number-game")]
-public class NumberGameController : ControllerBase
+public class NumberGameController(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator mediator;
-
-    public NumberGameController(IMediator mediator)
-    {
-        this.mediator = mediator;
-    }
-
     [Route("filter-default"), HttpGet]
     public async Task<IActionResult> Filter() => Ok
     (

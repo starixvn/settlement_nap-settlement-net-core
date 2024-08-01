@@ -1,7 +1,6 @@
 ﻿namespace Settlement.Sportsbook.Soccer.Services.GetMatch;
 
 using AutoMapper;
-using Core.Services.SpecificService;
 using Criteria;
 using Fanex.Data.Repository;
 using Models;
@@ -9,6 +8,7 @@ using Requests;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
+using Settlement.Core.Services.SpecificService;
 using Match = Models.Match;
 using MatchDetail = Models.MatchDetail;
 
@@ -155,7 +155,7 @@ public class MatchServiceImp(
 
     private async Task<List<ResultDetail>> GetResultDetail(int matchId)
     {
-        var resultDetailCriteria = new GetResultDetailCriteria { MatchidList = matchId.ToString() };
+        var resultDetailCriteria = new GetResultDetailCriteria { MatchIdList = matchId.ToString() };
         return (await repository.FetchAsync<ResultDetail>(resultDetailCriteria)).ToList();
     }
 

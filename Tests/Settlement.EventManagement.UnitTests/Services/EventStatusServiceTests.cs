@@ -6,12 +6,7 @@ namespace Settlement.EventManagement.UnitTests.Services;
 
 public class EventStatusServiceTests
 {
-    private readonly EventStatusService service;
-
-    public EventStatusServiceTests()
-    {
-        service = new EventStatusServiceImp();
-    }
+    private readonly EventStatusService service = new EventStatusServiceImp();
 
     [Theory]
     [InlineData(2, EventStatus.Running, 1, EventStatus.IrregularTime1H)]

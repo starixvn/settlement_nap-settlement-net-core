@@ -59,7 +59,7 @@ public class CreateCriteriaServiceTests
         };
 
         resourceService.HalftimeResources(Arg.Any<GoalCondition>(), Arg.Any<int>())
-            .Returns(new List<XmlResource> { new() });
+            .Returns([new XmlResource()]);
 
         // Act
         service.CreateCalculateCriteria(query);
@@ -82,7 +82,7 @@ public class CreateCriteriaServiceTests
             GoalRecord = "AH",
             ActionName = ActionType.CalculateFullTime
         };
-        resourceService.FullTimeResources(Arg.Any<GoalCondition>(), Arg.Any<int>()).Returns(new List<XmlResource> { new() });
+        resourceService.FullTimeResources(Arg.Any<GoalCondition>(), Arg.Any<int>()).Returns([new XmlResource()]);
 
         // Act
         service.CreateCalculateCriteria(query);
@@ -105,7 +105,7 @@ public class CreateCriteriaServiceTests
             GoalRecord = "AH",
             ActionName = ActionType.CalculateAll
         };
-        resourceService.AllResources(Arg.Any<GoalCondition>(), Arg.Any<int>()).Returns(new List<XmlResource> { new() });
+        resourceService.AllResources(Arg.Any<GoalCondition>(), Arg.Any<int>()).Returns([new XmlResource()]);
 
         // Act
         service.CreateCalculateCriteria(query);
@@ -128,7 +128,7 @@ public class CreateCriteriaServiceTests
             ActionName = ActionType.RefundFullTime,
             IsSettleAbandonedMatchIbc = true
         };
-        resourceService.FullTimeResourcesSettleDetermined(Arg.Any<GoalCondition>()).Returns(new List<XmlResource> { new() });
+        resourceService.FullTimeResourcesSettleDetermined(Arg.Any<GoalCondition>()).Returns([new XmlResource()]);
 
         // Act
         service.CreateRefundCriteria(query);
@@ -147,7 +147,7 @@ public class CreateCriteriaServiceTests
     {
         // Arrange
         var query = new RefundRequest { ActionName = ActionType.RefundAll, BetStatus = "123" };
-        resourceService.AllResources(Arg.Any<GoalCondition>(), Arg.Any<int>()).Returns(new List<XmlResource> { new() });
+        resourceService.AllResources(Arg.Any<GoalCondition>(), Arg.Any<int>()).Returns([new XmlResource()]);
 
         // Act
         var criteria = service.CreateRefundCriteria(query);
@@ -173,7 +173,7 @@ public class CreateCriteriaServiceTests
             HalfTimeAwayScore = 1,
             HalfTimeHomeScore = 2
         };
-        resourceService.AllResourcesSettleDetermined(Arg.Any<GoalCondition>()).Returns(new List<XmlResource> { new() });
+        resourceService.AllResourcesSettleDetermined(Arg.Any<GoalCondition>()).Returns([new XmlResource()]);
 
         // Act
         var criteria = service.CreateRefundCriteria(query);
@@ -200,7 +200,7 @@ public class CreateCriteriaServiceTests
             HalfTimeAwayScore = 1,
             HalfTimeHomeScore = 2
         };
-        resourceService.FullTimeResources(Arg.Any<GoalCondition>(), Arg.Any<int>()).Returns(new List<XmlResource> { new() });
+        resourceService.FullTimeResources(Arg.Any<GoalCondition>(), Arg.Any<int>()).Returns([new XmlResource()]);
 
         // Act
         var criteria = service.CreateRefundCriteria(query);
@@ -228,7 +228,7 @@ public class CreateCriteriaServiceTests
             HalfTimeAwayScore = 1,
             HalfTimeHomeScore = 2
         };
-        resourceService.HalftimeResources(Arg.Any<GoalCondition>(), Arg.Any<int>()).Returns(new List<XmlResource> { new() });
+        resourceService.HalftimeResources(Arg.Any<GoalCondition>(), Arg.Any<int>()).Returns([new XmlResource()]);
 
         // Act
         var criteria = service.CreateRefundCriteria(query);
@@ -264,7 +264,7 @@ public class CreateCriteriaServiceTests
         };
         matchService.GetMatchGoalRecord(Arg.Any<int>()).Returns(new MatchGoalRecordModel { BetStatus = "", GoalRecord = currentGoalRecord });
         soccerBetStatusService.CreateBetStatusAfterUncalculateFt(Arg.Any<UncalculateFtRequest>(), "", Arg.Any<string>()).Returns("");
-        resourceService.UnCalculateFtResources(Arg.Any<string>()).Returns(new List<XmlResource>());
+        resourceService.UnCalculateFtResources(Arg.Any<string>()).Returns([]);
 
         var criteria = service.CreateUnCalculateFtCriteria(request);
 
@@ -288,7 +288,7 @@ public class CreateCriteriaServiceTests
         matchService.GetMatchGoalRecord(Arg.Any<int>()).Returns(new MatchGoalRecordModel { BetStatus = "", GoalRecord = "HA" });
         soccerBetStatusService.CreateBetStatusAfterUncalculateFt(Arg.Any<UncalculateFtRequest>(), "", Arg.Any<string>())
             .Returns("");
-        resourceService.UnCalculateFtResources(Arg.Any<string>()).Returns(new List<XmlResource>());
+        resourceService.UnCalculateFtResources(Arg.Any<string>()).Returns([]);
 
         var criteria = service.CreateUnCalculateFtCriteria(request);
 

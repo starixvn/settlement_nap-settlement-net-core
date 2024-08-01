@@ -1,7 +1,7 @@
 import { HttpClientModule } from "@angular/common/http";
 import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from "@angular/core/testing";
 import { NgbModal, NgbModule } from "@ng-bootstrap/ng-bootstrap";
-import { ToastContainerDirective, ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from "ngx-toastr";
+import { ToastContainerDirective, ToastNoAnimationModule, ToastrModule, ToastrService } from "ngx-toastr";
 import { ResourceItem, ResultSettingModel, ResultSettingQuery } from "../../models";
 import { ResultDetail } from "../../models/sportsbook-sop/result-detail.model";
 import { ResultSettingType, SettlementStatusId, SportType, TicketStatusText } from "../../constants";
@@ -46,7 +46,6 @@ describe("Refund Base Component", () => {
                 HttpClientModule,
                 NgbModule,
                 ToastNoAnimationModule.forRoot(),
-                ToastContainerModule,
                 ToastrModule.forRoot()],
         })
             .compileComponents()

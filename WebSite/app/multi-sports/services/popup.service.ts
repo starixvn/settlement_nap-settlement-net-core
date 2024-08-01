@@ -1,11 +1,9 @@
 import { AutoSettingPosition } from "./../constants/change-setting-type.native";
-import { ChangeDetectorRef, Injectable } from "@angular/core";
+import { Injectable } from "@angular/core";
 import {
   PopupProperties,
   Match,
-  SportMatch,
   LeagueMatch,
-  AutoCalcSetting,
 } from "./../models";
 import { DialogBoxService } from "./../../shared/services";
 import { AutoSetting, DialogDataIframe } from "./../../shared/models";
@@ -36,6 +34,7 @@ export class PopupService {
     SportType.basketBall,
     SportType.cricket,
     SportType.volleyBall,
+    SportType.tableTennis
   ];
   public properties = new PopupProperties();
   constructor(
@@ -57,12 +56,11 @@ export class PopupService {
     this.setPopupSize(match.sportType);
 
     if (this.listNewSport.includes(match.sportType)) {
-      let sportName = PopularSports.get(match.sportType);
+      const sportName = PopularSports.get(match.sportType);
       this.properties.src = `/apps/${sportName}-recalculate?matchId=${match.matchId}&sportType=${match.sportType}`;
     } else {
       this.properties.src = `/apps/other-sports-recalculate?matchId=${match.matchId}&sportType=${match.sportType}`;
     }
-
     this.openAndHandlePopup(this.properties, match, state$);
   }
 
@@ -71,7 +69,7 @@ export class PopupService {
     this.setPopupRefundSize(match.sportType);
 
     if (_.includes(this.listNewSport, match.sportType)) {
-      let sportName = PopularSports.get(match.sportType);
+      const sportName = PopularSports.get(match.sportType);
       this.properties.src = `/apps/${sportName}-refund?matchId=${match.matchId}&sportType=${match.sportType}`;
     } else {
       this.properties.src = `/apps/other-sports-refund?matchId=${match.matchId}&sportType=${match.sportType}`;
@@ -82,7 +80,7 @@ export class PopupService {
 
   public popupEarly(match: Match, state$: BehaviorSubject<MatchState>) {
     this.properties.title = Language.EarlyPopupTitle;
-    let sportName = PopularSports.get(match.sportType);
+    const sportName = PopularSports.get(match.sportType);
     this.properties.src = `/apps/${sportName}-early?matchId=${match.matchId}&sportType=${match.sportType}`;
     this.properties.width =
       match.sportType === SportType.cricket
@@ -149,7 +147,7 @@ export class PopupService {
 
   private setPopupSize(sportType: number) {
     const groupOne = [SportType.badminton, SportType.eSports];
-    const groupTwo = [SportType.beachVolleyball, SportType.volleyBall];
+    const groupTwo = [SportType.beachVolleyball, SportType.volleyBall,SportType.tableTennis];
     if (_.includes(groupOne, sportType)) {
       this.properties.width = "1091px";
       this.properties.height = "760px";
@@ -267,18 +265,18 @@ export class PopupService {
         if (_.isNil(result)) {
           return;
         }
-        const setting = Object.assign(new LeagueAutoSettings(), JSON.parse(result));
+        const leagueSettings = Object.assign(new LeagueAutoSettings(), JSON.parse(result));
         this.applyNewSetting(
           league.autoCalcSetting,
-          setting.autoSetting.toString(),
+          leagueSettings.autoSetting.toString(),
           false,
           true
         );
 
-        league.autoWaitingTime = setting.waitingTime;
-        league.refundWaitingTime = setting.refundWaitingTime;
-        league.autoRetryTime = setting.retryTime;
-        if (setting.isApplyAll) {
+        league.autoWaitingTime = leagueSettings.waitingTime;
+        league.autoRetryTime = leagueSettings.retryTime;
+        league.refundWaitingTime = leagueSettings.refundWaitingTime;
+        if (leagueSettings.isApplyAll) {
           this.affectAutoPayoutForMatch(league);
           triggerRerender();
         }

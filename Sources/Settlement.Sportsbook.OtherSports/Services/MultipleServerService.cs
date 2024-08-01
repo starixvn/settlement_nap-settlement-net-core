@@ -25,30 +25,16 @@ public interface MultipleServerService
     Task<Result> Calculate(CalculateCriteria calculateCriteria, ScoreSetModel score);
 }
 
-public class MultipleServerServiceImp : MultipleServerService
+public class MultipleServerServiceImp(
+    IDynamicRepository repository,
+    IOptions<AppSettingsKey> appSettingsKey,
+    MergeDataService mergeDataService,
+    ScaleOutSettleService scaleOutSettleService,
+    LogService logService,
+    IMapper mapper)
+    : MultipleServerService
 {
-    private readonly IDynamicRepository repository;
-    private readonly AppSettingsKey appSettingsKey;
-    private readonly MergeDataService mergeDataService;
-    private readonly ScaleOutSettleService scaleOutSettleService;
-    private readonly LogService logService;
-    private readonly IMapper mapper;
-
-    public MultipleServerServiceImp(
-        IDynamicRepository repository,
-        IOptions<AppSettingsKey> appSettingsKey,
-        MergeDataService mergeDataService,
-        ScaleOutSettleService scaleOutSettleService,
-        LogService logService,
-        IMapper mapper)
-    {
-        this.repository = repository;
-        this.appSettingsKey = appSettingsKey.Value;
-        this.mergeDataService = mergeDataService;
-        this.scaleOutSettleService = scaleOutSettleService;
-        this.logService = logService;
-        this.mapper = mapper;
-    }
+    private readonly AppSettingsKey appSettingsKey = appSettingsKey.Value;
 
     public async Task<(MatchDetail, List<TicketCounts>)> GetMatchInfo(GetMatchRequest request)
     {

@@ -37,7 +37,7 @@ describe('QueryService', () => {
       const url = '/api/happy5/search';
       const param = new GetMatchesQuery('700000', '', '2020-01-01', '2020-01-02');
 
-      spyOn(httpRequestService, 'postJson');
+      jest.spyOn(httpRequestService, 'postJson');
       service.search(param);
 
       expect(httpRequestService.postJson).toHaveBeenCalledWith(param, url);
@@ -46,7 +46,7 @@ describe('QueryService', () => {
   it('filter - Call exact Url', fakeAsync(() => {
       const url = '/api/happy5/filter-default';
 
-      spyOn(httpRequestService, 'getJson');
+      jest.spyOn(httpRequestService, 'getJson');
       service.filter();
 
       expect(httpRequestService.getJson).toHaveBeenCalledWith(url);
@@ -56,7 +56,7 @@ describe('QueryService', () => {
       const matchId = 123456;
       const url = `/api/happy5/get-ball?matchId=${matchId}`;
 
-      spyOn(httpRequestService, 'getJson');
+      jest.spyOn(httpRequestService, 'getJson');
       service.getBallsByMatchId(matchId);
 
       expect(httpRequestService.getJson).toHaveBeenCalledWith(url);
@@ -67,7 +67,7 @@ describe('QueryService', () => {
       const balls: Ball[] = [new Ball(700000, 1, 1)];
       const param = new SettleQuery(700000, balls, "");
 
-      spyOn(httpRequestService, 'postJson');
+      jest.spyOn(httpRequestService, 'postJson');
       service.settle(param);
 
       expect(httpRequestService.postJson).toHaveBeenCalledWith(param, url);
@@ -77,7 +77,7 @@ describe('QueryService', () => {
     const listBalls: Ball[] = [];
     listBalls.push(new Ball(12345, 1, 0));
     listBalls.push(new Ball(12345, 2, 10));
-    spyOn(httpRequestService, 'getJson').and.returnValue(of(listBalls));
+    jest.spyOn(httpRequestService, 'getJson').mockReturnValue(of(listBalls));
 
     const actualBalls = await service.getBalls(1) ;
 

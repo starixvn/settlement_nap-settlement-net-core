@@ -6,12 +6,7 @@ namespace Settlement.FastMarkets.UnitTests.Services;
 
 public class MergeDataServiceTests
 {
-    private readonly MergeDataService service;
-
-    public MergeDataServiceTests()
-    {
-        service = new MergeDataServiceImp();
-    }
+    private readonly MergeDataService service = new MergeDataServiceImp();
 
     [Fact]
     public void MergeFastMarketTicketDetail_Always_SumValueTicketDetail()
@@ -72,8 +67,8 @@ public class MergeDataServiceTests
 
         var data = new List<(List<FastMarketResult>, TicketCounts)>
         {
-            (new List<FastMarketResult>(), ticketCount),
-            (new List<FastMarketResult>(), ticketCountSecond)
+            ([], ticketCount),
+            ([], ticketCountSecond)
         };
 
         var result = service.MergeFastMarketTicketDetail(data);

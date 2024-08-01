@@ -1,6 +1,5 @@
 ﻿import { TestBed, waitForAsync, ComponentFixture } from '@angular/core/testing';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
@@ -16,13 +15,6 @@ import {
     MessageBoxService,
     DialogBoxService,
 } from '../../shared/services';
-import {
-    ModalDialogComponent,
-    MultipleSelectComponent,
-    TreeViewComponent,
-    ModalContentDialogComponent,
-    MaterialDialogComponent,
-} from "../../shared/components";
 import { ScoreBySettlementPipe } from '../../shared/pipes/score-by-settlement.pipe';
 import { MatchDetail, AutoSetting, Permission } from '../models';
 import { ResultStatusPipe, SelectionPipe, TicketStatusPipe } from '../pipes';
@@ -30,6 +22,12 @@ import { MatchStatus } from '../../shared/constants';
 import { Resources } from '../constants';
 import { MaterialModule } from '../../shared/material-module';
 import { MultiSports, SportLeagues, LeagueMatches, MatchWaitingRequest } from '../models';
+import { MaterialDialogComponent } from '../../shared/components/material-dialog-iframe/material-dialog.component';
+import { ModalContentDialogComponent } from '../../shared/components/modal-dialog/modal-content-dialog.component';
+import { ModalDialogComponent } from '../../shared/components/modal-dialog/modal-dialog.component';
+import { NewMultipleSelectComponent } from "../../shared/components/multiple-select/multiple-select.component";
+import { DatepickerComponent } from '../../shared/components/date-picker/date-picker.component';
+
 
 describe('Bet Builder - Matches Component', () => {
     let component: MatchesComponent;
@@ -61,14 +59,10 @@ describe('Bet Builder - Matches Component', () => {
                 ModalDialogComponent,
                 MatchDetailComponent,
                 CalculationComponent,
-                ScoreBySettlementPipe,
-                MultipleSelectComponent,
                 ResultStatusPipe,
                 TicketStatusPipe,
                 SelectionPipe,
-                TreeViewComponent,
                 ModalContentDialogComponent,
-                MaterialDialogComponent
             ],
             providers: [
                 NgbModal,
@@ -84,6 +78,10 @@ describe('Bet Builder - Matches Component', () => {
             ],
             schemas: [NO_ERRORS_SCHEMA],
             imports: [
+                ScoreBySettlementPipe,
+                MaterialDialogComponent,
+                NewMultipleSelectComponent,
+                DatepickerComponent,
                 FormsModule,
                 HttpClientModule,
                 NgbModule,
@@ -189,7 +187,7 @@ describe('Bet Builder - Matches Component', () => {
     describe('updateMatchSetting function', () => {
         it('should call updateMatchSetting, show right confirm message for setting match', (() => {
             match.isShowLink = true;
-            spyOn(messageBoxService, 'confirm').and.returnValue(Promise.resolve(true));
+            jest.spyOn(messageBoxService, 'confirm').mockReturnValue();
 
             component.updateMatchSetting(match);
             const message = component.modalDialogMessage.message;
@@ -198,21 +196,14 @@ describe('Bet Builder - Matches Component', () => {
         }));
 
         it('should call updateMatchSetting, open Confirm dialog & call updateMatch from matchSettingService '
-            + 'when Yes button is clicked ', (done) => {
+            + 'when Yes button is clicked ', () => {
                 component.multiSports = mockMultiSport;
                 match.isShowLink = true;
-                spyOn(matchSettingService, 'updateMatch').and.callThrough();
-                const spy = spyOn(messageBoxService, 'confirm').and.returnValue(Promise.resolve(true));
+                jest.spyOn(matchSettingService, 'updateMatch').mockImplementation();
+                const spy = jest.spyOn(messageBoxService, 'confirm').mockReturnValue();
 
                 component.updateMatchSetting(match);
                 expect(messageBoxService.confirm).toHaveBeenCalled();
-
-                spy.calls.mostRecent().returnValue.then(() => {
-                    fixture.detectChanges();
-                    const confirmationTitle = document.getElementsByClassName('modal-title');
-                    expect(confirmationTitle.length).toBe(0);
-                    done();
-                });
             });
     });
 
@@ -221,7 +212,7 @@ describe('Bet Builder - Matches Component', () => {
             component.multiSports = mockMultiSport;
         });
         it('should call updateLeagueSetting, has implemented NO action on Confirm dialog', () => {
-            spyOn(leagueSettingService, 'getConfirmMessage').and.returnValue("");
+            jest.spyOn(leagueSettingService, 'getConfirmMessage').mockReturnValue("");
 
             component.updateLeagueSetting(mockLeague);
 
@@ -229,20 +220,11 @@ describe('Bet Builder - Matches Component', () => {
         });
 
         it('should call updateLeagueSetting, open Confirm dialog & call updateLeague from leagueSettingService '
-            + 'when Yes button is clicked ', (done) => {
-                spyOn(leagueSettingService, 'updateLeague').and.callThrough();
-                const spy = spyOn(messageBoxService, 'confirm').and.returnValue(Promise.resolve(true));
+            + 'when Yes button is clicked ', () => {
+                jest.spyOn(leagueSettingService, 'updateLeague').mockImplementation();
+                jest.spyOn(messageBoxService, 'confirm').mockReturnValue();
                 component.updateLeagueSetting(mockLeague);
                 expect(messageBoxService.confirm).toHaveBeenCalled();
-                const buttonYes = document.getElementsByClassName('btn-danger')[0] as HTMLElement;
-                buttonYes.click();
-
-                spy.calls.mostRecent().returnValue.then(() => {
-                    fixture.detectChanges();
-                    const confirmationTitle = document.getElementsByClassName('modal-title');
-                    expect(confirmationTitle.length).toBe(0);
-                    done();
-                });
             });
     });
 

@@ -1,20 +1,15 @@
 import { TestBed, waitForAsync, ComponentFixture } from '@angular/core/testing';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-import {
-    ModalDialogComponent,
-    ModalContentDialogComponent,
-} from "../../shared/components";
-import { MatchesComponent,
-    ReCalculationComponent,
-    BallsComponent
-} from './index';
+import { ModalDialogComponent } from "../../shared/components/modal-dialog/modal-dialog.component";
+import { ModalContentDialogComponent } from "../../shared/components/modal-dialog/modal-content-dialog.component";
+import { MatchesComponent, ReCalculationComponent, BallsComponent } from './index';
 import { Permission, Leagues, NumberGame, MatchDetail } from '../models';
 import { MaterialModule } from '../../shared/material-module';
 import { PopupService } from '../services/popup.service';
 import { DialogBoxService } from '../../shared/services';
+import { ToastContainerDirective, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 
 describe('NumberGame - Matches Component', () => {
     let component: MatchesComponent;
@@ -29,12 +24,19 @@ describe('NumberGame - Matches Component', () => {
                 BallsComponent,
                 ModalContentDialogComponent,
             ],
-            providers: [PopupService , DialogBoxService],
+            providers: [
+                PopupService , 
+                DialogBoxService,
+                ToastContainerDirective,
+                ToastrService,
+            ],
             imports: [
                 FormsModule,
                 HttpClientModule,
                 NgbModule,
                 MaterialModule,
+                ToastNoAnimationModule.forRoot(),
+                ToastrModule.forRoot()
             ],
         })
             .compileComponents()
@@ -48,19 +50,20 @@ describe('NumberGame - Matches Component', () => {
                 numberGame.leagues = leagues;
                 component.numberGame =  numberGame;
                 component.permission = numberGame.permission;
-
                 popupService = fixture.debugElement.injector.get(PopupService);
             });
     }));
 
     it('should returns true when have permission on Recal', () => {
         const isRecal = component.isRecalculate(true);
+        
         expect(isRecal).toBe(true);
     });
 
     it('should returns false when have not permission on Recal', () => {
         component.permission.canItAdmin = false;
         const isRecal = component.isRecalculate(false);
+        
         expect(isRecal).toBe(false);
     });
 
@@ -82,14 +85,14 @@ describe('NumberGame - Matches Component', () => {
     describe('openPopup function', () => {
         it('should open Popup log when click on link.', () => {
             const matchId = 123;
-            spyOn(popupService, 'popupLog');
+            jest.spyOn(popupService, 'popupLog');
             component.openLog(matchId);
             expect(popupService.popupLog).toHaveBeenCalled();
         });
 
-        it('should open Popup log when click on link.', () => {
+        it('should open Popup Calc when click on link.', () => {
             const match = new MatchDetail();
-            spyOn(popupService, 'popupReCalc');
+            jest.spyOn(popupService, 'popupReCalc');
             component.openReCalc(match);
             expect(popupService.popupReCalc).toHaveBeenCalled();
         });

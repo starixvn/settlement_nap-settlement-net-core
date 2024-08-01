@@ -2,8 +2,8 @@
 using NUnit.Framework;
 using Settlement.CalculationSetting.Controllers;
 using Settlement.CalculationSetting.Requests;
-using Settlement.Core.Models;
-using Settlement.Core.Services;
+using Settlement.Models;
+using Settlement.Services;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 

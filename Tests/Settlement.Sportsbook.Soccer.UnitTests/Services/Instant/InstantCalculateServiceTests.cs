@@ -38,7 +38,7 @@ public class InstantCalculateServiceTests
         mapperConfig.AddProfile<SoccerAutoMapperProfile>();
         var config = new MapperConfiguration(mapperConfig);
         var mapper = new Mapper(config);
-        var appSettings = new AppSettingsKey { SiteDbServer = new List<string> { "DB01", "DB02", "DB03" } };
+        var appSettings = new AppSettingsKey { SiteDbServer = ["DB01", "DB02", "DB03"] };
         var option = Options.Create(appSettings);
 
         service = new InstantCalculateServiceImp(repository, mapper, instantResourceService, option, scaleOutSettleService, pushInstantCalculationService);
@@ -55,7 +55,7 @@ public class InstantCalculateServiceTests
             Action = ActionType.UnCalculate,
             IsHalfTime = false
         };
-        instantResourceService.UnCalculate(Arg.Any<InstantGoalCondition>()).Returns(new List<XmlResource>());
+        instantResourceService.UnCalculate(Arg.Any<InstantGoalCondition>()).Returns([]);
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage { ErrorCode = errorCode, ErrorMessage = errorMsg });
         repository.GetAsync<MatchTicketInfo>(Arg.Any<MatchTicketInfoCriteria>()).Returns(new MatchTicketInfo());
         repository.GetAsync<MatchDetail>(Arg.Any<GetMatchInfoCriteria>()).Returns(new MatchDetail());
@@ -82,7 +82,7 @@ public class InstantCalculateServiceTests
             AwayScore = "1",
             GoalRecord = "AH"
         };
-        instantResourceService.Halftime(Arg.Any<InstantGoalCondition>()).Returns(new List<XmlResource>());
+        instantResourceService.Halftime(Arg.Any<InstantGoalCondition>()).Returns([]);
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage { ErrorCode = errorCode, ErrorMessage = errorMsg });
         repository.GetAsync<MatchTicketInfo>(Arg.Any<MatchTicketInfoCriteria>()).Returns(new MatchTicketInfo { GoalRecord = "AH" });
         repository.GetAsync<MatchDetail>(Arg.Any<GetMatchInfoCriteria>()).Returns(new MatchDetail { GoalRecord = "AH" });
@@ -107,7 +107,7 @@ public class InstantCalculateServiceTests
             Action = ActionType.CalculateFullTime,
             IsHalfTime = false
         };
-        instantResourceService.FullTime(Arg.Any<InstantGoalCondition>()).Returns(new List<XmlResource>());
+        instantResourceService.FullTime(Arg.Any<InstantGoalCondition>()).Returns([]);
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage { ErrorCode = errorCode, ErrorMessage = errorMsg });
         repository.GetAsync<MatchTicketInfo>(Arg.Any<MatchTicketInfoCriteria>()).Returns(new MatchTicketInfo { GoalRecord = "AH" });
         repository.GetAsync<MatchDetail>(Arg.Any<GetMatchInfoCriteria>()).Returns(new MatchDetail { GoalRecord = "AH" });

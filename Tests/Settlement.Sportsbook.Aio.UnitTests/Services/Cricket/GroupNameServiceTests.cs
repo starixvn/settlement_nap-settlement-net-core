@@ -4,12 +4,7 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services.Cricket;
 
 public class GroupNameServiceTests
 {
-    private readonly IGroupNameService service;
-
-    public GroupNameServiceTests()
-    {
-        service = new GroupNameServiceImp();
-    }
+    private readonly IGroupNameService service = new GroupNameServiceImp();
 
     [Theory]
     [InlineData("96801001", 9680, 2)]

@@ -11,9 +11,9 @@ using MatchDetail = Settlement.Sportsbook.Soccer.Models.MatchDetail;
 
 namespace Settlement.Sportsbook.Soccer.UnitTests.Services.GetMatch;
 
-using Core.Services.SpecificService;
 using Fanex.Caching;
 using Fanex.NAP.Client.Helpers.Web;
+using Settlement.Core.Services.SpecificService;
 using Soccer.Services.GetMatch;
 
 public class MatchServiceTests
@@ -75,8 +75,8 @@ public class MatchServiceTests
         var match = new Match
         {
             MatchDetail = new MatchDetail { MatchId = 123 },
-            TicketCounts = new List<TicketCounts>(),
-            ChildMatches = new List<ChildMatchModel>()
+            TicketCounts = [],
+            ChildMatches = []
         };
         var goalIcon = new GoalIcon
         {
@@ -106,8 +106,8 @@ public class MatchServiceTests
         var match = new Match
         {
             MatchDetail = new MatchDetail { MatchId = 123, LeagueId = 16371 },
-            TicketCounts = new List<TicketCounts>(),
-            ChildMatches = new List<ChildMatchModel>()
+            TicketCounts = [],
+            ChildMatches = []
         };
 
         fetchDataService.GetMatchInfo(Arg.Any<GetMatchRequest>()).Returns(match);
@@ -137,8 +137,8 @@ public class MatchServiceTests
         var match = new Match
         {
             MatchDetail = new MatchDetail { MatchId = 123 },
-            TicketCounts = new List<TicketCounts>(),
-            ChildMatches = new List<ChildMatchModel>()
+            TicketCounts = [],
+            ChildMatches = []
         };
 
         fetchDataService.GetMatchInfo(Arg.Any<GetMatchRequest>()).Returns(match);
@@ -160,8 +160,8 @@ public class MatchServiceTests
         var match = new Match
         {
             MatchDetail = new MatchDetail { MatchId = 123 },
-            TicketCounts = new List<TicketCounts>(),
-            ChildMatches = new List<ChildMatchModel>()
+            TicketCounts = [],
+            ChildMatches = []
         };
         var goalIcon = new GoalIcon
         {
@@ -219,7 +219,7 @@ public class MatchServiceTests
         var list = await service.GetSpecificBetTypes(new GetSpecificBetTypeRequest());
 
         // Assert
-        Assert.Equal(new List<string> { "1", "2", "3" }, list);
+        Assert.Equal(["1", "2", "3"], list);
         refDataService.Received(3).GetBetTypeName(Arg.Any<string>());
     }
 

@@ -79,7 +79,7 @@ public class SettlementServiceImp(
             ActionType.CalculateHalfTime => ActionId.CalHt,
             ActionType.RefundAll => ActionId.Refund,
             ActionType.RefundFullTime => ActionId.RefundFt,
-            _ => 0,
+            _ => 0
         };
 
         var balls = string.Join(", ", request.Balls.Select(b => $"B{b.Seq}({b.NumberBall})"));
@@ -171,7 +171,7 @@ public class SettlementServiceImp(
             ErrCode = results.Count,
             ErrMsg = string.Join("<br/>", results.Select(r => r.ErrMsg).ToArray()),
             StartTime = startTime,
-            EndTime = DateTimeOffset.Now.DateTime,
+            EndTime = DateTimeOffset.Now.DateTime
         };
     }
 

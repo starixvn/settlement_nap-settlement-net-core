@@ -8,11 +8,11 @@ import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { MaterialModule } from '../../shared/material-module';
 import { QueryService } from '../services';
-import { ModalContentDialogComponent, ModalDialogComponent } from '../../shared/components';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { of } from 'rxjs';
-import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { OutsideSource } from '../models';
+import { ModalDialogComponent } from "../../shared/components/modal-dialog/modal-dialog.component";
+import { ModalContentDialogComponent } from "../../shared/components/modal-dialog/modal-content-dialog.component";
 
 describe('EditSourceDialogComponent', () => {
   let component: EditSourceDialogComponent;
@@ -38,7 +38,6 @@ describe('EditSourceDialogComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [
-        EditSourceDialogComponent,
         ModalDialogComponent,
         ModalContentDialogComponent
       ],
@@ -52,6 +51,7 @@ describe('EditSourceDialogComponent', () => {
         { provide: MAT_DIALOG_DATA, useValue: data },
       ],
       imports: [
+        EditSourceDialogComponent,
         BrowserModule,
         FormsModule,
         MaterialModule,
@@ -74,7 +74,7 @@ describe('EditSourceDialogComponent', () => {
   });
 
   it('closepopup', () => {
-    spyOn(component.dialogRef, 'close');
+    jest.spyOn(component.dialogRef, 'close');
 
     component.closePopup();
 
@@ -85,8 +85,8 @@ describe('EditSourceDialogComponent', () => {
     it('should push successfully', fakeAsync(() => {
       component.outsideSource = new OutsideSource();
       component.outsideSource.sourceName = 'test';
-      spyOn(queryService, 'updateOutsideSource').and.returnValue(of(successfulResult));
-      spyOn(component.dialogRef, 'close');
+      jest.spyOn(queryService, 'updateOutsideSource').mockReturnValue(of(successfulResult));
+      jest.spyOn(component.dialogRef, 'close');
 
       component.saveSource();
       const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
@@ -99,7 +99,7 @@ describe('EditSourceDialogComponent', () => {
     it('should push unsuccessfully and set error message', fakeAsync(() => {
       component.outsideSource = new OutsideSource();
       component.outsideSource.sourceName = 'test';
-      spyOn(queryService, 'updateOutsideSource').and.returnValue(of(unSuccessfulResult));
+      jest.spyOn(queryService, 'updateOutsideSource').mockReturnValue(of(unSuccessfulResult));
 
       component.saveSource();
       const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;

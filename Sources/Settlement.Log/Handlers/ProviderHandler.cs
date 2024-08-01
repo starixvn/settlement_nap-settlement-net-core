@@ -5,18 +5,11 @@ using Settlement.Log.Services;
 
 namespace Settlement.Log.Handlers;
 
-public class ProviderHandler :
+public class ProviderHandler(ProviderLogService providerLogService) :
     IRequestHandler<ProviderNameRequest, List<ProviderName>>,
     IRequestHandler<ProviderLogRequest, ProviderLog>
 
 {
-    private readonly ProviderLogService providerLogService;
-
-    public ProviderHandler(ProviderLogService providerLogService)
-    {
-        this.providerLogService = providerLogService;
-    }
-
     public async Task<List<ProviderName>> Handle(ProviderNameRequest request, CancellationToken cancellationToken)
     {
         return (await providerLogService.GetProviderName()).ToList();

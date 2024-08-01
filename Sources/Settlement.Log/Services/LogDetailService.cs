@@ -20,30 +20,14 @@ public interface LogDetailService
     Task<List<string>> GetPlayerNameCricket(int matchId, int sportType);
 }
 
-public class LogDetailServiceImp : LogDetailService
+public class LogDetailServiceImp(
+    IDynamicRepository repository,
+    RemarkService remarkService,
+    XmlConvertService xmlConvertService,
+    MergeLogService mergeLogService)
+    : LogDetailService
 {
-    private readonly IDynamicRepository repository;
-
-    private readonly RemarkService remarkService;
-
-    private readonly IResourceNameService resourceNameService;
-
-    private readonly XmlConvertService xmlConvertService;
-
-    private readonly MergeLogService mergeLogService;
-
-    public LogDetailServiceImp(
-        IDynamicRepository repository,
-        RemarkService remarkService,
-        XmlConvertService xmlConvertService,
-        MergeLogService mergeLogService)
-    {
-        this.repository = repository;
-        this.remarkService = remarkService;
-        resourceNameService = new ResourceNameService(new MapperFactoryBase());
-        this.xmlConvertService = xmlConvertService;
-        this.mergeLogService = mergeLogService;
-    }
+    private readonly IResourceNameService resourceNameService = new ResourceNameService(new MapperFactoryBase());
 
     public async Task<List<LogDetailsModels>> GetLogDetailByMatchAndProduct(int matchId, string productType)
     {
@@ -73,7 +57,7 @@ public class LogDetailServiceImp : LogDetailService
     {
         if (sportType != SportType.Cricket)
         {
-            return new List<string>();
+            return [];
         }
 
         var criteria = new GetPlayerInfoCriteria { MatchId = matchId };

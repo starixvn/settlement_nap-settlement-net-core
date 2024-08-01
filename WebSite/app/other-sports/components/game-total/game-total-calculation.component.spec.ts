@@ -19,7 +19,7 @@ import { ResourceHeaderPipe, ResultPipe, ScorePipe } from "../../pipes";
 import { ChildMatch } from "../../models/child-match.model";
 import { ResultStatusId, SportType } from "../../../shared/constants";
 import { ResultSettingModel } from "../../../shared/models";
-import { ToastContainerDirective, ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from "ngx-toastr";
+import { ToastContainerDirective, ToastNoAnimationModule, ToastrModule, ToastrService } from "ngx-toastr";
 
 describe('GameTotalCalculationComponent', () => {
     let component: GameTotalCalculationComponent;
@@ -88,7 +88,6 @@ describe('GameTotalCalculationComponent', () => {
                 NgbModule,
                 FormsModule,
                 ToastNoAnimationModule.forRoot(),
-                ToastContainerModule,
                 ToastrModule.forRoot()
             ],
             providers: [

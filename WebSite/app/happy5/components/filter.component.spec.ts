@@ -1,5 +1,5 @@
 ﻿import { TestBed, waitForAsync, ComponentFixture } from '@angular/core/testing';
-import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
+import { DatePipe } from "@angular/common";
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { of } from 'rxjs';
@@ -15,17 +15,16 @@ describe('Happy 5 - Filter Component', () => {
     let fixture: ComponentFixture<FilterComponent>;
     let queryService: QueryService;
     const filter = {
-        matchCode: 123,
-        status: 0,
+        matchCode: "123",
         fromDate: "2018/12/1",
         toDate: "2018/12/31",
+        status: "0"
     };
 
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             declarations: [
                 FilterComponent,
-                DatepickerComponent,
                 ModalDialogComponent,
             ],
             providers: [
@@ -34,8 +33,10 @@ describe('Happy 5 - Filter Component', () => {
                 VerifyDateService,
                 BlockUIService,
                 MessageBoxService,
+                DatePipe
             ],
             imports: [
+                DatepickerComponent,
                 FormsModule,
                 HttpClientModule,
                 NgbModule,
@@ -46,7 +47,7 @@ describe('Happy 5 - Filter Component', () => {
                 fixture = TestBed.createComponent(FilterComponent);
                 component = fixture.componentInstance;
                 queryService = fixture.debugElement.injector.get(QueryService);
-                spyOn(queryService, 'filter').and.returnValue(of(filter));
+                jest.spyOn(queryService, 'filter').mockReturnValue(of(filter));
             });
     }));
 
@@ -68,8 +69,8 @@ describe('Happy 5 - Filter Component', () => {
             component.isDisabled = false;
             component.change = 1;
             component.status = "All";
-            spyOn(queryService, 'search').and.returnValue(of(""));
-            spyOn(component.searchAction, 'emit');
+            jest.spyOn(queryService, 'search').mockReturnValue(of(""));
+            jest.spyOn(component.searchAction, 'emit');
             component.ngOnChanges();
 
             expect(component.searchAction.emit).toHaveBeenCalled();
@@ -77,7 +78,7 @@ describe('Happy 5 - Filter Component', () => {
 
         it('should not call when there are not change', () => {
             component.change = 0;
-            spyOn(component.searchAction, 'emit');
+            jest.spyOn(component.searchAction, 'emit');
             component.ngOnChanges();
 
             expect(component.searchAction.emit).not.toHaveBeenCalled();
@@ -85,8 +86,8 @@ describe('Happy 5 - Filter Component', () => {
     });
 
     it('should emit on click submit', () => {
-        spyOn(queryService, 'search').and.returnValue(of(""));
-        spyOn(component.searchAction, 'emit');
+        jest.spyOn(queryService, 'search').mockReturnValue(of(""));
+        jest.spyOn(component.searchAction, 'emit');
         component.search();
 
         expect(component.searchAction.emit).toHaveBeenCalled();

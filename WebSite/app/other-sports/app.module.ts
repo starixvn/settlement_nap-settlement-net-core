@@ -29,12 +29,12 @@ import { SportTemplateModule } from './components/sport-template.module';
             positionClass: 'inline',
             maxOpened: 1,
         }),
-        ToastContainerModule,
-        ModalDialogComponent,
-        ModalContentDialogComponent,
+        ToastContainerModule
     ],
     declarations: [
-        AppComponent
+        AppComponent,
+        ModalDialogComponent,
+        ModalContentDialogComponent,
     ],
     bootstrap: [AppComponent],
     providers: [

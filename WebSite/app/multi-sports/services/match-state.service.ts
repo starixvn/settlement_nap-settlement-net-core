@@ -23,7 +23,7 @@ export class MatchStateService {
     return remark.isMtdHold || remark.isUndecided || remark.isUnderSettle || remark.isKeyHold ? BackgroundColor.undecidedRow : '';
   }
 
-  getBackgroundAutoSetting(match: Match, permission: Permission, isPayout: boolean = true) {
+  getBackgroundAutoSetting(match: Match, permission: Permission, isPayout = true) {
     const enableLink = permission.canAutoPayout && isPayout ? BackgroundColor.codeLink : "";
     const status = isPayout ? match.autoPayoutStatus : match.autoInstantStatus;
     const colorStatus = _.isEqual(status, this.autoSettingCompleted) ? 'auto-setting-completed' :

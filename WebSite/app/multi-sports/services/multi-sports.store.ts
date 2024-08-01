@@ -11,9 +11,9 @@ import { ModalDialogMessage } from "../../shared/models";
 export class MultiSportsStore{
   dialogMessage: ModalDialogMessage = new ModalDialogMessage();
   request: MatchRequest;
-  enableRefresh: boolean = false;
+  enableRefresh = false;
   state$: Observable<MultiSport>;
-  private _state$: BehaviorSubject<MultiSport>;
+  private readonly _state$: BehaviorSubject<MultiSport>;
 
   protected constructor() {
     this._state$ = new BehaviorSubject(new MultiSport());

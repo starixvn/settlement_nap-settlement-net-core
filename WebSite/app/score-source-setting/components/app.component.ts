@@ -15,7 +15,7 @@ import { OutsideSourceComponent } from './outside-source.component';
   templateUrl: './app.component.html',
   standalone: true
 })
-export class AppSettingComponent implements OnInit {
+export class AppComponent implements OnInit {
   @ViewChild('container', { read: ViewContainerRef, static: true }) container: ViewContainerRef;
   public component: ComponentRef<OnInit>;
 
@@ -24,7 +24,6 @@ export class AppSettingComponent implements OnInit {
     private readonly elementRef: ElementRef<HTMLElement>
   ) {
   }
-
   ngOnInit() {
     this.createComponent();
   }

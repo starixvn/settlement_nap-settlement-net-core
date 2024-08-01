@@ -10,19 +10,11 @@ public interface OutrightLogProcessService
     Task<List<OutrightLog>> GetOutrightLogByOutrightId(GetLogRequest request);
 }
 
-public class OutrightLogProcessServiceImp : OutrightLogProcessService
+public class OutrightLogProcessServiceImp(
+    OutrightLogQueryService outrightLogQueryService,
+    IRefDataService refDataService)
+    : OutrightLogProcessService
 {
-    private readonly OutrightLogQueryService outrightLogQueryService;
-
-    private readonly IRefDataService refDataService;
-
-    public OutrightLogProcessServiceImp(OutrightLogQueryService outrightLogQueryService,
-        IRefDataService refDataService)
-    {
-        this.outrightLogQueryService = outrightLogQueryService;
-        this.refDataService = refDataService;
-    }
-
     public async Task<List<OutrightLog>> GetOutrightLogByMatchCode(GetLogRequest request)
     {
         var calculationLogs = (await outrightLogQueryService.GetOutrightLogs(request)).ToList();

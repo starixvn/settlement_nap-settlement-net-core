@@ -1,9 +1,8 @@
 import { Injectable } from "@angular/core";
 import { VerificationBaseService } from "../../../core/services/verification-base.service";
 import { ExternalResult, ExternalResultDetail, ResultDetail } from "../../../shared/models/sportsbook-sop";
-
 import * as _ from "lodash";
-import { LeagueType, ResourceID } from "./constant";
+import { ResourceID } from "./constant";
 import { ResultByTeamNamePipe } from "../../../shared/pipes/result-by-team-name.pipe";
 import { GeneralResultDetail } from "../../../shared/models";
 import { ResultStatusId, SettlementStatusId } from "../../../shared/constants";
@@ -128,7 +127,7 @@ export class ValidationService extends VerificationBaseService {
 
   public isInsufficientSOPLite(originalResultDetails: ResultDetail[], externalResult: ExternalResult) {
     const hasTrader = originalResultDetails.some(r => r.resultStatusId === ResultStatusId.TraderConfirm);
-    const hasProvider = externalResult && externalResult.resultDetails.some(x => this.hasScore(x));
+    const hasProvider =  externalResult?.resultDetails?.some(x => this.hasScore(x));
 
     return !hasTrader && !hasProvider;
   }
@@ -136,7 +135,7 @@ export class ValidationService extends VerificationBaseService {
 
   public isConsistentScoreSOPLite(resultDetails: ResultDetail[], confirmResultDetails: ResultDetail[], externalResult: ExternalResult) {
     const hasTrader = confirmResultDetails.some(r => r.resultStatusId === ResultStatusId.TraderConfirm);
-    const hasProvider = externalResult && externalResult.resultDetails.some(x => this.hasScore(x));
+    const hasProvider = externalResult?.resultDetails?.some(x => this.hasScore(x));
 
     let isConsistent = false;
     if (hasProvider && hasTrader) {
@@ -157,15 +156,13 @@ export class ValidationService extends VerificationBaseService {
 
   public verifyChangeInputScore(currentResult: ResultDetail, resultDetails: ResultDetail[], confirmResultDetails: ResultDetail[], externalResult: ExternalResult) {
     const hasTrader = confirmResultDetails.some(r => r.resultStatusId === ResultStatusId.TraderConfirm);
-    const hasProvider = externalResult && externalResult.resultDetails.some(x => this.hasScore(x));
+    const hasProvider = externalResult?.resultDetails?.some(x => this.hasScore(x));
 
     const finalResult = resultDetails.find(x => x.resourceId === ResourceID.Final);
 
     if(currentResult.isScoreMismatched || finalResult.isScoreMismatched) {
       return;
     }
-
-    //
 
     if (hasProvider) {
       if (hasTrader) {
@@ -195,35 +192,51 @@ export class ValidationService extends VerificationBaseService {
     });
   }
 
-  public verifyResultChanged(resultsChanged:ResultDetail[],confirmResults: ResultDetail[],providerResutls:ExternalResultDetail[]) {
+  public verifyResultChanged(resultsChanged:ResultDetail[], confirmResults: ResultDetail[], providerResults:ExternalResultDetail[]) {
     _.forEach(resultsChanged,currentResult => {
-      let notMatch = false;
-      const confirmResult = confirmResults.find(x => x.resourceId === currentResult.resourceId);
-      const providerResult = providerResutls.find(x => x.resourceId === currentResult.resourceId);
-
-      if(providerResult && confirmResult) {
-        notMatch = this.hasScore(providerResult) && this.hasScore(confirmResult) && this.isNotEqualResult(providerResult,confirmResult);
-      }
-
-      if(!notMatch && providerResult) {
-        notMatch = (!_.isEmpty(currentResult.homeValue) && !_.isEmpty(currentResult.awayValue)) && this.hasScore(providerResult) && this.isNotEqualResult(currentResult,providerResult);
-      }
-
-      if(!notMatch && confirmResult) {
-        notMatch =(!_.isEmpty(currentResult.homeValue) && !_.isEmpty(currentResult.awayValue)) && this.hasScore(confirmResult) && this.isNotEqualResult(currentResult,confirmResult);
-      }
-
-      currentResult.isScoreMismatched = notMatch;
+      const confirmResult = this.findConfirmResult(confirmResults, currentResult.resourceId);
+      const providerResult = this.findProviderResult(providerResults, currentResult.resourceId);
+      currentResult.isScoreMismatched = this.isScoreMismatched(currentResult, confirmResult, providerResult);
     });
+  }
+
+  private isScoreMismatched(currentResult: ResultDetail, confirmResult: ResultDetail, providerResult: ExternalResultDetail) {
+    if (providerResult && confirmResult) {
+      return this.isProviderAndConfirmResult(confirmResult, providerResult);
+    }
+  
+    if (providerResult && !confirmResult) {
+      return this.isProviderResult(currentResult, providerResult);
+    }
+  
+    if (!providerResult && confirmResult) {
+      return this.isConfirmResult(currentResult, confirmResult);
+    }
+  
+    return false;
+  }
+
+  private isConfirmResult(currentResult: ResultDetail, confirmResult: ResultDetail) {
+    return (!_.isEmpty(currentResult.homeValue) && !_.isEmpty(currentResult.awayValue)) && this.hasScore(confirmResult) && this.isNotEqualResult(currentResult, confirmResult);
+  }
+
+  private isProviderResult(currentResult: ResultDetail, providerResult: ExternalResultDetail) {
+    return (!_.isEmpty(currentResult.homeValue) && !_.isEmpty(currentResult.awayValue)) && this.hasScore(providerResult) && this.isNotEqualResult(currentResult, providerResult);
+  }
+
+  private isProviderAndConfirmResult(confirmResult: ResultDetail, providerResult: ExternalResultDetail) {
+    return this.hasScore(providerResult) && this.hasScore(confirmResult) && this.isNotEqualResult(providerResult, confirmResult);
+  }
+
+  private findConfirmResult(confirmResults: ResultDetail[], currentResourceId: string) {
+    return confirmResults.find((x) => x.resourceId === currentResourceId);
+  }
+  
+  private findProviderResult(providerResults: ExternalResultDetail[], currentResourceId: string) {
+    return providerResults.find((x) => x.resourceId === currentResourceId);
   }
 
   private isNotEqualResult(result: GeneralResultDetail,otherResult: GeneralResultDetail) {
     return (!_.isEqual(result.homeValue,otherResult.homeValue) || !_.isEqual(result.awayValue,otherResult.awayValue));
-  }
-
-  private acceptableResult(result: ResultDetail,otherResult: ResultDetail) {
-    return (_.isEmpty(result.homeValue) && _.isEmpty(result.awayValue)) 
-      && (_.isEmpty(otherResult.homeValue) && _.isEmpty(otherResult.awayValue)
-          || _.isEqual(otherResult.homeValue,'0') && _.isEqual(otherResult.awayValue,'0'))
   }
 }

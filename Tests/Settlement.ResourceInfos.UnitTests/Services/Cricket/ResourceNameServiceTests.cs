@@ -4,12 +4,7 @@ using Settlement.ResourceInfos.Services.Cricket;
 
 public class ResourceNameServiceTests
 {
-    private readonly IResourceNameService service;
-
-    public ResourceNameServiceTests()
-    {
-        service = new ResourceNameService();
-    }
+    private readonly IResourceNameService service = new ResourceNameService();
 
     [Theory]
     [InlineData("96801001", 9680, "1st Inns Batsman Runs")]

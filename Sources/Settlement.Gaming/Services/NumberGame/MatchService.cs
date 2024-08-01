@@ -15,20 +15,10 @@ public interface MatchService
 
 }
 
-public class MatchServiceImp : MatchService
+public class MatchServiceImp(
+    IDynamicRepository repository,
+    IMapper mapper) : MatchService
 {
-    private readonly IDynamicRepository repository;
-
-    private readonly IMapper mapper;
-
-    public MatchServiceImp(
-        IDynamicRepository repository,
-        IMapper mapper)
-    {
-        this.repository = repository;
-        this.mapper = mapper;
-    }
-
     public async Task<List<MatchDetailModel>> Matches(NumberGameMatchRequest request)
     {
         var criteria = mapper.Map<NumberGameMatchRequest, GetNumberGameMatchCriteria>(request);

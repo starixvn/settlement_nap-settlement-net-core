@@ -16,18 +16,9 @@ public interface BallService
     string ResourcesBalls(List<BallModel> balls);
 }
 
-public class BallServiceImp : BallService
+public class BallServiceImp(IDynamicRepository repository, XmlConvertService xmlConvertService)
+    : BallService
 {
-    private readonly IDynamicRepository repository;
-
-    private readonly XmlConvertService xmlConvertService;
-
-    public BallServiceImp(IDynamicRepository repository, XmlConvertService xmlConvertService)
-    {
-        this.repository = repository;
-        this.xmlConvertService = xmlConvertService;
-    }
-
     public async Task<List<BallModel>> GetBalls(string matchIds)
     {
         var criteria = new GetBallCriteria
@@ -49,32 +40,21 @@ public class BallServiceImp : BallService
 
     public List<BallModel> CorrectNumberBall(int matchId, List<BallModel> balls)
     {
-        var newBalls = new List<BallModel>();
         var fiveBall = new List<byte> { 1, 2, 3, 4, 5 };
-        foreach (var item in fiveBall)
+
+        return fiveBall.Select(item => new BallModel(matchId, item, GetBallNumber(item))).ToList();
+
+        byte GetBallNumber(byte item)
         {
             var currentBall = balls.Find(b => b.Seq == item);
             var number = currentBall?.NumberBall ?? 0;
-            var ball = new BallModel(matchId, item, number);
-            newBalls.Add(ball);
+            return number;
         }
-
-        return newBalls;
     }
 
     public string ResourcesBalls(List<BallModel> balls)
     {
-        var resourceItems = new List<ResourcesItem>();
-        foreach (var ball in balls)
-        {
-            var resource = new ResourcesItem
-            {
-                Seq = ball.Seq,
-                NumberBall = ball.NumberBall
-            };
-
-            resourceItems.Add(resource);
-        }
+        var resourceItems = balls.Select(ball => new ResourcesItem { Seq = ball.Seq, NumberBall = ball.NumberBall }).ToList();
 
         var resources = new Resources
         {

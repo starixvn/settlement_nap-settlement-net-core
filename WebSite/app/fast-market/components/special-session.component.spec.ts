@@ -14,7 +14,7 @@ import { Result } from '../../shared/models';
 import { of } from 'rxjs';
 import { SessionId } from '../constants';
 import * as _ from 'lodash';
-import { ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
+import { ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 
 describe('SpecialSessionComponent', () => {
   let component: SpecialSessionComponent;
@@ -44,7 +44,6 @@ describe('SpecialSessionComponent', () => {
         MaterialModule,
         HttpClientModule,
         ToastNoAnimationModule.forRoot(),
-        ToastContainerModule,
         ToastrModule.forRoot()
       ],
     })

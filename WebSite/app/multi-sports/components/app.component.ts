@@ -1,7 +1,6 @@
 import { Component, OnInit, OnDestroy, Injector, ChangeDetectionStrategy } from '@angular/core';
-import { DatePipe } from "@angular/common";
-import { Subscription } from "rxjs";
-import { interval } from 'rxjs';
+import { DatePipe,CommonModule } from "@angular/common";
+import { interval,Subscription } from 'rxjs';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import {
     BlockUIService,
@@ -16,7 +15,6 @@ import { MultiSportService, RefreshMatchService, PopupService, DetectChangesServ
 import { MultiSport } from '../models';
 import { FilterComponent } from './filter.component';
 import { TableMatchComponent } from './table-match/table-match.component';
-import { CommonModule } from '@angular/common';
 import { MatchStateService } from '../services/match-state.service';
 import { IntervalScorePipe } from '../../shared/pipes/interval-score.pipe';
 

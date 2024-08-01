@@ -10,16 +10,10 @@ public interface OutrightTicketService
     Task<IEnumerable<TeamTicketModel>> GetTeamsTicketCount(IEnumerable<Team> teams);
 }
 
-public class OutrightTicketServiceImp : OutrightTicketService
+public class OutrightTicketServiceImp(IDynamicRepository repository, IOptions<AppSettingsKey> appSettingsKey)
+    : OutrightTicketService
 {
-    private readonly IDynamicRepository repository;
-    private readonly AppSettingsKey appSettingsKey;
-
-    public OutrightTicketServiceImp(IDynamicRepository repository, IOptions<AppSettingsKey> appSettingsKey)
-    {
-        this.repository = repository;
-        this.appSettingsKey = appSettingsKey.Value;
-    }
+    private readonly AppSettingsKey appSettingsKey = appSettingsKey.Value;
 
     public async Task<IEnumerable<TeamTicketModel>> GetTeamsTicketCount(IEnumerable<Team> teams)
     {
@@ -54,7 +48,7 @@ public class OutrightTicketServiceImp : OutrightTicketService
             TotalTicket = groupTeam.Sum(item => item.TotalTicket),
             TotalCal = groupTeam.Sum(item => item.TotalCal),
             TotalHide = groupTeam.Sum(item => item.TotalHide),
-            TotalRunning = groupTeam.Sum(item => item.TotalRunning),
+            TotalRunning = groupTeam.Sum(item => item.TotalRunning)
         });
         return result;
     }

@@ -6,7 +6,7 @@ public class NotificationBetBuilderCriteria : CriteriaBase
 {
     public override string GetSettingKey()
     {
-        return "Nap_Set_MatchBetbuilderStatusSel";
+        return "Nap_Set_MatchBetBuilderStatusSel";
     }
 
     public override bool IsValid()

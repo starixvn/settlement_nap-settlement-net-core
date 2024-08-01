@@ -5,10 +5,9 @@ using Settlement.Core.Services;
 using Settlement.FastMarkets.Criteria;
 using Settlement.FastMarkets.Requests;
 using MatchDetail = Settlement.FastMarkets.Models.MatchDetail;
+using Settlement.Core.Services.SpecificService;
 
 namespace Settlement.FastMarkets.Services;
-
-using Core.Services.SpecificService;
 
 public interface IMatchDetailService
 {
@@ -17,31 +16,15 @@ public interface IMatchDetailService
     Task<MarkedTickets> CheckingMarkedTickets(CheckingMarkedTicketsRequest request);
 }
 
-public class MatchDetailServiceImp : IMatchDetailService
+public class MatchDetailServiceImp(
+    IDynamicRepository repository,
+    IRefDataService refDataService,
+    GoalIconService goalIconService,
+    IFastMarketResultService fastMarketResultService,
+    IOptions<AppSettingsKey> appSettingsKey)
+    : IMatchDetailService
 {
-    private readonly IRefDataService refDataService;
-
-    private readonly IDynamicRepository repository;
-
-    private readonly GoalIconService goalIconService;
-
-    private readonly IFastMarketResultService fastMarketResultService;
-
-    private readonly AppSettingsKey appSettingsKey;
-
-    public MatchDetailServiceImp(
-        IDynamicRepository repository,
-        IRefDataService refDataService,
-        GoalIconService goalIconService,
-        IFastMarketResultService fastMarketResultService,
-        IOptions<AppSettingsKey> appSettingsKey)
-    {
-        this.repository = repository;
-        this.refDataService = refDataService;
-        this.goalIconService = goalIconService;
-        this.fastMarketResultService = fastMarketResultService;
-        this.appSettingsKey = appSettingsKey.Value;
-    }
+    private readonly AppSettingsKey appSettingsKey = appSettingsKey.Value;
 
     public async Task<MatchDetail> MatchInfo(int matchId)
     {

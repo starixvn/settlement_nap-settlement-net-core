@@ -23,7 +23,7 @@ export class GameTotalService {
         } else {
             const games = resultDetail.filter((game) => game.resourceId !== ResourcesIds.totalSets
                 && !_.isEmpty(game.homeValue) && !_.isEmpty(game.awayValue)
-                && game.settlementStatusId != SettlementStatusId.Refund);
+                && game.settlementStatusId !== SettlementStatusId.Refund);
 
             totalPoints.settlementStatusId = last.settlementStatusId;
             if (games.length > 0) {

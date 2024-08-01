@@ -235,8 +235,8 @@ public class HomeController(INapSession session, IConfiguration configuration) :
         stringBuilder.Append($"PagedMemorySize64 is: {currentProcess.PagedMemorySize64:n0}\n");
         stringBuilder.Append($"NonpagedSystemMemorySize64 is: {currentProcess.NonpagedSystemMemorySize64:n0}\n");
         stringBuilder.Append($"NonpagedSystemMemorySize64 is: {currentProcess.NonpagedSystemMemorySize64:n0}\n");
-        stringBuilder.AppendLine($@"Threads.Count: {currentProcess.Threads.Count}");
-        stringBuilder.AppendLine($@"ThreadPool.PendingWorkItemCount: {ThreadPool.PendingWorkItemCount}");
+        stringBuilder.AppendLine($"Threads.Count: {currentProcess.Threads.Count}");
+        stringBuilder.AppendLine($"ThreadPool.PendingWorkItemCount: {ThreadPool.PendingWorkItemCount}");
 
         return stringBuilder.ToString();
     }

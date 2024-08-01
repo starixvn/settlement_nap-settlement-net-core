@@ -23,17 +23,7 @@ public class EventCounterResultServiceImp : IEventCounterResultService
 {
     public EventCounterElement GoalResult(List<EventCounter> eventCounters)
     {
-        var items = new List<ItemElement>();
-        foreach (var eventCounter in eventCounters)
-        {
-            var item = new ItemElement
-            {
-                Position = eventCounter.Position,
-                Result = eventCounter.EventResultItem.Goal
-            };
-
-            items.Add(item);
-        }
+        var items = eventCounters.Select(eventCounter => new ItemElement { Position = eventCounter.Position, Result = eventCounter.EventResultItem.Goal }).ToList();
 
         return new EventCounterElement
         {
@@ -44,17 +34,7 @@ public class EventCounterResultServiceImp : IEventCounterResultService
 
     public EventCounterElement CornerResult(List<EventCounter> eventCounters)
     {
-        var items = new List<ItemElement>();
-        foreach (var eventCounter in eventCounters)
-        {
-            var item = new ItemElement
-            {
-                Position = eventCounter.Position,
-                Result = eventCounter.EventResultItem.Corner
-            };
-
-            items.Add(item);
-        }
+        var items = eventCounters.Select(eventCounter => new ItemElement { Position = eventCounter.Position, Result = eventCounter.EventResultItem.Corner }).ToList();
 
         return new EventCounterElement
         {
@@ -65,17 +45,7 @@ public class EventCounterResultServiceImp : IEventCounterResultService
 
     public EventCounterElement FreeKickResult(List<EventCounter> eventCounters)
     {
-        var items = new List<ItemElement>();
-        foreach (var eventCounter in eventCounters)
-        {
-            var item = new ItemElement
-            {
-                Position = eventCounter.Position,
-                Result = eventCounter.EventResultItem.FreeKick
-            };
-
-            items.Add(item);
-        }
+        var items = eventCounters.Select(eventCounter => new ItemElement { Position = eventCounter.Position, Result = eventCounter.EventResultItem.FreeKick }).ToList();
 
         return new EventCounterElement
         {
@@ -86,17 +56,7 @@ public class EventCounterResultServiceImp : IEventCounterResultService
 
     public EventCounterElement GoalKickResult(List<EventCounter> eventCounters)
     {
-        var items = new List<ItemElement>();
-        foreach (var eventCounter in eventCounters)
-        {
-            var item = new ItemElement
-            {
-                Position = eventCounter.Position,
-                Result = eventCounter.EventResultItem.GoalKick
-            };
-
-            items.Add(item);
-        }
+        var items = eventCounters.Select(eventCounter => new ItemElement { Position = eventCounter.Position, Result = eventCounter.EventResultItem.GoalKick }).ToList();
 
         return new EventCounterElement
         {
@@ -107,17 +67,7 @@ public class EventCounterResultServiceImp : IEventCounterResultService
 
     public EventCounterElement ThrowInResult(List<EventCounter> eventCounters)
     {
-        var items = new List<ItemElement>();
-        foreach (var eventCounter in eventCounters)
-        {
-            var item = new ItemElement
-            {
-                Position = eventCounter.Position,
-                Result = eventCounter.EventResultItem.ThrowIn
-            };
-
-            items.Add(item);
-        }
+        var items = eventCounters.Select(eventCounter => new ItemElement { Position = eventCounter.Position, Result = eventCounter.EventResultItem.ThrowIn }).ToList();
 
         return new EventCounterElement
         {
@@ -128,17 +78,7 @@ public class EventCounterResultServiceImp : IEventCounterResultService
 
     public EventCounterElement PenaltyResult(List<EventCounter> eventCounters)
     {
-        var items = new List<ItemElement>();
-        foreach (var eventCounter in eventCounters)
-        {
-            var item = new ItemElement
-            {
-                Position = eventCounter.Position,
-                Result = eventCounter.EventResultItem.Penalty
-            };
-
-            items.Add(item);
-        }
+        var items = eventCounters.Select(eventCounter => new ItemElement { Position = eventCounter.Position, Result = eventCounter.EventResultItem.Penalty }).ToList();
 
         return new EventCounterElement
         {

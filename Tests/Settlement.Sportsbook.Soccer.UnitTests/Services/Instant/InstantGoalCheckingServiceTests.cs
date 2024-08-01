@@ -5,12 +5,7 @@ namespace Settlement.Sportsbook.Soccer.UnitTests.Services.Instant;
 
 public class InstantGoalCheckingServiceTests
 {
-    private readonly IInstantGoalCheckingService service;
-
-    public InstantGoalCheckingServiceTests()
-    {
-        service = new InstantGoalCheckingServiceImp();
-    }
+    private readonly IInstantGoalCheckingService service = new InstantGoalCheckingServiceImp();
 
     [Fact]
     public void IsHalftimeGoalChecking_TheSameNewFirstGoalWithOldFirstGoalValue_ReturnsFalse()

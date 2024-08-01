@@ -27,7 +27,7 @@ import { ExternalSourceNamePipe } from '../../shared/pipes/external-source-name.
 import { ResultByTeamNamePipe } from '../../shared/pipes/result-by-team-name.pipe';
 import { MatchDetail, Permission, ResultDetail } from "../../shared/models/sportsbook-sop";
 import { ExternalLinkPipe } from "../../score-source-setting/pipes";
-import { ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
+import { ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 import { PipesModule } from "../../shared/pipes/pipes.module.native";
 import { ModalDialogComponent } from "../../shared/components/modal-dialog/modal-dialog.component";
 import { ModalContentDialogComponent } from "../../shared/components/modal-dialog/modal-content-dialog.component";
@@ -95,7 +95,6 @@ describe("E-sport - Early Settlement Component", () => {
         HttpClientModule,
         MaterialModule,
         ToastNoAnimationModule.forRoot(),
-        ToastContainerModule,
         ToastrModule.forRoot(),
         PipesModule,
         ResettleCheckerComponent,

@@ -130,10 +130,10 @@ export class VerificationService {
 
             return result.isShow && result.checked
                 && (endMinute > suspendedTime.startMinute
-                || endMinute === suspendedTime.startMinute && endSecond >= suspendedTime.startSecond);
+                    || endMinute === suspendedTime.startMinute && endSecond >= suspendedTime.startSecond);
         });
 
-        return isOverlap ? isOverlap : isInvalid;
+        return isOverlap || isInvalid;
     }
 
     private isOtherBetTypeOverlapWaterBreakOnCalculation(betType: BetType, waterBreaks: SpecialSession[], isInvalid: boolean) {
@@ -144,28 +144,28 @@ export class VerificationService {
             const startSecond = this.getIntervalTime(result.positionName, TimeType.startSecond);
             return _.some(waterBreaks, (waterBreak) =>
                 result.isShow && result.checked
-                    && (this.isIntervalInsideWaterBreak(startMinute, startSecond, waterBreak)
+                && (this.isIntervalInsideWaterBreak(startMinute, startSecond, waterBreak)
                     || this.isIntervalInsideWaterBreak(endMinute, endSecond, waterBreak)
                     || this.isWaterBreakInsideInterval(startMinute, startSecond, endMinute, endSecond, waterBreak))
             );
         });
 
-        return isOverlap ? isOverlap : isInvalid;
+        return isOverlap || isInvalid;
     }
 
     private isIntervalInsideWaterBreak(minute: number, second: number, waterBreak: SpecialSession) {
         return (minute > waterBreak.startMinute
-                || minute === waterBreak.startMinute && second >= waterBreak.startSecond)
+            || minute === waterBreak.startMinute && second >= waterBreak.startSecond)
             && (minute < waterBreak.endMinute
                 || minute === waterBreak.endMinute && second <= waterBreak.endSecond);
     }
 
     private isWaterBreakInsideInterval(startMinute: number, startSecond: number,
         endMinute: number, endSecond: number, waterBreak: SpecialSession) {
-            return (startMinute < waterBreak.startMinute
-                    || startMinute === waterBreak.startMinute && startSecond <= waterBreak.startSecond)
-                && (endMinute > waterBreak.endMinute
-                    || endMinute === waterBreak.endMinute && endSecond >= waterBreak.endSecond);
+        return (startMinute < waterBreak.startMinute
+            || startMinute === waterBreak.startMinute && startSecond <= waterBreak.startSecond)
+            && (endMinute > waterBreak.endMinute
+                || endMinute === waterBreak.endMinute && endSecond >= waterBreak.endSecond);
     }
 
     private isOtherBetTypeOverlapSuspendedOnCalculation(betType: BetType, suspendedTime: SpecialSession, isInvalid) {
@@ -178,14 +178,14 @@ export class VerificationService {
                 && this.isIntervalBehindSuspended(startMinute, startSecond, endMinute, endSecond, suspendedTime);
         });
 
-        return isOverlap ? isOverlap : isInvalid;
+        return isOverlap || isInvalid;
     }
 
     private isIntervalBehindSuspended(startMinute: number, startSecond: number,
         endMinute: number, endSecond: number, suspendedTime: SpecialSession) {
         return (endMinute > suspendedTime.startMinute
-                || endMinute === suspendedTime.startMinute && endSecond >= suspendedTime.startSecond)
-                && (startMinute < suspendedTime.startMinute
+            || endMinute === suspendedTime.startMinute && endSecond >= suspendedTime.startSecond)
+            && (startMinute < suspendedTime.startMinute
                 || startMinute === suspendedTime.startMinute && startSecond <= suspendedTime.startSecond)
             || startMinute > suspendedTime.startMinute
             || startMinute === suspendedTime.startMinute && startSecond > suspendedTime.startSecond;
@@ -250,7 +250,7 @@ export class VerificationService {
 
     private autoCheckRefundOverUnder(betTypes: BetType[]) {
         const timeMachineBetType = this.timeMachineService.getTimeMachineOUBetType(betTypes);
-        _.forEach(timeMachineBetType.fastMarketResults, (interval) =>{
+        _.forEach(timeMachineBetType.fastMarketResults, (interval) => {
             interval.checked = true;
         });
     }
@@ -296,7 +296,7 @@ export class VerificationService {
         );
 
         if (isTimeMachineIntervalExist) {
-            return suspendedTime && suspendedTime.apply;
+            return suspendedTime?.apply;
         }
 
         return _.some(specialSessions, (session) => session.apply);
@@ -311,14 +311,12 @@ export class VerificationService {
                 if (suspendedTime) {
                     isInvalid = this.isTimeMachineBetTypeOverlapOnRefundSDT(betType, suspendedTime, isInvalid);
                 }
-            } else {
-                if (suspendedTime && waterBreaks.length > 0) {
-                    isInvalid = this.isOtherBetTypeConfictWaterBreakAndSuspendedOnRefundSDT(betType, suspendedTime, isInvalid, waterBreaks);
-                } else if (suspendedTime) {
-                    isInvalid = this.isOtherBetTypeOverlapSuspendedOnRefundSDT(betType, suspendedTime, isInvalid);
-                } else if (waterBreaks.length > 0) {
-                    isInvalid = this.isOtherBetTypeOverlapWaterBreakOnRefundSDT(betType, waterBreaks, isInvalid);
-                }
+            } else if (suspendedTime && waterBreaks.length > 0) {
+                isInvalid = this.isOtherBetTypeConfictWaterBreakAndSuspendedOnRefundSDT(betType, suspendedTime, isInvalid, waterBreaks);
+            } else if (suspendedTime) {
+                isInvalid = this.isOtherBetTypeOverlapSuspendedOnRefundSDT(betType, suspendedTime, isInvalid);
+            } else if (waterBreaks.length > 0) {
+                isInvalid = this.isOtherBetTypeOverlapWaterBreakOnRefundSDT(betType, waterBreaks, isInvalid);
             }
         });
 
@@ -332,13 +330,13 @@ export class VerificationService {
             const startMinute = this.getIntervalTime(result.positionName, TimeType.startMinute);
             const startSecond = this.getIntervalTime(result.positionName, TimeType.startSecond);
             return _.every(waterBreaks, (waterBreak) => result.isShow && result.checked
-                    && (endMinute < waterBreak.startMinute
+                && (endMinute < waterBreak.startMinute
                     || endMinute === waterBreak.startMinute && endSecond < waterBreak.startSecond
                     || startMinute > waterBreak.endMinute
                     || startMinute === waterBreak.endMinute && startSecond > waterBreak.endSecond));
         });
 
-        return isOverlap ? isOverlap : isInvalid;
+        return isOverlap || isInvalid;
     }
 
     private isTimeMachineBetTypeOverlapOnRefundSDT(betType: BetType, suspendedTime: SpecialSession, isInvalid: boolean) {
@@ -349,10 +347,10 @@ export class VerificationService {
                 ? 0 : this.getIntervalTime(result.positionName, TimeType.endSecond);
             return result.isShow && result.checked
                 && (endMinute < suspendedTime.startMinute
-                || endMinute === suspendedTime.startMinute && endSecond < suspendedTime.startSecond);
+                    || endMinute === suspendedTime.startMinute && endSecond < suspendedTime.startSecond);
         });
 
-        return isOverlap ? isOverlap : isInvalid;
+        return isOverlap || isInvalid;
     }
 
     private isOtherBetTypeOverlapSuspendedOnRefundSDT(betType: BetType, suspendedTime: SpecialSession, isInvalid: boolean) {
@@ -365,7 +363,7 @@ export class VerificationService {
                 && this.isIntervalOutOfSuspended(startMinute, startSecond, endMinute, endSecond, suspendedTime);
         });
 
-        return isOverlap ? isOverlap : isInvalid;
+        return isOverlap || isInvalid;
     }
 
     private isOtherBetTypeConfictWaterBreakAndSuspendedOnRefundSDT(betType: BetType, suspendedTime: SpecialSession,
@@ -382,7 +380,7 @@ export class VerificationService {
                 && !this.isWaterBreakInsideInterval(startMinute, startSecond, endMinute, endSecond, waterBreak));
         });
 
-        return isOverlap ? isOverlap : isInvalid;
+        return isOverlap || isInvalid;
     }
 
     private isIntervalOutOfSuspended(startMinute: number, startSecond: number,
@@ -400,13 +398,13 @@ export class VerificationService {
         const endMinutePosition = 6;
         const endSecondPosition = 9;
         if (timeType === TimeType.startMinute) {
-            return Number(positionName.substr(startMinutePosition, timeLength));
+            return Number(positionName.substring(startMinutePosition, startMinutePosition + timeLength));
         } else if (timeType === TimeType.startSecond) {
-            return Number(positionName.substr(startSecondPosition, timeLength));
+            return Number(positionName.substring(startSecondPosition, startMinutePosition + timeLength));
         } else if (timeType === TimeType.endMinute) {
-            return Number(positionName.substr(endMinutePosition, timeLength));
+            return Number(positionName.substring(endMinutePosition, startMinutePosition + timeLength));
         } else {
-            return Number(positionName.substr(endSecondPosition, timeLength));
+            return Number(positionName.substring(endSecondPosition, startMinutePosition + timeLength));
         }
     }
 
@@ -415,22 +413,22 @@ export class VerificationService {
         const resultDetails = this.groupFastMarketResultDetail(betTypes);
 
         return this.requestService.getLastestResult(query).pipe(map((lastestResults: FastMarketResult[]) => {
-          let needConfirm = false;
-          _.forEach(resultDetails, (resultDetail) => {
-            const correspondingResult = _.find(lastestResults, (item) => item.betType === resultDetail.betType
-                && item.position === resultDetail.position);
-            if (correspondingResult
-                && (correspondingResult.resultStatus === ResultStatus.refund
-                    || correspondingResult.resultStatus === ResultStatus.refundWithDetermined
-                    || (correspondingResult.resultStatus === ResultStatus.completedAuto
-                        || correspondingResult.resultStatus === ResultStatus.completedManual)
+            let needConfirm = false;
+            _.forEach(resultDetails, (resultDetail) => {
+                const correspondingResult = _.find(lastestResults, (item) => item.betType === resultDetail.betType
+                    && item.position === resultDetail.position);
+                if (correspondingResult
+                    && (correspondingResult.resultStatus === ResultStatus.refund
+                        || correspondingResult.resultStatus === ResultStatus.refundWithDetermined
+                        || (correspondingResult.resultStatus === ResultStatus.completedAuto
+                            || correspondingResult.resultStatus === ResultStatus.completedManual)
                         && !_.isEmpty(correspondingResult.result?.toString())
                         && this.isResultsDifferent(resultDetail, correspondingResult, resultDetail.betType))) {
-                needConfirm = true;
-            }
-          });
+                    needConfirm = true;
+                }
+            });
 
-          return needConfirm;
+            return needConfirm;
         }));
     }
 
@@ -460,13 +458,42 @@ export class VerificationService {
 
     private compareResult(oldResult: FastMarketResult, newResult: FastMarketResult) {
         return oldResult.resultItem.none !== newResult.resultItem.none
-        || oldResult.resultItem.goal !== newResult.resultItem.goal
-        || oldResult.resultItem.corner !== newResult.resultItem.corner
-        || oldResult.resultItem.freeKick !== newResult.resultItem.freeKick
-        || oldResult.resultItem.goalKick !== newResult.resultItem.goalKick
-        || oldResult.resultItem.throwIn !== newResult.resultItem.throwIn
-        || oldResult.resultItem.bookings !== newResult.resultItem.bookings
-        || oldResult.resultItem.penalty !== newResult.resultItem.penalty;
+            || oldResult.resultItem.goal !== newResult.resultItem.goal
+            || oldResult.resultItem.corner !== newResult.resultItem.corner
+            || oldResult.resultItem.freeKick !== newResult.resultItem.freeKick
+            || oldResult.resultItem.goalKick !== newResult.resultItem.goalKick
+            || oldResult.resultItem.throwIn !== newResult.resultItem.throwIn
+            || oldResult.resultItem.bookings !== newResult.resultItem.bookings
+            || oldResult.resultItem.penalty !== newResult.resultItem.penalty;
+    }   
+
+    filterEventCounterByBetType(betType: BetType, items: FastMarketResult[], position: number, positionStep: number) {
+        let resultNext: FastMarketResult;
+        let result: FastMarketResult;
+        switch (betType.betTypeId) {
+            case FastMarketBetType.nextOneMinute:
+                result = this.findFastMarketResult(betType, position);
+                result && items.push(result);
+                break;
+            case FastMarketBetType.nextFiveMinutes:
+                const startPosition = Math.max(position - positionStep, 0);
+                const endPosition = position;
+                for (let i = startPosition; i <= endPosition; i++) {
+                    resultNext = this.findFastMarketResult(betType, i);
+                    resultNext && items.push(resultNext);
+                }
+                break;
+        }
+    }
+
+    findFastMarketResult(betType: BetType, position: number): FastMarketResult {
+        for (const result of betType.fastMarketResults) {
+            if (result.position === position) {
+                return result;
+            }
+        }
+
+        return null;
     }
 
 }

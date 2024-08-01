@@ -118,7 +118,7 @@ public class AioServiceImp(
 
     private async Task<List<ProviderInfo>> GetProviderInfos(int leagueId, int sportType)
     {
-        var criteria = new Core.Criteria.GetProviderInfoCriteria { LeagueId = leagueId, SportType = sportType };
+        var criteria = new Settlement.Core.Criteria.GetProviderInfoCriteria { LeagueId = leagueId, SportType = sportType };
         var providers = await repository.FetchAsync<ProviderInfo>(criteria);
 
         return providers.ToList();
@@ -133,7 +133,8 @@ public class AioServiceImp(
         {
             var providerCriteria = validateApiKeyService.CriteriaName(request, $"{request.ApiKey}-{ApiKeyConstant.ProviderKey}");
             var providerResult = await repository.FetchAsync<ExternalResultDetailModel>(providerCriteria);
-            var provider = new Tuple<List<ExternalResultDetailModel>, List<ExternalResultModel>>(providerResult.ToList(), new List<ExternalResultModel>());
+            var provider = new Tuple<List<ExternalResultDetailModel>, List<ExternalResultModel>>(providerResult.ToList(),
+                []);
             providerMapperService.Decorate(provider);
             externalResults = provider.Item2;
         }
@@ -161,7 +162,7 @@ public class AioServiceImp(
         return new FantasyMatch
         {
             FantasyMatchDetail = firstResultSet.FirstOrDefault(),
-            RelatedMatches = relatedMatches,
+            RelatedMatches = relatedMatches
         };
     }
 
@@ -179,7 +180,7 @@ public class AioServiceImp(
                 AwayValue = match.AwayValue,
                 ResourceId = match.ResourceId,
                 ResultStatusId = match.ResultStatusId,
-                SettlementStatusId = match.SettlementStatusId,
+                SettlementStatusId = match.SettlementStatusId
             }).ToList();
 
             ClearScore(results, ResourceType.Halftime);
@@ -272,18 +273,13 @@ public class AioServiceImp(
         }
 
         var fantasyMatch = await GetRelatedMatches(request.MatchId);
-        var relatedMatches = fantasyMatch?.RelatedMatches ?? new List<RelatedMatch>();
+        var relatedMatches = fantasyMatch?.RelatedMatches ?? [];
         var settlingResourceIds = request.SelectedResources.Select(x => x.ResourceId).ToList();
 
-        var isNotCalc = relatedMatches.Any(x => x.Results.Any(r => settlingResourceIds.Contains(r.ResourceId)
+        var isNotCalc = relatedMatches.Exists(x => x.Results.Exists(r => settlingResourceIds.Contains(r.ResourceId)
             && r.SettlementStatusId != SettlementStatus.Completed));
 
-        if (isNotCalc)
-        {
-            return new Result(ErrorCode.ParentFantasyNotCalc, ErrorMessage.ParentFantasyNotCalc);
-        }
-
-        return new Result();
+        return isNotCalc ? new Result(ErrorCode.ParentFantasyNotCalc, ErrorMessage.ParentFantasyNotCalc) : new Result();
     }
 
     public async Task<Result> VerifyNoRunningOdds(CheckRunningOddsRequest request)
@@ -323,19 +319,19 @@ public class AioServiceImp(
         };
     }
 
-    private async Task<List<ChildMatchModel>> GetChildMatch(List<ResultDetail> resultDetail, GetMatchRequest request, string apiKey)
+    private async Task<List<ChildMatchModel>> GetChildMatch(List<ResultDetail> resultDetails, GetMatchRequest request, string apiKey)
     {
         var childMatchMapperService = mapperFactory.GetMapperService($"{apiKey}-{ApiKeyConstant.ChildMatchKey}");
         if (childMatchMapperService != null)
         {
             var getChildMatchCriteria = validateApiKeyService.CriteriaName(request, $"{apiKey}-{ApiKeyConstant.ChildMatchKey}");
             var childMatchList = await repository.FetchAsync<ChildMatchModel>(getChildMatchCriteria);
-            var childMatchTuple = new Tuple<List<ChildMatchModel>, List<ResultDetail>>(childMatchList.ToList(), resultDetail);
+            var childMatchTuple = new Tuple<List<ChildMatchModel>, List<ResultDetail>>(childMatchList.ToList(), resultDetails);
             childMatchMapperService.Decorate(childMatchTuple);
             return childMatchTuple.Item1.ToList();
         }
 
-        return new List<ChildMatchModel>();
+        return [];
     }
 
     public async Task<bool> ResultSetting(ResultSettingRequest request)
@@ -353,9 +349,10 @@ public class AioServiceImp(
 
     private async Task<List<ResultDetail>> SetInterval(Models.MatchDetail matchDetail, List<ResultDetail> resultDetails)
     {
-        var setViewed = matchDetail.GameSession == GamePlay.Three ? GamePlay.Three : GamePlay.Five;
+        var setViewed = GetViewedSet(matchDetail);
 
-        if (matchDetail.SportType != SportType.Tennis)
+        int[] sports = [SportType.Tennis, SportType.TableTennis];
+        if (!sports.Contains(matchDetail.SportType))
         {
             return resultDetails;
         }
@@ -375,6 +372,21 @@ public class AioServiceImp(
         resultOrdered.Add(finalResult);
 
         return resultOrdered.ToList();
+    }
+
+    private int GetViewedSet(Models.MatchDetail matchDetail)
+    {
+        var setViewed = (matchDetail.GameSession, matchDetail.SportType) switch
+        {
+            (3, SportType.Tennis) => GamePlay.Three,
+            (_, SportType.Tennis) => GamePlay.Five,
+            (0, SportType.TableTennis) => GamePlay.Seven,
+            (6, SportType.TableTennis) => GamePlay.Five,
+            (_, SportType.TableTennis) => matchDetail.GameSession,
+            (_, _) => matchDetail.GameSession
+        };
+
+        return setViewed;
     }
 
     private async Task<IEnumerable<ResourceIndex>> GetResourceIndex(int sportType)

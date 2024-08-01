@@ -9,15 +9,8 @@ public interface ResultDetailService
     Task SetInterval(int sportType, List<ResultDetail> resultDetails);
 }
 
-public class ResultDetailServiceImp : ResultDetailService
+public class ResultDetailServiceImp(IDynamicRepository repository) : ResultDetailService
 {
-    private readonly IDynamicRepository repository;
-
-    public ResultDetailServiceImp(IDynamicRepository repository)
-    {
-        this.repository = repository;
-    }
-
     public async Task SetInterval(int sportType, List<ResultDetail> resultDetails)
     {
         var indexes = (await GetResourceIndex(sportType)).ToList();

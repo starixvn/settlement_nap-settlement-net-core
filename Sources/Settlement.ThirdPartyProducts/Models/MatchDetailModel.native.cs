@@ -65,7 +65,7 @@ public class MatchDetailModel
 
     public int AutoSettingForLeague { get; set; }
 
-    public List<SiteMatch> SiteMatch { get; set; } = new();
+    public List<SiteMatch> SiteMatch { get; set; } = [];
 
     public AutoSetting AutoCalcSetting => autoCalcSetting ??= new AutoSetting
     {

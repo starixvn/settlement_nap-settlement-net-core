@@ -34,7 +34,7 @@ public class LogHandlerTests
         };
         var logs = new List<LogModel>
         {
-            new LogModel { MatchId = 1 }
+            new() { MatchId = 1 }
         };
         balanceUpService.GetBalanceUpDay().Returns(balanceUp);
         logService.GetLog(Arg.Any<LogRequest>()).Returns(logs);
@@ -64,7 +64,7 @@ public class LogHandlerTests
         };
         var logs = new List<LogModel>
         {
-            new LogModel { MatchId = 1 }
+            new() { MatchId = 1 }
         };
         balanceUpService.GetBalanceUpDay().Returns(balanceUp);
         logService.GetLog(Arg.Any<LogRequest>()).Returns(logs);

@@ -33,12 +33,12 @@ import { BehaviorSubject } from 'rxjs';
 export class MatchComponent implements OnChanges, OnInit {
   @Input() match: Match;
   @Input() isShow: boolean;
-  private sportMatchService = inject(SportMatchService);
-  private popupService = inject(PopupService);
-  private messageBoxService = inject(MessageBoxService);
-  private multiSportService = inject(MultiSportService);
-  private refreshMatchService = inject(RefreshMatchService);
-  private matchStateService = inject(MatchStateService);
+  private readonly sportMatchService = inject(SportMatchService);
+  private readonly popupService = inject(PopupService);
+  private readonly messageBoxService = inject(MessageBoxService);
+  private readonly multiSportService = inject(MultiSportService);
+  private readonly refreshMatchService = inject(RefreshMatchService);
+  private readonly matchStateService = inject(MatchStateService);
   store = inject(MultiSportsStore);
   language = Language;
   readonly sportTypeCricket = SportType.cricket;

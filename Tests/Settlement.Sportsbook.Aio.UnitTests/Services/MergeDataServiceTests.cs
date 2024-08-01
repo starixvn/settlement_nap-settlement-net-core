@@ -6,12 +6,7 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services;
 
 public class MergeDataServiceTests
 {
-    private readonly MergeDataService service;
-
-    public MergeDataServiceTests()
-    {
-        service = new MergeDataServiceImp();
-    }
+    private readonly MergeDataService service = new MergeDataServiceImp();
 
     [Fact]
     public void MergeTicketDetails_Always_SumBetTypeOnResultDetail()
@@ -76,8 +71,8 @@ public class MergeDataServiceTests
             BetSettledCount = 1
         };
 
-        data.Add((new List<ResultDetail>(), ticketCounts));
-        data.Add((new List<ResultDetail>(), ticketCountsSecond));
+        data.Add(([], ticketCounts));
+        data.Add(([], ticketCountsSecond));
 
         var result = service.MergeTicketDetails(data);
 

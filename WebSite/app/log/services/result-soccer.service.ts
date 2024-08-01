@@ -34,12 +34,12 @@ export class ResultSoccerService {
     }
     private  generateResult(value: string, betType: string) {
         let mappingKey = `${value}`;
-        if (SoccerResultValue[mappingKey] != undefined) {
+        if (SoccerResultValue[mappingKey] !== undefined) {
             return SoccerResultValue[mappingKey];
         }
 
         mappingKey = `${value}-${betType}`;
-        if (SoccerResultValueWithBettype[mappingKey] != undefined) {
+        if (SoccerResultValueWithBettype[mappingKey] !== undefined) {
             return SoccerResultValueWithBettype[mappingKey];
         }
 

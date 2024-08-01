@@ -13,7 +13,7 @@ export class ResourceNameByIdPipe implements PipeTransform {
     } else if (_.isEqual(resourceId, ResourcesIds.totalGames)) {
       return "Total Games";
     } else {
-      const setNumber = resourceId.substr(1, 1);
+      const setNumber = resourceId.substring(1, 2);
       return `Set ${setNumber}`;
     }
   }

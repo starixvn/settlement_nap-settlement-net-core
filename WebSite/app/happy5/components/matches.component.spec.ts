@@ -1,12 +1,9 @@
 import { TestBed, waitForAsync, ComponentFixture } from '@angular/core/testing';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-import {
-    ModalDialogComponent,
-    ModalContentDialogComponent,
-} from "../../shared/components";
+import { ModalDialogComponent } from "../../shared/components/modal-dialog/modal-dialog.component";
+import { ModalContentDialogComponent } from "../../shared/components/modal-dialog/modal-content-dialog.component";
 import { MatchesComponent,
     ReCalculationComponent,
     RefundComponent,
@@ -26,7 +23,7 @@ describe('Happy 5 - Matches Component', () => {
                 ReCalculationComponent,
                 RefundComponent,
                 ModalDialogComponent,
-                ModalContentDialogComponent,
+                ModalContentDialogComponent
             ],
             providers: [
                 NgbModal,

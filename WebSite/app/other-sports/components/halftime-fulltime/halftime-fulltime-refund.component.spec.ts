@@ -9,7 +9,7 @@ import { BlockUIService, HttpRequestService, MessageBoxService } from '../../../
 import { HalfTimeFullTimeService } from './halftime-fulltime.service';
 import { VerificationService } from './verification.service';
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
-import { ToastContainerDirective, ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
+import { ToastContainerDirective, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 import { Match, MatchDetail, OtherSportsMatch, Permission, QueryMatch } from '../../models';
 import { ResultDetail } from '../../../shared/models/sportsbook-sop/result-detail.model';
 import { ResourcesIds } from '../../constants';
@@ -72,7 +72,6 @@ describe('HalfTimeFullTimeRefundComponent', () => {
                 NgbModule,
                 FormsModule,
                 ToastNoAnimationModule.forRoot(),
-                ToastContainerModule,
                 ToastrModule.forRoot()
             ],
             providers: [

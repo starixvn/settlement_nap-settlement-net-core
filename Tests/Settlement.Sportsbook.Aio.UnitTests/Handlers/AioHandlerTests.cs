@@ -3,6 +3,7 @@ using Fanex.NAP.Client.Helpers.Web;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
+using Settlement.Sportsbook.Aio.Criteria.Cricket;
 using Settlement.Sportsbook.Aio.Handlers;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Requests;
@@ -121,5 +122,25 @@ public class AioHandlerTests
         var actual = await handler.Handle(new SettleChildMatchRequest(), new CancellationToken());
 
         Assert.Equal(result, actual);
+    }
+
+    [Fact]
+    public async Task HandleResultSettingRequest_Always_ReturnTrue()
+    {
+        service.ResultSetting(Arg.Any<ResultSettingRequest>()).Returns(true);
+
+        var actual = await handler.Handle(new ResultSettingRequest(), new CancellationToken());
+
+        Assert.True(actual);
+    }
+
+    [Fact]
+    public async Task HandleUpdateSettlementResultHistoryStatusRequest_Always_ReturnTrue()
+    {
+        await resultAmendmentService.UpdateResultHistory(Arg.Any<ResultHistoryUpdateCriteria>());
+
+        var actual = await handler.Handle(new UpdateSettlementResultHistoryStatusRequest(), new CancellationToken());
+
+        Assert.True(actual);
     }
 }

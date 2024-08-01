@@ -16,13 +16,18 @@ describe('BetBuilder - League setting Service', () => {
         errCode: 0,
         errMsg: "",
         isSuccessful: true,
-        childMatchIds: '1,2'
+        childMatchIds: '1,2',
+        settledSessionId: "",
+        hasResultAmendment: false
     };
 
     const unSuccessfulResult = {
         errCode: 1,
         errMsg: errorMessage,
         isSuccessful: false,
+        childMatchIds: "",
+        settledSessionId: "",
+        hasResultAmendment: false
     };
 
     beforeEach(() => {
@@ -83,7 +88,7 @@ describe('BetBuilder - League setting Service', () => {
         leagueMatches.isAutoSettingForLeague = false;
         leagueMatches.matches = [matchOne, matchTwo];
         it('should reset match of league when update success', async () => {
-            spyOn(requestService, 'updateLeague').and.returnValue(of(successfulResult));
+            jest.spyOn(requestService, 'updateLeague').mockReturnValue(Promise.resolve(successfulResult));
             matchOne.autoCalcSetting.isAutoSettingForMatch = false;
             matchTwo.autoCalcSetting.isAutoSettingForMatch = false;
 
@@ -95,8 +100,8 @@ describe('BetBuilder - League setting Service', () => {
         });
 
         it('should show alert when update request is unsuccess.', async() => {
-            spyOn(requestService, 'updateLeague').and.returnValue(of(unSuccessfulResult));
-            spyOn(messageBoxService , 'alert');
+            jest.spyOn(requestService, 'updateLeague').mockReturnValue(Promise.resolve(unSuccessfulResult));
+            jest.spyOn(messageBoxService , 'alert');
 
             await service.updateLeague(leagueMatches, true);
 

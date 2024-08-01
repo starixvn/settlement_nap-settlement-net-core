@@ -81,7 +81,7 @@ describe('BetBuilder - Calculation Filter Sevice', () => {
     it('groupBySelectionName - should return group selection', () => {
         const selection = new Selection('test name');
         const selections = [selection];
-        const expected = [new GroupSelection('test name-', selections)];
+        const expected = [new GroupSelection('test name', selections)];
 
         const result = service.groupBySelectionName(selections);
 

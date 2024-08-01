@@ -95,12 +95,7 @@ public class FetchDateServiceImp(IDynamicRepository repository,
                                                        betDaq.IsRefundRunningBetDaq
                                                        || baseData.IsSettleAbandonedMatchBetDaq !=
                                                        betDaq.IsSettleAbandonedMatchBetDaq);
-        if (existConflictData)
-        {
-            return mergeDataService.MergeBetDaq(baseData, nodeData);
-        }
-
-        return baseData;
+        return existConflictData ? mergeDataService.MergeBetDaq(baseData, nodeData) : baseData;
     }
 
     public async Task<BetFair> GetMultiServersBetFair(BetFairCheckingCriteria criteria)
@@ -123,12 +118,7 @@ public class FetchDateServiceImp(IDynamicRepository repository,
                                                           betDaq.IsRefundRunningBetFair
                                                           || baseData.IsSettleAbandonedMatchBetFair !=
                                                           betDaq.IsSettleAbandonedMatchBetFair);
-        if (existConflictData)
-        {
-            return mergeDataService.MergeBetFair(baseData, nodeData);
-        }
-
-        return baseData;
+        return existConflictData ? mergeDataService.MergeBetFair(baseData, nodeData) : baseData;
     }
 
     public async Task<(List<ResultDetailModel>, TicketCounts)> GetEarlyTicketDetails(GetResultDetailEarlyCriteria criteria)
