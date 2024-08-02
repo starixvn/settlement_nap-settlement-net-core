@@ -99,6 +99,9 @@ public class MatchServiceImp(
             case SportType.TableTennis:
                 return matchResultDetailService.TableTennisResultDetail(matches, resultDetails, isLeader);
 
+            case SportType.BaseBall:
+                return matchResultDetailService.BaseballResultDetail(matches, resultDetails, isLeader);
+
             default:
                 return LoadExternalResults(matches, resultDetails, sportType);
         }

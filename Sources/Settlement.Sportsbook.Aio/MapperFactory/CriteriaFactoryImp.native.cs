@@ -116,8 +116,8 @@ public class CriteriaFactoryImp : CriteriaFactoryBase
 
         CriteriaTypes.Add("tableTennis-settle", typeof(Criteria.SettleCriteria));
     }
-    
-     private static void StandardAIO()
+
+    private static void StandardAIO()
     {
         CriteriaTypes.Add($"standard-{ApiKeyConstant.MatchInfoKey}", typeof(Criteria.GetMatchDetailCriteria));
         CriteriaTypes.Add($"standard-{ApiKeyConstant.HedgeMatchInfoKey}", typeof(Criteria.GetHedgeMatchCriteria));
@@ -126,7 +126,8 @@ public class CriteriaFactoryImp : CriteriaFactoryBase
         CriteriaTypes.Add($"standard-{ApiKeyConstant.ProviderKey}", typeof(Criteria.GetProviderCriteria));
         CriteriaTypes.Add($"standard-{ApiKeyConstant.SaveScore}", typeof(Criteria.SaveScoreCriteria));
         CriteriaTypes.Add("standard-settle", typeof(Criteria.SettleCriteria));
+        CriteriaTypes.Add($"standard-refund-{ApiKeyConstant.ProviderKey}", typeof(Criteria.GetResultConfirmRefundCriteria));
     }
 
-    
+
 }

@@ -18,16 +18,16 @@ export class MatchDetailComponent {
   matchDetail = input<MatchDetail>();
   permission = input<Permission>();
   resultDetail = input<ResultDetail[]>([]);
-  private aioService = inject(AioService);
-  private dialog = inject(MatDialog);
+  #aioService = inject(AioService);
+  #dialog = inject(MatDialog);
 
   public manageOutSideSourcePopup() {
-    this.aioService.getLeagueSources(this.matchDetail().leagueId).subscribe((source: LeagueOutsideSource) => {
+    this.#aioService.getLeagueSources(this.matchDetail().leagueId).subscribe((source: LeagueOutsideSource) => {
         source.leagueName = this.matchDetail().leagueName;
         source.leagueId = this.matchDetail().leagueId;
         source.sportName = this.matchDetail().sportName;
-        this.dialog.closeAll();
-        this.dialog.open(ManageLeagueComponent, {
+        this.#dialog.closeAll();
+        this.#dialog.open(ManageLeagueComponent, {
             width: '500px',
             data: source
         }).afterClosed().subscribe((result) => {

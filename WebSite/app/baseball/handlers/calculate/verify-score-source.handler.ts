@@ -1,5 +1,5 @@
-import { Store } from './../../services/store.service';
-import { CalculateStore } from "../../services/calculate/calculate.store";
+import { Storage } from './../../services/storage.service';
+import { CalculateStorage } from "../../services/calculate/calculate.storage";
 import { NotifyService } from "../../services/notify.service";
 import { BaseHandler } from "../base.handler.native";
 import { inject } from "@angular/core";
@@ -15,8 +15,8 @@ export class VerifyScoreSourceHandler implements BaseHandler {
     this.nextHandler = handler;
   }
 
-  async handle(store: Store) {
-    const selectedResult = store.getResultChecked();
+  async handle(storage: Storage) {
+    const selectedResult = storage.getResultChecked();
     if (!this.verify.allMapHaveScreenshotSource(selectedResult)) {
       this.notifyService.error(Language.sop.notScreenshot);
       return;
@@ -28,10 +28,10 @@ export class VerifyScoreSourceHandler implements BaseHandler {
     }
 
     if (this.verify.allMapHaveScoreSources(selectedResult)) {
-      this.nextHandler.handle(store);
+      this.nextHandler.handle(storage);
     } else {
-      if (store.isLeader()) {
-        this.notifyService.confirm(Language.eSports.leader.insufficientSources, () => this.nextHandler.handle(store));
+      if (storage.isLeader()) {
+        this.notifyService.confirm(Language.eSports.leader.insufficientSources, () => this.nextHandler.handle(storage));
       } else {
         this.notifyService.error(Language.eSports.nonLeader.insufficientSources);
       }

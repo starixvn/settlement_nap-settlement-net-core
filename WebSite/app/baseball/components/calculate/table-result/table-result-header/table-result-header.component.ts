@@ -4,7 +4,7 @@ import { ExternalSourceNamePipe } from '../../../../../shared/pipes/external-sou
 import { FormsModule } from '@angular/forms';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { CommonModule } from '@angular/common';
-import { CalculateStore } from '../../../../services/calculate/calculate.store';
+import { CalculateStorage } from '../../../../services/calculate/calculate.storage';
 
 @Component({
   selector: 'thead[table-result-header]',
@@ -13,8 +13,8 @@ import { CalculateStore } from '../../../../services/calculate/calculate.store';
   templateUrl: './table-result-header.component.html',
 })
 export class TableResultHeaderComponent{
-  private store = inject(CalculateStore);
-  match = this.store.getMatch();
+  #storage = inject(CalculateStorage);
+  match = this.#storage.getMatch();
   SOURCE_ID = ScoreSourceType;
 
   get maxProviderCol() {

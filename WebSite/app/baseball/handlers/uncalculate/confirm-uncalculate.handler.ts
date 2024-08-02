@@ -1,9 +1,9 @@
 import { inject } from "@angular/core";
 import { Language } from "../../../shared/language.native";
-import { CalculateStore } from "../../services/calculate/calculate.store";
+import { CalculateStorage } from "../../services/calculate/calculate.storage";
 import { NotifyService } from "../../services/notify.service";
 import { BaseHandler } from "../base.handler.native";
-import { Store } from "../../services/store.service";
+import { Storage } from "../../services/storage.service";
 import { CalculateAction, ResultStatusId } from "../../../shared/constants";
 import { find } from "lodash";
 import { ResultDetail } from "../../../shared/models/sportsbook-sop";
@@ -17,19 +17,19 @@ export class ConfirmUnCalculateHandler implements BaseHandler {
     this.nextHandler = handler;
   }
 
-  handle(store: Store) {
-    const message = store.getActionSubmit() == CalculateAction.earlyUnCalculate ? this.getEarlyConfirmMessage(store) : Language.UncalculationConfirmMessage
+  handle(storage: Storage) {
+    const message = storage.getActionSubmit() == CalculateAction.earlyUnCalculate ? this.getEarlyConfirmMessage(storage) : Language.UncalculationConfirmMessage
     this.notifyService.confirm(message, () => {
-      store.getResultChecked().forEach((item) => {
+      storage.getResultChecked().forEach((item) => {
         item.homeValue = "";
         item.awayValue = "";
       });
-      this.nextHandler.handle(store);
+      this.nextHandler.handle(storage);
     });
   }
 
-  private getEarlyConfirmMessage(store: Store) {
-    const isRunningResultStatus = find(store.getResultChecked(),
+  private getEarlyConfirmMessage(storage: Storage) {
+    const isRunningResultStatus = find(storage.getResultChecked(),
       (x: ResultDetail) =>x.resultStatusId === ResultStatusId.RunningZero
               || x.resultStatusId === ResultStatusId.RunningOne
               || x.resultStatusId === ResultStatusId.RunningThree || x.resultStatusId === null);

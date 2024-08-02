@@ -1,12 +1,12 @@
 import { find, isEmpty, isNil } from "lodash";
 import { Language } from "../../../shared/language.native";
-import { CalculateStore } from "../../services/calculate/calculate.store";
+import { CalculateStorage } from "../../services/calculate/calculate.storage";
 import { NotifyService } from "../../services/notify.service";
 import { ResultDetail } from "../../../shared/models/sportsbook-sop";
 import { ResourceIds } from "../../constants/resource-id.constant";
 import { BaseHandler } from "../base.handler.native";
 import { inject } from "@angular/core";
-import { Store } from "../../services/store.service";
+import { Storage } from "../../services/storage.service";
 
 export class InvalidInputHandler implements BaseHandler {
   private nextHandler: BaseHandler;
@@ -16,11 +16,11 @@ export class InvalidInputHandler implements BaseHandler {
     this.nextHandler = handler;
   }
 
-  handle(store: Store) {
-    if (this.invalidInputScore(store.getResultChecked())) {
-      this.notifyService.error(store.isLeader() ? Language.sop.leader.blankScore : Language.sop.nonLeader.blankScore);
+  handle(storage: Storage) {
+    if (this.invalidInputScore(storage.getResultChecked())) {
+      this.notifyService.error(storage.isLeader() ? Language.sop.leader.blankScore : Language.sop.nonLeader.blankScore);
     } else {
-      this.nextHandler.handle(store);
+      this.nextHandler.handle(storage);
     }
   }
 

@@ -1,7 +1,7 @@
 import { TicketCountComponent } from './../../../shared/components/ticket-count/ticket-count.component';
 import { Component, inject } from '@angular/core';
 import { GroupMap, ResultDetail, SportTemplate } from '../../../shared/models/sportsbook-sop';
-import {  EarlySettlementStore } from '../../services/early-settlement/early-settlement.store';
+import {  EarlySettlementStorage } from '../../services/early-settlement/early-settlement.storage';
 import { ResourceNamePipe } from '../../pipes/resource-name.pipe';
 import { MatchDetailComponent } from '../../../shared/components/sportsbook-sop/match-detail/match-detail.component';
 import { CommonModule } from '@angular/common';
@@ -16,20 +16,20 @@ import { ResettleCheckerComponent } from "../../../shared/components/resettle-ch
   selector: 'early-settlement',
   standalone: true,
   imports: [MatchDetailComponent, TicketCountComponent, CommonModule, TableResultHeaderComponent, TableResultBodyComponent, TableResultFooterComponent, ResettleCheckerComponent],
-  providers: [EarlySettlementStore, ResourceNamePipe, EarlySettlementService],
+  providers: [EarlySettlementStorage, ResourceNamePipe, EarlySettlementService],
   templateUrl: './early-settlement.component.html',
 })
 export class EarlySettlementComponent implements SportTemplate{
-  store = inject(EarlySettlementStore);
-  match = this.store.match;
+  storage = inject(EarlySettlementStorage);
+  match = this.storage.match;
   isReadyMatch = false;
   mainResult: ResultDetail[];
-  isResettleTickets = this.store.isReSettledTickets();
+  isResettleTickets = this.storage.isReSettledTickets();
   async getMatch(matchId: number): Promise<void> {
-    await this.store.fetchMatch(matchId);
-    this.store.groupInning();
+    await this.storage.fetchMatch(matchId);
+    this.storage.groupInning();
     this.isReadyMatch = this.match().matchDetail.playTime >= KickOffTime.playTime;
-    this.mainResult = this.store.getMainResult();
+    this.mainResult = this.storage.getMainResult();
   }
 
   refresh(){
@@ -37,7 +37,7 @@ export class EarlySettlementComponent implements SportTemplate{
   }
 
   onResettleCheckboxChange(isChecked: boolean) {
-    this.store.setReSettledTickets(isChecked);
+    this.storage.setReSettledTickets(isChecked);
   }
 
 }

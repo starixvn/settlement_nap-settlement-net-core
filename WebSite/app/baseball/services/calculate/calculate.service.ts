@@ -6,7 +6,6 @@ import { VerifyRunningOddsHandler } from "../../handlers/calculate/verify-runnin
 import { VerifyScoreSourceHandler } from "../../handlers/calculate/verify-score-source.handler";
 import { ConfirmMismatchScoreHandler } from "../../handlers/calculate/confirm-mismatch-score.handler";
 import { ConfirmChangedResultHandler } from "../../handlers/calculate/confirm-changed-result.handler";
-import { CalculateStore } from "./calculate.store";
 import { NotifyService } from "../notify.service";
 import { ConfirmUnCalculateHandler } from "../../handlers/uncalculate/confirm-uncalculate.handler";
 import { SaveScoreQuery } from "../../../shared/models/sportsbook-sop";
@@ -16,6 +15,11 @@ import { VerificationBaseService } from "../../../core/services/verification-bas
 import { ConfirmCalculateHandler } from "../../handlers/calculate/confirm-calculate.handler";
 import { SaveScoreHandler } from "../../handlers/calculate/save-score.handler";
 import { CalculateHandler } from "../../handlers/calculate/calculate.handler";
+import { CalculateStorage } from "./calculate.storage";
+import { ResultDetailBaseBall } from "../../models/result-detail.model";
+import { every, find, isEqual, sumBy } from "lodash";
+import { ResourceIds } from "../../constants/resource-id.constant";
+import { GeneralResultDetail } from "../../../shared/models";
 
 @Injectable()
 
@@ -32,7 +36,7 @@ export class CalculateService {
   private calculateHandler = new CalculateHandler();
   private confirmUncalculateHandler = new ConfirmUnCalculateHandler();
 
-  private store = inject(CalculateStore);
+  private storage = inject(CalculateStorage);
   private notifyService = inject(NotifyService);
   private aioService = inject(AioService);
   private verificationService = inject(VerificationBaseService)
@@ -51,19 +55,19 @@ export class CalculateService {
   }
 
   calculate() {
-    this.nonSelectedHandler.handle(this.store);
+    this.nonSelectedHandler.handle(this.storage);
   }
 
   unCalculate() {
-    this.confirmUncalculateHandler.handle(this.store);
+    this.confirmUncalculateHandler.handle(this.storage);
   }
 
   async saveScore() {
-    const resultWithoutFinal = this.store.getAllInnings();
-    const scoresToSave = this.verificationService.getChangedScores(resultWithoutFinal, this.store.getOriginalResultDetails());
+    const resultWithoutFinal = this.storage.getAllInnings();
+    const scoresToSave = this.verificationService.getChangedScores(resultWithoutFinal, this.storage.getOriginalResultDetails());
     const checkedScores = this.verificationService.getOutsideScores(resultWithoutFinal);
     const query: SaveScoreQuery = {
-      matchId: this.store.getMatchDetail().matchId,
+      matchId: this.storage.getMatchDetail().matchId,
       scoresToSave,
       checkedScores,
       apiKey: BaseballApiKeys.NormalMatch
@@ -71,12 +75,36 @@ export class CalculateService {
 
     const result = await this.aioService.saveScore(query);
     if (result.isSuccessful) {
-      this.store.getResultDetails().forEach((map) => {
+      this.storage.getResultDetails().forEach((map) => {
         map.checked = false;
       });
     } else {
       this.notifyService.error(result.errMsg);
     }
-
   }
+
+  sumTotalScores(resultDetails: GeneralResultDetail[], totalPoints: GeneralResultDetail) {
+    if (resultDetails.length > 0 &&
+      (this.isScoreConsecutive(resultDetails))) {
+        totalPoints.homeValue = sumBy(resultDetails, (map) => Number(map.homeValue)).toString();
+        totalPoints.awayValue = sumBy(resultDetails, (map) => Number(map.awayValue)).toString();
+    } else {
+      totalPoints.homeValue = "";
+      totalPoints.awayValue = "";
+    }
+  }
+
+  private isScoreConsecutive(resultDetails: GeneralResultDetail[]) {
+    if (resultDetails.length === 1) {
+      return false;
+    }
+
+    return every(resultDetails, (item) =>
+      find(resultDetails, (resultDetail) => this.getPosition(resultDetail,resultDetails) === this.getPosition(item, resultDetails) - 1)
+      || this.getPosition(item, resultDetails) === 1);
+  }
+
+  private getPosition(resultDetail: GeneralResultDetail, resultDetails: GeneralResultDetail[]) {
+    return isEqual(resultDetail.resourceId, ResourceIds.extraInning) ? resultDetails.length : Number(resultDetail.resourceId.slice(-2));
+}
 }

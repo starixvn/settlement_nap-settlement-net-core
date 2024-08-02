@@ -7,7 +7,7 @@ import { ResourceNamePipe } from "../../pipes/resource-name.pipe";
 
 @Injectable() 
 
-export class RefundStore {
+export class RefundStorage {
   private aioService = inject(AioService);
   private resultPipe = inject(ResourceNamePipe);
   #match = signal<Match>(null);

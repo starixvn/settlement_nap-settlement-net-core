@@ -2,35 +2,35 @@ import { inject, Injectable } from "@angular/core";
 import { ResultDetail } from "../../shared/models/sportsbook-sop";
 import { ResourceIds, ResultStatus, TicketStatusText } from "../../shared/constants";
 import { isEmpty, isEqual } from "lodash";
-import { CalculateStore } from "./calculate/calculate.store";
 import { VerificationBaseService } from "../../core/services/verification-base.service";
 import { IntervalBackgroundPipe } from "../../shared/pipes/interval-background.pipe";
+import { CalculateStorage } from "./calculate/calculate.storage";
 
 
 @Injectable()
 
 export class ResultRowStateService {
-  store = inject(CalculateStore);
+  storage = inject(CalculateStorage);
   verificationService = inject(VerificationBaseService);
   intervalBackgroundPipe = inject(IntervalBackgroundPipe);
 
 
   isConfirmed(resultDetail: ResultDetail) {
-    if (isEqual(resultDetail.resourceId, ResourceIds.fullTime)) {
-      return this.store.isLeader && resultDetail.resultSettingData.isConfirmedRefund;
+    if (isEqual(resultDetail.resourceId, ResourceIds.extraInning)) {
+      return this.storage.isLeader() && this.storage.fulltimeResult.resultSettingData.isConfirmedRefund;
     } else {
-      return this.store.isLeader && resultDetail.resultSettingData.isConfirmedRefund;
+      return this.storage.isLeader() && resultDetail.resultSettingData.isConfirmedRefund;
     }
   }
 
   isFinalScoreDisabled(set: ResultDetail, outsideSource = false) {
-    return this.store.isLeader || outsideSource ? isEqual(set.resourceId, ResourceIds.fullTime)
-      ? !this.store.isScoreDirect() : this.store.isScoreDirect() : true;
+    return this.storage.isLeader || outsideSource ? isEqual(set.resourceId, ResourceIds.fullTime)
+      ? !this.storage.isScoreDirect() : this.storage.isScoreDirect() : true;
   }
 
 
   finalScoreClass(resultDetail: ResultDetail) {
-    const className = this.verificationService.isFullTimeMismatched(this.store.getResultDetails(), this.store.isScoreDirect(),
+    const className = this.verificationService.isFullTimeMismatched(this.storage.getResultDetails(), this.storage.isScoreDirect(),
       ResourceIds.fullTime, true)
       ? 'col-mismatched ' : '';
 
@@ -43,9 +43,9 @@ export class ResultRowStateService {
       return false;
     }
 
-    let disabled = resultDetail.resourceId === ResourceIds.fullTime ? !this.store.isScoreDirect() : this.store.isScoreDirect();
+    let disabled = resultDetail.resourceId === ResourceIds.fullTime ? !this.storage.isScoreDirect() : this.storage.isScoreDirect();
 
-    return this.store.getIsClickOnCalculate() && !disabled && resultDetail.checked && isEmpty(isHome ? resultDetail.homeValue : resultDetail.awayValue);
+    return this.storage.getIsClickOnCalculate() && !disabled && resultDetail.checked && isEmpty(isHome ? resultDetail.homeValue : resultDetail.awayValue);
   }
 
   canSettleResult(result: ResultDetail) {
@@ -59,6 +59,6 @@ export class ResultRowStateService {
   }
 
   isCheckBoxDisabled(result: ResultDetail) {
-    return isEqual(result.resourceId, ResourceIds.extraInning) ? !this.store.isScoreDirect() : this.store.isScoreDirect();
+    return isEqual(result.resourceId, ResourceIds.extraInning) ? !this.storage.isScoreDirect() : this.storage.isScoreDirect();
   }
 }

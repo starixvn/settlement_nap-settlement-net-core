@@ -5,8 +5,8 @@ import { BaseHandler } from "../base.handler.native";
 import { VerificationBaseService } from "../../../core/services/verification-base.service";
 import { SaveScoreQuery } from "../../../shared/models/sportsbook-sop";
 import { BaseballApiKeys } from "../../constants/api-keys.constant";
-import { CalculateStore } from "../../services/calculate/calculate.store";
-import { Store } from "../../services/store.service";
+import { CalculateStorage } from "../../services/calculate/calculate.storage";
+import { Storage } from "../../services/storage.service";
 
 export class SaveScoreHandler implements BaseHandler {
   private nextHandler: BaseHandler;
@@ -18,11 +18,11 @@ export class SaveScoreHandler implements BaseHandler {
     this.nextHandler = handler;
   }
 
-  async handle(store: Store) {
-    const scoresToSave = this.verificationService.getChangedScores(store.getResultChecked(), store.getOriginalResultDetails());
-    const checkedScores = this.verificationService.getOutsideScores(store.getResultChecked());
+  async handle(storage: Storage) {
+    const scoresToSave = this.verificationService.getChangedScores(storage.getResultChecked(), storage.getOriginalResultDetails());
+    const checkedScores = this.verificationService.getOutsideScores(storage.getResultChecked());
     const saveScoreQuery: SaveScoreQuery = {
-      matchId: store.getMatchDetail().matchId,
+      matchId: storage.getMatchDetail().matchId,
       scoresToSave,
       checkedScores,
       apiKey: BaseballApiKeys.NormalMatch,
@@ -32,7 +32,7 @@ export class SaveScoreHandler implements BaseHandler {
     if(!saveScoreResult.isSuccessful){
       this.notifyService.error(saveScoreResult.errMsg);
     } else {
-      this.nextHandler?.handle(store);
+      this.nextHandler?.handle(storage);
     }
   }
 }

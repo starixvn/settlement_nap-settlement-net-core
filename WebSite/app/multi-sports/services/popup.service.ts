@@ -34,7 +34,7 @@ export class PopupService {
     SportType.basketBall,
     SportType.cricket,
     SportType.volleyBall,
-    SportType.tableTennis
+    SportType.tableTennis,
     SportType.baseBall
   ];
   public properties = new PopupProperties();

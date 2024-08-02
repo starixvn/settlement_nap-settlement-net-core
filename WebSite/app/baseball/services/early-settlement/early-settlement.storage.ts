@@ -8,11 +8,11 @@ import { VerificationBaseService } from "../../../core/services/verification-bas
 import { cloneDeep, isEqual, isNil, uniqBy } from "lodash";
 import { GroupMap, ResultDetail } from "../../../shared/models/sportsbook-sop";
 import { ItemsSelect } from "../../../shared/models";
-import { Store } from '../store.service';
 import { BackgroundColor, TicketStatusText } from '../../../shared/constants';
+import { Storage } from '../storage.service';
 
 @Injectable()
-export class EarlySettlementStore implements Store {
+export class EarlySettlementStorage implements Storage {
   #aioService = inject(AioService);
   #resultPipe = inject(ResourceNamePipe);
   #verificationService = inject(VerificationBaseService);

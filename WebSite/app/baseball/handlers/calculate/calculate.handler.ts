@@ -2,10 +2,10 @@ import { inject } from "@angular/core";
 import { SettleQuery } from "../../../shared/models/sportsbook-sop";
 import { AioService } from "../../../shared/services";
 import { BaseballApiKeys } from "../../constants/api-keys.constant";
-import { CalculateStore } from "../../services/calculate/calculate.store";
+import { CalculateStorage } from "../../services/calculate/calculate.storage";
 import { NotifyService } from "../../services/notify.service";
 import { BaseHandler } from "../base.handler.native";
-import { Store } from "../../services/store.service";
+import { Storage } from "../../services/storage.service";
 
 export class CalculateHandler implements BaseHandler {
   private nextHandler: BaseHandler;
@@ -15,18 +15,18 @@ export class CalculateHandler implements BaseHandler {
     this.nextHandler = handler;
   }
 
-  async handle(store: Store): Promise<void> {
-    const query = this.createRequestQuery(store);
+  async handle(storage: Storage): Promise<void> {
+    const query = this.createRequestQuery(storage);
     const result = await this.aioService.push(query);
     if (result.isSuccessful) {
-      this.calculateHedgeMatch(query, store);
+      this.calculateHedgeMatch(query, storage);
     } else {
       this.notifyService.error(result.errMsg);
     }
   }
 
-  private calculateHedgeMatch(query: SettleQuery, store: Store) {
-    const hedgeMatchId = store.getApplyingHedgeMatch() ? store.getMatch().hedgeMatchDetail.matchId
+  private calculateHedgeMatch(query: SettleQuery, storage: Storage) {
+    const hedgeMatchId = storage.getApplyingHedgeMatch() ? storage.getMatch().hedgeMatchDetail.matchId
       : 0;
     if (hedgeMatchId > 0) {
       query.matchId = hedgeMatchId;
@@ -39,17 +39,17 @@ export class CalculateHandler implements BaseHandler {
     }
   }
 
-  private createRequestQuery(store: Store) {
+  private createRequestQuery(storage: Storage) {
     const query = new SettleQuery(
-      store.getMatchDetail(),
-      store.getResultChecked(),
-      store.getActionSubmit(),
-      store.isReSettledTickets(),
+      storage.getMatchDetail(),
+      storage.getResultChecked(),
+      storage.getActionSubmit(),
+      storage.isReSettledTickets(),
       "",
       BaseballApiKeys.Settle,
-      store.isLeader()
+      storage.isLeader()
     );
-    query.isDirectly = store.isScoreDirect();
+    query.isDirectly = storage.isScoreDirect();
     return query;
   }
 }

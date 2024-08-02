@@ -1,5 +1,5 @@
 import { inject } from "@angular/core";
-import { Store } from "../../services/store.service";
+import { Storage } from "../../services/storage.service";
 import { BaseHandler } from "../base.handler.native";
 import { AioService } from "../../../shared/services";
 import { NotifyService } from "../../services/notify.service";
@@ -14,17 +14,17 @@ export class CheckMarkedTicketHandler implements BaseHandler {
     this.nextHandler = handler;
   }
 
-  async handle(store: Store) {
+  async handle(storage: Storage) {
     const paramsCheckingMarkedTickets = {
-      matchId: store.getMatchDetail().matchId,
-      selectedResources: store.getResultChecked()
+      matchId: storage.getMatchDetail().matchId,
+      selectedResources: storage.getResultChecked()
     };
     const res = await this.#aioService.checkMarkedTickets(paramsCheckingMarkedTickets);
     if (res.isExistMarkedTicket) {
       this.#notifyService.error(Language.MarkedTicket);
     } else {
       this.#notifyService.confirm(Language.RefundConfirmMessageEarly, () => {
-        this.nextHandler.handle(store);
+        this.nextHandler.handle(storage);
       });
     }
   }

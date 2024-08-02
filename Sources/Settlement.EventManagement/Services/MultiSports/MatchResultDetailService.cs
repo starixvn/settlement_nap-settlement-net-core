@@ -25,6 +25,8 @@ public interface IMatchResultDetailService
     List<Match> BandyResultDetail(List<Match> matches, List<ResultDetail> resultDetails, bool isLeader);
 
     List<Match> TableTennisResultDetail(List<Match> matches, List<ResultDetail> resultDetails, bool isLeader);
+
+    List<Match> BaseballResultDetail(List<Match> matches, List<ResultDetail> resultDetails, bool isLeader);
 }
 
 public class MatchResultDetailServiceImp(
@@ -57,6 +59,12 @@ public class MatchResultDetailServiceImp(
     public List<Match> CricketResultDetail(List<Match> matches, List<ResultDetail> resultDetails, bool isLeader)
     {
         var resources = new List<string> { "H1", "H2", "A1", "A2" };
+        return SetMatchInfo(matches, resultDetails, resources, isLeader);
+    }
+
+    public List<Match> BaseballResultDetail(List<Match> matches, List<ResultDetail> resultDetails, bool isLeader)
+    {
+        var resources = new List<string> { "0101", "0102", "0103", "0104", "0105", "0106", "0107", "0108", "0109", "EI" };
         return SetMatchInfo(matches, resultDetails, resources, isLeader);
     }
 

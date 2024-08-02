@@ -1,7 +1,7 @@
 import { CalculateAction } from './../../../../../shared/constants/calculate-action.native';
 import { FormsModule } from '@angular/forms';
 import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
-import { EarlySettlementStore } from '../../../../services/early-settlement/early-settlement.store';
+import { EarlySettlementStorage } from '../../../../services/early-settlement/early-settlement.storage';
 import { CommonModule } from '@angular/common';
 import { Permission, SettleQuery } from '../../../../../shared/models/sportsbook-sop';
 import { NotifyService } from '../../../../services/notify.service';
@@ -19,21 +19,21 @@ import { find, join } from 'lodash';
 })
 export class TableResultFooterComponent {
   permission = input<Permission>();
-  #store = inject(EarlySettlementStore);
+  #storage = inject(EarlySettlementStorage);
   #notifyService = inject(NotifyService);
   #earlySettlementService = inject(EarlySettlementService);
-  isDisableAction = this.#store.disableAction;
+  isDisableAction = this.#storage.disableAction;
   isShowRefundButton = false;
 
   calculate() {
     this.#notifyService.clearError();
-    this.#store.setActionSubmit(CalculateAction.earlyCalculate);
+    this.#storage.setActionSubmit(CalculateAction.earlyCalculate);
     this.#earlySettlementService.calculate();
   }
 
   unCalculate() {
     this.#notifyService.clearError();
-    this.#store.setActionSubmit(CalculateAction.earlyUnCalculate);
+    this.#storage.setActionSubmit(CalculateAction.earlyUnCalculate);
     this.#earlySettlementService.unCalculate();
 
   }
@@ -47,7 +47,7 @@ export class TableResultFooterComponent {
 
   confirmRefund() {
     this.#notifyService.clearError();
-    const selected = this.#store.getResultChecked();
+    const selected = this.#storage.getResultChecked();
     const resourceIds = join(selected.map(item => item.resourceId), ',');
     const existResultConfirmed = find(selected, item => item.resultSettingData.isConfirmedRefund);
     if (existResultConfirmed) {
@@ -59,7 +59,7 @@ export class TableResultFooterComponent {
 
   refund() {
     this.#notifyService.clearError();
-    this.#store.setActionSubmit(CalculateAction.earlyRefund);
+    this.#storage.setActionSubmit(CalculateAction.earlyRefund);
     this.#earlySettlementService.refund();
   }
 

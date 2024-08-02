@@ -1,10 +1,10 @@
 import { Language } from "../../../shared/language.native";
-import { CalculateStore } from "../../services/calculate/calculate.store";
+import { CalculateStorage } from "../../services/calculate/calculate.storage";
 import { NotifyService } from "../../services/notify.service";
 import { BaseHandler } from "../base.handler.native";
 import { VerificationBaseService } from "../../../core/services/verification-base.service";
 import { inject } from "@angular/core";
-import { Store } from "../../services/store.service";
+import { Storage } from "../../services/storage.service";
 
 export class ConfirmMismatchScoreHandler implements BaseHandler {
   private nextHandler: BaseHandler;
@@ -15,15 +15,15 @@ export class ConfirmMismatchScoreHandler implements BaseHandler {
     this.nextHandler = handler;
   }
 
-  handle(store: Store) {
-    if (this.verify.isExistMismatchScore(store.getResultChecked())) {
-      if (store.isLeader()) {
-        this.notifyService.confirm(Language.eSports.leader.mismatchedScore, () => this.nextHandler.handle(store));
+  handle(storage: Storage) {
+    if (this.verify.isExistMismatchScore(storage.getResultChecked())) {
+      if (storage.isLeader()) {
+        this.notifyService.confirm(Language.eSports.leader.mismatchedScore, () => this.nextHandler.handle(storage));
       } else {
         this.notifyService.error(Language.eSports.nonLeader.mismatchedScore);
       }
     } else {
-      this.nextHandler.handle(store);
+      this.nextHandler.handle(storage);
     }
   }
 }

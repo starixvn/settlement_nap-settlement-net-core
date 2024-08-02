@@ -1,6 +1,6 @@
-import { Store } from "../services/store.service";
+import { Storage } from "../services/storage.service";
 
 export interface BaseHandler {
   setNextHandler(handler: BaseHandler): void;
-  handle(store: Store): void ;
+  handle(storage: Storage): void ;
 }

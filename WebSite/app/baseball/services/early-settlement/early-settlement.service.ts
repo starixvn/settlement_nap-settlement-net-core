@@ -16,7 +16,7 @@ import { ConfirmCalculateHandler } from "../../handlers/calculate/confirm-calcul
 import { SaveScoreHandler } from "../../handlers/calculate/save-score.handler";
 import { CalculateHandler } from "../../handlers/calculate/calculate.handler";
 import { ConfirmUnCalculateHandler } from "../../handlers/uncalculate/confirm-uncalculate.handler";
-import { EarlySettlementStore } from "./early-settlement.store";
+import { EarlySettlementStorage } from "./early-settlement.storage";
 import { CheckMarkedTicketHandler } from "../../handlers/refund/check-marked-ticket.handler";
 import { NotifyService } from "../notify.service";
 import { AioService } from "../../../shared/services";
@@ -24,7 +24,7 @@ import { AioService } from "../../../shared/services";
 @Injectable()
 
 export class EarlySettlementService {
-  #store = inject(EarlySettlementStore);
+  #storage = inject(EarlySettlementStorage);
   #aioService = inject(AioService);
   #notifyService = inject(NotifyService);
   #resultConfirmedHandler = new ResultConfirmedHandler();
@@ -55,30 +55,30 @@ export class EarlySettlementService {
   }
 
   calculate() {
-    this.#resultConfirmedHandler.handle(this.#store)
+    this.#resultConfirmedHandler.handle(this.#storage)
   }
 
   unCalculate() {
-    this.#confirmUncalculateHandler.handle(this.#store);
+    this.#confirmUncalculateHandler.handle(this.#storage);
   }
 
   refund() {
-    this.#checkMarkedTicket.handle(this.#store);
+    this.#checkMarkedTicket.handle(this.#storage);
   }
 
   saveScore() {
-    this.#saveScoreOnly.handle(this.#store);
+    this.#saveScoreOnly.handle(this.#storage);
   }
 
   confirmResult(resourceIds: string) {
     this.#aioService.changeConfirmResultSetting(Language.confirmRefund.confirmRefund,
-      this.#store.getMatchDetail().matchId, resourceIds, true, null);
+      this.#storage.getMatchDetail().matchId, resourceIds, true, null);
   }
 
   unConfirmResult(resourceIds: string) {
-    const resultNotConfirmed = find(this.#store.getResultChecked(), item => !item.resultSettingData.isConfirmedRefund);
+    const resultNotConfirmed = find(this.#storage.getResultChecked(), item => !item.resultSettingData.isConfirmedRefund);
     if (isNil(resultNotConfirmed)) {
-      this.#aioService.changeConfirmResultSetting(Language.confirmRefund.undoConfirm, this.#store.getMatchDetail().matchId, resourceIds, false, null);
+      this.#aioService.changeConfirmResultSetting(Language.confirmRefund.undoConfirm, this.#storage.getMatchDetail().matchId, resourceIds, false, null);
     } else {
       this.#notifyService.error(Language.confirmRefund.differentStates);
     }

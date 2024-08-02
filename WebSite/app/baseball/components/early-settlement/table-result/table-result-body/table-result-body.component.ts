@@ -1,6 +1,6 @@
 import { FormsModule } from '@angular/forms';
 import { Component, inject, OnInit } from '@angular/core';
-import { EarlySettlementStore } from '../../../../services/early-settlement/early-settlement.store';
+import { EarlySettlementStorage } from '../../../../services/early-settlement/early-settlement.storage';
 import { GroupMap, ResultDetail } from '../../../../../shared/models/sportsbook-sop';
 import { CommonModule } from '@angular/common';
 import { PipesModule } from "../../../../../shared/pipes/pipes.module.native";
@@ -22,19 +22,19 @@ import { InputType } from '../../../../constants/input-type.constant';
   templateUrl: './table-result-body.component.html',
 })
 export class TableResultBodyComponent  implements OnInit{
-  #store = inject(EarlySettlementStore);
+  #storage = inject(EarlySettlementStorage);
   #notifyService = inject(NotifyService);
   #aioService = inject(AioService);
   #earlySettlementService = inject(EarlySettlementService);
   #verificationService = inject(VerificationBaseService);
-  permission = this.#store.getPermission();
-  match = this.#store.match;
-  groupMap = this.#store.getGroupResultDetail();
-  #matchId = this.#store.match().matchDetail.matchId
-  resultTypeSelected = this.#store.resultType;
-  ticketStatusSelected = this.#store.ticketStatus;
-  resultStatusSelected = this.#store.resultStatus
-  maxProviderCol = this.#store.match().matchDetail.providerCount > 2 ? 3 : 2
+  permission = this.#storage.getPermission();
+  match = this.#storage.match;
+  groupMap = this.#storage.getGroupResultDetail();
+  #matchId = this.#storage.match().matchDetail.matchId
+  resultTypeSelected = this.#storage.resultType;
+  ticketStatusSelected = this.#storage.ticketStatus;
+  resultStatusSelected = this.#storage.resultStatus
+  maxProviderCol = this.#storage.match().matchDetail.providerCount > 2 ? 3 : 2
   #maxTeamName = 10;
   homeName = this.getTeamName(this.match().matchDetail.homeName);
   awayName = this.getTeamName(this.match().matchDetail.awayName);
@@ -54,7 +54,7 @@ export class TableResultBodyComponent  implements OnInit{
         item.isResultWarning = false;
       }
     });
-    this.#store.updateDisableAction();
+    this.#storage.updateDisableAction();
   }
 
   onChangeBetType(resultDetail: ResultDetail, groupMap: GroupMap) {
@@ -66,7 +66,7 @@ export class TableResultBodyComponent  implements OnInit{
         return true;
     });
 
-    this.#store.updateDisableAction();
+    this.#storage.updateDisableAction();
   }
 
 
@@ -77,7 +77,7 @@ export class TableResultBodyComponent  implements OnInit{
         !group.isHoldResult, resourceIds);
       this.#notifyService.confirm(Language.holdResultGroupConfirmMessage, async () => {
         this.#aioService.changeResultSetting(query).then((result) => {
-          this.#store.updateValueGroup(group, result);
+          this.#storage.updateValueGroup(group, result);
         });
       });
     }
@@ -90,7 +90,7 @@ export class TableResultBodyComponent  implements OnInit{
         !resultDetail.resultSettingData.isHoldResult, resultDetail.resourceId);
       this.#notifyService.confirm(Language.holdResultConfirmMessage, async () => {
         const result = await this.#aioService.changeResultSetting(query);
-        this.#store.updateHoldStatus(resultDetail, result);
+        this.#storage.updateHoldStatus(resultDetail, result);
         groupMap.isHoldResult = groupMap.resultDetail.every(item => item.resultSettingData.isHoldResult);
       });
     }

@@ -6,8 +6,9 @@ import { AioService } from "../../../shared/services";
 import { VerificationBaseService } from "../../../core/services/verification-base.service";
 import { CalculateAction, ResourceIds, ResultStatusId, SettlementStatusId } from "../../../shared/constants";
 import { ResultDetailBaseBall } from "../../models/result-detail.model";
-import { cloneDeep } from "lodash";
-import { Store } from "../store.service";
+import { cloneDeep, every, find, sumBy } from "lodash";
+import { Storage } from "../storage.service";
+import { GeneralResultDetail } from "../../../shared/models";
 
 @Injectable(
   {
@@ -15,7 +16,7 @@ import { Store } from "../store.service";
   }
 )
 
-export class CalculateStore implements Store{
+export class CalculateStorage implements Storage {
   #aioService = inject(AioService);
   #verificationBaseService = inject(VerificationBaseService);
 
@@ -47,6 +48,13 @@ export class CalculateStore implements Store{
     this.maxProviderCol = matchFetched.matchDetail.providerCount > 2 ? 3 : 2;
     this.fulltimeResult = this.getFullTime();
     this.#originalResultDetails = cloneDeep(matchFetched.resultDetails);
+  }
+
+  mapTicketStatusExtraInning() {
+    const extraInning = this.#match().resultDetails.find((item) => item.resourceId === ResourceIds.extraInning);
+    if (extraInning) {
+         extraInning.ticketStatus = this.fulltimeResult.ticketStatus;
+    }
   }
 
   resetHomeAway() {
@@ -85,15 +93,15 @@ export class CalculateStore implements Store{
   setIsApplyHedgeMatch = (isApplyHedgeMatch: boolean) => this.#isApplyHedgeMatch.set(isApplyHedgeMatch);
 
   getMatch = () => this.#match();
-  
+
   getApplyingHedgeMatch = () => this.#isApplyHedgeMatch();
 
-  onSubmitCalculate () {
+  onSubmitCalculate() {
     this.#isClickOnCalculate = true;
     this.#actionSubmit = CalculateAction.calculate;
   }
 
-  onSubmitUncalculate () {
+  onSubmitUncalculate() {
     this.#isClickOnCalculate = false;
     this.#actionSubmit = CalculateAction.unCalculate;
   }

@@ -6,7 +6,6 @@ import { KickOffTime } from '../../constants/kick-off-time.constant';
 import { CommonModule } from '@angular/common';
 import { TicketCountComponent } from '../../../shared/components/ticket-count/ticket-count.component';
 import { ResettleCheckerComponent } from '../../../shared/components/resettle-checker/resettle-checker.component';
-import { CalculateStore } from '../../services/calculate/calculate.store';
 import { NotReadyMatchComponent } from "../../../shared/components/not-ready-match/not-ready-match.component";
 import { TableResultHeaderComponent } from './table-result/table-result-header/table-result-header.component';
 import { TableResultBodyComponent } from './table-result/table-result-body/table-result-body.component';
@@ -15,32 +14,36 @@ import { IntervalBackgroundPipe } from '../../../shared/pipes/interval-backgroun
 import { ResultRowStateService } from '../../services/result-row-state.service';
 import { ResourceNamePipe } from '../../pipes/resource-name.pipe';
 import { Match } from '../../models/match.model';
+import { CalculateStorage } from '../../services/calculate/calculate.storage';
+import { CalculateService } from '../../services/calculate/calculate.service';
 @Component({
   selector: 'calculate',
   standalone: true,
   imports: [MatchDetailComponent, TicketCountComponent, ResettleCheckerComponent,
      CommonModule, FormsModule, NotReadyMatchComponent, TableResultHeaderComponent, TableResultBodyComponent, TableResultFooterComponent],
-  providers: [IntervalBackgroundPipe, ResultRowStateService, ResourceNamePipe],
+  providers: [IntervalBackgroundPipe, ResultRowStateService, ResourceNamePipe, CalculateService],
   templateUrl: './calculate.component.html'
 })
 export class CalculateComponent implements SportTemplate {
-  #store = inject(CalculateStore);
+  #storage = inject(CalculateStorage);
   isReadyMatch = false;
   applyHedgeMatch: boolean;
-  isResettleTickets = this.#store.isReSettledTickets();
+  isResettleTickets = this.#storage.isReSettledTickets();
   match: Match;
+  
   async getMatch(matchId: number) {
-    await this.#store.fetchMatch(matchId);
-    this.isReadyMatch = this.#store.getMatchDetail().playTime >= KickOffTime.playTime;
-    this.#store.resetHomeAway();
-    this.match = this.#store.getMatch();
+    await this.#storage.fetchMatch(matchId);
+    this.isReadyMatch = this.#storage.getMatchDetail().playTime >= KickOffTime.playTime;
+    this.#storage.resetHomeAway();
+    this.#storage.mapTicketStatusExtraInning();
+    this.match = this.#storage.getMatch();
   }
 
   onResettleCheckboxChange(isChecked: boolean) {
-    this.#store.setReSettledTickets(isChecked);
+    this.#storage.setReSettledTickets(isChecked);
   }
 
   changeApplyHedgeMatch(isChecked: boolean) {
-    this.#store.setIsApplyHedgeMatch(isChecked);
+    this.#storage.setIsApplyHedgeMatch(isChecked);
   }
 }

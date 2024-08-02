@@ -5,7 +5,7 @@ import { MatchDetail, ResultDetail } from "../../../shared/models/sportsbook-sop
 import { ResourceNamePipe } from "../../pipes/resource-name.pipe";
 import { NotifyService } from "../../services/notify.service";
 import { BaseHandler } from "../base.handler.native";
-import { Store } from "../../services/store.service";
+import { Storage } from "../../services/storage.service";
 import { isEqual } from "lodash";
 import { InputType } from "../../constants/input-type.constant";
 import { CalculateAction } from "../../../shared/constants";
@@ -20,11 +20,11 @@ export class ConfirmCalculateHandler implements BaseHandler {
     this.nextHandler = handler;
   }
 
-  handle(store: Store) {
-    const message = store.getActionSubmit() == CalculateAction.earlyCalculate ?
-      this.getConfirmEarly(store.getResultChecked(), store.getMatchDetail()) : this.getConfirmMessage(store.getResultChecked());
+  handle(storage: Storage) {
+    const message = storage.getActionSubmit() == CalculateAction.earlyCalculate ?
+      this.getConfirmEarly(storage.getResultChecked(), storage.getMatchDetail()) : this.getConfirmMessage(storage.getResultChecked());
     this.notifyService.confirm(message, () => {
-      this.nextHandler.handle(store);
+      this.nextHandler.handle(storage);
     });
   }
 

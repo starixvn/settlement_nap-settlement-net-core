@@ -1,8 +1,8 @@
-import { Store } from './../../services/store.service';
+import { Storage } from './../../services/storage.service';
 import { find, isEqual } from "lodash";
 import { Language } from "../../../shared/language.native";
 import { ResourceIds } from "../../constants/resource-id.constant";
-import { CalculateStore } from "../../services/calculate/calculate.store";
+import { CalculateStorage } from "../../services/calculate/calculate.storage";
 import { NotifyService } from "../../services/notify.service";
 import { BaseHandler } from "../base.handler.native";
 import { inject } from "@angular/core";
@@ -15,15 +15,15 @@ export class ResultConfirmedHandler implements BaseHandler {
     this.nextHandler = handler;
   }
 
-  handle(store: Store) {
+  handle(storage: Storage) {
     const existResultConfirmed = find(
-      store.getResultChecked(), 
+      storage.getResultChecked(), 
       (item) =>item.resultSettingData.isConfirmedRefund && !isEqual(item.resourceId, ResourceIds.extraInning)
     );
     if (existResultConfirmed) {
       this.notifyService.error(Language.confirmRefund.calculateResultNotConfirmed);
     } else {
-      this.nextHandler.handle(store);
+      this.nextHandler.handle(storage);
     }
 }
 }

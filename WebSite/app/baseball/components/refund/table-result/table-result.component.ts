@@ -9,7 +9,6 @@ import { HedgeMatchDetail, MatchDetail, Permission, ResultDetail, SettleQuery } 
 import { Language } from '../../../../shared/language.native';
 import { NotifyService } from '../../../services/notify.service';
 import { BaseballApiKeys } from '../../../constants/api-keys.constant';
-import { CalculateAction } from '../../../../shared/constants';
 
 @Component({
   selector: 'table-result',

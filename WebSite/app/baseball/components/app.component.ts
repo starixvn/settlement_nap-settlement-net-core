@@ -22,21 +22,21 @@ import { CommonModule } from '@angular/common';
 export class AppComponent implements OnInit {
   @ViewChild('container', { read: ViewContainerRef, static: true }) container: ViewContainerRef;
   @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
-  private destroyRef = inject(DestroyRef);
-  private toastrService = inject(ToastrService);
-  private blockUIService = inject(BlockUIService)
+  #destroyRef = inject(DestroyRef);
+  #toastrService = inject(ToastrService);
+  #blockUIService = inject(BlockUIService)
   public component: ComponentRef<SportTemplate>;
   blockUI = true;
   constructor(protected viewContainerRef: ViewContainerRef, protected elementRef: ElementRef<HTMLElement>) {
   }
 
   ngOnInit() {
-    this.toastrService.overlayContainer = this.toastContainer;
-    var subscriber = this.blockUIService.blockUIEvent.subscribe((blockUI) => {
+    this.#toastrService.overlayContainer = this.toastContainer;
+    var subscriber = this.#blockUIService.blockUIEvent.subscribe((blockUI) => {
         this.blockUI = blockUI;
       })
     this.createComponent();
-    this.destroyRef.onDestroy(() => {
+    this.#destroyRef.onDestroy(() => {
       subscriber.unsubscribe();
     });
   }
@@ -49,7 +49,7 @@ export class AppComponent implements OnInit {
       return this.component;
     });
 
-    this.destroyRef.onDestroy(() => {
+    this.#destroyRef.onDestroy(() => {
       subscriber.unsubscribe();
     });
   }

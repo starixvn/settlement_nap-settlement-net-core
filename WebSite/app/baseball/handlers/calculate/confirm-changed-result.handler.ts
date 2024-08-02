@@ -6,8 +6,8 @@ import { inject } from "@angular/core";
 import { BaseballApiKeys } from "../../constants/api-keys.constant";
 import { SportType } from "../../../shared/constants";
 import { AioService } from "../../../shared/services";
-import { CalculateStore } from "../../services/calculate/calculate.store";
-import { Store } from "../../services/store.service";
+import { CalculateStorage } from "../../services/calculate/calculate.storage";
+import { Storage } from "../../services/storage.service";
 
 export class ConfirmChangedResultHandler implements BaseHandler {
   private nextHandler: BaseHandler;
@@ -18,28 +18,28 @@ export class ConfirmChangedResultHandler implements BaseHandler {
     this.nextHandler = handler;
   }
 
-  async handle(store: Store) {
-    if (store.isReSettledTickets()) {
-      this.nextHandler.handle(store);
+  async handle(storage: Storage) {
+    if (storage.isReSettledTickets()) {
+      this.nextHandler.handle(storage);
     } else {
       const getResultQuery = {
-        matchId: store.getMatchDetail().matchId,
+        matchId: storage.getMatchDetail().matchId,
         apikey: BaseballApiKeys.NormalMatch,
         sportType: SportType.baseBall,
       };
 
-      const needConfirm = await this.aioService.verifyChangedSettledTickets(store.getResultChecked(), getResultQuery);
-      this.confirmSetReSettle(needConfirm, store );
+      const needConfirm = await this.aioService.verifyChangedSettledTickets(storage.getResultChecked(), getResultQuery);
+      this.confirmSetReSettle(needConfirm, storage );
     }
   }
 
-  private confirmSetReSettle(needConfirm: boolean, store: Store) {
+  private confirmSetReSettle(needConfirm: boolean, storage: Storage) {
     if (needConfirm) {
       this.notifyService.confirm(Language.recalculateNotification, () => {
-        store.setReSettledTickets(true);
+        storage.setReSettledTickets(true);
       });
     } else {
-      this.nextHandler.handle(store);
+      this.nextHandler.handle(storage);
     }
   }
 }

@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, Type } from '@angular/core';
 import { ScoreSourceType } from '../../../../../shared/constants';
-import { EarlySettlementStore } from '../../../../services/early-settlement/early-settlement.store';
+import { EarlySettlementStorage } from '../../../../services/early-settlement/early-settlement.storage';
 import { NewMultipleSelectComponent } from '../../../../../shared/components/multiple-select/multiple-select.component';
 import { ItemsSelect, MultipleSelect } from '../../../../../shared/models';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -17,15 +17,15 @@ import { FilterId } from '../../../../constants/filter-id.constants';
   templateUrl: './table-result-header.component.html',
 })
 export class TableResultHeaderComponent implements OnInit {
-  private store = inject(EarlySettlementStore);
+  private storage = inject(EarlySettlementStorage);
   private earlyBaseService = inject(EarlyBaseService)
-  match = this.store.match;
-  permission = this.store.getPermission();
+  match = this.storage.match;
+  permission = this.storage.getPermission();
   SOURCE_ID = ScoreSourceType;
   ticketsStatusSelect = new MultipleSelect();
   resultStatusSelect = new MultipleSelect();
   resultTypeSelect = new MultipleSelect();
-  groupResultDetail = this.store.getGroupResultDetail();
+  groupResultDetail = this.storage.getGroupResultDetail();
   filterId = FilterId;
 
   get maxProviderCol() {
@@ -51,6 +51,6 @@ export class TableResultHeaderComponent implements OnInit {
   }
 
   onSelectFilter(value: ItemsSelect[], type: number) {
-    this.store.updateFilter(value, type);
+    this.storage.updateFilter(value, type);
   }
 }

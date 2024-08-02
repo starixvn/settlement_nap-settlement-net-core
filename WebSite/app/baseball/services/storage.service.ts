@@ -2,7 +2,7 @@ import { MatchDetail, ResultDetail } from "../../shared/models/sportsbook-sop";
 import { Match } from "../models/match.model";
 
 
-export interface Store {
+export interface Storage {
   getMatchDetail() : MatchDetail;
   getResultChecked(): ResultDetail[];
   getActionSubmit(): string;
