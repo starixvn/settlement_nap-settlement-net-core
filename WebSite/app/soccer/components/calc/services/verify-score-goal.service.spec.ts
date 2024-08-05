@@ -374,14 +374,17 @@ describe('Soccer - verify score goal', () => {
             awayId: 2,
             homeName: 'Home',
             awayName: 'Away',
-            htHomeScore: '1',
-            htAwayScore: '2',
-            finalAwayScore: '3',
-            finalHomeScore: '4',
+            htHomeScore: 1,
+            htAwayScore: 2,
+            finalAwayScore: 3,
+            finalHomeScore: 4,
             remark: null,
             eventStatus: '',
             betStatus: '',
-            isDeleted: false
+            isDeleted: false,
+            ftSettlementStatusId: 0,
+            htSettlementStatusId: 0
+
         }
         const homeTeams = ['1', '2'];
         const awayTeams = ['1', '2'];

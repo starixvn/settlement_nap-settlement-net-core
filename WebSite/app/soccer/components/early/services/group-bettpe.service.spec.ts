@@ -23,15 +23,16 @@ export class CreateDataTest {
         isNotTaken: boolean) {
         return {
             resourceId: null,
-            map,
-            ticketStatus: null,
-            betType,
-            betTypeName: null,
+            resourceName:'',
             homeValue: home,
             awayValue: away,
             resultStatusId: null,
             settlementStatusId,
             resultStatus: null,
+            map,
+            ticketStatus: null,
+            betType,
+            betTypeName: null,
             checked: null,
             isResultWarning: false,
             isHomeValueWarning: null,
@@ -39,6 +40,7 @@ export class CreateDataTest {
             isInvalidValue,
             isNotTaken,
             isSettleDetermined,
+            isSettleDeterminedOriginal: false,
             isInvalidSelectedProceed: false,
             isNotExistedValue: false,
             resultSettingData: new ResultSettingModel(),
@@ -99,7 +101,7 @@ describe(`Soccer - GroupBetTypeService`, () => {
                 resultDetails.push(away);
                 resultDetails.push(CreateDataTest.FakeData(
                     BetTypes.PenaltyShootout1X2, 1, "", "", 1, false, false, false));
-                spyOn(autoFillService, 'checkConsistentOnBetTypes').and.returnValue(true);
+                jest.spyOn(autoFillService, 'checkConsistentOnBetTypes').mockReturnValue(true);
                 const maps = service.getGroupBetType(resultDetails);
 
                 const expectedResult: ResultDetail[] = [];
@@ -121,7 +123,7 @@ describe(`Soccer - GroupBetTypeService`, () => {
                     resultDetails.push(away);
                     resultDetails.push(CreateDataTest.FakeData(
                         BetTypes.PenaltyShootout1X2, 1, "", "", 0, false, false, false));
-                    spyOn(penaltyShootout1x2Service, 'resetValuePenaltyShootout1X2').and.returnValue(ResultValue.Draw);
+                    jest.spyOn(penaltyShootout1x2Service, 'resetValuePenaltyShootout1X2').mockReturnValue(ResultValue.Draw);
                     const maps = service.getGroupBetType(resultDetails);
 
                     const expectedResult: ResultDetail[] = [];
@@ -143,8 +145,8 @@ describe(`Soccer - GroupBetTypeService`, () => {
                     resultDetails.push(away);
                     resultDetails.push(CreateDataTest.FakeData(
                         BetTypes.PenaltyShootoutBothOneNeither, 1, "", "", 0, false, false, false));
-                    spyOn(penaltyShootoutBothOneNeitherService,
-                        'resetValuePenalyShootoutBothOneNeither').and.returnValue(ResultValue.Both);
+                    jest.spyOn(penaltyShootoutBothOneNeitherService,
+                        'resetValuePenalyShootoutBothOneNeither').mockReturnValue(ResultValue.Both);
                     const maps = service.getGroupBetType(resultDetails);
 
                     const expectedResult: ResultDetail[] = [];
@@ -167,7 +169,7 @@ describe(`Soccer - GroupBetTypeService`, () => {
                 resultDetails.push(away);
                 resultDetails.push(CreateDataTest.FakeData(
                     BetTypes.PenaltyWoodwork, 1, "", "", 1, false, false, false));
-                spyOn(penaltyWoodWorkService, 'isInvalidHomeOrAwayResult').and.returnValue(true);
+                jest.spyOn(penaltyWoodWorkService, 'isInvalidHomeOrAwayResult').mockReturnValue(true);
                 const maps = service.getGroupBetType(resultDetails);
 
                 const expectedResult: ResultDetail[] = [];
@@ -189,8 +191,8 @@ describe(`Soccer - GroupBetTypeService`, () => {
                     resultDetails.push(away);
                     resultDetails.push(CreateDataTest.FakeData(
                         BetTypes.PenaltyWoodwork, 1, "", "", 0, false, false, false));
-                    spyOn(penaltyWoodWorkService, 'resetResultValue').and.returnValue(ResultValue.NotTaken);
-                    spyOn(penaltyWoodWorkService, 'isInvalidHomeOrAwayResult').and.returnValue(false);
+                    jest.spyOn(penaltyWoodWorkService, 'resetResultValue').mockReturnValue(ResultValue.NotTaken);
+                    jest.spyOn(penaltyWoodWorkService, 'isInvalidHomeOrAwayResult').mockReturnValue(false);
 
                     const maps = service.getGroupBetType(resultDetails);
 
@@ -213,7 +215,7 @@ describe(`Soccer - GroupBetTypeService`, () => {
                 const resultDetail = CreateDataTest.FakeData(
                     BetTypes.PenaltyShootout1X2, 1, "", "", 0, false, false, false);
                 resultDetails.push(resultDetail);
-                spyOn(penaltyService, 'isSelectedNotTaken').and.returnValue(true);
+                jest.spyOn(penaltyService, 'isSelectedNotTaken').mockReturnValue(true);
                 const maps = service.getGroupBetType(resultDetails);
 
                 const expectedResult: ResultDetail[] = [];
@@ -231,7 +233,7 @@ describe(`Soccer - GroupBetTypeService`, () => {
                 const resultDetail = CreateDataTest.FakeData(
                     BetTypes.PenaltyShootout1X2, 1, "", "", 7, false, false, false);
                 resultDetails.push(resultDetail);
-                spyOn(penaltyService, 'isSelectedNotTaken').and.returnValue(true);
+                jest.spyOn(penaltyService, 'isSelectedNotTaken').mockReturnValue(true);
                 const maps = service.getGroupBetType(resultDetails);
 
                 const expectedResult: ResultDetail[] = [];
@@ -252,7 +254,7 @@ describe(`Soccer - GroupBetTypeService`, () => {
                 const resultDetail = CreateDataTest.FakeData(
                     BetTypes.PenaltyShootoutOddEven, 1, "", "", 0, false, false, false);
                 resultDetails.push(resultDetail);
-                spyOn(autoFillService, 'resetValueOnFirstTen').and.returnValue(of(resultDetail));
+                jest.spyOn(autoFillService, 'resetValueOnFirstTen');
                 service.getGroupBetType(resultDetails);
                 expect(autoFillService.resetValueOnFirstTen).toHaveBeenCalled();
             });
@@ -262,7 +264,7 @@ describe(`Soccer - GroupBetTypeService`, () => {
                 const resultDetail = CreateDataTest.FakeData(
                     BetTypes.PenaltyShootoutHomeScore, 1, "1", "2", 7, false, false, false);
                 resultDetails.push(resultDetail);
-                spyOn(penaltyService, 'countHomePenaltyShooutoutByScore').and.returnValue("1");
+                jest.spyOn(penaltyService, 'countHomePenaltyShooutoutByScore').mockReturnValue("1");
                 const maps = service.getGroupBetType(resultDetails);
 
                 const expectedResult: ResultDetail[] = [];
@@ -297,8 +299,8 @@ describe(`Soccer - GroupBetTypeService`, () => {
                 const resultDetail = CreateDataTest.FakeData(
                     BetTypes.PenaltyShootoutExactTotalGoals, 1, "1", "2", 7, false, false, false);
                 resultDetails.push(resultDetail);
-                spyOn(penaltyService, 'countHomePenaltyShooutoutByScore').and.returnValue("1");
-                spyOn(penaltyService, 'countAwayPenaltyShooutoutByScore').and.returnValue("2");
+                jest.spyOn(penaltyService, 'countHomePenaltyShooutoutByScore').mockReturnValue("1");
+                jest.spyOn(penaltyService, 'countAwayPenaltyShooutoutByScore').mockReturnValue("2");
                 const maps = service.getGroupBetType(resultDetails);
 
                 const expectedResult: ResultDetail[] = [];
@@ -316,8 +318,8 @@ describe(`Soccer - GroupBetTypeService`, () => {
                 const resultDetail = CreateDataTest.FakeData(
                     BetTypes.PenaltyShootoutOddEven, 1, "1", "2", 1, false, false, false);
                 resultDetails.push(resultDetail);
-                spyOn(penaltyService, 'countHomePenaltyShooutoutByScore').and.returnValue("1");
-                spyOn(penaltyService, 'countAwayPenaltyShooutoutByScore').and.returnValue("2");
+                jest.spyOn(penaltyService, 'countHomePenaltyShooutoutByScore').mockReturnValue("1");
+                jest.spyOn(penaltyService, 'countAwayPenaltyShooutoutByScore').mockReturnValue("2");
                 const maps = service.getGroupBetType(resultDetails);
 
                 const expectedResult: ResultDetail[] = [];

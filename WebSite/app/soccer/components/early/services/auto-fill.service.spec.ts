@@ -21,6 +21,7 @@ export class CreateDataTest {
         isNotTaken: boolean) {
         return {
             resourceId: null,
+            resourceName:'',
             map,
             ticketStatus: null,
             betType,
@@ -37,6 +38,7 @@ export class CreateDataTest {
             isInvalidValue,
             isNotTaken,
             isSettleDetermined,
+            isSettleDeterminedOriginal: false,
             isInvalidSelectedProceed: false,
             isNotExistedValue: true,
             resultSettingData: new ResultSettingModel(),
@@ -80,7 +82,7 @@ describe(`Soccer - AutoFillService`, () => {
                                 0, false, false, false);
             const resultDetails: ResultDetail[] = [];
             resultDetails.push(selectedItem);
-            spyOn(penaltyService, 'isSelectedNotTaken').and.returnValue(true);
+            jest.spyOn(penaltyService, 'isSelectedNotTaken').mockReturnValue(true);
             service.autoFillResult(resultDetails, selectedItem);
 
             const expectedResult: ResultDetail[] = [];
@@ -101,7 +103,7 @@ describe(`Soccer - AutoFillService`, () => {
                 0, false, false, false);
                 const resultDetails: ResultDetail[] = [];
                 resultDetails.push(betType1x2);
-                spyOn(penaltyShootout1x2Service, 'resetValuePenaltyShootout1X2').and.returnValue(ResultValue.Home);
+                jest.spyOn(penaltyShootout1x2Service, 'resetValuePenaltyShootout1X2').mockReturnValue(ResultValue.Home);
                 service.autoFillResult(resultDetails, selectedItem);
 
                 const expectedResult: ResultDetail[] = [];
@@ -118,7 +120,7 @@ describe(`Soccer - AutoFillService`, () => {
                 0, false, false, false);
                 const resultDetails: ResultDetail[] = [];
                 resultDetails.push(betTypeBothOneNeither);
-                spyOn(bothOneNeitherService, 'resetValuePenalyShootoutBothOneNeither').and.returnValue(ResultValue.One);
+                jest.spyOn(bothOneNeitherService, 'resetValuePenalyShootoutBothOneNeither').mockReturnValue(ResultValue.One);
                 service.autoFillResult(resultDetails, selectedItem);
 
                 const expectedResult: ResultDetail[] = [];
@@ -135,7 +137,7 @@ describe(`Soccer - AutoFillService`, () => {
                 0, false, false, false);
                 const resultDetails: ResultDetail[] = [];
                 resultDetails.push(betTypePenaltyWoodwork);
-                spyOn(penaltyWoodWorkService, 'resetResultValue').and.returnValue(ResultValue.NotTaken);
+                jest.spyOn(penaltyWoodWorkService, 'resetResultValue').mockReturnValue(ResultValue.NotTaken);
                 service.autoFillResult(resultDetails, selectedItem);
 
                 const expectedResult: ResultDetail[] = [];
@@ -152,7 +154,7 @@ describe(`Soccer - AutoFillService`, () => {
                 0, false, false, false);
                 const resultDetails: ResultDetail[] = [];
                 resultDetails.push(betTypePenaltyWoodwork);
-                spyOn(penaltyWoodWorkService, 'resetResultValue').and.returnValue(ResultValue.NotTaken);
+                jest.spyOn(penaltyWoodWorkService, 'resetResultValue').mockReturnValue(ResultValue.NotTaken);
                 service.autoFillResult(resultDetails, selectedItem);
 
                 const expectedResult: ResultDetail[] = [];
@@ -172,7 +174,7 @@ describe(`Soccer - AutoFillService`, () => {
 
                 const resultDetails: ResultDetail[] = [];
                 resultDetails.push(betTypeHomeOverUnder);
-                spyOn(penaltyService, 'countHomePenaltyShooutoutByScore').and.returnValue("2");
+                jest.spyOn(penaltyService, 'countHomePenaltyShooutoutByScore').mockReturnValue("2");
                 service.autoFillResult(resultDetails, selectedItem);
 
                 const expectedResult: ResultDetail[] = [];
@@ -190,7 +192,7 @@ describe(`Soccer - AutoFillService`, () => {
 
                 const resultDetails: ResultDetail[] = [];
                 resultDetails.push(betTypeAwayOverUnder);
-                spyOn(penaltyService, 'countAwayPenaltyShooutoutByScore').and.returnValue("3");
+                jest.spyOn(penaltyService, 'countAwayPenaltyShooutoutByScore').mockReturnValue("3");
                 service.autoFillResult(resultDetails, selectedItem);
 
                 const expectedResult: ResultDetail[] = [];
@@ -208,8 +210,8 @@ describe(`Soccer - AutoFillService`, () => {
 
                 const resultDetails: ResultDetail[] = [];
                 resultDetails.push(betTypeOddEven);
-                spyOn(penaltyService, 'countHomePenaltyShooutoutByScore').and.returnValue("2");
-                spyOn(penaltyService, 'countAwayPenaltyShooutoutByScore').and.returnValue("3");
+                jest.spyOn(penaltyService, 'countHomePenaltyShooutoutByScore').mockReturnValue("2");
+                jest.spyOn(penaltyService, 'countAwayPenaltyShooutoutByScore').mockReturnValue("3");
                 service.autoFillResult(resultDetails, selectedItem);
 
                 const expectedResult: ResultDetail[] = [];
