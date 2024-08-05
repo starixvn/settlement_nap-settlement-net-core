@@ -1,6 +1,5 @@
 import { FormsModule } from '@angular/forms';
 import { Component, inject, OnInit } from '@angular/core';
-import { EarlySettlementStorage } from '../../../../services/early-settlement/early-settlement.storage';
 import { GroupMap, ResultDetail } from '../../../../../shared/models/sportsbook-sop';
 import { CommonModule } from '@angular/common';
 import { PipesModule } from "../../../../../shared/pipes/pipes.module.native";
@@ -14,6 +13,7 @@ import { EarlySettlementService } from '../../../../services/early-settlement/ea
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { VerificationBaseService } from '../../../../../core/services/verification-base.service';
 import { InputType } from '../../../../constants/input-type.constant';
+import { EarlySettlementStorage } from '../../../../services/early-settlement/early-settlement.storage';
 
 @Component({
   selector: 'tbody[table-result-body]',
@@ -111,8 +111,6 @@ export class TableResultBodyComponent  implements OnInit{
   }
 
   private getTeamName(teamName: string) {
-    console.log(`${teamName.substring(0, this.#maxTeamName)}...`);
-    console.log(this.#maxTeamName);
     return teamName.length > this.#maxTeamName ? `${teamName.substring(0, this.#maxTeamName)}...` : teamName;
   }
 

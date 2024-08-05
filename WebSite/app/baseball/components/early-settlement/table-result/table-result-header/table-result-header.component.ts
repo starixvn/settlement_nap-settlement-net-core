@@ -1,6 +1,5 @@
 import { Component, inject, OnInit, Type } from '@angular/core';
 import { ScoreSourceType } from '../../../../../shared/constants';
-import { EarlySettlementStorage } from '../../../../services/early-settlement/early-settlement.storage';
 import { NewMultipleSelectComponent } from '../../../../../shared/components/multiple-select/multiple-select.component';
 import { ItemsSelect, MultipleSelect } from '../../../../../shared/models';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -8,6 +7,7 @@ import { ExternalLinkPipe } from "../../../../../score-source-setting/pipes/exte
 import { CommonModule } from '@angular/common';
 import { EarlyBaseService } from '../../../../../core/services/early-base.service';
 import { FilterId } from '../../../../constants/filter-id.constants';
+import { EarlySettlementStorage } from '../../../../services/early-settlement/early-settlement.storage';
 
 @Component({
   selector: 'thead[table-result-header]',
@@ -17,15 +17,15 @@ import { FilterId } from '../../../../constants/filter-id.constants';
   templateUrl: './table-result-header.component.html',
 })
 export class TableResultHeaderComponent implements OnInit {
-  private storage = inject(EarlySettlementStorage);
-  private earlyBaseService = inject(EarlyBaseService)
-  match = this.storage.match;
-  permission = this.storage.getPermission();
+  #storage = inject(EarlySettlementStorage);
+  #earlyBaseService = inject(EarlyBaseService)
+  match = this.#storage.match;
+  permission = this.#storage.getPermission();
   SOURCE_ID = ScoreSourceType;
   ticketsStatusSelect = new MultipleSelect();
   resultStatusSelect = new MultipleSelect();
   resultTypeSelect = new MultipleSelect();
-  groupResultDetail = this.storage.getGroupResultDetail();
+  groupResultDetail = this.#storage.getGroupResultDetail();
   filterId = FilterId;
 
   get maxProviderCol() {
@@ -42,15 +42,15 @@ export class TableResultHeaderComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.resultTypeSelect.items = this.earlyBaseService.renderResultType(this.groupResultDetail);
-    this.resultStatusSelect.items = this.earlyBaseService.renderResultStatus(this.permission);
-    this.ticketsStatusSelect.items = this.earlyBaseService.renderTicketStatus();
+    this.resultTypeSelect.items = this.#earlyBaseService.renderResultType(this.groupResultDetail);
+    this.resultStatusSelect.items = this.#earlyBaseService.renderResultStatus(this.permission);
+    this.ticketsStatusSelect.items = this.#earlyBaseService.renderTicketStatus();
     this.resultTypeSelect.maxWidth = '150px';
     this.ticketsStatusSelect.maxWidth = '100px';
     this.resultStatusSelect.maxWidth = '150px';
   }
 
   onSelectFilter(value: ItemsSelect[], type: number) {
-    this.storage.updateFilter(value, type);
+    this.#storage.updateFilter(value, type);
   }
 }

@@ -18,7 +18,7 @@ import { BaseballApiKeys } from '../../../constants/api-keys.constant';
 })
 export class TableResultComponent extends RefundActionBaseComponent implements OnInit{
   match = input.required<Match>();
-  private notifyService = inject(NotifyService);
+  #notifyService = inject(NotifyService);
   hedgeMatchDetail: HedgeMatchDetail;
   applyHedgeMatch: boolean;
   resultDetails: ResultDetail[];
@@ -44,7 +44,7 @@ export class TableResultComponent extends RefundActionBaseComponent implements O
     } else if (res.isExistMarkedTicket) {
       this.toastrService.error(Language.MarkedTicket);
     } else {
-      this.notifyService.confirm(Language.RefundConfirmMessage, () => {
+      this.#notifyService.confirm(Language.RefundConfirmMessage, () => {
         this.doRefund();
       });
     }

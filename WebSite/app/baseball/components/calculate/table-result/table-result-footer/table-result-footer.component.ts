@@ -2,13 +2,13 @@
 import { FormsModule } from '@angular/forms';
 import { Component, inject, OnInit } from '@angular/core';
 import { ResourceIds } from '../../../../constants/resource-id.constant';
-import * as _ from 'lodash';
 import { CommonModule } from '@angular/common';
 import { NotifyService } from '../../../../services/notify.service';
 import { Language } from '../../../../../shared/language.native';
 import { CalculateService } from '../../../../services/calculate/calculate.service';
 import { TicketStatusText } from '../../../../../shared/constants';
 import { CalculateStorage } from '../../../../services/calculate/calculate.storage';
+import { filter, isEqual } from 'lodash';
 
 @Component({
   selector: 'tfoot[table-result-footer]',
@@ -25,7 +25,9 @@ export class TableResultFooterComponent implements OnInit {
   canUncalculate = this.#storage.getPermission().canUncalculate;
 
   ngOnInit(): void {
-    this.disableScoreDirect = _.filter(this.#storage.getResultDetails(), (item) => !_.isEqual(item.resourceId, ResourceIds.fullTime)
+    this.disableScoreDirect = filter(this.#storage.getResultDetails(), (item) => 
+      !isEqual(item.resourceId, ResourceIds.fullTime) &&
+     !isEqual(item.resourceId, ResourceIds.extraInning)
       && item.ticketStatus !== TicketStatusText.noTicket).length > 0;
   }
 

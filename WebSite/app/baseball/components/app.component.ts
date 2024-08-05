@@ -32,7 +32,7 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     this.#toastrService.overlayContainer = this.toastContainer;
-    var subscriber = this.#blockUIService.blockUIEvent.subscribe((blockUI) => {
+    const subscriber = this.#blockUIService.blockUIEvent.subscribe((blockUI) => {
         this.blockUI = blockUI;
       })
     this.createComponent();

@@ -1,6 +1,5 @@
 import { FormsModule } from '@angular/forms';
-import { effect, OnInit } from '@angular/core';
-import { Component, inject } from '@angular/core';
+import { Component, inject, effect, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ResourceNamePipe } from '../../../../pipes/resource-name.pipe';
 import { ResultDetail } from '../../../../../shared/models/sportsbook-sop';
