@@ -1,14 +1,13 @@
 import { CalculateAction } from './../../../../../shared/constants/calculate-action.native';
 import { FormsModule } from '@angular/forms';
 import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
-import { EarlySettlementStorage } from '../../../../services/early-settlement/early-settlement.storage';
 import { CommonModule } from '@angular/common';
 import { Permission, SettleQuery } from '../../../../../shared/models/sportsbook-sop';
 import { NotifyService } from '../../../../services/notify.service';
 import { EarlySettlementService } from '../../../../services/early-settlement/early-settlement.service';
-import { BaseballApiKeys } from '../../../../constants/api-keys.constant';
 import { Language } from '../../../../../shared/language.native';
 import { find, join } from 'lodash';
+import { EarlySettlementStorage } from '../../../../services/early-settlement/early-settlement.storage';
 
 @Component({
   selector: 'div[table-result-footer]',

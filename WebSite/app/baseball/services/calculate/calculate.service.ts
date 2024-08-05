@@ -8,7 +8,7 @@ import { ConfirmMismatchScoreHandler } from "../../handlers/calculate/confirm-mi
 import { ConfirmChangedResultHandler } from "../../handlers/calculate/confirm-changed-result.handler";
 import { NotifyService } from "../notify.service";
 import { ConfirmUnCalculateHandler } from "../../handlers/uncalculate/confirm-uncalculate.handler";
-import { SaveScoreQuery } from "../../../shared/models/sportsbook-sop";
+import { ResultDetail, SaveScoreQuery } from "../../../shared/models/sportsbook-sop";
 import { BaseballApiKeys } from "../../constants/api-keys.constant";
 import { AioService } from "../../../shared/services";
 import { VerificationBaseService } from "../../../core/services/verification-base.service";
@@ -17,9 +17,10 @@ import { SaveScoreHandler } from "../../handlers/calculate/save-score.handler";
 import { CalculateHandler } from "../../handlers/calculate/calculate.handler";
 import { CalculateStorage } from "./calculate.storage";
 import { ResultDetailBaseBall } from "../../models/result-detail.model";
-import { every, find, isEqual, sumBy } from "lodash";
+import { every, find, isEmpty, isEqual, sumBy } from "lodash";
 import { ResourceIds } from "../../constants/resource-id.constant";
 import { GeneralResultDetail } from "../../../shared/models";
+import { CalculateAction } from "../../../shared/constants";
 
 @Injectable()
 
@@ -36,10 +37,10 @@ export class CalculateService {
   private calculateHandler = new CalculateHandler();
   private confirmUncalculateHandler = new ConfirmUnCalculateHandler();
 
-  private storage = inject(CalculateStorage);
-  private notifyService = inject(NotifyService);
-  private aioService = inject(AioService);
-  private verificationService = inject(VerificationBaseService)
+  #storage = inject(CalculateStorage);
+  #notifyService = inject(NotifyService);
+  #aioService = inject(AioService);
+  #verificationService = inject(VerificationBaseService)
 
   constructor() {
     this.nonSelectedHandler.setNextHandler(this.resultConfirmedHandler);
@@ -55,39 +56,39 @@ export class CalculateService {
   }
 
   calculate() {
-    this.nonSelectedHandler.handle(this.storage);
+    this.nonSelectedHandler.handle(this.#storage);
   }
 
   unCalculate() {
-    this.confirmUncalculateHandler.handle(this.storage);
+    this.confirmUncalculateHandler.handle(this.#storage);
   }
 
   async saveScore() {
-    const resultWithoutFinal = this.storage.getAllInnings();
-    const scoresToSave = this.verificationService.getChangedScores(resultWithoutFinal, this.storage.getOriginalResultDetails());
-    const checkedScores = this.verificationService.getOutsideScores(resultWithoutFinal);
+    const resultWithoutFinal = this.#storage.getAllInnings();
+    const scoresToSave = this.#verificationService.getChangedScores(resultWithoutFinal, this.#storage.getOriginalResultDetails());
+    const checkedScores = this.#verificationService.getOutsideScores(resultWithoutFinal);
     const query: SaveScoreQuery = {
-      matchId: this.storage.getMatchDetail().matchId,
+      matchId: this.#storage.getMatchDetail().matchId,
       scoresToSave,
       checkedScores,
       apiKey: BaseballApiKeys.NormalMatch
     };
 
-    const result = await this.aioService.saveScore(query);
+    const result = await this.#aioService.saveScore(query);
     if (result.isSuccessful) {
-      this.storage.getResultDetails().forEach((map) => {
+      this.#storage.getResultDetails().forEach((map) => {
         map.checked = false;
       });
     } else {
-      this.notifyService.error(result.errMsg);
+      this.#notifyService.error(result.errMsg);
     }
   }
 
   sumTotalScores(resultDetails: GeneralResultDetail[], totalPoints: GeneralResultDetail) {
     if (resultDetails.length > 0 &&
       (this.isScoreConsecutive(resultDetails))) {
-        totalPoints.homeValue = sumBy(resultDetails, (map) => Number(map.homeValue)).toString();
-        totalPoints.awayValue = sumBy(resultDetails, (map) => Number(map.awayValue)).toString();
+      totalPoints.homeValue = sumBy(resultDetails, (map) => Number(map.homeValue)).toString();
+      totalPoints.awayValue = sumBy(resultDetails, (map) => Number(map.awayValue)).toString();
     } else {
       totalPoints.homeValue = "";
       totalPoints.awayValue = "";
@@ -100,11 +101,11 @@ export class CalculateService {
     }
 
     return every(resultDetails, (item) =>
-      find(resultDetails, (resultDetail) => this.getPosition(resultDetail,resultDetails) === this.getPosition(item, resultDetails) - 1)
+      find(resultDetails, (resultDetail) => this.getPosition(resultDetail, resultDetails) === this.getPosition(item, resultDetails) - 1)
       || this.getPosition(item, resultDetails) === 1);
   }
 
   private getPosition(resultDetail: GeneralResultDetail, resultDetails: GeneralResultDetail[]) {
     return isEqual(resultDetail.resourceId, ResourceIds.extraInning) ? resultDetails.length : Number(resultDetail.resourceId.slice(-2));
-}
+  }
 }

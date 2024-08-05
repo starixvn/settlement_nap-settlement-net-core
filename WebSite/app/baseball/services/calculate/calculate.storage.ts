@@ -8,7 +8,6 @@ import { CalculateAction, ResourceIds, ResultStatusId, SettlementStatusId } from
 import { ResultDetailBaseBall } from "../../models/result-detail.model";
 import { cloneDeep, every, find, sumBy } from "lodash";
 import { Storage } from "../storage.service";
-import { GeneralResultDetail } from "../../../shared/models";
 
 @Injectable(
   {

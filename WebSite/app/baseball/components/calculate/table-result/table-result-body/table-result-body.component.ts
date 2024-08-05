@@ -21,7 +21,7 @@ import { CalculateService } from '../../../../services/calculate/calculate.servi
   imports: [CommonModule, FormsModule, ResourceNamePipe, ResultByTeamNamePipe],
   templateUrl: './table-result-body.component.html',
 })
-export class TableResultBodyComponent implements OnInit{
+export class TableResultBodyComponent implements OnInit {
   #storage = inject(CalculateStorage);
   #resultRowState = inject(ResultRowStateService)
   #verificationService = inject(VerificationBaseService);
@@ -39,12 +39,9 @@ export class TableResultBodyComponent implements OnInit{
   homeName = this.getTeamName(this.matchDetail.homeName);
   awayName = this.getTeamName(this.matchDetail.awayName);
 
-  constructor(){
+  constructor() {
     effect(() => {
-      this.innings.forEach((inning) => {
-        inning.resultState = new ResultState(this.#resultRowState, inning);
-        inning.checked = inning.resourceId === ResourceIds.fullTime ? this.#storage.isScoreDirect() : false;
-      });
+      this.changeState(true);
       this.tableIsReady = true;
     });
   }
@@ -66,6 +63,7 @@ export class TableResultBodyComponent implements OnInit{
     }
 
     this.#storage.fulltimeResult.isScoreMismatched = this.#verificationService.isMismatchedWarning(this.#storage.fulltimeResult);
+    this.changeState();
   }
 
   verifyAndAutoFillScore(map: ResultDetailBaseBall, isOnLoad = false) {
@@ -137,7 +135,7 @@ export class TableResultBodyComponent implements OnInit{
     this.#storage.onChange();
     inning.resultState = new ResultState(this.#resultRowState, inning);
 
-    if(inning.resourceId === ResourceIds.extraInning) {
+    if (inning.resourceId === ResourceIds.extraInning) {
       this.#storage.fulltimeResult.resultState = new ResultState(this.#resultRowState, this.#storage.fulltimeResult);
     }
   }
@@ -153,5 +151,14 @@ export class TableResultBodyComponent implements OnInit{
 
   getTeamName(teamName: string) {
     return teamName.length > this.#maxTeamName ? `${teamName.substring(0, this.#maxTeamName)}...` : teamName;
+  }
+
+  private changeState(modifySelectState = false) {
+    this.innings.forEach((inning) => {
+      inning.resultState = new ResultState(this.#resultRowState, inning);
+      if(modifySelectState) {
+        inning.checked = inning.resourceId === ResourceIds.fullTime ? this.#storage.isScoreDirect() : false;
+      }
+    });
   }
 }
