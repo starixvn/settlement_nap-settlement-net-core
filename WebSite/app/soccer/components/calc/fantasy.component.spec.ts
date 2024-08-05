@@ -9,14 +9,13 @@ import { ScorePipe } from "../../pipes/score.pipe";
 import { FantasyMatch, FantasyMatchDetail, FantasyRelatedMatch } from "./models/match.model";
 import { Remark } from "../../../shared/models";
 import { Language } from "../../../shared/language.native";
-import { BrowserDynamicTestingModule } from "@angular/platform-browser-dynamic/testing";
-import { ModalContentDialogComponent, ModalDialogComponent } from "../../../shared/components";
+import { ModalDialogComponent } from '../../../shared/components/modal-dialog/modal-dialog.component';
+import { ModalContentDialogComponent } from '../../../shared/components/modal-dialog/modal-content-dialog.component';
 
 describe('GoalHistoryComponent', () => {
     let component: FantasyComponent;
     let fixture: ComponentFixture<FantasyComponent>;
     let verifyMatchService: VerifyMatchService;
-    let messageBoxService: MessageBoxService;
     let verifyScoreGoalService: VerifyScoreGoalService;
     const buttonName = "btn-danger";
 
@@ -33,14 +32,16 @@ describe('GoalHistoryComponent', () => {
         awayId: 0,
         homeName: "",
         awayName: "",
-        htHomeScore: "",
-        htAwayScore: "",
-        finalHomeScore: "",
-        finalAwayScore: "",
+        htHomeScore: 0,
+        htAwayScore: 0,
+        finalHomeScore: 0,
+        finalAwayScore: 0,
         remark: new Remark(),
         eventStatus: "",
         betStatus: "",
-        isDeleted: false
+        isDeleted: false,
+        ftSettlementStatusId: 0,
+        htSettlementStatusId: 0
     }
 
     const fantasyMatch: FantasyMatch = {
@@ -52,12 +53,12 @@ describe('GoalHistoryComponent', () => {
         TestBed.configureTestingModule({
             imports: [
                 NgbModule,
-                FormsModule
+                FormsModule,
+                ModalDialogComponent,
+                ModalContentDialogComponent
             ],
             declarations: [
                 FantasyComponent,
-                ModalDialogComponent,
-                ModalContentDialogComponent,
                 ScorePipe
             ],
             providers: [
@@ -71,7 +72,6 @@ describe('GoalHistoryComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(FantasyComponent);
         verifyMatchService = fixture.debugElement.injector.get(VerifyMatchService);
-        messageBoxService = fixture.debugElement.injector.get(MessageBoxService);
         verifyScoreGoalService = fixture.debugElement.injector.get(VerifyScoreGoalService);
         component = fixture.componentInstance;
         component.fantasyMatch = fantasyMatch;
@@ -101,8 +101,8 @@ describe('GoalHistoryComponent', () => {
 
     describe('verifyAndFillFantasyMatch', () => {
         it('should emit error message when related matches insufficient', () => {
-            spyOn(verifyMatchService, 'isRelatedMatchesInsufficient').and.returnValue(true);
-            spyOn(component.errorMsgEmitter, 'emit');
+            jest.spyOn(verifyMatchService, 'isRelatedMatchesInsufficient').mockReturnValue(true);
+            jest.spyOn(component.errorMsgEmitter, 'emit');
 
             component.verifyAndFillFantasyMatch();
 
@@ -113,9 +113,9 @@ describe('GoalHistoryComponent', () => {
         it('should emit error message when exist match not calculated', () => {
             fantasyRelatedMatch.eventStatus = 'runninG';
             component.relatedMatches = [fantasyRelatedMatch];
-            spyOn(verifyMatchService, 'isRelatedMatchesInsufficient').and.returnValue(false);
-            spyOn(verifyMatchService, 'isExistHoldMatch').and.returnValue(false);
-            spyOn(component.errorMsgEmitter, 'emit');
+            jest.spyOn(verifyMatchService, 'isRelatedMatchesInsufficient').mockReturnValue(false);
+            jest.spyOn(verifyMatchService, 'isExistHoldMatch').mockReturnValue(false);
+            jest.spyOn(component.errorMsgEmitter, 'emit');
 
             component.verifyAndFillFantasyMatch();
 
@@ -127,10 +127,10 @@ describe('GoalHistoryComponent', () => {
             fantasyRelatedMatch.eventStatus = 'completeD';
             fantasyRelatedMatch.betStatus = 'running';
             component.relatedMatches = [fantasyRelatedMatch];
-            spyOn(verifyMatchService, 'isRelatedMatchesInsufficient').and.returnValue(false);
-            spyOn(verifyMatchService, 'isExistHoldMatch').and.returnValue(false);
-            spyOn(verifyScoreGoalService, 'sumScoreAndAutoFill');
-            spyOn(component.autoFillScore, 'emit');
+            jest.spyOn(verifyMatchService, 'isRelatedMatchesInsufficient').mockReturnValue(false);
+            jest.spyOn(verifyMatchService, 'isExistHoldMatch').mockReturnValue(false);
+            jest.spyOn(verifyScoreGoalService, 'sumScoreAndAutoFill');
+            jest.spyOn(component.autoFillScore, 'emit');
 
             component.verifyAndFillFantasyMatch();
             const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
@@ -144,10 +144,10 @@ describe('GoalHistoryComponent', () => {
         it('should show twice confirm when exist hold match', fakeAsync(() => {
             fantasyRelatedMatch.eventStatus = 'Completed';
             component.relatedMatches = [fantasyRelatedMatch];
-            spyOn(verifyMatchService, 'isRelatedMatchesInsufficient').and.returnValue(false);
-            spyOn(verifyMatchService, 'isExistHoldMatch').and.returnValue(true);
-            spyOn(verifyScoreGoalService, 'sumScoreAndAutoFill');
-            spyOn(component.autoFillScore, 'emit');
+            jest.spyOn(verifyMatchService, 'isRelatedMatchesInsufficient').mockReturnValue(false);
+            jest.spyOn(verifyMatchService, 'isExistHoldMatch').mockReturnValue(true);
+            jest.spyOn(verifyScoreGoalService, 'sumScoreAndAutoFill');
+            jest.spyOn(component.autoFillScore, 'emit');
 
             component.verifyAndFillFantasyMatch();
             let buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;

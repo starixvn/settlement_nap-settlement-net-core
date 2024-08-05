@@ -15,10 +15,9 @@ import {
 } from '.';
 import { CalculationComponent } from './calculation.component';
 import { BlockUIService, ClosePopupService, HttpRequestService, MessageBoxService } from '../../../shared/services';
-import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ChildMatch, Match, MatchDetail, Score, UndoChecking } from './models/match.model';
-import { of } from 'rxjs';
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { VerifyMatchService } from './services/verify-match.service';
 import { RequestService } from './services/request.service';
 import { VerifyActionService } from './services/verify-action.service';
@@ -80,6 +79,7 @@ describe('CalculationComponent', () => {
     betStatus: '',
     errCode: 0,
     errMsg: '',
+    resources:[]
   }
 
   const childMatch: ChildMatch = {
@@ -103,6 +103,9 @@ describe('CalculationComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
+        BrowserAnimationsModule,
+        ModalDialogComponent,
+        ModalContentDialogComponent,
         FormsModule,
         HttpClientModule,
         NgbModule,
@@ -121,9 +124,7 @@ describe('CalculationComponent', () => {
         GoalHistoryComponent,
         RefundChildMatchComponent,
         SoccerTicketCountComponent,
-        ScorePipe,
-        ModalDialogComponent,
-        ModalContentDialogComponent,
+        ScorePipe
       ],
       providers: [
         RequestService,
@@ -469,6 +470,7 @@ describe('CalculationComponent', () => {
       verifyActionService.isScoreChangedFullTime = jest.fn().mockReturnValue(false);
       requestService.calculate = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
       closePopupService.closePopup = jest.fn();
+      requestService.alertMessageToLetstalkForFastMarket = jest.fn();
 
       await component.calculateFullTime();
       tick();
@@ -565,7 +567,7 @@ describe('CalculationComponent', () => {
       verifyActionService.isScoreChangedAll = jest.fn().mockReturnValue(false);
       requestService.calculate = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
       closePopupService.closePopup = jest.fn();
-
+      requestService.alertMessageToLetstalkForFastMarket = jest.fn();
       await component.calculateAll();
       tick();
       let buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
