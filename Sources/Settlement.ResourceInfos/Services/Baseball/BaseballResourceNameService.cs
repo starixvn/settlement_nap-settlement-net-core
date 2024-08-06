@@ -17,6 +17,6 @@ public class BaseballResourceNameService : IMapperService
     public (string, string) GetResourceName(string resourceId, int sportType)
     {
         var betType = resourceId[..4];
-        return (betType, refDataService.GetBetTypeName(betType, resourceId));
+        return (betType, refDataService.GetBetTypeName(betType, resourceId[4..]));
     }
 }

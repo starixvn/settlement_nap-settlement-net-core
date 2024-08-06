@@ -84,8 +84,8 @@ export class PopupService {
     const sportName = PopularSports.get(match.sportType);
     this.properties.src = `/apps/${sportName}-early?matchId=${match.matchId}&sportType=${match.sportType}`;
     this.properties.width =
-      match.sportType === SportType.cricket
-        ? "1400px"
+      match.sportType === SportType.cricket || match.sportType === SportType.baseBall
+        ? "1450px"
         : this.isPopupEarlySOP(match.sportType)
           ? "1570px"
           : "845px";

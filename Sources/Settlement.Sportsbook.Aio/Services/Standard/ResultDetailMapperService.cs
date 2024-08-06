@@ -26,6 +26,8 @@ public class ResultDetailMapperServiceImp : IMapperService
 
     private int getInputType(string betType)
     {
-        return InputType.CoupleScore.Contains(Convert.ToInt32(betType)) ? InputType.CoupleScoreId : InputType.HomeAwayId;
+        return InputType.CoupleScore.Contains(Convert.ToInt32(betType)) ? InputType.CoupleScoreId :
+            InputType.YesNo.Contains(Convert.ToInt32(betType)) ? InputType.YesNoId :
+            InputType.HomeAwayId;
     }
 }

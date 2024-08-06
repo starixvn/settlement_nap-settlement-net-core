@@ -21,25 +21,36 @@
     <td class="align-left bettype-name">{{item.betTypeName}}</td>
     <td class="ticket-status" [ngClass]="item.ticketStatus.toLowerCase()">{{item.ticketStatus}}</td>
     <td class="final-result">
-      @if(item.inputType == 1) {
-      <label>{{homeName}}&nbsp;</label>
-      <input type="text" maxlength="3" (change)="checkResultIsMatched(item)"
-        [disabled]="!item.checked || !permission.isLeader" [(ngModel)]="item.homeValue"
-        [ngClass]="{'warning':item.isResultWarning }" />
-      <br />
-      <label>{{awayName}}&nbsp;</label>
-      <input type="text" maxlength="3" (change)="checkResultIsMatched(item)"
-        [disabled]="!item.checked || !permission.isLeader" [(ngModel)]="item.awayValue"
-        [ngClass]="{'warning':item.isResultWarning}" />
-      } @else {
-      <select [(ngModel)]="item.homeValue" [ngClass]="{'warning':item.isResultWarning}"
-        [disabled]="!item.checked || !permission.isLeader" (ngModelChange)="checkResultIsMatched(item)">
-        <option></option>
-        <option value="H">{{match().matchDetail.homeName}}</option>
-        <option value="A">{{match().matchDetail.awayName}}</option>
-        <option value="N">Neither</option>
-      </select>
-      }
+      <ng-container [ngSwitch]="item.inputType">
+        <ng-container *ngSwitchCase="1">
+          <label>{{homeName}}&nbsp;</label>
+          <input type="text" maxlength="3" (change)="checkResultIsMatched(item)"
+            [disabled]="!item.checked || !permission.isLeader" [(ngModel)]="item.homeValue"
+            [ngClass]="{'warning':item.isResultWarning }" />
+          <br />
+          <label>{{awayName}}&nbsp;</label>
+          <input type="text" maxlength="3" (change)="checkResultIsMatched(item)"
+            [disabled]="!item.checked || !permission.isLeader" [(ngModel)]="item.awayValue"
+            [ngClass]="{'warning':item.isResultWarning}" />
+        </ng-container>
+        <ng-container *ngSwitchCase="2">
+          <select [(ngModel)]="item.homeValue" [ngClass]="{'warning':item.isResultWarning}"
+            [disabled]="!item.checked || !permission.isLeader" (ngModelChange)="checkResultIsMatched(item)">
+            <option></option>
+            <option value="H">{{match().matchDetail.homeName}}</option>
+            <option value="A">{{match().matchDetail.awayName}}</option>
+            <option value="N">Neither</option>
+          </select>
+        </ng-container>
+        <ng-container *ngSwitchCase="3">
+          <select [(ngModel)]="item.homeValue" [ngClass]="{'warning':item.isResultWarning}"
+            [disabled]="!item.checked || !permission.isLeader" (ngModelChange)="checkResultIsMatched(item)">
+            <option></option>
+            <option value="Y">Yes</option>
+            <option value="N">No</option>
+          </select>
+        </ng-container>
+      </ng-container>
     </td>
     <ng-container *ngFor="let result of item.externalScores; let x=index">
       <td *ngIf="x < (maxProviderCol + 1) && permission.isLeader" class="map">
@@ -76,6 +87,14 @@
                 <option value="H">{{match().matchDetail.homeName}}</option>
                 <option value="A">{{match().matchDetail.awayName}}</option>
                 <option value="N">Neither</option>
+              </select>
+            </ng-container>
+            <ng-container *ngSwitchCase="3">
+              <select [(ngModel)]="result.homeValue" [disabled]="!item.checked"
+                (ngModelChange)="verifyAndAutoFillResult(item)">
+                <option></option>
+                <option value="Y">Yes</option>
+                <option value="N">No</option>
               </select>
             </ng-container>
           </ng-container>

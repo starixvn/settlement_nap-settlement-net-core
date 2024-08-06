@@ -28,7 +28,7 @@ export const ResultType = {
     havingFiveMaxRound: [SportType.football, SportType.rugby, SportType.netBall, SportType.squash, SportType.sepakTakraw],
     havingFourMaxRound: [SportType.iceHockey, SportType.fieldHockey],
     havingTenMaxRound: [SportType.baseBall],
-    autoSettleSupported: [SportType.badminton, SportType.basketBall, SportType.eSports, SportType.cricket, SportType.volleyBall],
+    autoSettleSupported: [SportType.badminton, SportType.basketBall, SportType.eSports, SportType.cricket, SportType.volleyBall, SportType.baseBall],
     
     havingConfirmedStatus: [SportType.tennis, SportType.eSports,
         SportType.badminton, SportType.cricket, SportType.snookerPool, SportType.golf, SportType.motorsports,
