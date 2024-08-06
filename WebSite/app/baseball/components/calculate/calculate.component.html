@@ -1,7 +1,7 @@
 @if(match != null) {
 <div class="padding">
   @if(isReadyMatch) {
-  <match-detail [matchDetail]="match.matchDetail" [permission]="match.permission"></match-detail>
+  <match-detail [matchDetail]="match.matchDetail" [permission]="match.permission" [isCalculate]="true"></match-detail>
   <ticket-count [ticketCounts]="match.ticketCounts"></ticket-count>
   <div class="calculation-actions">
     @if(match.hedgeMatchDetail) {

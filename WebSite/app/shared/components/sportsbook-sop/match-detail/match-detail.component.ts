@@ -15,6 +15,7 @@ import { ScoreBySettlementPipe } from '../../../pipes/score-by-settlement.pipe';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MatchDetailComponent {
+  isCalculate = input<boolean>(false);  
   matchDetail = input<MatchDetail>();
   permission = input<Permission>();
   resultDetail = input<ResultDetail[]>([]);

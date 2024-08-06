@@ -47,7 +47,7 @@
   </ng-container>
   <td *ngIf="inning.resultState.isExtraInningRow" rowspan="2" class="status">
     <input id="final-checkbox" type="checkbox" [(ngModel)]="innings[i + 1].checked"
-      (ngModelChange)="selectedOnLastMap(inning)" />
+      (ngModelChange)="selectedOnLastMap(inning, $event)" />
   </td>
   <td *ngIf="inning.resultState.isInningRow" class="status">
     <input type="checkbox" [(ngModel)]="inning.checked" [disabled]="inning.resultState.isCheckBoxDisabled"

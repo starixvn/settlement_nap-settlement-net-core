@@ -1,7 +1,8 @@
 <div class="calculate-league">
   <div class="icon"></div>
   {{ matchDetail().sportName.toUpperCase() }} - {{ matchDetail().leagueName }}
-  <button *ngIf="permission().canChangeScoreSource" class="button manage-outside" (click)="manageOutSideSourcePopup()">
+  <button *ngIf="permission().canChangeScoreSource && isCalculate()" class="button manage-outside"
+    (click)="manageOutSideSourcePopup()">
     Manage Outside Source
   </button>
 </div>
