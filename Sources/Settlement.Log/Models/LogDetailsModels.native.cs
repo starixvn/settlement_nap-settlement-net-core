@@ -10,7 +10,7 @@ public class LogDetailsModels
 
     public int LogId { get; set; }
 
-    public DateTime SettlementDate { get; set; }
+    public string SettlementDate { get; set; }
 
     public string ResourceId { get; set; }
 

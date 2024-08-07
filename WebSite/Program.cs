@@ -7,12 +7,18 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using ONEbook.UM.AspNetCore.Filters;
 using Settlement.Core.Models;
 using Settlement.WebSites;
 using Settlement.WebSites.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
+
+JsonConvert.DefaultSettings = () => new JsonSerializerSettings
+{
+    DateTimeZoneHandling = DateTimeZoneHandling.Unspecified,
+};
 
 var services = builder.Services;
 var configuration = builder.Configuration;

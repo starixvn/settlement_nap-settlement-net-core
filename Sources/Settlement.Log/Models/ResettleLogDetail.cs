@@ -2,7 +2,7 @@
 
 public class ResettleLogDetail
 {
-    public DateTime SettlementDate { get; set; }
+    public string SettlementDate { get; set; }
 
     public string UserName { get; set; }
 

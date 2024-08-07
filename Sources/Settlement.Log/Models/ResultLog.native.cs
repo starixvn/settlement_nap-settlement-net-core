@@ -19,7 +19,7 @@ public class ResultLog
         set => sourceName = value;
     }
 
-    public DateTime CreateDate { get; set; }
+    public string CreateDate { get; set; }
 
     public string HomeValue { get; set; }
 

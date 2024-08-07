@@ -27,8 +27,6 @@ import { DynamicHeightDirective, OnlyIntegerDirective } from '../shared/directiv
         LogComponent,
         MatchesComponent,
         FilterComponent,
-        ModalDialogComponent,
-        ModalContentDialogComponent,
         ResettleLogDetailComponent,
         LogDetailComponent,
         ProviderMatchesComponent,
