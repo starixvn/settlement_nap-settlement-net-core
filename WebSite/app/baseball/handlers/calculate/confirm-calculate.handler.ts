@@ -40,16 +40,46 @@ export class ConfirmCalculateHandler implements BaseHandler {
   private getConfirmEarly(resultDetails: ResultDetail[], matchDetail: MatchDetail) {
     let confirmMessage = `${Language.CalculationConfirmMessageEarly}<br/>`;
     resultDetails.forEach((x: ResultDetail) => {
-      let value = '';
-      if (x.inputType === InputType.coupleScore) {
-        value = `${x.homeValue} - ${x.awayValue}`;
-      } else {
-        value = isEqual(x.homeValue, "H") ? matchDetail.homeName :
-          isEqual(x.homeValue, "A") ? matchDetail.awayName : "Neither";
-      }
+      let value = this.getValueBasedOnInputType(x, matchDetail);
       confirmMessage += `${x.betTypeName}: ${value}<br/>`;
     });
 
     return confirmMessage;
+  }
+  private getValueBasedOnInputType(resultDetail: ResultDetail, matchDetail: MatchDetail): string {
+    switch (resultDetail.inputType) {
+      case InputType.coupleScore:
+        return `${resultDetail.homeValue} - ${resultDetail.awayValue}`;
+      case InputType.homeAway:
+        return this.getHomeAwayValue(resultDetail, matchDetail);
+      default:
+        return this.getYesNoValue(resultDetail);
+    }
+  }
+
+  private getHomeAwayValue(resultDetail: ResultDetail, matchDetail: MatchDetail): string {
+    if (isEqual(resultDetail.homeValue, "H")) {
+      return matchDetail.homeName;
+    }
+
+    if (isEqual(resultDetail.homeValue, "A")) {
+      return matchDetail.awayName;
+    }
+    
+    return "Neither";
+
+  }
+
+  private getYesNoValue(resultDetail: ResultDetail): string {
+    if (isEqual(resultDetail.homeValue, "Y")) {
+      return "Yes";
+    }
+
+    if (isEqual(resultDetail.homeValue, "N")) {
+      return "No";
+    }
+
+    return "";
+
   }
 }
