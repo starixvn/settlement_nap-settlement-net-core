@@ -5,9 +5,7 @@ import { BaseballApiKeys } from "../../constants/api-keys.constant";
 import { NotifyService } from "../../services/notify.service";
 import { BaseHandler } from "../base.handler.native";
 import { Storage } from "../../services/storage.service";
-import { CalculateService } from "../../services/calculate/calculate.service";
 import { CalculateAction, ResourceIds } from "../../../shared/constants";
-import { isEmpty } from "lodash";
 
 export class CalculateHandler implements BaseHandler {
   #nextHandler: BaseHandler;
@@ -20,6 +18,7 @@ export class CalculateHandler implements BaseHandler {
   async handle(storage: Storage): Promise<void> {
     const query = this.createRequestQuery(storage);
     const result = await this.#aioService.push(query);
+    console.log('CalculateHandler',result);
     if (result.isSuccessful) {
       this.calculateHedgeMatch(query, storage);
     } else {
@@ -30,6 +29,7 @@ export class CalculateHandler implements BaseHandler {
   private calculateHedgeMatch(query: SettleQuery, storage: Storage) {
     const hedgeMatchId = storage.getApplyingHedgeMatch() ? storage.getMatch().hedgeMatchDetail.matchId
       : 0;
+
     if (hedgeMatchId > 0) {
       query.matchId = hedgeMatchId;
       query.isHedgeMatch = true;

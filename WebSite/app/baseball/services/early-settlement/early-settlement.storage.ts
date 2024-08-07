@@ -100,7 +100,7 @@ export class EarlySettlementStorage implements Storage {
 
   getMatch = (): Match => this.#match();
 
-  getApplyingHedgeMatch = (): boolean => true;
+  getApplyingHedgeMatch = (): boolean => false;
 
   getOriginalResultDetails = () => this.#earlyOriginalResults;
 
