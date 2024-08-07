@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { PipesModule } from "../../../../../shared/pipes/pipes.module.native";
 import { forEach, isEqual, isNil, join } from 'lodash';
 import { ResultSettingQuery } from '../../../../../shared/models';
-import { ResultSettingType, ResultStatus, TicketStatusText } from '../../../../../shared/constants';
+import { ResultSettingType, ResultStatus, ResultStatusId, SettlementStatusId, TicketStatusText } from '../../../../../shared/constants';
 import { NotifyService } from '../../../../services/notify.service';
 import { AioService } from '../../../../../shared/services';
 import { Language } from '../../../../../shared/language.native';
@@ -134,5 +134,27 @@ export class TableResultBodyComponent  implements OnInit{
     forEach(this.match().resultDetails, (resultDetail) => {
       this.verifyAndAutoFillResult(resultDetail);
     });
+  }
+
+  getResultStatusClass(resultDetail: ResultDetail): string {
+    if(this.isCompleted(resultDetail.resultStatusId, resultDetail.settlementStatusId)) {
+      return 'calculated';
+    }
+
+    if(this.isRefunded(resultDetail.resultStatusId, resultDetail.settlementStatusId)) {
+      return 'refunded';
+    }
+    
+    return '';
+  }
+
+  isCompleted(resultStatusId: number, settlementStatusId: number) {
+    return resultStatusId === ResultStatusId.AutoCompleted
+        || (resultStatusId === ResultStatusId.ManualCompleted
+            && settlementStatusId === SettlementStatusId.Calculated);
+  }
+
+  isRefunded(resultStatusId: number, settlementStatusId: number) {
+    return resultStatusId === ResultStatusId.ManualCompleted && settlementStatusId === SettlementStatusId.Refund;
   }
 }

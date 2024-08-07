@@ -101,7 +101,7 @@
         </td>
       </ng-container>
     </ng-container>
-    <td [ngClass]="item.resultStatus.toLowerCase()" class="result">
+    <td [ngClass]="getResultStatusClass(item)" class="result">
       {{item.resultStatus}}
     </td>
     <td class="select-proceed">

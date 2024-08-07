@@ -18,7 +18,6 @@ export class CalculateHandler implements BaseHandler {
   async handle(storage: Storage): Promise<void> {
     const query = this.createRequestQuery(storage);
     const result = await this.#aioService.push(query);
-    console.log('CalculateHandler',result);
     if (result.isSuccessful) {
       this.calculateHedgeMatch(query, storage);
     } else {

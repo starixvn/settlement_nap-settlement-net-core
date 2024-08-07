@@ -20,6 +20,7 @@ import { EarlySettlementStorage } from "./early-settlement.storage";
 import { CheckMarkedTicketHandler } from "../../handlers/refund/check-marked-ticket.handler";
 import { NotifyService } from "../notify.service";
 import { AioService } from "../../../shared/services";
+import { InvalidResultsHandler } from "../../handlers/early-settlement/invalid-results.handler";
 
 @Injectable()
 
@@ -28,7 +29,7 @@ export class EarlySettlementService {
   #aioService = inject(AioService);
   #notifyService = inject(NotifyService);
   #resultConfirmedHandler = new ResultConfirmedHandler();
-  #invalidInputHandler = new InvalidInputHandler();
+  #invalidResultsHandler = new InvalidResultsHandler();
   #verifyRunningOddsHandler = new VerifyRunningOddsHandler();
   #verifyScoreSourceHandler = new VerifyScoreSourceHandler();
   #confirmMismatchScoreHandler = new ConfirmMismatchScoreHandler();
@@ -42,8 +43,8 @@ export class EarlySettlementService {
 
 
   constructor() {
-    this.#resultConfirmedHandler.setNextHandler(this.#invalidInputHandler);
-    this.#invalidInputHandler.setNextHandler(this.#verifyRunningOddsHandler);
+    this.#resultConfirmedHandler.setNextHandler(this.#invalidResultsHandler);
+    this.#invalidResultsHandler.setNextHandler(this.#verifyRunningOddsHandler);
     this.#verifyRunningOddsHandler.setNextHandler(this.#verifyScoreSourceHandler);
     this.#verifyScoreSourceHandler.setNextHandler(this.#confirmMismatchScoreHandler);
     this.#confirmMismatchScoreHandler.setNextHandler(this.#confirmChangedResultHandler);
