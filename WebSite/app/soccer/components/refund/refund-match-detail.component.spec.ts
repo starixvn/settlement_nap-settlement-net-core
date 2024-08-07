@@ -1,6 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ScorePipe } from '../../pipes/score.pipe';
-import { PipesModule } from '../../../shared/pipes/pipes.module.native';
 
 import { RefundMatchDetailComponent } from './refund-match-detail.component';
 import { MatchDetail } from './model/match.model';

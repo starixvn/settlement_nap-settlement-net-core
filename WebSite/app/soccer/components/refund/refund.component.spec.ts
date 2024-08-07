@@ -1,10 +1,10 @@
-import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { ComponentFixture,  TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ScorePipe } from '../../pipes/score.pipe';
 import { MaterialModule } from '../../../shared/material-module';
 import { RefundMatchDetailComponent } from './refund-match-detail.component';
-
+import { MoveBetComponent } from './move-bet.component';
 import { RefundComponent } from './refund.component';
 import { RequestService } from './services/request.service';
 import { VerifyActionService } from './services/verify-action.service';
@@ -18,9 +18,12 @@ import { of } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { MarkedTicketsModel } from '../../../shared/models';
 import { Language } from '../../../shared/language.native';
-import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
-import { ModalContentDialogComponent, ModalDialogComponent } from '../../../shared/components';
 import { RefundType } from './model/constant.native';
+import { ModalDialogComponent } from '../../../shared/components/modal-dialog/modal-dialog.component';
+import { ModalContentDialogComponent } from '../../../shared/components/modal-dialog/modal-content-dialog.component';
+import { MatDialogRef } from '@angular/material/dialog';
+import { ConfirmRefundComponent } from './confirm-refund.component';
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 
 describe('RefundComponent', () => {
   let component: RefundComponent;
@@ -45,15 +48,22 @@ describe('RefundComponent', () => {
 
   const hedgeMatchDetail = {} as HedgeMatchDetail;
 
+  const errorMessage = "Error message";
   const successfulResult = {
-    errCode: 0,
-    errMsg: "",
-    isSuccessful: true,
-  }
+      errCode: 0,
+      errMsg: "",
+      isSuccessful: true,
+      childMatchIds:"",
+      settledSessionId:"",
+      hasResultAmendment:false
+  };
   const unSuccessfulResult = {
-    errCode: 1,
-    errMsg: 'errorMessage',
-    isSuccessful: false,
+      errCode: 1,
+      errMsg: errorMessage,
+      isSuccessful: false,
+      childMatchIds:"",
+      settledSessionId:"",
+      hasResultAmendment:false
   };
 
   const resultMarkedTickets = {} as MarkedTicketsModel;
@@ -66,9 +76,7 @@ describe('RefundComponent', () => {
       declarations: [
         RefundComponent,
         RefundMatchDetailComponent,
-        ScorePipe,
-        ModalDialogComponent,
-        ModalContentDialogComponent
+        ScorePipe
       ],
       providers: [
         RequestService,
@@ -81,6 +89,9 @@ describe('RefundComponent', () => {
         { provide: ToastrService, useClass: ToastrService },
       ],
       imports: [
+        BrowserAnimationsModule,
+        ModalDialogComponent,
+        ModalContentDialogComponent,
         NgbModule,
         FormsModule,
         MaterialModule,
@@ -112,8 +123,8 @@ describe('RefundComponent', () => {
     hedgeMatchDetail.isUndecided = false;
     match.hedgeMatchDetail = hedgeMatchDetail;
     matchDetail.applyGoalRecord = false;
-    spyOn(requestService, 'getMatch').and.returnValue(of(match));
-    spyOn(verifyMatchService, 'setDisableRefund').and.returnValue(new MainRefundButtonStatus(true, true, true));
+    jest.spyOn(requestService, 'getMatch').mockReturnValue(Promise.resolve(match));
+    jest.spyOn(verifyMatchService, 'setDisableRefund').mockReturnValue(new MainRefundButtonStatus(true, true, true));
 
     await component.getMatch(1);
 
@@ -147,12 +158,12 @@ describe('RefundComponent', () => {
     it('should close main popup when sub popup move bet close and return successful', () => {
       component.matchDetail = matchDetail;
       component.matchDetail.matchId = 100;
-      const result = successfulResult;
       const mockDialogRef = {
-        afterClosed: () => of({ result })
-      };
-      spyOn(dialog, 'open').and.returnValue(mockDialogRef);
-      spyOn(messageBoxService, 'closePopupNotChanged');
+        afterClosed: () => of({ result: successfulResult})
+      } as MatDialogRef<MoveBetComponent>;
+
+      jest.spyOn(dialog, 'open').mockReturnValue(mockDialogRef);
+      jest.spyOn(messageBoxService, 'closePopupNotChanged');
 
       component.openPopupMoveBet(true);
 
@@ -162,13 +173,12 @@ describe('RefundComponent', () => {
     it('should show error p when sub popup move bet close and return unSuccessful', () => {
       component.matchDetail = matchDetail;
       component.matchDetail.matchId = 100;
-      const result = unSuccessfulResult;
       const mockDialogRef = {
-        afterClosed: () => of({ result })
-      };
-      spyOn(dialog, 'open').and.returnValue(mockDialogRef);
-      spyOn(toastrService, 'clear');
-      spyOn(toastrService, 'error');
+        afterClosed: () => of({ result: unSuccessfulResult})
+      } as MatDialogRef<MoveBetComponent>;
+      jest.spyOn(dialog, 'open').mockReturnValue(mockDialogRef);
+      jest.spyOn(toastrService, 'clear');
+      jest.spyOn(toastrService, 'error');
 
       component.openPopupMoveBet(true);
 
@@ -182,8 +192,8 @@ describe('RefundComponent', () => {
       resultMarkedTickets.isExistMarkedTicket = true
       component.matchDetail = matchDetail;
       component.matchDetail.matchId = 100;
-      spyOn(requestService, 'checkingMarkedTicket').and.returnValue(of(resultMarkedTickets));
-      spyOn(toastrService, 'error');
+      jest.spyOn(requestService, 'checkingMarkedTicket').mockReturnValue(Promise.resolve(resultMarkedTickets));
+      jest.spyOn(toastrService, 'error');
 
       await component.refundHalftime();
 
@@ -194,9 +204,9 @@ describe('RefundComponent', () => {
       resultMarkedTickets.isExistMarkedTicket = false
       component.matchDetail = matchDetail;
       component.matchDetail.matchId = 100;
-      spyOn(requestService, 'checkingMarkedTicket').and.returnValue(of(resultMarkedTickets));
-      spyOn(requestService, 'checkNewStatus').and.returnValue(of(unSuccessfulResult));
-      spyOn(toastrService, 'error');
+      jest.spyOn(requestService, 'checkingMarkedTicket').mockReturnValue(Promise.resolve(resultMarkedTickets));
+      jest.spyOn(requestService, 'checkNewStatus').mockReturnValue(Promise.resolve(unSuccessfulResult));
+      jest.spyOn(toastrService, 'error');
 
       await component.refundHalftime();
 
@@ -207,55 +217,53 @@ describe('RefundComponent', () => {
       resultMarkedTickets.isExistMarkedTicket = false
       component.matchDetail = matchDetail;
       component.matchDetail.matchId = 100;
-      spyOn(requestService, 'checkingMarkedTicket').and.returnValue(of(resultMarkedTickets));
-      spyOn(requestService, 'checkNewStatus').and.returnValue(of(successfulResult));
-      spyOn(messageBoxService, 'confirm');
-      spyOn(toastrService, 'error');
+      jest.spyOn(requestService, 'checkingMarkedTicket').mockReturnValue(Promise.resolve(resultMarkedTickets));
+      jest.spyOn(requestService, 'checkNewStatus').mockReturnValue(Promise.resolve(successfulResult));
+      jest.spyOn(messageBoxService, 'confirm');
+      jest.spyOn(toastrService, 'error');
 
       await component.refundHalftime();
 
       expect(messageBoxService.confirm).toHaveBeenCalled();
     });
 
-    it('should close popup when refund done', fakeAsync(async () => {
+    it('should close popup when refund done', async () => {
       resultMarkedTickets.isExistMarkedTicket = false
       component.matchDetail = matchDetail;
       component.matchDetail.matchId = 100;
       component.betDaq = betDaq;
       component.betFair = betFair;
-      spyOn(requestService, 'checkingMarkedTicket').and.returnValue(of(resultMarkedTickets));
-      spyOn(requestService, 'checkNewStatus').and.returnValue(of(successfulResult));
-      spyOn(requestService, 'refundMatch').and.returnValue(of(successfulResult));
-      spyOn(messageBoxService, 'closePopup');
+      jest.spyOn(requestService, 'checkingMarkedTicket').mockReturnValue(Promise.resolve(resultMarkedTickets));
+      jest.spyOn(requestService, 'checkNewStatus').mockReturnValue(Promise.resolve(successfulResult));
+      jest.spyOn(requestService, 'refundMatch').mockReturnValue(Promise.resolve(successfulResult));
+      jest.spyOn(messageBoxService, 'closePopup');
 
       await component.refundHalftime();
-      tick();
       const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
       buttonYes.click();
-      tick();
+      await new Promise(resolve => setTimeout(resolve, 100));
 
       expect(messageBoxService.closePopup).toHaveBeenCalled();
-    }));
+    });
 
-    it('should show error when refund return fail', fakeAsync(async () => {
+    it('should show error when refund return fail', async () => {
       resultMarkedTickets.isExistMarkedTicket = false
       component.matchDetail = matchDetail;
       component.matchDetail.matchId = 100;
       component.betDaq = betDaq;
       component.betFair = betFair;
-      spyOn(requestService, 'checkingMarkedTicket').and.returnValue(of(resultMarkedTickets));
-      spyOn(requestService, 'checkNewStatus').and.returnValue(of(successfulResult));
-      spyOn(requestService, 'refundMatch').and.returnValue(of(unSuccessfulResult));
-      spyOn(toastrService, 'error');
+      jest.spyOn(requestService, 'checkingMarkedTicket').mockReturnValue(Promise.resolve(resultMarkedTickets));
+      jest.spyOn(requestService, 'checkNewStatus').mockReturnValue(Promise.resolve(successfulResult));
+      jest.spyOn(requestService, 'refundMatch').mockReturnValue(Promise.resolve(unSuccessfulResult));
+      jest.spyOn(toastrService, 'error');
 
       await component.refundHalftime();
-      tick();
       const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
       buttonYes.click();
-      tick();
+      await new Promise(resolve => setTimeout(resolve, 100));
 
       expect(toastrService.error).toHaveBeenCalledWith(unSuccessfulResult.errMsg);
-    }));
+    });
   });
 
   describe('refundFullTime', () => {
@@ -264,8 +272,8 @@ describe('RefundComponent', () => {
       resultMarkedTickets.isExistMarkedTicket = true
       component.matchDetail = matchDetail;
       component.matchDetail.matchId = 100;
-      spyOn(requestService, 'checkingMarkedTicket').and.returnValue(of(resultMarkedTickets));
-      spyOn(toastrService, 'error');
+      jest.spyOn(requestService, 'checkingMarkedTicket').mockReturnValue(Promise.resolve(resultMarkedTickets));
+      jest.spyOn(toastrService, 'error');
 
       await component.refundFullTime();
 
@@ -278,11 +286,12 @@ describe('RefundComponent', () => {
       resultMarkedTickets.isExistMarkedTicket = false;
       const result = true;
       const mockDialogRef = {
-        afterClosed: () => of({ result })
-      };
-      spyOn(dialog, 'open').and.returnValue(mockDialogRef);
-      spyOn(requestService, 'checkingMarkedTicket').and.returnValue(of(resultMarkedTickets));
-      spyOn(verifyActionService, 'getMessageConfirm').and.returnValue("");
+        afterClosed: () => of(result)
+      } as MatDialogRef<ConfirmRefundComponent>;
+
+      jest.spyOn(dialog, 'open').mockReturnValue(mockDialogRef);
+      jest.spyOn(requestService, 'checkingMarkedTicket').mockReturnValue(Promise.resolve(resultMarkedTickets));
+      jest.spyOn(verifyActionService, 'getMessageConfirm').mockReturnValue("");
 
       await component.refundFullTime();
 
@@ -296,10 +305,10 @@ describe('RefundComponent', () => {
       resultMarkedTickets.isExistMarkedTicket = false;
       const mockDialogRef = {
         afterClosed: () => of(false)
-      };
-      spyOn(dialog, 'open').and.returnValue(mockDialogRef);
-      spyOn(requestService, 'checkingMarkedTicket').and.returnValue(of(resultMarkedTickets));
-      spyOn(messageBoxService, 'confirm');
+      } as MatDialogRef<ConfirmRefundComponent>;
+      jest.spyOn(dialog, 'open').mockReturnValue(mockDialogRef);
+      jest.spyOn(requestService, 'checkingMarkedTicket').mockReturnValue(Promise.resolve(resultMarkedTickets));
+      jest.spyOn(messageBoxService, 'confirm');
 
       await component.refundFullTime();
 
@@ -314,8 +323,8 @@ describe('RefundComponent', () => {
       resultMarkedTickets.isExistMarkedTicket = true
       component.matchDetail = matchDetail;
       component.matchDetail.matchId = 100;
-      spyOn(requestService, 'checkingMarkedTicket').and.returnValue(of(resultMarkedTickets));
-      spyOn(toastrService, 'error');
+      jest.spyOn(requestService, 'checkingMarkedTicket').mockReturnValue(Promise.resolve(resultMarkedTickets));
+      jest.spyOn(toastrService, 'error');
 
       await component.refundAll();
 
@@ -328,11 +337,12 @@ describe('RefundComponent', () => {
       resultMarkedTickets.isExistMarkedTicket = false;
       const result = true;
       const mockDialogRef = {
-        afterClosed: () => of({ result })
-      };
-      spyOn(dialog, 'open').and.returnValue(mockDialogRef);
-      spyOn(requestService, 'checkingMarkedTicket').and.returnValue(of(resultMarkedTickets));
-      spyOn(verifyActionService, 'getMessageConfirm').and.returnValue("");
+        afterClosed: () =>of(result)
+      } as MatDialogRef<ConfirmRefundComponent>;
+
+      jest.spyOn(dialog, 'open').mockReturnValue(mockDialogRef);
+      jest.spyOn(requestService, 'checkingMarkedTicket').mockReturnValue(Promise.resolve(resultMarkedTickets));
+      jest.spyOn(verifyActionService, 'getMessageConfirm').mockReturnValue("");
 
       await component.refundAll();
 
@@ -346,10 +356,10 @@ describe('RefundComponent', () => {
       resultMarkedTickets.isExistMarkedTicket = false;
       const mockDialogRef = {
         afterClosed: () => of(false)
-      };
-      spyOn(dialog, 'open').and.returnValue(mockDialogRef);
-      spyOn(requestService, 'checkingMarkedTicket').and.returnValue(of(resultMarkedTickets));
-      spyOn(messageBoxService, 'confirm');
+      } as MatDialogRef<ConfirmRefundComponent>;
+      jest.spyOn(dialog, 'open').mockReturnValue(mockDialogRef);
+      jest.spyOn(requestService, 'checkingMarkedTicket').mockReturnValue(Promise.resolve(resultMarkedTickets));
+      jest.spyOn(messageBoxService, 'confirm');
 
       await component.refundAll();
 
@@ -362,8 +372,8 @@ describe('RefundComponent', () => {
     it('should close popup when refund successful', async () => {
       component.matchDetail = matchDetail;
       component.matchDetail.matchId = 100;
-      spyOn(requestService, 'refundRunningThirdPartyTickets').and.returnValue(of(successfulResult));
-      spyOn(messageBoxService, 'closePopup');
+      jest.spyOn(requestService, 'refundRunningThirdPartyTickets').mockReturnValue(Promise.resolve(successfulResult));
+      jest.spyOn(messageBoxService, 'closePopup');
 
       await component.refundRunningThirdPartyTickets(true);
 
@@ -374,8 +384,8 @@ describe('RefundComponent', () => {
     it('should close popup when refund successful', async () => {
       component.matchDetail = matchDetail;
       component.matchDetail.matchId = 100;
-      spyOn(requestService, 'refundRunningThirdPartyTickets').and.returnValue(of(unSuccessfulResult));
-      spyOn(toastrService, 'error');
+      jest.spyOn(requestService, 'refundRunningThirdPartyTickets').mockReturnValue(Promise.resolve(unSuccessfulResult));
+      jest.spyOn(toastrService, 'error');
 
       await component.refundRunningThirdPartyTickets(true);
 

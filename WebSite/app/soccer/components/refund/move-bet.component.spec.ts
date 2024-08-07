@@ -35,6 +35,9 @@ describe('MoveBetComponent', () => {
     errCode: 0,
     errMsg: "",
     isSuccessful: true,
+    childMatchIds:"",
+    settledSessionId:"",
+    hasResultAmendment:false
   }
 
   beforeEach(async () => {
@@ -75,8 +78,8 @@ describe('MoveBetComponent', () => {
   });
 
   it('close - should close popup', () => {
-    spyOn(toastrService, 'clear');
-    spyOn(dialogRef, 'close');
+    jest.spyOn(toastrService, 'clear');
+    jest.spyOn(dialogRef, 'close');
 
     component.close();
 
@@ -85,8 +88,8 @@ describe('MoveBetComponent', () => {
   });
 
   it('ngOnInit - should show warning when not exist match to move ', async () => {
-    spyOn(requestService, 'getMatchDetailThirdPartyBetTickets').and.returnValue(of([]));
-    spyOn(toastrService, 'warning');
+    jest.spyOn(requestService, 'getMatchDetailThirdPartyBetTickets').mockReturnValue(of([]));
+    jest.spyOn(toastrService, 'warning');
     component.data.refundType = RefundType.refundBetDaq;
 
     await component.ngOnInit();
@@ -99,8 +102,8 @@ describe('MoveBetComponent', () => {
   describe('moveBet', () => {
     it('should show error when not exist match selected', () => {
       component.matchIdSelected = null;
-      spyOn(toastrService, 'error');
-      spyOn(toastrService, 'clear');
+      jest.spyOn(toastrService, 'error');
+      jest.spyOn(toastrService, 'clear');
 
       component.moveBet();
 
@@ -116,8 +119,8 @@ describe('MoveBetComponent', () => {
       matchMoveBet.matchId = 1000;
       component.listMatch = [matchMoveBet];
       component.title = 'BetFair';
-      spyOn(requestService, 'moveBetType').and.returnValue(of(result));
-      spyOn(dialogRef, 'close');
+      jest.spyOn(requestService, 'moveBetType').mockReturnValue(Promise.resolve(result));
+      jest.spyOn(dialogRef, 'close');
 
       await component.moveBet();
       tick();
