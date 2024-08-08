@@ -4,12 +4,16 @@ import { UrlHelper } from "../../../helper";
 import { Match } from "../../models/match.model";
 import { AioService } from "../../../shared/services";
 import { ResourceNamePipe } from "../../pipes/resource-name.pipe";
-
+import { ResultDetail } from "../../../shared/models/sportsbook-sop/result-detail.model";
+import { IntervalBackgroundPipe } from "../../../shared/pipes/interval-background.pipe";
+import { isEqual } from "lodash";
+import { SettlementStatusId } from "../../../shared/constants";
 @Injectable() 
 
 export class RefundStorage {
   private aioService = inject(AioService);
   private resultPipe = inject(ResourceNamePipe);
+  private intervalBackgroundPipe = inject(IntervalBackgroundPipe);
   #match = signal<Match>(null);
 
   match = this.#match.asReadonly();
@@ -25,6 +29,8 @@ export class RefundStorage {
     const matchFetched = (await this.aioService.getMatch(matchQuery)) as Match;
     matchFetched.resultDetails.forEach(result => {
       result.resourceName = this.resultPipe.transform(result.resourceId, true);
+      result.className = this.getClass(result);
+      result.isDisplayedForMember = matchFetched.permission.isLeader || Number(result.settlementStatusId) !== SettlementStatusId.Running;
     });
     this.#match.set(matchFetched);
   }
@@ -33,4 +39,16 @@ export class RefundStorage {
   getResultChecked = () => this.#match().resultDetails.filter(x => x.checked);
 
   getMatchId = () => this.#match().matchDetail.matchId;
+
+  getClass(resultDetail: ResultDetail) {
+    let className = '';
+
+    if (isEqual(resultDetail.resourceId, "00")) {
+        className += 'final-score ';
+    } else if (isEqual(resultDetail.resourceId, "01")) {
+        className += 'ht-score ';
+    }
+
+    return className + this.intervalBackgroundPipe.transform(resultDetail.settlementStatusId);
+}
 }
