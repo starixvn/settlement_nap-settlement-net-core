@@ -1,4 +1,5 @@
 import { EarlySettlementComponent } from './early-settlement.component';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { TestBed, waitForAsync, fakeAsync, ComponentFixture, tick } from '@angular/core/testing';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ResultDetail, GroupMap } from '../../models';
@@ -24,7 +25,6 @@ import { TicketCountComponent } from '../../../shared/components/ticket-count/ti
 import { ResettleCheckerComponent } from '../../../shared/components/resettle-checker/resettle-checker.component';
 import { ModalDialogComponent } from '../../../shared/components/modal-dialog/modal-dialog.component';
 import { ModalContentDialogComponent } from '../../../shared/components/modal-dialog/modal-content-dialog.component';
-import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { HttpClientModule } from '@angular/common/http';
 import {
     BetTypes,
@@ -169,7 +169,7 @@ describe('Soccer - EarlySettlementComponent', () => {
                     ToastrService,
                 ],
                 imports: [
-                    BrowserAnimationsModule,
+                    NoopAnimationsModule,
                     ScoreBySettlementPipe,
                     TicketCountComponent,
                     ResettleCheckerComponent,

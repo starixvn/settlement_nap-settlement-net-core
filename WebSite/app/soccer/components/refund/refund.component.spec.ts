@@ -1,4 +1,5 @@
 import { ComponentFixture,  TestBed } from '@angular/core/testing';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ScorePipe } from '../../pipes/score.pipe';
@@ -23,7 +24,6 @@ import { ModalDialogComponent } from '../../../shared/components/modal-dialog/mo
 import { ModalContentDialogComponent } from '../../../shared/components/modal-dialog/modal-content-dialog.component';
 import { MatDialogRef } from '@angular/material/dialog';
 import { ConfirmRefundComponent } from './confirm-refund.component';
-import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 
 describe('RefundComponent', () => {
   let component: RefundComponent;
@@ -89,7 +89,7 @@ describe('RefundComponent', () => {
         { provide: ToastrService, useClass: ToastrService },
       ],
       imports: [
-        BrowserAnimationsModule,
+        NoopAnimationsModule,
         ModalDialogComponent,
         ModalContentDialogComponent,
         NgbModule,

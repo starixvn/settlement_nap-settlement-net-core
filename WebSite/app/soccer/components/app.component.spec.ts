@@ -4,7 +4,6 @@ import { waitForAsync, TestBed, ComponentFixture } from '@angular/core/testing';
 import { BlockUIService, ClosePopupService, HttpRequestService, MessageBoxService } from '../../shared/services';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ElementRef } from "@angular/core";
-import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { PageType } from '../../shared/constants';
 import { CalculationComponent } from './calc/calculation.component'
 import { RefundComponent } from './refund/refund.component'
@@ -21,9 +20,10 @@ describe(`Soccer - AppComponent`, () => {
     let fixture: ComponentFixture<AppComponent>;
     let elementRef: ElementRef<HTMLElement>;
 
-    beforeEach(waitForAsync(() => {
+    beforeEach(async() => {
         TestBed.configureTestingModule({
             imports: [
+                ModalDialogComponent,
                 BrowserModule,
                 FormsModule,
                 ReactiveFormsModule,
@@ -37,7 +37,6 @@ describe(`Soccer - AppComponent`, () => {
                 CalculationComponent,
                 RefundComponent,
                 EarlySettlementComponent,
-                ModalDialogComponent,
                 GroupNameByIdPipe,
             ],
             providers: [
@@ -46,6 +45,7 @@ describe(`Soccer - AppComponent`, () => {
                 MessageBoxService,
                 ClosePopupService,
             ],
+            teardown: {destroyAfterEach: false},
             schemas: [NO_ERRORS_SCHEMA],
         })
             .compileComponents()
@@ -54,7 +54,7 @@ describe(`Soccer - AppComponent`, () => {
                 component = fixture.componentInstance;
                 elementRef = fixture.debugElement.injector.get(ElementRef);
             });
-    }));
+    });
 
     it('should create the app', () => {
         expect(component).toBeTruthy();

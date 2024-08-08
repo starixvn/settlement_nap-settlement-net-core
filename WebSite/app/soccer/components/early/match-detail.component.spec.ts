@@ -12,8 +12,11 @@ describe('Soccer - MatchDetailComponent', () => {
 
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
-            imports: [HttpClientModule],
-            declarations: [MatchDetailComponent, ScoreBySettlementPipe],
+            imports: [
+                HttpClientModule,
+                ScoreBySettlementPipe
+            ],
+            declarations: [MatchDetailComponent],
             providers: [
                 HttpRequestService,
                 BlockUIService,
