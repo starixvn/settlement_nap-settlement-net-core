@@ -33,7 +33,7 @@
     <PackageReference Include="Fanex.Caching.AspNetCore" Version="2.2.4" />
 		<PackageReference Include="Fanex.Caching.Redis" Version="2.2.4" />
     <PackageReference Include="Fanex.Caching.Redis.AspNetCore" Version="2.2.4" />
-    <PackageReference Include="Fanex.Data.ProxyClient" Version="0.0.3.1-beta02" />
+    <PackageReference Include="Fanex.Data.ProxyClient" Version="0.0.4-beta4" />
     <PackageReference Include="Fanex.Logging.Extensions.AspNetCore" Version="1.0.1" />
     <PackageReference Include="Fanex.Logging.Extensions.Database" Version="1.0.8" />
     <PackageReference Include="Fanex.Logging.Sentry.RavenClient" Version="1.0.1.2" />
