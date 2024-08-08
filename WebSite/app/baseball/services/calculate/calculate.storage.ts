@@ -87,7 +87,9 @@ export class CalculateStorage implements Storage {
 
   onChange = () => this.#isClickOnCalculate = false;
 
-  setReSettledTickets = (isReSettledTickets: boolean) => this.#isReSettledTickets.set(isReSettledTickets);
+  setReSettledTickets = (isReSettledTickets: boolean) => {
+    this.#isReSettledTickets.set(isReSettledTickets);
+  };
 
   setIsApplyHedgeMatch = (isApplyHedgeMatch: boolean) => this.#isApplyHedgeMatch.set(isApplyHedgeMatch);
 
@@ -108,5 +110,7 @@ export class CalculateStorage implements Storage {
   getActionSubmit = () => this.#actionSubmit;
 
   getIsClickOnCalculate = () => this.#isClickOnCalculate;
+
+  getIsReSettledTickets = () => this.#isReSettledTickets;
 }
 

@@ -28,7 +28,7 @@ export class CalculateComponent implements SportTemplate {
   #storage = inject(CalculateStorage);
   isReadyMatch = false;
   applyHedgeMatch: boolean;
-  isResettleTickets = this.#storage.isReSettledTickets();
+  isResettleTickets = this.#storage.getIsReSettledTickets();
   match: Match;
   
   async getMatch(matchId: number) {
