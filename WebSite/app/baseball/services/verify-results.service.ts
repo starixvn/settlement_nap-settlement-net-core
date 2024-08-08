@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { VerificationBaseService } from "../../core/services/verification-base.service";
-import { ScoreSourceType } from "../../shared/constants";
+import { ResourceIds, ScoreSourceType } from "../../shared/constants";
 import { ResultDetail } from "../../shared/models/sportsbook-sop/result-detail.model";
 import * as _ from "lodash";
 
@@ -11,10 +11,21 @@ export class VerificationResultsService extends VerificationBaseService {
     _.forEach(selectedResult, (map) => {
       if (
         !this.isExistScreenshotSource(map) &&
-        !this.isExistExtraSources(map, "EI")
+        !this.isExistExtraSources(map, ResourceIds.extraInning)
       ) {
         result = false;
       }
+    });
+
+    return result;
+  }
+
+  public allMapHaveScoreSources(selectedResult: ResultDetail[]): boolean {
+    let result = true;
+    _.forEach(selectedResult, (map) => {
+        if (!this.isExistScoreSources(map) && !this.isExistExtraSources(map, ResourceIds.extraInning)) {
+            result = false;
+        }
     });
 
     return result;
