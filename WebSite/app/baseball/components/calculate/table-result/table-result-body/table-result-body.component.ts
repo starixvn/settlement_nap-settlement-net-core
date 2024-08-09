@@ -105,7 +105,7 @@ export class TableResultBodyComponent implements OnInit {
     const externalResults = this.#storage.getAllInnings().map((item) => item.externalScores.find(e => e.sourceId === sourceId));
     const outsideResults = externalResults.filter(e => this.#verificationService.isExistedHomeAwayScore(e.homeValue, e.awayValue));
 
-    const totalGameOutside = _.find(this.#storage.fulltimeResult.externalScores.slice(3), (score) => score.sourceId === sourceId);
+    const totalGameOutside = _.find(this.#storage.fulltimeResult.externalScores.slice(this.maxProviderCol + 1), (score) => score.sourceId === sourceId);
 
     if (totalGameOutside && (IsOnLoad &&
       !this.#verificationService.isExistedHomeAwayScore(totalGameOutside.homeValue, totalGameOutside.awayValue))

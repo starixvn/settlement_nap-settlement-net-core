@@ -5,7 +5,7 @@ import { BaseballApiKeys } from "../../constants/api-keys.constant";
 import { NotifyService } from "../../services/notify.service";
 import { BaseHandler } from "../base.handler.native";
 import { Storage } from "../../services/storage.service";
-import { CalculateAction, ResourceIds } from "../../../shared/constants";
+import { CalculateAction, ResourceIds, SettingPosition } from "../../../shared/constants";
 
 export class CalculateHandler implements BaseHandler {
   #nextHandler: BaseHandler;
@@ -55,10 +55,12 @@ export class CalculateHandler implements BaseHandler {
     return query;
   }
 
-  private generateDeterminedType(storage: Storage) {
-    if (storage.getActionSubmit() !== CalculateAction.calculate) {
+  private generateDeterminedType(storage: Storage) {  
+    if (storage.getActionSubmit() !== CalculateAction.calculate 
+      || !this.isBitSet(storage.getMatchDetail().autoSetting, SettingPosition.instant)) {
       return 0;
     }
+   
     const roundBitStartAt = 2;
     const bitArray = new Array<number>(12).fill(0);
     const resultWithoutFinal = storage.getResultChecked()
@@ -73,4 +75,9 @@ export class CalculateHandler implements BaseHandler {
     const reversedBitArray = bitArray.toReversed();
     return parseInt(reversedBitArray.join(''), 2);
   }
+
+  private isBitSet(num: number, bitPosition: number): boolean {
+    const mask = 1 << bitPosition;
+    return (num & mask) !== 0;
+}
 }
