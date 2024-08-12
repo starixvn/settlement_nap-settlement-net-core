@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import { Injectable, PipeTransform } from "@angular/core";
 import { ExternalResultDetail, ResultDetail, GeneralMatch, ExternalResult } from "../../shared/models/sportsbook-sop";
-import { ResultStatusId, TicketStatusText, ScoreSourceType, SettlementStatusId, SportType } from "../../shared/constants";
+import { ResultStatusId, TicketStatusText, ScoreSourceType, SettlementStatusId, SportType, SpoSports } from "../../shared/constants";
 import { Language } from "../../shared/language.native";
 import { ResultByTeamNamePipe } from '../../shared/pipes/result-by-team-name.pipe';
 import { GeneralResultDetail } from '../../shared/models';
@@ -223,8 +223,10 @@ export class VerificationBaseService {
     }
 
     public verifyFinalResource(resultDetails: ResultDetail[], resourcesIdFinal: string, newFinal: string, totalScore: string) {
+        console.log('verifyFinalResource', resultDetails, resourcesIdFinal, newFinal, totalScore);
         const final = resultDetails.find((map) => _.isEqual(map.resourceId, resourcesIdFinal) && map.checked
             && map.homeValue && map.awayValue);
+        console.log('final', final);
         if (final) {
             const oldScore = `${final.homeValue}-${final.awayValue}`;
 
@@ -383,13 +385,12 @@ export class VerificationBaseService {
 
     public generateExternalScores(match: GeneralMatch, resultDetails: ResultDetail[], sportType: number,maximumProvider = 2) {
         const listGroupExternalResult = this.groupExternalResult(match.externalResults, sportType,maximumProvider);
-        const newSportsSOP = [SportType.tennis, SportType.cricket, SportType.badminton, SportType.basketBall, SportType.volleyBall, SportType.beachVolleyball, SportType.eSports,SportType.tableTennis];
         _.forEach(resultDetails, (map: ResultDetail) => {
             const scores: ExternalResultDetail[] = [];
             _.forEach(listGroupExternalResult, (result: ExternalResult) => {
                 const score = result.resultDetails.find((item) => _.isEqual(item.resourceId, map.resourceId));
                 if (_.isNil(score)) {
-                    if (result.sourceId === ScoreSourceType.trader && (newSportsSOP.includes(sportType))
+                    if (result.sourceId === ScoreSourceType.trader && (SpoSports.includes(sportType))
                         && !_.isEqual(map.resultStatus, "Refund")
                         && (!_.isEmpty(map.homeValue) || !_.isEmpty(map.awayValue))
                         && !_.isEqual(map.settlementStatusId, SettlementStatusId.RefundSettleDetermined)

@@ -95,6 +95,8 @@ export class EarlySettlementStorage implements Storage {
 
   getResultChecked = () => this.#earlyResults.filter(x => x.checked);
 
+  getResultDetails = () => this.#earlyResults;
+  
   getActionSubmit = () => this.#actionSubmit;
 
   setActionSubmit = (action: string) => this.#actionSubmit = action;

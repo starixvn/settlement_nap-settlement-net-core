@@ -351,7 +351,7 @@ public class AioServiceImp(
     {
         var setViewed = GetViewedSet(matchDetail);
 
-        int[] sports = [SportType.Tennis, SportType.TableTennis];
+        int[] sports = [SportType.Tennis, SportType.TableTennis, SportType.BaseBall];
         if (!sports.Contains(matchDetail.SportType))
         {
             return resultDetails;
@@ -366,7 +366,7 @@ public class AioServiceImp(
 
         var resultOrdered = setResults
             .Where(r => r.IntervalNo <= setViewed)
-            .OrderBy(s => s.IntervalNo)
+            //.OrderBy(s => s.IntervalNo)
             .ToList();
 
         resultOrdered.Add(finalResult);
@@ -383,6 +383,9 @@ public class AioServiceImp(
             (0, SportType.TableTennis) => GamePlay.Seven,
             (6, SportType.TableTennis) => GamePlay.Five,
             (_, SportType.TableTennis) => matchDetail.GameSession,
+            (6, SportType.BaseBall) => GamePlay.Six,
+            (7, SportType.BaseBall) => GamePlay.Seven,
+            (_, SportType.BaseBall) => GamePlay.Nine,
             (_, _) => matchDetail.GameSession
         };
 

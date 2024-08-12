@@ -21,6 +21,7 @@ import { every, find, isEmpty, isEqual, sumBy } from "lodash";
 import { ResourceIds } from "../../constants/resource-id.constant";
 import { GeneralResultDetail } from "../../../shared/models";
 import { CalculateAction } from "../../../shared/constants";
+import { ConfirmIntervalConsistency } from "../../handlers/calculate/confirm-interval-consistency.handler";
 
 @Injectable()
 
@@ -31,6 +32,7 @@ export class CalculateService {
   private verifyRunningOddsHandler = new VerifyRunningOddsHandler();
   private verifyScoreSourceHandler = new VerifyScoreSourceHandler();
   private confirmMismatchScoreHandler = new ConfirmMismatchScoreHandler();
+  private confirmIntervalConsistency = new ConfirmIntervalConsistency();
   private confirmChangedResultHandler = new ConfirmChangedResultHandler();
   private confirmCalculateHandler = new ConfirmCalculateHandler();
   private saveScoreHandler = new SaveScoreHandler();
@@ -48,7 +50,8 @@ export class CalculateService {
     this.invalidInputHandler.setNextHandler(this.verifyRunningOddsHandler);
     this.verifyRunningOddsHandler.setNextHandler(this.verifyScoreSourceHandler);
     this.verifyScoreSourceHandler.setNextHandler(this.confirmMismatchScoreHandler);
-    this.confirmMismatchScoreHandler.setNextHandler(this.confirmChangedResultHandler);
+    this.confirmMismatchScoreHandler.setNextHandler(this.confirmIntervalConsistency);
+    this.confirmIntervalConsistency.setNextHandler(this.confirmChangedResultHandler);
     this.confirmChangedResultHandler.setNextHandler(this.confirmCalculateHandler);
     this.confirmCalculateHandler.setNextHandler(this.saveScoreHandler);
     this.saveScoreHandler.setNextHandler(this.calculateHandler);

@@ -14,9 +14,10 @@ export class NotifyService {
   private readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage(Language.confirmationBox);
 
 
-  confirm(message: string, confirmCallback: () => void) {
+  confirm(message: string, confirmCallback: () => void, hasActionOnNoBtn = false, rejectCallback?: () => void) {
     this.confirmationDialogMessage.message = message;
-    this.messageBoxService.confirm(this.confirmationDialogMessage, confirmCallback);
+    this.confirmationDialogMessage.hasActionOnNoBtn = hasActionOnNoBtn;
+    this.messageBoxService.confirm(this.confirmationDialogMessage, confirmCallback, rejectCallback);
   }
 
   clearError() {

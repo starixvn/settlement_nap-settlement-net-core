@@ -5,6 +5,7 @@ import { Match } from "../models/match.model";
 export interface Storage {
   getMatchDetail() : MatchDetail;
   getResultChecked(): ResultDetail[];
+  getResultDetails(): ResultDetail[];
   getActionSubmit(): string;
   isReSettledTickets(): boolean;
   setReSettledTickets(value: boolean): void;
@@ -12,5 +13,6 @@ export interface Storage {
   isScoreDirect(): boolean;
   getMatch(): Match;
   getApplyingHedgeMatch(): boolean;
-  getOriginalResultDetails() : ResultDetail[]; 
+  getOriginalResultDetails() : ResultDetail[];
+  selectFinalResult?: () => void;
 }

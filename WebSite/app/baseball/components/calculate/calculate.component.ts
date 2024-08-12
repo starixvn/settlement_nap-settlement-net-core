@@ -16,12 +16,13 @@ import { ResourceNamePipe } from '../../pipes/resource-name.pipe';
 import { Match } from '../../models/match.model';
 import { CalculateStorage } from '../../services/calculate/calculate.storage';
 import { CalculateService } from '../../services/calculate/calculate.service';
+import { IntervalCalculationService } from '../../../shared/services';
 @Component({
   selector: 'calculate',
   standalone: true,
   imports: [MatchDetailComponent, TicketCountComponent, ResettleCheckerComponent,
      CommonModule, FormsModule, NotReadyMatchComponent, TableResultHeaderComponent, TableResultBodyComponent, TableResultFooterComponent],
-  providers: [IntervalBackgroundPipe, ResultRowStateService, ResourceNamePipe, CalculateService],
+  providers: [IntervalBackgroundPipe, ResultRowStateService, ResourceNamePipe, CalculateService,IntervalCalculationService],
   templateUrl: './calculate.component.html'
 })
 export class CalculateComponent implements SportTemplate {

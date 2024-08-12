@@ -16,6 +16,7 @@ import { Storage } from "../storage.service";
 )
 
 export class CalculateStorage implements Storage {
+
   #aioService = inject(AioService);
   #verificationBaseService = inject(VerificationBaseService);
 
@@ -52,7 +53,7 @@ export class CalculateStorage implements Storage {
   mapTicketStatusExtraInning() {
     const extraInning = this.#match().resultDetails.find((item) => item.resourceId === ResourceIds.extraInning);
     if (extraInning) {
-         extraInning.ticketStatus = this.fulltimeResult.ticketStatus;
+      extraInning.ticketStatus = this.fulltimeResult.ticketStatus;
     }
   }
 
@@ -112,5 +113,11 @@ export class CalculateStorage implements Storage {
   getIsClickOnCalculate = () => this.#isClickOnCalculate;
 
   getIsReSettledTickets = () => this.#isReSettledTickets;
+
+  selectFinalResult = () => {
+    this.#match().resultDetails.forEach((item) => {
+      item.checked = item.resourceId === ResourceIds.fullTime || item.checked;
+    });
+  };
 }
 

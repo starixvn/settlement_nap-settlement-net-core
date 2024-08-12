@@ -58,6 +58,8 @@ export class TableResultBodyComponent implements OnInit {
   private changeScore() {
     const innings = this.#storage.getAllInnings().filter((item) => this.#verificationService.isExistedHomeAwayScore(item.homeValue, item.awayValue));
 
+    console.log('innings', innings);
+
     if (!this.#storage.isScoreDirect()) {
       this.#calculateService.sumTotalScores(innings, this.#storage.fulltimeResult);
     }
@@ -117,7 +119,7 @@ export class TableResultBodyComponent implements OnInit {
 
   selectedOnLastMap(inning: ResultDetailBaseBall, checked: boolean) {
     this.#storage.getExtraInning().checked = checked;
-    const allInnings = this.#storage.getAllInnings();
+    const allInnings = this.#storage.getResultDetails();
     const newFullTimeScore = this.#verificationService.getNewFinalResource(allInnings, ResourceIds.fullTime, false);
     const confirmMessage = this.#verificationService.verifyFinalResource(allInnings,
       ResourceIds.fullTime, newFullTimeScore, "Match");
