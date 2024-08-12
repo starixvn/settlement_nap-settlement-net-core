@@ -8,7 +8,7 @@ import { ResultDetail } from "../../../shared/models/sportsbook-sop/result-detai
 import { IntervalBackgroundPipe } from "../../../shared/pipes/interval-background.pipe";
 import { isEqual } from "lodash";
 import { SettlementStatusId } from "../../../shared/constants";
-@Injectable() 
+@Injectable()
 
 export class RefundStorage {
   private aioService = inject(AioService);
@@ -44,11 +44,11 @@ export class RefundStorage {
     let className = '';
 
     if (isEqual(resultDetail.resourceId, "00")) {
-        className += 'final-score ';
+      className += 'final-score ';
     } else if (isEqual(resultDetail.resourceId, "01")) {
-        className += 'ht-score ';
+      className += 'ht-score ';
     }
 
     return className + this.intervalBackgroundPipe.transform(resultDetail.settlementStatusId);
-}
+  }
 }

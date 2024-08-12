@@ -6,7 +6,7 @@ import { AioService } from "../../../shared/services";
 import { VerificationBaseService } from "../../../core/services/verification-base.service";
 import { CalculateAction, ResourceIds, ResultStatusId, SettlementStatusId } from "../../../shared/constants";
 import { ResultDetailBaseBall } from "../../models/result-detail.model";
-import { cloneDeep, every, find, sumBy } from "lodash";
+import { cloneDeep } from "lodash";
 import { Storage } from "../storage.service";
 
 @Injectable(

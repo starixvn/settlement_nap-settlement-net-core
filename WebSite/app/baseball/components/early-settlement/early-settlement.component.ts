@@ -11,12 +11,13 @@ import { TableResultBodyComponent } from './table-result/table-result-body/table
 import { EarlySettlementService } from '../../services/early-settlement/early-settlement.service';
 import { TableResultFooterComponent } from './table-result/table-result-footer/table-result-footer.component';
 import { ResettleCheckerComponent } from "../../../shared/components/resettle-checker/resettle-checker.component";
+import { IntervalBackgroundPipe } from '../../../shared/pipes/interval-background.pipe';
 
 @Component({
   selector: 'early-settlement',
   standalone: true,
   imports: [MatchDetailComponent, TicketCountComponent, CommonModule, TableResultHeaderComponent, TableResultBodyComponent, TableResultFooterComponent, ResettleCheckerComponent],
-  providers: [EarlySettlementStorage, ResourceNamePipe, EarlySettlementService],
+  providers: [EarlySettlementStorage, ResourceNamePipe, EarlySettlementService,IntervalBackgroundPipe],
   templateUrl: './early-settlement.component.html',
 })
 export class EarlySettlementComponent implements SportTemplate{

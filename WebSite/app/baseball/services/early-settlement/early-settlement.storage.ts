@@ -8,14 +8,17 @@ import { VerificationBaseService } from "../../../core/services/verification-bas
 import { cloneDeep, isEqual, isNil, uniqBy } from "lodash";
 import { GroupMap, ResultDetail } from "../../../shared/models/sportsbook-sop";
 import { ItemsSelect } from "../../../shared/models";
-import { BackgroundColor, TicketStatusText } from '../../../shared/constants';
+import { BackgroundColor, SettlementStatusId, TicketStatusText } from '../../../shared/constants';
 import { Storage } from '../storage.service';
+import { IntervalBackgroundPipe } from "../../../shared/pipes/interval-background.pipe";
 
 @Injectable()
 export class EarlySettlementStorage implements Storage {
   #aioService = inject(AioService);
   #resultPipe = inject(ResourceNamePipe);
   #verificationService = inject(VerificationBaseService);
+  #intervalBackgroundPipe = inject(IntervalBackgroundPipe);
+
   #match = signal<Match>(null);
   #disableAction = signal<boolean>(true);
   #mainResults: ResultDetail[];
@@ -54,7 +57,9 @@ export class EarlySettlementStorage implements Storage {
 
   private GetInitStatus() {
     this.#mainResults.forEach(x => {
-      x.resourceName = this.#resultPipe.transform(x.resourceId, true)
+      x.resourceName = this.#resultPipe.transform(x.resourceId, true);
+      x.className = this.getClass(x);
+      x.isDisplayedForMember = this.isLeader() || +x.settlementStatusId !== SettlementStatusId.Running;
     });
 
     this.#earlyResults.forEach(x => x.resultSettingData.iconHoldResult = this.setIconMap(x.resultSettingData.isHoldResult, this.#match()));
@@ -168,5 +173,17 @@ export class EarlySettlementStorage implements Storage {
     });
 
     return maps;
+  }
+
+  getClass(resultDetail: ResultDetail) {
+    let className = '';
+
+    if (isEqual(resultDetail.resourceId, "00")) {
+      className += 'final-score ';
+    } else if (isEqual(resultDetail.resourceId, "01")) {
+      className += 'ht-score ';
+    }
+
+    return className + this.#intervalBackgroundPipe.transform(resultDetail.settlementStatusId);
   }
 }
