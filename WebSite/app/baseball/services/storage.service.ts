@@ -14,5 +14,5 @@ export interface Storage {
   getMatch(): Match;
   getApplyingHedgeMatch(): boolean;
   getOriginalResultDetails() : ResultDetail[];
-  selectFinalResult?: () => void;
+
 }

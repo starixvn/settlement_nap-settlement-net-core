@@ -35,12 +35,12 @@
       <td [ngClass]="{'map': true, 'can-settle': inning.resultState.canSettleResult }">
         <div><input type="text" myOnlyInteger [(ngModel)]="result.homeValue"
             [disabled]="inning.resultState.isOutSideSourceDisabled"
-            (ngModelChange)="updateOutsideScore(result.sourceId, inning); verifyAndAutoFillScore(inning, inning.resultState.isFullTimeRow)" />
+            (ngModelChange)="updateOutsideScore(result.sourceId); verifyAndAutoFillScore(inning, inning.resultState.isFullTimeRow)" />
         </div>
         <div>
           <input type="text" myOnlyInteger [(ngModel)]="result.awayValue"
             [disabled]="inning.resultState.isOutSideSourceDisabled"
-            (ngModelChange)="updateOutsideScore(result.sourceId, inning); verifyAndAutoFillScore(inning, inning.resultState.isFullTimeRow)" />
+            (ngModelChange)="updateOutsideScore(result.sourceId); verifyAndAutoFillScore(inning, inning.resultState.isFullTimeRow)" />
         </div>
       </td>
     </ng-container>

@@ -47,6 +47,7 @@ export class TableResultBodyComponent implements OnInit {
   }
   ngOnInit(): void {
     this.autoFillScoreOnLoad();
+    this.autoFillOutsideScoreOnLoad();
   }
 
   checkInningIsMatched(map: ResultDetail) {
@@ -57,8 +58,6 @@ export class TableResultBodyComponent implements OnInit {
 
   private changeScore() {
     const innings = this.#storage.getAllInnings().filter((item) => this.#verificationService.isExistedHomeAwayScore(item.homeValue, item.awayValue));
-
-    console.log('innings', innings);
 
     if (!this.#storage.isScoreDirect()) {
       this.#calculateService.sumTotalScores(innings, this.#storage.fulltimeResult);
@@ -103,7 +102,14 @@ export class TableResultBodyComponent implements OnInit {
     }
   }
 
-  updateOutsideScore(sourceId: number, inning: ResultDetail, IsOnLoad = false) {
+  autoFillOutsideScoreOnLoad() {
+    const sourceIds = this.#storage.fulltimeResult.externalScores.map((score) => score.sourceId);
+    _.forEach(sourceIds, (sourceId) => {      
+      this.updateOutsideScore(sourceId, true);
+    });
+  }
+
+  updateOutsideScore(sourceId: number, IsOnLoad = false) {
     const externalResults = this.#storage.getAllInnings().map((item) => item.externalScores.find(e => e.sourceId === sourceId));
     const outsideResults = externalResults.filter(e => this.#verificationService.isExistedHomeAwayScore(e.homeValue, e.awayValue));
 
@@ -126,10 +132,12 @@ export class TableResultBodyComponent implements OnInit {
     if (!_.isEmpty(confirmMessage) && !this.#storage.isScoreDirect()) {
       this.#notifyService.confirm(confirmMessage, () => {
         this.#verificationService.changeToNewFinalResource(this.#storage.getFullTime(), newFullTimeScore);
+        this.#storage.getAllInnings().forEach((item) => {
+          this.#storage.setResultState(this.#resultRowState, item);
+        })
       });
     }
     this.selectedOnMap(inning);
-
   }
 
   selectedOnMap(inning: ResultDetailBaseBall) {

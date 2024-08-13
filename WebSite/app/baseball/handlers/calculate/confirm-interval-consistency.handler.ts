@@ -2,9 +2,9 @@ import { Language } from "../../../shared/language.native";
 import { NotifyService } from "../../services/notify.service";
 import { BaseHandler } from "../base.handler.native";
 import { inject } from "@angular/core";
-import { Storage } from "../../services/storage.service";
 import { IntervalCalculationService } from "../../../shared/services";
 import { ResourceIds } from "../../../shared/constants";
+import { ICalculateStorage } from "../../services/calculate/calculate.storage";
 
 export class ConfirmIntervalConsistency implements BaseHandler {
   private nextHandler: BaseHandler;
@@ -15,7 +15,7 @@ export class ConfirmIntervalConsistency implements BaseHandler {
     this.nextHandler = handler;
   }
 
-  async handle(storage: Storage) {
+  async handle(storage: ICalculateStorage) {
     if (
       this.intervalCalculationService.isMatchNotCheckedWhenChangingIntervals(
         storage.getResultDetails(),

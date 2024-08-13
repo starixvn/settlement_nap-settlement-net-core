@@ -8,14 +8,20 @@ import { CalculateAction, ResourceIds, ResultStatusId, SettlementStatusId } from
 import { ResultDetailBaseBall } from "../../models/result-detail.model";
 import { cloneDeep } from "lodash";
 import { Storage } from "../storage.service";
+import { ResultRowStateService } from "../result-row-state.service";
+import { ResultState } from "../../models/result-state.model";
+
+
+export interface ICalculateStorage extends Storage  {
+  selectFinalResult?: () => void;
+}
 
 @Injectable(
   {
     providedIn: 'root'
   }
 )
-
-export class CalculateStorage implements Storage {
+export class CalculateStorage implements ICalculateStorage {
 
   #aioService = inject(AioService);
   #verificationBaseService = inject(VerificationBaseService);
@@ -119,5 +125,9 @@ export class CalculateStorage implements Storage {
       item.checked = item.resourceId === ResourceIds.fullTime || item.checked;
     });
   };
+  
+  setResultState = (service: ResultRowStateService,inning: ResultDetailBaseBall) => { 
+    inning.resultState = new ResultState(service, inning);
+  }
 }
 
