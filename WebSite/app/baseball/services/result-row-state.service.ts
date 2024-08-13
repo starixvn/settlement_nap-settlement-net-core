@@ -24,7 +24,7 @@ export class ResultRowStateService {
   }
 
   isFinalScoreDisabled(set: ResultDetail, outsideSource = false) {
-    return this.storage.isLeader || outsideSource ? isEqual(set.resourceId, ResourceIds.fullTime)
+    return this.storage.isLeader() || outsideSource ? isEqual(set.resourceId, ResourceIds.fullTime)
       ? !this.storage.isScoreDirect() : this.storage.isScoreDirect() : true;
   }
 

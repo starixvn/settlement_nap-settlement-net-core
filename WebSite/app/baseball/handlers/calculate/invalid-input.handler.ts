@@ -25,7 +25,7 @@ export class InvalidInputHandler implements BaseHandler {
   }
 
   private invalidInputScore(resultDetails: ResultDetail[]) {
-    const findMap = find(resultDetails, item => isEmpty(item.homeValue) && item.resourceId !== ResourceIds.fullTime && item.resourceId !== ResourceIds.extraInning);
+    const findMap = find(resultDetails, item => (isEmpty(item.homeValue) || isEmpty(item.awayValue)) && item.resourceId !== ResourceIds.fullTime && item.resourceId !== ResourceIds.extraInning);
     const final = find(resultDetails, item => (isEmpty(item.homeValue) || isEmpty(item.awayValue))
       && item.resourceId === ResourceIds.fullTime);
 
