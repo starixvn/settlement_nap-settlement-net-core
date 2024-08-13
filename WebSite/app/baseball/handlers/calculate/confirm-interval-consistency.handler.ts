@@ -1,7 +1,6 @@
 import { Language } from "../../../shared/language.native";
 import { NotifyService } from "../../services/notify.service";
 import { BaseHandler } from "../base.handler.native";
-import { VerificationBaseService } from "../../../core/services/verification-base.service";
 import { inject } from "@angular/core";
 import { Storage } from "../../services/storage.service";
 import { IntervalCalculationService } from "../../../shared/services";
@@ -29,7 +28,6 @@ export class ConfirmIntervalConsistency implements BaseHandler {
         () => {
           storage.setReSettledTickets(true);
           storage.selectFinalResult();
-          this.nextHandler.handle(storage);
         },
         true,
         () => this.nextHandler.handle(storage)

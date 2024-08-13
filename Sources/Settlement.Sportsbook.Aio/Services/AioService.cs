@@ -93,7 +93,7 @@ public class AioServiceImp(
         }
         resultDetails = resultDetails.OrderBy(result => result.OrdNo).ToList();
 
-        var newResultDetails = await SetInterval(matchDetail, resultDetails);
+        var newResultDetails = request.SettleType == "EAR" ? resultDetails : await SetInterval(matchDetail, resultDetails);
 
         return (newResultDetails, ticketCounts);
     }
