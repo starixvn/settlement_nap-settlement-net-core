@@ -16,11 +16,9 @@ import { ConfirmCalculateHandler } from "../../handlers/calculate/confirm-calcul
 import { SaveScoreHandler } from "../../handlers/calculate/save-score.handler";
 import { CalculateHandler } from "../../handlers/calculate/calculate.handler";
 import { CalculateStorage } from "./calculate.storage";
-import { ResultDetailBaseBall } from "../../models/result-detail.model";
-import { every, find, isEmpty, isEqual, sumBy } from "lodash";
+import { every, find, isEqual, sumBy } from "lodash";
 import { ResourceIds } from "../../constants/resource-id.constant";
 import { GeneralResultDetail } from "../../../shared/models";
-import { CalculateAction } from "../../../shared/constants";
 import { ConfirmIntervalConsistency } from "../../handlers/calculate/confirm-interval-consistency.handler";
 
 @Injectable()
@@ -42,7 +40,7 @@ export class CalculateService {
   #storage = inject(CalculateStorage);
   #notifyService = inject(NotifyService);
   #aioService = inject(AioService);
-  #verificationService = inject(VerificationBaseService)
+  #verificationService = inject(VerificationBaseService);
 
   constructor() {
     this.nonSelectedHandler.setNextHandler(this.resultConfirmedHandler);

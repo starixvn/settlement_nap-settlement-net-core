@@ -38,7 +38,7 @@ export class CalculateComponent implements SportTemplate {
     this.#storage.resetHomeAway();
     this.#storage.mapTicketStatusExtraInning();
     this.match = this.#storage.getMatch();
-  }
+    this.applyHedgeMatch = this.#storage.getApplyingHedgeMatch();}
 
   onResettleCheckboxChange(isChecked: boolean) {
     this.#storage.setReSettledTickets(isChecked);

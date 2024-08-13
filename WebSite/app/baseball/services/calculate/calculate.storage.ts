@@ -30,6 +30,7 @@ export class CalculateStorage implements ICalculateStorage {
   #isScoreDirect = signal<boolean>(false);
   #isReSettledTickets = signal<boolean>(false);
   #isApplyHedgeMatch = signal<boolean>(false);
+
   #originalResultDetails: ResultDetailBaseBall[];
   #isClickOnCalculate = false;
   #actionSubmit = '';
@@ -54,6 +55,7 @@ export class CalculateStorage implements ICalculateStorage {
     this.maxProviderCol = matchFetched.matchDetail.providerCount > 2 ? 3 : 2;
     this.fulltimeResult = this.getFullTime();
     this.#originalResultDetails = cloneDeep(matchFetched.resultDetails);
+    this.setIsApplyHedgeMatch(!!matchFetched.hedgeMatchDetail);
   }
 
   mapTicketStatusExtraInning() {
@@ -126,8 +128,20 @@ export class CalculateStorage implements ICalculateStorage {
     });
   };
   
-  setResultState = (service: ResultRowStateService,inning: ResultDetailBaseBall) => { 
+  setResultState = (service: ResultRowStateService, inning: ResultDetailBaseBall) => { 
     inning.resultState = new ResultState(service, inning);
+  }
+
+  setResultsCheckedState = (service: ResultRowStateService) => {
+    this.getResultChecked().forEach((inning) => {
+      this.setResultState(service,inning);
+    })
+  }
+
+  setAllInningsResultState = (service: ResultRowStateService) => {
+    this.getAllInnings().forEach((inning) => {
+      this.setResultState(service,inning);
+    })
   }
 }
 

@@ -132,9 +132,7 @@ export class TableResultBodyComponent implements OnInit {
     if (!_.isEmpty(confirmMessage) && !this.#storage.isScoreDirect()) {
       this.#notifyService.confirm(confirmMessage, () => {
         this.#verificationService.changeToNewFinalResource(this.#storage.getFullTime(), newFullTimeScore);
-        this.#storage.getAllInnings().forEach((item) => {
-          this.#storage.setResultState(this.#resultRowState, item);
-        })
+        this.changeState();
       });
     }
     this.selectedOnMap(inning);
