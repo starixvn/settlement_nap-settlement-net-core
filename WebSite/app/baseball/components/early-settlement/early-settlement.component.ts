@@ -1,6 +1,6 @@
 import { TicketCountComponent } from './../../../shared/components/ticket-count/ticket-count.component';
 import { Component, inject } from '@angular/core';
-import { GroupMap, ResultDetail, SportTemplate } from '../../../shared/models/sportsbook-sop';
+import { ResultDetail, SportTemplate } from '../../../shared/models/sportsbook-sop';
 import {  EarlySettlementStorage } from '../../services/early-settlement/early-settlement.storage';
 import { ResourceNamePipe } from '../../pipes/resource-name.pipe';
 import { MatchDetailComponent } from '../../../shared/components/sportsbook-sop/match-detail/match-detail.component';

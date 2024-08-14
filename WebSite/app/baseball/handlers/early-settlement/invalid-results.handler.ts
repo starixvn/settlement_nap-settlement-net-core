@@ -1,8 +1,7 @@
-import { find, isEmpty, isNil } from "lodash";
+import { isEmpty } from "lodash";
 import { Language } from "../../../shared/language.native";
 import { NotifyService } from "../../services/notify.service";
 import { ResultDetail } from "../../../shared/models/sportsbook-sop";
-import { ResourceIds } from "../../constants/resource-id.constant";
 import { BaseHandler } from "../base.handler.native";
 import { inject } from "@angular/core";
 import { Storage } from "../../services/storage.service";

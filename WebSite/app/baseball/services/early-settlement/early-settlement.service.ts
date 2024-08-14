@@ -21,6 +21,7 @@ import { CheckMarkedTicketHandler } from "../../handlers/refund/check-marked-tic
 import { NotifyService } from "../notify.service";
 import { AioService } from "../../../shared/services";
 import { InvalidResultsHandler } from "../../handlers/early-settlement/invalid-results.handler";
+import { ConfirmRefundHandler } from "../../handlers/early-settlement/confirm-refund.handler";
 
 @Injectable()
 
@@ -28,6 +29,7 @@ export class EarlySettlementService {
   #storage = inject(EarlySettlementStorage);
   #aioService = inject(AioService);
   #notifyService = inject(NotifyService);
+
   #resultConfirmedHandler = new ResultConfirmedHandler();
   #invalidResultsHandler = new InvalidResultsHandler();
   #verifyRunningOddsHandler = new VerifyRunningOddsHandler();
@@ -39,6 +41,7 @@ export class EarlySettlementService {
   #calculateHandler = new CalculateHandler();
   #confirmUncalculateHandler = new ConfirmUnCalculateHandler();
   #checkMarkedTicket = new CheckMarkedTicketHandler();
+  #checkConfirmRefundHandler = new ConfirmRefundHandler();
   #saveScoreOnly = new SaveScoreHandler();
 
 
@@ -52,6 +55,7 @@ export class EarlySettlementService {
     this.#confirmCalculateHandler.setNextHandler(this.#saveScoreHandler);
     this.#saveScoreHandler.setNextHandler(this.#calculateHandler);
     this.#confirmUncalculateHandler.setNextHandler(this.#calculateHandler);
+    this.#checkConfirmRefundHandler.setNextHandler(this.#checkMarkedTicket);
     this.#checkMarkedTicket.setNextHandler(this.#calculateHandler);
   }
 
@@ -64,7 +68,7 @@ export class EarlySettlementService {
   }
 
   refund() {
-    this.#checkMarkedTicket.handle(this.#storage);
+    this.#checkConfirmRefundHandler.handle(this.#storage);
   }
 
   saveScore() {
