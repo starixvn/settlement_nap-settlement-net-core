@@ -28,7 +28,7 @@ export class ResultDetail extends GeneralResultDetail {
     resultName: string;
     groupName: string;
     inputType: number;
-    isSpecialBettype: boolean;
+    isSpecialBettype: number;
     isDisplayedForMember: boolean;
     inputOptions: InputOption[];
     multipleResultSelect: MultipleSelect;

@@ -60,6 +60,7 @@ public class MergeDataServiceImp : MergeDataService
         baseDetail.BetSettledCount += siteDetail.BetSettledCount;
         baseDetail.BetRefundedCount += siteDetail.BetRefundedCount;
         baseDetail.BetCount += siteDetail.BetCount;
+        baseDetail.IsSpecialBettype += siteDetail.IsSpecialBettype;
     }
 
     private static TicketCounts ResolveTicketCounts(List<TicketCounts> data)
