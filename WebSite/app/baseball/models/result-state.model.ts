@@ -11,11 +11,13 @@ export class ResultState {
   invalidAwayScore: boolean;
   isFullTimeRow: boolean;
   isExtraInningRow: boolean;
+  isTotalHitsRow: boolean;
   isInningRow: boolean;
   canSettleResult: boolean;
   isCheckBoxDisabled: boolean;
 
   constructor(service: ResultRowStateService, resultDetail: ResultDetail){
+    this.isTotalHitsRow = resultDetail.resourceId === ResourceIds.totalHits;
     this.isFinalScoreDisabled = service.isFinalScoreDisabled(resultDetail);
     this.isOutSideSourceDisabled = service.isFinalScoreDisabled(resultDetail, true);
     this.isConfirmed = service.isConfirmed(resultDetail);

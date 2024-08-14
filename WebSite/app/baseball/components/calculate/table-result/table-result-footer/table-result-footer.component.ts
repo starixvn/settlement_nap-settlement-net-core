@@ -24,7 +24,6 @@ export class TableResultFooterComponent implements OnInit {
   canUncalculate = this.#storage.getPermission().canUncalculate;
 
   ngOnInit(): void {
-    console.log(this.#storage.getFullTime());
     this.disableScoreDirect =
       filter(
         this.#storage.getResultDetails(),

@@ -30,9 +30,12 @@ export class ResultRowStateService {
 
 
   finalScoreClass(resultDetail: ResultDetail) {
-    const className = this.verificationService.isFullTimeMismatched(this.storage.getResultDetails(), this.storage.isScoreDirect(),
-      ResourceIds.fullTime, true)
-      ? 'col-mismatched ' : '';
+    const className = this.verificationService.isFullTimeMismatched(
+      this.storage.getResultDetails().filter(x => x.resourceId !== ResourceIds.totalHits), 
+      this.storage.isScoreDirect(),
+      ResourceIds.fullTime, 
+      true)
+        ? 'col-mismatched ' : '';
 
     return className + this.intervalBackgroundPipe.transform(resultDetail.settlementStatusId);
   }
@@ -50,12 +53,12 @@ export class ResultRowStateService {
 
   canSettleResult(result: ResultDetail) {
     const isRunning = isEqual(result.ticketStatus, TicketStatusText.running)
-      || isEqual(result.resultStatus, ResultStatus.noResult) 
+      || isEqual(result.resultStatus, ResultStatus.noResult)
       || isEqual(result.resultStatus, ResultStatus.running);
 
-    return isRunning 
-        && !result.isScoreMismatched 
-        && this.verificationService.isValidTraderConfirmScore(result);
+    return isRunning
+      && !result.isScoreMismatched
+      && this.verificationService.isValidTraderConfirmScore(result);
   }
 
   isCheckBoxDisabled(result: ResultDetail) {

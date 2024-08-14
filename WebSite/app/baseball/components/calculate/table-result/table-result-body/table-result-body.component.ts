@@ -125,7 +125,7 @@ export class TableResultBodyComponent implements OnInit {
 
   selectedOnLastMap(inning: ResultDetailBaseBall, checked: boolean) {
     this.#storage.getExtraInning().checked = checked;
-    const allInnings = this.#storage.getResultDetails();
+    const allInnings = this.#storage.getResultDetails().filter(x => x.resourceId !== ResourceIds.totalHits);
     const newFullTimeScore = this.#verificationService.getNewFinalResource(allInnings, ResourceIds.fullTime, true);
     const confirmMessage = this.#verificationService.verifyFinalResource(allInnings,
       ResourceIds.fullTime, newFullTimeScore, "Match");

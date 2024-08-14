@@ -35,6 +35,6 @@ public static class Resources
 
     public static Dictionary<int, string[]> ExtraResults => new()
     {
-        {SportType.BaseBall, new[] { "8816" } }
+        {SportType.BaseBall, new[] { "8816" } },
     };
 }

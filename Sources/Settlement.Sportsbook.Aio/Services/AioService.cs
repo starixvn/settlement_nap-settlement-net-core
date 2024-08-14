@@ -107,11 +107,11 @@ public class AioServiceImp(
 
         matchDetail.RefDataService = refDataService;
 
-        //if (SportGroup.SOP.Contains(matchDetail.SportType))
-        //{
-        //    var providersSetting = await GetProviderInfos(matchDetail.LeagueId, matchDetail.SportType);
-        //    matchDetail.ProviderCount = providersSetting.Count;
-        //}
+        if (SportGroup.SOP.Contains(matchDetail.SportType))
+        {
+            var providersSetting = await GetProviderInfos(matchDetail.LeagueId, matchDetail.SportType);
+            matchDetail.ProviderCount = providersSetting.Count;
+        }
 
         return matchDetail;
     }
@@ -356,8 +356,8 @@ public class AioServiceImp(
 
         var setViewed = GetViewedSet(matchDetail);
         var finalResult = GetFinalResult(resultDetails);
-        var setResults = GetSetResults(matchDetail, resultDetails);
-        var extraResults = GetExtraResults(matchDetail, resultDetails);
+        var setResults = GetSetResults(resultDetails);
+        var extraResults = GetExtraResults(resultDetails);
         var resourceIndexes = (await GetResourceIndex(matchDetail.SportType)).ToList();
 
         SetIntervalsForResults(setResults, resourceIndexes);
@@ -406,12 +406,12 @@ public class AioServiceImp(
         return resultDetails.First(r => r.ResourceId == ResourceType.Final);
     }
 
-    private List<ResultDetail> GetSetResults(Models.MatchDetail matchDetail, List<ResultDetail> resultDetails) => resultDetails
+    private List<ResultDetail> GetSetResults(List<ResultDetail> resultDetails) => resultDetails
             .Where(x => x.ResourceId != ResourceType.Final
                 && !(Resources.ExtraResults[SportType.BaseBall].Contains(x.ResourceId)))
             .ToList();
 
-    private List<ResultDetail> GetExtraResults(Models.MatchDetail matchDetail, List<ResultDetail> resultDetails) => resultDetails
+    private List<ResultDetail> GetExtraResults(List<ResultDetail> resultDetails) => resultDetails
             .Where(x => Resources.ExtraResults[SportType.BaseBall].Contains(x.ResourceId))
             .ToList();
 
