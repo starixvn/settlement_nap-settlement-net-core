@@ -14,6 +14,8 @@ export class ResourceNamePipe implements PipeTransform {
       return 'Match';
     } else if (resourceId == ResourceIds.extraInning) {
       return isRefund ? 'E.I' : 'Extra Inning';
+    } else if (resourceId == ResourceIds.totalHits) {
+      return 'Total Hits';
     }
     const lastTwoCharacters = resourceId.slice(-2);
     const position = parseInt(lastTwoCharacters);

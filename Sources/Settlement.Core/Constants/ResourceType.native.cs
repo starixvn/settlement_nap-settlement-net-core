@@ -32,4 +32,9 @@ public static class Resources
     {
         {SportType.BasketBall, new[] { "Q1", "Q2", "Q3", "Q4", "OT"} }
     };
+
+    public static Dictionary<int, string[]> ExtraResults => new()
+    {
+        {SportType.BaseBall, new[] { "8816" } }
+    };
 }

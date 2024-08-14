@@ -107,11 +107,11 @@ public class AioServiceImp(
 
         matchDetail.RefDataService = refDataService;
 
-        if (SportGroup.SOP.Contains(matchDetail.SportType))
-        {
-            var providersSetting = await GetProviderInfos(matchDetail.LeagueId, matchDetail.SportType);
-            matchDetail.ProviderCount = providersSetting.Count;
-        }
+        //if (SportGroup.SOP.Contains(matchDetail.SportType))
+        //{
+        //    var providersSetting = await GetProviderInfos(matchDetail.LeagueId, matchDetail.SportType);
+        //    matchDetail.ProviderCount = providersSetting.Count;
+        //}
 
         return matchDetail;
     }
@@ -349,29 +349,22 @@ public class AioServiceImp(
 
     private async Task<List<ResultDetail>> SetInterval(Models.MatchDetail matchDetail, List<ResultDetail> resultDetails)
     {
-        var setViewed = GetViewedSet(matchDetail);
-
-        int[] sports = [SportType.Tennis, SportType.TableTennis, SportType.BaseBall];
-        if (!sports.Contains(matchDetail.SportType))
+        if (!IsIntervalSport(matchDetail.SportType))
         {
             return resultDetails;
         }
 
-        var finalResult = resultDetails.First(r => r.ResourceId == ResourceType.Final);
-        var setResults = resultDetails.Where(x => x.ResourceId != ResourceType.Final).ToList();
+        var setViewed = GetViewedSet(matchDetail);
+        var finalResult = GetFinalResult(resultDetails);
+        var setResults = GetSetResults(matchDetail, resultDetails);
+        var extraResults = GetExtraResults(matchDetail, resultDetails);
+        var resourceIndexes = (await GetResourceIndex(matchDetail.SportType)).ToList();
 
-        var indexes = (await GetResourceIndex(matchDetail.SportType)).ToList();
+        SetIntervalsForResults(setResults, resourceIndexes);
 
-        setResults.ForEach(s => s.IntervalNo = indexes.First(i => i.ResourceId == s.ResourceId).IntervalNo);
+        var orderedResults = GetOrderedResults(setResults, setViewed, finalResult, extraResults);
 
-        var resultOrdered = setResults
-            .Where(r => r.IntervalNo <= setViewed)
-            //.OrderBy(s => s.IntervalNo)
-            .ToList();
-
-        resultOrdered.Add(finalResult);
-
-        return resultOrdered.ToList();
+        return orderedResults;
     }
 
     private int GetViewedSet(Models.MatchDetail matchDetail)
@@ -400,5 +393,49 @@ public class AioServiceImp(
         return indexes
             .Where(r => r.ResourceId != ResourceType.Final)
             .ToList();
+    }
+
+    private bool IsIntervalSport(int sportType)
+    {
+        int[] intervalSports = { SportType.Tennis, SportType.TableTennis, SportType.BaseBall };
+        return intervalSports.Contains(sportType);
+    }
+
+    private ResultDetail GetFinalResult(List<ResultDetail> resultDetails)
+    {
+        return resultDetails.First(r => r.ResourceId == ResourceType.Final);
+    }
+
+    private List<ResultDetail> GetSetResults(Models.MatchDetail matchDetail, List<ResultDetail> resultDetails) => resultDetails
+            .Where(x => x.ResourceId != ResourceType.Final
+                && !(Resources.ExtraResults[SportType.BaseBall].Contains(x.ResourceId)))
+            .ToList();
+
+    private List<ResultDetail> GetExtraResults(Models.MatchDetail matchDetail, List<ResultDetail> resultDetails) => resultDetails
+            .Where(x => Resources.ExtraResults[SportType.BaseBall].Contains(x.ResourceId))
+            .ToList();
+
+    private void SetIntervalsForResults(List<ResultDetail> setResults, List<ResourceIndex> indexes)
+    {
+        foreach (var result in setResults)
+        {
+            result.IntervalNo = indexes.Find(i => i.ResourceId == result.ResourceId)?.IntervalNo ?? 0;
+        }
+    }
+
+    private List<ResultDetail> GetOrderedResults(List<ResultDetail> setResults, int setViewed, ResultDetail finalResult, List<ResultDetail> extraResults)
+    {
+        var resultOrdered = setResults
+            .Where(r => r.IntervalNo <= setViewed)
+            .ToList();
+
+        resultOrdered.Add(finalResult);
+
+        if (extraResults.Any())
+        {
+            resultOrdered.AddRange(extraResults);
+        }
+
+        return resultOrdered;
     }
 }
