@@ -65,9 +65,9 @@ export class CalculateService {
   }
 
   async saveScore() {
-    const resultWithoutFinal = this.#storage.getAllInnings();
-    const scoresToSave = this.#verificationService.getChangedScores(resultWithoutFinal, this.#storage.getOriginalResultDetails());
-    const checkedScores = this.#verificationService.getOutsideScores(resultWithoutFinal);
+    const results = this.#storage.getResultChecked();
+    const scoresToSave = this.#verificationService.getChangedScores(results, this.#storage.getOriginalResultDetails());
+    const checkedScores = this.#verificationService.getOutsideScores(results);
     const query: SaveScoreQuery = {
       matchId: this.#storage.getMatchDetail().matchId,
       scoresToSave,

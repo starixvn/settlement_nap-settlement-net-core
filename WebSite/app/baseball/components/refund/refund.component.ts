@@ -17,6 +17,7 @@ import { IntervalBackgroundPipe } from '../../../shared/pipes/interval-backgroun
 export class RefundComponent implements SportTemplate{
   #storage = inject(RefundStorage);
   match = this.#storage.match;
+  resultDetails = this.#storage.getResultDetails;
   async getMatch(matchId: number) {
     await this.#storage.fetchMatch(matchId);
   }

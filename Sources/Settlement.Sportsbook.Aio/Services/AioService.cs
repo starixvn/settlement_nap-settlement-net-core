@@ -93,7 +93,7 @@ public class AioServiceImp(
         }
         resultDetails = resultDetails.OrderBy(result => result.OrdNo).ToList();
 
-        var newResultDetails = request.SettleType == "EAR" ? resultDetails : await SetInterval(matchDetail, resultDetails);
+        var newResultDetails = await SetInterval(matchDetail, resultDetails);
 
         return (newResultDetails, ticketCounts);
     }
@@ -356,15 +356,22 @@ public class AioServiceImp(
 
         var setViewed = GetViewedSet(matchDetail);
         var finalResult = GetFinalResult(resultDetails);
-        var setResults = GetSetResults(resultDetails);
         var extraResults = GetExtraResults(resultDetails);
-        var resourceIndexes = (await GetResourceIndex(matchDetail.SportType)).ToList();
+        var mainResources = (await GetResourceIndex(matchDetail.SportType)).ToList();
+        var mainResults = GetSetResults(resultDetails, mainResources);
 
-        SetIntervalsForResults(setResults, resourceIndexes);
+        var earlyResults = resultDetails
+            .Except(mainResults)
+            .Except(extraResults)
+            .Except([finalResult]);
 
-        var orderedResults = GetOrderedResults(setResults, setViewed, finalResult, extraResults);
+        SetIntervalsForResults(mainResults, mainResources);
 
-        return orderedResults;
+        var resultOrdered = mainResults.Where(r => r.IntervalNo <= setViewed)
+            .Concat([finalResult])
+            .Concat(extraResults);
+
+        return resultOrdered.Concat(earlyResults).ToList();
     }
 
     private int GetViewedSet(Models.MatchDetail matchDetail)
@@ -390,9 +397,8 @@ public class AioServiceImp(
         var criteria = new GetResourceIndexCriteria { SportType = sportType };
 
         var indexes = await repository.FetchAsync<ResourceIndex>(criteria);
-        return indexes
-            .Where(r => r.ResourceId != ResourceType.Final)
-            .ToList();
+
+        return indexes.Where(r => r.ResourceId != ResourceType.Final).ToList();
     }
 
     private bool IsIntervalSport(int sportType)
@@ -406,10 +412,13 @@ public class AioServiceImp(
         return resultDetails.First(r => r.ResourceId == ResourceType.Final);
     }
 
-    private List<ResultDetail> GetSetResults(List<ResultDetail> resultDetails) => resultDetails
-            .Where(x => x.ResourceId != ResourceType.Final
-                && !(Resources.ExtraResults[SportType.BaseBall].Contains(x.ResourceId)))
-            .ToList();
+    private List<ResultDetail> GetSetResults(List<ResultDetail> resultDetails, List<ResourceIndex> mainResources)
+    {
+        var resourceIds = mainResources.Select(x => x.ResourceId).ToList();
+        var predicate = (ResultDetail result) => result.ResourceId != ResourceType.Final && resourceIds.Contains(result.ResourceId);
+
+        return resultDetails.Where(predicate).ToList();
+    }
 
     private List<ResultDetail> GetExtraResults(List<ResultDetail> resultDetails) => resultDetails
             .Where(x => Resources.ExtraResults[SportType.BaseBall].Contains(x.ResourceId))
@@ -419,23 +428,7 @@ public class AioServiceImp(
     {
         foreach (var result in setResults)
         {
-            result.IntervalNo = indexes.Find(i => i.ResourceId == result.ResourceId)?.IntervalNo ?? 0;
+            result.IntervalNo = indexes.Find(i => i.ResourceId == result.ResourceId).IntervalNo;
         }
-    }
-
-    private List<ResultDetail> GetOrderedResults(List<ResultDetail> setResults, int setViewed, ResultDetail finalResult, List<ResultDetail> extraResults)
-    {
-        var resultOrdered = setResults
-            .Where(r => r.IntervalNo <= setViewed)
-            .ToList();
-
-        resultOrdered.Add(finalResult);
-
-        if (extraResults.Any())
-        {
-            resultOrdered.AddRange(extraResults);
-        }
-
-        return resultOrdered;
     }
 }

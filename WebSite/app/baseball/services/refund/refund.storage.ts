@@ -7,7 +7,7 @@ import { ResourceNamePipe } from "../../pipes/resource-name.pipe";
 import { ResultDetail } from "../../../shared/models/sportsbook-sop/result-detail.model";
 import { IntervalBackgroundPipe } from "../../../shared/pipes/interval-background.pipe";
 import { isEqual } from "lodash";
-import { SettlementStatusId } from "../../../shared/constants";
+import { SettlementStatusId, ResourceIds } from "../../../shared/constants";
 @Injectable()
 
 export class RefundStorage {
@@ -37,6 +37,8 @@ export class RefundStorage {
 
 
   getResultChecked = () => this.#match().resultDetails.filter(x => x.checked);
+
+  getResultDetails = () => this.#match().resultDetails.filter(x => x.resourceId !== ResourceIds.totalHits);
 
   getMatchId = () => this.#match().matchDetail.matchId;
 
