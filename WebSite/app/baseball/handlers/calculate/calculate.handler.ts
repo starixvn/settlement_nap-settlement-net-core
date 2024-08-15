@@ -65,7 +65,8 @@ export class CalculateHandler implements BaseHandler {
     const bitArray = new Array<number>(12).fill(0);
     const resultWithoutFinal = storage.getResultChecked()
       .filter(resultDetail => resultDetail.resourceId !== ResourceIds.extraInning
-        && resultDetail.resourceId !== ResourceIds.fullTime);
+        && resultDetail.resourceId !== ResourceIds.fullTime
+        && resultDetail.resourceId !== ResourceIds.totalHits);
 
     resultWithoutFinal.forEach(resultDetail => {
       let bitPosition = Number(resultDetail.resourceId.slice(-2)) + roundBitStartAt;

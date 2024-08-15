@@ -30,6 +30,7 @@ export class TableResultFooterComponent implements OnInit {
         (item) =>
           !isEqual(item.resourceId, ResourceIds.fullTime) &&
           !isEqual(item.resourceId, ResourceIds.extraInning) &&
+          !isEqual(item.resourceId, ResourceIds.totalHits) &&
           item.ticketStatus !== TicketStatusText.noTicket
       ).length > 0 || !!this.#storage.getFullTime().isSpecialBettype;
   }
