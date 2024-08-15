@@ -18,7 +18,7 @@ export class ConfirmIntervalConsistency implements BaseHandler {
   async handle(storage: ICalculateStorage) {
     if (
       this.intervalCalculationService.isMatchNotCheckedWhenChangingIntervals(
-        storage.getResultDetails(),
+        storage.getResultDetails().filter((x) => x.resourceId !== ResourceIds.totalHits),
         ResourceIds.fullTime,
         ResourceIds.extraInning
       )
