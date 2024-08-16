@@ -371,7 +371,7 @@ public class AioServiceImp(
             .Concat([finalResult])
             .Concat(extraResults);
 
-        return resultOrdered.Concat(earlyResults).ToList();
+        return earlyResults.Any() ? earlyResults.Concat(resultOrdered).ToList() : resultOrdered.ToList();
     }
 
     private int GetViewedSet(Models.MatchDetail matchDetail)
