@@ -19,9 +19,19 @@
 .score {
   width: 150px;
 
-  label {
-    width: 100px;
+}
+.score-row {
+    display:  flex; align-items: center; justify-content: center;
+    column-gap: 10px;
+
+  &__team {
+    display: inline-block;
     text-align: left;
+    font-weight: normal;
+    width: 100px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 
@@ -118,8 +128,19 @@ tr.mismatched td:not(:first-child):not(.set-status):not(.match-status):not(.calc
 }
 
 .final-result {
-  label {
-    width: 70px;
+  &__row {
+    display:  flex; align-items: center; justify-content: center;
+    column-gap: 10px;
+  }
+
+  &__team {
+    display: inline-block;
+    width: 100px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: left;
+    font-weight: normal;
   }
 }
 

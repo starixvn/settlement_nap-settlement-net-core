@@ -13,16 +13,16 @@
     {{ inning.ticketStatus }}
   </td>
   <td [ngClass]="inning.resultState.finalScoreClass">
-    <div class="score">
-      <label>{{homeName}}&nbsp;</label>
+    <div class="score score-row">
+      <span class="score-row__team" [matTooltip]="getTextTooltip(homeName,20)" matTooltipPosition="above">{{homeName}}</span>
       <input type="text" myOnlyInteger [disabled]="inning.resultState.isFinalScoreDisabled"
         [(ngModel)]="inning.homeValue" (ngModelChange)="checkInningIsMatched(inning)" [ngClass]="{
           'final-score': inning.resultState.isFullTimeRow,
             warning: inning.resultState.invalidHomeScore
         }" />
     </div>
-    <div class="score">
-      <label>{{awayName}}&nbsp;</label>
+    <div class="score score-row">
+      <span class="score-row__team" [matTooltip]="getTextTooltip(awayName,20)" matTooltipPosition="above">{{awayName}}</span>
       <input type="text" myOnlyInteger [disabled]="inning.resultState.isFinalScoreDisabled"
         [(ngModel)]="inning.awayValue" (ngModelChange)="checkInningIsMatched(inning)" [ngClass]="{
           'final-score': inning.resultState.isFullTimeRow,

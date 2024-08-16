@@ -14,11 +14,12 @@ import { ResultDetailBaseBall } from '../../../../models/result-detail.model';
 import { ResultByTeamNamePipe } from "../../../../../shared/pipes/result-by-team-name.pipe";
 import { CalculateStorage } from '../../../../services/calculate/calculate.storage';
 import { CalculateService } from '../../../../services/calculate/calculate.service';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'tbody[table-result-body]',
   standalone: true,
-  imports: [CommonModule, FormsModule, ResourceNamePipe, ResultByTeamNamePipe],
+  imports: [CommonModule, FormsModule, ResourceNamePipe, ResultByTeamNamePipe,MatTooltipModule],
   templateUrl: './table-result-body.component.html',
 })
 export class TableResultBodyComponent implements OnInit {
@@ -35,9 +36,8 @@ export class TableResultBodyComponent implements OnInit {
   fullTimeId = ResourceIds.fullTime;
   maxProviderCol = this.#storage.maxProviderCol;
   tableIsReady = false;
-  #maxTeamName = 15;
-  homeName = this.getTeamName(this.matchDetail.homeName);
-  awayName = this.getTeamName(this.matchDetail.awayName);
+  homeName = this.matchDetail.homeName;
+  awayName = this.matchDetail.awayName;
 
   constructor() {
     effect(() => {
@@ -157,8 +157,8 @@ export class TableResultBodyComponent implements OnInit {
     }
   }
 
-  getTeamName(teamName: string) {
-    return teamName.length > this.#maxTeamName ? `${teamName.substring(0, this.#maxTeamName)}...` : teamName;
+  getTextTooltip(text: string, maxLength: number) {
+    return text?.length > maxLength ? text : null;
   }
 
   private changeState(modifySelectState = false) {

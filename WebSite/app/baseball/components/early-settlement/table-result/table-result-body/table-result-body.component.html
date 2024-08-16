@@ -23,15 +23,18 @@
     <td class="final-result">
       <ng-container [ngSwitch]="item.inputType">
         <ng-container *ngSwitchCase="1">
-          <label>{{homeName}}&nbsp;</label>
+         <div class="final-result__row">
+          <span class="final-result__team" [matTooltip]="getTextTooltip(match().matchDetail.homeName,20)" matTooltipPosition="above">{{match().matchDetail.homeName}}</span>
           <input type="text" maxlength="3" (change)="checkResultIsMatched(item)"
             [disabled]="!item.checked || !permission.isLeader" [(ngModel)]="item.homeValue"
             [ngClass]="{'warning':item.isResultWarning }" />
-          <br />
-          <label>{{awayName}}&nbsp;</label>
+         </div>
+         <div class="final-result__row">
+          <span class="final-result__team" [matTooltip]="getTextTooltip(match().matchDetail.awayName,20)" matTooltipPosition="above">{{match().matchDetail.awayName}}</span>
           <input type="text" maxlength="3" (change)="checkResultIsMatched(item)"
             [disabled]="!item.checked || !permission.isLeader" [(ngModel)]="item.awayValue"
             [ngClass]="{'warning':item.isResultWarning}" />
+         </div>
         </ng-container>
         <ng-container *ngSwitchCase="2">
           <select [(ngModel)]="item.homeValue" [ngClass]="{'warning':item.isResultWarning}"

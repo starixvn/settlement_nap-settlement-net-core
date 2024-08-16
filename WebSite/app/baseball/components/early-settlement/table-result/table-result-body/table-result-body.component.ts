@@ -35,9 +35,7 @@ export class TableResultBodyComponent  implements OnInit{
   ticketStatusSelected = this.#storage.ticketStatus;
   resultStatusSelected = this.#storage.resultStatus
   maxProviderCol = this.#storage.match().matchDetail.providerCount > 2 ? 3 : 2
-  #maxTeamName = 10;
-  homeName = this.getTeamName(this.match().matchDetail.homeName);
-  awayName = this.getTeamName(this.match().matchDetail.awayName);
+
 
   ngOnInit(): void {
       this.autoFillResultOnLoad();
@@ -108,10 +106,6 @@ export class TableResultBodyComponent  implements OnInit{
     resultDetail.isScoreMismatched = isExistedCoupleResult
       ? this.#verificationService.isMismatchedWarning(resultDetail)
       : this.#verificationService.isEarlyMismatchedWarning(resultDetail);
-  }
-
-  private getTeamName(teamName: string) {
-    return teamName.length > this.#maxTeamName ? `${teamName.substring(0, this.#maxTeamName)}...` : teamName;
   }
 
   getTextTooltip(text: string, maxLength: number) {
