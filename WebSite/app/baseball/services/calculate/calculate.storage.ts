@@ -14,6 +14,7 @@ import { ResultState } from "../../models/result-state.model";
 
 export interface ICalculateStorage extends Storage  {
   selectFinalResult?: () => void;
+  selectResult?: (resourceId: string) => void;
 }
 
 @Injectable(
@@ -125,6 +126,12 @@ export class CalculateStorage implements ICalculateStorage {
   selectFinalResult = () => {
     this.#match().resultDetails.forEach((item) => {
       item.checked = item.resourceId === ResourceIds.fullTime || item.checked;
+    });
+  };
+
+  selectResult = (resourceId: string) => {
+    this.#match().resultDetails.forEach((item) => {
+      item.checked = (resourceId && item.resourceId === resourceId) || item.checked;
     });
   };
   

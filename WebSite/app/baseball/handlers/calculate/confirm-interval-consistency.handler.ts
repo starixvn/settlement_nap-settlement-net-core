@@ -28,6 +28,7 @@ export class ConfirmIntervalConsistency implements BaseHandler {
         () => {
           storage.setReSettledTickets(true);
           storage.selectFinalResult();
+          storage.selectResult(ResourceIds.extraInning);
         },
         true,
         () => this.nextHandler.handle(storage)

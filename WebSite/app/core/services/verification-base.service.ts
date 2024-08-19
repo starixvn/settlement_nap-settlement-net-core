@@ -223,10 +223,8 @@ export class VerificationBaseService {
     }
 
     public verifyFinalResource(resultDetails: ResultDetail[], resourcesIdFinal: string, newFinal: string, totalScore: string) {
-        console.log('verifyFinalResource', resultDetails, resourcesIdFinal, newFinal, totalScore);
         const final = resultDetails.find((map) => _.isEqual(map.resourceId, resourcesIdFinal) && map.checked
             && map.homeValue && map.awayValue);
-        console.log('final', final);
         if (final) {
             const oldScore = `${final.homeValue}-${final.awayValue}`;
 
