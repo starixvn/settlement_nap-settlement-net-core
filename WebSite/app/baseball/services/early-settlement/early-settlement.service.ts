@@ -1,15 +1,12 @@
 
 import { inject, Injectable } from "@angular/core";
-import { GroupMap, ResultDetail } from "../../../shared/models/sportsbook-sop";
-import { find, isEmpty, isEqual, isNil, uniqBy } from "lodash";
-import { BackgroundColor, ResultStatusId, ScoreSourceType, TicketStatusText } from "../../../shared/constants";
+import { ResultDetail } from "../../../shared/models/sportsbook-sop";
+import { find, isEmpty, isNil } from "lodash";
+import { ResultStatusId, ScoreSourceType } from "../../../shared/constants";
 import { InputType } from "../../constants/input-type.constant";
-import { Match } from "../../models/match.model";
 import { Language } from "../../../shared/language.native";
 import { ResultConfirmedHandler } from "../../handlers/calculate/result-confirmed.handler";
-import { InvalidInputHandler } from "../../handlers/calculate/invalid-input.handler";
 import { VerifyRunningOddsHandler } from "../../handlers/calculate/verify-running-odds.handler";
-import { VerifyScoreSourceHandler } from "../../handlers/calculate/verify-score-source.handler";
 import { ConfirmMismatchScoreHandler } from "../../handlers/calculate/confirm-mismatch-score.handler";
 import { ConfirmChangedResultHandler } from "../../handlers/calculate/confirm-changed-result.handler";
 import { ConfirmCalculateHandler } from "../../handlers/calculate/confirm-calculate.handler";
@@ -22,6 +19,7 @@ import { NotifyService } from "../notify.service";
 import { AioService } from "../../../shared/services";
 import { InvalidResultsHandler } from "../../handlers/early-settlement/invalid-results.handler";
 import { ConfirmRefundHandler } from "../../handlers/early-settlement/confirm-refund.handler";
+import { VerifyScoreSourceHandler } from "../../handlers/early-settlement/verify-score-source.handler";
 
 @Injectable()
 

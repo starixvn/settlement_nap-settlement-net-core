@@ -41,21 +41,21 @@ export class VerificationResultsService extends VerificationBaseService {
     return false;
   }
 
-  private findExistedProvider(map: ResultDetail) {
+  private findExistedProvider(map: ResultDetail, hasTwoValue = true) {
     return _.find(
       map.externalScores,
       (source) =>
         source.sourceId < ScoreSourceType.screenshot &&
-        this.isExistedHomeAwayScore(source.homeValue, source.awayValue)
+        (hasTwoValue ? this.isExistedHomeAwayScore(source.homeValue, source.awayValue) : this.isExistedHomeScore(source.homeValue))
     );
   }
 
-  private findExistedOutside(map: ResultDetail) {
+  private findExistedOutside(map: ResultDetail, hasTwoValue = true) {
     return _.find(
       map.externalScores,
       (source) =>
         source.sourceId >= ScoreSourceType.screenshot &&
-        this.isExistedHomeAwayScore(source.homeValue, source.awayValue)
+        (hasTwoValue ? this.isExistedHomeAwayScore(source.homeValue, source.awayValue) : this.isExistedHomeScore(source.homeValue))
     );
   }
 }

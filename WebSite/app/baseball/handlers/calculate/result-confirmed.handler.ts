@@ -2,7 +2,6 @@ import { Storage } from './../../services/storage.service';
 import { find, isEqual } from "lodash";
 import { Language } from "../../../shared/language.native";
 import { ResourceIds } from "../../constants/resource-id.constant";
-import { CalculateStorage } from "../../services/calculate/calculate.storage";
 import { NotifyService } from "../../services/notify.service";
 import { BaseHandler } from "../base.handler.native";
 import { inject } from "@angular/core";

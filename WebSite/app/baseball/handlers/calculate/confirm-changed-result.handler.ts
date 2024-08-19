@@ -1,12 +1,10 @@
 import { Language } from "../../../shared/language.native";
 import { NotifyService } from "../../services/notify.service";
 import { BaseHandler } from "../base.handler.native";
-import { VerificationBaseService } from "../../../core/services/verification-base.service";
 import { inject } from "@angular/core";
 import { BaseballApiKeys } from "../../constants/api-keys.constant";
 import { SportType } from "../../../shared/constants";
 import { AioService } from "../../../shared/services";
-import { CalculateStorage } from "../../services/calculate/calculate.storage";
 import { Storage } from "../../services/storage.service";
 
 export class ConfirmChangedResultHandler implements BaseHandler {
