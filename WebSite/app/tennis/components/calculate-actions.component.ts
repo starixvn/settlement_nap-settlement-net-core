@@ -12,7 +12,6 @@ import { TennisService, VerificationService } from '../services';
 import { ExternalResultDetail, HedgeMatchDetail, ResultDetail, SaveScoreQuery, SportTemplate } from '../../shared/models/sportsbook-sop';
 import { ResourceNameByIdPipe } from '../pipes';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
-import { ProviderSource } from '../../shared/models/league-settings.model';
 
 @Component({
   selector: 'calculate-actions',

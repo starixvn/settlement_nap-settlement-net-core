@@ -16,7 +16,7 @@ import { ConfirmCalculateHandler } from "../../handlers/calculate/confirm-calcul
 import { SaveScoreHandler } from "../../handlers/calculate/save-score.handler";
 import { CalculateHandler } from "../../handlers/calculate/calculate.handler";
 import { CalculateStorage } from "./calculate.storage";
-import { every, find, isEqual, sumBy } from "lodash";
+import { countBy, every, find, isEqual, sumBy } from "lodash";
 import { ResourceIds } from "../../constants/resource-id.constant";
 import { GeneralResultDetail } from "../../../shared/models";
 import { ConfirmIntervalConsistency } from "../../handlers/calculate/confirm-interval-consistency.handler";
@@ -90,15 +90,21 @@ export class CalculateService {
     }
   }
 
-  sumTotalScores(resultDetails: GeneralResultDetail[], totalPoints: GeneralResultDetail) {
-    if (resultDetails.length > 0 &&
-      (this.isScoreConsecutive(resultDetails))) {
-      totalPoints.homeValue = sumBy(resultDetails, (map) => Number(map.homeValue)).toString();
-      totalPoints.awayValue = sumBy(resultDetails, (map) => Number(map.awayValue)).toString();
-    } else {
-      totalPoints.homeValue = "";
-      totalPoints.awayValue = "";
+  sumTotalScores(resultDetails: GeneralResultDetail[], finalResult: GeneralResultDetail, isSumScore: boolean) {
+    if (resultDetails.length > 0 && (this.isScoreConsecutive(resultDetails))) {
+      if (isSumScore) {
+        finalResult.homeValue = sumBy(resultDetails, (map) => Number(map.homeValue)).toString();
+        finalResult.awayValue = sumBy(resultDetails, (map) => Number(map.awayValue)).toString();
+      } else {
+        finalResult.homeValue = (countBy(resultDetails, (map) => Number(map.homeValue) > Number(map.awayValue)).true ?? 0).toString();
+        finalResult.awayValue = (countBy(resultDetails, (map) => Number(map.homeValue) < Number(map.awayValue)).true ?? 0).toString();
+      }
+      return;
     }
+
+    finalResult.homeValue = "";
+    finalResult.awayValue = "";
+
   }
 
   private isScoreConsecutive(resultDetails: GeneralResultDetail[]) {
