@@ -5,7 +5,7 @@
     'confirmed-refund': inning.resultState.isConfirmed, 
     'striped': inning.resourceId === '00' || inning.resourceId === 'EI' || (!last && innings.length % 2 !== 0 && i % 2 === 0) || ( !last && innings.length % 2 === 0 && i % 2 !== 0),
   }">
-  <td>{{ inning.resourceId | resourceName }}</td>
+  <td>{{ inning.resourceId | resourceName:false:matchDetail.leagueType }}</td>
   <td [ngClass]="inning.ticketStatus.toLowerCase()" class="set-status" *ngIf="inning.resultState.isInningRow">
     {{ inning.ticketStatus }}</td>
   <td [ngClass]="inning.ticketStatus.toLowerCase()" class="match-status" *ngIf="inning.resultState.isExtraInningRow"

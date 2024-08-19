@@ -425,17 +425,16 @@ public class AioServiceImp(
 
 	private int GetViewedSet(Models.MatchDetail matchDetail)
 	{
-		var setViewed = (matchDetail.GameSession, matchDetail.SportType) switch
+        var setViewed = (matchDetail.GameSession, matchDetail.SportType, matchDetail.LeagueType) switch
 		{
-			(3, SportType.Tennis) => GamePlay.Three,
-			(_, SportType.Tennis) => GamePlay.Five,
-			(0, SportType.TableTennis) => GamePlay.Seven,
-			(6, SportType.TableTennis) => GamePlay.Five,
-			(_, SportType.TableTennis) => matchDetail.GameSession,
-			(6, SportType.BaseBall) => GamePlay.Six,
-			(7, SportType.BaseBall) => GamePlay.Seven,
-			(_, SportType.BaseBall) => GamePlay.Nine,
-			(_, _) => matchDetail.GameSession
+            (3, SportType.Tennis, _) => GamePlay.Three,
+            (_, SportType.Tennis, _) => GamePlay.Five,
+            (0, SportType.TableTennis, _) => GamePlay.Seven,
+            (6, SportType.TableTennis, _) => GamePlay.Five,
+            (_, SportType.TableTennis, _) => matchDetail.GameSession,
+            (0, SportType.BaseBall, 1) => GamePlay.Seven, // match series
+            (0, SportType.BaseBall, _) => GamePlay.Nine,
+            (_, _, _) => matchDetail.GameSession
 		};
 
 		return setViewed;

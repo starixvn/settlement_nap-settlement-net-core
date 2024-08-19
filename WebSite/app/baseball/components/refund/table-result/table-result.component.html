@@ -21,7 +21,7 @@
       <tr *ngFor="let game of resultDetails; let last=last;"
         [ngClass]="{'confirmed-refund': permission.isLeader && game.resultSettingData.isConfirmedRefund}">
         @if(game.resourceId != extraInningId) {
-        <td>{{ game.resourceId | resourceName}}</td>
+        <td>{{ game.resourceId | resourceName:false:matchDetail.leagueType}}</td>
         <td [ngClass]="game.ticketStatus.toLowerCase()">
           <input type="checkbox" [(ngModel)]="game.checked" />
         </td>
