@@ -2,9 +2,6 @@
 
 public class MatchDetail
 {
-    private const string Refund = "Refund";
-    private string eventStatus = string.Empty;
-
     public int MatchId { get; set; }
 
     public int LeagueId { get; set; }
@@ -15,36 +12,13 @@ public class MatchDetail
 
     public DateTime EventDate { get; set; }
 
-    public string EventName => $"No {MatchCode}";
+    public string EventName { get; set; }
 
-    public string EventStatus
-    {
-        get
-        {
-            if (BetStatus.IgnoreCaseContains(Refund))
-            {
-                eventStatus = Refund;
-            }
-
-            return eventStatus;
-        }
-        set => eventStatus = value;
-    }
+    public string EventStatus { get; set; }
 
     public string BetStatus { get; set; }
 
     public List<BallModel> Balls { get; set; }
 
-    public bool IsYesterdayMatch
-    {
-        get
-        {
-            const int twoDays = 2;
-            var start = Convert.ToDateTime(EventDate.ToShortDateString());
-            var end = Convert.ToDateTime(DateTime.Now.ToShortDateString());
-            var totalDays = end.Subtract(start).TotalDays;
-
-            return totalDays < twoDays;
-        }
-    }
+    public bool IsYesterdayMatch { get; set; }
 }

@@ -41,7 +41,7 @@ public class LeagueServiceImp(
         {
             LeagueId = leagueId,
             Matches = matches,
-            RefDataService = refDataService
+            //RefDataService = refDataService
         };
 
         return await Task.Run(() => league);
