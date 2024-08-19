@@ -12,11 +12,12 @@ import { EarlySettlementService } from '../../services/early-settlement/early-se
 import { TableResultFooterComponent } from './table-result/table-result-footer/table-result-footer.component';
 import { ResettleCheckerComponent } from "../../../shared/components/resettle-checker/resettle-checker.component";
 import { IntervalBackgroundPipe } from '../../../shared/pipes/interval-background.pipe';
+import { NotReadyMatchComponent } from '../../../shared/components/not-ready-match/not-ready-match.component';
 
 @Component({
   selector: 'early-settlement',
   standalone: true,
-  imports: [MatchDetailComponent, TicketCountComponent, CommonModule, TableResultHeaderComponent, TableResultBodyComponent, TableResultFooterComponent, ResettleCheckerComponent],
+  imports: [MatchDetailComponent, TicketCountComponent, NotReadyMatchComponent,CommonModule, TableResultHeaderComponent, TableResultBodyComponent, TableResultFooterComponent, ResettleCheckerComponent],
   providers: [EarlySettlementStorage, ResourceNamePipe, EarlySettlementService,IntervalBackgroundPipe],
   templateUrl: './early-settlement.component.html',
 })

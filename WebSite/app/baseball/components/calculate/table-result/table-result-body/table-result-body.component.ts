@@ -57,7 +57,9 @@ export class TableResultBodyComponent implements OnInit {
   }
 
   private changeScore() {
-    const innings = this.#storage.getAllInnings().filter((item) => this.#verificationService.isExistedHomeAwayScore(item.homeValue, item.awayValue));
+    const innings = this.#storage.getAllInnings()
+      .filter((item) => item.resourceId !== ResourceIds.totalHits)
+      .filter((item) => this.#verificationService.isExistedHomeAwayScore(item.homeValue, item.awayValue));
 
     if (!this.#storage.isScoreDirect()) {
       this.#calculateService.sumTotalScores(innings, this.#storage.fulltimeResult);
@@ -110,7 +112,10 @@ export class TableResultBodyComponent implements OnInit {
   }
 
   updateOutsideScore(sourceId: number, IsOnLoad = false) {
-    const externalResults = this.#storage.getAllInnings().map((item) => item.externalScores.find(e => e.sourceId === sourceId));
+    const externalResults = this.#storage.getAllInnings()
+      .filter((item) => item.resourceId !== ResourceIds.totalHits)
+      .map((item) => item.externalScores.find(e => e.sourceId === sourceId));
+   
     const outsideResults = externalResults.filter(e => this.#verificationService.isExistedHomeAwayScore(e.homeValue, e.awayValue));
 
     const totalGameOutside = _.find(this.#storage.fulltimeResult.externalScores.slice(this.maxProviderCol + 1), (score) => score.sourceId === sourceId);

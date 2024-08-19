@@ -88,7 +88,7 @@ export class CalculateStorage implements ICalculateStorage {
 
   isLeader = () => this.#match().permission.isLeader;
 
-  getAllInnings = () => this.#match().resultDetails.filter((item) => item.resourceId !== ResourceIds.fullTime && item.resourceId !== ResourceIds.totalHits);
+  getAllInnings = () => this.#match().resultDetails.filter((item) => item.resourceId !== ResourceIds.fullTime);
 
   getFullTime = () => this.#match().resultDetails.find((item) => item.resourceId === ResourceIds.fullTime);
 
