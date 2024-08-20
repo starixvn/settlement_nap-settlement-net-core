@@ -65,7 +65,12 @@
           <ng-container *ngSwitchCase="2">
             <div class="outside-source-text" [matTooltip]="getTextTooltip(result.homeName, 13)"
               matTooltipPosition="above">
-              {{result.homeValue | resultByTeamName: match().matchDetail: 0}}
+              {{result.homeValue | resultByTeamName: match().matchDetail: 15}}
+            </div>
+          </ng-container>
+          <ng-container *ngSwitchCase="3">
+            <div class="outside-source-text" >
+              {{result.homeValue | resultByTeamName: null: 3}}
             </div>
           </ng-container>
         </ng-container>

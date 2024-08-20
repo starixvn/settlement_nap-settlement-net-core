@@ -42,7 +42,7 @@ export class ResultRowStateService {
 
 
   invalidScore(resultDetail: ResultDetail, isHome = true) {
-    if (isEqual(resultDetail.resourceId, ResourceIds.extraInning)) {
+    if (isEqual(resultDetail.resourceId, ResourceIds.extraInning) && (isEmpty(resultDetail.homeValue) === isEmpty(resultDetail.awayValue))) {
       return false;
     }
 
