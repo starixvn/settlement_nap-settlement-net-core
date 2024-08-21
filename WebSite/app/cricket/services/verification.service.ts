@@ -173,11 +173,12 @@ export class VerificationService  {
         return false;
     }
 
-    public isValidTraderConfirmScore(result: ResultDetail) {
-        const traderScore = result.externalScores.find((source) => source.sourceId === ScoreSourceType.trader);
+    public isValidTraderConfirmScore(result: ResultDetail, isCoupleScore = true) {
+        const traderScore = result.externalScores.find((source) => source.sourceId === ScoreSourceType.trader 
+            && source.settlementStatusId === ResultStatusId.TraderConfirm);
 
-        return traderScore 
-            && !_.isEmpty(traderScore.homeValue) 
-            && !_.isEmpty(traderScore.awayValue);
+            return traderScore 
+                && ((isCoupleScore && !_.isEmpty(traderScore.homeValue) && !_.isEmpty(traderScore.awayValue)) || (!isCoupleScore && !_.isEmpty(traderScore.homeValue)));
+
     }
 }

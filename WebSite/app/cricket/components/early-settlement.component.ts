@@ -305,8 +305,12 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
 
   public canSettleResult(result: ResultDetail) {
     const isRunning = _.isEqual(result.ticketStatus, TicketStatus.running)
-      || _.isEqual(result.resultStatus, ResultStatus.noResult) || _.isEqual(result.resultStatus, ResultStatus.running);
-    return isRunning && !result.isScoreMismatched && !_.isNil(this.verificationService.isExistInhouseResult(result));
+      || _.isEqual(result.resultStatus, ResultStatus.noResult) 
+      || _.isEqual(result.resultStatus, ResultStatus.running);
+
+    return isRunning 
+      && !result.isScoreMismatched 
+      && this.verificationService.isValidTraderConfirmScore(result,result.inputType === ResultControlGroup.CoupleScores);
   }
 
   public checkResultIsMatched(resultDetail: ResultDetail) {

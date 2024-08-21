@@ -405,9 +405,12 @@ export class VerificationBaseService {
                         tempScore.homeName = this.resultByTeamNamePipe.transform(tempScore.homeValue, match.matchDetail, map.groupBetType);
                         tempScore.awayName = this.resultByTeamNamePipe.transform(tempScore.awayValue, match.matchDetail, map.groupBetType);
                         tempScore.fromResultDetail = true;
+                        tempScore.resultStatusId = map.resultStatusId;
                         scores.push(tempScore);
                     } else {
-                        scores.push(new ExternalResultDetail(result.sourceId, map.resourceId, result.sourceName, result.remark));
+                        const externalResult = new ExternalResultDetail(result.sourceId, map.resourceId, result.sourceName, result.remark);
+                        externalResult.resultStatusId = map.resultStatusId;
+                        scores.push(externalResult);
                     }
                 } else {
                     score.homeName = this.resultByTeamNamePipe.transform(score.homeValue, match.matchDetail, map.groupBetType);
@@ -554,11 +557,10 @@ export class VerificationBaseService {
     public acceptCaseZero(orinalResult: GeneralResultDetail, result: ResultDetail) {
         return (result.awayValue === "0" && result.homeValue === "0" && _.isEmpty(orinalResult.homeValue) && _.isEmpty(orinalResult.awayValue));
     }
-    public isValidTraderConfirmScore(result: ResultDetail) {
-        const traderScore = result.externalScores.find((source) => source.sourceId === ScoreSourceType.trader);
 
-        return traderScore
-            && !_.isEmpty(traderScore.homeValue)
-            && !_.isEmpty(traderScore.awayValue);
+    public isValidTraderConfirmScore(result: ResultDetail, isCoupleScore = true) {
+        const traderScore = result.externalScores.find((source) => source.sourceId === ScoreSourceType.trader
+            && source.resultStatusId === ResultStatusId.TraderConfirm);
+        return traderScore && ((isCoupleScore && !_.isEmpty(traderScore.homeValue) && !_.isEmpty(traderScore.awayValue)) || (!isCoupleScore && !_.isEmpty(traderScore.homeValue)));
     }
 }
