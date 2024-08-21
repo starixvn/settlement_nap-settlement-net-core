@@ -24,6 +24,7 @@ import * as _ from "lodash";
         { provide: NgbDateParserFormatter, useFactory: () => new CustomNgbDateParserFormatter('MMM dd, y') }],
 })
 export class FilterComponent implements OnInit {
+
     @Output() public searchAction = new EventEmitter();
     @Output() public requestEmitter = new EventEmitter();
     public readonly warningDialogMessage = new ModalDialogMessage();
@@ -45,7 +46,7 @@ export class FilterComponent implements OnInit {
     }
 
     public ngOnInit() {
-        this.sportTypesSelected = SportType.cricket.toString();
+        this.sportTypesSelected = SportType.baseBall.toString();
         this.initiateData();
     }
 
@@ -141,6 +142,16 @@ export class FilterComponent implements OnInit {
         } else {
             this.initLeague();
         }
+    }
+
+    onChangeSport($event: any) {
+        const sportType = $event.target.value;
+        this.moveTicketsService.getDate()
+        .subscribe((date: DateFilter) => {
+            this.fromDate = this.verifyDateService.convertToDateStruct(date.fromDate);
+            this.toDate = this.verifyDateService.convertToDateStruct(date.toDate);
+            this.renderLeague(this.fromDate, this.toDate, sportType);
+        });
     }
 
     private initLeague() {

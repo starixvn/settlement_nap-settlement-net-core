@@ -20,8 +20,6 @@ import { PipesModule } from '../shared/pipes/pipes.module.native';
 import { MoveTicketsTemplateModule } from './components/move-tickets-template.module';
 import { OnlyIntegerDirective } from '../shared/directives';
 import { DatepickerComponent } from '../shared/components/date-picker/date-picker.component';
-import { ModalContentDialogComponent } from '../shared/components/modal-dialog/modal-content-dialog.component';
-import { ModalDialogComponent } from '../shared/components/modal-dialog/modal-dialog.component';
 @NgModule({
     imports: [
         BrowserModule,
@@ -40,8 +38,6 @@ import { ModalDialogComponent } from '../shared/components/modal-dialog/modal-di
         MaterialDialogComponent,
     ],
     declarations: [
-        ModalDialogComponent,
-        ModalContentDialogComponent,
         FilterComponent,
         LeagueComponent,
         CricketComponent,
