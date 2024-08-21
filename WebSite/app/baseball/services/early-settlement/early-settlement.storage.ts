@@ -188,4 +188,6 @@ export class EarlySettlementStorage implements Storage {
 
     return className + this.#intervalBackgroundPipe.transform(resultDetail.settlementStatusId);
   }
+
+  getIsReSettledTickets = () => this.#isReSettledTickets;
 }
