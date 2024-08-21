@@ -2,7 +2,7 @@
 using Fanex.NAP.Client.Services;
 using Settlement.Core.Models;
 
-namespace Settlement.Gaming.Services.Happy5;
+namespace Settlement.Gaming.Services;
 
 using Core.Configurations;
 
