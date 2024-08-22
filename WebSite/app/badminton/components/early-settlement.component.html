@@ -117,7 +117,7 @@
       <ng-template ngFor let-map [ngForOf]="groupMap">
         <tr class="group-map">
           <td
-            [colSpan]="permission.isLeader ? match.resultDetails[0].externalScores.length + 4 : match.resultDetails[0].externalScores.length + 1"
+            [colSpan]="permission.isLeader ? match.resultDetails[0].externalScores.length + 4 : match.resultDetails[0].externalScores.length"
             (click)="onCollapsedClick(map)">
             <span>{{map.collapsed?"+ ":"- "}}</span>
             <span>{{map.groupName}}</span>

@@ -340,7 +340,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     if (this.permission.canUncalculate || this.permission.canCalculate || this.permission.canRefund) {
       return this.permission.isLeader ? this.match.resultDetails[0].externalScores.length + 4
         : this.permission.isTrader ? this.match.resultDetails[0].externalScores.length + 2
-          : this.match.resultDetails[0].externalScores.length + 1;
+          : this.match.resultDetails[0].externalScores.length;
     } else if (this.permission.isTrader) {
       return 4;
     }

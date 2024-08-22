@@ -15,7 +15,6 @@ import { MatchDetailComponent } from './match-detail.component';
 import { NotReadyMatchComponent } from '../../shared/components/not-ready-match/not-ready-match.component';
 import { VerificationBaseService } from '../../core/services/verification-base.service';
 import { ResourceNameByIdPipe } from '../pipes/resource-name-by-id.pipe';
-import { ProviderSource } from '../../shared/models/league-settings.model';
 
 @Component({
     selector: 'early-settlement',
