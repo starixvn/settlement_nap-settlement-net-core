@@ -2,7 +2,7 @@ import { MessageBoxService } from './../../../shared/services/message-box.servic
 import { ComponentFixture, TestBed, tick, fakeAsync, flush } from '@angular/core/testing';
 import { LeagueAutoSettingsComponent } from './league-auto-settings.component';
 import { LeagueSettingsStore } from '../../services/league-settings.store.native';
-import { LeagueSettings } from '../../../shared/models/league-settings.model';
+import { AutoSettings } from '../../../shared/models/league-settings.model';
 import { RequestService } from '../../services/request.service';
 import { BlockUIService, HttpRequestService } from '../../../shared/services';
 import { HttpClientModule } from '@angular/common/http';
@@ -17,7 +17,7 @@ describe('LeagueAutoSettingsComponent', () => {
   let requestService :RequestService;
   let messageBoxService: MessageBoxService;
   let toastrService : ToastrService;
-  const leagueSettings : LeagueSettings = {
+  const leagueSettings : AutoSettings = {
     leagueId: 100,
     leagueName: '',
     autoSetting: 0,

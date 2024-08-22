@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ProviderSelectionComponent } from './provider-selection.component';
 import { LeagueSettingsStore } from '../../../../services/league-settings.store.native';
-import { LeagueSettings, ProviderSource } from '../../../../../shared/models/league-settings.model';
+import { AutoSettings, ProviderSource } from '../../../../../shared/models/league-settings.model';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { Language } from '../../../../../shared/language.native';
 
@@ -33,7 +33,7 @@ describe('ProviderSelectionComponent', () => {
     priority: 0
   }
 
-  const leagueSettings: LeagueSettings = {
+  const leagueSettings: AutoSettings = {
     leagueId: 0,
     leagueName: '',
     autoSetting: 0,

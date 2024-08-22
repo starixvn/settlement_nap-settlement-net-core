@@ -4,11 +4,14 @@ using Fanex.NAP.Client;
 using Microsoft.AspNetCore.Http;
 using Settlement.Core.Criteria;
 using Settlement.Core.Models;
+using Settlement.Core.Services;
 using Settlement.Setting.Constants;
 using Settlement.Setting.Criteria;
+using Settlement.Setting.Criteria.LeagueSettings;
 using Settlement.Setting.Models;
 using Settlement.Setting.Models.LeagueSettings;
 using Settlement.Setting.Requests;
+using Settlement.Setting.Requests.LeagueSettings;
 using System.Text.Json;
 using LogService = Settlement.Core.Services.LogService;
 
@@ -27,9 +30,12 @@ public interface SettingService
     Task<string> GetSetting(GetSettingRequest request);
 
     Task ProcessUpdateHoldMatchSetting(UpdateHoldMatchSettingRequest request);
+
+    public Task<LeagueSettings> GetLeagueSettings(GetLeagueSettingsRequest request);
 }
 
 public class SettingServiceImp(
+    IRefDataService refDataService,
     IDynamicRepository repository,
     INapSession currentSession,
     IHttpContextAccessor accessor,
@@ -221,5 +227,32 @@ public class SettingServiceImp(
         var setting = await repository.GetAsync<int?>(criteria);
 
         return Convert.ToString(setting ?? 0, convertToBase).Reverse();
+    }
+
+    public async Task<LeagueSettings> GetLeagueSettings(GetLeagueSettingsRequest request)
+    {
+        var criteria = new GetLeagueSettings
+        {
+            LeagueId = request.LeagueId,
+            SportType = request.SportType
+        };
+
+        var leagueSettings = await repository.GetAsync<LeagueSettings>(criteria);
+
+        leagueSettings.RefDataService = refDataService;
+        leagueSettings.Providers = (await GetProviderInfo(request)).ToList();
+
+        return leagueSettings;
+    }
+
+    private async Task<IEnumerable<ProviderInfo>> GetProviderInfo(GetLeagueSettingsRequest request)
+    {
+        var criteria = new GetProviderInfoCriteria
+        {
+            SportType = request.SportType,
+            LeagueId = request.LeagueId
+        };
+
+        return await repository.FetchAsync<ProviderInfo>(criteria);
     }
 }

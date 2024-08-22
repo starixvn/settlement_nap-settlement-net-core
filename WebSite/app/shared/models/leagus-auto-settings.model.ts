@@ -1,7 +1,7 @@
 export class LeagueAutoSettings {
-  autoSetting: number;
-  waitingTime: number;
-  retryTime: number;
+  // autoSetting: number;
+  // waitingTime: number;
+  // retryTime: number;
   isApplyAll: boolean;
-  refundWaitingTime: number;
+  // refundWaitingTime: number;
 }

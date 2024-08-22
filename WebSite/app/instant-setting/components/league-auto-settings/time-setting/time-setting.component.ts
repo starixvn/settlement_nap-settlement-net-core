@@ -1,8 +1,7 @@
-import { ChangeDetectionStrategy, Component, inject, input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { LeagueSettingsStore } from '../../../services/league-settings.store';
+import { LeagueSettingsStore } from '../../../services/league-settings.store.native';
 import { CommonModule } from '@angular/common';
-import { distinctUntilChanged, map } from 'rxjs';
 import { ZeroFallbackDirective } from '../../../../shared/directives/zero-fall-back.directive.native';
 import { OnlyIntegerDirective } from '../../../../shared/directives';
 
@@ -34,9 +33,9 @@ export class TimeSettingComponent {
 
   changeWaiting(seconds: string) {
     if (this.directSetting()) {
-      this.store.setState({ ... this.store.state, waitingTime: Number(seconds) })
+      this.store.setState({ ... this.store.state })
       return;
     }
-    this.store.setState({ ... this.store.state, refundWaitingTime: Number(seconds) })
+    this.store.setState({ ... this.store.state })
   }
 }

@@ -7,7 +7,7 @@ import { MessageBoxService } from './message-box.service.native';
 import { Language } from '../language.native';
 import { GeneralMatch, HedgeMatchDetail, ResultDetail, SaveScoreQuery } from '../models/sportsbook-sop';
 import { ResultSettingType, ResultStatus, ResourceIds } from '../../shared/constants';
-import { LeagueSettings } from '../models/league-settings.model';
+import { AutoSettings } from '../models/league-settings.model';
 
 @Injectable(
     {
@@ -30,7 +30,7 @@ export class AioService {
             leagueId,
             sportType
         }
-        const request = this.httpRequestService.postJson<LeagueSettings>(query, `${this.leagueSettingApi}/get-settings`);
+        const request = this.httpRequestService.postJson<AutoSettings>(query, `${this.leagueSettingApi}/get-settings`);
         return firstValueFrom(request);
     }
 

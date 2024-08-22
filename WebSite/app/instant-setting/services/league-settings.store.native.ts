@@ -1,25 +1,25 @@
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, Observable } from "rxjs";
-import { LeagueSettings } from "../../shared/models/league-settings.model";
+import { AutoSettings } from "../../shared/models/league-settings.model";
 
 @Injectable({
   providedIn: 'root'
 })
 
 export class LeagueSettingsStore{
-  originalState: LeagueSettings;
-  state$: Observable<LeagueSettings>;
+  originalState: AutoSettings;
+  state$: Observable<AutoSettings>;
   actionAfterUpdate: () => void;
-  private readonly _state$: BehaviorSubject<LeagueSettings>;
+  private readonly _state$: BehaviorSubject<AutoSettings>;
 
   protected constructor() {
-    this._state$ = new BehaviorSubject(new LeagueSettings());
+    this._state$ = new BehaviorSubject(new AutoSettings());
     this.state$ = this._state$.asObservable();
   }
-  get state(): LeagueSettings {
+  get state(): AutoSettings {
     return this._state$.getValue();
   }
-  setState(nextState: LeagueSettings): void {
+  setState(nextState: AutoSettings): void {
     this._state$.next(nextState);
     this.actionAfterUpdate()
   }

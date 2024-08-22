@@ -4,7 +4,7 @@ import { HttpRequestService } from '../../shared/services';
 import { firstValueFrom } from 'rxjs';
 import { TimeSettingQuery, GetRemarkQuery, ChangeSettingQuery, RemarkAndPermission, ChangeHoldMatchSettingQuery } from '../models';
 import { AutoSettingLeagueQuery, AutoSettingMatchQuery, Result } from '../../shared/models';
-import { LeagueSettings, ProviderSource, ResultSettings } from '../../shared/models/league-settings.model';
+import { AutoSettings, ProviderSource, ResultSettings } from '../../shared/models/league-settings.model';
 
 @Injectable()
 export class RequestService {
@@ -53,11 +53,11 @@ export class RequestService {
             leagueId,
             sportType
         }
-        const request = this.httpRequestService.postJson<LeagueSettings>(query, `${this.leagueSettingApi}/get-settings`);
+        const request = this.httpRequestService.postJson<AutoSettings>(query, `${this.leagueSettingApi}/get-settings`);
         return firstValueFrom(request);
     }
 
-    public updateLeagueSetting(oldSettings: LeagueSettings, newSettings: LeagueSettings, isApplyAll: boolean) {
+    public updateLeagueSetting(oldSettings: AutoSettings, newSettings: AutoSettings, isApplyAll: boolean) {
         this.modifyLeagueSettingsQuery(oldSettings);
         this.modifyLeagueSettingsQuery(newSettings);
 
@@ -72,7 +72,7 @@ export class RequestService {
     }
 
 
-    private modifyLeagueSettingsQuery(leagueSettings: LeagueSettings) {
+    private modifyLeagueSettingsQuery(leagueSettings: AutoSettings) {
         const { providers, ...updatedSettings } = leagueSettings;
         const { mainResultSettings, earlyResultSettings } = updatedSettings;
 

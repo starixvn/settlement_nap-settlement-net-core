@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed, flush } from '@angular/core/testing';
 
 import { SettingContainerComponent } from './setting-container.component';
 import { LeagueSettingsStore } from '../../../../services/league-settings.store.native';
-import { LeagueSettings, ResultSettings } from '../../../../../shared/models/league-settings.model';
+import { AutoSettings, ResultSettings } from '../../../../../shared/models/league-settings.model';
 import { MatDialog } from '@angular/material/dialog';
 import { ProviderSelectionComponent } from '../provider-selection/provider-selection.component';
 
@@ -20,7 +20,7 @@ describe('SettingContainerComponent', () => {
     secondaryProvider: ''
   }
 
-  const leagueSettings: LeagueSettings = {
+  const leagueSettings: AutoSettings = {
     leagueId: 0,
     leagueName: '',
     autoSetting: 0,

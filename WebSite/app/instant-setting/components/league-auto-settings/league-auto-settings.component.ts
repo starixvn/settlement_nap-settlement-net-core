@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { ResultSettings } from '../../../shared/models/league-settings.model';
 import { UrlHelper } from '../../../helper';
 import { AutoTypeComponent } from './auto-setting/auto-setting.component';
@@ -13,12 +14,16 @@ import { ModalDialogMessage } from '../../../shared/models';
 import { LeagueAutoSettings } from '../../../shared/models/leagus-auto-settings.model';
 import * as _ from 'lodash';
 import { LeagueSettingsStore } from '../../services/league-settings.store.native';
+import { ZeroFallbackDirective } from '../../../shared/directives/zero-fall-back.directive.native';
+import { OnlyIntegerDirective } from '../../../shared/directives';
+
 
 @Component({
   selector: 'league-auto-settings',
   templateUrl: './league-auto-settings.component.html',
-  imports: [AutoTypeComponent, CommonModule, TimeSettingComponent,
-    AutoPayoutSettingComponent, ToastContainerModule],
+  imports: [AutoTypeComponent, CommonModule, TimeSettingComponent, FormsModule,
+    AutoPayoutSettingComponent, ToastContainerModule,
+    ZeroFallbackDirective, OnlyIntegerDirective],
   providers: [RequestService, ToastrService],
   standalone: true
 })
@@ -26,11 +31,9 @@ export class LeagueAutoSettingsComponent implements OnInit {
   @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
   private leagueId: string;
   private sportType: string;
-  waitingTime: number;
-  refundWaitingTime: number;
-  autoSetting: number;
+  public mainResultSettings: ResultSettings;
+  public earlyResultSettings: ResultSettings;
   leagueName: string;
-  retryTime: number;
 
   constructor(
     private readonly store: LeagueSettingsStore,
@@ -42,19 +45,14 @@ export class LeagueAutoSettingsComponent implements OnInit {
     this.toastrService.overlayContainer = this.toastContainer;
     this.leagueId = UrlHelper.getUrlParameter('leagueId');
     this.sportType = UrlHelper.getUrlParameter('sportType');
-    this.waitingTime = Number(UrlHelper.getUrlParameter('waitingTime'));
-    this.refundWaitingTime = Number(UrlHelper.getUrlParameter('refundWaitingTime'));
-    this.autoSetting = Number(UrlHelper.getUrlParameter('autoSetting'));
     this.store.actionAfterUpdate = () => { this.toastrService.clear() };
     const leagueSettings = await this.requestService.getLeagueSetting(Number(this.leagueId), Number(this.sportType));
     this.leagueName = leagueSettings.leagueName;
-    this.retryTime = leagueSettings.retryTime;
-    this.store.setState({
-      ...leagueSettings,
-      waitingTime: this.waitingTime,
-      refundWaitingTime: this.refundWaitingTime,
-      autoSetting: this.autoSetting
-    });
+    this.mainResultSettings = leagueSettings.mainResultSettings;
+    this.earlyResultSettings = leagueSettings.earlyResultSettings;
+
+    this.store.setState({...leagueSettings });
+
     this.store.originalState = _.cloneDeep(this.store.state);
   }
 
@@ -82,11 +80,7 @@ export class LeagueAutoSettingsComponent implements OnInit {
     const result = await this.requestService.updateLeagueSetting(this.store.originalState, this.store.state, isApplyAll);
     if (result.isSuccessful) {
       const response: LeagueAutoSettings = {
-        isApplyAll: isApplyAll,
-        autoSetting: this.store.state.autoSetting,
-        waitingTime: this.store.state.waitingTime,
-        retryTime: this.store.state.retryTime,
-        refundWaitingTime: this.store.state.refundWaitingTime
+        isApplyAll: isApplyAll
       }
       parent.document.getElementById('dialog-response').setAttribute('value', JSON.stringify(response));
       this.messageBoxService.closePopup();
@@ -97,5 +91,23 @@ export class LeagueAutoSettingsComponent implements OnInit {
 
   private verifyQuantityProvider(resultSettings: ResultSettings) {
     return !resultSettings.hasTrader && resultSettings.minimumProvider === 1;
+  }
+
+  changeSettingTrader(isMain: boolean) {
+    if(isMain) {
+      this.mainResultSettings.hasTrader = !this.mainResultSettings.hasTrader;
+     
+    } else {
+      this.earlyResultSettings.hasTrader = !this.earlyResultSettings.hasTrader;
+    }
+  }
+
+  changeSettingAuto(isMain: boolean) {
+    if(isMain) {
+      this.mainResultSettings.hasTrader = !this.mainResultSettings.hasTrader;
+     
+    } else {
+      this.earlyResultSettings.hasTrader = !this.earlyResultSettings.hasTrader;
+    }
   }
 }

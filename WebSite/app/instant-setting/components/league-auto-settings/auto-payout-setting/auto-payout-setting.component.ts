@@ -1,10 +1,9 @@
 
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { SettingContainerComponent } from './setting-container/setting-container.component';
 import { LeagueSettingsStore } from '../../../services/league-settings.store.native';
-import { distinctUntilChanged, map } from 'rxjs';
 import { ZeroFallbackDirective } from '../../../../shared/directives/zero-fall-back.directive.native';
 import { OnlyIntegerDirective } from '../../../../shared/directives';
 
@@ -43,6 +42,6 @@ export class AutoPayoutSettingComponent {
   private readonly store = inject(LeagueSettingsStore);
 
   changeRetryTime(retryTime: string): void {
-    this.store.setState({ ... this.store.state, retryTime: Number(retryTime)});
+    this.store.setState({ ... this.store.state });
   }
 }

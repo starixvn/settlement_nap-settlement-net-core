@@ -2,14 +2,14 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AutoTypeComponent } from './auto-setting.component';
 import { LeagueSettingsStore } from '../../../services/league-settings.store.native';
-import { LeagueSettings } from '../../../../shared/models/league-settings.model';
+import { AutoSettings } from '../../../../shared/models/league-settings.model';
 
 describe('AutoTypeComponent', () => {
   let component: AutoTypeComponent;
   let fixture: ComponentFixture<AutoTypeComponent>;
   let store : LeagueSettingsStore;
 
-  const leagueSettings : LeagueSettings = {
+  const leagueSettings : AutoSettings = {
     leagueId: 0,
     leagueName: '',
     autoSetting: 0,

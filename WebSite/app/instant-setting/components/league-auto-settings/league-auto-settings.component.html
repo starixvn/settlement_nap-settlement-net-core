@@ -4,12 +4,69 @@
 		<div class="icon"></div>
 		{{ leagueName }}
 	</div>
-	<div class="line"></div>
 	<div class="content">
-		<auto-setting [autoSetting]="autoSetting" />
-		<time-setting [directSetting]="true" [waitingTime]="waitingTime" />
-		<time-setting [directSetting]="false" [waitingTime]="refundWaitingTime" />
-		<auto-payout-setting [retryTime]="retryTime"> </auto-payout-setting>
+		<table>
+      <thead>
+        <tr>
+          <th rowspan="2" class="code">Auto Function</th>
+          <th rowspan="2" class="kick-off-time">Result Flow</th>
+          <th rowspan="2" class="event">Enable</th>
+          <th rowspan="2" class="interval-score">Waiting Time (second)</th>
+          <th rowspan="2" class="score">Trader Required</th>
+          <th colspan="2" class="confirm">Provider Required</th>
+        </tr>
+        <tr>
+          <th>Minimum</th>
+          <th>Source</th>
+        </tr>
+      </thead>
+			<tbody>
+				<tr *ngIf="mainResultSettings != null">
+					<td rowspan="2">Auto Payout</td>
+					<td>Main Results</td>
+					<td><span [ngClass]="mainResultSettings.hasTrader ? 'toggle-on' : 'toggle-off'" (click)="changeSettingAuto(true)"></span></td>
+					<td><input type="text" zeroFallback myOnlyInteger [ngModel]="mainResultSettings.waitingTime"/></td>
+					<td><span [ngClass]="mainResultSettings.hasTrader ? 'toggle-on' : 'toggle-off'" (click)="changeSettingTrader(true)"></span></td>
+					<td>
+						<select [(ngModel)]="mainResultSettings.minimumProvider">
+							<option value="0" [text]="0"></option>
+							<option value="1" [text]="1"></option>
+							<option value="2" [text]="2"></option>
+						</select>
+					</td>
+					<td>
+						<div>Primary: &nbsp; {{ mainResultSettings.primaryProvider == "" ? "any." : mainResultSettings.primaryProvider }}</div>
+						<div>Secondary: &nbsp; {{ mainResultSettings.secondaryProvider == "" ? "any." : mainResultSettings.secondaryProvider }}</div>
+					</td>
+				</tr>
+				<tr  *ngIf="earlyResultSettings != null">
+					<td>Early Results</td>
+					<td><span [ngClass]="earlyResultSettings.hasTrader ? 'toggle-on' : 'toggle-off'" (click)="changeSettingAuto(false)"></span></td>
+					<td><input type="text" zeroFallback myOnlyInteger [ngModel]="earlyResultSettings.waitingTime"/></td>
+					<td><span [ngClass]="earlyResultSettings.hasTrader ? 'toggle-on' : 'toggle-off'" (click)="changeSettingTrader(false)"></span></td>
+					<td>
+						<select [(ngModel)]="earlyResultSettings.minimumProvider">
+							<option value="0" [text]="0"></option>
+							<option value="1" [text]="1"></option>
+							<option value="2" [text]="2"></option>
+						</select>
+					</td>
+					<td>
+						<div>Primary: &nbsp; {{ earlyResultSettings.primaryProvider == "" ? "any." : earlyResultSettings.primaryProvider }}</div>
+						<div>Secondary: &nbsp; {{ earlyResultSettings.secondaryProvider == "" ? "any." : earlyResultSettings.secondaryProvider }}</div>
+					</td>
+				</tr>
+				<tr>
+					<td>Auto Refund</td>
+					<td>Main Results</td>
+					<td>follow Auto Payout</td>
+					<td><input type="text" zeroFallback myOnlyInteger/></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+			</tbody>
+    </table>
 	</div>
 	<div class="line"></div>
 	<div class="bottom">

@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Fanex.Data.Repository;
-using Fanex.RemotingRef;
 using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
@@ -14,13 +13,15 @@ namespace Settlement.Setting.Services;
 
 public interface LeagueSettingsService
 {
-    public Task<LeagueSettings> GetLeagueSettings(GetLeagueSettingsRequest request);
+    public Task<AutoSettings> GetLeagueSettings(GetLeagueSettingsRequest request);
 
     public Task<Result> UpdateLeagueSettings(UpdateLeagueSettingsRequest request);
 }
 
-public class LeagueSettingsServiceImp
-    (IDynamicRepository repository, IRemotingRefService remotingRef, IMapper mapper, LogService logService, SettingService settingService)
+public class LeagueSettingsServiceImp(IDynamicRepository repository,
+        IMapper mapper,
+        LogService logService,
+        SettingService settingService)
     : LeagueSettingsService
 {
     private const int ActionChangeLeagueSettingsId = 81048;
@@ -29,20 +30,52 @@ public class LeagueSettingsServiceImp
 
     private const int RefundSetting = 7;
 
-    public async Task<LeagueSettings> GetLeagueSettings(GetLeagueSettingsRequest request)
+    public async Task<AutoSettings> GetLeagueSettings(GetLeagueSettingsRequest request)
     {
-        var criteria = new GetLeagueSettings
+        var leagueSettings = await settingService.GetLeagueSettings(request);
+        return new AutoSettings
         {
-            LeagueId = request.LeagueId,
-            SportType = request.SportType
+            LeagueId = leagueSettings.LeagueId,
+            LeagueName = leagueSettings.LeagueName,
+            Providers = leagueSettings.Providers,
+            MainResultSettings = GetMainResultSettings(leagueSettings),
+            EarlyResultSettings = GetEarlyResultSettings(leagueSettings)
         };
+    }
 
-        var leagueSettings = await repository.GetAsync<LeagueSettings>(criteria);
+    private static ResultSettings GetMainResultSettings(LeagueSettings leagueSettings)
+    {
+        return new ResultSettings
+        {
+            HasTrader = leagueSettings.Main_HasTrader,
+            MinimumProvider = leagueSettings.Main_NumberProvider,
+            WaitingTime = leagueSettings.Main_WaitingTime,
+            SecondaryProvider = ParseProvider(leagueSettings.Main_SecondaryProvider, leagueSettings.Providers),
+            PrimaryProvider = ParseProvider(leagueSettings.Main_PrimaryProvider, leagueSettings.Providers),
+            InactiveProvider = leagueSettings.Main_InactiveProvider
+        };
+    }
 
-        leagueSettings.LeagueName = remotingRef.GetLeagueName(request.LeagueId.ToString(), "EN");
-        leagueSettings.Providers = (await GetProviderInfo(request)).ToList();
+    private static ResultSettings GetEarlyResultSettings(LeagueSettings leagueSettings)
+    {
+        return new ResultSettings
+        {
+            HasTrader = leagueSettings.EAR_HasTrader,
+            MinimumProvider = leagueSettings.EAR_NumberProvider,
+            WaitingTime = leagueSettings.EAR_WaitingTime,
+            SecondaryProvider = ParseProvider(leagueSettings.EAR_SecondaryProvider, leagueSettings.Providers),
+            PrimaryProvider = ParseProvider(leagueSettings.EAR_PrimaryProvider, leagueSettings.Providers),
+            InactiveProvider = leagueSettings.EAR_InactiveProvider
+        };
+    }
 
-        return leagueSettings;
+    private static string ParseProvider(string providers, IEnumerable<ProviderInfo> providerInfos)
+    {
+        var providerIds = providers.Split(',');
+        var providerNames = providerInfos.Where(p => providerIds.Contains(p.SourceId.ToString()))
+            .Select(p => p.SourceName);
+
+        return string.Join(", ", providerNames);
     }
 
     public async Task<Result> UpdateLeagueSettings(UpdateLeagueSettingsRequest request)

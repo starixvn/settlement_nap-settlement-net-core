@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { TimeSettingComponent } from './time-setting.component';
 import { LeagueSettingsStore } from '../../../services/league-settings.store';
-import { LeagueSettings } from '../../../../shared/models/league-settings.model';
+import { AutoSettings } from '../../../../shared/models/league-settings.model';
 import { input } from '@angular/core';
 
 describe('DirectSettingComponent', () => {
@@ -10,7 +10,7 @@ describe('DirectSettingComponent', () => {
   let fixture: ComponentFixture<TimeSettingComponent>;
   let store: LeagueSettingsStore;
 
-  const leagueSettings: LeagueSettings = {
+  const leagueSettings: AutoSettings = {
     leagueId: 0,
     leagueName: '',
     autoSetting: 0,

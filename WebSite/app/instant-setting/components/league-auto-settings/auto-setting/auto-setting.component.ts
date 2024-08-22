@@ -1,7 +1,6 @@
-import { ChangeDetectionStrategy, Component, inject, input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { LeagueSettingsStore } from '../../../services/league-settings.store.native';
-import { distinctUntilChanged, map } from 'rxjs';
 
 @Component({
   selector: 'auto-setting',
@@ -36,6 +35,6 @@ export class AutoTypeComponent {
 	private readonly store = inject(LeagueSettingsStore);
 
   changeAutoSetting(value: number): void { 
-    this.store.setState({ ...this.store.state, autoSetting: value});
+    this.store.setState({ ...this.store.state});
   }
 }
