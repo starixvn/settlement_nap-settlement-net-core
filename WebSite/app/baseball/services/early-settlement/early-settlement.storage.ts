@@ -48,7 +48,9 @@ export class EarlySettlementStorage implements Storage {
     };
     const matchFetched = (await this.#aioService.getMatch(matchQuery)) as Match;
     this.#verificationService.generateExternalScores(matchFetched, matchFetched.resultDetails, matchFetched.matchDetail.sportType, matchFetched.matchDetail.providerCount > 2 ? 3 : 2);
-    this.#mainResults = matchFetched.resultDetails.filter(x => x.resourceId.length < 5 && !x.resourceId.startsWith('88') && isNil(x.betTypeName));
+    const mainResults = matchFetched.resultDetails.filter(x => x.resourceId.length < 5 && !x.resourceId.startsWith('88') && isNil(x.betTypeName));
+    this.#mainResults = cloneDeep(mainResults);
+   
     this.#earlyResults = matchFetched.resultDetails.filter(x => x.resourceId.startsWith('88') && !isNil(x.betTypeName));
     this.#match.set(matchFetched);
     this.GetInitStatus();

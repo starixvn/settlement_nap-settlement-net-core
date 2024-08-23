@@ -367,14 +367,14 @@ export class VerificationBaseService {
             }
         });
 
-        return outsideScores;
+        return outsideScores.map(x => ({ ...x,homeValue: x.homeValue ?? '', awayValue: x.awayValue ?? '' }));
     }
 
     public getOutsideScores(resultDetails: ResultDetail[]) {
         const outsideScores: ExternalResultDetail[] = [];
         const mapsChecked = resultDetails.filter((map) => map.checked);
         _.forEach(mapsChecked, (map) => {
-            const mapScore = new ExternalResultDetail(0, map.resourceId, '', '', map.homeValue ?? "", map.awayValue ?? "");
+            const mapScore = new ExternalResultDetail(0, map.resourceId, '', '', map.homeValue , map.awayValue);
             outsideScores.push(mapScore);
             _.forEach(map.externalScores, (score) => {
                 if (score.sourceId > ScoreSourceType.emptySource) {
@@ -383,7 +383,7 @@ export class VerificationBaseService {
             });
         });
 
-        return outsideScores;
+        return outsideScores.map(x => ({ ...x,homeValue: x.homeValue ?? '', awayValue: x.awayValue ?? '' }));
     }
 
     public generateExternalScores(match: GeneralMatch, resultDetails: ResultDetail[], sportType: number, maximumProvider = 2) {
