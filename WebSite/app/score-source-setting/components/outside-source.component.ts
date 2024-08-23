@@ -1,5 +1,5 @@
 import { NewMultipleSelectComponent } from './../../shared/components/multiple-select/multiple-select.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SourceStatusPipe } from './../pipes/source-status.pipe';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
@@ -19,7 +19,7 @@ import { BlockUIService, HttpRequestService, MessageBoxService } from '../../sha
   selector: 'outside-source',
   templateUrl: './outside-source.component.html',
   standalone: true,
-  imports: [CommonModule, SourceStatusPipe, FormsModule, GameStatusPipe, ExternalLinkPipe, NewMultipleSelectComponent],
+  imports: [CommonModule, SourceStatusPipe, FormsModule, GameStatusPipe, ExternalLinkPipe, NewMultipleSelectComponent, ReactiveFormsModule],
   providers: [QueryService, GenerateFilterService, HttpRequestService, BlockUIService, MessageBoxService]
 })
 export class OutsideSourceComponent implements OnInit {
@@ -29,7 +29,7 @@ export class OutsideSourceComponent implements OnInit {
   public statusSelected: string;
   public readonly games = DefaultGames;
   public readonly gameSelect = new MultipleSelect();
-  public readonly statusSelect = new MultipleSelect();
+  public readonly statusSelect =  new MultipleSelect();
   public outsideSources: OutsideSource[];
   public sourceName: string;
   public sports: Sport[];
@@ -40,13 +40,16 @@ export class OutsideSourceComponent implements OnInit {
               public dialog: MatDialog) { }
 
   async ngOnInit(): Promise<void> {
-    this.scoreSourcePermission = await this.queryService.getScoreSourcePermission();
     this.gameSelect.items = this.generateFilterService.renderGames();
     this.gameSelect.isCheckAll = true;
     this.gamesSelected = this.gameSelect.items.map(item => Number(item.value)).join();
+ 
     this.statusSelect.items = this.generateFilterService.renderStatus();
     this.statusSelect.isCheckAll = true;
     this.statusSelected = DefaultFilterValue.allStatusChecked;
+  
+    this.scoreSourcePermission = await this.queryService.getScoreSourcePermission();
+    
     this.sports = sportSupport.outsideSource;
   }
 
