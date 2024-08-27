@@ -28,6 +28,7 @@
 		<PackageReference Include="Fanex.NAP.Client" Version="2.0.0.1" />
 		<PackageReference Include="Fanex.Settlement.Converter" Version="1.0.0.1" />
 		<PackageReference Include="MediatR" Version="12.4.0" />
+		<PackageReference Include="StackExchange.Redis" Version="2.7.27" />
 		<PackageReference Include="System.ValueTuple" Version="4.5.0" />
 	</ItemGroup>
 

@@ -48,203 +48,206 @@ namespace Settlement.WebSites;
 
 public static class WebSites
 {
-    public static void AddAuthentication(this IServiceCollection services, IConfiguration configuration)
-    {
-        services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                    .AddCookie(options =>
-                    {
-                        options.LoginPath = configuration.GetSection("AuthSettings:LoginPath").Value;
-                        options.LogoutPath = configuration.GetSection("AuthSettings:LogoutPath").Value;
-                        options.ExpireTimeSpan = TimeSpan.FromMinutes(int.Parse(configuration.GetSection("AuthSettings:CookieTimeOut").Value));
-                        options.Cookie = new CookieBuilder
-                        {
-                            Name = "Fanex.Settlement.Cookie",
-                            SecurePolicy = CookieSecurePolicy.SameAsRequest
-                        };
-                        options.Events.OnSigningOut = context =>
-                        {
-                            context.Response.Redirect(options.LoginPath);
-                            return Task.CompletedTask;
-                        };
-                    });
-    }
+	public static void AddAuthentication(this IServiceCollection services, IConfiguration configuration)
+	{
+		services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+					.AddCookie(options =>
+					{
+						options.LoginPath = configuration.GetSection("AuthSettings:LoginPath").Value;
+						options.LogoutPath = configuration.GetSection("AuthSettings:LogoutPath").Value;
+						options.ExpireTimeSpan = TimeSpan.FromMinutes(int.Parse(configuration.GetSection("AuthSettings:CookieTimeOut").Value));
+						options.Cookie = new CookieBuilder
+						{
+							Name = "Fanex.Settlement.Cookie",
+							SecurePolicy = CookieSecurePolicy.SameAsRequest
+						};
+						options.Events.OnSigningOut = context =>
+						{
+							context.Response.Redirect(options.LoginPath);
+							return Task.CompletedTask;
+						};
+					});
+	}
 
-    public static void AddAuthorizationPolicy(this IServiceCollection services)
-    {
-        services.AddControllers(config =>
-        {
-            var policy = new AuthorizationPolicyBuilder()
-                             .RequireAuthenticatedUser()
-                             .Build();
-            config.Filters.Add(new AuthorizeFilter(policy));
-        });
-    }
+	public static void AddAuthorizationPolicy(this IServiceCollection services)
+	{
+		services.AddControllers(config =>
+		{
+			var policy = new AuthorizationPolicyBuilder()
+							 .RequireAuthenticatedUser()
+							 .Build();
+			config.Filters.Add(new AuthorizeFilter(policy));
+		});
+	}
 
-    public static void AddRedis(this IServiceCollection services, IConfiguration configuration)
-    {
-        var redisConfig = configuration.GetSection("AuthSettings:RedisConfig").Value;
-        var applicationName = configuration.GetSection("AuthSettings:ChannelPrefix").Value;
-        //services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect($"{redisConfig},ChannelPrefix={applicationName}"));
-        services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect($"{redisConfig}"));
+	public static void AddRedis(this IServiceCollection services, IConfiguration configuration)
+	{
+		var redisConfig = configuration.GetSection("AuthSettings:RedisConfig").Value;
+		var redisMultiplexer = ConnectionMultiplexer.Connect(redisConfig);
 
-        services.AddStackExchangeRedisCache(options =>
-        {
-            options.Configuration = redisConfig;
-            options.InstanceName = "Fanex.Settlement.Session-";
-        });
+		services.AddDataProtection()
+			.PersistKeysToStackExchangeRedis(redisMultiplexer, "Fanex.Settlement-ProtectionKeys");
 
-        services.AddRedisCache(configuration.GetSection("Fanex.Caching.Redis"));
-    }
+		services.AddSingleton<IConnectionMultiplexer>(redisMultiplexer);
 
-    public static void AddSession(this IServiceCollection services, IConfiguration configuration)
-    {
-        services.AddSession(options =>
-        {
-            options.Cookie.IsEssential = true;
-            options.IdleTimeout = TimeSpan.FromMinutes(int.Parse(configuration.GetSection("AuthSettings:SessionTimeOut").Value));
-            options.Cookie.Name = "Fanex.Settlement.Session";
-        });
-    }
+		services.AddStackExchangeRedisCache(options =>
+		{
+			options.Configuration = redisConfig;
+			options.InstanceName = "Fanex.Settlement.Session-";
+		});
 
-    public static void AddInternalService(this IServiceCollection services)
-    {
-        services.ConfigOtherSportsServices();
-        services.ConfigMoveTicketServices();
-        services.ConfigAioServices();
-        services.ConfigSoccerServices();
-        services.ConfigEventManagementServices();
-        services.ConfigLogServices();
-        services.ConfigFastMarketsServices();
-        services.ThirdPartyProductsConfigServices();
-        services.SettingConfigServices();
-        services.GamingConfigServices();
-        services.OutrightConfigServices();
-    }
+		services.AddRedisCache(configuration.GetSection("Fanex.Caching.Redis"));
+	}
 
-    public static void AddNapServices(this IServiceCollection services, IConfiguration configuration)
-    {
-        services.AddTransient<ILogger, Logger>();
-        services.AddSingleton<INapSettings>(new NapSettings(configuration));
-        services.AddSingleton<INapSession, NapSession>();
-        services.AddSingleton<ICacheService, CacheService>();
+	public static void AddSession(this IServiceCollection services, IConfiguration configuration)
+	{
+		services.AddSession(options =>
+		{
+			options.Cookie.IsEssential = true;
+			options.IdleTimeout = TimeSpan.FromMinutes(int.Parse(configuration.GetSection("AuthSettings:SessionTimeOut").Value));
+			options.Cookie.Name = "Fanex.Settlement.Session";
+		});
+	}
 
-        services.AddSingleton<IGroupService, GroupService>();
-        services.AddSingleton<IUserService, UserService>();
-        services.AddSingleton<ISecurityService, SecurityService>();
-        services.AddTransient<IBalanceUpService, BalanceUpServiceImp>();
+	public static void AddInternalService(this IServiceCollection services)
+	{
+		services.ConfigOtherSportsServices();
+		services.ConfigMoveTicketServices();
+		services.ConfigAioServices();
+		services.ConfigSoccerServices();
+		services.ConfigEventManagementServices();
+		services.ConfigLogServices();
+		services.ConfigFastMarketsServices();
+		services.ThirdPartyProductsConfigServices();
+		services.SettingConfigServices();
+		services.GamingConfigServices();
+		services.OutrightConfigServices();
+	}
 
-        RefDataTypeContainer
-            .ConnectTo(new Uri(configuration.GetSection("Fanex.RemotingRef.Service.Url").Value))
-            .FromApplication("Settlement");
-        services.Configure<IConfiguration>(configuration);
-        services.AddSingleton<IRemotingRefService, RemotingRefService>();
-    }
+	public static void AddNapServices(this IServiceCollection services, IConfiguration configuration)
+	{
+		services.AddTransient<ILogger, Logger>();
+		services.AddSingleton<INapSettings>(new NapSettings(configuration));
+		services.AddSingleton<INapSession, NapSession>();
+		services.AddSingleton<ICacheService, CacheService>();
 
-    public static void AddFanex(this IServiceCollection services, IConfiguration configuration)
-    {
-        LogManager
-        .SetDefaultLogCategory(configuration.GetSection("LogCategory").Value)
-        .Use(new List<ILogEngine>
-        {
-                new SentryLogging(new SentryEngineOptions
-                {
-                    Dsn = new Dsn(configuration.GetSection("SentryEngineOptions:Dsn").Value)
-                })
-        });
+		services.AddSingleton<IGroupService, GroupService>();
+		services.AddSingleton<IUserService, UserService>();
+		services.AddSingleton<ISecurityService, SecurityService>();
+		services.AddTransient<IBalanceUpService, BalanceUpServiceImp>();
 
-        ExceptionHandler
-            .UseConfig(new LoggingConfiguration())
-            .UseGetDbExceptionInfo(DatabaseInfoGetters.GetDbExceptionInfo);
+		RefDataTypeContainer
+			.ConnectTo(new Uri(configuration.GetSection("Fanex.RemotingRef.Service.Url").Value))
+			.FromApplication("Settlement");
+		services.Configure<IConfiguration>(configuration);
+		services.AddSingleton<IRemotingRefService, RemotingRefService>();
+	}
 
-        AppSettings.AppMailId = configuration.GetSection("MailServer:Id").Value;
-        AppSettings.AppMailAddress = configuration.GetSection("MailServer:Address").Value;
-    }
+	public static void AddFanex(this IServiceCollection services, IConfiguration configuration)
+	{
+		LogManager
+		.SetDefaultLogCategory(configuration.GetSection("LogCategory").Value)
+		.Use(new List<ILogEngine>
+		{
+				new SentryLogging(new SentryEngineOptions
+				{
+					Dsn = new Dsn(configuration.GetSection("SentryEngineOptions:Dsn").Value)
+				})
+		});
 
-    public static void AddCoreServices(this IServiceCollection services)
-    {
-        services.AddScoped<IDynamicRepository, DynamicRepository>();
-        services.AddTransient<IRefDataService, RefDataService>();
-        services.AddSingleton<PermissionService, PermissionServiceImp>();
-        services.AddSingleton<XmlConvertService, XmlConvertServiceImp>();
-        services.AddTransient<LogService, LogServiceImp>();
-        services.AddTransient<BasketballEventStatusService, BasketballEventStatusServiceImp>();
+		ExceptionHandler
+			.UseConfig(new LoggingConfiguration())
+			.UseGetDbExceptionInfo(DatabaseInfoGetters.GetDbExceptionInfo);
 
-        services.AddTransient<IScoreSetService, ScoreSetServiceImp>();
-        services.AddTransient<ScaleOutSettleService, ScaleOutSettleServiceImp>();
-        services.AddTransient<ScaleOutSettleThirdPartyService, ScaleOutSettleThirdPartyServiceImp>();
-        services.AddTransient<GeneralService, GeneralServiceImp>();
-    }
+		AppSettings.AppMailId = configuration.GetSection("MailServer:Id").Value;
+		AppSettings.AppMailAddress = configuration.GetSection("MailServer:Address").Value;
+	}
 
-    public static void AddMediator(this IServiceCollection services)
-    {
-        services.ConfigAioMediator();
-        services.ConfigMoveTicketMediator();
-        services.ConfigOtherSportsMediator();
-        services.ConfigSoccerMediator();
-        services.ConfigEventManagementMediator();
-        services.ConfigLogMediator();
-        services.ConfigFastMarketsMediator();
-        services.ThirdPartyProductsConfigMediator();
-        services.SettingConfigMediator();
-        services.GamingConfigMediator();
-        services.OutrightConfigMediator();
-    }
+	public static void AddCoreServices(this IServiceCollection services)
+	{
+		services.AddScoped<IDynamicRepository, DynamicRepository>();
+		services.AddTransient<IRefDataService, RefDataService>();
+		services.AddSingleton<PermissionService, PermissionServiceImp>();
+		services.AddSingleton<XmlConvertService, XmlConvertServiceImp>();
+		services.AddTransient<LogService, LogServiceImp>();
+		services.AddTransient<BasketballEventStatusService, BasketballEventStatusServiceImp>();
 
-    public static void AddAutoMapper(this IServiceCollection services)
-    {
-        var mapperConfig = new MapperConfiguration(mc =>
-        {
-            mc.AddProfile(typeof(SportsbookAioAutoMapperProfile));
-            mc.AddProfile(typeof(SportsbookMoveTicketAutoMapperProfile));
-            mc.AddProfile(typeof(OtherSportsAutoMapperProfile));
-            mc.AddProfile(typeof(SoccerAutoMapperProfile));
-            mc.AddProfile(typeof(LogAutoMapper));
-            mc.AddProfile(typeof(EventManagementAutoMapperProfile));
-            mc.AddProfile(typeof(FastMarketAutoMapperProfile));
-            mc.AddProfile(typeof(ThirdPartyProductsAutoMapperProfile));
-            mc.AddProfile(typeof(SettingAutoMapperProfile));
-            mc.AddProfile(typeof(GamingMapperProfile));
-            mc.AddProfile(typeof(ScaleOutMappingProfile));
-            mc.AddProfile(typeof(OutrightMapperProfile));
-        });
+		services.AddTransient<IScoreSetService, ScoreSetServiceImp>();
+		services.AddTransient<ScaleOutSettleService, ScaleOutSettleServiceImp>();
+		services.AddTransient<ScaleOutSettleThirdPartyService, ScaleOutSettleThirdPartyServiceImp>();
+		services.AddTransient<GeneralService, GeneralServiceImp>();
+	}
 
-        var mapper = mapperConfig.CreateMapper();
-        services.AddSingleton(mapper);
-    }
+	public static void AddMediator(this IServiceCollection services)
+	{
+		services.ConfigAioMediator();
+		services.ConfigMoveTicketMediator();
+		services.ConfigOtherSportsMediator();
+		services.ConfigSoccerMediator();
+		services.ConfigEventManagementMediator();
+		services.ConfigLogMediator();
+		services.ConfigFastMarketsMediator();
+		services.ThirdPartyProductsConfigMediator();
+		services.SettingConfigMediator();
+		services.GamingConfigMediator();
+		services.OutrightConfigMediator();
+	}
 
-    public static void AddOnebookUM(this IServiceCollection services, IConfiguration configuration)
-    {
-        services.RegisterServiceCollection(configuration);
-    }
+	public static void AddAutoMapper(this IServiceCollection services)
+	{
+		var mapperConfig = new MapperConfiguration(mc =>
+		{
+			mc.AddProfile(typeof(SportsbookAioAutoMapperProfile));
+			mc.AddProfile(typeof(SportsbookMoveTicketAutoMapperProfile));
+			mc.AddProfile(typeof(OtherSportsAutoMapperProfile));
+			mc.AddProfile(typeof(SoccerAutoMapperProfile));
+			mc.AddProfile(typeof(LogAutoMapper));
+			mc.AddProfile(typeof(EventManagementAutoMapperProfile));
+			mc.AddProfile(typeof(FastMarketAutoMapperProfile));
+			mc.AddProfile(typeof(ThirdPartyProductsAutoMapperProfile));
+			mc.AddProfile(typeof(SettingAutoMapperProfile));
+			mc.AddProfile(typeof(GamingMapperProfile));
+			mc.AddProfile(typeof(ScaleOutMappingProfile));
+			mc.AddProfile(typeof(OutrightMapperProfile));
+		});
 
-    public static void AddMessagePack(this IServiceCollection services)
-    {
-        services.AddMvc().AddMvcOptions(option =>
-        {
-            option.OutputFormatters.Add(new MessagePackOutputFormatter());
-            option.InputFormatters.Add(new MessagePackInputFormatter());
-        });
+		var mapper = mapperConfig.CreateMapper();
+		services.AddSingleton(mapper);
+	}
 
-        services.Configure<KestrelServerOptions>(options =>
-        {
-            options.AllowSynchronousIO = true;
-        });
+	public static void AddOnebookUM(this IServiceCollection services, IConfiguration configuration)
+	{
+		services.RegisterServiceCollection(configuration);
+	}
 
-        services.Configure<IISServerOptions>(options =>
-        {
-            options.AllowSynchronousIO = true;
-        });
+	public static void AddMessagePack(this IServiceCollection services)
+	{
+		services.AddMvc().AddMvcOptions(option =>
+		{
+			option.OutputFormatters.Add(new MessagePackOutputFormatter());
+			option.InputFormatters.Add(new MessagePackInputFormatter());
+		});
 
-        services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Optimal);
-        services.AddResponseCompression(options =>
-        {
-            options.MimeTypes = new[]{
-                    "text/html",
-                    "text/css",
-                    "application/javascript",
-                    "application/json",
-                    "application/x-msgpack"
-            };
-        });
-    }
+		services.Configure<KestrelServerOptions>(options =>
+		{
+			options.AllowSynchronousIO = true;
+		});
+
+		services.Configure<IISServerOptions>(options =>
+		{
+			options.AllowSynchronousIO = true;
+		});
+
+		services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Optimal);
+		services.AddResponseCompression(options =>
+		{
+			options.MimeTypes = new[]{
+					"text/html",
+					"text/css",
+					"application/javascript",
+					"application/json",
+					"application/x-msgpack"
+			};
+		});
+	}
 }
