@@ -57,14 +57,6 @@ export class AppComponent implements OnInit {
 
   private getComponentFactory(): Observable<Type<SportTemplate>> {
     const pageType = this.elementRef.nativeElement.getAttribute('page-type');
-    return from(
-      (async () => {
-        const { RefundComponent } = await import(
-          './refund/refund.component'
-        );
-        return RefundComponent;
-      })()
-    );
     switch (pageType) {
       case PageType.ReCalculate:
         return from(

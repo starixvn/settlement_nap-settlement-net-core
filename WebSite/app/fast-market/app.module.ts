@@ -46,7 +46,7 @@ import { InputOuScoreComponent } from "./components/input-ou-score/input-ou-scor
       enableHtml: true,
       tapToDismiss: false,
       positionClass: "inline",
-      maxOpened: 1,
+      maxOpened: 3,
     }),
     ToastContainerModule,
     OnlyIntegerDirective,

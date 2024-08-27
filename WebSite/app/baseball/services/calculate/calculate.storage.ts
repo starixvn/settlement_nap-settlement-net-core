@@ -68,7 +68,7 @@ export class CalculateStorage implements ICalculateStorage {
     this.fulltimeResult = this.getFullTime();
     this.#originalResultDetails = cloneDeep(matchFetched.resultDetails);
     this.setIsApplyHedgeMatch(!!matchFetched.hedgeMatchDetail);
-    this.#isMatchSeries.set(matchFetched.matchDetail.leagueType === 1);
+    this.#isMatchSeries.set(matchFetched.matchDetail.sessionTime === 1);
   }
 
   mapTicketStatusExtraInning() {

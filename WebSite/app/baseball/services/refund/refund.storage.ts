@@ -28,7 +28,7 @@ export class RefundStorage {
     };
     const matchFetched = (await this.aioService.getMatch(matchQuery)) as Match;
     matchFetched.resultDetails.forEach(result => {
-      result.resourceName = this.resultPipe.transform(result.resourceId, true,matchFetched.matchDetail.leagueType);
+      result.resourceName = this.resultPipe.transform(result.resourceId, true,matchFetched.matchDetail.sessionTime);
       result.className = this.getClass(result);
       result.isDisplayedForMember = matchFetched.permission.isLeader || Number(result.settlementStatusId) !== SettlementStatusId.Running;
     });
