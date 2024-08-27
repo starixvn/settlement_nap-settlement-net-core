@@ -403,6 +403,7 @@ public class AioServiceImp(
 			return resultDetails;
 		}
 
+        var isMatchSeries = matchDetail.SportType == SportType.BaseBall && matchDetail.SessionTime.Equals(1);
 		var setViewed = GetViewedSet(matchDetail);
 		var finalResult = GetFinalResult(resultDetails);
 		var extraResults = GetExtraResults(resultDetails);
@@ -416,7 +417,12 @@ public class AioServiceImp(
 
 		SetIntervalsForResults(mainResults, mainResources);
 
-		var resultOrdered = mainResults.Where(r => r.IntervalNo <= setViewed)
+        var finalMainResults = isMatchSeries
+            ? mainResults.Where(r => r.ResourceId != ResourceType.ExtraInning)
+            : mainResults;
+
+        var resultOrdered = finalMainResults
+            .Where(r => r.IntervalNo <= setViewed)
 			.Concat([finalResult])
 			.Concat(extraResults);
 
@@ -468,9 +474,12 @@ public class AioServiceImp(
 		return resultDetails.Where(predicate).ToList();
 	}
 
-	private List<ResultDetail> GetExtraResults(List<ResultDetail> resultDetails) => resultDetails
-			.Where(x => Resources.ExtraResults[SportType.BaseBall].Contains(x.ResourceId))
-			.ToList();
+    private List<ResultDetail> GetExtraResults(List<ResultDetail> resultDetails)
+    {
+        return resultDetails
+             .Where(x => Resources.ExtraResults[SportType.BaseBall].Contains(x.ResourceId))
+             .ToList();
+    }
 
 	private void SetIntervalsForResults(List<ResultDetail> setResults, List<ResourceIndex> indexes)
 	{

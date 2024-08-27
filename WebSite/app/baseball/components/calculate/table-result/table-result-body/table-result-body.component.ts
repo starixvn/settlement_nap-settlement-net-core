@@ -33,6 +33,7 @@ export class TableResultBodyComponent implements OnInit {
   permission = this.#storage.getPermission();
   matchDetail = this.#storage.getMatchDetail();
   isLeader = this.#storage.isLeader();
+  isMatchSeries = this.#storage.isMatchSeries();
   extraInningId = ResourceIds.extraInning;
   fullTimeId = ResourceIds.fullTime;
   maxProviderCol = this.#storage.maxProviderCol;

@@ -6,7 +6,7 @@
     'striped': inning.resourceId === '00' || inning.resourceId === 'EI' || (!last && innings.length % 2 !== 0 && i % 2 === 0) || ( !last && innings.length % 2 === 0 && i % 2 !== 0),
   }">
   <td>{{ inning.resourceId | resourceName:false:matchDetail.sessionTime }}</td>
-  <td [ngClass]="inning.ticketStatus.toLowerCase()" class="set-status" *ngIf="inning.resultState.isInningRow">
+  <td [ngClass]="inning.ticketStatus.toLowerCase()" class="set-status" *ngIf="inning.resultState.isInningRow || (isMatchSeries && inning.resultState.isFullTimeRow)">
     {{ inning.ticketStatus }}</td>
   <td [ngClass]="inning.ticketStatus.toLowerCase()" class="match-status" *ngIf="inning.resultState.isExtraInningRow"
     rowspan="2">
@@ -53,7 +53,7 @@
     <input id="final-checkbox" type="checkbox" [(ngModel)]="innings[i + 1].checked"
       (ngModelChange)="selectedOnLastMap(inning, $event)" />
   </td>
-  <td *ngIf="inning.resultState.isInningRow" class="status">
+  <td *ngIf="inning.resultState.isInningRow || (isMatchSeries && inning.resultState.isFullTimeRow)" class="status">
     <input type="checkbox" [(ngModel)]="inning.checked" [disabled]="inning.resultState.isCheckBoxDisabled"
       (ngModelChange)="selectedOnMap(inning)" />
   </td>
