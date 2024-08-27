@@ -6,6 +6,7 @@ import { NotifyService } from "../../services/notify.service";
 import { BaseHandler } from "../base.handler.native";
 import { Storage } from "../../services/storage.service";
 import { CalculateAction, ResourceIds, SettingPosition } from "../../../shared/constants";
+import { SettleChildMatchQuery } from "../../../shared/models/settle-childmatch.model";
 
 export class CalculateHandler implements BaseHandler {
   #nextHandler: BaseHandler;
@@ -19,6 +20,7 @@ export class CalculateHandler implements BaseHandler {
     const query = this.createRequestQuery(storage);
     const result = await this.#aioService.push(query);
     if (result.isSuccessful) {
+      result.childMatchIds && await this.calculateChildMatch(result.childMatchIds, result.settledSessionId, storage);
       this.calculateHedgeMatch(query, storage);
     } else {
       this.#notifyService.error(result.errMsg);
@@ -39,6 +41,17 @@ export class CalculateHandler implements BaseHandler {
       this.#notifyService.closePopup();
     }
   }
+  private async calculateChildMatch(childMatchIds: string, parentSessionId: string, storage: Storage) {
+    const settleChildMatchQuery = new SettleChildMatchQuery(
+      childMatchIds,
+      storage.getResultChecked(),
+      storage.getActionSubmit(),
+      storage.isReSettledTickets());
+
+    settleChildMatchQuery.sportType = storage.getMatchDetail().sportType;
+    settleChildMatchQuery.parentSessionId = parentSessionId;
+    await this.#aioService.pushChildMatch(settleChildMatchQuery);
+  }
 
   private createRequestQuery(storage: Storage) {
     const query = new SettleQuery(
@@ -55,12 +68,12 @@ export class CalculateHandler implements BaseHandler {
     return query;
   }
 
-  private generateDeterminedType(storage: Storage) {  
-    if (storage.getActionSubmit() !== CalculateAction.calculate 
+  private generateDeterminedType(storage: Storage) {
+    if (storage.getActionSubmit() !== CalculateAction.calculate
       || !this.isBitSet(storage.getMatchDetail().autoSetting, SettingPosition.instant)) {
       return 0;
     }
-   
+
     const roundBitStartAt = 2;
     const bitArray = new Array<number>(12).fill(0);
     const resultWithoutFinal = storage.getResultChecked()
@@ -80,5 +93,5 @@ export class CalculateHandler implements BaseHandler {
   private isBitSet(num: number, bitPosition: number): boolean {
     const mask = 1 << bitPosition;
     return (num & mask) !== 0;
-}
+  }
 }

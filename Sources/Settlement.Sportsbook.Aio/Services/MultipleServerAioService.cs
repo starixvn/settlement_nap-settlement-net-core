@@ -162,7 +162,8 @@ public class MultipleServerAioServiceImp(
         var criteria = createQueryService.QuerySettle(request);
         var result = await Execute(criteria, request.SelectedResources);
 
-        if (request.SportType == SportType.Cricket && result.IsSuccessful)
+        int[] sportChildMatches = [SportType.Cricket, SportType.BaseBall];
+        if (sportChildMatches.Contains(request.SportType) && result.IsSuccessful)
         {
             var childMatchIds = await GetChildMatchIds(criteria.MatchId, criteria.Action, criteria.SelectedResources);
             result.ChildMatchIds = childMatchIds;
