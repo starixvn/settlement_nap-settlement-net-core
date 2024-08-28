@@ -9,6 +9,8 @@ import { HedgeMatchDetail, MatchDetail, Permission, ResultDetail, SettleQuery } 
 import { Language } from '../../../../shared/language.native';
 import { NotifyService } from '../../../services/notify.service';
 import { BaseballApiKeys } from '../../../constants/api-keys.constant';
+import { SettleChildMatchQuery } from '../../../../shared/models/settle-childmatch.model';
+import { CalculateAction } from '../../../../shared/constants';
 
 @Component({
   selector: 'table-result',
@@ -16,7 +18,7 @@ import { BaseballApiKeys } from '../../../constants/api-keys.constant';
   imports: [CommonModule, FormsModule, ResourceNamePipe],
   templateUrl: './table-result.component.html',
 })
-export class TableResultComponent extends RefundActionBaseComponent implements OnInit{
+export class TableResultComponent extends RefundActionBaseComponent implements OnInit {
   match = input.required<Match>();
   #notifyService = inject(NotifyService);
   #resultPipe = inject(ResourceNamePipe);
@@ -58,10 +60,25 @@ export class TableResultComponent extends RefundActionBaseComponent implements O
     const query = this.generateRefundQuery(BaseballApiKeys.Settle);
     const result = await this.aioService.push(query);
     if (result.errCode === 0) {
+      result.childMatchIds && await this.refundChildMatch(result.childMatchIds, result.settledSessionId);
       this.refundHedgeMatch(query);
       this.messageBoxService.closePopup();
     } else {
       this.toastrService.error(result.errMsg);
     }
   }
+
+  private async refundChildMatch(childMatchIds: string, parentSessionId: string) {
+    const settleChildMatchQuery = new SettleChildMatchQuery(
+      childMatchIds, 
+      this.selectedResources,
+      CalculateAction.refund, 
+      false);
+
+    settleChildMatchQuery.sportType = this.matchDetail.sportType;
+    settleChildMatchQuery.parentSessionId = parentSessionId;
+
+    await this.aioService.pushChildMatch(settleChildMatchQuery);
+  }
+
 }
