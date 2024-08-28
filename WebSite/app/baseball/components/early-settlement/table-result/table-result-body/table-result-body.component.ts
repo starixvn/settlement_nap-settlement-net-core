@@ -14,11 +14,12 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { VerificationBaseService } from '../../../../../core/services/verification-base.service';
 import { InputType } from '../../../../constants/input-type.constant';
 import { EarlySettlementStorage } from '../../../../services/early-settlement/early-settlement.storage';
+import { OnlyIntegerDirective } from '../../../../../shared/directives';
 
 @Component({
   selector: 'tbody[table-result-body]',
   standalone: true,
-  imports: [CommonModule, FormsModule, PipesModule, MatTooltipModule],
+  imports: [CommonModule, FormsModule, PipesModule, MatTooltipModule,OnlyIntegerDirective],
   templateUrl: './table-result-body.component.html',
 })
 export class TableResultBodyComponent  implements OnInit{

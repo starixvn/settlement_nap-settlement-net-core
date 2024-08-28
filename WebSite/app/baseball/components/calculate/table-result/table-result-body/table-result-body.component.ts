@@ -15,11 +15,12 @@ import { ResultByTeamNamePipe } from "../../../../../shared/pipes/result-by-team
 import { CalculateStorage } from '../../../../services/calculate/calculate.storage';
 import { CalculateService } from '../../../../services/calculate/calculate.service';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { OnlyIntegerDirective } from '../../../../../shared/directives';
 
 @Component({
   selector: 'tbody[table-result-body]',
   standalone: true,
-  imports: [CommonModule, FormsModule, ResourceNamePipe, ResultByTeamNamePipe,MatTooltipModule],
+  imports: [CommonModule, FormsModule, ResourceNamePipe, ResultByTeamNamePipe,MatTooltipModule,OnlyIntegerDirective],
   templateUrl: './table-result-body.component.html',
 })
 export class TableResultBodyComponent implements OnInit {
