@@ -1,89 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testExecutions version="1">
-  <file path="D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\shared\services\aio.service.spec.ts">
-    <testCase name="AioService should create a service" duration="41"/>
-    <testCase name="AioService getMatch - Call exact Url and param" duration="27"/>
-    <testCase name="AioService push - Call exact Url and param" duration="5"/>
-    <testCase name="AioService saveScore - Call exact Url and param" duration="4"/>
-    <testCase name="AioService verifyChangedSettledTickets should return false when no need to check for recalc tickets" duration="6"/>
-    <testCase name="AioService verifyChangedSettledTickets should return true when need to check for recalc tickets" duration="3"/>
-    <testCase name="AioService undoConfirmedResult should show alert when exist result not confirmed" duration="4"/>
-    <testCase name="AioService undoConfirmedResult should show confirm when all result confirmed" duration="5"/>
-    <testCase name="AioService undoConfirmedResult should push request when click ok on confirm box" duration="114"/>
-    <testCase name="AioService changeConfirmResultSDTSetting show correct confirm when enbale is true" duration="5">
-      <failure message="TypeError: Cannot read properties of undefined (reading &apos;resourceName&apos;)"><![CDATA[TypeError: Cannot read properties of undefined (reading 'resourceName')
-    at AioService.changeConfirmResultSDTSetting (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\shared\services\aio.service.ts:137:82)
-    at D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\shared\services\aio.service.spec.ts:172:15
-    at _ZoneDelegate.invoke (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone.umd.js:412:32)
-    at ProxyZoneSpec.Object.<anonymous>.ProxyZoneSpec.onInvoke (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone-testing.umd.js:2164:43)
-    at _ZoneDelegate.invoke (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone.umd.js:411:38)
-    at ZoneImpl.run (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone.umd.js:147:47)
-    at wrappedFunc (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone-testing.umd.js:450:38)
-    at Object.<anonymous> (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\jest-each\build\bind.js:81:13)
-    at Promise.then.completed (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\jest-circus\build\utils.js:298:28)
-    at new Promise (<anonymous>)
-    at callAsyncCircusFn (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\jest-circus\build\utils.js:231:10)
-    at _callCircusTest (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\jest-circus\build\run.js:316:40)
-    at processTicksAndRejections (node:internal/process/task_queues:95:5)
-    at _runTest (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\jest-circus\build\run.js:252:3)
-    at _runTestsForDescribeBlock (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\jest-circus\build\run.js:126:9)
-    at _runTestsForDescribeBlock (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\jest-circus\build\run.js:121:9)
-    at _runTestsForDescribeBlock (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\jest-circus\build\run.js:121:9)
-    at run (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\jest-circus\build\run.js:71:3)
-    at runAndTransformResultsToJestFormat (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:122:21)]]></failure>
+  <file path="D:\Projects\nap-settlement-net-core\WebSite\app\baseball\components\calculate\table-result\table-result-body\table-result-body.component.spec.ts">
+    <testCase name="TableResultRowComponent should create" duration="52">
+      <failure message="TypeError: Cannot read properties of null (reading &apos;resultDetails&apos;)"><![CDATA[TypeError: Cannot read properties of null (reading 'resultDetails')
+    at CalculateStorage.getResultDetails (D:\Projects\nap-settlement-net-core\WebSite\app\baseball\services\calculate\calculate.storage.ts:87:41)
+    at new TableResultBodyComponent (D:\Projects\nap-settlement-net-core\WebSite\app\baseball\components\calculate\table-result\table-result-body\table-result-body.component.ts:31:27)
+    at NodeInjectorFactory.TableResultBodyComponent_Factory [as factory] (ng:///TableResultBodyComponent/ɵfac.js:5:10)
+    at getNodeInjectable (D:\Projects\nap-settlement-net-core\WebSite\app\node_modules\@angular\core\fesm2022\core.mjs:5984:44)
+    at createRootComponent (D:\Projects\nap-settlement-net-core\WebSite\app\node_modules\@angular\core\fesm2022\core.mjs:15998:35)
+    at ComponentFactory.create (D:\Projects\nap-settlement-net-core\WebSite\app\node_modules\@angular\core\fesm2022\core.mjs:15858:29)
+    at initComponent (D:\Projects\nap-settlement-net-core\WebSite\app\node_modules\@angular\core\fesm2022\testing.mjs:1979:51)
+    at _ZoneDelegate.invoke (D:\Projects\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone.umd.js:412:32)
+    at ProxyZoneSpec.Object.<anonymous>.ProxyZoneSpec.onInvoke (D:\Projects\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone-testing.umd.js:2164:43)
+    at _ZoneDelegate.invoke (D:\Projects\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone.umd.js:411:38)
+    at Object.onInvoke (D:\Projects\nap-settlement-net-core\WebSite\app\node_modules\@angular\core\fesm2022\core.mjs:14882:33)
+    at _ZoneDelegate.invoke (D:\Projects\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone.umd.js:411:38)
+    at ZoneImpl.run (D:\Projects\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone.umd.js:147:47)
+    at NgZone.run (D:\Projects\nap-settlement-net-core\WebSite\app\node_modules\@angular\core\fesm2022\core.mjs:14733:28)
+    at _TestBedImpl.createComponent (D:\Projects\nap-settlement-net-core\WebSite\app\node_modules\@angular\core\fesm2022\testing.mjs:1990:41)
+    at Function.createComponent (D:\Projects\nap-settlement-net-core\WebSite\app\node_modules\@angular\core\fesm2022\testing.mjs:1783:37)
+    at D:\Projects\nap-settlement-net-core\WebSite\app\baseball\components\calculate\table-result\table-result-body\table-result-body.component.spec.ts:44:23
+    at Generator.next (<anonymous>)
+    at fulfilled (D:\Projects\nap-settlement-net-core\WebSite\app\baseball\components\calculate\table-result\table-result-body\table-result-body.component.spec.ts:5:58)
+    at _ZoneDelegate.invoke (D:\Projects\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone.umd.js:412:32)
+    at ProxyZoneSpec.Object.<anonymous>.ProxyZoneSpec.onInvoke (D:\Projects\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone-testing.umd.js:2164:43)
+    at _ZoneDelegate.invoke (D:\Projects\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone.umd.js:411:38)
+    at ZoneImpl.run (D:\Projects\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone.umd.js:147:47)
+    at D:\Projects\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone.umd.js:2557:42
+    at _ZoneDelegate.invokeTask (D:\Projects\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone.umd.js:445:37)
+    at ProxyZoneSpec.Object.<anonymous>.ProxyZoneSpec.onInvokeTask (D:\Projects\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone-testing.umd.js:2195:43)
+    at _ZoneDelegate.invokeTask (D:\Projects\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone.umd.js:444:42)
+    at ZoneImpl.runTask (D:\Projects\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone.umd.js:195:51)
+    at drainMicroTaskQueue (D:\Projects\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone.umd.js:634:39)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)]]></failure>
     </testCase>
-    <testCase name="AioService changeConfirmResultSDTSetting show correct confirm when enbale is false" duration="4"/>
-    <testCase name="AioService changeConfirmResultSDTSetting should change push request and close popup when click ok on confirm box" duration="4">
-      <failure message="TypeError: Cannot read properties of undefined (reading &apos;resourceName&apos;)"><![CDATA[TypeError: Cannot read properties of undefined (reading 'resourceName')
-    at AioService.changeConfirmResultSDTSetting (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\shared\services\aio.service.ts:137:82)
-    at D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\shared\services\aio.service.spec.ts:184:15
-    at fakeAsyncFn (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone-testing.umd.js:1789:30)
-    at _ZoneDelegate.invoke (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone.umd.js:412:32)
-    at ProxyZoneSpec.Object.<anonymous>.ProxyZoneSpec.onInvoke (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone-testing.umd.js:2164:43)
-    at _ZoneDelegate.invoke (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone.umd.js:411:38)
-    at ZoneImpl.run (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone.umd.js:147:47)
-    at Object.wrappedFunc (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone-testing.umd.js:450:38)
-    at Promise.then.completed (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\jest-circus\build\utils.js:298:28)
-    at new Promise (<anonymous>)
-    at callAsyncCircusFn (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\jest-circus\build\utils.js:231:10)
-    at _callCircusTest (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\jest-circus\build\run.js:316:40)
-    at processTicksAndRejections (node:internal/process/task_queues:95:5)
-    at _runTest (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\jest-circus\build\run.js:252:3)
-    at _runTestsForDescribeBlock (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\jest-circus\build\run.js:126:9)
-    at _runTestsForDescribeBlock (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\jest-circus\build\run.js:121:9)
-    at _runTestsForDescribeBlock (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\jest-circus\build\run.js:121:9)
-    at run (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\jest-circus\build\run.js:71:3)
-    at runAndTransformResultsToJestFormat (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:122:21)]]></failure>
-    </testCase>
-    <testCase name="AioService changeConfirmResultSDTSetting should change setting for hedgeMatch when select hedgeMatch" duration="4">
-      <failure message="TypeError: Cannot read properties of undefined (reading &apos;resourceName&apos;)"><![CDATA[TypeError: Cannot read properties of undefined (reading 'resourceName')
-    at AioService.changeConfirmResultSDTSetting (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\shared\services\aio.service.ts:137:82)
-    at D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\shared\services\aio.service.spec.ts:199:15
-    at fakeAsyncFn (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone-testing.umd.js:1789:30)
-    at _ZoneDelegate.invoke (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone.umd.js:412:32)
-    at ProxyZoneSpec.Object.<anonymous>.ProxyZoneSpec.onInvoke (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone-testing.umd.js:2164:43)
-    at _ZoneDelegate.invoke (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone.umd.js:411:38)
-    at ZoneImpl.run (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone.umd.js:147:47)
-    at Object.wrappedFunc (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone-testing.umd.js:450:38)
-    at Promise.then.completed (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\jest-circus\build\utils.js:298:28)
-    at new Promise (<anonymous>)
-    at callAsyncCircusFn (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\jest-circus\build\utils.js:231:10)
-    at _callCircusTest (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\jest-circus\build\run.js:316:40)
-    at processTicksAndRejections (node:internal/process/task_queues:95:5)
-    at _runTest (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\jest-circus\build\run.js:252:3)
-    at _runTestsForDescribeBlock (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\jest-circus\build\run.js:126:9)
-    at _runTestsForDescribeBlock (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\jest-circus\build\run.js:121:9)
-    at _runTestsForDescribeBlock (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\jest-circus\build\run.js:121:9)
-    at run (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\jest-circus\build\run.js:71:3)
-    at runAndTransformResultsToJestFormat (D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:122:21)]]></failure>
-    </testCase>
-    <testCase name="AioService changeConfirmResultSetting should show confirm box " duration="4"/>
-    <testCase name="AioService changeConfirmResultSetting should change push request and close popup when click ok on confirm box" duration="24"/>
-    <testCase name="AioService changeConfirmResultSetting should change setting for hedgeMatch when select hedgeMatch" duration="23"/>
-    <testCase name="AioService changeConfirmResultSetting should change setting for old match and hedgeMatch when select old match and hedgeMatch" duration="21"/>
-    <testCase name="AioService generateDeterminedType should generate the determined type for full-time result" duration="3"/>
-    <testCase name="AioService generateDeterminedType should generate the determined type for half-time result" duration="6"/>
-    <testCase name="AioService generateDeterminedType should generate the determined type for other results" duration="4"/>
-    <testCase name="AioService generateDeterminedType should generate the determined type when no results are checked" duration="3"/>
   </file>
 </testExecutions>
