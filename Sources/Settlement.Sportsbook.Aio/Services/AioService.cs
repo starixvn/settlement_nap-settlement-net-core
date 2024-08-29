@@ -403,7 +403,7 @@ public class AioServiceImp(
 			return resultDetails;
 		}
 
-        var isMatchSeries = matchDetail.SportType == SportType.BaseBall && matchDetail.SessionTime.Equals(1);
+		var isMatchSeries = matchDetail.SportType == SportType.BaseBall && matchDetail.SessionTime.Equals(1);
 		var setViewed = GetViewedSet(matchDetail);
 		var finalResult = GetFinalResult(resultDetails);
 		var extraResults = GetExtraResults(resultDetails);
@@ -417,12 +417,12 @@ public class AioServiceImp(
 
 		SetIntervalsForResults(mainResults, mainResources);
 
-        var finalMainResults = isMatchSeries
-            ? mainResults.Where(r => r.ResourceId != ResourceType.ExtraInning)
-            : mainResults;
+		var finalMainResults = isMatchSeries
+			? mainResults.Where(r => r.ResourceId != ResourceType.ExtraInning)
+			: mainResults;
 
-        var resultOrdered = finalMainResults
-            .Where(r => r.IntervalNo <= setViewed)
+		var resultOrdered = finalMainResults
+			.Where(r => r.IntervalNo <= setViewed)
 			.Concat([finalResult])
 			.Concat(extraResults);
 
@@ -431,16 +431,16 @@ public class AioServiceImp(
 
 	private int GetViewedSet(Models.MatchDetail matchDetail)
 	{
-        var setViewed = (matchDetail.GameSession, matchDetail.SportType, matchDetail.LeagueType) switch
+		var setViewed = (matchDetail.GameSession, matchDetail.SportType, (int)matchDetail.SessionTime) switch
 		{
-            (3, SportType.Tennis, _) => GamePlay.Three,
-            (_, SportType.Tennis, _) => GamePlay.Five,
-            (0, SportType.TableTennis, _) => GamePlay.Seven,
-            (6, SportType.TableTennis, _) => GamePlay.Five,
-            (_, SportType.TableTennis, _) => matchDetail.GameSession,
-            (0, SportType.BaseBall, 1) => GamePlay.Seven, // match series
-            (0, SportType.BaseBall, _) => GamePlay.Nine,
-            (_, _, _) => matchDetail.GameSession
+			(3, SportType.Tennis, _) => GamePlay.Three,
+			(_, SportType.Tennis, _) => GamePlay.Five,
+			(0, SportType.TableTennis, _) => GamePlay.Seven,
+			(6, SportType.TableTennis, _) => GamePlay.Five,
+			(_, SportType.TableTennis, _) => matchDetail.GameSession,
+			(0, SportType.BaseBall, 1) => GamePlay.Seven, // match series
+			(0, SportType.BaseBall, _) => GamePlay.Nine,
+			(_, _, _) => matchDetail.GameSession
 		};
 
 		return setViewed;
@@ -474,12 +474,12 @@ public class AioServiceImp(
 		return resultDetails.Where(predicate).ToList();
 	}
 
-    private List<ResultDetail> GetExtraResults(List<ResultDetail> resultDetails)
-    {
-        return resultDetails
-             .Where(x => Resources.ExtraResults[SportType.BaseBall].Contains(x.ResourceId))
-             .ToList();
-    }
+	private List<ResultDetail> GetExtraResults(List<ResultDetail> resultDetails)
+	{
+		return resultDetails
+			 .Where(x => Resources.ExtraResults[SportType.BaseBall].Contains(x.ResourceId))
+			 .ToList();
+	}
 
 	private void SetIntervalsForResults(List<ResultDetail> setResults, List<ResourceIndex> indexes)
 	{
