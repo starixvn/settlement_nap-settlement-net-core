@@ -53,9 +53,13 @@
     <input id="final-checkbox" type="checkbox" [(ngModel)]="innings[i + 1].checked"
       (ngModelChange)="selectedOnLastMap(inning, $event)" />
   </td>
-  <td *ngIf="inning.resultState.isInningRow || (isMatchSeries && inning.resultState.isFullTimeRow)" class="status">
+  <td *ngIf="inning.resultState.isInningRow && !(isMatchSeries && inning.resultState.isFullTimeRow)" class="status">
     <input type="checkbox" [(ngModel)]="inning.checked" [disabled]="inning.resultState.isCheckBoxDisabled"
       (ngModelChange)="selectedOnMap(inning)" />
+  </td>
+  <td *ngIf="isMatchSeries && inning.resultState.isFullTimeRow" class="status">
+    <input type="checkbox" [(ngModel)]="inning.checked"
+      (ngModelChange)="selectedOnLastMap(inning,$event)" />
   </td>
 </tr>
 }
