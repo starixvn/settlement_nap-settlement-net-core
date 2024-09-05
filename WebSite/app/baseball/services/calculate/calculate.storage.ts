@@ -51,6 +51,15 @@ export class CalculateStorage implements ICalculateStorage {
       settleType: "MNL"
     };
     const matchFetched = (await this.#aioService.getMatch(matchQuery)) as Match;
+    matchFetched.resultDetails.forEach((map) => {
+      if (map.settlementStatusId === SettlementStatusId.Calculated) {
+        map.originalHomeValue = map.homeValue;
+        map.originalAwayValue = map.awayValue;
+      } else {
+        map.originalHomeValue = '0';
+        map.originalAwayValue = '0';
+      }
+    });
     this.#verificationBaseService.generateExternalScores(matchFetched, matchFetched.resultDetails, matchFetched.matchDetail.sportType, matchFetched.matchDetail.providerCount > 2 ? 3 : 2);
     this.#match.set(matchFetched);
     this.maxProviderCol = matchFetched.matchDetail.providerCount > 2 ? 3 : 2;
