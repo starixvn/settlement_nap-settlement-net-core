@@ -1,0 +1,30 @@
+@if(match() != null) {
+<div class="padding">
+  @if(isReadyMatch) {
+    <div >
+      <match-detail [matchDetail]="match().matchDetail" [permission]="match().permission"
+        [resultDetail]="mainResult"></match-detail>
+      <div (click)="refresh()" class="icon-refresh"></div>
+      <ticket-count [ticketCounts]="match().ticketCounts"></ticket-count>
+    </div>
+  
+    <div class="table-wrapper">
+      <div class="table-header">
+        <table>
+          <thead table-result-header></thead>
+        </table>
+      </div>
+      <div class="table-scroll">
+        <table>
+          <tbody table-result-body></tbody>
+        </table>
+      </div>
+      <div table-result-footer [permission]="match().permission" class="footer"></div>
+    </div>
+  
+    <resettle-checker (proceedEvent)="onResettleCheckboxChange($event)" [(checked)]="isResettleTickets" />
+  } @else {
+    <not-ready-match></not-ready-match>
+  }
+</div>
+}

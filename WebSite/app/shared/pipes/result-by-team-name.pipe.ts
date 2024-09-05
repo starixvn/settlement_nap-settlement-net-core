@@ -34,6 +34,8 @@ export class ResultByTeamNamePipe implements PipeTransform {
     private noneOrNoOption(betTypeGroup: number) {
         if (betTypeGroup === 3 || betTypeGroup === 13) {
             return 'No';
+        } else if(betTypeGroup === 15) {
+            return "Neither";
         } else {
             return 'None';
         }

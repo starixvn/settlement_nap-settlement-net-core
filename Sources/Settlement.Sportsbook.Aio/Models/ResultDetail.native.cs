@@ -29,7 +29,7 @@ public class ResultDetail
 
     public int InputType { get; set; }
 
-    public bool IsSpecialBettype { get; set; }
+    public byte IsSpecialBettype { get; set; }
 
     public int Map { get; set; }
 

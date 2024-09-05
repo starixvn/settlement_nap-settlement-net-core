@@ -10,6 +10,8 @@ public static class ResourceType
 
     public const string OverTime = "OT";
 
+    public const string ExtraInning = "EI";
+
     public const string FullTimeFirstGoal = "14F";
 
     public const string FullTimeLastGoal = "14L";
@@ -29,5 +31,10 @@ public static class Resources
     public static Dictionary<int, string[]> ResultFullTime => new()
     {
         {SportType.BasketBall, new[] { "Q1", "Q2", "Q3", "Q4", "OT"} }
+    };
+
+    public static Dictionary<int, string[]> ExtraResults => new()
+    {
+        {SportType.BaseBall, new[] { "8816" } },
     };
 }

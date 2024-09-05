@@ -50,7 +50,7 @@ describe('SpecificBettypeComponent', () => {
     });
 
     it('close - should call close function', () => {
-        spyOn(dialogRef, 'close');
+        jest.spyOn(dialogRef, 'close');
 
         component.close();
 
@@ -58,7 +58,7 @@ describe('SpecificBettypeComponent', () => {
     });
 
     it('ngOnInit - should call api to get bettype', async () => {
-        spyOn(requestService, 'getSpecificBetType').and.returnValue(of(["1", "2"]));
+        jest.spyOn(requestService, 'getSpecificBetType').mockReturnValue(of(["1", "2"]));
 
         await component.ngOnInit();
 

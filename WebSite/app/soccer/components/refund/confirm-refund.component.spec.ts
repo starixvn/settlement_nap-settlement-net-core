@@ -6,7 +6,6 @@ import { of } from 'rxjs';
 import { CalculateAction } from '../../../shared/constants';
 import { MaterialModule } from '../../../shared/material-module';
 import { BlockUIService, HttpRequestService, MessageBoxService } from '../../../shared/services';
-
 import { ConfirmRefundComponent } from './confirm-refund.component';
 import { RefundType } from './model/constant.native';
 import { BetDaq, BetFair, Match, MatchDetail } from './model/match.model';
@@ -30,9 +29,24 @@ describe('ConfirmRefundComponent', () => {
   const betFair = {} as BetFair;
   const betDaq = {} as BetDaq;
 
+  
+const permission = {
+  canCalculate: true,
+  canUncalculate: false,
+  canRefund: false,
+  isLeader: false,
+  canUncalculateInstant: false,
+  isTrader: false,
+  canViewSettlementLog: false,
+  canAutoPayout: false,
+  canMarkPending: false,
+  canMarkUnDecided: false,
+  canChangeScoreSource: false
+};
+
   const match: Match = {
     matchDetail,
-    permission: null,
+    permission: permission,
     resultDetails: [],
     hedgeMatchDetail: null,
     betDaq,
@@ -45,17 +59,24 @@ describe('ConfirmRefundComponent', () => {
     match,
     refundType,
   }
-
+  const errorMessage = "Error message";
   const successfulResult = {
     errCode: 0,
     errMsg: "",
     isSuccessful: true,
-  }
-  const unSuccessfulResult = {
-    errCode: 1,
-    errMsg: 'errorMessage',
-    isSuccessful: false,
+    childMatchIds:"",
+    settledSessionId:"",
+    hasResultAmendment:false
   };
+  const unSuccessfulResult = {
+      errCode: 1,
+      errMsg: errorMessage,
+      isSuccessful: false,
+      childMatchIds:"",
+      settledSessionId:"",
+      hasResultAmendment:false
+  };
+
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -98,7 +119,7 @@ describe('ConfirmRefundComponent', () => {
   describe('#ngOnInit', () => {
     it('should call right function for refund all', () => {
       component.data.refundType = RefundType.refundAll;
-      spyOn(verifyMatchService, 'setDisableSubRefundAll');
+      jest.spyOn(verifyMatchService, 'setDisableSubRefundAll');
 
       component.ngOnInit();
 
@@ -107,7 +128,7 @@ describe('ConfirmRefundComponent', () => {
 
     it('should call right function for refund FT', () => {
       component.data.refundType = RefundType.refundFT;
-      spyOn(verifyMatchService, 'setDisableSubRefundFT');
+      jest.spyOn(verifyMatchService, 'setDisableSubRefundFT');
 
       component.ngOnInit();
 
@@ -116,7 +137,7 @@ describe('ConfirmRefundComponent', () => {
   });
 
   it('close - should call close function', () => {
-    spyOn(dialogRef, 'close');
+    jest.spyOn(dialogRef, 'close');
 
     component.close();
 
@@ -124,73 +145,68 @@ describe('ConfirmRefundComponent', () => {
   });
 
   describe('refundSus', () => {
-    it('should close popup and return true when check match status passed', fakeAsync(async () => {
+    it('should close popup and return true when check match status passed', async () => {
       matchDetail.matchId = 10000;
       component.matchDetail = matchDetail;
-      spyOn(requestService, 'checkNewStatus').and.returnValue(of(successfulResult));
-      spyOn(dialogRef, 'close');
+      jest.spyOn(requestService, 'checkNewStatus').mockReturnValue(Promise.resolve(successfulResult));
+      jest.spyOn(dialogRef, 'close');
 
       await component.refundSus(CalculateAction.refundFullTime);
-      tick();
 
       expect(dialogRef.close).toHaveBeenCalledWith(true);
       expect(component.matchDetail.isSettleAbandonedMatchIBC).toBeTruthy();
-    }));
+    });
 
-    it('should show error when check match status failed', fakeAsync(async () => {
+    it('should show error when check match status failed', async () => {
       matchDetail.matchId = 10000;
       component.matchDetail = matchDetail;
-      spyOn(requestService, 'checkNewStatus').and.returnValue(of(unSuccessfulResult));
-      spyOn(toastrService, 'error');
+      jest.spyOn(requestService, 'checkNewStatus').mockReturnValue(Promise.resolve(unSuccessfulResult));
+      jest.spyOn(toastrService, 'error');
 
       await component.refundSus(CalculateAction.refundFullTime);
-      tick();
 
       expect(toastrService.error).toHaveBeenCalledWith(unSuccessfulResult.errMsg);
-    }));
+    });
   });
 
   describe('refundNotSdtAndPos', () => {
-    it('should close popup and return true when check match status passed and match exist settle determine', fakeAsync(async () => {
+    it('should close popup and return true when check match status passed and match exist settle determine', async () => {
       matchDetail.matchId = 10000;
       match.betFair.settleDeterminedBetFair = true;
       component.matchDetail = matchDetail;
       component.data.match = match;
-      spyOn(requestService, 'checkNewStatus').and.returnValue(of(successfulResult));
-      spyOn(dialogRef, 'close');
+      jest.spyOn(requestService, 'checkNewStatus').mockReturnValue(Promise.resolve(successfulResult));
+      jest.spyOn(dialogRef, 'close');
 
       await component.refundNotSdtAndPos(CalculateAction.refundFullTime);
-      tick();
 
       expect(dialogRef.close).toHaveBeenCalledWith(true);
       expect(component.matchDetail.isSettleAbandonedMatchIBC).toBeFalsy();
-    }));
+    });
 
-    it('should close popup and return false when check match status passed and match not exist settle determine', fakeAsync(async () => {
+    it('should close popup and return false when check match status passed and match not exist settle determine', async () => {
       matchDetail.matchId = 10000;
       match.betFair.settleDeterminedBetFair = false;
       component.matchDetail = matchDetail;
       component.data.match = match;
-      spyOn(requestService, 'checkNewStatus').and.returnValue(of(successfulResult));
-      spyOn(dialogRef, 'close');
+      jest.spyOn(requestService, 'checkNewStatus').mockReturnValue(Promise.resolve(successfulResult));
+      jest.spyOn(dialogRef, 'close');
 
       await component.refundNotSdtAndPos(CalculateAction.refundFullTime);
-      tick();
 
       expect(dialogRef.close).toHaveBeenCalledWith(false);
       expect(component.matchDetail.isSettleAbandonedMatchIBC).toBeFalsy();
-    }));
+    });
 
-    it('should show error when check match status failed', fakeAsync(async () => {
+    it('should show error when check match status failed', async () => {
       matchDetail.matchId = 10000;
       component.matchDetail = matchDetail;
-      spyOn(requestService, 'checkNewStatus').and.returnValue(of(unSuccessfulResult));
-      spyOn(toastrService, 'error');
+      jest.spyOn(requestService, 'checkNewStatus').mockReturnValue(Promise.resolve(unSuccessfulResult));
+      jest.spyOn(toastrService, 'error');
 
       await component.refundNotSdtAndPos(CalculateAction.refundFullTime);
-      tick();
 
       expect(toastrService.error).toHaveBeenCalledWith(unSuccessfulResult.errMsg);
-    }));
+    });
   });
 });

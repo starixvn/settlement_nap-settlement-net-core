@@ -1,0 +1,27 @@
+@if(match != null) {
+<div class="padding">
+  @if(isReadyMatch) {
+  <match-detail [matchDetail]="match.matchDetail" [permission]="match.permission" [isCalculate]="true"></match-detail>
+  <ticket-count [ticketCounts]="match.ticketCounts"></ticket-count>
+  <div class="calculation-actions">
+    @if(match.hedgeMatchDetail) {
+    <div class="hedge-match">
+      <input type="checkbox" [(ngModel)]="applyHedgeMatch" (ngModelChange)="changeApplyHedgeMatch($event)"
+        id="ApplyHedgeMatch" />
+      <label for="ApplyHedgeMatch">Apply for hedge match '<strong>{{ match.hedgeMatchDetail.matchCode }}</strong>'
+        also.</label>
+    </div>
+    }
+    <table>
+      <thead table-result-header></thead>
+      <tbody table-result-body></tbody>
+      <tfoot table-result-footer></tfoot>
+    </table>
+    <resettle-checker (proceedEvent)="onResettleCheckboxChange($event)"
+      [(checked)]="isResettleTickets"></resettle-checker>
+  </div>
+  } @else{
+  <not-ready-match></not-ready-match>
+  }
+</div>
+}

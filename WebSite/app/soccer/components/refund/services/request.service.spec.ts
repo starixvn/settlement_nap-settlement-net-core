@@ -1,8 +1,7 @@
 
 import { HttpClientModule } from '@angular/common/http';
-import { fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { url } from 'inspector';
 import { BlockUIService, HttpRequestService, MessageBoxService } from '../../../../shared/services';
 import { RefundQuery } from '../model/query.model';
 import { RequestService } from './request.service';
@@ -32,7 +31,6 @@ describe('Soccer refund - request service', () => {
     });
 
     it('getMatch - Call exact Url and param',
-        fakeAsync(
             () => {
                 // Arrange
                 const matchId = 7000000;
@@ -43,16 +41,14 @@ describe('Soccer refund - request service', () => {
                 };
 
                 // Act
-                spyOn(httpRequestService, 'postJson');
+                jest.spyOn(httpRequestService, 'postJson');
                 service.getMatch(7000000);
-                tick();
 
                 // Assert
                 expect(httpRequestService.postJson).toHaveBeenCalledWith(query, apiUrl);
-            }));
+            });
 
     it('checkNewStatus - Call exact Url and param',
-        fakeAsync(
             () => {
                 // Arrange
                 const matchId = 7000000;
@@ -64,16 +60,14 @@ describe('Soccer refund - request service', () => {
                 };
 
                 // Act
-                spyOn(httpRequestService, 'postJson');
+                jest.spyOn(httpRequestService, 'postJson');
                 service.checkNewStatus(7000000, "calc", true);
-                tick();
 
                 // Assert
                 expect(httpRequestService.postJson).toHaveBeenCalledWith(query, apiUrl);
-            }));
+            });
 
     it('getSpecificBetType - Call exact Url and param',
-        fakeAsync(
             () => {
                 // Arrange
                 const apiUrl = `${url}/specific-bet-type`;
@@ -84,15 +78,14 @@ describe('Soccer refund - request service', () => {
                 };
 
                 // Act
-                spyOn(httpRequestService, 'postJson');
+                jest.spyOn(httpRequestService, 'postJson');
                 service.getSpecificBetType("BetDaq", "ALL");
-                tick();
 
                 // Assert
                 expect(httpRequestService.postJson).toHaveBeenCalledWith(query, apiUrl);
-            }));
+            });
 
-    it('checkingMarkedTicket - Call exact Url and param', fakeAsync(
+    it('checkingMarkedTicket - Call exact Url and param', 
         () => {
             // Arrange
             const apiUrl = `${url}/checking-marked-tickets`;
@@ -103,15 +96,14 @@ describe('Soccer refund - request service', () => {
             };
 
             // Act
-            spyOn(httpRequestService, 'postJson');
+            jest.spyOn(httpRequestService, 'postJson');
             service.checkingMarkedTicket("Refund FT", 10000);
-            tick();
 
             // Assert
             expect(httpRequestService.postJson).toHaveBeenCalledWith(query, apiUrl, false);
-        }));
+        });
 
-    it('refundMatch - Call exact Url and param', fakeAsync(
+    it('refundMatch - Call exact Url and param', 
         () => {
             // Arrange
             const apiUrl = `${url}/refund`;
@@ -138,14 +130,13 @@ describe('Soccer refund - request service', () => {
             };
 
             // Act
-            spyOn(httpRequestService, 'postJson');
+            jest.spyOn(httpRequestService, 'postJson');
             service.refundMatch(query);
-            tick();
 
             // Assert
             expect(httpRequestService.postJson).toHaveBeenCalledWith(query, apiUrl);
-        }));
-    it('refundRunningThirdPartyTickets - Call exact Url and param', fakeAsync(
+        });
+    it('refundRunningThirdPartyTickets - Call exact Url and param',
         () => {
             // Arrange
             const apiUrl = `${url}/refund-running-third-party-ticket`;
@@ -156,16 +147,15 @@ describe('Soccer refund - request service', () => {
             };
 
             // Act
-            spyOn(httpRequestService, 'postJson');
+            jest.spyOn(httpRequestService, 'postJson');
             service.refundRunningThirdPartyTickets(10000, "Refund FT");
-            tick();
 
             // Assert
             expect(httpRequestService.postJson).toHaveBeenCalledWith(query, apiUrl);
-        }));
+        });
 
 
-    it('getMatchDetailThirdPartyBetTickets - Call exact Url and param', fakeAsync(
+    it('getMatchDetailThirdPartyBetTickets - Call exact Url and param',
         () => {
             // Arrange
             const apiUrl = `${url}/third-party-bet-tickets-checking`;
@@ -175,15 +165,14 @@ describe('Soccer refund - request service', () => {
             };
 
             // Act
-            spyOn(httpRequestService, 'postJson');
+            jest.spyOn(httpRequestService, 'postJson');
             service.getMatchDetailThirdPartyBetTickets(10000);
-            tick();
 
             // Assert
             expect(httpRequestService.postJson).toHaveBeenCalledWith(query, apiUrl);
-        }));
+        });
 
-    it('moveBetType - Call exact Url and param', fakeAsync(
+    it('moveBetType - Call exact Url and param', 
         () => {
             // Arrange
             const apiUrl = `${url}/move-third-party-bet-ticket`;
@@ -195,12 +184,10 @@ describe('Soccer refund - request service', () => {
             };
 
             // Act
-            spyOn(httpRequestService, 'postJson');
+            jest.spyOn(httpRequestService, 'postJson');
             service.moveBetType(10000, 20000, "abc1234", "Refund FT");
-            tick();
 
             // Assert
             expect(httpRequestService.postJson).toHaveBeenCalledWith(query, apiUrl);
-        }));
-
+        });
 });

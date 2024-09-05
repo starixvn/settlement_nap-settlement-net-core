@@ -1,8 +1,6 @@
 import { ComponentFixture, fakeAsync, TestBed, tick } from "@angular/core/testing";
-import { ModalContentDialogComponent, ModalDialogComponent } from "../../../shared/components";
 import { CalculationMatchDetailComponent } from ".";
 import { MessageBoxService } from "../../../shared/services";
-import { BrowserDynamicTestingModule } from "@angular/platform-browser-dynamic/testing";
 import { GoalIconService } from "./services/goal-icon.service";
 import { VerifyScoreGoalService } from "./services/verify-score-goal.service";
 import { FormsModule } from "@angular/forms";
@@ -12,11 +10,12 @@ import { GoalIcon } from "../../models";
 import { Language } from "../../../shared/language.native";
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
 import { VerificationBaseService } from "../../services/verification-base.service";
+import { ModalDialogComponent } from '../../../shared/components/modal-dialog/modal-dialog.component';
+import { ModalContentDialogComponent } from '../../../shared/components/modal-dialog/modal-content-dialog.component';
 
 describe('CalculationComponent', () => {
     let component: CalculationMatchDetailComponent;
     let fixture: ComponentFixture<CalculationMatchDetailComponent>;
-    let messageBoxService: MessageBoxService;
     let goalIconService: GoalIconService;
     let verifyScoreGoalService: VerifyScoreGoalService;
     let matchDetail = CreateDataTest.MatchDetail();
@@ -26,13 +25,13 @@ describe('CalculationComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [
+                ModalDialogComponent,
+                ModalContentDialogComponent,
                 FormsModule,
                 NgbModule
             ],
             declarations: [
                 CalculationMatchDetailComponent,
-                ModalDialogComponent,
-                ModalContentDialogComponent,
                 ScorePipe
             ],
             providers: [
@@ -48,7 +47,6 @@ describe('CalculationComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(CalculationMatchDetailComponent);
         component = fixture.componentInstance;
-        messageBoxService = fixture.debugElement.injector.get(MessageBoxService);
         goalIconService = fixture.debugElement.injector.get(GoalIconService);
         verifyScoreGoalService = fixture.debugElement.injector.get(VerifyScoreGoalService);
         component.matchDetail = matchDetail;
@@ -126,7 +124,7 @@ describe('CalculationComponent', () => {
 
     it('goalRecordModelChange - should set correct value', () => {
         const goal = new GoalIcon('1', '1', '1', '1');
-        spyOn(goalIconService, 'generateGoalIcon').and.returnValue(goal);
+        jest.spyOn(goalIconService, 'generateGoalIcon').mockReturnValue(goal);
 
         component.goalRecordModelChange('H');
 
@@ -137,7 +135,7 @@ describe('CalculationComponent', () => {
     describe('changeScore', () => {
         it('always emit match detail when call function', () => {
             component.matchDetail = matchDetail;
-            spyOn(component.scoreChange, 'emit');
+            jest.spyOn(component.scoreChange, 'emit');
 
             component.changeScore();
 
@@ -187,8 +185,8 @@ describe('CalculationComponent', () => {
             matchDetail.finalHomeScore = 0;
         });
         it('should emit match settled message when match settled', () => {
-            spyOn(component.errorMsgEmitter, 'emit');
-            spyOn(verifyScoreGoalService, 'isFullTimeSettled').and.returnValue(true);
+            jest.spyOn(component.errorMsgEmitter, 'emit');
+            jest.spyOn(verifyScoreGoalService, 'isFullTimeSettled').mockReturnValue(true);
 
             component.copyScore();
 
@@ -199,9 +197,9 @@ describe('CalculationComponent', () => {
             matchDetail.exFTAwayScore = null;
             matchDetail.exFTHomeScore = 1;
             component.matchDetail = matchDetail;
-            spyOn(component.errorMsgEmitter, 'emit');
-            spyOn(verifyScoreGoalService, 'isFullTimeSettled').and.returnValue(false);
-            spyOn(verifyScoreGoalService, 'isHalfTimeSettled').and.returnValue(true);
+            jest.spyOn(component.errorMsgEmitter, 'emit');
+            jest.spyOn(verifyScoreGoalService, 'isFullTimeSettled').mockReturnValue(false);
+            jest.spyOn(verifyScoreGoalService, 'isHalfTimeSettled').mockReturnValue(true);
 
             component.copyScore();
 
@@ -214,9 +212,9 @@ describe('CalculationComponent', () => {
             matchDetail.exFTAwayScore = null;
             matchDetail.exFTHomeScore = 1;
             component.matchDetail = matchDetail;
-            spyOn(component.errorMsgEmitter, 'emit');
-            spyOn(verifyScoreGoalService, 'isFullTimeSettled').and.returnValue(false);
-            spyOn(verifyScoreGoalService, 'isHalfTimeSettled').and.returnValue(false);
+            jest.spyOn(component.errorMsgEmitter, 'emit');
+            jest.spyOn(verifyScoreGoalService, 'isFullTimeSettled').mockReturnValue(false);
+            jest.spyOn(verifyScoreGoalService, 'isHalfTimeSettled').mockReturnValue(false);
 
             component.copyScore();
 
@@ -227,8 +225,8 @@ describe('CalculationComponent', () => {
             matchDetail.exFTAwayScore = 2;
             matchDetail.exFTHomeScore = 1;
             component.matchDetail = matchDetail;
-            spyOn(verifyScoreGoalService, 'isFullTimeSettled').and.returnValue(false);
-            spyOn(verifyScoreGoalService, 'isHalfTimeSettled').and.returnValue(true);
+            jest.spyOn(verifyScoreGoalService, 'isFullTimeSettled').mockReturnValue(false);
+            jest.spyOn(verifyScoreGoalService, 'isHalfTimeSettled').mockReturnValue(true);
 
             component.copyScore();
             const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
@@ -247,8 +245,8 @@ describe('CalculationComponent', () => {
             matchDetail.exFTAwayScore = 2;
             matchDetail.exFTHomeScore = 1;
             component.matchDetail = matchDetail;
-            spyOn(verifyScoreGoalService, 'isFullTimeSettled').and.returnValue(false);
-            spyOn(verifyScoreGoalService, 'isHalfTimeSettled').and.returnValue(false);
+            jest.spyOn(verifyScoreGoalService, 'isFullTimeSettled').mockReturnValue(false);
+            jest.spyOn(verifyScoreGoalService, 'isHalfTimeSettled').mockReturnValue(false);
 
             component.copyScore();
             const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
@@ -267,9 +265,9 @@ describe('CalculationComponent', () => {
             matchDetail.exFTAwayScore = null;
             matchDetail.exFTHomeScore = 1;
             component.matchDetail = matchDetail;
-            spyOn(component.errorMsgEmitter, 'emit');
-            spyOn(verifyScoreGoalService, 'isFullTimeSettled').and.returnValue(false);
-            spyOn(verifyScoreGoalService, 'isHalfTimeSettled').and.returnValue(false);
+            jest.spyOn(component.errorMsgEmitter, 'emit');
+            jest.spyOn(verifyScoreGoalService, 'isFullTimeSettled').mockReturnValue(false);
+            jest.spyOn(verifyScoreGoalService, 'isHalfTimeSettled').mockReturnValue(false);
 
             component.copyScore();
             const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
@@ -288,9 +286,9 @@ describe('CalculationComponent', () => {
             matchDetail.exFTHomeScore = 3;
             matchDetail.exFTAwayScore = 4;
             component.matchDetail = matchDetail;
-            spyOn(component.errorMsgEmitter, 'emit');
-            spyOn(verifyScoreGoalService, 'isFullTimeSettled').and.returnValue(false);
-            spyOn(verifyScoreGoalService, 'isHalfTimeSettled').and.returnValue(false);
+            jest.spyOn(component.errorMsgEmitter, 'emit');
+            jest.spyOn(verifyScoreGoalService, 'isFullTimeSettled').mockReturnValue(false);
+            jest.spyOn(verifyScoreGoalService, 'isHalfTimeSettled').mockReturnValue(false);
 
             component.copyScore();
             const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;

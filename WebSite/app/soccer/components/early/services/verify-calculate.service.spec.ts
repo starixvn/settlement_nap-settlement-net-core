@@ -17,15 +17,16 @@ export class CreateDataTest {
         isInvalid: boolean) {
         return {
             resourceId: null,
-            map: 1,
-            ticketStatus: null,
-            betType,
-            betTypeName: null,
+            resourceName:'',
             homeValue: home,
             awayValue: away,
             resultStatusId: null,
             settlementStatusId: null,
             resultStatus: null,
+            map: 1,
+            ticketStatus: null,
+            betType,
+            betTypeName: null,
             checked: null,
             isResultWarning: true,
             isHomeValueWarning: null,
@@ -33,6 +34,7 @@ export class CreateDataTest {
             isInvalidValue: isInvalid,
             isNotTaken: false,
             isSettleDetermined: false,
+            isSettleDeterminedOriginal: false,
             isInvalidSelectedProceed: false,
             isNotExistedValue: false,
             resultSettingData: new ResultSettingModel(),
@@ -113,13 +115,13 @@ describe('Soccer - VerifyCalculateService', () => {
             const resultDetails: ResultDetail[] = [];
             resultDetails.push(CreateDataTest.FakeDataOne(BetTypes.PenaltyShootout1X2, "", "", false));
 
-            spyOn(penaltyShootoutService, 'isSelectedNotTaken').and.returnValue(true);
+            jest.spyOn(penaltyShootoutService, 'isSelectedNotTaken').mockReturnValue(true);
             const actual = verifyCalculateService.verifyPenaltyBettypeBeforeCalculation(resultDetails, []);
             expect(actual).toEqual(Resources.NotTaken);
         });
 
         it('Should return InvalidAssociatedHomeAway message when there are not settled', () => {
-            spyOn(verifyService, 'isValidOnRound').and.returnValue(true);
+            jest.spyOn(verifyService, 'isValidOnRound').mockReturnValue(true);
             const actual = verifyCalculateService.verifyPenaltyBettypeBeforeCalculation([], []);
             expect(actual).toEqual(Resources.InvalidAssociatedHomeAway);
         });
@@ -143,25 +145,25 @@ describe('Soccer - VerifyCalculateService', () => {
 
     describe('verifyCornerBettypeBeforeCalculation', () => {
         it('Should return InvalidMinuteTimeOfFirstCorner message when isInvalidMinuteTimeOfFirstCorner = true.', () => {
-            spyOn(verifyService, 'isInvalidMinuteTimeOfFirstCorner').and.returnValue(true);
+            jest.spyOn(verifyService, 'isInvalidMinuteTimeOfFirstCorner').mockReturnValue(true);
             const actual = verifyCalculateService.verifyCornerBettypeBeforeCalculation([]);
             expect(actual).toEqual(Resources.InvalidMinuteTimeOfFirstCorner);
         });
 
         it('Should return InvalidMinuteTimeOf2HFirstCorner message when isInvalidMinuteTimeOf2HFirstCorner = true.', () => {
-            spyOn(verifyService, 'isInvalidMinuteTimeOf2HFirstCorner').and.returnValue(true);
+            jest.spyOn(verifyService, 'isInvalidMinuteTimeOf2HFirstCorner').mockReturnValue(true);
             const actual = verifyCalculateService.verifyCornerBettypeBeforeCalculation([]);
             expect(actual).toEqual(Resources.InvalidMinuteTimeOf2HFirstCorner);
         });
 
         it('Should return InvalidSecondTime message when isInvalidSecondTime = true.', () => {
-            spyOn(verifyService, 'isInvalidSecondTime').and.returnValue(true);
+            jest.spyOn(verifyService, 'isInvalidSecondTime').mockReturnValue(true);
             const actual = verifyCalculateService.verifyCornerBettypeBeforeCalculation([]);
             expect(actual).toEqual(Resources.InvalidSecondTime);
         });
 
         it('Should return NotSpecifyValidResults message when isOverTime = true.', () => {
-            spyOn(verifyService, 'isOverTime').and.returnValue(true);
+            jest.spyOn(verifyService, 'isOverTime').mockReturnValue(true);
             const actual = verifyCalculateService.verifyCornerBettypeBeforeCalculation([]);
             expect(actual).toEqual(Language.NotSpecifyValidResults);
         });
@@ -174,31 +176,31 @@ describe('Soccer - VerifyCalculateService', () => {
 
     describe('verifyPenaltyBettypeBeforeRefund', () => {
         it('Should return NotSpecifyValidResults message when isEmptyResultValue = true.', () => {
-            spyOn(verifyRefundService, 'isEmptyResultValue').and.returnValue(true);
-            const actual = verifyCalculateService.verifyPenaltyBettypeBeforeRefund([],[]);
+            jest.spyOn(verifyRefundService, 'isEmptyResultValue').mockReturnValue(true);
+            const actual = verifyCalculateService.verifyPenaltyBettypeBeforeRefund([],[],[]);
             expect(actual).toEqual(Language.NotSpecifyValidResults);
         });
 
         it('Should return NotTaken message when isExistedNotTaken = true.', () => {
-            spyOn(verifyRefundService, 'isExistedNotTaken').and.returnValue(true);
-            const actual = verifyCalculateService.verifyPenaltyBettypeBeforeRefund([],[]);
+            jest.spyOn(verifyRefundService, 'isExistedNotTaken').mockReturnValue(true);
+            const actual = verifyCalculateService.verifyPenaltyBettypeBeforeRefund([],[],[]);
             expect(actual).toEqual(Resources.NotTaken);
         });
 
         it('Should return InvalidAssociatedHomeAway message when isValidOnRound = true.', () => {
-            spyOn(verifyService, 'isValidOnRound').and.returnValue(true);
-            const actual = verifyCalculateService.verifyPenaltyBettypeBeforeRefund([],[]);
+            jest.spyOn(verifyService, 'isValidOnRound').mockReturnValue(true);
+            const actual = verifyCalculateService.verifyPenaltyBettypeBeforeRefund([],[],[]);
             expect(actual).toEqual(Resources.InvalidAssociatedHomeAway);
         });
 
         it('Should return InconsistentValue message when isInconsistentValue = true.', () => {
-            spyOn(verifyRefundService, 'isInconsistentValue').and.returnValue(true);
-            const actual = verifyCalculateService.verifyPenaltyBettypeBeforeRefund([],[]);
+            jest.spyOn(verifyRefundService, 'isInconsistentValue').mockReturnValue(true);
+            const actual = verifyCalculateService.verifyPenaltyBettypeBeforeRefund([],[],[]);
             expect(actual).toEqual(Resources.InconsistentValue);
         });
 
         it('Should return empty when pass all value', () => {
-            const actual = verifyCalculateService.verifyPenaltyBettypeBeforeRefund([],[]);
+            const actual = verifyCalculateService.verifyPenaltyBettypeBeforeRefund([],[],[]);
             expect(actual).toEqual("");
         });
     });

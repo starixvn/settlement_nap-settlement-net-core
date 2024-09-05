@@ -9,7 +9,11 @@ import { GeneralMatch, HedgeMatchDetail, ResultDetail, SaveScoreQuery } from '..
 import { ResultSettingType, ResultStatus, ResourceIds } from '../../shared/constants';
 import { LeagueSettings } from '../models/league-settings.model';
 
-@Injectable()
+@Injectable(
+    {
+        providedIn: 'root'
+    }
+)
 export class AioService {
     private readonly aioApi = `/api/aio`;
     private readonly leagueSettingApi = '/api/league-settings'

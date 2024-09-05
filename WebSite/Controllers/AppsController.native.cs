@@ -156,6 +156,24 @@ public class AppsController(IConfiguration configuration) : Controller
         return SetView("Other Sports - Refund", PagesType.Refund, ViewPath.OtherSports);
     }
 
+    [HttpGet("baseball-early")]
+    public IActionResult BaseballEarly()
+    {
+        return SetView("Baseball - Early Settlement", PagesType.EarlySettle, ViewPath.Baseball);
+    }
+
+    [HttpGet("baseball-recalculate")]
+    public IActionResult BaseballRecalculate()
+    {
+        return SetView("Baseball - Calculation", PagesType.Recalculate, ViewPath.Baseball);
+    }
+
+    [HttpGet("baseball-refund")]
+    public IActionResult BaseballRefund()
+    {
+        return SetView("Baseball - Refund", PagesType.Refund, ViewPath.Baseball);
+    }
+
     [HttpGet("notification")]
     public IActionResult Notification(int top)
     {

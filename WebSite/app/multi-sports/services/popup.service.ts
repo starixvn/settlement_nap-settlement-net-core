@@ -34,7 +34,8 @@ export class PopupService {
     SportType.basketBall,
     SportType.cricket,
     SportType.volleyBall,
-    SportType.tableTennis
+    SportType.tableTennis,
+    SportType.baseBall
   ];
   public properties = new PopupProperties();
   constructor(
@@ -83,8 +84,8 @@ export class PopupService {
     const sportName = PopularSports.get(match.sportType);
     this.properties.src = `/apps/${sportName}-early?matchId=${match.matchId}&sportType=${match.sportType}`;
     this.properties.width =
-      match.sportType === SportType.cricket
-        ? "1400px"
+      match.sportType === SportType.cricket || match.sportType === SportType.baseBall
+        ? "1450px"
         : this.isPopupEarlySOP(match.sportType)
           ? "1570px"
           : "845px";
@@ -163,6 +164,9 @@ export class PopupService {
     } else if (sportType === SportType.basketBall) {
       this.properties.width = "1005px";
       this.properties.height = "820px";
+    }else if (sportType === SportType.baseBall) {
+      this.properties.width = "1005px";
+      this.properties.height = "1000px";
     } else {
       this.properties.width = "820px";
       this.properties.height = "500px";

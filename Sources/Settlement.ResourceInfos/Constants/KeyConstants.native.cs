@@ -22,6 +22,8 @@ public static class KeyConstants
 
     public const string TennisKey = "TennisKey";
 
+    public const string BaseballKey = "BaseballKey";
+
     public static Dictionary<int, string> KeyDictionary => new()
     {
         {SportType.Badminton, BadmintonKey},

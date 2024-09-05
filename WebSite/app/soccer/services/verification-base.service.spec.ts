@@ -91,7 +91,7 @@ describe('Soccer refund - VerificationBaseService', () => {
             matchDetail.goalRecord = "A;";
             matchDetail.applyGoalRecord = true;
 
-            spyOn(service, 'isHtGoalRecordInvalid').and.returnValue(true);
+            jest.spyOn(service, 'isHtGoalRecordInvalid').mockReturnValue(true);
 
             const actual = service.isHTGoalRecordConsistent(matchDetail);
 
@@ -103,7 +103,7 @@ describe('Soccer refund - VerificationBaseService', () => {
             matchDetail.halfTimeHomeScore = null;
             matchDetail.goalRecord = "H;";
             matchDetail.applyGoalRecord = true;
-            spyOn(service, 'isHtGoalRecordInvalid').and.returnValue(true);
+            jest.spyOn(service, 'isHtGoalRecordInvalid').mockReturnValue(true);
 
             const actual = service.isHTGoalRecordConsistent(matchDetail);
 

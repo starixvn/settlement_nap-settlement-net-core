@@ -6,14 +6,14 @@ import * as _ from 'lodash';
 @Injectable()
 
 export class GenerateFilterService {
-    private createListOption(items) {
-        const tickets: ItemsSelect[] = [];
+    public  createListOption(items) {
+        const tickets = new Array<ItemsSelect>();
         items.forEach((item) => {
             const temp = new ItemsSelect(
                 item.id,
                 item.value,
                 item.text,
-                true,
+                item.checked,
                 true,
                 true,
                 []);

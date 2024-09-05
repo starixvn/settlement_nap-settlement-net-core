@@ -60,6 +60,7 @@ public class MultipleServerAioServiceImp(
         {
             var ticketDetail = ticketDetails.Find(detail => detail.ResourceId == result.ResourceId);
             result.TicketStatus = CreateTicketStatus(ticketDetail, settleType);
+            result.IsSpecialBettype = ticketDetail?.IsSpecialBettype ?? 0;
         }
     }
 

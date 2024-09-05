@@ -8,7 +8,7 @@
     "ng": "ng",
     "build": "ng build --configuration production",
     "start": "ng serve",
-    "test": "jest --debug --no-cache shared/services/aio.service.spec.ts",
+    "test": "jest --debug --no-cache fast-market/services",
     "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand other-sports/components/halftime-fulltime/halftime-fulltime-calculation.component.spec.ts",
     "test:watch": "jest --watch happy5/components/happy5/components/matches.component.spec.ts",
     "test:coverage": "jest --runInBand --coverage multi-sports/components/league.component.spec",
@@ -54,6 +54,8 @@
     "zone.js": "^0.14.3"
   },
   "devDependencies": {
+    "@angular-devkit/build-angular": "^17.1.0",
+    "@angular/compiler-cli": "^17.1.0",
     "@types/babel__core": "^7.20.5",
     "@types/lodash": "^4.14.191",
     "@types/node": "^18.11.18",

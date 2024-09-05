@@ -1,0 +1,10 @@
+@if(match() != null) {
+<div class="padding">
+  <match-detail [matchDetail]="match().matchDetail" [permission]="match().permission"
+    [resultDetail]="resultDetails()"></match-detail>
+  <div class="refund-actions">
+    <table-result [match]="match()"> </table-result>
+  </div>
+</div>
+
+}

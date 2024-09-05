@@ -7,6 +7,7 @@ export class GroupMap {
     public isHoldResult: boolean;
     public groupName: string;
     public teamName: string;
+    public icon: string;
 
     constructor(groupName: string, resultDetail: ResultDetail[]) {
         this.groupName = groupName;

@@ -158,8 +158,8 @@ describe('ConfirmScoreComponent', () => {
 
   describe('proceedRefundFullTime', () => {
     it('should close popup and return true when verify passed', () => {
-      spyOn(verifyActionService, 'verifyFulltime').and.returnValue('');
-      spyOn(dialogRef, 'close');
+      jest.spyOn(verifyActionService, 'verifyFulltime').mockReturnValue('');
+      jest.spyOn(dialogRef, 'close');
 
       component.proceedRefundFullTime();
 
@@ -167,8 +167,8 @@ describe('ConfirmScoreComponent', () => {
     });
 
     it('should show error when verify failed', () => {
-      spyOn(verifyActionService, 'verifyFulltime').and.returnValue('error');
-      spyOn(toastrService, 'error');
+      jest.spyOn(verifyActionService, 'verifyFulltime').mockReturnValue('error');
+      jest.spyOn(toastrService, 'error');
 
       component.proceedRefundFullTime();
 
@@ -178,8 +178,8 @@ describe('ConfirmScoreComponent', () => {
 
   describe('proceedRefundAll', () => {
     it('should close popup and return true when verify passed', () => {
-      spyOn(verifyActionService, 'verifyAll').and.returnValue('');
-      spyOn(dialogRef, 'close');
+      jest.spyOn(verifyActionService, 'verifyAll').mockReturnValue('');
+      jest.spyOn(dialogRef, 'close');
 
       component.proceedRefundAll();
 
@@ -187,8 +187,8 @@ describe('ConfirmScoreComponent', () => {
     });
 
     it('should show error when verify failed', () => {
-      spyOn(verifyActionService, 'verifyAll').and.returnValue('error');
-      spyOn(toastrService, 'error');
+      jest.spyOn(verifyActionService, 'verifyAll').mockReturnValue('error');
+      jest.spyOn(toastrService, 'error');
 
       component.proceedRefundAll();
 
@@ -198,7 +198,7 @@ describe('ConfirmScoreComponent', () => {
 
 
   it('openPopupSpecificBetTypes - open popup', () => {
-    spyOn(dialog, 'open');
+    jest.spyOn(dialog, 'open');
 
     component.openPopupSpecificBetTypes('Normal');
 

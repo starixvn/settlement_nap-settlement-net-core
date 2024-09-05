@@ -1,6 +1,9 @@
 ﻿import { Injectable, EventEmitter } from '@angular/core';
 
-@Injectable()
+@Injectable(
+    {
+        providedIn: 'root'
+    })
 export class BlockUIService {
     public blockUIEvent: EventEmitter<boolean>;
 

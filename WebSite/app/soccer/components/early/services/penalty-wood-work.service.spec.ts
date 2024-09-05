@@ -12,6 +12,7 @@ export class CreateDataTest {
         away: string) {
         return {
             resourceId: null,
+            resourceName:'',
             map: 1,
             ticketStatus: null,
             betType,
@@ -28,6 +29,7 @@ export class CreateDataTest {
             isInvalidValue: false,
             isNotTaken: false,
             isSettleDetermined: false,
+            isSettleDeterminedOriginal: false,
             isInvalidSelectedProceed: false,
             isNotExistedValue: false,
             resultSettingData: new ResultSettingModel(),

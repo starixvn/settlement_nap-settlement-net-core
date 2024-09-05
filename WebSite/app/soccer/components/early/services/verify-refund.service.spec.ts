@@ -12,15 +12,16 @@ export class CreateDataTest {
         isSettleDetermined: boolean) {
         return {
             resourceId: null,
-            map: 1,
-            ticketStatus: null,
-            betType,
-            betTypeName: null,
+            resourceName:'',
             homeValue: home,
             awayValue: away,
             resultStatusId: null,
             settlementStatusId: null,
             resultStatus: null,
+            map: 1,
+            ticketStatus: null,
+            betType,
+            betTypeName: null,
             checked: null,
             isResultWarning: true,
             isHomeValueWarning: null,
@@ -28,6 +29,7 @@ export class CreateDataTest {
             isInvalidValue: true,
             isNotTaken: false,
             isSettleDetermined,
+            isSettleDeterminedOriginal: false,
             isInvalidSelectedProceed: false,
             isNotExistedValue: false,
             resultSettingData: new ResultSettingModel(),
@@ -58,7 +60,7 @@ describe('Soccer - VerifyRefundService', () => {
         const resultDetails: ResultDetail[] = [];
         resultDetails.push(CreateDataTest.FakeData(BetTypes.HomePenaltyShootout, "", "", false));
 
-        spyOn(penaltyShootoutService, 'isEmptyHomeOrAwayValue').and.returnValue(true);
+        jest.spyOn(penaltyShootoutService, 'isEmptyHomeOrAwayValue').mockReturnValue(true);
         expect(service.isEmptyResultValue(resultDetails)).toBe(true);
     });
 
@@ -78,7 +80,7 @@ describe('Soccer - VerifyRefundService', () => {
         it('Should return true when any bettypes is not selected = Not Taken', () => {
             const resultDetails: ResultDetail[] = [];
             resultDetails.push(CreateDataTest.FakeData(BetTypes.HomePenaltyShootout, "D", "", true));
-            spyOn(penaltyShootoutService, 'isSelectedNotTaken').and.returnValue(false);
+            jest.spyOn(penaltyShootoutService, 'isSelectedNotTaken').mockReturnValue(false);
             expect(service.isExistedNotTaken(resultDetails)).toBe(true);
         });
     });

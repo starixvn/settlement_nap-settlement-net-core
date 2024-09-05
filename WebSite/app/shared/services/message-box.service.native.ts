@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ModalDialogComponent } from '../components/modal-dialog/modal-dialog.component';
 import { ModalDialogMessage } from '../models';
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class MessageBoxService {
     constructor(private readonly modalService: NgbModal) {
     }

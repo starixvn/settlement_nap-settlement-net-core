@@ -30,7 +30,7 @@ describe('Soccer - request service', () => {
         expect(service).toBeTruthy();
     });
 
-    it('getMatch - Call exact Url and param', fakeAsync(() => {
+    it('getMatch - Call exact Url and param', () => {
         const matchId = 7000000;
         const url = `${ApiUrl}/get-match`;
         const query = {
@@ -38,13 +38,13 @@ describe('Soccer - request service', () => {
             isRefundPage: false,
         };
 
-        spyOn(httpRequestService, 'postJson');
+        jest.spyOn(httpRequestService, 'postJson');
         service.getMatch(7000000);
 
         expect(httpRequestService.postJson).toHaveBeenCalledWith(query, url);
-    }));
+    });
 
-    it('checkNewStatus - Call exact Url and param', fakeAsync(() => {
+    it('checkNewStatus - Call exact Url and param', () => {
         const matchId = 7000000;
         const url = `${ApiUrl}/check-status`;
         const query = {
@@ -52,55 +52,55 @@ describe('Soccer - request service', () => {
             actionName: "calc",
         };
 
-        spyOn(httpRequestService, 'postJson');
+        jest.spyOn(httpRequestService, 'postJson');
         service.checkNewStatus(7000000, "calc");
 
         expect(httpRequestService.postJson).toHaveBeenCalledWith(query, url);
-    }));
+    });
 
-    it('getLastestMatchResult - Call exact Url and param', fakeAsync(() => {
+    it('getLastestMatchResult - Call exact Url and param', () => {
         const matchId = 7000000;
         const url = `${ApiUrl}/get-latest-match-detail`;
         const query = {
             matchId
         };
 
-        spyOn(httpRequestService, 'postJson');
+        jest.spyOn(httpRequestService, 'postJson');
         service.getLastestMatchResult(7000000);
 
         expect(httpRequestService.postJson).toHaveBeenCalledWith(query, url);
-    }));
+    });
 
-    it('calculate - Call exact Url and param', fakeAsync(() => {
+    it('calculate - Call exact Url and param', () => {
         const query = {} as SettleQuery;
         const url = `${ApiUrl}/calculate`;
 
-        spyOn(httpRequestService, 'postJson');
+        jest.spyOn(httpRequestService, 'postJson');
         service.calculate(query);
 
         expect(httpRequestService.postJson).toHaveBeenCalledWith(query, url);
-    }));
+    });
 
-    it('undoCheckingScore - Call exact Url and param', fakeAsync(() => {
+    it('undoCheckingScore - Call exact Url and param', () => {
         const matchId = 7000000;
         const url = `${ApiUrl}/undo-checking-score`;
         const query = {
             matchId
         };
 
-        spyOn(httpRequestService, 'postJson');
+        jest.spyOn(httpRequestService, 'postJson');
         service.undoCheckingScore(matchId);
 
         expect(httpRequestService.postJson).toHaveBeenCalledWith(query, url);
-    }));
+    });
 
-    it('pushInstantScore - Call exact Url and param', fakeAsync(() => {
+    it('pushInstantScore - Call exact Url and param', () => {
         const query = {} as InstantCalculationQuery;
         const url = `${ApiUrl}/push-instant-score`;
 
-        spyOn(httpRequestService, 'postJson');
+        jest.spyOn(httpRequestService, 'postJson');
         service.pushInstantScore(query);
 
         expect(httpRequestService.postJson).toHaveBeenCalledWith(query, url);
-    }));
+    });
 });

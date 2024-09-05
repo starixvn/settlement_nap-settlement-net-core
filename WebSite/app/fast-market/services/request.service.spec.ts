@@ -129,7 +129,7 @@ describe('FastMarketService', () => {
 
   it('updateWaterBreakSetting - Call exact url and param', () => {
       const query = new UpdateWaterBreakQuery();
-      const url = "api/fast-market/update-water-break";
+      const url = "/api/fast-market/update-water-break";
 
       service.updateWaterBreakSetting(query);
 
