@@ -1,5 +1,6 @@
 ﻿using Fanex.NAP.Client.Helpers.Common;
 using Fanex.Settlement.ScaleOut.Constants;
+using MediatR;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
@@ -47,7 +48,9 @@ public class AioServiceImp(
 	: IAioService
 {
 	private const string KeyConfirmRefund = "SettlementConfirmRefund";
-	private const string ValueConfirmResult = "SettlementConfirmRefundValue";
+	private const int defaultRedisDb = 13;
+
+	private readonly IDatabase redisDb = connectionMultiplexer.GetDatabase(defaultRedisDb);
 
 	public async Task<AioMatch> GetMatch(GetMatchRequest request)
 	{
@@ -358,33 +361,35 @@ public class AioServiceImp(
 	{
 		var keys = request.ResourceIds.Split(",").Select(x =>
 		{
-			string GetResourceName(IEnumerable<ResourceItem> resources, string resourceId) =>
-				resources?.FirstOrDefault(z => z.ResourceId == resourceId)?.ResourceName;
-
-			var resourceName = GetResourceName(request.ConfirmRefundResources, x) ??
-				   GetResourceName(request.SelectedResources, x) ??
-				   string.Empty;
+			var resourceName = GetResourceName(request.ConfirmRefundResources, x)
+				?? GetResourceName(request.SelectedResources, x)
+				?? string.Empty;
 
 			return $"{KeyConfirmRefund}:{request.MatchId}:{x}:{resourceName}";
-		}).ToList();
+		});
 
-		var db = connectionMultiplexer.GetDatabase(13);
+		SetOrDeleteKeyConfirmRefund(request, keys);
+	}
 
+	private void SetOrDeleteKeyConfirmRefund(ResultSettingRequest request, IEnumerable<string> keys)
+	{
 		foreach (var key in keys)
 		{
-			var result1 = db.KeyExists(key);
 			if (request.IsEnabled)
 			{
-				var result = db.StringSet(key, request.IsEnabled, TimeSpan.FromMinutes(2));
+				redisDb.StringSet(key, request.IsEnabled, TimeSpan.FromMinutes(10));
 				continue;
 			}
 
-			if (db.KeyExists(key))
+			if (redisDb.KeyExists(key))
 			{
-				var isDeleted = db.KeyDelete(key);
+				redisDb.KeyDelete(key);
 			}
 		}
 	}
+
+	string GetResourceName(IEnumerable<ResourceItem> resources, string resourceId)
+		=> resources?.FirstOrDefault(z => z.ResourceId == resourceId)?.ResourceName;
 
 	public async Task<Result> SettleChildMatch(SettleChildMatchRequest request)
 	{

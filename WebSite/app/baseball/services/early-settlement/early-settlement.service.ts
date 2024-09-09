@@ -20,6 +20,7 @@ import { AioService } from "../../../shared/services";
 import { InvalidResultsHandler } from "../../handlers/early-settlement/invalid-results.handler";
 import { ConfirmRefundHandler } from "../../handlers/early-settlement/confirm-refund.handler";
 import { VerifyScoreSourceHandler } from "../../handlers/early-settlement/verify-score-source.handler";
+import { ResourceItem } from "../../../shared/models";
 
 @Injectable()
 
@@ -74,14 +75,23 @@ export class EarlySettlementService {
   }
 
   confirmResult(resourceIds: string) {
+    const confirmResults = this.#storage.getResultChecked().map(x => new ResourceItem(x.resourceId, x.betTypeName, x.homeValue, x.awayValue));
     this.#aioService.changeConfirmResultSetting(Language.confirmRefund.confirmRefund,
-      this.#storage.getMatchDetail().matchId, resourceIds, true, null);
+      this.#storage.getMatchDetail().matchId, 
+      resourceIds, 
+      true, 
+      null,
+      null,
+      confirmResults
+      );
   }
 
   unConfirmResult(resourceIds: string) {
     const resultNotConfirmed = find(this.#storage.getResultChecked(), item => !item.resultSettingData.isConfirmedRefund);
+    const confirmResults = this.#storage.getResultChecked().map(x => new ResourceItem(x.resourceId, x.betTypeName, x.homeValue, x.awayValue));
+
     if (isNil(resultNotConfirmed)) {
-      this.#aioService.changeConfirmResultSetting(Language.confirmRefund.undoConfirm, this.#storage.getMatchDetail().matchId, resourceIds, false, null);
+      this.#aioService.changeConfirmResultSetting(Language.confirmRefund.undoConfirm, this.#storage.getMatchDetail().matchId, resourceIds, false, null,null, confirmResults);
     } else {
       this.#notifyService.error(Language.confirmRefund.differentStates);
     }

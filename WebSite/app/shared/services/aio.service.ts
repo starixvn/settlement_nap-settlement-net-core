@@ -50,7 +50,6 @@ export class AioService {
     }
 
     public changeResultSetting(query: object) {
-        console.log(query);
         const request = this.httpRequestService.postJson<boolean>(query, `${this.aioApi}/result-setting`);
         return firstValueFrom(request);
     }
