@@ -1021,10 +1021,10 @@ export class CalculationActionsComponent implements SportTemplate {
       const awayValue = (findScore.awayValue ?? "0").toString();
 
       const externalScores = result.externalScores.map((x) => {
-        if ([SourceIds.trader, SourceIds.screenshot].includes(score.sourceId)) {
+        if ([SourceIds.trader, SourceIds.screenshot].includes(x.sourceId)) {
           return { ...x, homeValue, awayValue };
         }
-        return score;
+        return x;
       });
 
       return {
