@@ -478,6 +478,7 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
       this.match.resultDetails.forEach((map) => {
         map.checked = false;
       });
+      this.changeIsSettleRelated(false);
     } else {
       this.toastrService.error(result.errMsg);
     }
