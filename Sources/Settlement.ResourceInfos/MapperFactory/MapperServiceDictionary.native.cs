@@ -1,4 +1,5 @@
 ﻿using Settlement.ResourceInfos.Constants;
+using Settlement.ResourceInfos.Services.Baseball;
 
 namespace Settlement.ResourceInfos.MapperFactory;
 
@@ -15,6 +16,6 @@ public static class MapperServiceDictionary
         { KeyConstants.GameTotalKey, typeof(Services.Others.GameTotalResourceName)},
         { KeyConstants.OtherKey, typeof(Services.Others.OtherResourceName)},
         { KeyConstants.TennisKey, typeof(Services.Tennis.TennisResourceNameService)},
-        { KeyConstants.BaseballKey, typeof(Services.BasketBall.BaseballResourceNameService) }
+        { KeyConstants.BaseballKey, typeof(BaseballResourceNameService) }
     };
 }
