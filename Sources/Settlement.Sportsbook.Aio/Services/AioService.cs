@@ -103,7 +103,24 @@ public class AioServiceImp(
 
 		var newResultDetails = await SetInterval(matchDetail, resultDetails);
 
+		ResetScoreValue(matchDetail, newResultDetails);
+
 		return (newResultDetails, ticketCounts);
+	}
+
+	private void ResetScoreValue(Models.MatchDetail matchDetail, List<ResultDetail> resultDetails)
+	{
+		if (!SportGroup.SOP.Contains(matchDetail.SportType))
+		{
+			return;
+		}
+
+		resultDetails.ForEach(result =>
+		{
+			var isInitialResult = result.ResultStatusId is null || result.ResultStatusId == ResultStatus.Initial || result.ResultStatusId == ResultStatus.Live;
+			result.HomeValue = isInitialResult ? string.Empty : result.HomeValue;
+			result.AwayValue = isInitialResult ? string.Empty : result.AwayValue;
+		});
 	}
 
 	private async Task<Models.MatchDetail> GetMatchDetail(GetMatchRequest request, string apiKey)
