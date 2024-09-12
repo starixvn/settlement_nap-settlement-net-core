@@ -33,14 +33,14 @@
             <span class="settle-related">
               <input type="checkbox" [(ngModel)]="isSettleRelated" id="settleRelated" />
               <label for="settleRelated">Refund related </label> <label class="link"
-                (click)="OpenInfo()">child-match.</label>
+                (click)="openInfo()">child-match.</label>
             </span>
           </td>
         </tr>
         <tr>
           <td colspan="2">
             <button *ngIf="match.permission.isLeader" [ngClass]="{'btn btn-outline-primary button-confirmed': true}"
-              [disabled]="selectedResources.length === 0" (click)="confirmRefund()">
+              [disabled]="selectedResources.length === 0" (click)="confirmRefund(confirmRefundResources)">
               Confirm/Undo-confirm Refund
             </button>
             <button [ngClass]="{'refund-button': true, 'button-disabled': selectedResources.length === 0}"

@@ -251,4 +251,9 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
         }
         return this.isSDTSettle && resultDetail.checked && !this.isDirectly;
     }
+
+    
+  public get confirmRefundResources() {
+    return this.selectedResources.map((x) => ({...x,resourceName: this.resourceNamePipe.transform(x.resourceId)}))
+  }
 }

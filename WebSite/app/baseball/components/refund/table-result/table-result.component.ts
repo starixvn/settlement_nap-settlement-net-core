@@ -19,6 +19,7 @@ import { BaseballApiKeys } from '../../../constants/api-keys.constant';
 export class TableResultComponent extends RefundActionBaseComponent implements OnInit{
   match = input.required<Match>();
   #notifyService = inject(NotifyService);
+  #resultPipe = inject(ResourceNamePipe);
   hedgeMatchDetail: HedgeMatchDetail;
   applyHedgeMatch: boolean;
   resultDetails: ResultDetail[];
@@ -26,6 +27,9 @@ export class TableResultComponent extends RefundActionBaseComponent implements O
   permission: Permission;
   extraInningId = ResourceIds.extraInning;
 
+  public get confirmRefundResources() {
+    return this.selectedResources.map((x) => ({...x,resourceName: this.#resultPipe.transform(x.resourceId)}))
+  } 
 
   ngOnInit(): void {
     this.hedgeMatchDetail = this.match().hedgeMatchDetail;

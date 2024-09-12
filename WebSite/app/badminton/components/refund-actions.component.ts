@@ -1,4 +1,4 @@
-import { Component, ViewChild } from "@angular/core";
+import { Component, inject, ViewChild } from "@angular/core";
 import { ToastContainerDirective } from "ngx-toastr";
 import * as _ from "lodash";
 import {
@@ -33,7 +33,7 @@ import { BadmintonService } from "../services";
     MatchDetailComponent,
     ResourceNameByIdPipe,
   ],
-  providers: [BadmintonService],
+  providers: [BadmintonService,ResourceNameByIdPipe,],
 })
 export class RefundActionsComponent
   extends RefundActionBaseComponent
@@ -47,7 +47,7 @@ export class RefundActionsComponent
   public apiKeys = null;
   public blockUI = true;
   public isSettleRelated = false;
-
+  private resourceNameByIdPipe = inject(ResourceNameByIdPipe);
 
   public get isSupportSettleRelated() {
     return [SportType.tableTennis].includes(this.matchDetail.sportType) 
@@ -228,5 +228,8 @@ export class RefundActionsComponent
 
     return childrenMatchId;
   }
-  
+
+  public get confirmRefundResources() {
+    return this.selectedResources.map((x) => ({...x,resourceName: this.resourceNameByIdPipe.transform(x.resourceId)}))
+  } 
 }

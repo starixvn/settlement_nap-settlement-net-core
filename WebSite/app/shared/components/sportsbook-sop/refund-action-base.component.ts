@@ -8,6 +8,16 @@ import { Component, inject } from "@angular/core";
 import { ToastrService } from "ngx-toastr";
 import { ResourceItem } from '../../models';
 
+
+type UndoConfirm = {
+    resultDetails: ResultDetail[], 
+    matchId: number, 
+    resourceIds: string,
+    hedgeMatchDetail: HedgeMatchDetail, 
+    oldMatchDetail?: HedgeMatchDetail | null,
+    confirmRefundResources?: ResourceItem[]
+}
+
 @Component({
     template: '',
 })
@@ -68,7 +78,8 @@ export class RefundActionBaseComponent {
         return this.permission.isLeader && resultDetail.resultSettingData.isConfirmedRefund;
     }
 
-    confirmRefund() {
+    confirmRefund(confirmRefundResources?: ResourceItem[]) {
+        console.log(confirmRefundResources)
         this.toastrService.clear();
         const hedgeMatchDetail = this.applyHedgeMatch ? this.hedgeMatchDetail : new HedgeMatchDetail();
         if (this.isSDTSettle) {
@@ -78,32 +89,51 @@ export class RefundActionBaseComponent {
         const resourceIds = _.join(this.selectedResources.map(item => item.resourceId), ',');
         const resultConfirmed = _.find(this.selectedResources, item => item.resultSettingData.isConfirmedRefund);
         if (_.isNil(resultConfirmed)) {
-            this.aioService.changeConfirmResultSetting(Language.confirmRefund.confirmRefund, this.matchDetail.matchId, resourceIds, true,
-                hedgeMatchDetail);
+            this.aioService.changeConfirmResultSetting(
+                Language.confirmRefund.confirmRefund,
+                this.matchDetail.matchId, 
+                resourceIds, 
+                true,
+                hedgeMatchDetail,
+                null,
+                confirmRefundResources);
         } else {
-            this.undoConfirmedResult(this.selectedResources, this.matchDetail.matchId, resourceIds, hedgeMatchDetail);
+            this.undoConfirmedResult({
+                resultDetails: this.selectedResources,matchId: 
+                this.matchDetail.matchId, 
+                resourceIds, 
+                hedgeMatchDetail,
+                oldMatchDetail: null,
+                confirmRefundResources
+            });
         }
     }
 
-    undoConfirmedResult(resultDetails: ResultDetail[], matchId: number, resourceIds: string,
-        hedgeMatchDetail: HedgeMatchDetail, oldMatchDetail: HedgeMatchDetail = null) {
-        const resultNotConfirmed = _.find(resultDetails, item => !item.resultSettingData.isConfirmedRefund);
+    undoConfirmedResult(undoConfirm: UndoConfirm) {
+        const resultNotConfirmed = _.find(undoConfirm.resultDetails, item => !item.resultSettingData.isConfirmedRefund);
+        
         if (_.isNil(resultNotConfirmed)) {
-            this.aioService.changeConfirmResultSetting(Language.confirmRefund.undoConfirm, matchId, resourceIds, false,
-                hedgeMatchDetail, oldMatchDetail);
+            this.aioService.changeConfirmResultSetting(
+                Language.confirmRefund.undoConfirm, 
+                undoConfirm.matchId, 
+                undoConfirm.resourceIds, 
+                false,
+                undoConfirm.hedgeMatchDetail, 
+                undoConfirm.oldMatchDetail,
+                undoConfirm.confirmRefundResources);
         } else {
             this.toastrService.error(Language.confirmRefund.differentStates);
         }
     }
 
-    undoConfirmedAllResult() {
+    undoConfirmedAllResult(confirmRefundResources?: ResourceItem[]) {
         this.toastrService.clear();
         const hedgeMatch = this.applyHedgeMatch ? this.hedgeMatchDetail : null;
         const refundNormal = this.resultDetails.filter(item => item.resultSettingData.isConfirmedRefund);
         if (refundNormal.length > 0) {
             const resourceIds = refundNormal.map(resource => resource.resourceId).join(',');
             this.aioService.changeConfirmResultSetting(Language.confirmRefund.undoConfirmAll, this.matchDetail.matchId, resourceIds, false,
-                hedgeMatch);
+                hedgeMatch,null,confirmRefundResources);
         } else {
             const resultConfirmed = this.resultDetails.filter(item => item.resultSettingData.isConfirmedRefundSdt)
             const resourceItems = resultConfirmed.map(item => new ResourceItem(item.resourceId, item.resourceName, item.homeValue, item.awayValue))

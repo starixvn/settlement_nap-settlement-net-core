@@ -1,5 +1,5 @@
 ﻿
-import { Component, ViewChild, Injector } from '@angular/core';
+import { Component, ViewChild, Injector, inject } from '@angular/core';
 import { ToastContainerDirective } from 'ngx-toastr';
 import * as _ from 'lodash';
 import { MessageBoxService, BlockUIService } from '../../shared/services';
@@ -28,6 +28,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
     public match: Match;
     private readonly isReSettledTickets: boolean;
     public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage(Language.confirmationBox);
+    private resultNameByIdPipe = inject(ResultNameByIdPipe);
 
     async getMatch(matchId: number): Promise<void> {
         this.initService();
@@ -139,5 +140,9 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
     private async handleUpdateSettlementResultHistoryStatus(settleQuery: SettleQuery,sessionId: string) {
         const query = new UpdateSettlementResultHistoryStatus(settleQuery.matchId,sessionId)
         await this.aioService.updateSettlementResultHistoryStatus(query);
+      }
+
+    public get confirmRefundResources() {
+        return this.selectedResources.map((x) => ({...x,resourceName: this.resultNameByIdPipe.transform(x.resourceId,this.matchDetail)}))
       }
 }

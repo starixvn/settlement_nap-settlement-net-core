@@ -1,6 +1,6 @@
 import { RefundCommonModule } from './../../shared/modules/refund-common.module';
 import { ExcludeTotalPointPipe, ResourceNameByIdPipe } from '../pipes';
-import { Component, Injector, Input, ViewChild } from '@angular/core';
+import { Component, Injector, Input, ViewChild, inject } from '@angular/core';
 import * as _ from 'lodash';
 import { ModalDialogMessage } from '../../shared/models';
 import { CalculateAction, EventStatus } from '../../shared/constants';
@@ -18,7 +18,7 @@ import { TennisService } from '../services';
   templateUrl: './refund-actions.component.html',
   standalone: true,
   imports: [ExcludeTotalPointPipe, MatchDetailComponent, RefundCommonModule, ResourceNameByIdPipe],
-  providers: [TennisService]
+  providers: [TennisService,ResourceNameByIdPipe]
 
 })
 export class RefundActionsComponent extends RefundActionBaseComponent implements SportTemplate {
@@ -28,6 +28,8 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
   public isSettleRelated = false;
   private readonly infoDialog: ModalDialogMessage = new ModalDialogMessage();
   public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage(Language.confirmationBox);
+  private resourceNameByIdPipe = inject(ResourceNameByIdPipe);
+
 
   async getMatch(matchId: number): Promise<void> {
     this.initService();
@@ -143,9 +145,13 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
     return refund + betStatus.join(',');
   }
 
-  OpenInfo(){
+  openInfo(){
     this.infoDialog.title = Language.information;
     this.infoDialog.message = Language.childMatchTennisInfo;
     this.messageBoxService.alert(this.infoDialog);
+  }
+
+  public get confirmRefundResources() {
+    return this.selectedResources.map((x) => ({...x,resourceName: this.resourceNameByIdPipe.transform(x.resourceId)}))
   }
 }

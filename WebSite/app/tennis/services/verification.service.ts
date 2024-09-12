@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { IntervalCalculationService } from "../../shared/services";
 import { Language } from "../../shared/language.native";
-import { MatchDetail, ResultDetail } from "../../shared/models/sportsbook-sop";
+import { ResultDetail } from "../../shared/models/sportsbook-sop";
 import * as _ from "lodash";
 import { VerificationBaseService } from "../../core/services/verification-base.service";
 import { ResultByTeamNamePipe } from "../../shared/pipes/result-by-team-name.pipe";
@@ -55,10 +55,8 @@ export class VerificationService extends VerificationBaseService {
 
     return "";
   }
-   verifySuperTieBreak(matchDetail: MatchDetail, selectedResults: ResultDetail[]) {
-    const isValidScoreSetThree = +homeValue === 0 && +awayValue === 1 || +homeValue === 1 && +awayValue === 0;
-  }
 
   isFTDrawWithInputNormal(totalPoint: ResultDetail, inputDirectly: boolean) {
     return totalPoint.checked && !inputDirectly && totalPoint.homeValue.trim() === totalPoint.awayValue.trim();
+ }
 }
