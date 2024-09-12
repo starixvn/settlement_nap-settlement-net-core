@@ -37,7 +37,6 @@ export class FinalResultCalculateHandler implements BaseHandler {
     const finalResult = storage.getResultDetails().find(x => x.resourceId === ResourceIds.fullTime);
     const extraInning = storage.getResultDetails().find(x => x.resourceId === ResourceIds.extraInning);
     
-    // R1
     const isScoreDirect = storage.isScoreDirect();
     if(finalResult.checked && !isScoreDirect) {
       const existsNotCheckedOrCalculated = allInnings.some(x => !this.intervalCalculationService.isIntervalCheckedOrCalculated(x));
@@ -51,6 +50,13 @@ export class FinalResultCalculateHandler implements BaseHandler {
 
       if(totalScoreHome !== totalScoreAway && (extraInning.homeValue !== "0" && extraInning.awayValue !== "0")) {
         this.notifyService.error(Language.intervalsAndMatch.extraInningDraw);
+        return;
+      }
+
+      if(totalScoreHome !== totalScoreAway && (extraInning.homeValue === "0" && extraInning.awayValue === "0")) {
+        extraInning.homeValue = ''; // reset null follow rule
+        extraInning.awayValue = '';
+        this.nextHandler.handle(storage);
         return;
       }
     }
