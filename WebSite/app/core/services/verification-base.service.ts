@@ -387,12 +387,17 @@ export class VerificationBaseService {
     }
 
     public generateExternalScores(match: GeneralMatch, resultDetails: ResultDetail[], sportType: number, maximumProvider = 2) {
+        // console.log(match.externalResults)
         const listGroupExternalResult = this.groupExternalResult(match.externalResults, sportType, maximumProvider);
+        // console.log(listGroupExternalResult)
         _.forEach(resultDetails, (map: ResultDetail) => {
             const scores: ExternalResultDetail[] = [];
             _.forEach(listGroupExternalResult, (result: ExternalResult) => {
                 const score = result.resultDetails.find((item) => _.isEqual(item.resourceId, map.resourceId));
+                console.log('score',score)
                 if (_.isNil(score)) {
+                    console.log('result.sourceId',result.sourceId)
+                    console.log('map',map)
                     if (result.sourceId === ScoreSourceType.trader && (SpoSports.includes(sportType))
                         && !_.isEqual(map.resultStatus, "Refund")
                         && (!_.isEmpty(map.homeValue) || !_.isEmpty(map.awayValue))
@@ -406,6 +411,8 @@ export class VerificationBaseService {
                         tempScore.awayName = this.resultByTeamNamePipe.transform(tempScore.awayValue, match.matchDetail, map.groupBetType);
                         tempScore.fromResultDetail = true;
                         tempScore.resultStatusId = map.resultStatusId;
+                        console.log('tempScore',tempScore)
+
                         scores.push(tempScore);
                     } else {
                         const externalResult = new ExternalResultDetail(result.sourceId, map.resourceId, result.sourceName, result.remark);
