@@ -36,31 +36,36 @@ export class FinalResultCalculateHandler implements BaseHandler {
       );
     const finalResult = storage.getResultDetails().find(x => x.resourceId === ResourceIds.fullTime);
     const extraInning = storage.getResultDetails().find(x => x.resourceId === ResourceIds.extraInning);
-    
+
     const isScoreDirect = storage.isScoreDirect();
-    if(finalResult.checked && !isScoreDirect) {
-      const existsNotCheckedOrCalculated = allInnings.some(x => !this.intervalCalculationService.isIntervalCheckedOrCalculated(x));
-      if(existsNotCheckedOrCalculated) {
-        this.notifyService.error(Language.intervalsAndMatch.inningsNotSelected);
-        return;
-      }
 
-      const totalScoreHome = _.sumBy(allInnings, x => +x.homeValue);
-      const totalScoreAway = _.sumBy(allInnings, x => +x.awayValue);
-
-      if(totalScoreHome !== totalScoreAway && (extraInning.homeValue !== "0" && extraInning.awayValue !== "0")) {
-        this.notifyService.error(Language.intervalsAndMatch.extraInningDraw);
-        return;
-      }
-
-      if(totalScoreHome !== totalScoreAway && (extraInning.homeValue === "0" && extraInning.awayValue === "0")) {
-        extraInning.homeValue = ''; // reset null follow rule
-        extraInning.awayValue = '';
-        this.nextHandler.handle(storage);
-        return;
-      }
+    if (!finalResult.checked || isScoreDirect) {
+      this.nextHandler.handle(storage);
+      return;
     }
 
+    const existsNotCheckedOrCalculated = allInnings.some(x => !this.intervalCalculationService.isIntervalCheckedOrCalculated(x));
+    if (existsNotCheckedOrCalculated) {
+      this.notifyService.error(Language.intervalsAndMatch.inningsNotSelected);
+      return;
+    }
+
+    const totalScoreHome = _.sumBy(allInnings, x => +x.homeValue);
+    const totalScoreAway = _.sumBy(allInnings, x => +x.awayValue);
+
+    if (totalScoreHome !== totalScoreAway
+      && (!_.isEmpty(extraInning.homeValue)
+        && !_.isEmpty(extraInning.awayValue)
+        && (extraInning.homeValue !== "0"
+        || extraInning.awayValue !== "0"))) {
+      this.notifyService.error(Language.intervalsAndMatch.extraInningDraw);
+      return;
+    }
+
+    if (totalScoreHome !== totalScoreAway && (extraInning.homeValue === "0" && extraInning.awayValue === "0")) {
+      extraInning.homeValue = ''; // reset null follow rule
+      extraInning.awayValue = '';
+    }
 
     this.nextHandler.handle(storage);
   }

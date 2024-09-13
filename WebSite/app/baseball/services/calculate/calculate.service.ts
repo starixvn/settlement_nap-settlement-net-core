@@ -47,13 +47,13 @@ export class CalculateService {
   constructor() {
     this.nonSelectedHandler.setNextHandler(this.resultConfirmedHandler);
     this.resultConfirmedHandler.setNextHandler(this.invalidInputHandler);
-    this.invalidInputHandler.setNextHandler(this.verifyRunningOddsHandler);
+    this.invalidInputHandler.setNextHandler(this.finalResultCalculateHandler);
+
+    this.finalResultCalculateHandler.setNextHandler(this.verifyRunningOddsHandler);
     this.verifyRunningOddsHandler.setNextHandler(this.verifyScoreSourceHandler);
     this.verifyScoreSourceHandler.setNextHandler(this.confirmMismatchScoreHandler);
-    // TODO
-    this.confirmMismatchScoreHandler.setNextHandler(this.finalResultCalculateHandler);
-    
-    this.finalResultCalculateHandler.setNextHandler(this.confirmIntervalConsistency);
+    // TODO    
+    this.confirmMismatchScoreHandler.setNextHandler(this.confirmIntervalConsistency);
     this.confirmIntervalConsistency.setNextHandler(this.confirmChangedResultHandler);
     this.confirmChangedResultHandler.setNextHandler(this.confirmCalculateHandler);
     this.confirmCalculateHandler.setNextHandler(this.saveScoreHandler);
