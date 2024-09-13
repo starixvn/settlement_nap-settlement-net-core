@@ -175,7 +175,7 @@ export class VerificationService  {
 
     public isValidTraderConfirmScore(result: ResultDetail, isCoupleScore = true) {
         const traderScore = result.externalScores.find((source) => source.sourceId === ScoreSourceType.trader 
-            && source.settlementStatusId === ResultStatusId.TraderConfirm);
+            && source.resultStatusId === ResultStatusId.TraderConfirm);
 
             return traderScore 
                 && ((isCoupleScore && !_.isEmpty(traderScore.homeValue) && !_.isEmpty(traderScore.awayValue)) || (!isCoupleScore && !_.isEmpty(traderScore.homeValue)));

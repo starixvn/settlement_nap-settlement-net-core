@@ -106,7 +106,6 @@ export class CalculationActionsComponent implements SportTemplate {
         this.hedgeMatchDetail = this.match.hedgeMatchDetail;
         this.applyHedgeMatch = this.hedgeMatchDetail != null;
         this.verificationBaseService.generateExternalScores(this.match, this.match.resultDetails, SportType.cricket,this.maxProviderCol);
-        console.log(this.match.resultDetails[0].externalScores);
         this.match.originalResultDetail = _.cloneDeep(this.match.resultDetails);
         this.resetHomeAway(this.match.resultDetails);
         this.autoFillScoreOnLoad(this.match.resultDetails);
@@ -480,7 +479,6 @@ export class CalculationActionsComponent implements SportTemplate {
     }
 
     public canSettleResult(result: ResultDetail) {
-        // console.log(result);
         const isRunning = _.isEqual(result.ticketStatus, TicketStatusText.running)
           || _.isEqual(result.resultStatus, ResultStatus.noResult) 
           || _.isEqual(result.resultStatus, ResultStatus.running);
