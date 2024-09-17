@@ -47,7 +47,7 @@ public class ScoreSetServiceImp : IScoreSetService
 			IsNotSettled = true
 		};
 
-		var isRunningResult = item.ResultStatusId == ResultStatus.Initial || item.ResultStatusId == ResultStatus.Live;
+		var isRunningResult = item.ResultStatusId is null || item.ResultStatusId == ResultStatus.Initial || item.ResultStatusId == ResultStatus.Live;
 
 		if (isRunningResult)
 		{
