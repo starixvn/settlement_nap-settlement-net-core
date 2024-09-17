@@ -36,7 +36,9 @@ import { ModalDialogComponent } from '../shared/components/modal-dialog/modal-di
         NewMultipleSelectComponent,
         DatepickerComponent,
         MaterialDialogComponent,
-        NoopAnimationsModule
+        NoopAnimationsModule,
+        ModalDialogComponent,
+        ModalContentDialogComponent
     ],
     declarations: [
         AppComponent,
@@ -44,8 +46,6 @@ import { ModalDialogComponent } from '../shared/components/modal-dialog/modal-di
         MatchesComponent,
         MatchDetailComponent,
         CalculationComponent,
-        ModalDialogComponent,
-        ModalContentDialogComponent,
         ResultStatusPipe,
         SelectionPipe,
         TicketStatusPipe,

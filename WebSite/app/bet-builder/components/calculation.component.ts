@@ -209,10 +209,9 @@ export class CalculationComponent implements OnInit {
       ? Language.UnCalculationConfirmMessageEarly2
       : Language.UnCalculationConfirmMessageEarly1;
 
-    const resources = this.selections.filter((selection) => selection.checked);
-    resources.forEach((map) => (map.result = ""));
-
     this.messageBoxService.confirm(this.warningDialogMessage, () => {
+      const resources = this.selections.filter((selection) => selection.checked);
+      resources.forEach((map) => (map.result = ""));
       const query = new SettleQuery(
         this.matchId,
         resources,
