@@ -39,7 +39,7 @@ export class FinalResultCalculateHandler implements BaseHandler {
 
     const isScoreDirect = storage.isScoreDirect();
 
-    if (!finalResult.checked || isScoreDirect) {
+    if (!finalResult.checked || isScoreDirect || storage.getMatchDetail().sessionTime === 1) {
       this.nextHandler.handle(storage);
       return;
     }

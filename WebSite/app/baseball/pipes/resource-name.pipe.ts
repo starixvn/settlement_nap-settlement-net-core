@@ -9,20 +9,20 @@ import { ResourceIds } from '../../shared/constants';
 })
 
 export class ResourceNamePipe implements PipeTransform {
-  transform(resourceId: string, isRefund = false, leagueType = 0): string {
+  transform(resourceId: string, isRefund = false, sessionTime = 0): string {
 
     const specialResource = [ResourceIds.fullTime, ResourceIds.extraInning, ResourceIds.totalHits];
     if (specialResource.includes(resourceId)) {
-      return this.getSpecialSetName(resourceId, isRefund, leagueType);
+      return this.getSpecialSetName(resourceId, isRefund, sessionTime);
     }
 
-    return this.getSetName(resourceId, isRefund, leagueType);
+    return this.getSetName(resourceId, isRefund, sessionTime);
   }
 
-  private getSetName(resourceId: string,isRefund:boolean, leagueType: number) {
+  private getSetName(resourceId: string,isRefund:boolean, sessionTime: number) {
     const lastTwoCharacters = resourceId.slice(-2);
     const position = parseInt(lastTwoCharacters);
-    const name = leagueType === 1 ? 'Game' : 'Inning';
+    const name = sessionTime === 1 ? 'Game' : 'Inning';
 
     if (!isNaN(position)) {
       const suffix = this.getSuffix(position);
