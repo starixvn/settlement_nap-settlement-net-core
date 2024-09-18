@@ -45,7 +45,7 @@ export class IntervalCalculationService {
         return false;
     }
 
-    private isIntervalCheckedOrCalculated(interval: ResultDetail) {
+    public isIntervalCheckedOrCalculated(interval: ResultDetail) {
         return interval.checked || _.isEqual(interval.settlementStatusId, SettlementStatusId.Calculated);
     }
 

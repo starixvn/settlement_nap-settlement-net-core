@@ -15,11 +15,11 @@ export class VerificationService extends VerificationBaseService {
     super(resultByTeamNamePipe);
   }
 
-   isExistedHomeAwayScore(homeValue: string, awayValue: string) {
+  isExistedHomeAwayScore(homeValue: string, awayValue: string) {
     return !_.isEmpty(homeValue) && !_.isEmpty(awayValue);
   }
 
-   verifyMatchScoreOnCalculation(resultDetails: ResultDetail[]) {
+  verifyMatchScoreOnCalculation(resultDetails: ResultDetail[]) {
     return this.intervalCalculationService.isMatchNotCheckedWhenChangingIntervals(
       resultDetails,
       ResourcesIds.totalSets,
@@ -27,7 +27,7 @@ export class VerificationService extends VerificationBaseService {
     );
   }
 
-   verifyIntervalsOnCalculation(
+  verifyIntervalsOnCalculation(
     resultDetails: ResultDetail[],
     isScoreDirect: boolean
   ) {
@@ -57,6 +57,10 @@ export class VerificationService extends VerificationBaseService {
   }
 
   isFTDrawWithInputNormal(totalPoint: ResultDetail, inputDirectly: boolean) {
-    return totalPoint.checked && !inputDirectly && totalPoint.homeValue.trim() === totalPoint.awayValue.trim();
- }
+    return (
+      totalPoint.checked &&
+      !inputDirectly &&
+      totalPoint.homeValue.trim() === totalPoint.awayValue.trim()
+    );
+  }
 }
