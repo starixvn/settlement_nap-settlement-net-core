@@ -6,7 +6,7 @@ import { AioService } from "../../../shared/services";
 import { VerificationBaseService } from "../../../core/services/verification-base.service";
 import { CalculateAction, ResourceIds, ResultStatusId, SettlementStatusId } from "../../../shared/constants";
 import { ResultDetailBaseBall } from "../../models/result-detail.model";
-import { cloneDeep } from "lodash";
+import { cloneDeep, isMatch } from "lodash";
 import { Storage } from "../storage.service";
 import { ResultRowStateService } from "../result-row-state.service";
 import { ResultState } from "../../models/result-state.model";
@@ -31,6 +31,7 @@ export class CalculateStorage implements ICalculateStorage {
   #isScoreDirect = signal<boolean>(false);
   #isReSettledTickets = signal<boolean>(false);
   #isApplyHedgeMatch = signal<boolean>(false);
+  #isMatchSeries = signal<boolean>(false);
 
   #originalResultDetails: ResultDetailBaseBall[];
   #isClickOnCalculate = false;
@@ -38,6 +39,7 @@ export class CalculateStorage implements ICalculateStorage {
 
   isScoreDirect = this.#isScoreDirect.asReadonly();
   isReSettledTickets = this.#isReSettledTickets.asReadonly();
+  isMatchSeries = this.#isMatchSeries.asReadonly();
 
   fulltimeResult: ResultDetailBaseBall;
   maxProviderCol: number;
@@ -66,6 +68,7 @@ export class CalculateStorage implements ICalculateStorage {
     this.fulltimeResult = this.getFullTime();
     this.#originalResultDetails = cloneDeep(matchFetched.resultDetails);
     this.setIsApplyHedgeMatch(!!matchFetched.hedgeMatchDetail);
+    this.#isMatchSeries.set(matchFetched.matchDetail.sessionTime === 1);
   }
 
   mapTicketStatusExtraInning() {

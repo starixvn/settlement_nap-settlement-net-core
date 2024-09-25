@@ -21,17 +21,17 @@ export class ConfirmCalculateHandler implements BaseHandler {
   }
 
   handle(storage: Storage) {
-    const message = storage.getActionSubmit() == CalculateAction.earlyCalculate ?
-      this.getConfirmEarly(storage.getResultChecked(), storage.getMatchDetail()) : this.getConfirmMessage(storage.getResultChecked());
-    this.notifyService.confirm(message, () => {
-      this.nextHandler.handle(storage);
-    });
+    const message = storage.getActionSubmit() == CalculateAction.earlyCalculate 
+        ? this.getConfirmEarly(storage.getResultChecked(), storage.getMatchDetail()) 
+        : this.getConfirmMessage(storage.getResultChecked(), storage.getMatchDetail());
+
+    this.notifyService.confirm(message, () => this.nextHandler.handle(storage));
   }
 
-  private getConfirmMessage(resultDetails: ResultDetail[]) {
+  private getConfirmMessage(resultDetails: ResultDetail[], matchDetail: MatchDetail) {
     let confirmMessage = `${Language.CalculationConfirmMessage}<br/>${Language.CalculationAdditionalConfirmation}<br/>`;
     resultDetails.forEach((x: ResultDetail) => {
-      const resourceName = this.resultNamePipe.transform(x.resourceId);
+      const resourceName = this.resultNamePipe.transform(x.resourceId,false,matchDetail.sessionTime);
       confirmMessage += `${resourceName}: ${x.homeValue} - ${x.awayValue}<br/>`;
     });
     return confirmMessage;
@@ -65,7 +65,7 @@ export class ConfirmCalculateHandler implements BaseHandler {
     if (isEqual(resultDetail.homeValue, "A")) {
       return matchDetail.awayName;
     }
-    
+
     return "Neither";
 
   }

@@ -34,7 +34,7 @@ export class ResultRowStateService {
       this.storage.getResultDetails().filter(x => x.resourceId !== ResourceIds.totalHits), 
       this.storage.isScoreDirect(),
       ResourceIds.fullTime, 
-      true)
+      !this.storage.isMatchSeries())
         ? 'col-mismatched ' : '';
 
     return className + this.intervalBackgroundPipe.transform(resultDetail.settlementStatusId);

@@ -6,7 +6,7 @@ import { MessageBoxService, BlockUIService } from '../../shared/services';
 import { CalculateAction } from '../../shared/constants';
 import { MarkedTicketsModel, ModalDialogMessage } from '../../shared/models';
 import { Language } from '../../shared/language.native';
-import { SettleQuery, SettleChildMatchQuery, Match, UpdateSettlementResultHistoryStatus
+import { SettleQuery, Match, UpdateSettlementResultHistoryStatus
 } from '../models';
 import { ApiKeys } from '../constants';
 import { RefundActionBaseComponent } from '../../shared/components/sportsbook-sop/refund-action-base.component';
@@ -15,6 +15,7 @@ import { RefundCommonModule } from '../../shared/modules/refund-common.module';
 import { ResultNameByIdPipe } from '../pipes';
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
 import { MatchDetailComponent } from './match-detail.component';
+import { SettleChildMatchQuery } from '../../shared/models/settle-childmatch.model';
 
 @Component({
     selector: 'refund-actions',

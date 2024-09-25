@@ -38,10 +38,10 @@ public class MoveTicketServiceImp(
 
         var matches = new List<Match>();
         matchesByEachSport.ForEach(sport => sport.Matches.ForEach(match =>
-        {
-            match.RefDataService = refDataService;
-            matches.Add(match);
-        }));
+    {
+        match.RefDataService = refDataService;
+        matches.Add(match);
+    }));
 
         await GetReferenceAction(matches);
 

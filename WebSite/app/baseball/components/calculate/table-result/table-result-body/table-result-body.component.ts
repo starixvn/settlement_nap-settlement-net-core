@@ -33,6 +33,7 @@ export class TableResultBodyComponent implements OnInit {
   permission = this.#storage.getPermission();
   matchDetail = this.#storage.getMatchDetail();
   isLeader = this.#storage.isLeader();
+  isMatchSeries = this.#storage.isMatchSeries();
   extraInningId = ResourceIds.extraInning;
   fullTimeId = ResourceIds.fullTime;
   maxProviderCol = this.#storage.maxProviderCol;
@@ -63,7 +64,7 @@ export class TableResultBodyComponent implements OnInit {
       .filter((item) => this.#verificationService.isExistedHomeAwayScore(item.homeValue, item.awayValue));
 
     if (!this.#storage.isScoreDirect()) {
-      this.#calculateService.sumTotalScores(innings, this.#storage.fulltimeResult);
+      this.#calculateService.sumTotalScores(innings, this.#storage.fulltimeResult,!this.#storage.isMatchSeries());
     }
 
     this.#storage.fulltimeResult.isScoreMismatched = this.#verificationService.isMismatchedWarning(this.#storage.fulltimeResult);
@@ -124,17 +125,17 @@ export class TableResultBodyComponent implements OnInit {
     if (totalGameOutside && (IsOnLoad &&
       !this.#verificationService.isExistedHomeAwayScore(totalGameOutside.homeValue, totalGameOutside.awayValue))
       || (!IsOnLoad && !this.#storage.isScoreDirect())) {
-      this.#calculateService.sumTotalScores(outsideResults, totalGameOutside);
+      this.#calculateService.sumTotalScores(outsideResults, totalGameOutside, !this.#storage.isMatchSeries());
       this.verifyAndAutoFillScore(this.#storage.fulltimeResult, true);
     }
   }
 
   selectedOnLastMap(inning: ResultDetailBaseBall, checked: boolean) {
-    !this.#storage.isScoreDirect() && (this.#storage.getExtraInning().checked = checked);
+    !this.#storage.isScoreDirect() &&  this.#storage.getExtraInning() && (this.#storage.getExtraInning().checked = checked);
     const allInnings = this.#storage.getResultDetails().filter(x => x.resourceId !== ResourceIds.totalHits);
-    const newFullTimeScore = this.#verificationService.getNewFinalResource(allInnings, ResourceIds.fullTime, true);
+    const newFullTimeScore = this.#verificationService.getNewFinalResource(allInnings, ResourceIds.fullTime, !this.#storage.isMatchSeries());
     const confirmMessage = this.#verificationService.verifyFinalResource(allInnings,
-      ResourceIds.fullTime, newFullTimeScore, "Match");
+      ResourceIds.fullTime, newFullTimeScore,!this.#storage.isMatchSeries() ? "Match" : "Series");
     if (!_.isEmpty(confirmMessage) && !this.#storage.isScoreDirect()) {
       this.#notifyService.confirm(confirmMessage, () => {
         this.#verificationService.changeToNewFinalResource(this.#storage.getFullTime(), newFullTimeScore);

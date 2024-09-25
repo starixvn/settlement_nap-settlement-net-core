@@ -59,7 +59,7 @@ export class EarlySettlementStorage implements Storage {
 
   private GetInitStatus() {
     this.#mainResults.forEach(x => {
-      x.resourceName = this.#resultPipe.transform(x.resourceId, true);
+      x.resourceName = this.#resultPipe.transform(x.resourceId, true, this.#match().matchDetail.sessionTime);
       x.className = this.getClass(x);
       x.isDisplayedForMember = this.isLeader() || +x.settlementStatusId !== SettlementStatusId.Running;
     });

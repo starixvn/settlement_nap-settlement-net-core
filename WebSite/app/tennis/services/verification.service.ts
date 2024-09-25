@@ -63,4 +63,6 @@ export class VerificationService extends VerificationBaseService {
       totalPoint.homeValue.trim() === totalPoint.awayValue.trim()
     );
   }
+
 }
+    

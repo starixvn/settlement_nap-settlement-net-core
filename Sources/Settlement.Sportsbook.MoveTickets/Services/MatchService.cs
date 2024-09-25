@@ -29,6 +29,11 @@ public class MatchServiceImp(
             return matchResultDetailService.CricketResultDetail(matches, resultDetails);
         }
 
+        if (sportType == SportType.BaseBall)
+        {
+            return matchResultDetailService.BaseballResultDetail(matches, resultDetails);
+        }
+
         foreach (var result in matches)
         {
             result.RefDataService = refDataService;

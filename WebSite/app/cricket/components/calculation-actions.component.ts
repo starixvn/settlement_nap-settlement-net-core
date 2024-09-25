@@ -12,7 +12,6 @@ import {
     SettleQuery,
     MatchDetail,
     HedgeMatchDetail,
-    SettleChildMatchQuery,
     Match,
     UpdateSettlementResultHistoryStatus
 } from '../models';
@@ -23,6 +22,7 @@ import { VerificationBaseService } from '../../core/services/verification-base.s
 import { CalculateCommonModule } from '../../shared/modules/calculate-common.module';
 import { ResultByPlayerNamePipe, ResultNameByIdPipe, ResultValuePipe } from '../pipes';
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
+import { SettleChildMatchQuery } from '../../shared/models/settle-childmatch.model';
 
 @Component({
     selector: 'calculation-actions',
