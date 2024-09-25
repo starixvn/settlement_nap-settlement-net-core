@@ -1,6 +1,6 @@
 ﻿import { Component, ViewChild ,Injector } from '@angular/core';
 import { ToastContainerDirective } from 'ngx-toastr';
-import { Match, SettleQuery, SettleChildMatchQuery, UpdateSettlementResultHistoryStatus } from '../models';
+import { Match, SettleQuery, UpdateSettlementResultHistoryStatus } from '../models';
 import * as _ from 'lodash';
 import { Language } from '../../shared/language.native';
 import { ItemsSelect } from '../../shared/models';
@@ -14,6 +14,7 @@ import { EarlyCommonModule } from '../../shared/modules/early-common.module';
 import { MatchDetailComponent } from './match-detail.component';
 import { ResultValuePipe, ResultByPlayerNamePipe } from '../pipes';
 import { BlockUIService } from '../../shared/services/block-ui.service';
+import { SettleChildMatchQuery } from '../../shared/models/settle-childmatch.model';
 
 @Component({
   selector: 'early-settlement',
