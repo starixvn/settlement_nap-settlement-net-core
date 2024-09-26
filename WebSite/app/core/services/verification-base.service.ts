@@ -66,7 +66,7 @@ export class VerificationBaseService {
     public isExistScoreSources(map: ResultDetail, hasTwoValue = true) {
         const providerScore = _.find(map.externalScores, (source) => source.sourceId < ScoreSourceType.screenshot
             && (hasTwoValue ? this.isExistedHomeAwayScore(source.homeValue, source.awayValue) : this.isExistedHomeScore(source.homeValue)));
-        
+
         const outsideScore = _.find(map.externalScores, (source) => source.sourceId === ScoreSourceType.screenshot
             && (hasTwoValue ? this.isExistedHomeAwayScore(source.homeValue, source.awayValue) : this.isExistedHomeScore(source.homeValue)));
 
@@ -367,14 +367,14 @@ export class VerificationBaseService {
             }
         });
 
-        return outsideScores.map(x => ({ ...x,homeValue: x.homeValue ?? '', awayValue: x.awayValue ?? '' }));
+        return outsideScores.map(x => ({ ...x, homeValue: x.homeValue ?? '', awayValue: x.awayValue ?? '' }));
     }
 
     public getOutsideScores(resultDetails: ResultDetail[]) {
         const outsideScores: ExternalResultDetail[] = [];
         const mapsChecked = resultDetails.filter((map) => map.checked);
         _.forEach(mapsChecked, (map) => {
-            const mapScore = new ExternalResultDetail(0, map.resourceId, '', '', map.homeValue , map.awayValue);
+            const mapScore = new ExternalResultDetail(0, map.resourceId, '', '', map.homeValue, map.awayValue);
             outsideScores.push(mapScore);
             _.forEach(map.externalScores, (score) => {
                 if (score.sourceId > ScoreSourceType.emptySource) {
@@ -383,7 +383,7 @@ export class VerificationBaseService {
             });
         });
 
-        return outsideScores.map(x => ({ ...x,homeValue: x.homeValue ?? '', awayValue: x.awayValue ?? '' }));
+        return outsideScores.map(x => ({ ...x, homeValue: x.homeValue ?? '', awayValue: x.awayValue ?? '' }));
     }
 
     public generateExternalScores(match: GeneralMatch, resultDetails: ResultDetail[], sportType: number, maximumProvider = 2) {
@@ -405,14 +405,18 @@ export class VerificationBaseService {
                         tempScore.homeName = this.resultByTeamNamePipe.transform(tempScore.homeValue, match.matchDetail, map.groupBetType);
                         tempScore.awayName = this.resultByTeamNamePipe.transform(tempScore.awayValue, match.matchDetail, map.groupBetType);
                         tempScore.fromResultDetail = true;
+                        tempScore.resultStatusId = map.resultStatusId;
                         scores.push(tempScore);
                     } else {
-                        scores.push(new ExternalResultDetail(result.sourceId, map.resourceId, result.sourceName, result.remark));
+                        const externalResult = new ExternalResultDetail(result.sourceId, map.resourceId, result.sourceName, result.remark);
+                        externalResult.resultStatusId = map.resultStatusId;
+                        scores.push(externalResult);
                     }
                 } else {
                     score.homeName = this.resultByTeamNamePipe.transform(score.homeValue, match.matchDetail, map.groupBetType);
                     score.awayName = this.resultByTeamNamePipe.transform(score.awayValue, match.matchDetail, map.groupBetType);
-                    scores.push(score);
+                    score.resultStatusId = map.resultStatusId;
+                    scores.push({ ...score });
                 }
             });
 
@@ -554,11 +558,19 @@ export class VerificationBaseService {
     public acceptCaseZero(orinalResult: GeneralResultDetail, result: ResultDetail) {
         return (result.awayValue === "0" && result.homeValue === "0" && _.isEmpty(orinalResult.homeValue) && _.isEmpty(orinalResult.awayValue));
     }
-    public isValidTraderConfirmScore(result: ResultDetail) {
-        const traderScore = result.externalScores.find((source) => source.sourceId === ScoreSourceType.trader);
 
-        return traderScore
-            && !_.isEmpty(traderScore.homeValue)
-            && !_.isEmpty(traderScore.awayValue);
+    public isValidTraderConfirmScore(result: ResultDetail, isCoupleScore = true) {
+        const isTraderResult = result.resultStatusId === ResultStatusId.TraderConfirm && this.isValidHomeAwayScore(result, isCoupleScore); ;
+        const traderExternalScore = result.externalScores.find((source) => source.sourceId === ScoreSourceType.trader);
+
+        return isTraderResult || (traderExternalScore && this.isValidHomeAwayScore(traderExternalScore, isCoupleScore));
+    }
+
+    private isValidHomeAwayScore(result: GeneralResultDetail, isCoupleScore = true) {
+        if(isCoupleScore) {
+            return result && !_.isEmpty(result.homeValue) && !_.isEmpty(result.awayValue);
+        }
+
+        return result && !_.isEmpty(result.homeValue);
     }
 }

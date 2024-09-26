@@ -13,7 +13,6 @@ import { HedgeMatchDetail, ResultDetail, MatchDetail, ExternalResult, SaveScoreQ
 import { VerificationService, ESportsService } from '../services';
 import { ResourceNameByIdPipe } from '../pipes';
 import { SourceIds } from '../../basketball/constants/source-ids';
-import { ProviderSource } from '../../shared/models/league-settings.model';
 
 @Component({
     selector: 'calculation-actions',

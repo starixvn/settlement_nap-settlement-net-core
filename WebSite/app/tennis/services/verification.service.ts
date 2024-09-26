@@ -55,7 +55,6 @@ export class VerificationService extends VerificationBaseService {
 
     return "";
   }
-
   isFTDrawWithInputNormal(totalPoint: ResultDetail, inputDirectly: boolean) {
     return (
       totalPoint.checked &&

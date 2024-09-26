@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import { ExternalResultDetail, ResultDetail } from "../../shared/models/sportsbook-sop";
 import { ResultStatusId, ScoreSourceType } from "../../shared/constants";
 import { EarlyConstraintService } from "./early-constraint.service";
+import { GeneralResultDetail } from "../../shared/models";
 
 @Injectable()
 export class VerificationService  {
@@ -173,11 +174,18 @@ export class VerificationService  {
         return false;
     }
 
-    public isValidTraderConfirmScore(result: ResultDetail) {
-        const traderScore = result.externalScores.find((source) => source.sourceId === ScoreSourceType.trader);
+    public isValidTraderConfirmScore(result: ResultDetail, isCoupleScore = true) {
+        const isTraderResult = result.resultStatusId === ResultStatusId.TraderConfirm && this.isValidHomeAwayScore(result, isCoupleScore); ;
+        const traderExternalScore = result.externalScores.find((source) => source.sourceId === ScoreSourceType.trader);
 
-        return traderScore 
-            && !_.isEmpty(traderScore.homeValue) 
-            && !_.isEmpty(traderScore.awayValue);
+        return isTraderResult || (traderExternalScore && this.isValidHomeAwayScore(traderExternalScore, isCoupleScore));
+    }
+
+    private isValidHomeAwayScore(result: GeneralResultDetail, isCoupleScore = true) {
+        if(isCoupleScore) {
+            return result && !_.isEmpty(result.homeValue) && !_.isEmpty(result.awayValue);
+        }
+
+        return result && !_.isEmpty(result.homeValue);
     }
 }
