@@ -10,6 +10,7 @@ using Settlement.Sportsbook.Aio.MapperFactory;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Requests;
 using Settlement.Sportsbook.Aio.Services;
+using StackExchange.Redis;
 
 namespace Settlement.Sportsbook.Aio.UnitTests.Services;
 
@@ -19,7 +20,7 @@ public class AioServiceTests
     private readonly ICreateQueryService createQueryService;
     private readonly IValidateApiKeyService validateApiKeyService;
     private readonly MultipleServerAioService multipleServerAioService;
-    private readonly IAioService service;
+    private readonly AioServiceImp service;
     private readonly IRefDataService refDataService;
 
     public AioServiceTests()
@@ -31,11 +32,11 @@ public class AioServiceTests
         multipleServerAioService = Substitute.For<MultipleServerAioService>();
         validateApiKeyService = Substitute.For<IValidateApiKeyService>();
         var basketballEventStatusService = Substitute.For<BasketballEventStatusService>();
-
+        var connectionMultiplexer = Substitute.For<IConnectionMultiplexer>();
         var mapperConfig = new MapperConfigurationExpression();
         mapperConfig.AddProfile<SportsbookAioAutoMapperProfile>();
         service = new AioServiceImp(repository, refDataService,
-            mapperFactory, validateApiKeyService, createQueryService, multipleServerAioService, basketballEventStatusService);
+            mapperFactory, validateApiKeyService, createQueryService, multipleServerAioService, basketballEventStatusService, connectionMultiplexer);
     }
 
     [Fact]

@@ -1,4 +1,6 @@
-﻿using Settlement.Core.Services;
+﻿using Settlement.Core.Constants;
+using Settlement.Core.Services;
+
 using CoreConstants = Settlement.Core.Constants;
 
 namespace Settlement.Log.Models;
@@ -17,7 +19,9 @@ public class LogModel
 
     public int LeagueId { get; set; }
 
-    public string LeagueName => RefDataService.GetLeagueName(LeagueId);
+    private bool IsMatch3rd => SportGroup.VirtualSports.Contains(SportType);
+
+    public string LeagueName => RefDataService.GetLeagueName(LeagueId, IsMatch3rd);
 
     public string Home => RefDataService.GetTeamName(HomeId);
 
@@ -27,6 +31,11 @@ public class LogModel
     {
         get
         {
+            if (IsMatch3rd)
+            {
+                return $"Event {MatchId}";
+            }
+
             if (SportType == CoreConstants.SportType.NumberGame)
             {
                 return $"Number Game No {MatchCode}";
