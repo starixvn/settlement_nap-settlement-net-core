@@ -14,14 +14,14 @@ import { CalculateAction } from "../../../shared/constants";
 export class ConfirmCalculateHandler implements BaseHandler {
   private nextHandler: BaseHandler;
   resultNamePipe = inject(ResourceNamePipe);
-  private notifyService = inject(NotifyService);
+  private readonly notifyService = inject(NotifyService);
 
   setNextHandler(handler: BaseHandler) {
     this.nextHandler = handler;
   }
 
   handle(storage: Storage) {
-    const message = storage.getActionSubmit() == CalculateAction.earlyCalculate 
+    const message = storage.getActionSubmit() === CalculateAction.earlyCalculate 
         ? this.getConfirmEarly(storage.getResultChecked(), storage.getMatchDetail()) 
         : this.getConfirmMessage(storage.getResultChecked(), storage.getMatchDetail());
 
@@ -40,7 +40,7 @@ export class ConfirmCalculateHandler implements BaseHandler {
   private getConfirmEarly(resultDetails: ResultDetail[], matchDetail: MatchDetail) {
     let confirmMessage = `${Language.CalculationConfirmMessageEarly}<br/>`;
     resultDetails.forEach((x: ResultDetail) => {
-      let value = this.getValueBasedOnInputType(x, matchDetail);
+      const value = this.getValueBasedOnInputType(x, matchDetail);
       confirmMessage += `${x.betTypeName}: ${value}<br/>`;
     });
 

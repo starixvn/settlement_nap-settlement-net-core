@@ -30,12 +30,10 @@ export class CricketComponent implements OnInit, OnDestroy {
     }
 
     public search(value: MultiSport) {
-        console.log(value);
         this.multiSport = value;
     }
 
     public getRequest(request: MatchWaitingRequest) {
-        console.log(request);
         this.request = request;
     }
 

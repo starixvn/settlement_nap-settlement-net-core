@@ -82,7 +82,7 @@ export class CalculateHandler implements BaseHandler {
         && resultDetail.resourceId !== ResourceIds.totalHits);
 
     resultWithoutFinal.forEach(resultDetail => {
-      let bitPosition = Number(resultDetail.resourceId.slice(-2)) + roundBitStartAt;
+      const bitPosition = Number(resultDetail.resourceId.slice(-2)) + roundBitStartAt;
       bitArray[bitPosition] = 1;
     });
 

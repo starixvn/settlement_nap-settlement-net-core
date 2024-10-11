@@ -1,24 +1,18 @@
 import { inject } from "@angular/core";
 import { Language } from "../../../shared/language.native";
-import {
-  MatchDetail,
-  ResultDetail,
-} from "../../../shared/models/sportsbook-sop";
 import { ResourceNamePipe } from "../../pipes/resource-name.pipe";
 import { NotifyService } from "../../services/notify.service";
 import { BaseHandler } from "../base.handler.native";
 import { Storage } from "../../services/storage.service";
-import { isEqual } from "lodash";
-import { InputType } from "../../constants/input-type.constant";
-import { CalculateAction, ResourceIds } from "../../../shared/constants";
+import { ResourceIds } from "../../../shared/constants";
 import * as _ from "lodash";
 import { IntervalCalculationService } from "../../../shared/services";
 
 export class FinalResultCalculateHandler implements BaseHandler {
   private nextHandler: BaseHandler;
   resultNamePipe = inject(ResourceNamePipe);
-  private notifyService = inject(NotifyService);
-  private intervalCalculationService = inject(IntervalCalculationService);
+  private readonly notifyService = inject(NotifyService);
+  private readonly intervalCalculationService = inject(IntervalCalculationService);
 
   setNextHandler(handler: BaseHandler) {
     this.nextHandler = handler;

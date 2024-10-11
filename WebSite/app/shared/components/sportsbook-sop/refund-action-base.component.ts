@@ -79,7 +79,6 @@ export class RefundActionBaseComponent {
     }
 
     confirmRefund(confirmRefundResources?: ResourceItem[]) {
-        console.log(confirmRefundResources)
         this.toastrService.clear();
         const hedgeMatchDetail = this.applyHedgeMatch ? this.hedgeMatchDetail : new HedgeMatchDetail();
         if (this.isSDTSettle) {

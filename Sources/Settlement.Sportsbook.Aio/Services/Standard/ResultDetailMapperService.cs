@@ -11,7 +11,7 @@ public class ResultDetailMapperServiceImp : IMapperService
 {
     public void Decorate(dynamic obj)
     {
-        var prefixEarlyBaseball = "88";
+        const string prefixEarlyBaseball = "88";
         var resourceNameService = new ResourceNameService(new MapperFactoryBase());
         if (obj is List<ResultDetail> list)
         {

@@ -1,10 +1,9 @@
 ﻿
-import { Component, ViewChild, Injector, inject } from '@angular/core';
+import { Component, ViewChild, inject } from '@angular/core';
 import { ToastContainerDirective } from 'ngx-toastr';
 import * as _ from 'lodash';
-import { MessageBoxService, BlockUIService } from '../../shared/services';
 import { CalculateAction } from '../../shared/constants';
-import { MarkedTicketsModel, ModalDialogMessage } from '../../shared/models';
+import { ModalDialogMessage } from '../../shared/models';
 import { Language } from '../../shared/language.native';
 import { SettleQuery, Match, UpdateSettlementResultHistoryStatus
 } from '../models';
@@ -29,7 +28,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
     public match: Match;
     private readonly isReSettledTickets: boolean;
     public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage(Language.confirmationBox);
-    private resultNameByIdPipe = inject(ResultNameByIdPipe);
+    private readonly resultNameByIdPipe = inject(ResultNameByIdPipe);
 
     async getMatch(matchId: number): Promise<void> {
         this.initService();

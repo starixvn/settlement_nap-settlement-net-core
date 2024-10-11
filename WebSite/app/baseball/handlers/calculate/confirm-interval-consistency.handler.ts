@@ -8,8 +8,8 @@ import { ICalculateStorage } from "../../services/calculate/calculate.storage";
 
 export class ConfirmIntervalConsistency implements BaseHandler {
   private nextHandler: BaseHandler;
-  private intervalCalculationService = inject(IntervalCalculationService);
-  private notifyService = inject(NotifyService);
+  private readonly intervalCalculationService = inject(IntervalCalculationService);
+  private readonly notifyService = inject(NotifyService);
 
   setNextHandler(handler: BaseHandler) {
     this.nextHandler = handler;

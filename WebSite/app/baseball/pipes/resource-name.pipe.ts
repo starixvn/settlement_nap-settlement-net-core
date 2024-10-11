@@ -33,11 +33,11 @@ export class ResourceNamePipe implements PipeTransform {
   }
 
   private getSpecialSetName(resourceId: string,isRefund:boolean,leagueType: number): string {
-    if (resourceId == ResourceIds.fullTime) { 
+    if (resourceId === ResourceIds.fullTime) { 
       return leagueType === 1 ? 'Series' : 'Match'; // match normal
     }  
     
-    if (resourceId == ResourceIds.extraInning) {
+    if (resourceId === ResourceIds.extraInning) {
       return isRefund ? 'E.I' : 'Extra Inning';
     }
     

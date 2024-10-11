@@ -9,9 +9,9 @@ import { Storage } from "../../services/storage.service";
 
 export class SaveScoreHandler implements BaseHandler {
   private nextHandler: BaseHandler;
-  private aioService = inject(AioService);
-  private verificationService = inject(VerificationBaseService);
-  private notifyService = inject(NotifyService);
+  private readonly aioService = inject(AioService);
+  private readonly verificationService = inject(VerificationBaseService);
+  private readonly notifyService = inject(NotifyService);
 
   setNextHandler(handler: BaseHandler) {
     this.nextHandler = handler;

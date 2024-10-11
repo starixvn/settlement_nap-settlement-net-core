@@ -46,7 +46,7 @@ export class ResultRowStateService {
       return false;
     }
 
-    let disabled = resultDetail.resourceId === ResourceIds.fullTime ? !this.storage.isScoreDirect() : this.storage.isScoreDirect();
+    const disabled = resultDetail.resourceId === ResourceIds.fullTime ? !this.storage.isScoreDirect() : this.storage.isScoreDirect();
 
     return this.storage.getIsClickOnCalculate() && !disabled && resultDetail.checked && isEmpty(isHome ? resultDetail.homeValue : resultDetail.awayValue);
   }
