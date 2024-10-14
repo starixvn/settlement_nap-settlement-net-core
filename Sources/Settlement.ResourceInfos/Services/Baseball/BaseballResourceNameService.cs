@@ -1,9 +1,8 @@
 ﻿using Fanex.RemotingRef;
-using Microsoft.AspNetCore.Mvc.Filters;
 using Settlement.Core.Services;
 using Settlement.ResourceInfos.MapperFactory;
 
-namespace Settlement.ResourceInfos.Services.BasketBall;
+namespace Settlement.ResourceInfos.Services.Baseball;
 
 public class BaseballResourceNameService : IMapperService
 {
@@ -28,7 +27,7 @@ public class BaseballResourceNameService : IMapperService
         return (betType, resourceName);
     }
 
-    private string GetBetTypeName(string betType) => betType switch
+    private static string GetBetTypeName(string betType) => betType switch
     {
         "8823" => "{0} Inning Total Hits",
         "8827" => "Last Team to Score",
@@ -50,12 +49,8 @@ public class BaseballResourceNameService : IMapperService
 
     private static string GetInning(string resourceId)
     {
-        if (resourceId.Length < 5)
-        {
-            return string.Empty;
-        }
-
-        return resourceId[4..];
+        const int numberFour = 4;
+        return resourceId.Length < 5 ? string.Empty : resourceId[numberFour..];
     }
 
     private static string GenerateOrdinals(int number)

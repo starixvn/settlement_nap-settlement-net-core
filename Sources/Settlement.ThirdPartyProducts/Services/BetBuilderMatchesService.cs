@@ -28,8 +28,6 @@ public class BetBuilderMatchesServiceImp(
     IOptions<AppSettingsKey> appSettingsKey)
     : BetBuilderMatchesService
 {
-    private readonly AppSettingsKey appSettingsKey = appSettingsKey.Value;
-
     private static int isProcessing;
 
     public async Task<List<SportModel>> Search(FilterRequest request)
@@ -91,7 +89,7 @@ public class BetBuilderMatchesServiceImp(
         var listMatchId = string.Join(",", matches.Select(match => match.MatchId.ToString()).ToArray());
         var criteria = new TicketsInfoCriteria { MatchIds = listMatchId };
 
-        foreach (var server in appSettingsKey.SiteDbServer)
+        foreach (var server in appSettingsKey.Value.SiteDbServer)
         {
             criteria.DbServer = server;
             var data = (await repository.FetchAsync<Models.SiteMatch>(criteria)).ToList();
@@ -132,7 +130,7 @@ public class BetBuilderMatchesServiceImp(
     {
         var matches = new List<MatchDetailModel>();
         var isCentralDataBase = true;
-        foreach (var server in appSettingsKey.SiteDbServer)
+        foreach (var server in appSettingsKey.Value.SiteDbServer)
         {
             criteria.DbServer = server;
             var data = (await repository.FetchAsync<MatchDetailModel>(criteria)).ToList();

@@ -18,18 +18,8 @@ public interface LogService
     Task WriteLog(LogCriteria criteria);
 }
 
-public class LogServiceImp : LogService
+public class LogServiceImp(IDynamicRepository repository, INapSession session) : LogService
 {
-    private readonly IDynamicRepository repository;
-
-    private readonly INapSession session;
-
-    public LogServiceImp(IDynamicRepository repository, INapSession session)
-    {
-        this.repository = repository;
-        this.session = session;
-    }
-
     public async Task ActionLog(int matchId, string message, int actionId)
     {
         var criteria = new LogCriteria(matchId, message, actionId, session.UserId);

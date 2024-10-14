@@ -18,28 +18,13 @@ public interface ScaleOutSettleService
     Task<int> GetSiteGroupId(string dbServer);
 }
 
-public class ScaleOutSettleServiceImp : ScaleOutSettleService
+public class ScaleOutSettleServiceImp(
+    IDynamicRepository repository,
+    IMapper mapper,
+    IHttpContextAccessor accessor,
+    GeneralService generalService)
+    : ScaleOutSettleService
 {
-    private readonly IDynamicRepository repository;
-
-    private readonly IMapper mapper;
-
-    private readonly IHttpContextAccessor accessor;
-
-    private readonly GeneralService generalService;
-
-    public ScaleOutSettleServiceImp(
-        IDynamicRepository repository,
-        IMapper mapper,
-        IHttpContextAccessor accessor,
-        GeneralService generalService)
-    {
-        this.repository = repository;
-        this.mapper = mapper;
-        this.accessor = accessor;
-        this.generalService = generalService;
-    }
-
     public async Task UpdateAutoRefundChildMatch(RefundChildMatchRequest request)
     {
         var leagueGroupIds = new[] { 42, 74, 108 };
