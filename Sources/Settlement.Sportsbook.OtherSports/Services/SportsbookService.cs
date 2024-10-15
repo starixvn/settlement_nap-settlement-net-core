@@ -1,6 +1,4 @@
-﻿using Fanex.NAP.Client.Helpers.Common;
-
-namespace Settlement.Sportsbook.OtherSports.Services;
+﻿namespace Settlement.Sportsbook.OtherSports.Services;
 
 using AutoMapper;
 using Constants;
@@ -32,7 +30,6 @@ public class SportsbookServiceImp(
     public async Task<MatchResultDetail> GetMatch(GetMatchRequest request)
     {
         var (matchDetail, ticketCounts) = await multipleServerService.GetMatchInfo(request);
-        Check.Argument.IsNotNull(matchDetail, $"Match ${request.MatchId} does not exist");
 
         matchDetail.RefDataService = refDataService;
 

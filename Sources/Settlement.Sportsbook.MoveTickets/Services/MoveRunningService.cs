@@ -3,7 +3,6 @@
 using AutoMapper;
 using Criteria;
 using Fanex.Data.Repository;
-using Fanex.NAP.Client.Helpers.Web;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.AspNetCore.Http;

@@ -1,6 +1,6 @@
-﻿using Fanex.NAP.Client.Configuration;
+﻿using Fanex.NAP.Client;
+using Fanex.NAP.Client.Configuration;
 using Fanex.NAP.Client.Helpers.Business;
-using Fanex.NAP.Client.Helpers.Web;
 using Fanex.NAP.Client.Services;
 using PermissionService = Settlement.ThirdPartyProducts.Services.PermissionService;
 

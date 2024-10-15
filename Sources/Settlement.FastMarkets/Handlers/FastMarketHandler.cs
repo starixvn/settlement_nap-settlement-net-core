@@ -1,4 +1,4 @@
-﻿using Fanex.NAP.Client.Helpers.Web;
+﻿using Fanex.NAP.Client;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;

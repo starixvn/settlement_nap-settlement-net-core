@@ -1,9 +1,5 @@
-﻿using Fanex.NAP.Client.Helpers.Web;
+﻿using Fanex.NAP.Client;
 using Fanex.NAP.Client.Models;
-using Fanex.NAP.Client.Models.ParameterObject;
-using Fanex.NAP.Client.Services;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ONEbook.UM.AspNetCore.Filters;
@@ -12,7 +8,6 @@ using Settlement.WebSites.Models;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
-using System.Security.Claims;
 using System.Text;
 
 namespace Settlement.WebSites.Controllers;
@@ -77,52 +72,6 @@ public class HomeController(INapSession session, IConfiguration configuration) :
         HttpContext.Session.Clear();
         return Content("Clear session.");
     }
-
-#if DEBUG
-
-    [AllowAnonymous]
-    [Route("Home/FakeLogin")]
-    public async Task<IActionResult> FakeLogin()
-    {
-        var criteria = new LoginParameter
-        {
-            UserId = 8,
-            SiteId = 67,
-            LoginDate = DateTime.Now,
-            NetSessionId = HttpContext.Session.Id,
-            Ip = "127.0.0.1",
-            BrowserName = Request.Headers["User-Agent"].ToString(),
-            CountryCode = "VN",
-            Domain = "",
-            Platform = Environment.OSVersion.Platform.ToString()
-        };
-
-        var securityService = new SecurityService();
-        var onUserId = await securityService.LoginAsync(criteria);
-
-        await SaveUserSession(onUserId);
-
-        return Content("Faked Login");
-    }
-
-    private async Task SaveUserSession(int onUserId)
-    {
-        const int fakeUserId = 8;
-        session.UserId = fakeUserId;
-        session.UserName = "sa";
-        session.OnUserId = onUserId;
-
-        var claims = new List<Claim>
-        {
-            new(ClaimTypes.Name, "sa"),
-            new(ClaimTypes.NameIdentifier, "8")
-        };
-
-        var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));
-    }
-
-#endif
 
     [Route("Home/bet-builder/{matchId?}")]
     public IActionResult BetBuilder(string matchId)

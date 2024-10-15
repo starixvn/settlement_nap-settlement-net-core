@@ -4,7 +4,6 @@ namespace Settlement.Sportsbook.MoveTickets.Services;
 
 using Criteria;
 using Fanex.Data.Repository;
-using Fanex.NAP.Client.Helpers.Web;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Models;

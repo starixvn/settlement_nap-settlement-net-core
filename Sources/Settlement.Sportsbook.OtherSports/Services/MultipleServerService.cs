@@ -1,5 +1,4 @@
-﻿using Fanex.NAP.Client.Helpers.Common;
-using Settlement.Core.Criteria;
+﻿using Settlement.Core.Criteria;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.OtherSports.Models;
 
@@ -46,7 +45,6 @@ public class MultipleServerServiceImp(
 
         var fetchedResult = await repository.FetchMultipleAsync<MatchDetail, object>(criteria);
         var matchDetail = fetchedResult.Item1.FirstOrDefault();
-        Check.Argument.IsNotNull(matchDetail, $"Match ${criteria.MatchId} does not exist");
         var ticketInfoCriteria = new GetTicketInfoCriteria { MatchId = request.MatchId };
         var multipleTicketCounts = await GetTicketInfo(ticketInfoCriteria);
         var ticketCounts = mergeDataService.MergeTicketCounts(multipleTicketCounts);

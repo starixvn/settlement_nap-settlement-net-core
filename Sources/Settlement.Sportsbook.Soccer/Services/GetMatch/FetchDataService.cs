@@ -1,6 +1,4 @@
-﻿using Fanex.NAP.Client.Helpers.Common;
-
-namespace Settlement.Sportsbook.Soccer.Services.GetMatch;
+﻿namespace Settlement.Sportsbook.Soccer.Services.GetMatch;
 
 using AutoMapper;
 using Criteria;
@@ -39,7 +37,6 @@ public class FetchDateServiceImp(IDynamicRepository repository,
 
         var result = await repository.FetchMultipleAsync<MatchDetail, ChildMatchModel>(criteria);
         var baseMatchDetail = result.Item1.FirstOrDefault();
-        Check.Argument.IsNotNull(baseMatchDetail, $"Match ${criteria.MatchId} does not exist");
 
         var siteMatch = GetSiteMatchInfo(criteria.MatchId);
 

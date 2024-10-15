@@ -17,7 +17,6 @@ public static class OnebookUmInitializer
         services.AddScoped<CheckUMFilterAttribute>();
         services.AddSingleton<IUMCacheService, MemoryUmCacheService>();
         services.AddSingleton<IUMRestClient, UMRestClient>();
-        services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         services.AddSingleton<IHttpContextHelper, HttpContextHelper>();
         services.AddSingleton<IMaintenanceService, MaintenanceService>();
     }
