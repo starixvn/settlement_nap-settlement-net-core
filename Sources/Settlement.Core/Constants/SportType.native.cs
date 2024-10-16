@@ -135,6 +135,10 @@ public static class SportType
     public const int NumberGame = 161;
 
     public const int Happy5 = 164;
+
+    public const int VirtualDogs = 177;
+
+    public const int VirtualHorses = 198;
 }
 
 public static class SportGroup
@@ -143,8 +147,19 @@ public static class SportGroup
 
     public const string OtherGroup = "All Other Sports";
 
-    public static readonly int[] SupportSettleDetermine = { SportType.BasketBall };
+    public static readonly int[] VirtualSports = [SportType.VirtualDogs, SportType.VirtualHorses];
 
-    public static readonly int[] SOP = { SportType.BasketBall, SportType.Badminton, SportType.VolleyBall,
-        SportType.ESports, SportType.Cricket, SportType.Tennis, SportType.TableTennis,SportType.BaseBall };
+    public static readonly int[] SupportSettleDetermine = [SportType.BasketBall];
+
+    public static readonly int[] SOP =
+    [
+        SportType.BasketBall,
+        SportType.Badminton,
+        SportType.VolleyBall,
+        SportType.ESports,
+        SportType.Cricket,
+        SportType.Tennis,
+        SportType.TableTennis,
+        SportType.BaseBall
+    ];
 }

@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Fanex.Caching;
 using Fanex.Data.Repository;
-using Fanex.NAP.Client.Helpers.Web;
+using Fanex.NAP.Client;
 using NSubstitute.ReturnsExtensions;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
@@ -23,7 +23,7 @@ public class MatchEarlyServiceTests
 
     private readonly IFetchDataService fetchDataService;
 
-    private readonly MatchEarlyService service;
+    private readonly MatchEarlyServiceImp service;
 
     public MatchEarlyServiceTests()
     {

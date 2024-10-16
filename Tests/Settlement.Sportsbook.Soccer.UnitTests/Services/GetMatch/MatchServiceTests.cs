@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Fanex.Data.Repository;
+using Fanex.NAP.Client;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
@@ -12,7 +13,6 @@ using MatchDetail = Settlement.Sportsbook.Soccer.Models.MatchDetail;
 namespace Settlement.Sportsbook.Soccer.UnitTests.Services.GetMatch;
 
 using Fanex.Caching;
-using Fanex.NAP.Client.Helpers.Web;
 using Settlement.Core.Services.SpecificService;
 using Soccer.Services.GetMatch;
 

@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Fanex.Data.Repository;
-using Fanex.NAP.Client.Helpers.Web;
+using Fanex.NAP.Client;
 using NSubstitute;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;

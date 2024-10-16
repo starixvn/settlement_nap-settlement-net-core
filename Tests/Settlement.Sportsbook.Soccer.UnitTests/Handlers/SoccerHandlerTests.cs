@@ -1,6 +1,4 @@
-﻿
-using Fanex.NAP.Client.Helpers.Web;
-using Settlement.Core.Constants;
+﻿using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Sportsbook.Soccer.Handlers;
 using Settlement.Sportsbook.Soccer.Requests;
@@ -11,6 +9,7 @@ using MatchDetail = Settlement.Sportsbook.Soccer.Models.MatchDetail;
 
 namespace Settlement.Sportsbook.Soccer.UnitTests.Handlers;
 
+using Fanex.NAP.Client;
 using Soccer.Services.GetMatch;
 
 public class SoccerHandlerTests

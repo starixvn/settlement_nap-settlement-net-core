@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Fanex.NAP.Client.Helpers.Web;
+using Fanex.NAP.Client;
 using Fanex.Settlement.Converter.Services;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;

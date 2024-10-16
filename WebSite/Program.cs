@@ -1,8 +1,5 @@
 using Fanex.Data;
-using Fanex.NAP.Client;
-using Fanex.NAP.Client.Configuration;
-using Fanex.NAP.Client.Helpers.Web;
-using Fanex.NAP.SignIn.Attribute;
+using Fanex.NAP.Client.Attributes;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
@@ -27,11 +24,11 @@ services.AddSession(configuration);
 
 services.AddOnebookUM(configuration);
 
+services.AddNapClient(configuration);
+
 services.AddNapServices(configuration);
 
 services.AddFanexData(configuration);
-
-services.AddFanex(configuration);
 
 services.AddAutoMapper();
 
@@ -77,8 +74,4 @@ app.MapControllerRoute(
         "default",
         "{controller=Home}/{action=Index}/{id?}");
 
-NapClientManager
-    .UseConfig(app.Services.GetRequiredService<INapSettings>())
-    .UseSession(app.Services.GetRequiredService<INapSession>());
-
-app.Run();
+await app.RunAsync();

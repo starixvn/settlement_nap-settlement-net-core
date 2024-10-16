@@ -1,15 +1,14 @@
 ﻿namespace Settlement.Sportsbook.Soccer.Services.GetMatch;
 
-using Fanex.NAP.Client.Helpers.Common;
 using AutoMapper;
 using Criteria;
 using Fanex.Data.Repository;
 using Models;
-using Settlement.Core.Services;
-using MatchDetail = Models.MatchDetail;
-using Settlement.Core.Models;
-using Settlement.Core.Services.SpecificService;
 using Settlement.Core.Constants;
+using Settlement.Core.Models;
+using Settlement.Core.Services;
+using Settlement.Core.Services.SpecificService;
+using MatchDetail = Models.MatchDetail;
 
 public interface MatchEarlyService
 {
@@ -30,7 +29,6 @@ public class MatchEarlyServiceImp(
     {
         var criteria = new GetMatchDetailEarlyCriteria { MatchId = matchId };
         var matchDetail = await repository.GetAsync<MatchDetail>(criteria);
-        Check.Argument.IsNotNull(matchDetail, $"Match ${matchId} does not exist");
 
         matchDetail.RefDataService = refDataService;
 

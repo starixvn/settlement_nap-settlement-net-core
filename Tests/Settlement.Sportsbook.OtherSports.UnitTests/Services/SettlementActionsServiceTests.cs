@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Fanex.NAP.Client.Helpers.Web;
+using Fanex.NAP.Client;
 using Microsoft.AspNetCore.Http;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;

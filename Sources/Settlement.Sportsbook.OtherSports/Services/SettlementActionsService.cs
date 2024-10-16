@@ -1,11 +1,11 @@
-﻿using Settlement.Sportsbook.OtherSports.Models;
+﻿using Fanex.NAP.Client;
+using Settlement.Sportsbook.OtherSports.Models;
 using System.Text;
 
 namespace Settlement.Sportsbook.OtherSports.Services;
 
 using AutoMapper;
 using Criteria;
-using Fanex.NAP.Client.Helpers.Web;
 using Microsoft.AspNetCore.Http;
 using Requests;
 using Settlement.Core.Models;

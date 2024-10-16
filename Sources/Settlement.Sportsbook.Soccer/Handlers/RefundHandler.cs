@@ -7,7 +7,6 @@ using Settlement.Sportsbook.Soccer.Services;
 namespace Settlement.Sportsbook.Soccer.Handlers;
 
 using AutoMapper;
-using Fanex.NAP.Client.Helpers.Web;
 using Services.GetMatch;
 
 public class RefundHandler(

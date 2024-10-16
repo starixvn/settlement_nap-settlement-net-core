@@ -1,6 +1,6 @@
 ﻿using Fanex.Caching;
+using Fanex.NAP.Client;
 using Fanex.NAP.Client.Configuration;
-using Fanex.NAP.Client.Helpers.Web;
 using Fanex.NAP.Client.Services;
 using Settlement.Core.Models;
 

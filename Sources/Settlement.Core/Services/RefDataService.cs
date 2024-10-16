@@ -8,23 +8,16 @@ public interface IRefDataService
 
     string GetSportName(int sportId);
 
-    string GetLeagueName(object leagueId);
+    string GetLeagueName(object leagueId, bool is3rd = false);
 
     string GetBetTypeName(object betTypeId);
 
     string GetBetTypeName(object betTypeId, object resourceId);
 }
 
-public class RefDataService : IRefDataService
+public class RefDataService(IRemotingRefService remotingRefService) : IRefDataService
 {
     private const string LanguageCode = "en";
-
-    private readonly IRemotingRefService remotingRefService;
-
-    public RefDataService(IRemotingRefService remotingRefService)
-    {
-        this.remotingRefService = remotingRefService;
-    }
 
     public string GetTeamName(object teamId)
     {
@@ -36,9 +29,11 @@ public class RefDataService : IRefDataService
         return remotingRefService.GetSportName(sportId.ToString(), LanguageCode, string.Empty);
     }
 
-    public string GetLeagueName(object leagueId)
+    public string GetLeagueName(object leagueId, bool is3rd = false)
     {
-        return remotingRefService.GetLeagueName(leagueId.ToString(), LanguageCode, string.Empty);
+        return is3rd
+            ? remotingRefService.GetLeagueName3rd(leagueId.ToString(), LanguageCode, string.Empty)
+            : remotingRefService.GetLeagueName(leagueId.ToString(), LanguageCode, string.Empty);
     }
 
     public string GetBetTypeName(object betTypeId)
