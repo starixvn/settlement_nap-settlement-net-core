@@ -124,9 +124,10 @@ public class InstantCalculateServiceImp(
             }
         }
 
-        await UpdateResult(request);
+        await InsertAutoResult(request);
         await UpdateMatchInfo(request, request.IsHalfTime, criteria.ResourceResult);
         await pushInstantService.Execute(criteria);
+        await UpdateAutoResult(request);
 
         return new Result();
     }
@@ -300,7 +301,7 @@ public class InstantCalculateServiceImp(
         await scaleOutSettleService.UpdateMatchInfo(requestUpdateInfo);
     }
 
-    private async Task UpdateResult(InstantCalculationRequest request)
+    private async Task InsertAutoResult(InstantCalculationRequest request)
     {
         if (request.Action.Equals(ActionType.CalculateAll))
         {
@@ -313,6 +314,22 @@ public class InstantCalculateServiceImp(
                 StatusId = 1,
                 TypeId = request.IsHalfTime ? InstantCalculationType.CalcHt : InstantCalculationType.CalcFt,
                 ChildMatchType = request.ChildMatchType
+            };
+
+            await repository.ExecuteAsync(updateResultCriteria);
+        }
+    }
+
+    private async Task UpdateAutoResult(InstantCalculationRequest request)
+    {
+        if (request.Action.Equals(ActionType.CalculateAll))
+        {
+            var updateResultCriteria = new AutoPayoutResultUpdCriteria
+            {
+                MatchId = request.MatchId,
+                StatusId = 2, // completed,
+                SourceId = 100,
+                TypeId = request.IsHalfTime ? InstantCalculationType.CalcHt : InstantCalculationType.CalcFt,
             };
 
             await repository.ExecuteAsync(updateResultCriteria);
