@@ -8,7 +8,8 @@ export const SportNewAutoPayout = [
   SportType.eSports,
   SportType.iceHockey,
   SportType.basketBall,
-  SportType.kabaddi,
+  SportType.kabaddi, 
+  SportType.volleyBall,
   SportType.baseBall,
 ];
 
@@ -18,6 +19,7 @@ export const SportSingleAutoType = [
   SportType.eSports,
   SportType.iceHockey,
   SportType.basketBall,
-  SportType.kabaddi,
+  SportType.kabaddi, 
+  SportType.volleyBall,
   SportType.baseBall,
 ];
