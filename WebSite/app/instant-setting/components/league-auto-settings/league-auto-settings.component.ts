@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import {Component, inject, OnInit, ViewChild} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ResultSettings } from '../../../shared/models/league-settings.model';
 import { UrlHelper } from '../../../helper';
@@ -17,11 +17,11 @@ import { LeagueSettingsStore } from '../../services/league-settings.store.native
 import { ZeroFallbackDirective } from '../../../shared/directives/zero-fall-back.directive.native';
 import { OnlyIntegerDirective } from '../../../shared/directives';
 
-
 @Component({
   selector: 'league-auto-settings',
   templateUrl: './league-auto-settings.component.html',
-  imports: [AutoTypeComponent, CommonModule, TimeSettingComponent, FormsModule,
+  imports: [AutoTypeComponent,
+    CommonModule, TimeSettingComponent, FormsModule,
     AutoPayoutSettingComponent, ToastContainerModule,
     ZeroFallbackDirective, OnlyIntegerDirective],
   providers: [RequestService, ToastrService],
@@ -29,24 +29,29 @@ import { OnlyIntegerDirective } from '../../../shared/directives';
 })
 export class LeagueAutoSettingsComponent implements OnInit {
   @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
+  private  readonly store = inject(LeagueSettingsStore);
+  private readonly requestService = inject(RequestService);
+  private readonly messageBoxService = inject(MessageBoxService);
+  private readonly toastrService = inject(ToastrService);
+
   private leagueId: string;
   private sportType: string;
+  public autoSetting: number;
   public mainResultSettings: ResultSettings;
   public earlyResultSettings: ResultSettings;
-  leagueName: string;
+  public leagueName: string;
 
-  constructor(
-    private readonly store: LeagueSettingsStore,
-    private readonly requestService: RequestService,
-    private readonly messageBoxService: MessageBoxService,
-    private readonly toastrService: ToastrService) {
-  }
   async ngOnInit(): Promise<void> {
     this.toastrService.overlayContainer = this.toastContainer;
+
     this.leagueId = UrlHelper.getUrlParameter('leagueId');
     this.sportType = UrlHelper.getUrlParameter('sportType');
+    this.autoSetting = Number(UrlHelper.getUrlParameter('autoSetting'));
+
     this.store.actionAfterUpdate = () => { this.toastrService.clear() };
+
     const leagueSettings = await this.requestService.getLeagueSetting(Number(this.leagueId), Number(this.sportType));
+
     this.leagueName = leagueSettings.leagueName;
     this.mainResultSettings = leagueSettings.mainResultSettings;
     this.earlyResultSettings = leagueSettings.earlyResultSettings;

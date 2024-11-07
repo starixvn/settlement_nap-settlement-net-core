@@ -1,0 +1,50 @@
+<span toastContainer></span>
+<div class="league-setting">
+    <div class="league">
+        <div class="icon"></div>
+        {{ title }}
+    </div>
+    <div class="content">
+        <table>
+            <thead>
+            <tr>
+                <th rowspan="2" class="code">Auto Function</th>
+                <th rowspan="2" class="kick-off-time">Result Flow</th>
+                <th rowspan="2" class="event">Enable</th>
+                <th rowspan="2" class="interval-score">Waiting Time (second)</th>
+                <th rowspan="2" class="score">Trader Required</th>
+                <th colspan="2" class="confirm">Provider Required</th>
+            </tr>
+            <tr>
+                <th>Minimum</th>
+                <th>Source</th>
+            </tr>
+            </thead>
+            <tbody>
+            @for(setting of autoSettings; track $index) {
+                <tr>
+                    <td> {{setting.typeSettle}} </td>
+                    <td> {{setting.typeResult}} </td>
+                    <td><span [ngClass]="setting.enabled ? 'toggle-on' : 'toggle-off'" ></span></td>
+                    <td><input type="text" zeroFallback myOnlyInteger [value]="setting.waitingTime"/></td>
+                    <td><span [ngClass]="setting.isTraderRequired ? 'toggle-on' : 'toggle-off'"></span></td>
+<!--                    <td> {{setting.minProvider}} </td>-->
+                    <td>
+                        <select>
+                            @for(option of minProviderOptions;track $index) {
+                                <option [value]="option">{{option}}</option>
+                            }
+                        </select>
+                    </td>
+                    <td> {{setting.providers.length}} </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+    <div class="line"></div>
+    <div class="bottom">
+        <button type="button" style="margin-right: 16px;" class="btn btn-primary" (click)="submit()">Submit</button>
+        <button type="button" class="btn btn-danger" (click)="cancel()">Cancel</button>
+    </div>
+</div>
