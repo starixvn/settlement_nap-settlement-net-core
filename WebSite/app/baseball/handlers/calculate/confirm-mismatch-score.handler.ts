@@ -7,8 +7,8 @@ import { Storage } from "../../services/storage.service";
 
 export class ConfirmMismatchScoreHandler implements BaseHandler {
   private nextHandler: BaseHandler;
-  private verify = inject(VerificationBaseService);
-  private notifyService = inject(NotifyService);
+  private readonly verify = inject(VerificationBaseService);
+  private readonly notifyService = inject(NotifyService);
 
   setNextHandler(handler: BaseHandler) {
     this.nextHandler = handler;

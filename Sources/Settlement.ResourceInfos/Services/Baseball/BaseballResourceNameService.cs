@@ -51,6 +51,7 @@ public class BaseballResourceNameService : IMapperService
     {
         const int numberFour = 4;
         return resourceId.Length < 5 ? string.Empty : resourceId[numberFour..];
+
     }
 
     private static string GenerateOrdinals(int number)

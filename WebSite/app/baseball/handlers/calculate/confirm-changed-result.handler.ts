@@ -9,8 +9,8 @@ import { Storage } from "../../services/storage.service";
 
 export class ConfirmChangedResultHandler implements BaseHandler {
   private nextHandler: BaseHandler;
-  private aioService = inject(AioService);
-  private notifyService = inject(NotifyService);
+  private readonly aioService = inject(AioService);
+  private readonly notifyService = inject(NotifyService);
 
   setNextHandler(handler: BaseHandler) {
     this.nextHandler = handler;

@@ -11,9 +11,9 @@ import { SettlementStatusId, ResourceIds } from "../../../shared/constants";
 @Injectable()
 
 export class RefundStorage {
-  private aioService = inject(AioService);
-  private resultPipe = inject(ResourceNamePipe);
-  private intervalBackgroundPipe = inject(IntervalBackgroundPipe);
+  private readonly aioService = inject(AioService);
+  private readonly resultPipe = inject(ResourceNamePipe);
+  private readonly intervalBackgroundPipe = inject(IntervalBackgroundPipe);
   #match = signal<Match>(null);
 
   match = this.#match.asReadonly();

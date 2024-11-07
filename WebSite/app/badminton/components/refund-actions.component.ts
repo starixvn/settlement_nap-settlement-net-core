@@ -47,7 +47,7 @@ export class RefundActionsComponent
   public apiKeys = null;
   public blockUI = true;
   public isSettleRelated = false;
-  private resourceNameByIdPipe = inject(ResourceNameByIdPipe);
+  private readonly resourceNameByIdPipe = inject(ResourceNameByIdPipe);
 
   public get isSupportSettleRelated() {
     return [SportType.tableTennis].includes(this.matchDetail.sportType) 

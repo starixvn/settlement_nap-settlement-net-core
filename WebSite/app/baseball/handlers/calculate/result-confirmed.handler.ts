@@ -8,7 +8,7 @@ import { inject } from "@angular/core";
 
 export class ResultConfirmedHandler implements BaseHandler {
   private nextHandler: BaseHandler;
-  private notifyService = inject(NotifyService);
+  private readonly notifyService = inject(NotifyService);
 
   setNextHandler(handler: BaseHandler) {
     this.nextHandler = handler;

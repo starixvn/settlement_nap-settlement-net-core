@@ -10,14 +10,14 @@ import { ResultDetail } from "../../../shared/models/sportsbook-sop";
 
 export class ConfirmUnCalculateHandler implements BaseHandler {
   private nextHandler: BaseHandler;
-  private notifyService = inject(NotifyService);
+  private readonly notifyService = inject(NotifyService);
 
   setNextHandler(handler: BaseHandler) {
     this.nextHandler = handler;
   }
 
   handle(storage: Storage) {
-    const message = storage.getActionSubmit() == CalculateAction.earlyUnCalculate ? this.getEarlyConfirmMessage(storage) : Language.UncalculationConfirmMessage
+    const message = storage.getActionSubmit() === CalculateAction.earlyUnCalculate ? this.getEarlyConfirmMessage(storage) : Language.UncalculationConfirmMessage
     this.notifyService.confirm(message, () => {
       storage.getResultChecked().forEach((item) => {
         item.homeValue = "";

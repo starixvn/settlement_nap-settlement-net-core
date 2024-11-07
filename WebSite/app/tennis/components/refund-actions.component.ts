@@ -28,7 +28,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
   public isSettleRelated = false;
   private readonly infoDialog: ModalDialogMessage = new ModalDialogMessage();
   public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage(Language.confirmationBox);
-  private resourceNameByIdPipe = inject(ResourceNameByIdPipe);
+  private readonly resourceNameByIdPipe = inject(ResourceNameByIdPipe);
 
 
   async getMatch(matchId: number): Promise<void> {

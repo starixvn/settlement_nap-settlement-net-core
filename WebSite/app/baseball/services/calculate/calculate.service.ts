@@ -25,19 +25,19 @@ import { FinalResultCalculateHandler } from "../../handlers/calculate/final-resu
 @Injectable()
 
 export class CalculateService {
-  private nonSelectedHandler = new NonSelectedHandler();
-  private resultConfirmedHandler = new ResultConfirmedHandler();
-  private invalidInputHandler = new InvalidInputHandler();
-  private verifyRunningOddsHandler = new VerifyRunningOddsHandler();
-  private verifyScoreSourceHandler = new VerifyScoreSourceHandler();
-  private confirmMismatchScoreHandler = new ConfirmMismatchScoreHandler();
-  private finalResultCalculateHandler = new FinalResultCalculateHandler();
-  private confirmIntervalConsistency = new ConfirmIntervalConsistency();
-  private confirmChangedResultHandler = new ConfirmChangedResultHandler();
-  private confirmCalculateHandler = new ConfirmCalculateHandler();
-  private saveScoreHandler = new SaveScoreHandler();
-  private calculateHandler = new CalculateHandler();
-  private confirmUncalculateHandler = new ConfirmUnCalculateHandler();
+  private readonly nonSelectedHandler = new NonSelectedHandler();
+  private readonly resultConfirmedHandler = new ResultConfirmedHandler();
+  private readonly invalidInputHandler = new InvalidInputHandler();
+  private readonly verifyRunningOddsHandler = new VerifyRunningOddsHandler();
+  private readonly verifyScoreSourceHandler = new VerifyScoreSourceHandler();
+  private readonly confirmMismatchScoreHandler = new ConfirmMismatchScoreHandler();
+  private readonly finalResultCalculateHandler = new FinalResultCalculateHandler();
+  private readonly confirmIntervalConsistency = new ConfirmIntervalConsistency();
+  private readonly confirmChangedResultHandler = new ConfirmChangedResultHandler();
+  private readonly confirmCalculateHandler = new ConfirmCalculateHandler();
+  private readonly saveScoreHandler = new SaveScoreHandler();
+  private readonly   calculateHandler = new CalculateHandler();
+  private readonly confirmUncalculateHandler = new ConfirmUnCalculateHandler();
 
   #storage = inject(CalculateStorage);
   #notifyService = inject(NotifyService);
@@ -52,7 +52,6 @@ export class CalculateService {
     this.finalResultCalculateHandler.setNextHandler(this.verifyRunningOddsHandler);
     this.verifyRunningOddsHandler.setNextHandler(this.verifyScoreSourceHandler);
     this.verifyScoreSourceHandler.setNextHandler(this.confirmMismatchScoreHandler);
-    // TODO    
     this.confirmMismatchScoreHandler.setNextHandler(this.confirmIntervalConsistency);
     this.confirmIntervalConsistency.setNextHandler(this.confirmChangedResultHandler);
     this.confirmChangedResultHandler.setNextHandler(this.confirmCalculateHandler);

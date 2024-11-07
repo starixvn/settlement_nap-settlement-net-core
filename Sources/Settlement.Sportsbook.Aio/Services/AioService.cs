@@ -1,5 +1,4 @@
-﻿using Fanex.Settlement.ScaleOut.Constants;
-using Settlement.Core.Constants;
+﻿using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Aio.Constants;
@@ -288,7 +287,7 @@ public class AioServiceImp(
 
     private async Task<Result> ValidateFantasyMatch(SettleRequest request)
     {
-        if (!request.IsFantasy || !request.ActionName.Equals(ActionName.CalculateAll, StringComparison.Ordinal))
+        if (!request.IsFantasy || !request.ActionName.Equals(ActionType.CalculateAll, StringComparison.Ordinal))
         {
             return new Result();
         }
