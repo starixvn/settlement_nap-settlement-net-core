@@ -1,9 +1,11 @@
 <span toastContainer></span>
 <div class="league-setting">
-    <div class="league">
-        <div class="icon"></div>
-        {{ title }}
-    </div>
+    @if(title) {
+        <div class="league">
+            <div class="icon"></div>
+            {{ title }}
+        </div>
+    }
     <div class="content">
         <table>
             <thead>
@@ -21,24 +23,41 @@
             </tr>
             </thead>
             <tbody>
-            @for(setting of autoSettings; track $index) {
+            @for(setting of resultSettings; track $index) {
                 <tr>
-                    <td> {{setting.typeSettle}} </td>
+                    <td > {{setting.typeSettle}} </td>
                     <td> {{setting.typeResult}} </td>
-                    <td><span [ngClass]="setting.enabled ? 'toggle-on' : 'toggle-off'" ></span></td>
-                    <td><input type="text" zeroFallback myOnlyInteger [value]="setting.waitingTime"/></td>
-                    <td><span [ngClass]="setting.isTraderRequired ? 'toggle-on' : 'toggle-off'"></span></td>
-<!--                    <td> {{setting.minProvider}} </td>-->
                     <td>
-                        <select>
-                            @for(option of minProviderOptions;track $index) {
-                                <option [value]="option">{{option}}</option>
-                            }
-                        </select>
+                        @if(setting.typeSettle !== 'Refund') {
+                            <span  [ngClass]="setting.enabled ? 'toggle-on' : 'toggle-off'" (click)="changeEnableAuto(setting)"></span>
+                        }
                     </td>
-                    <td> {{setting.providers.length}} </td>
+                    <td><input type="text" zeroFallback myOnlyInteger [(ngModel)]="setting.waitingTime"/></td>
+                    <td>
+                        @if(setting.typeSettle !== 'Refund') {
+                            <span [ngClass]="setting.isTraderRequired ? 'toggle-on' : 'toggle-off'" (click)="changeRequiredTrader(setting)"></span>
+                        }
+                    </td>
+                    <td>
+                        @if(setting.typeSettle !== 'Refund') {
+                            <select [(ngModel)]="setting.minProvider">
+                                @for(option of minProviderOptions;track $index) {
+                                    <option [value]="option">{{option}}</option>
+                                }
+                            </select>
+                        }
+                    </td>
+                    <td>
+                        @if(setting.typeSettle !== 'Refund') {
+                            <div role="button" (click)="openProviderPopup(setting)">
+                                <div>Primary: &nbsp; {{ getProvidersName(1,setting) }}</div>
+                                <div>Secondary: &nbsp; {{ getProvidersName(2,setting)  }}</div>
+                            </div>
+                        }
+                    </td>
                 </tr>
             }
+
             </tbody>
         </table>
     </div>

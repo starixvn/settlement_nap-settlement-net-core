@@ -24,7 +24,8 @@
 				<tr *ngIf="mainResultSettings != null">
 					<td rowspan="2">Auto Payout</td>
 					<td>Main Results</td>
-					<td><span [ngClass]="mainResultSettings.hasTrader ? 'toggle-on' : 'toggle-off'" (click)="changeSettingAuto(true)"></span></td>
+					<td><span [ngClass]="mainResultSettings.hasTrader ? 'toggle-on' : 'toggle-off'" (click)="changeSettingAuto(true)">
+                    </span></td>
 					<td><input type="text" zeroFallback myOnlyInteger [ngModel]="mainResultSettings.waitingTime"/></td>
 					<td><span [ngClass]="mainResultSettings.hasTrader ? 'toggle-on' : 'toggle-off'" (click)="changeSettingTrader(true)"></span></td>
 					<td>

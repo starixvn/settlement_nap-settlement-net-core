@@ -1,4 +1,5 @@
 ﻿using Settlement.Setting.Controllers;
+using Settlement.Setting.Handlers;
 using Settlement.Setting.Services;
 
 namespace Settlement.WebSites.Configurations;
@@ -13,6 +14,7 @@ public static class SettingConfig
         services.AddTransient<OutsideSourceSettingService, OutsideSourceSettingServiceImp>();
         services.AddTransient<SendMailService, SendMailServiceImp>();
         services.AddTransient<LeagueSettingsService, LeagueSettingsServiceImp>();
+        services.AddScoped<AutoSettleSettingsHandler>();
     }
 
     public static void SettingConfigMediator(this IServiceCollection services)
