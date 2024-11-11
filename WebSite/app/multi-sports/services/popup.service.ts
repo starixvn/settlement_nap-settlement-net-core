@@ -1,5 +1,5 @@
 import { AutoSettingPosition } from "./../constants/change-setting-type.native";
-import { Injectable } from "@angular/core";
+import {inject, Injectable} from "@angular/core";
 import {
   PopupProperties,
   Match,
@@ -23,8 +23,13 @@ import { PopularSports } from "../constants/popular-sports.native";
 import { RefreshMatchService } from "./refresh-match.service";
 import { MatchState } from "../models/match-state.model";
 import { BehaviorSubject } from "rxjs";
+import {HttpParams} from "@angular/common/http";
 @Injectable()
 export class PopupService {
+  private readonly dialogBoxService = inject(DialogBoxService);
+  private readonly multiSportService = inject(MultiSportService);
+  private readonly handleActionsService = inject(HandleActionsService);
+  private readonly refreshMatchService = inject(RefreshMatchService);
   private readonly generalWidthPopup = "845px";
   private readonly generalHeightPopup = "715px";
   private readonly listNewSport = [
@@ -38,12 +43,7 @@ export class PopupService {
     SportType.baseBall
   ];
   public properties = new PopupProperties();
-  constructor(
-    private readonly dialogBoxService: DialogBoxService,
-    private readonly multiSportService: MultiSportService,
-    private readonly handleActionsService: HandleActionsService,
-    private readonly refreshMatchService: RefreshMatchService
-  ) { }
+
 
 
   public popupLog(matchCode: string, fromDate: string, toDate: string) {
@@ -217,6 +217,67 @@ export class PopupService {
       });
   }
 
+  private getAutoSettingBitPosition(autoSetting: AutoSetting) {
+    if(autoSetting.isAutoPayoutForLeague) {
+      return 1;
+    }
+
+    if(autoSetting.isDirectPayoutForLeague) {
+      return 5;
+    }
+
+    if(autoSetting.isEarlyPayoutForLeague) {
+      return 6;
+    }
+    return 0;
+  }
+
+  public async opeAutoSettleSetting(typeObject: "Match" | "League", league: LeagueMatch, match: Match | null, triggerRerender: () => void) {
+    const setting = await this.multiSportService.getSetting(league.leagueId, +match.matchId);
+
+    this.applyNewSetting(league.autoCalcSetting, setting.setting, false);
+
+    const autoSettingBitPosition = this.getAutoSettingBitPosition(league.autoCalcSetting)
+
+    const params = new HttpParams()
+        .set('leagueId', league.leagueId)
+        .set('type', typeObject)
+        .set('matchId',match?.matchId || 0)
+        .set('sportType', league.sportType)
+        .set('autoSetting', autoSettingBitPosition)
+        .set('waitingTime', league.autoWaitingTime)
+        .set('refundWaitingTime', league.refundWaitingTime)
+
+    const src = `/apps/advanced-auto-setting-league?${params.toString()}`;
+    const dialogData = new DialogDataIframe(Language.payout.titlePopupForLeague, encodeURI(src));
+
+    const subscribe = this.dialogBoxService
+        .popupHasResponse(dialogData, "500px", "930px")
+        .subscribe((result) => {
+              // if (_.isNil(result)) {
+              //   return;
+              // }
+              // const leagueSettings = Object.assign(new LeagueAutoSettings(), JSON.parse(result));
+              // this.applyNewSetting(
+              //     league.autoCalcSetting,
+              //     leagueSettings.autoSetting.toString(),
+              //     false,
+              //     true
+              // );
+              //
+              // league.autoWaitingTime = leagueSettings.waitingTime;
+              // league.autoRetryTime = leagueSettings.retryTime;
+              // league.refundWaitingTime = leagueSettings.refundWaitingTime;
+              // if (leagueSettings.isApplyAll) {
+              //   this.affectAutoPayoutForMatch(league);
+              //   triggerRerender();
+              // }
+              //
+              // subscribe.unsubscribe();
+            }
+        );
+  }
+
   public async openUpdatePayoutForLeague(league: LeagueMatch, triggerRerender: () => void) {
     const isMultiSelect = _.isNil(league.matches[0]) ? true : !_.isEqual(league.matches[0].sportType, SportType.cricket);
     const autoSetting = await this.multiSportService.getSetting(
@@ -252,12 +313,12 @@ export class PopupService {
       );
   }
 
-
   public async openUpdateNewPayoutForLeague(league: LeagueMatch, triggerRerender: () => void) {
     const setting = await this.multiSportService.getSetting(
       league.leagueId,
       0
     );
+    console.log(setting);
     this.applyNewSetting(league.autoCalcSetting, setting.setting, false);
     const currentState = league.autoCalcSetting.isAutoPayoutForLeague ? 1 : league.autoCalcSetting.isDirectPayoutForLeague ? 5 : 0;
     const src = `/apps/advanced-auto-setting-league?leagueId=${league.leagueId}&sportType=${league.sportType}&autoSetting=${currentState}&waitingTime=${league.autoWaitingTime}&refundWaitingTime=${league.refundWaitingTime}`;

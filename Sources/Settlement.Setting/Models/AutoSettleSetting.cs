@@ -15,7 +15,7 @@ public class AutoSettleSetting
 
     public bool Main_HasTrader { get; set; }
 
-    public int Main_NumberProvider { get; set; }
+    public byte Main_NumberProvider { get; set; }
 
     public string Main_PrimaryProvider { get; set; }
     public int Main_TotalPrimaryProvider { get; set; }
@@ -24,7 +24,7 @@ public class AutoSettleSetting
 
     public bool EAR_HasTrader { get; set; }
 
-    public int EAR_NumberProvider { get; set; }
+    public byte EAR_NumberProvider { get; set; }
 
     public string EAR_PrimaryProvider { get; set; }
 

@@ -1,4 +1,5 @@
 ﻿using Fanex.Data.Repository;
+using Settlement.Setting.Constants;
 using Settlement.Setting.Requests;
 
 namespace Settlement.Setting.Handlers;
@@ -24,7 +25,7 @@ public class UpdateAutoSettingsHandler
         {
             var criteria = new UpdateLeagueAutoSettleRunningCriteria
             {
-                AutoType = item.TypeSettle == "Payout" && item.TypeResult == "Main" ? (short)1 : (short)5,
+                //AutoType = item.TypeSettle == "Payout" && item.TypeResult == "Main" ? (short)1 : (short)5,
                 IsEnabled = item.Enabled,
                 IsApplyAll = command.IsApplyAll,
                 LeagueId = command.LeagueId,
@@ -37,8 +38,8 @@ public class UpdateAutoSettingsHandler
 
     private async Task UpdateSourceToAutoSettle(UpdateAutoSettingsCommand command)
     {
-        var payoutMain = command.ResultSettings.First(x => x.TypeSettle == "Payout" && x.TypeResult == "Main");
-        var payoutEarly = command.ResultSettings.First(x => x.TypeSettle == "Payout" && x.TypeResult == "Early");
+        var payoutMain = command.ResultSettings.First(x => x.SettleType == AutoSettleType.AutoPayout && x.ResourceType == ResourceType.Main);
+        var payoutEarly = command.ResultSettings.First(x => x.SettleType == AutoSettleType.AutoPayout && x.ResourceType == ResourceType.Early);
 
         var sourceCriteria = new UpdateLeagueAutoSettleSourceCriteria
         {
@@ -49,8 +50,8 @@ public class UpdateAutoSettingsHandler
             Main_NumberProvider = payoutMain.MinProvider,
             Main_PrimaryProvider = payoutMain.PrimaryProvider,
             Main_SecondaryProvider = payoutMain.SecondaryProvider,
-            Main_TotalPrimaryProvider = (byte)payoutMain.Providers.Count(x => x.Priority == 1),
-            Main_TotalSecondaryProvider = (byte)payoutMain.Providers.Count(x => x.Priority == 2),
+            Main_TotalPrimaryProvider = (byte)payoutMain.Providers.Count(x => x.Priority == Constants.ProviderPriority.Primary),
+            Main_TotalSecondaryProvider = (byte)payoutMain.Providers.Count(x => x.Priority == Constants.ProviderPriority.Secondary),
             Main_WaitingTime = payoutMain.WaitingTime,
             Main_InactiveProvider = string.Join(",", payoutMain.Providers.Where(x => !x.IsActive).Select(x => x.SourceId)),
 
@@ -58,8 +59,8 @@ public class UpdateAutoSettingsHandler
             EAR_NumberProvider = payoutEarly.MinProvider,
             EAR_PrimaryProvider = payoutEarly.PrimaryProvider,
             EAR_SecondaryProvider = payoutEarly.SecondaryProvider,
-            EAR_TotalPrimaryProvider = payoutEarly.Providers.Count(x => x.Priority == 1),
-            EAR_TotalSecondaryProvider = payoutEarly.Providers.Count(x => x.Priority == 2),
+            EAR_TotalPrimaryProvider = payoutEarly.Providers.Count(x => x.Priority == Constants.ProviderPriority.Primary),
+            EAR_TotalSecondaryProvider = payoutEarly.Providers.Count(x => x.Priority == Constants.ProviderPriority.Secondary),
             EAR_WaitingTime = payoutEarly.WaitingTime,
             EAR_InactiveProvider = string.Join(",", payoutEarly.Providers.Where(x => !x.IsActive).Select(x => x.SourceId))
 

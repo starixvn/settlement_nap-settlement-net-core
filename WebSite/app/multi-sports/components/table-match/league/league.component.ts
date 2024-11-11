@@ -106,9 +106,10 @@ export class LeagueComponent implements OnInit, OnDestroy {
 
   changeAutoLeague() {
     if (this.permission.canAutoPayout) {
-      SportNewAutoPayout.includes(this.league.sportType) ?
-        this.popupService.openUpdateNewPayoutForLeague(this.league,() => { this.cd.markForCheck() })
-        : this.popupService.openUpdatePayoutForLeague(this.league,() => { this.cd.markForCheck() });
+      SportNewAutoPayout.includes(this.league.sportType)
+          // ? this.popupService.openUpdateNewPayoutForLeague(this.league,() => { this.cd.markForCheck() })
+          ? this.popupService.opeAutoSettleSetting("League",this.league,null,() => { this.cd.markForCheck() })
+          : this.popupService.openUpdatePayoutForLeague(this.league,() => { this.cd.markForCheck() });
     }
 
   }

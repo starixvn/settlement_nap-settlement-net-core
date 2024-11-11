@@ -3,17 +3,19 @@ import {OnlyIntegerDirective} from "../../../../shared/directives";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {ToastContainerModule, ToastrService} from "ngx-toastr";
 import {ZeroFallbackDirective} from "../../../../shared/directives/zero-fall-back.directive.native";
-import { ResultSetting} from "../types";
+import {AutoSettleType, GetAutoSettleSettings, ResourceType, ResultSetting} from "../types";
 import {NgClass} from "@angular/common";
-import { AutoSettleSettingsService } from "../auto-settle-settings.service";
-import { UrlHelper } from "../../../../helper";
-import {MatDialog } from "@angular/material/dialog";
+import {AutoSettleSettingsService} from "../auto-settle-settings.service";
+import {UrlHelper} from "../../../../helper";
+import {MatDialog} from "@angular/material/dialog";
 import {ProviderSelectionComponent} from "../provider-selection/provider-selection.component";
-import { Store } from "../store";
+import {Store} from "../store";
 import {cloneDeep, isEmpty} from 'lodash';
 import {MessageBoxService} from "../../../../shared/services";
 import {Language} from "../../../../shared/language.native";
 import {ModalDialogMessage} from "../../../../shared/models";
+import {ResourceTypeNamePipe} from "../resource-type-name.pipe";
+import {SettleTypeNamePipe} from "../settle-type-name.pipe";
 
 @Component({
     selector: "app-auto-setting",
@@ -25,6 +27,8 @@ import {ModalDialogMessage} from "../../../../shared/models";
         ZeroFallbackDirective,
         NgClass,
         FormsModule,
+        ResourceTypeNamePipe,
+        SettleTypeNamePipe,
     ],
     providers: [AutoSettleSettingsService],
     standalone: true
@@ -49,15 +53,21 @@ export class DataTableSettingComponent implements OnInit {
         const refundWaitingTime = +(UrlHelper.getUrlParameter('refundWaitingTime'));
 
         console.log("DataTableSettingComponent",leagueId, sportType, autoSetting);
+        const query: GetAutoSettleSettings = {
+            leagueId,
+            matchId,
+            sportType,
+            typeObject : "League"
+        }
 
-        this.autoSettleSettingsService.getAutoSetting(leagueId, sportType).subscribe(res => {
+        this.autoSettleSettingsService.getAutoSetting(query).subscribe(res => {
             res.resultSettings[0].enabled = autoSetting === 1; // payout
             res.resultSettings[1].enabled = autoSetting === 5; // early
             res.typeObject = "League"
 
             const refundResultSetting: ResultSetting = {
-                typeResult: "Main",
-                typeSettle: "Refund",
+                resourceType: ResourceType.Main,
+                settleType: AutoSettleType.AutoRefund,
                 enabled: false,
                 waitingTime: refundWaitingTime,
                 isTraderRequired: false,

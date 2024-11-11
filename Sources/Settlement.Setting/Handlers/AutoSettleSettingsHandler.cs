@@ -3,6 +3,8 @@
 using Fanex.Data.Repository;
 using Settlement.Core.Criteria;
 using Settlement.Core.Models;
+using Settlement.Setting.Constants;
+using Settlement.Setting.Criteria;
 using Settlement.Setting.Models;
 using Settlement.Setting.Requests;
 using Settlement.Setting.Responses;
@@ -21,7 +23,54 @@ public class AutoSettleSettingsHandler
 
     public async Task<GetAutoSettleSettingsResponse> HandleAsync(AutoSettleSettingsQuery query, CancellationToken cancellationToken)
     {
-        ICriteria criteria = query.TypeObject == "League"
+        ICriteria criteria = CreateAutoSettleSettingsSelCriteria(query);
+
+        var result = await _repository.GetAsync<AutoSettleSetting>(criteria);
+
+        var providers = await _repository.FetchAsync<ProviderInfo>(new GetProviderInfoCriteria
+        {
+            SportType = query.SportType,
+            LeagueId = query.LeagueId
+        });
+
+        return CreateAutoSettleSettingsResponse(query, result, providers);
+
+    }
+
+    private GetAutoSettleSettingsResponse CreateAutoSettleSettingsResponse(AutoSettleSettingsQuery query, AutoSettleSetting result, IEnumerable<ProviderInfo> providers)
+    {
+        var mainItem = new GetAutoSettleSettingResponseItem
+        {
+            ResourceType = ResourceType.Main,
+            SettleType = AutoSettleType.AutoPayout,
+            WaitingTime = result.Main_WaitingTime,
+            MinProvider = result.Main_NumberProvider,
+            IsTraderRequired = result.Main_HasTrader,
+            Providers = GetProvidersSetting(result.Main_PrimaryProvider, result.Main_SecondaryProvider, result.Main_InactiveProvider, providers.ToList())
+        };
+
+        var earlyItem = new GetAutoSettleSettingResponseItem
+        {
+            ResourceType = ResourceType.Early,
+            SettleType = AutoSettleType.AutoPayout,
+            WaitingTime = result.EAR_WaitingTime,
+            MinProvider = result.EAR_NumberProvider,
+            IsTraderRequired = result.EAR_HasTrader,
+            Providers = GetProvidersSetting(result.EAR_PrimaryProvider, result.EAR_SecondaryProvider, result.EAR_InactiveProvider, providers.ToList())
+        };
+
+
+        return new GetAutoSettleSettingsResponse
+        {
+            LeagueId = query.LeagueId,
+            MatchId = query.MatchId,
+            ResultSettings = new List<GetAutoSettleSettingResponseItem> { mainItem, earlyItem }
+        };
+    }
+
+    private static ICriteria CreateAutoSettleSettingsSelCriteria(AutoSettleSettingsQuery query)
+    {
+        return query.TypeObject == "League"
            ? new AutoSettleLeagueSettingSelCriteria
            {
                LeagueId = query.LeagueId,
@@ -33,42 +82,6 @@ public class AutoSettleSettingsHandler
                MatchId = query.MatchId,
                SportType = query.SportType
            };
-
-        var result = await _repository.GetAsync<AutoSettleSetting>(criteria);
-
-        var providers = await _repository.FetchAsync<ProviderInfo>(new GetProviderInfoCriteria
-        {
-            SportType = query.SportType,
-            LeagueId = query.LeagueId
-        });
-
-        var mainItem = new GetAutoSettleSettingResponseItem
-        {
-            TypeResult = "Main",
-            TypeSettle = "Payout",
-            WaitingTime = result.Main_WaitingTime,
-            MinProvider = result.Main_NumberProvider,
-            IsTraderRequired = result.Main_HasTrader,
-            Providers = GetProvidersSetting(result.Main_PrimaryProvider, result.Main_SecondaryProvider, result.Main_InactiveProvider, providers.ToList())
-        };
-
-        var earlyItem = new GetAutoSettleSettingResponseItem
-        {
-            TypeResult = "Early",
-            TypeSettle = "Payout",
-            WaitingTime = result.EAR_WaitingTime,
-            MinProvider = result.EAR_NumberProvider,
-            IsTraderRequired = result.EAR_HasTrader,
-            Providers = GetProvidersSetting(result.EAR_PrimaryProvider, result.EAR_SecondaryProvider, result.EAR_InactiveProvider, providers.ToList())
-        };
-
-        return new GetAutoSettleSettingsResponse
-        {
-            LeagueId = query.LeagueId,
-            MatchId = query.MatchId,
-            ResultSettings = new List<GetAutoSettleSettingResponseItem> { mainItem, earlyItem }
-        };
-
     }
 
     private List<Provider> GetProvidersSetting(
@@ -94,40 +107,17 @@ public class AutoSettleSettingsHandler
         return result;
     }
 
-    private int GetProviderPriority(int sourceId, string[] primaryProviderIds, string[] secondaryProviderIds)
+    private ProviderPriority GetProviderPriority(int sourceId, string[] primaryProviderIds, string[] secondaryProviderIds)
     {
         var sourceIdStr = sourceId.ToString();
 
         return sourceIdStr switch
         {
-            _ when primaryProviderIds.Contains(sourceIdStr) => 1,
-            _ when secondaryProviderIds.Contains(sourceIdStr) => 2,
-            _ => 0
+            _ when primaryProviderIds.Contains(sourceIdStr) => ProviderPriority.Primary,
+            _ when secondaryProviderIds.Contains(sourceIdStr) => ProviderPriority.Secondary,
+            _ => ProviderPriority.UnAssign
         };
     }
 }
 
 
-public class AutoSettleMatchSettingSelCriteria : ICriteria
-
-{
-    public int LeagueId { get; set; }
-    public int MatchId { get; set; }
-    public short SportType { get; set; }
-    public byte AutoType { get; set; } = 6;
-
-    public string GetSettingKey() => "NAP_Set_AutoPayout_MatchSetting_Sel";
-
-    public bool IsValid() => true;
-}
-
-public class AutoSettleLeagueSettingSelCriteria : ICriteria
-{
-    public int LeagueId { get; set; }
-    public short SportType { get; set; }
-    public byte AutoType { get; set; } = 6;
-
-    public string GetSettingKey() => "NAP_Set_AutoPayout_LeagueSetting_Sel";
-
-    public bool IsValid() => true;
-}

@@ -6,8 +6,8 @@ export interface Provider  {
 }
 
 export interface ResultSetting {
-    typeSettle: "Payout" | "Refund"
-    typeResult: "Main" | "Early",
+    settleType: AutoSettleType,
+    resourceType: ResourceType,
     enabled: boolean,
     waitingTime: number,
     isTraderRequired:boolean
@@ -30,4 +30,23 @@ export class AutoSettleSettings implements IAutoSettleSettingsResponse {
     matchId: number | null = 0;
     typeObject: "League" | "Match" = "Match";
     resultSettings: ResultSetting[] = []
+}
+
+export enum AutoSettleType  {
+    AutoDirect = 5,
+    AutoPayout = 6, // for service ap2
+    AutoRefund = 7
+}
+
+export enum ResourceType {
+    Total,
+    Main,
+    Early
+}
+
+export type GetAutoSettleSettings = {
+    leagueId: number;
+    matchId : number;
+    sportType: number;
+    typeObject: "League" | "Match";
 }

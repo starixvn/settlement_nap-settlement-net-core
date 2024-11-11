@@ -5,6 +5,7 @@ public class AutoCalculationSetting
 {
     private const int ConvertToBase = 2;
     private const int DirectPayoutBit = 4;
+    private const int EarlyPayoutBit = 5;
 
     [IgnoreMember]
     private bool IsMultiSportPage { get; }
@@ -72,6 +73,9 @@ public class AutoCalculationSetting
 
     [Key("isDirectPayoutForLeague")]
     public bool IsDirectPayoutForLeague => !string.IsNullOrWhiteSpace(LeagueSetting) && LeagueSetting.Length > DirectPayoutBit && LeagueSetting[DirectPayoutBit].Equals('1');
+
+    [Key("isEarlyPayoutForLeague")]
+    public bool isEarlyPayoutForLeague => !string.IsNullOrWhiteSpace(LeagueSetting) && LeagueSetting.Length > EarlyPayoutBit && LeagueSetting[EarlyPayoutBit].Equals('1');
 
     [Key("isInstantForLeague")]
     public bool IsInstantForLeague => !string.IsNullOrWhiteSpace(LeagueSetting) && LeagueSetting.Length > 1 && LeagueSetting[1].Equals('1');

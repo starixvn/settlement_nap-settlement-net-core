@@ -25,7 +25,7 @@ export  class Store {
         const currentSetting = this.autoSetting$.getValue();
 
         const updatedResultSettings = currentSetting.resultSettings
-            .map(x => x.typeResult === nextState.typeResult ? {...x, ...nextState} : x);
+            .map(x => x.resourceType === nextState.resourceType ? {...x, ...nextState} : x);
 
         const updatedSetting = {...currentSetting, resultSettings: updatedResultSettings};
 
