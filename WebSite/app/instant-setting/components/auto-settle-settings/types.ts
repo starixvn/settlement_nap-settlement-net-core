@@ -20,15 +20,17 @@ export interface IAutoSettleSettingsResponse {
     leagueName: string;
     typeObject: "League" | "Match"
     matchId: number | null;
+    isApplyAll: boolean;
     resultSettings: ResultSetting[];
 }
 
 
 export class AutoSettleSettings implements IAutoSettleSettingsResponse {
-    leagueId: number = 0;
-    leagueName: string = '';
+    leagueId = 0;
+    leagueName = '';
     matchId: number | null = 0;
     typeObject: "League" | "Match" = "Match";
+    isApplyAll = false;
     resultSettings: ResultSetting[] = []
 }
 

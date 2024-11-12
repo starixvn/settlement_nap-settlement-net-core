@@ -25,7 +25,12 @@
             <tbody>
             @for(setting of resultSettings; track $index) {
                 <tr>
-                    <td > {{setting.settleType | settleTypeName}} </td>
+                    @if(setting.settleType === 6 && setting.resourceType === 1) {
+                        <td rowspan="2"> {{setting.settleType | settleTypeName}} </td>
+                    }
+                    @if(setting.settleType === 7) {
+                        <td> {{setting.settleType | settleTypeName}} </td>
+                    }
                     <td> {{setting.resourceType | resourceTypeName}} </td>
                     <td>
                         @if(setting.settleType !== 7) {
@@ -51,7 +56,7 @@
                     </td>
                     <td>
                         @if(setting.settleType !== 7) {
-                            <div role="button" (click)="openProviderPopup(setting)">
+                            <div role="button" (click)="openProviderPopup(setting)" style="text-decoration:underline;color: #1d3968;cursor: pointer">
                                 <div>Primary: &nbsp; {{ getProvidersName(1,setting) }}</div>
                                 <div>Secondary: &nbsp; {{ getProvidersName(2,setting)  }}</div>
                             </div>

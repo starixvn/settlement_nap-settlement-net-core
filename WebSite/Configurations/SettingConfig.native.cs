@@ -15,6 +15,8 @@ public static class SettingConfig
         services.AddTransient<SendMailService, SendMailServiceImp>();
         services.AddTransient<LeagueSettingsService, LeagueSettingsServiceImp>();
         services.AddScoped<AutoSettleSettingsHandler>();
+        services.AddScoped<UpdateAutoSettingsHandler>();
+
     }
 
     public static void SettingConfigMediator(this IServiceCollection services)

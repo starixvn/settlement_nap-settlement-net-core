@@ -10,12 +10,13 @@ import {UrlHelper} from "../../../../helper";
 import {MatDialog} from "@angular/material/dialog";
 import {ProviderSelectionComponent} from "../provider-selection/provider-selection.component";
 import {Store} from "../store";
-import {cloneDeep, isEmpty} from 'lodash';
+import {cloneDeep, isEmpty, set} from 'lodash';
 import {MessageBoxService} from "../../../../shared/services";
 import {Language} from "../../../../shared/language.native";
 import {ModalDialogMessage} from "../../../../shared/models";
 import {ResourceTypeNamePipe} from "../resource-type-name.pipe";
 import {SettleTypeNamePipe} from "../settle-type-name.pipe";
+import {LeagueAutoSettings} from "../../../../shared/models/leagus-auto-settings.model";
 
 @Component({
     selector: "app-auto-setting",
@@ -38,56 +39,45 @@ export class DataTableSettingComponent implements OnInit {
     private  readonly store = inject(Store);
     private readonly dialog = inject(MatDialog);
     private readonly messageBoxService = inject(MessageBoxService);
-    private readonly toastrService = inject(ToastrService);
 
     public title = "";
     public minProviderOptions = [0,1,2];
-    public resultSettings : ResultSetting[] =[]
+    public resultSettings : ResultSetting[] = []
 
 
     ngOnInit(): void {
-        const leagueId = +UrlHelper.getUrlParameter('leagueId') || 97078;
-        const matchId = +UrlHelper.getUrlParameter('matchId') || 97078;
+        const leagueId = +UrlHelper.getUrlParameter('leagueId') || 123590;
+        const matchId = +UrlHelper.getUrlParameter('matchId') || 0;
         const sportType = +UrlHelper.getUrlParameter('sportType') || 43;
-        const autoSetting = +UrlHelper.getUrlParameter('autoSetting');
+        const typeObject = UrlHelper.getUrlParameter('typeObject');
         const refundWaitingTime = +(UrlHelper.getUrlParameter('refundWaitingTime'));
-
-        console.log("DataTableSettingComponent",leagueId, sportType, autoSetting);
         const query: GetAutoSettleSettings = {
             leagueId,
             matchId,
             sportType,
-            typeObject : "League"
+            typeObject: typeObject === "League" ? "League" : "Match"
         }
 
         this.autoSettleSettingsService.getAutoSetting(query).subscribe(res => {
-            res.resultSettings[0].enabled = autoSetting === 1; // payout
-            res.resultSettings[1].enabled = autoSetting === 5; // early
-            res.typeObject = "League"
-
             const refundResultSetting: ResultSetting = {
                 resourceType: ResourceType.Main,
                 settleType: AutoSettleType.AutoRefund,
-                enabled: false,
+                enabled: !!res.resultSettings?.find(x => x.resourceType === ResourceType.Main)?.enabled,
                 waitingTime: refundWaitingTime,
                 isTraderRequired: false,
                 minProvider: 0,
                 providers: []
             }
-
             res.resultSettings.push(refundResultSetting);
 
             this.store.originalAutoSetting = cloneDeep(res);
             this.store.setAutoSetting(res);
         });
 
-
-        this.store.getAutoSetting().subscribe(res => {
-            console.log("subscribe",res);
+        this.store.getAutoSettings().subscribe(res => {
             this.resultSettings = res.resultSettings;
             this.title = res.leagueName;
         })
-
     }
 
     getProvidersName(priority: number, resultSetting: ResultSetting) {
@@ -101,14 +91,31 @@ export class DataTableSettingComponent implements OnInit {
         const confirmBox = new ModalDialogMessage(Language.confirmationBox);
         confirmBox.message = Language.AutoPayoutSetting.ConfirmMessageForAutoSetting;
         confirmBox.hasActionOnNoBtn = true;
+
         this.messageBoxService.confirm(confirmBox, () => {
-            console.log('yes')
+            this.store.autoSettings.isApplyAll = true;
+            this.autoSettleSettingsService.updateAutoSetting(this.store.autoSettings).subscribe(res => {
+                const response: LeagueAutoSettings = {
+                    isApplyAll: this.store.autoSettings.isApplyAll
+                }
+                parent.document.getElementById('dialog-response').setAttribute('value', JSON.stringify(response));
+                this.messageBoxService.closePopup();
+            });
         }, () => {
-        console.log('no');
+            this.store.autoSettings.isApplyAll = false;
+            this.autoSettleSettingsService.updateAutoSetting(this.store.autoSettings).subscribe(res => {
+                const response: LeagueAutoSettings = {
+                    isApplyAll: this.store.autoSettings.isApplyAll
+                }
+                parent.document.getElementById('dialog-response').setAttribute('value', JSON.stringify(response));
+                this.messageBoxService.closePopup();
+            });
         });
     }
 
-    cancel() {}
+    cancel() {
+        this.messageBoxService.closePopup();
+    }
 
     openProviderPopup(setting:ResultSetting) {
         this.dialog.closeAll();
@@ -116,7 +123,6 @@ export class DataTableSettingComponent implements OnInit {
             width: '400px',
             data: setting
         });
-
     }
 
     changeEnableAuto(setting: ResultSetting) {

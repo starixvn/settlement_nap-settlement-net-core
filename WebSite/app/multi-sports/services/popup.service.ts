@@ -217,42 +217,21 @@ export class PopupService {
       });
   }
 
-  private getAutoSettingBitPosition(autoSetting: AutoSetting) {
-    if(autoSetting.isAutoPayoutForLeague) {
-      return 1;
-    }
-
-    if(autoSetting.isDirectPayoutForLeague) {
-      return 5;
-    }
-
-    if(autoSetting.isEarlyPayoutForLeague) {
-      return 6;
-    }
-    return 0;
-  }
-
-  public async opeAutoSettleSetting(typeObject: "Match" | "League", league: LeagueMatch, match: Match | null, triggerRerender: () => void) {
-    const setting = await this.multiSportService.getSetting(league.leagueId, +match.matchId);
-
-    this.applyNewSetting(league.autoCalcSetting, setting.setting, false);
-
-    const autoSettingBitPosition = this.getAutoSettingBitPosition(league.autoCalcSetting)
-
+  public async opeAutoSettleSetting(typeObject: "Match" | "League", league: LeagueMatch | null, match: Match | null, triggerRerender: () => void) {
+    console.log(match)
     const params = new HttpParams()
-        .set('leagueId', league.leagueId)
-        .set('type', typeObject)
+        .set('leagueId', league?.leagueId || match?.leagueId || 0)
+        .set('typeObject', typeObject)
         .set('matchId',match?.matchId || 0)
-        .set('sportType', league.sportType)
-        .set('autoSetting', autoSettingBitPosition)
-        .set('waitingTime', league.autoWaitingTime)
-        .set('refundWaitingTime', league.refundWaitingTime)
+        .set('sportType', league?.sportType || match?.sportType || 0)
+        .set('waitingTime', league?.autoWaitingTime || 0)
+        .set('refundWaitingTime', league?.refundWaitingTime || 0)
 
     const src = `/apps/advanced-auto-setting-league?${params.toString()}`;
     const dialogData = new DialogDataIframe(Language.payout.titlePopupForLeague, encodeURI(src));
 
     const subscribe = this.dialogBoxService
-        .popupHasResponse(dialogData, "500px", "930px")
+        .popupHasResponse(dialogData, "760px", "320px")
         .subscribe((result) => {
               // if (_.isNil(result)) {
               //   return;

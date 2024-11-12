@@ -60,17 +60,17 @@ export class AppComponent implements OnInit, AfterContentChecked {
     }
 
     private getComponentFactory(): ComponentFactory<OnInit> {
-        // const pageType = this.elementRef.nativeElement.getAttribute('page-type');
-        // switch (pageType) {
-        //     case "DirectTime":
-        //     case "InstantTime":
-        //         return this.componentFactoryResolver.resolveComponentFactory(TimeSettingComponent);
-            // case "RemarkSetting":
-            //     return this.componentFactoryResolver.resolveComponentFactory(RemarkSettingComponent);
-            // case "AdvancedLeagueSettings":
+        const pageType = this.elementRef.nativeElement.getAttribute('page-type');
+        switch (pageType) {
+            case "DirectTime":
+            case "InstantTime":
+                return this.componentFactoryResolver.resolveComponentFactory(TimeSettingComponent);
+            case "RemarkSetting":
+                return this.componentFactoryResolver.resolveComponentFactory(RemarkSettingComponent);
+            case "AdvancedLeagueSettings":
                 return this.componentFactoryResolver.resolveComponentFactory(DataTableSettingComponent);
-            // default:
-            //     return this.componentFactoryResolver.resolveComponentFactory(AutoSettingComponent);
-        // }
+            default:
+                return this.componentFactoryResolver.resolveComponentFactory(AutoSettingComponent);
+        }
     }
 }

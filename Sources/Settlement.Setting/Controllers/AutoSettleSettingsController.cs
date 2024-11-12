@@ -14,9 +14,10 @@ public class AutoSettleSettingsController : ControllerBase
     private readonly AutoSettleSettingsHandler handler;
     private readonly UpdateAutoSettingsHandler updateAutoSettingsHandler;
 
-    public AutoSettleSettingsController(AutoSettleSettingsHandler handler)
+    public AutoSettleSettingsController(AutoSettleSettingsHandler handler, UpdateAutoSettingsHandler updateAutoSettingsHandler)
     {
         this.handler = handler;
+        this.updateAutoSettingsHandler = updateAutoSettingsHandler;
     }
 
     [HttpGet]
@@ -27,7 +28,8 @@ public class AutoSettleSettingsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task UpdateSettings(UpdateAutoSettingsCommand command, CancellationToken cancellationToken)
+    [Route("update-settings")]
+    public async Task UpdateSettings([FromBody] UpdateAutoSettingsCommand command, CancellationToken cancellationToken)
     {
         await updateAutoSettingsHandler.HandleAsync(command, cancellationToken);
     }

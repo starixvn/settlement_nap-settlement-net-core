@@ -16,17 +16,17 @@
 			</thead>
 			<tbody>
                 @for(provider of resultSetting.providers; track $index) {
-                    <tr class="disable">
+                    <tr class="disable" [ngStyle]="{'background-color' : !provider.isActive ? 'darkgrey' : 'white',}">
                         <td> <input type="checkbox" [(ngModel)]="provider.isActive"/> </td>
                         <td>{{ provider.sourceName}} </td>
                         <td>
-                            <input type="radio" [(ngModel)]="provider.priority" [value]="1" [name]="provider.sourceId.toString()" />
+                            <input type="radio" [(ngModel)]="provider.priority" [value]="1" [name]="provider.sourceId.toString()" [disabled]="!provider.isActive" />
                         </td>
                         <td>
-                            <input type="radio" [(ngModel)]="provider.priority" [value]="2" [name]="provider.sourceId.toString()" />
+                            <input type="radio" [(ngModel)]="provider.priority" [value]="2" [name]="provider.sourceId.toString()" [disabled]="!provider.isActive"/>
                         </td>
                         <td>
-                            <input type="radio" [(ngModel)]="provider.priority" [value]="0" [name]="provider.sourceId.toString()" />
+                            <input type="radio" [(ngModel)]="provider.priority" [value]="0" [name]="provider.sourceId.toString()" [disabled]="!provider.isActive"/>
                         </td>
 
                     </tr>

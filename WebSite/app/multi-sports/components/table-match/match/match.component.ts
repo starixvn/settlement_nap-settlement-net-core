@@ -64,7 +64,7 @@ export class MatchComponent implements OnChanges, OnInit {
     const { permission } = this.store.state;
     if (permission.canAutoPayout) {
       if(SportNewAutoPayout.includes(this.match.sportType)) {
-
+        this.popupService.opeAutoSettleSetting("Match",null,this.match, () => {})
       } else {
         this.popupService.openUpdatePayoutForMatch(this.match, this.state$);
       }

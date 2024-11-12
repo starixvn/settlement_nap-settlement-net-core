@@ -27,36 +27,62 @@ public class AutoSettleSettingsHandler
 
         var result = await _repository.GetAsync<AutoSettleSetting>(criteria);
 
+        var autoSettingBit = await GetAutoSettingBit(query.LeagueId, query.MatchId);
+
         var providers = await _repository.FetchAsync<ProviderInfo>(new GetProviderInfoCriteria
         {
             SportType = query.SportType,
             LeagueId = query.LeagueId
         });
 
-        return CreateAutoSettleSettingsResponse(query, result, providers);
+        return CreateAutoSettleSettingsResponse(query, result, autoSettingBit, providers);
 
     }
 
-    private GetAutoSettleSettingsResponse CreateAutoSettleSettingsResponse(AutoSettleSettingsQuery query, AutoSettleSetting result, IEnumerable<ProviderInfo> providers)
+    private bool IsBitSet(int value, int position)
+    {
+        return (value & (1 << position)) != 0;
+    }
+
+    public async Task<int> GetAutoSettingBit(int leagueId, int matchId)
+    {
+        var criteria = new GetSettingCriteria
+        {
+            MatchId = matchId,
+            LeagueId = leagueId
+        };
+
+        var value = await _repository.GetAsync<int?>(criteria);
+
+        return value ?? 0;
+    }
+
+    private GetAutoSettleSettingsResponse CreateAutoSettleSettingsResponse(
+        AutoSettleSettingsQuery query,
+        AutoSettleSetting result,
+        int autoSettingBit,
+        IEnumerable<ProviderInfo> providers)
     {
         var mainItem = new GetAutoSettleSettingResponseItem
         {
+            Enabled = IsBitSet(autoSettingBit, AutoSettleBitPosition.AutoPayoutMain - 1),
             ResourceType = ResourceType.Main,
             SettleType = AutoSettleType.AutoPayout,
             WaitingTime = result.Main_WaitingTime,
             MinProvider = result.Main_NumberProvider,
             IsTraderRequired = result.Main_HasTrader,
-            Providers = GetProvidersSetting(result.Main_PrimaryProvider, result.Main_SecondaryProvider, result.Main_InactiveProvider, providers.ToList())
+            Providers = GetProvidersSetting(result.Main_PrimaryProvider, result.Main_SecondaryProvider, result.Main_InactiveProvider, providers)
         };
 
         var earlyItem = new GetAutoSettleSettingResponseItem
         {
+            Enabled = IsBitSet(autoSettingBit, AutoSettleBitPosition.AutoPayoutEarly - 1),
             ResourceType = ResourceType.Early,
             SettleType = AutoSettleType.AutoPayout,
             WaitingTime = result.EAR_WaitingTime,
             MinProvider = result.EAR_NumberProvider,
             IsTraderRequired = result.EAR_HasTrader,
-            Providers = GetProvidersSetting(result.EAR_PrimaryProvider, result.EAR_SecondaryProvider, result.EAR_InactiveProvider, providers.ToList())
+            Providers = GetProvidersSetting(result.EAR_PrimaryProvider, result.EAR_SecondaryProvider, result.EAR_InactiveProvider, providers)
         };
 
 
@@ -64,6 +90,7 @@ public class AutoSettleSettingsHandler
         {
             LeagueId = query.LeagueId,
             MatchId = query.MatchId,
+            TypeObject = query.TypeObject,
             ResultSettings = new List<GetAutoSettleSettingResponseItem> { mainItem, earlyItem }
         };
     }
@@ -88,7 +115,7 @@ public class AutoSettleSettingsHandler
         string primaryProvider,
         string secondaryProvider,
         string activeProvider,
-        List<ProviderInfo> providerInfos)
+        IEnumerable<ProviderInfo> providerInfos)
     {
         var primaryProviderIds = primaryProvider.Split(','); // 1,2,3
         var secondaryProviderIds = secondaryProvider.Split(','); // 1,2

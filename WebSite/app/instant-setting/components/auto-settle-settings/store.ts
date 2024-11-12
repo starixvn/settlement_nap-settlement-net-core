@@ -9,11 +9,11 @@ export  class Store {
     private readonly autoSetting$ = new BehaviorSubject<AutoSettleSettings>(new AutoSettleSettings());
     public originalAutoSetting: AutoSettleSettings;
 
-    public  get autoSetting() {
+    public  get autoSettings() {
         return this.autoSetting$.getValue();
     }
 
-    public  getAutoSetting() {
+    public  getAutoSettings() {
         return this.autoSetting$.asObservable();
     }
 
@@ -25,7 +25,7 @@ export  class Store {
         const currentSetting = this.autoSetting$.getValue();
 
         const updatedResultSettings = currentSetting.resultSettings
-            .map(x => x.resourceType === nextState.resourceType ? {...x, ...nextState} : x);
+            .map(x => x.resourceType === nextState.resourceType && x.settleType === nextState.settleType ? {...x, ...nextState} : x);
 
         const updatedSetting = {...currentSetting, resultSettings: updatedResultSettings};
 

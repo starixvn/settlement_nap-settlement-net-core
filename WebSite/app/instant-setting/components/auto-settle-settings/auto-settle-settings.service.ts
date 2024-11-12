@@ -3,10 +3,11 @@ import { HttpRequestService } from "../../../shared/services";
 import {HttpParams} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {GetAutoSettleSettings, IAutoSettleSettingsResponse} from "./types";
+import {AutoSettings} from "../../../shared/models/league-settings.model";
 
 @Injectable()
 export class AutoSettleSettingsService {
-    private readonly  baseUrl = "/api/auto-settle-settings/get-settings";
+    private readonly  baseUrl = "/api/auto-settle-settings";
     private  readonly httpRequestService = inject(HttpRequestService);
 
     public getAutoSetting(query: GetAutoSettleSettings):Observable<IAutoSettleSettingsResponse> {
@@ -16,12 +17,12 @@ export class AutoSettleSettingsService {
             .set("matchId",query.matchId)
             .set("typeObject",query.typeObject);
 
-        const url = this.baseUrl + '?' + params.toString();
+        const url = this.baseUrl + '/get-settings?' + params.toString();
 
-       return   this.httpRequestService.getJson<IAutoSettleSettingsResponse>(url)
+       return this.httpRequestService.getJson<IAutoSettleSettingsResponse>(url)
     }
 
-    public updateAutoSetting() {
-
+    public updateAutoSetting(command: IAutoSettleSettingsResponse) {
+        return this.httpRequestService.postJson(command, `${this.baseUrl}/update-settings`)
     }
 }
