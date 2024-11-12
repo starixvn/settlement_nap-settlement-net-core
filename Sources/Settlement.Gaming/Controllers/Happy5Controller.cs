@@ -1,5 +1,4 @@
-﻿using Fanex.NAP.Client.Helpers.Web;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
