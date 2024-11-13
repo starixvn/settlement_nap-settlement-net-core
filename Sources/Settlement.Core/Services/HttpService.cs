@@ -30,6 +30,8 @@ public class HttpService(HttpClient httpClient, IOptions<AppSettingsKey> appSett
         var result = await httpClient.PostAsync($"{apiUrl}{uri}", content);
         if (!result.IsSuccessStatusCode)
         {
+            var message = await result.Content.ReadAsStringAsync();
+            await Fanex.Logging.LogService.ErrorAsync(message);
             return null;
         }
 
