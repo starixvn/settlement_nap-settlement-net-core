@@ -26,6 +26,34 @@ public class ScoreSetServiceTests
     }
 
     [Fact]
+    public void GetScore_HasResultDetailWithSettlementStatusIdIsAbandonedAndScoreNull_ReturnsROnScore()
+    {
+        // Arrange
+        var resultDetail = new ResultDetail { MatchId = 1, SettlementStatusId = SettlementStatus.Abandoned };
+        var expectedScore = new Score("R", "R");
+
+        // Act
+        var actualScore = service.GetScore(resultDetail, isLeader);
+
+        // Assert
+        AssertExtension.AreEqual(expectedScore, actualScore);
+    }
+
+    [Fact]
+    public void GetScore_HasResultDetailWithSettlementStatusIdIsAbandonedAndScoreNotNull_ReturnsScore()
+    {
+        // Arrange
+        var resultDetail = new ResultDetail { MatchId = 1, HomeValue = "1", AwayValue = "5", SettlementStatusId = SettlementStatus.Abandoned };
+        var expectedScore = new Score("1", "5");
+
+        // Act
+        var actualScore = service.GetScore(resultDetail, isLeader);
+
+        // Assert
+        AssertExtension.AreEqual(expectedScore, actualScore);
+    }
+
+    [Fact]
     public void GetScore_HasResultDetailWithSettlementStatusIdIsRefundHalftime_ReturnsRHTOnScore()
     {
         // Arrange
@@ -85,7 +113,7 @@ public class ScoreSetServiceTests
     }
 
     [Fact]
-    public void GetScore_HasResultDetailWithSettlementStatusIdIsRunningAndScoreIsNotNull_ReturnsCorrectScore()
+    public void GetScore_HasResultDetailWithSettlementStatusIdIsRunningResultStatusIdIsRunningAndScoreIsNotNull_ReturnsCorrectScore()
     {
         // Arrange
         var resultDetail = new ResultDetail
@@ -104,6 +132,31 @@ public class ScoreSetServiceTests
 
         // Act
         var actualScore = service.GetScore(resultDetail, true);
+
+        // Assert
+        AssertExtension.AreEqual(expectedScore, actualScore);
+    }
+
+    [Fact]
+    public void GetScore_NotLeaderSettlementStatusIdIsRunningResultStatusIdIsRunningAndScoreIsNotNull_ReturnsCorrectScore()
+    {
+        // Arrange
+        var resultDetail = new ResultDetail
+        {
+            MatchId = 1,
+            HomeValue = "1",
+            AwayValue = "2",
+            SettlementStatusId = SettlementStatus.Running,
+            ResultStatusId = ResultStatus.Confirmed
+        };
+        var expectedScore = new Score("-", "-")
+        {
+            IsNotSettled = true,
+            IsConfirmed = true
+        };
+
+        // Act
+        var actualScore = service.GetScore(resultDetail, false);
 
         // Assert
         AssertExtension.AreEqual(expectedScore, actualScore);
