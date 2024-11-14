@@ -16,6 +16,7 @@ import { AutoSettingPosition } from "../../../constants";
 import { HandleActionsService, MultiSportService, PopupService } from "../../../services";
 import { TimeConverterPipe } from '../../../../shared/pipes/time-converter.pipe';
 import { MatchComponent } from '../match/match.component';
+import {reflectTypeEntityToDeclaration} from "@angular/compiler-cli/src/ngtsc/reflection";
 @Component({
   selector: 'tr[league-row]',
   templateUrl: './league.component.html',
@@ -100,30 +101,41 @@ export class LeagueComponent implements OnInit, OnDestroy {
 
   openUpdateTime() {
     if (this.permission.canAutoPayout) {
-      this.popupService.openUpdateTime(this.league,() => { this.cd.markForCheck() });
+      this.popupService.openUpdateTime(this.league, () => { this.cd.markForCheck() });
     }
   }
 
   changeAutoLeague() {
     if (this.permission.canAutoPayout) {
       SportNewAutoPayout.includes(this.league.sportType)
-          // ? this.popupService.openUpdateNewPayoutForLeague(this.league,() => { this.cd.markForCheck() })
-          ? this.popupService.opeAutoSettleSetting("League",this.league,null,() => { this.cd.markForCheck() })
-          : this.popupService.openUpdatePayoutForLeague(this.league,() => { this.cd.markForCheck() });
+        ? this.popupService.openAutoSettleSetting("League", this.league, null, null,() => { this.cd.markForCheck() })
+        : this.popupService.openUpdatePayoutForLeague(this.league, () => { this.cd.markForCheck() });
     }
 
   }
 
   getAutoSettingLeague() {
-    if (this.league.autoCalcSetting.isAutoPayoutForLeague && this.league.autoCalcSetting.isDirectPayoutForLeague) {
+    const {isDirectPayoutForLeague, isAutoPayoutForLeague , isEarlyPayoutForLeague } = this.league.autoCalcSetting;
+
+    if (isAutoPayoutForLeague && isDirectPayoutForLeague) {
       return "BOTH";
     }
-    if (this.league.autoCalcSetting.isAutoPayoutForLeague) {
+    if (isAutoPayoutForLeague) {
       return "AUTO";
     }
-    if (this.league.autoCalcSetting.isDirectPayoutForLeague) {
+    if (isDirectPayoutForLeague) {
       return "DIRECT";
     }
+
+    return "OFF";
+  }
+
+  getAutoNewSettingLeague() {
+    const {isAutoPayoutForLeague , isEarlyPayoutForLeague } = this.league.autoCalcSetting;
+
+    if(isAutoPayoutForLeague && isEarlyPayoutForLeague)  return "Auto (Both)";
+    if(isAutoPayoutForLeague) return "Auto (Main)";
+    if (isEarlyPayoutForLeague) return "Auto (Early)";
 
     return "OFF";
   }

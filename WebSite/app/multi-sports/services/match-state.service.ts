@@ -259,4 +259,12 @@ export class MatchStateService {
 
     return "OFF";
   }
+
+  getAutoNewSetting(autoCalcSetting: AutoSetting) {
+    if(autoCalcSetting.isAutoPayoutForMatch && autoCalcSetting.isEarlyPayoutForMatch)  return "Auto (Both)";
+    if(autoCalcSetting.isAutoPayoutForMatch) return "Auto (Main)";
+    if (autoCalcSetting.isEarlyPayoutForMatch) return "Auto (Early)";
+
+    return "OFF";
+  }
 }

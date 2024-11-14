@@ -15,12 +15,12 @@
   </ng-container>
   <ng-container *ngIf="sportSupportNewAutoPayout.includes(league.sportType)">
     <div class="auto-info">
-      <span>Waiting time: {{ league.autoWaitingTime | timeConverter }}</span> <br />
-      <span>Retry time: {{ league.autoRetryTime | timeConverter }}</span>
+      <span>Main: {{ league.autoWaitingTime | timeConverter }}</span> <br />
+      <span>Early: {{ league.earlyWaitingTime | timeConverter }}</span>
     </div>
   </ng-container>
 </td>
 
 <td [ngClass]="{ 'code-link enable': permission.canAutoPayout, 'auto-setting auto-setting-text': true }">
-  <div class="cursor-pointer" (click)="changeAutoLeague()">{{getAutoSettingLeague() }}</div>
+  <div class="cursor-pointer" (click)="changeAutoLeague()">{{sportSupportNewAutoPayout.includes(league.sportType) ? getAutoSettingLeague(): getAutoNewSettingLeague() }}</div>
 </td>

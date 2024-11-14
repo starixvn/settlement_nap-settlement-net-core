@@ -11,7 +11,7 @@ import { MessageBoxService } from '../../../shared/services';
 import { ToastContainerDirective, ToastContainerModule, ToastrService } from 'ngx-toastr';
 import { Language } from '../../../shared/language.native';
 import { ModalDialogMessage } from '../../../shared/models';
-import { LeagueAutoSettings } from '../../../shared/models/leagus-auto-settings.model';
+import { LeagueAutoSettings } from '../../../shared/models/league-auto-settings.model';
 import * as _ from 'lodash';
 import { LeagueSettingsStore } from '../../services/league-settings.store.native';
 import { ZeroFallbackDirective } from '../../../shared/directives/zero-fall-back.directive.native';
@@ -84,7 +84,7 @@ export class LeagueAutoSettingsComponent implements OnInit {
   private async updateSetting(isApplyAll = false) {
     const result = await this.requestService.updateLeagueSetting(this.store.originalState, this.store.state, isApplyAll);
     if (result.isSuccessful) {
-      const response: LeagueAutoSettings = {
+      const response = {
         isApplyAll: isApplyAll
       }
       parent.document.getElementById('dialog-response').setAttribute('value', JSON.stringify(response));

@@ -16,7 +16,7 @@
 			</thead>
 			<tbody>
                 @for(provider of resultSetting.providers; track $index) {
-                    <tr class="disable" [ngStyle]="{'background-color' : !provider.isActive ? 'darkgrey' : 'white',}">
+                    <tr [ngStyle]="{'background-color' : !provider.isActive ? 'darkgrey' : 'white',}">
                         <td> <input type="checkbox" [(ngModel)]="provider.isActive"/> </td>
                         <td>{{ provider.sourceName}} </td>
                         <td>

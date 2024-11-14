@@ -1,9 +1,11 @@
-﻿using Settlement.Setting.Constants;
+﻿using MediatR;
+using Settlement.Core.Models;
+using Settlement.Setting.Constants;
 using Settlement.Setting.Responses;
 
 namespace Settlement.Setting.Requests;
 
-public class UpdateAutoSettingsCommand
+public class UpdateAutoSettingsCommand : IRequest<Result>
 {
     public int LeagueId { get; set; }
     public int MatchId { get; set; }

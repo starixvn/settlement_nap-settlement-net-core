@@ -1,8 +1,6 @@
-﻿
-
-using Fanex.Data.Repository;
-using Settlement.Core.Criteria;
+﻿using Settlement.Core.Criteria;
 using Settlement.Core.Models;
+using Settlement.Core.Services;
 using Settlement.Setting.Constants;
 using Settlement.Setting.Criteria;
 using Settlement.Setting.Models;
@@ -11,32 +9,21 @@ using Settlement.Setting.Responses;
 
 namespace Settlement.Setting.Handlers;
 
-public class GetAutoSettleSettingsHandler
+public class GetAutoSettleSettingsHandler(IDynamicRepository repository, IRefDataService refDataService)
+    : IRequestHandler<AutoSettleSettingsQuery, GetAutoSettleSettingsResponse>
 {
-    private readonly IDynamicRepository _repository;
-
-    public GetAutoSettleSettingsHandler(IDynamicRepository repository)
-    {
-        _repository = repository;
-    }
-
-
-    public async Task<GetAutoSettleSettingsResponse> HandleAsync(AutoSettleSettingsQuery query, CancellationToken cancellationToken)
+    public async Task<GetAutoSettleSettingsResponse> Handle(AutoSettleSettingsQuery query, CancellationToken cancellationToken)
     {
         ICriteria criteria = CreateSettingsSelCriteria(query);
-
-        var result = await _repository.GetAsync<AutoSettleSetting>(criteria);
-
+        var result = await repository.GetAsync<AutoSettleSetting>(criteria);
         var autoSettingBit = await GetAutoSettingBit(query.LeagueId, query.MatchId);
-
-        var providers = await _repository.FetchAsync<ProviderInfo>(new GetProviderInfoCriteria
+        var providers = await repository.FetchAsync<ProviderInfo>(new GetProviderInfoCriteria
         {
             SportType = query.SportType,
             LeagueId = query.LeagueId
         });
 
         return CreateGetSettingsResponse(query, result, autoSettingBit, providers);
-
     }
 
     private bool IsBitSet(int value, int position) => (value & (1 << position)) != 0;
@@ -48,8 +35,7 @@ public class GetAutoSettleSettingsHandler
             MatchId = matchId,
             LeagueId = leagueId
         };
-
-        var value = await _repository.GetAsync<int?>(criteria);
+        var value = await repository.GetAsync<int?>(criteria);
 
         return value ?? 0;
     }
@@ -87,6 +73,7 @@ public class GetAutoSettleSettingsHandler
             LeagueId = query.LeagueId,
             MatchId = query.MatchId,
             TypeObject = query.TypeObject,
+            LeagueName = refDataService.GetLeagueName(query.LeagueId),
             ResultSettings = new List<GetAutoSettleSettingResponseItem> { mainItem, earlyItem }
         };
     }
@@ -130,7 +117,6 @@ public class GetAutoSettleSettingsHandler
     private ProviderPriority GetProviderPriority(int sourceId, string[] primaryProviderIds, string[] secondaryProviderIds)
     {
         var sourceIdStr = sourceId.ToString();
-
         return sourceIdStr switch
         {
             _ when primaryProviderIds.Contains(sourceIdStr) => ProviderPriority.Primary,

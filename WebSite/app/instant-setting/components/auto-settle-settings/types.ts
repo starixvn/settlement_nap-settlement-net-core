@@ -1,3 +1,7 @@
+import {AutoSettleType} from "../../../shared/constants/auto-settle-type.native";
+import {ResourceType} from "../../../shared/constants/resource-type.native";
+import {TypeObject} from "../../../shared/constants/type-object.native";
+
 export interface Provider  {
     sourceId: number;
     sourceName: string;
@@ -18,7 +22,7 @@ export interface ResultSetting {
 export interface IAutoSettleSettingsResponse {
     leagueId: number;
     leagueName: string;
-    typeObject: "League" | "Match"
+    typeObject: TypeObject
     matchId: number | null;
     isApplyAll: boolean;
     resultSettings: ResultSetting[];
@@ -29,26 +33,23 @@ export class AutoSettleSettings implements IAutoSettleSettingsResponse {
     leagueId = 0;
     leagueName = '';
     matchId: number | null = 0;
-    typeObject: "League" | "Match" = "Match";
+    typeObject: TypeObject = "Match";
     isApplyAll = false;
     resultSettings: ResultSetting[] = []
-}
-
-export enum AutoSettleType  {
-    AutoDirect = 5,
-    AutoPayout = 6, // for service ap2
-    AutoRefund = 7
-}
-
-export enum ResourceType {
-    Total,
-    Main,
-    Early
 }
 
 export type GetAutoSettleSettings = {
     leagueId: number;
     matchId : number;
     sportType: number;
-    typeObject: "League" | "Match";
+    typeObject: TypeObject;
+}
+
+export type UpdateAutoSettleSettings = {
+    leagueId: number;
+    typeObject: TypeObject
+    matchId: number | null;
+    isApplyAll: boolean;
+    resultSettings: ResultSetting[];
+    oldResultSettings: ResultSetting[];
 }

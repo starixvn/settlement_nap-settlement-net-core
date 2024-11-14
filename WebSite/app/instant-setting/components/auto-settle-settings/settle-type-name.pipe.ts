@@ -1,5 +1,5 @@
 import {Pipe, PipeTransform} from "@angular/core";
-import {AutoSettleType, ResourceType} from "./types";
+import {AutoSettleType} from "../../../shared/constants/auto-settle-type.native";
 
 @Pipe({
     name: 'settleTypeName',

@@ -1,13 +1,12 @@
 ﻿using Fanex.Data;
-using Fanex.Data.Repository;
 
 namespace Settlement.Setting.Criteria;
 
 
 public interface AutoSettleRunUpdateCriteria : INonQueryCommand
 {
-    int ErrCode { get; set; }
-    string ErrMsg { get; set; }
+    int ErrCode { get; set; } // out
+    string ErrMsg { get; set; } // out
     string UpdatedMatchIDs { get; set; } // out
 }
 
@@ -32,7 +31,6 @@ public class MatchAutoSettleRunUpdateCriteria : AutoSettleRunUpdateCriteria
 {
     public short AutoType { get; set; }
     public bool IsEnabled { get; set; }
-    public bool IsApplyAll { get; set; }
     public int AdminId { get; set; }
     public string Ip { get; set; }
     public int ErrCode { get; set; }

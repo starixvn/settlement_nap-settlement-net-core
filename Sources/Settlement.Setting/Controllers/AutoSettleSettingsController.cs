@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Settlement.Setting.Handlers;
+using Settlement.Core.Models;
 using Settlement.Setting.Requests;
 using Settlement.Setting.Responses;
 
@@ -11,26 +12,20 @@ namespace Settlement.Setting.Controllers;
 [Route("api/auto-settle-settings")]
 public class AutoSettleSettingsController : ControllerBase
 {
-    private readonly GetAutoSettleSettingsHandler handler;
-    private readonly UpdateAutoSettingsHandler updateAutoSettingsHandler;
+    private readonly IMediator mediator;
 
-    public AutoSettleSettingsController(GetAutoSettleSettingsHandler handler, UpdateAutoSettingsHandler updateAutoSettingsHandler)
+    public AutoSettleSettingsController(IMediator mediator)
     {
-        this.handler = handler;
-        this.updateAutoSettingsHandler = updateAutoSettingsHandler;
+        this.mediator = mediator;
     }
 
     [HttpGet]
     [Route("get-settings")]
     public async Task<GetAutoSettleSettingsResponse> GetSettings([FromQuery] AutoSettleSettingsQuery query, CancellationToken cancellationToken)
-    {
-        return await handler.HandleAsync(query, cancellationToken);
-    }
+        => await mediator.Send(query, cancellationToken);
 
     [HttpPost]
     [Route("update-settings")]
-    public async Task UpdateSettings([FromBody] UpdateAutoSettingsCommand command, CancellationToken cancellationToken)
-    {
-        await updateAutoSettingsHandler.HandleAsync(command, cancellationToken);
-    }
+    public async Task<Result> UpdateSettings([FromBody] UpdateAutoSettingsCommand command, CancellationToken cancellationToken)
+        => await mediator.Send(command, cancellationToken);
 }

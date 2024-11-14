@@ -2,8 +2,9 @@ import { inject, Injectable } from "@angular/core";
 import { HttpRequestService } from "../../../shared/services";
 import {HttpParams} from "@angular/common/http";
 import {Observable} from "rxjs";
-import {GetAutoSettleSettings, IAutoSettleSettingsResponse} from "./types";
+import {GetAutoSettleSettings, IAutoSettleSettingsResponse, UpdateAutoSettleSettings} from "./types";
 import {AutoSettings} from "../../../shared/models/league-settings.model";
+import { Result } from "../../../shared/models";
 
 @Injectable()
 export class AutoSettleSettingsService {
@@ -22,7 +23,7 @@ export class AutoSettleSettingsService {
        return this.httpRequestService.getJson<IAutoSettleSettingsResponse>(url)
     }
 
-    public updateAutoSetting(command: IAutoSettleSettingsResponse) {
-        return this.httpRequestService.postJson(command, `${this.baseUrl}/update-settings`)
+    public updateAutoSetting(command: UpdateAutoSettleSettings) {
+        return this.httpRequestService.postJson<Result>(command, `${this.baseUrl}/update-settings`)
     }
 }

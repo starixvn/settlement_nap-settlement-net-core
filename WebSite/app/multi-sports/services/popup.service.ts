@@ -18,12 +18,13 @@ import {
 } from "../../shared/constants";
 import { AutoType } from "../constants";
 import { SportSingleAutoType } from "../constants/sport-instant";
-import { LeagueAutoSettings } from "../../shared/models/leagus-auto-settings.model";
+import { LeagueAutoSettings } from "../../shared/models/league-auto-settings.model";
 import { PopularSports } from "../constants/popular-sports.native";
 import { RefreshMatchService } from "./refresh-match.service";
 import { MatchState } from "../models/match-state.model";
 import { BehaviorSubject } from "rxjs";
 import {HttpParams} from "@angular/common/http";
+import {TypeObject} from "../../shared/constants/type-object.native";
 @Injectable()
 export class PopupService {
   private readonly dialogBoxService = inject(DialogBoxService);
@@ -217,7 +218,7 @@ export class PopupService {
       });
   }
 
-  public async opeAutoSettleSetting(typeObject: "Match" | "League", league: LeagueMatch | null, match: Match | null, triggerRerender: () => void) {
+  public async openAutoSettleSetting(typeObject: TypeObject, league: LeagueMatch, match: Match, state$: BehaviorSubject<MatchState>, triggerRerender: () => void) {
     const getParam = (key: keyof LeagueMatch | keyof Match, defaultValue: number = 0) =>
         league?.[key] || match?.[key] || defaultValue;
 
@@ -229,16 +230,43 @@ export class PopupService {
         .set('refundWaitingTime', getParam('refundWaitingTime'));
 
     const src = `/apps/advanced-auto-setting-league?${params.toString()}`;
-    const dialogData = new DialogDataIframe(Language.payout.titlePopupForLeague, encodeURI(src));
+    const title = typeObject === "Match" ? Language.payout.titlePopup : Language.payout.titlePopupForLeague;
+    const dialogData = new DialogDataIframe(title, encodeURI(src));
 
     const subscribe = this.dialogBoxService
-        .popupHasResponse(dialogData, "760px", "320px")
+        .popupHasResponse(dialogData, "780px", "350px")
         .subscribe((result) => {
           if(!result) {
-            triggerRerender();
+            subscribe.unsubscribe();
+            return;
           }
-          subscribe.unsubscribe();
+
+          const setting = Object.assign(new LeagueAutoSettings(), JSON.parse(result)) as LeagueAutoSettings;
+
+          if(typeObject === "League") {
+            this.handleUpdatedLeagueSetting(league, setting, triggerRerender);
+            return;
+          }
+          this.handleUpdatedMatchSetting(match,setting,state$);
         });
+  }
+
+  private handleUpdatedLeagueSetting(league: LeagueMatch, settings: LeagueAutoSettings, triggerRerender: () => void) {
+    league.autoCalcSetting.isAutoPayoutForLeague = (settings.mainEnabled || settings.earlyEnabled);
+    league.autoCalcSetting.isEarlyPayoutForLeague = settings.earlyEnabled;
+    league.autoWaitingTime = settings.mainWaitingTime;
+    league.refundWaitingTime = settings.refundWaitingTime;
+
+    if (settings.isApplyAll) {
+      this.affectAutoPayoutForMatch(league);
+      triggerRerender();
+    }
+  }
+
+  private handleUpdatedMatchSetting(match: Match, setting: LeagueAutoSettings, state$: BehaviorSubject<MatchState>) {
+    match.autoCalcSetting.isAutoPayoutForMatch = (setting.mainEnabled || setting.earlyEnabled);
+    match.autoCalcSetting.isEarlyPayoutForMatch = setting.earlyEnabled;
+    this.refreshMatchService.refreshMatch(state$, match);
   }
 
   public async openUpdatePayoutForLeague(league: LeagueMatch, triggerRerender: () => void) {
@@ -281,7 +309,7 @@ export class PopupService {
       league.leagueId,
       0
     );
-    console.log(setting);
+
     this.applyNewSetting(league.autoCalcSetting, setting.setting, false);
     const currentState = league.autoCalcSetting.isAutoPayoutForLeague ? 1 : league.autoCalcSetting.isDirectPayoutForLeague ? 5 : 0;
     const src = `/apps/advanced-auto-setting-league?leagueId=${league.leagueId}&sportType=${league.sportType}&autoSetting=${currentState}&waitingTime=${league.autoWaitingTime}&refundWaitingTime=${league.refundWaitingTime}`;

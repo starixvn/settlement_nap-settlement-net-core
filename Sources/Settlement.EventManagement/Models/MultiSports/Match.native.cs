@@ -50,6 +50,9 @@ public class Match : BaseMatch
     [IgnoreMember]
     public int AutoWaitingTime { get; set; }
 
+    [IgnoreMember]
+    public int AutoEarlyWaitingTime { get; set; }
+
     [Key("refundWaitingTime")]
     public int RefundWaitingTime { get; set; }
 

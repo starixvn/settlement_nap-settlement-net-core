@@ -1,22 +1,25 @@
-import {Component, inject, OnInit} from "@angular/core";
-import {OnlyIntegerDirective} from "../../../../shared/directives";
-import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {ToastContainerModule, ToastrService} from "ngx-toastr";
-import {ZeroFallbackDirective} from "../../../../shared/directives/zero-fall-back.directive.native";
-import {AutoSettleType, GetAutoSettleSettings, ResourceType, ResultSetting} from "../types";
-import {NgClass} from "@angular/common";
-import {AutoSettleSettingsService} from "../auto-settle-settings.service";
-import {UrlHelper} from "../../../../helper";
-import {MatDialog} from "@angular/material/dialog";
-import {ProviderSelectionComponent} from "../provider-selection/provider-selection.component";
-import {Store} from "../store";
-import {cloneDeep, isEmpty, set} from 'lodash';
-import {MessageBoxService} from "../../../../shared/services";
-import {Language} from "../../../../shared/language.native";
-import {ModalDialogMessage} from "../../../../shared/models";
-import {ResourceTypeNamePipe} from "../resource-type-name.pipe";
-import {SettleTypeNamePipe} from "../settle-type-name.pipe";
-import {LeagueAutoSettings} from "../../../../shared/models/leagus-auto-settings.model";
+import { Component, inject, OnInit, ViewChild } from "@angular/core";
+import { OnlyIntegerDirective } from "../../../../shared/directives";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { ToastContainerDirective, ToastContainerModule, ToastrService } from "ngx-toastr";
+import { ZeroFallbackDirective } from "../../../../shared/directives/zero-fall-back.directive.native";
+import { GetAutoSettleSettings, IAutoSettleSettingsResponse, ResultSetting } from "../types";
+import { NgClass } from "@angular/common";
+import { AutoSettleSettingsService } from "../auto-settle-settings.service";
+import { UrlHelper } from "../../../../helper";
+import { MatDialog } from "@angular/material/dialog";
+import { ProviderSelectionComponent } from "../provider-selection/provider-selection.component";
+import { Store } from "../store";
+import { cloneDeep, isEmpty } from 'lodash';
+import { MessageBoxService } from "../../../../shared/services";
+import { Language } from "../../../../shared/language.native";
+import { ModalDialogMessage } from "../../../../shared/models";
+import { ResourceTypeNamePipe } from "../resource-type-name.pipe";
+import { SettleTypeNamePipe } from "../settle-type-name.pipe";
+import { LeagueAutoSettings } from "../../../../shared/models/league-auto-settings.model";
+import {ResourceType} from "../../../../shared/constants/resource-type.native";
+import {AutoSettleType} from "../../../../shared/constants/auto-settle-type.native";
+import {TypeObject} from "../../../../shared/constants/type-object.native";
 
 @Component({
     selector: "app-auto-setting",
@@ -35,43 +38,40 @@ import {LeagueAutoSettings} from "../../../../shared/models/leagus-auto-settings
     standalone: true
 })
 export class DataTableSettingComponent implements OnInit {
-    private  readonly autoSettleSettingsService = inject(AutoSettleSettingsService);
-    private  readonly store = inject(Store);
+    @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
+
+    private readonly autoSettleSettingsService = inject(AutoSettleSettingsService);
+    private readonly store = inject(Store);
     private readonly dialog = inject(MatDialog);
     private readonly messageBoxService = inject(MessageBoxService);
+    private readonly toastrService = inject(ToastrService);
 
     public title = "";
-    public minProviderOptions = [0,1,2];
-    public resultSettings : ResultSetting[] = []
-
+    public minProviderOptions = [0, 1, 2];
+    public resultSettings: ResultSetting[] = [];
+    public typeObject: TypeObject;
+    public resourceType = ResourceType;
+    public autoSettleType = AutoSettleType;
 
     ngOnInit(): void {
-        const leagueId = +UrlHelper.getUrlParameter('leagueId') || 123590;
-        const matchId = +UrlHelper.getUrlParameter('matchId') || 0;
-        const sportType = +UrlHelper.getUrlParameter('sportType') || 43;
-        const typeObject = UrlHelper.getUrlParameter('typeObject');
+        this.toastrService.overlayContainer = this.toastContainer;
+
+        const leagueId = +UrlHelper.getUrlParameter('leagueId');
+        const matchId = +UrlHelper.getUrlParameter('matchId');
+        const sportType = +UrlHelper.getUrlParameter('sportType');
+        this.typeObject = UrlHelper.getUrlParameter('typeObject') as TypeObject;
         const refundWaitingTime = +(UrlHelper.getUrlParameter('refundWaitingTime'));
         const query: GetAutoSettleSettings = {
             leagueId,
             matchId,
             sportType,
-            typeObject: typeObject === "League" ? "League" : "Match"
+            typeObject : this.typeObject
         }
 
-        this.autoSettleSettingsService.getAutoSetting(query).subscribe(res => {
-            const refundResultSetting: ResultSetting = {
-                resourceType: ResourceType.Main,
-                settleType: AutoSettleType.AutoRefund,
-                enabled: !!res.resultSettings?.find(x => x.resourceType === ResourceType.Main)?.enabled,
-                waitingTime: refundWaitingTime,
-                isTraderRequired: false,
-                minProvider: 0,
-                providers: []
-            }
-            res.resultSettings.push(refundResultSetting);
+        this.store.actionAfterUpdate = () => { this.toastrService.clear() };
 
-            this.store.originalAutoSetting = cloneDeep(res);
-            this.store.setAutoSetting(res);
+        this.autoSettleSettingsService.getAutoSetting(query).subscribe(res => {
+            this.processAutoSettleResponse(res, refundWaitingTime);
         });
 
         this.store.getAutoSettings().subscribe(res => {
@@ -80,36 +80,65 @@ export class DataTableSettingComponent implements OnInit {
         })
     }
 
+    private processAutoSettleResponse(res: IAutoSettleSettingsResponse, refundWaitingTime: number) {
+        const refundResultSetting: ResultSetting = {
+            resourceType: ResourceType.Main,
+            settleType: AutoSettleType.AutoRefund,
+            enabled: !!res.resultSettings?.find(x => x.resourceType === ResourceType.Main)?.enabled,
+            waitingTime: refundWaitingTime,
+            isTraderRequired: false,
+            minProvider: 0,
+            providers: []
+        };
+        res.resultSettings.push(refundResultSetting);
+
+        this.store.originResultSettings = cloneDeep(res.resultSettings);
+        this.store.setAutoSetting(res);
+    }
+
     getProvidersName(priority: number, resultSetting: ResultSetting) {
         const name = resultSetting.providers
             .filter(x => x.isActive && x.priority === priority)
             .map(x => x.sourceName).join(', ');
+
         return isEmpty(name) ? 'any.' : name;
     }
 
     submit() {
         const confirmBox = new ModalDialogMessage(Language.confirmationBox);
-        confirmBox.message = Language.AutoPayoutSetting.ConfirmMessageForAutoSetting;
+        confirmBox.message = this.typeObject === "League" ? Language.AutoPayoutSetting.ConfirmMessageForAutoSetting : Language.AutoPayoutSetting.ConfirmMessageForMatch;
         confirmBox.hasActionOnNoBtn = true;
 
         this.messageBoxService.confirm(confirmBox, () => {
-            this.store.autoSettings.isApplyAll = true;
-            this.autoSettleSettingsService.updateAutoSetting(this.store.autoSettings).subscribe(res => {
-                const response: LeagueAutoSettings = {
-                    isApplyAll: this.store.autoSettings.isApplyAll
-                }
-                parent.document.getElementById('dialog-response').setAttribute('value', JSON.stringify(response));
-                this.messageBoxService.closePopup();
-            });
+            this.store.autoSettings.isApplyAll = this.typeObject === "League";
+            this.handleUpdateSetting();
         }, () => {
             this.store.autoSettings.isApplyAll = false;
-            this.autoSettleSettingsService.updateAutoSetting(this.store.autoSettings).subscribe(res => {
-                const response: LeagueAutoSettings = {
-                    isApplyAll: this.store.autoSettings.isApplyAll
-                }
-                parent.document.getElementById('dialog-response').setAttribute('value', JSON.stringify(response));
-                this.messageBoxService.closePopup();
-            });
+            this.handleUpdateSetting();
+        });
+    }
+
+    handleUpdateSetting() {
+        this.autoSettleSettingsService.updateAutoSetting({...this.store.autoSettings, oldResultSettings: this.store.originResultSettings}).subscribe(res => {
+            if (!res.isSuccessful) {
+                this.toastrService.error(res.errMsg);
+                return;
+            }
+            const getSettingValue = (type: ResourceType | AutoSettleType, key: 'enabled' | 'waitingTime') =>
+                this.store.autoSettings.resultSettings.find(setting =>
+                    setting.resourceType === type || setting.settleType === type)?.[key];
+
+            const response: LeagueAutoSettings = {
+                isApplyAll: this.store.autoSettings.isApplyAll,
+                earlyEnabled: getSettingValue(ResourceType.Early, 'enabled') as boolean,
+                mainEnabled: getSettingValue(ResourceType.Main, 'enabled') as boolean,
+                earlyWaitingTime: getSettingValue(ResourceType.Early, 'waitingTime') as number,
+                mainWaitingTime: getSettingValue(ResourceType.Main, 'waitingTime') as number,
+                refundWaitingTime: getSettingValue(AutoSettleType.AutoRefund, 'waitingTime') as number,
+            };
+
+            parent.document.getElementById('dialog-response').setAttribute('value', JSON.stringify(response));
+            this.messageBoxService.closePopup();
         });
     }
 
@@ -117,7 +146,7 @@ export class DataTableSettingComponent implements OnInit {
         this.messageBoxService.closePopup();
     }
 
-    openProviderPopup(setting:ResultSetting) {
+    openProviderPopup(setting: ResultSetting) {
         this.dialog.closeAll();
         this.dialog.open(ProviderSelectionComponent, {
             width: '400px',

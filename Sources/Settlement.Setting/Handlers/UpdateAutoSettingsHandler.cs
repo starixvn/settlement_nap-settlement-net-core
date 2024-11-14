@@ -1,17 +1,14 @@
-﻿using System.Reflection;
-using System.Text;
-using Fanex.Data.Repository;
-using Fanex.NAP.Client;
-using Microsoft.AspNetCore.Http;
+﻿
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Setting.Constants;
 using Settlement.Setting.Criteria;
+using Settlement.Setting.Factories;
 using Settlement.Setting.Requests;
 
 namespace Settlement.Setting.Handlers;
 
-public class UpdateAutoSettingsHandler
+public class UpdateAutoSettingsHandler : IRequestHandler<UpdateAutoSettingsCommand, Result>
 {
     private readonly IDynamicRepository repository;
     private readonly INapSession currentSession;
@@ -20,28 +17,43 @@ public class UpdateAutoSettingsHandler
 
     private const int ActionChangeLeagueSettingsId = 81048;
 
-    public UpdateAutoSettingsHandler(IDynamicRepository repository)
+    public UpdateAutoSettingsHandler(
+        IDynamicRepository repository,
+        IHttpContextAccessor accessor,
+        LogService logService,
+        INapSession napSession)
     {
         this.repository = repository;
+        this.accessor = accessor;
+        this.logService = logService;
+        this.currentSession = napSession;
     }
-    public async Task HandleAsync(UpdateAutoSettingsCommand command, CancellationToken cancellationToken)
+
+    public async Task<Result> Handle(UpdateAutoSettingsCommand command, CancellationToken cancellationToken)
     {
+        var results = new List<Result>();
+
         foreach (var item in command.ResultSettings)
         {
-            var effectChildMatchIds = "";
-            //enable auto
-            if (item.SettleType != AutoSettleType.AutoRefund)
-            {
-                var result = await EnableAutoSettle(command, item);
-                effectChildMatchIds = result.ChildMatchIds;
-            }
-            //add source
-            var sourceCriteria = CreateSettingSourceCriteria(command, item);
-            //await repository.ExecuteAsync(sourceCriteria);
-
-            //log
-            await WriteLogUpdateSetting(command, item, effectChildMatchIds);
+            var result = await ProcessResultSetting(command, item);
+            results.Add(result);
         }
+
+        return new Result();
+    }
+
+    private async Task<Result> ProcessResultSetting(UpdateAutoSettingsCommand command, UpdateResultSettingItem item)
+    {
+        var result = item.SettleType != AutoSettleType.AutoRefund
+            ? await EnableAutoSettle(command, item)
+            : new Result();
+
+        var sourceCriteria = CreateSettingSourceCriteria(command, item);
+        await repository.ExecuteAsync(sourceCriteria);
+
+        await WriteLogUpdateSetting(command, item, result);
+
+        return result;
     }
 
     private async Task<Result> EnableAutoSettle(UpdateAutoSettingsCommand command, UpdateResultSettingItem item)
@@ -60,7 +72,10 @@ public class UpdateAutoSettingsHandler
 
     private AutoSettleRunUpdateCriteria CreateSettingRunCriteriaFactory(UpdateAutoSettingsCommand command, UpdateResultSettingItem item)
     {
-        var bitAutoType = item.ResourceType == ResourceType.Main && item.SettleType == AutoSettleType.AutoPayout ? (short)1 : (short)6;
+        var bitAutoType = item.ResourceType == ResourceType.Main && item.SettleType == AutoSettleType.AutoPayout
+            ? AutoSettleBitPosition.AutoPayoutMain
+            : AutoSettleBitPosition.AutoPayoutEarly;
+
         AutoSettleRunUpdateCriteria criteria = command.TypeObject == "League"
                ? new LeagueAutoSettleRunUpdateCriteria
                {
@@ -69,7 +84,7 @@ public class UpdateAutoSettingsHandler
                    IsApplyAll = command.IsApplyAll,
                    LeagueId = command.LeagueId,
                    //AdminId = currentSession.UserId,
-                   //Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString()
+                   Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString()
                }
                : new MatchAutoSettleRunUpdateCriteria
                {
@@ -77,12 +92,12 @@ public class UpdateAutoSettingsHandler
                    IsEnabled = item.Enabled,
                    MatchId = command.MatchId,
                    //AdminId = currentSession.UserId,
-                   //Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString()
+                   Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString()
                };
         return criteria;
     }
 
-    private async Task WriteLogUpdateSetting(UpdateAutoSettingsCommand command, UpdateResultSettingItem item, string effectChildMatchIds)
+    private async Task WriteLogUpdateSetting(UpdateAutoSettingsCommand command, UpdateResultSettingItem item, Result result)
     {
         var oldItem = command.OldResultSettings.First(x => x.ResourceType == item.ResourceType && x.SettleType == item.SettleType);
 
@@ -91,11 +106,11 @@ public class UpdateAutoSettingsHandler
         var objectInfo = command.TypeObject == "League" ? $"League({command.LeagueId})" : $"Match{command.MatchId}";
         var settingTypeInfo = $"for {item.SettleType} {item.ResourceType} ";
 
-        var childMatchInfo = command.IsApplyAll && !string.IsNullOrEmpty(effectChildMatchIds) ? $"Effect child match: {effectChildMatchIds}" : string.Empty;
+        var childMatchInfo = command.IsApplyAll && !string.IsNullOrEmpty(result.ChildMatchIds) ? $"Effect child match: {result.ChildMatchIds}" : string.Empty;
 
         var msg = $"NAP: Update auto setting on {objectInfo} {settingTypeInfo} has isApplyAll({command.IsApplyAll.ToString()}) {childMatchInfo} {differences}";
 
-        //await logService.WriteLog(msg, ActionChangeLeagueSettingsId);
+        await logService.WriteLog(msg, ActionChangeLeagueSettingsId);
     }
 
     private string GetSpecificDifferences(UpdateResultSettingItem firstObject, UpdateResultSettingItem secondObject)
@@ -124,47 +139,14 @@ public class UpdateAutoSettingsHandler
 
     private INonQueryCommand CreateSettingSourceCriteria(UpdateAutoSettingsCommand command, UpdateResultSettingItem item)
     {
-        var criteria = new UpdateLeagueAutoSettleSourceCriteria
+        SettingSourceCriteriaStrategy strategy = command.TypeObject switch
         {
-            AutoType = (byte)item.SettleType,
-            LeagueId = command.LeagueId,
-
+            "League" => new LeagueSettingSourceCriteriaStrategy(),
+            "Match" => new MatchCriteriaStrategy(),
+            _ => throw new ArgumentException("Invalid TypeObject")
         };
 
-        if (item.SettleType == AutoSettleType.AutoRefund)
-        {
-            criteria.Main_WaitingTime = item.WaitingTime;
-            return criteria;
-        }
-
-        MapProviderDetails(item, criteria, isMain: item.ResourceType == ResourceType.Main);
-
-        return criteria;
-    }
-
-    private void MapProviderDetails(UpdateResultSettingItem resultSetting, SourceSettleCriteriaBase criteria, bool isMain)
-    {
-        if (isMain)
-        {
-            criteria.Main_WaitingTime = resultSetting.WaitingTime;
-            criteria.Main_HasTrader = resultSetting.IsTraderRequired;
-            criteria.Main_NumberProvider = resultSetting.MinProvider;
-            criteria.Main_PrimaryProvider = resultSetting.PrimaryProvider;
-            criteria.Main_TotalPrimaryProvider = resultSetting.TotalPrimaryProvider;
-            criteria.Main_SecondaryProvider = resultSetting.SecondaryProvider;
-            criteria.Main_TotalSecondaryProvider = resultSetting.TotalSecondaryProvider;
-            criteria.Main_InactiveProvider = resultSetting.InactiveProvider;
-        }
-        else
-        {
-            criteria.EAR_WaitingTime = resultSetting.WaitingTime;
-            criteria.EAR_HasTrader = resultSetting.IsTraderRequired;
-            criteria.EAR_NumberProvider = resultSetting.MinProvider;
-            criteria.EAR_PrimaryProvider = resultSetting.PrimaryProvider;
-            criteria.EAR_TotalPrimaryProvider = resultSetting.TotalPrimaryProvider;
-            criteria.EAR_SecondaryProvider = resultSetting.SecondaryProvider;
-            criteria.EAR_TotalSecondaryProvider = resultSetting.TotalSecondaryProvider;
-            criteria.EAR_InactiveProvider = resultSetting.InactiveProvider;
-        }
+        var context = new SettingSourceContext(strategy);
+        return context.CreateCriteria(command, item);
     }
 }

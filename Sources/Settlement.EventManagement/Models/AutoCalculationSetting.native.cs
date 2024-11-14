@@ -49,6 +49,9 @@ public class AutoCalculationSetting
     [Key("isDirectPayoutForMatch")]
     public bool IsDirectPayoutForMatch => !string.IsNullOrWhiteSpace(MatchSetting) && MatchSetting.Length > DirectPayoutBit && MatchSetting[DirectPayoutBit].Equals('1');
 
+    [Key("isEarlyPayoutForMatch")]
+    public bool IsEarlyPayoutForMatch => !string.IsNullOrWhiteSpace(MatchSetting) && MatchSetting.Length > EarlyPayoutBit && MatchSetting[EarlyPayoutBit].Equals('1');
+
     [Key("isInstantForMatch")]
     public bool IsInstantForMatch => !string.IsNullOrWhiteSpace(MatchSetting) && MatchSetting.Length > 1 && MatchSetting[1].Equals('1');
 

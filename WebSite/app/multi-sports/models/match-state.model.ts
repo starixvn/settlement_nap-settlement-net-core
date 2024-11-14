@@ -3,6 +3,7 @@ import { BackgroundColor } from "../../shared/constants";
 import { MatchStateService } from "../services/match-state.service";
 import { MultiSportsStore } from "../services/multi-sports.store";
 import { Match } from "./match.model";
+import {SportNewAutoPayout} from "../constants/sport-instant";
 
 export class MatchState {
   hasValue: boolean;
@@ -62,7 +63,7 @@ export class MatchState {
     this.remarkTooltip = service.getRemarkStatusTooltip(match.remark);
     this.remarkClass = service.isChangeSetting(match) ? 'act-change-setting title' : '';
     this.remarkState = service.getRemarkState(match.remark);
-    this.autoSetting = service.getAutoSetting(match.autoCalcSetting);
+    this.autoSetting = SportNewAutoPayout.includes(match.sportType) ? service.getAutoNewSetting(match.autoCalcSetting) : service.getAutoSetting(match.autoCalcSetting);
   }
 }
 

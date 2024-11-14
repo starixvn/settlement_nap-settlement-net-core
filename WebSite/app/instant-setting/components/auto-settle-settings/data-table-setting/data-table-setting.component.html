@@ -25,15 +25,15 @@
             <tbody>
             @for(setting of resultSettings; track $index) {
                 <tr>
-                    @if(setting.settleType === 6 && setting.resourceType === 1) {
+                    @if(setting.settleType === autoSettleType.AutoPayout && setting.resourceType === resourceType.Main) {
                         <td rowspan="2"> {{setting.settleType | settleTypeName}} </td>
                     }
-                    @if(setting.settleType === 7) {
+                    @if(setting.settleType ===  autoSettleType.AutoRefund) {
                         <td> {{setting.settleType | settleTypeName}} </td>
                     }
                     <td> {{setting.resourceType | resourceTypeName}} </td>
                     <td>
-                        @if(setting.settleType !== 7) {
+                        @if(setting.settleType !== autoSettleType.AutoRefund) {
                             <span  [ngClass]="setting.enabled ? 'toggle-on' : 'toggle-off'" (click)="changeEnableAuto(setting)"></span>
                         } @else {
                             <span>Follow Auto Payout</span>
@@ -41,12 +41,12 @@
                     </td>
                     <td><input type="text" zeroFallback myOnlyInteger [(ngModel)]="setting.waitingTime"/></td>
                     <td>
-                        @if(setting.settleType !== 7) {
+                        @if(setting.settleType !== autoSettleType.AutoRefund) {
                             <span [ngClass]="setting.isTraderRequired ? 'toggle-on' : 'toggle-off'" (click)="changeRequiredTrader(setting)"></span>
                         }
                     </td>
                     <td>
-                        @if(setting.settleType !== 7) {
+                        @if(setting.settleType !== autoSettleType.AutoRefund) {
                             <select [(ngModel)]="setting.minProvider">
                                 @for(option of minProviderOptions;track $index) {
                                     <option [value]="option">{{option}}</option>
@@ -56,7 +56,7 @@
                     </td>
                     <td>
                         @if(setting.settleType !== 7) {
-                            <div role="button" (click)="openProviderPopup(setting)" style="text-decoration:underline;color: #1d3968;cursor: pointer">
+                            <div role="button" (click)="openProviderPopup(setting)" style="text-decoration:underline;color: #3362ef;cursor: pointer; text-align: left; padding: 0 10px">
                                 <div>Primary: &nbsp; {{ getProvidersName(1,setting) }}</div>
                                 <div>Secondary: &nbsp; {{ getProvidersName(2,setting)  }}</div>
                             </div>

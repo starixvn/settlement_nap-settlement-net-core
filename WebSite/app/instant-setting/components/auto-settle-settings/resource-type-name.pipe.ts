@@ -1,5 +1,5 @@
 import {Pipe, PipeTransform} from "@angular/core";
-import {ResourceType} from "./types";
+import {ResourceType} from "../../../shared/constants/resource-type.native";
 
 @Pipe({
     name: "resourceTypeName",
