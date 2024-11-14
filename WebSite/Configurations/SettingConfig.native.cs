@@ -14,7 +14,7 @@ public static class SettingConfig
         services.AddTransient<OutsideSourceSettingService, OutsideSourceSettingServiceImp>();
         services.AddTransient<SendMailService, SendMailServiceImp>();
         services.AddTransient<LeagueSettingsService, LeagueSettingsServiceImp>();
-        services.AddScoped<AutoSettleSettingsHandler>();
+        services.AddScoped<GetAutoSettleSettingsHandler>();
         services.AddScoped<UpdateAutoSettingsHandler>();
 
     }

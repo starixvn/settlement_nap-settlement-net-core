@@ -9,8 +9,8 @@ public class UpdateAutoSettingsCommand
     public int MatchId { get; set; }
     public string TypeObject { get; set; }
     public bool IsApplyAll { get; set; }
-
     public List<UpdateResultSettingItem> ResultSettings { get; set; }
+    public List<UpdateResultSettingItem> OldResultSettings { get; set; }
 }
 
 

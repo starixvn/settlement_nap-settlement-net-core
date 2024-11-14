@@ -2,9 +2,9 @@
 
 namespace Settlement.Setting.Criteria;
 
-public class UpdateAutoSettleSourceBase
+public class SourceSettleCriteriaBase
 {
-    public byte AutoType { get; set; } = 6; // 1: Auto Payout 1, 5: Direct, 6: Auto Payout 2
+    public byte AutoType { get; set; } // 1: Auto Payout 1, 5: Direct, 6: Auto Payout 2
 
     #region Main
     public int? Main_WaitingTime { get; set; }
@@ -29,7 +29,7 @@ public class UpdateAutoSettleSourceBase
     #endregion
 }
 
-public class UpdateLeagueAutoSettleSourceCriteria : UpdateAutoSettleSourceBase, INonQueryCommand
+public class UpdateLeagueAutoSettleSourceCriteria : SourceSettleCriteriaBase, INonQueryCommand
 {
     public int LeagueId { get; set; }
     public string GetSettingKey() => "NAP_Set_AutoPayout_LeagueSetting_Update";
@@ -37,7 +37,7 @@ public class UpdateLeagueAutoSettleSourceCriteria : UpdateAutoSettleSourceBase, 
     public bool IsValid() => true;
 }
 
-public class UpdateMatchAutoSettleSourceCriteria : UpdateAutoSettleSourceBase, INonQueryCommand
+public class UpdateMatchAutoSettleSourceCriteria : SourceSettleCriteriaBase, INonQueryCommand
 {
     public int MatchId { get; set; }
     public string GetSettingKey() => "NAP_Set_AutoPayout_MatchSetting_Update";

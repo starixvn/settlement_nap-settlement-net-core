@@ -218,14 +218,15 @@ export class PopupService {
   }
 
   public async opeAutoSettleSetting(typeObject: "Match" | "League", league: LeagueMatch | null, match: Match | null, triggerRerender: () => void) {
-    console.log(match)
+    const getParam = (key: keyof LeagueMatch | keyof Match, defaultValue: number = 0) =>
+        league?.[key] || match?.[key] || defaultValue;
+
     const params = new HttpParams()
-        .set('leagueId', league?.leagueId || match?.leagueId || 0)
+        .set('leagueId', getParam('leagueId'))
         .set('typeObject', typeObject)
-        .set('matchId',match?.matchId || 0)
-        .set('sportType', league?.sportType || match?.sportType || 0)
-        .set('waitingTime', league?.autoWaitingTime || 0)
-        .set('refundWaitingTime', league?.refundWaitingTime || 0)
+        .set('matchId', getParam('matchId'))
+        .set('sportType', getParam('sportType'))
+        .set('refundWaitingTime', getParam('refundWaitingTime'));
 
     const src = `/apps/advanced-auto-setting-league?${params.toString()}`;
     const dialogData = new DialogDataIframe(Language.payout.titlePopupForLeague, encodeURI(src));
@@ -233,28 +234,11 @@ export class PopupService {
     const subscribe = this.dialogBoxService
         .popupHasResponse(dialogData, "760px", "320px")
         .subscribe((result) => {
-              // if (_.isNil(result)) {
-              //   return;
-              // }
-              // const leagueSettings = Object.assign(new LeagueAutoSettings(), JSON.parse(result));
-              // this.applyNewSetting(
-              //     league.autoCalcSetting,
-              //     leagueSettings.autoSetting.toString(),
-              //     false,
-              //     true
-              // );
-              //
-              // league.autoWaitingTime = leagueSettings.waitingTime;
-              // league.autoRetryTime = leagueSettings.retryTime;
-              // league.refundWaitingTime = leagueSettings.refundWaitingTime;
-              // if (leagueSettings.isApplyAll) {
-              //   this.affectAutoPayoutForMatch(league);
-              //   triggerRerender();
-              // }
-              //
-              // subscribe.unsubscribe();
-            }
-        );
+          if(!result) {
+            triggerRerender();
+          }
+          subscribe.unsubscribe();
+        });
   }
 
   public async openUpdatePayoutForLeague(league: LeagueMatch, triggerRerender: () => void) {

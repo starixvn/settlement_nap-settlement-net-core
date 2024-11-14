@@ -11,11 +11,11 @@ using Settlement.Setting.Responses;
 
 namespace Settlement.Setting.Handlers;
 
-public class AutoSettleSettingsHandler
+public class GetAutoSettleSettingsHandler
 {
     private readonly IDynamicRepository _repository;
 
-    public AutoSettleSettingsHandler(IDynamicRepository repository)
+    public GetAutoSettleSettingsHandler(IDynamicRepository repository)
     {
         _repository = repository;
     }
@@ -23,7 +23,7 @@ public class AutoSettleSettingsHandler
 
     public async Task<GetAutoSettleSettingsResponse> HandleAsync(AutoSettleSettingsQuery query, CancellationToken cancellationToken)
     {
-        ICriteria criteria = CreateAutoSettleSettingsSelCriteria(query);
+        ICriteria criteria = CreateSettingsSelCriteria(query);
 
         var result = await _repository.GetAsync<AutoSettleSetting>(criteria);
 
@@ -35,16 +35,13 @@ public class AutoSettleSettingsHandler
             LeagueId = query.LeagueId
         });
 
-        return CreateAutoSettleSettingsResponse(query, result, autoSettingBit, providers);
+        return CreateGetSettingsResponse(query, result, autoSettingBit, providers);
 
     }
 
-    private bool IsBitSet(int value, int position)
-    {
-        return (value & (1 << position)) != 0;
-    }
+    private bool IsBitSet(int value, int position) => (value & (1 << position)) != 0;
 
-    public async Task<int> GetAutoSettingBit(int leagueId, int matchId)
+    private async Task<int> GetAutoSettingBit(int leagueId, int matchId)
     {
         var criteria = new GetSettingCriteria
         {
@@ -57,9 +54,9 @@ public class AutoSettleSettingsHandler
         return value ?? 0;
     }
 
-    private GetAutoSettleSettingsResponse CreateAutoSettleSettingsResponse(
+    private GetAutoSettleSettingsResponse CreateGetSettingsResponse(
         AutoSettleSettingsQuery query,
-        AutoSettleSetting result,
+        AutoSettleSetting setting,
         int autoSettingBit,
         IEnumerable<ProviderInfo> providers)
     {
@@ -68,10 +65,10 @@ public class AutoSettleSettingsHandler
             Enabled = IsBitSet(autoSettingBit, AutoSettleBitPosition.AutoPayoutMain - 1),
             ResourceType = ResourceType.Main,
             SettleType = AutoSettleType.AutoPayout,
-            WaitingTime = result.Main_WaitingTime,
-            MinProvider = result.Main_NumberProvider,
-            IsTraderRequired = result.Main_HasTrader,
-            Providers = GetProvidersSetting(result.Main_PrimaryProvider, result.Main_SecondaryProvider, result.Main_InactiveProvider, providers)
+            WaitingTime = setting.Main_WaitingTime,
+            MinProvider = setting.Main_NumberProvider,
+            IsTraderRequired = setting.Main_HasTrader,
+            Providers = GetProvidersSetting(setting.Main_PrimaryProvider, setting.Main_SecondaryProvider, setting.Main_InactiveProvider, providers)
         };
 
         var earlyItem = new GetAutoSettleSettingResponseItem
@@ -79,12 +76,11 @@ public class AutoSettleSettingsHandler
             Enabled = IsBitSet(autoSettingBit, AutoSettleBitPosition.AutoPayoutEarly - 1),
             ResourceType = ResourceType.Early,
             SettleType = AutoSettleType.AutoPayout,
-            WaitingTime = result.EAR_WaitingTime,
-            MinProvider = result.EAR_NumberProvider,
-            IsTraderRequired = result.EAR_HasTrader,
-            Providers = GetProvidersSetting(result.EAR_PrimaryProvider, result.EAR_SecondaryProvider, result.EAR_InactiveProvider, providers)
+            WaitingTime = setting.EAR_WaitingTime,
+            MinProvider = setting.EAR_NumberProvider,
+            IsTraderRequired = setting.EAR_HasTrader,
+            Providers = GetProvidersSetting(setting.EAR_PrimaryProvider, setting.EAR_SecondaryProvider, setting.EAR_InactiveProvider, providers)
         };
-
 
         return new GetAutoSettleSettingsResponse
         {
@@ -95,9 +91,7 @@ public class AutoSettleSettingsHandler
         };
     }
 
-    private static ICriteria CreateAutoSettleSettingsSelCriteria(AutoSettleSettingsQuery query)
-    {
-        return query.TypeObject == "League"
+    private static ICriteria CreateSettingsSelCriteria(AutoSettleSettingsQuery query) => query.TypeObject == "League"
            ? new AutoSettleLeagueSettingSelCriteria
            {
                LeagueId = query.LeagueId,
@@ -109,20 +103,19 @@ public class AutoSettleSettingsHandler
                MatchId = query.MatchId,
                SportType = query.SportType
            };
-    }
 
     private List<Provider> GetProvidersSetting(
         string primaryProvider,
         string secondaryProvider,
         string activeProvider,
-        IEnumerable<ProviderInfo> providerInfos)
+        IEnumerable<ProviderInfo> providersInfo)
     {
         var primaryProviderIds = primaryProvider.Split(','); // 1,2,3
         var secondaryProviderIds = secondaryProvider.Split(','); // 1,2
         var activeProviderIds = activeProvider.Split(','); // 2,3
 
 
-        var result = providerInfos.Select(x => new Provider
+        var result = providersInfo.Select(x => new Provider
         {
             SourceId = x.SourceId,
             SourceName = x.SourceName,

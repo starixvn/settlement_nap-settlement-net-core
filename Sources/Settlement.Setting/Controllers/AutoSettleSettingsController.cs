@@ -11,10 +11,10 @@ namespace Settlement.Setting.Controllers;
 [Route("api/auto-settle-settings")]
 public class AutoSettleSettingsController : ControllerBase
 {
-    private readonly AutoSettleSettingsHandler handler;
+    private readonly GetAutoSettleSettingsHandler handler;
     private readonly UpdateAutoSettingsHandler updateAutoSettingsHandler;
 
-    public AutoSettleSettingsController(AutoSettleSettingsHandler handler, UpdateAutoSettingsHandler updateAutoSettingsHandler)
+    public AutoSettleSettingsController(GetAutoSettleSettingsHandler handler, UpdateAutoSettingsHandler updateAutoSettingsHandler)
     {
         this.handler = handler;
         this.updateAutoSettingsHandler = updateAutoSettingsHandler;
