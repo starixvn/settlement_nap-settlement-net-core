@@ -27,6 +27,7 @@ public class SettingServiceTests
         var config = new MapperConfiguration(mapperConfig);
         var mapper = new Mapper(config);
         var accessor = Substitute.For<IHttpContextAccessor>();
+        var refDataService = Substitute.For<IRefDataService>();
         var context = new DefaultHttpContext
         {
             Connection =
@@ -36,7 +37,7 @@ public class SettingServiceTests
         };
         accessor.HttpContext = context;
 
-        service = new SettingServiceImp(repository, currentSession, accessor, mapper, logService, xmlConvertService);
+        service = new SettingServiceImp(refDataService, repository, currentSession, accessor, mapper, logService, xmlConvertService);
     }
 
     [Fact]
