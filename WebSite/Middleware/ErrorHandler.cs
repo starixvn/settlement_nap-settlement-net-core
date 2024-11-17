@@ -1,5 +1,4 @@
 using Fanex.Logging.Extensions;
-using Fanex.Logging.Extensions.Database;
 using Microsoft.AspNetCore.Http.Extensions;
 using ONEbook.UM.Services;
 using ILogger = Fanex.Logging.ILogger;
@@ -47,7 +46,6 @@ public class ErrorHandler(
 
         var logMessage = new LogMessage(exception.Message)
                     .AddSection("Request Info", GetRequestInfo(context, body))
-                    .AddSection("Database Info", DatabaseInfoGetters.GetDbExceptionInfo(exception))
                     .AddSection("Server Info", CommonInfoGetters.GetServerInfo())
                     .AddSection("Exception Info", CommonInfoGetters.GetExceptionInfo(exception))
                     .ToString();
