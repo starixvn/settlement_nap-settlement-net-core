@@ -188,7 +188,7 @@
     matchNotSelected: "WARNING! Changed values may affect other results. Do you want to select Match/Full Time score also?",
     intervalNotSelected: "WARNING! Cannot continue due to related intervals are not selected or calculated.",
     intervalInconsistent: "WARNING! Cannot continue due to selected intervals are inconsistent with Match/Full Time score.",
-    inningsNotSelected: "Please calculate all Innings first or select all Running Innings at the same time.",
+    inningsNotSelected: "Please calculate all related intervals first or select all related un-calculated intervals at the same time.",
     extraInningDraw: "Sum all Inning scores has Winner & Loser and E.I. has value. Please check and try again."
   },
 

@@ -6,9 +6,10 @@ import { VerifyRunningOddsHandler } from "../../handlers/calculate/verify-runnin
 import { VerifyScoreSourceHandler } from "../../handlers/calculate/verify-score-source.handler";
 import { ConfirmMismatchScoreHandler } from "../../handlers/calculate/confirm-mismatch-score.handler";
 import { ConfirmChangedResultHandler } from "../../handlers/calculate/confirm-changed-result.handler";
+import { InningsValidateHandler } from "../../handlers/calculate/innings-validate.handler";
 import { NotifyService } from "../notify.service";
 import { ConfirmUnCalculateHandler } from "../../handlers/uncalculate/confirm-uncalculate.handler";
-import { ResultDetail, SaveScoreQuery } from "../../../shared/models/sportsbook-sop";
+import { SaveScoreQuery } from "../../../shared/models/sportsbook-sop";
 import { BaseballApiKeys } from "../../constants/api-keys.constant";
 import { AioService } from "../../../shared/services";
 import { VerificationBaseService } from "../../../core/services/verification-base.service";
@@ -38,6 +39,7 @@ export class CalculateService {
   private readonly saveScoreHandler = new SaveScoreHandler();
   private readonly   calculateHandler = new CalculateHandler();
   private readonly confirmUncalculateHandler = new ConfirmUnCalculateHandler();
+  private readonly inningsValidateHandler = new InningsValidateHandler();
 
   #storage = inject(CalculateStorage);
   #notifyService = inject(NotifyService);
@@ -47,8 +49,8 @@ export class CalculateService {
   constructor() {
     this.nonSelectedHandler.setNextHandler(this.resultConfirmedHandler);
     this.resultConfirmedHandler.setNextHandler(this.invalidInputHandler);
-    this.invalidInputHandler.setNextHandler(this.finalResultCalculateHandler);
-
+    this.invalidInputHandler.setNextHandler(this.inningsValidateHandler);
+    this.inningsValidateHandler.setNextHandler(this.finalResultCalculateHandler);
     this.finalResultCalculateHandler.setNextHandler(this.verifyRunningOddsHandler);
     this.verifyRunningOddsHandler.setNextHandler(this.verifyScoreSourceHandler);
     this.verifyScoreSourceHandler.setNextHandler(this.confirmMismatchScoreHandler);
