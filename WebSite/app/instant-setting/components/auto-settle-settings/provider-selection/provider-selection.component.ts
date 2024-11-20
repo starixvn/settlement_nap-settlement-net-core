@@ -1,11 +1,11 @@
-import {MAT_DIALOG_DATA, MatDialogModule, MatDialogRef} from "@angular/material/dialog";
-import {DragDropModule} from "@angular/cdk/drag-drop";
-import {CommonModule} from "@angular/common";
-import {FormsModule} from "@angular/forms";
-import {Component, inject, Inject, OnInit} from "@angular/core";
-import {ResultSetting} from "../types";
-import {Store} from "../store";
-import {cloneDeep} from 'lodash'
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from "@angular/material/dialog";
+import { DragDropModule } from "@angular/cdk/drag-drop";
+import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
+import { Component, inject, Inject } from "@angular/core";
+import { Provider, ResultSetting } from "../types";
+import { Store } from "../store";
+import { cloneDeep } from 'lodash'
 
 @Component({
   selector: 'provider-selection',
@@ -13,20 +13,19 @@ import {cloneDeep} from 'lodash'
   standalone: true,
   imports: [MatDialogModule, DragDropModule, CommonModule, FormsModule],
 })
-export class ProviderSelectionComponent implements OnInit {
-    private readonly dialogRef = inject(MatDialogRef<ProviderSelectionComponent>);
-    private readonly store = inject(Store);
+export class ProviderSelectionComponent {
 
-    public resultSetting: ResultSetting | null = null;
-    public errorMessage: string;
+  private readonly dialogRef = inject(MatDialogRef<ProviderSelectionComponent>);
+  private readonly store = inject(Store);
 
-    constructor(@Inject(MAT_DIALOG_DATA) public  data: ResultSetting) {
-      this.dialogRef.disableClose = true;
-      this.resultSetting = cloneDeep(data);
-    }
+  public resultSetting: ResultSetting | null = null;
+  public errorMessage: string;
 
-    ngOnInit(): void {
-    }
+  constructor(@Inject(MAT_DIALOG_DATA) public data: ResultSetting) {
+    this.dialogRef.disableClose = true;
+    this.resultSetting = cloneDeep(data);
+  }
+
 
 
 
@@ -35,8 +34,12 @@ export class ProviderSelectionComponent implements OnInit {
   }
 
   submit() {
-        this.store.setResultSetting(this.resultSetting);
+    this.store.setResultSetting(this.resultSetting);
     this.close();
   }
 
- }
+  changeActiveProvider(provider: Provider) {
+    provider.isActive = !provider.isActive;
+  }
+
+}

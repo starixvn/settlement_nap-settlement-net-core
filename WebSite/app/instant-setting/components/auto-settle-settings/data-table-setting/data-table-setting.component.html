@@ -10,16 +10,16 @@
         <table>
             <thead>
             <tr>
-                <th rowspan="2" class="code">Auto Function</th>
-                <th rowspan="2" class="kick-off-time">Result Flow</th>
-                <th rowspan="2" class="event">Enable</th>
-                <th rowspan="2" class="interval-score">Waiting Time (second)</th>
-                <th rowspan="2" class="score">Trader Required</th>
-                <th colspan="2" class="confirm">Provider Required</th>
+                <th rowspan="2" class="code" scope="col">Auto Function</th>
+                <th rowspan="2" class="kick-off-time" scope="col">Result Flow</th>
+                <th rowspan="2" class="event" scope="col">Enable</th>
+                <th rowspan="2" class="interval-score" scope="col">Waiting Time (second)</th>
+                <th rowspan="2" class="score" scope="col">Trader Required</th>
+                <th colspan="2" class="confirm" scope="col">Provider Required</th>
             </tr>
             <tr>
-                <th>Minimum</th>
-                <th>Source</th>
+                <th scope="col">Minimum</th>
+                <th scope="col">Source</th>
             </tr>
             </thead>
             <tbody>
@@ -34,13 +34,13 @@
                     <td> {{setting.resourceType | resourceTypeName}} </td>
                     <td>
                         @if(setting.settleType !== autoSettleType.AutoRefund) {
-                            <span  [ngClass]="setting.enabled ? 'toggle-on' : 'toggle-off'" (click)="changeEnableAuto(setting)"></span>
+                            <span [ngClass]="setting.enabled ? 'toggle-on' : 'toggle-off'" (click)="changeEnableAuto(setting)"></span>
                         } @else {
                             <span>Follow Auto Payout</span>
                         }
                     </td>
                     <td><input type="text" zeroFallback myOnlyInteger [(ngModel)]="setting.waitingTime"/></td>
-                    <td>
+                    <td [ngStyle]="getBackground(setting)">
                         @if(setting.settleType !== autoSettleType.AutoRefund) {
                             <span [ngClass]="setting.isTraderRequired ? 'toggle-on' : 'toggle-off'" (click)="changeRequiredTrader(setting)"></span>
                         }

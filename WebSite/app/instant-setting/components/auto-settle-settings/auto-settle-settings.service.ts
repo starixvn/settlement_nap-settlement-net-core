@@ -3,7 +3,6 @@ import { HttpRequestService } from "../../../shared/services";
 import {HttpParams} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {GetAutoSettleSettings, IAutoSettleSettingsResponse, UpdateAutoSettleSettings} from "./types";
-import {AutoSettings} from "../../../shared/models/league-settings.model";
 import { Result } from "../../../shared/models";
 
 @Injectable()

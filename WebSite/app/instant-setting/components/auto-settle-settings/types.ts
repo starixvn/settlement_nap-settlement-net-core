@@ -1,8 +1,8 @@
-import {AutoSettleType} from "../../../shared/constants/auto-settle-type.native";
-import {ResourceType} from "../../../shared/constants/resource-type.native";
-import {TypeObject} from "../../../shared/constants/type-object.native";
+import { AutoSettleType } from "../../../shared/constants/auto-settle-type.native";
+import { ResourceType } from "../../../shared/constants/resource-type.native";
+import { TypeObject } from "../../../shared/constants/type-object.native";
 
-export interface Provider  {
+export interface Provider {
     sourceId: number;
     sourceName: string;
     priority: number;
@@ -14,7 +14,7 @@ export interface ResultSetting {
     resourceType: ResourceType,
     enabled: boolean,
     waitingTime: number,
-    isTraderRequired:boolean
+    isTraderRequired: boolean
     minProvider: number,
     providers: Provider[],
 }
@@ -40,7 +40,7 @@ export class AutoSettleSettings implements IAutoSettleSettingsResponse {
 
 export type GetAutoSettleSettings = {
     leagueId: number;
-    matchId : number;
+    matchId: number;
     sportType: number;
     typeObject: TypeObject;
 }

@@ -2,11 +2,11 @@ import { HttpClientModule, HttpUrlEncodingCodec } from '@angular/common/http';
 import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { BlockUIService, HttpRequestService, MessageBoxService } from '../../shared/services';
-import { Permission, Remark, RemarkAndPermission, RemarkStatus } from '../models';
-import { RequestService } from '../services/request.service';
+import { BlockUIService, HttpRequestService, MessageBoxService } from '../../../shared/services';
+import { Permission, Remark, RemarkAndPermission, RemarkStatus } from '../../models';
+import { RequestService } from '../../services/request.service';
 import { RemarkSettingComponent } from './remark-setting.component';
-import { UrlHelper } from '../../helper';
+import { UrlHelper } from '../../../helper';
 import { cloneDeep } from 'lodash';
 import * as exp from 'constants';
 

@@ -1,16 +1,16 @@
 ﻿import { Component, OnInit } from '@angular/core';
-import { UrlHelper } from '../../helper';
 import * as _ from 'lodash';
-import { RequestService } from "../services/request.service";
-import { MessageBoxService } from '../../shared/services';
-import { ModalDialogMessage, Result } from '../../shared/models';
-import { Language } from '../../shared/language.native';
-import { League, TimeSettingQuery } from '../models';
-import { AutoType } from '../constants/auto-type';
-import { OnlyIntegerDirective } from '../../shared/directives';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { ZeroFallbackDirective } from '../../shared/directives/zero-fall-back.directive.native';
+import { ZeroFallbackDirective } from '../../../shared/directives/zero-fall-back.directive.native';
+import { OnlyIntegerDirective } from '../../../shared/directives';
+import { RequestService } from '../../services/request.service';
+import { ModalDialogMessage, Result } from '../../../shared/models';
+import { MessageBoxService } from '../../../shared/services';
+import { Language } from '../../../shared/language.native';
+import { UrlHelper } from '../../../helper';
+import { AutoType } from '../../constants';
+import { League, TimeSettingQuery } from '../../models';
 @Component({
     selector: 'time-setting',
     templateUrl: './time-setting.component.html',
@@ -44,7 +44,7 @@ export class TimeSettingComponent implements OnInit {
             return league.leagueName;
         });
 
-        this.time = this.originalTime =  Number(UrlHelper.getUrlParameter("time"));
+        this.time = this.originalTime = Number(UrlHelper.getUrlParameter("time"));
         this.refundWaitingTime = this.originalRefundWaitingTime = Number(UrlHelper.getUrlParameter("refundWaitingTime"));
         const autoTypeByUrl = UrlHelper.getUrlParameter("autoType");
         this.autoType = _.isEmpty(autoTypeByUrl) ? this.getAutoType() : Number(autoTypeByUrl);
@@ -54,7 +54,7 @@ export class TimeSettingComponent implements OnInit {
         this.messageBoxService.closePopupNotChanged();
     }
 
-     proceed() {
+    proceed() {
         this.confirmationDialogMessage.message = Language.InstantSetting.ConfirmMessageSetting;
         this.messageBoxService.confirm(this.confirmationDialogMessage, async () => {
             await this.updateRefundTime();
@@ -73,7 +73,7 @@ export class TimeSettingComponent implements OnInit {
         }
     }
 
-    private async updateTime(){
+    private async updateTime() {
         const query = new TimeSettingQuery(this.leagueId, this.time, this.autoType);
         this.requestService.proceed(query).then((result: Result) => {
             if (result.isSuccessful) {

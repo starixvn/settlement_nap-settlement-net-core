@@ -5,7 +5,7 @@ import  {
   AutoSettingComponent,
   TimeSettingComponent,
 } from '.';
-import { RemarkSettingComponent } from './remark-setting.component';
+import { RemarkSettingComponent } from './remark-setting/remark-setting.component';
 import { AppComponent } from './app.component';
 import { LeagueAutoSettingsComponent } from './league-auto-settings/league-auto-settings.component';
 import { HttpClientModule } from '@angular/common/http';

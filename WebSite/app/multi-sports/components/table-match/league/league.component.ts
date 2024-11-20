@@ -16,7 +16,7 @@ import { AutoSettingPosition } from "../../../constants";
 import { HandleActionsService, MultiSportService, PopupService } from "../../../services";
 import { TimeConverterPipe } from '../../../../shared/pipes/time-converter.pipe';
 import { MatchComponent } from '../match/match.component';
-import {reflectTypeEntityToDeclaration} from "@angular/compiler-cli/src/ngtsc/reflection";
+import { reflectTypeEntityToDeclaration } from "@angular/compiler-cli/src/ngtsc/reflection";
 @Component({
   selector: 'tr[league-row]',
   templateUrl: './league.component.html',
@@ -108,14 +108,14 @@ export class LeagueComponent implements OnInit, OnDestroy {
   changeAutoLeague() {
     if (this.permission.canAutoPayout) {
       SportNewAutoPayout.includes(this.league.sportType)
-        ? this.popupService.openAutoSettleSetting("League", this.league, null, null,() => { this.cd.markForCheck() })
+        ? this.popupService.openAutoSettleSetting("League", this.league, null, null, () => { this.cd.markForCheck() })
         : this.popupService.openUpdatePayoutForLeague(this.league, () => { this.cd.markForCheck() });
     }
 
   }
 
   getAutoSettingLeague() {
-    const {isDirectPayoutForLeague, isAutoPayoutForLeague , isEarlyPayoutForLeague } = this.league.autoCalcSetting;
+    const { isDirectPayoutForLeague, isAutoPayoutForLeague } = this.league.autoCalcSetting;
 
     if (isAutoPayoutForLeague && isDirectPayoutForLeague) {
       return "BOTH";
@@ -131,11 +131,17 @@ export class LeagueComponent implements OnInit, OnDestroy {
   }
 
   getAutoNewSettingLeague() {
-    const {isAutoPayoutForLeague , isEarlyPayoutForLeague } = this.league.autoCalcSetting;
+    const { isAutoPayoutForLeague, isEarlyPayoutForLeague } = this.league.autoCalcSetting;
 
-    if(isAutoPayoutForLeague && isEarlyPayoutForLeague)  return "Auto (Both)";
-    if(isAutoPayoutForLeague) return "Auto (Main)";
-    if (isEarlyPayoutForLeague) return "Auto (Early)";
+    if (isAutoPayoutForLeague && isEarlyPayoutForLeague) {
+      return "Auto (Both)";
+    }
+    if (isAutoPayoutForLeague) {
+      return "Auto (Main)";
+    }
+    if (isEarlyPayoutForLeague) {
+      return "Auto (Early)";
+    }
 
     return "OFF";
   }

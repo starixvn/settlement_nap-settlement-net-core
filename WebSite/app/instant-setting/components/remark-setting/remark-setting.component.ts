@@ -4,16 +4,16 @@ import {
   Permission,
   RemarkAndPermission,
   ChangeHoldMatchSettingQuery,
-} from "../models";
-import { UrlHelper } from "../../helper";
-import { RequestService } from "../services/request.service";
-import { ModalDialogMessage } from "../../shared/models";
-import { MessageBoxService } from "../../shared/services";
-import { Language } from "../../shared/language.native";
-import { TooltipMessage } from "../constants";
+} from "../../models";
+import { UrlHelper } from "../../../helper";
+import { RequestService } from "../../services/request.service";
+import { ModalDialogMessage } from "../../../shared/models";
+import { MessageBoxService } from "../../../shared/services";
+import { Language } from "../../../shared/language.native";
+import { TooltipMessage } from "../../constants";
 import { HttpUrlEncodingCodec } from "@angular/common/http";
 import { FormsModule } from "@angular/forms";
-import { OnlyIntegerDirective } from "../../shared/directives";
+import { OnlyIntegerDirective } from "../../../shared/directives";
 import { CommonModule } from "@angular/common";
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
 

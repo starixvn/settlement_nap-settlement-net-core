@@ -1,5 +1,5 @@
-import {Pipe, PipeTransform} from "@angular/core";
-import {AutoSettleType} from "../../../shared/constants/auto-settle-type.native";
+import { Pipe, PipeTransform } from "@angular/core";
+import { AutoSettleType } from "../../../shared/constants/auto-settle-type.native";
 
 @Pipe({
     name: 'settleTypeName',
@@ -7,17 +7,17 @@ import {AutoSettleType} from "../../../shared/constants/auto-settle-type.native"
 })
 export class SettleTypeNamePipe implements PipeTransform {
     transform(value: AutoSettleType, ...args: any[]): any {
-        if(value === AutoSettleType.AutoPayout) {
+        if (value === AutoSettleType.AutoPayout) {
             return 'Auto Payout';
         }
-        if(value === AutoSettleType.AutoRefund) {
+        if (value === AutoSettleType.AutoRefund) {
             return 'Auto Refund';
         }
 
-        if(value === AutoSettleType.AutoDirect) {
+        if (value === AutoSettleType.AutoDirect) {
             return 'Direct';
         }
 
-        return  'Auto Payout';
+        return 'Auto Payout';
     }
 }

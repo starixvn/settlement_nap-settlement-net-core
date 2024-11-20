@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { UrlHelper } from '../../helper';
+import { UrlHelper } from '../../../helper';
 import * as _ from 'lodash';
-import { MessageBoxService } from '../../shared/services';
-import { AutoSettingLeagueQuery, AutoSettingMatchQuery, ModalDialogMessage } from '../../shared/models';
-import { Language } from '../../shared/language.native';
-import { RequestService } from '../services/request.service';
-import { SettingQuery } from '../models';
+import { MessageBoxService } from '../../../shared/services';
+import { AutoSettingLeagueQuery, AutoSettingMatchQuery, ModalDialogMessage } from '../../../shared/models';
+import { Language } from '../../../shared/language.native';
+import { RequestService } from '../../services/request.service';
+import { SettingQuery } from '../../models';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 

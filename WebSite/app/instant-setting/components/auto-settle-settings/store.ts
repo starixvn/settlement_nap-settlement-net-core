@@ -1,4 +1,4 @@
-import { BehaviorSubject, Observable } from "rxjs";
+import { BehaviorSubject } from "rxjs";
 import { AutoSettleSettings, ResultSetting } from "./types";
 import { Injectable } from "@angular/core";
 

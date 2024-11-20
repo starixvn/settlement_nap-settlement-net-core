@@ -8,20 +8,20 @@
     ElementRef,
     ComponentRef,
     ChangeDetectorRef,
-    AfterContentChecked
+    AfterContentChecked,
+    inject
 } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { BlockUIService, HttpRequestService, MessageBoxService, ClosePopupService} from '../../shared/services';
-import { TimeSettingComponent } from './time-setting.component';
-import { AutoSettingComponent } from './auto-setting.component';
-import { RemarkSettingComponent } from './remark-setting.component';
-import { LeagueAutoSettingsComponent } from './league-auto-settings/league-auto-settings.component';
+import { AutoSettingComponent } from './auto-setting/auto-setting.component';
+import { RemarkSettingComponent } from './remark-setting/remark-setting.component';
 import { CommonModule } from '@angular/common';
 import {DataTableSettingComponent} from "./auto-settle-settings/data-table-setting/data-table-setting.component";
+import { TimeSettingComponent } from './time-setting/time-setting.component';
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
-    imports: [TimeSettingComponent, RemarkSettingComponent, LeagueAutoSettingsComponent, AutoSettingComponent, CommonModule],
+    imports: [TimeSettingComponent, RemarkSettingComponent, AutoSettingComponent, CommonModule],
     providers: [
         BlockUIService,
         HttpRequestService,
@@ -33,16 +33,14 @@ import {DataTableSettingComponent} from "./auto-settle-settings/data-table-setti
 
 export class AppComponent implements OnInit, AfterContentChecked {
     @ViewChild('container', { read: ViewContainerRef, static: true }) container: ViewContainerRef;
+
+    private readonly componentFactoryResolver = inject(ComponentFactoryResolver)
+    private readonly blockUIService = inject(BlockUIService);
+    private readonly elementRef = inject(ElementRef<HTMLElement>);
+    private readonly changeDetector = inject(ChangeDetectorRef);
+
     public blockUI = false;
     public component: ComponentRef<OnInit>;
-
-    constructor(
-        private readonly componentFactoryResolver: ComponentFactoryResolver,
-        private readonly blockUIService: BlockUIService,
-        private readonly elementRef: ElementRef<HTMLElement>,
-        private readonly changeDetector: ChangeDetectorRef
-        ) {
-    }
 
     ngOnInit() {
         this.blockUIService.blockUIEvent.subscribe((event: boolean) => this.blockUI = event);

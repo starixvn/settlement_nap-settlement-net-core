@@ -1,15 +1,15 @@
 import { waitForAsync, ComponentFixture, TestBed, tick, fakeAsync } from '@angular/core/testing';
 import { AutoSettingComponent } from './auto-setting.component';
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
-import { MessageBoxService, HttpRequestService, BlockUIService, ClosePopupService } from '../../shared/services';
+import { MessageBoxService, HttpRequestService, BlockUIService, ClosePopupService } from '../../../shared/services';
 import { FormsModule } from '@angular/forms';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { HttpClientModule } from '@angular/common/http';
-import { UrlHelper } from '../../helper';
-import { RequestService } from '../services/request.service';
-import { ModalDialogComponent } from '../../shared/components/modal-dialog/modal-dialog.component';
-import { ModalContentDialogComponent } from '../../shared/components/modal-dialog/modal-content-dialog.component';
-import { Result } from '../../shared/models';
+import { UrlHelper } from '../../../helper';
+import { RequestService } from '../../services/request.service';
+import { ModalDialogComponent } from '../../../shared/components/modal-dialog/modal-dialog.component';
+import { ModalContentDialogComponent } from '../../../shared/components/modal-dialog/modal-content-dialog.component';
+import { Result } from '../../../shared/models';
 import * as _ from 'lodash';
 
 

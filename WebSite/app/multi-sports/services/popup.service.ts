@@ -112,8 +112,8 @@ export class PopupService {
   public popupChangeRemark(match: Match, state$: BehaviorSubject<MatchState>): void {
     this.properties.title = Language.remarkSettingTitle;
     this.properties.src = `/apps/remark-setting?matchId=${match.matchId}&matchCode=${match.matchCode}`;
-    this.properties.width = "400px";
-    this.properties.height = "250px";
+    this.properties.width = "390px";
+    this.properties.height = "270px";
     const frameSrc = encodeURI(this.properties.src);
     const dialogData = new DialogDataIframe(this.properties.title, frameSrc);
     this.dialogBoxService.popup(dialogData, this.properties.width, this.properties.height).subscribe(async () => {
@@ -252,7 +252,7 @@ export class PopupService {
   }
 
   private handleUpdatedLeagueSetting(league: LeagueMatch, settings: LeagueAutoSettings, triggerRerender: () => void) {
-    league.autoCalcSetting.isAutoPayoutForLeague = (settings.mainEnabled || settings.earlyEnabled);
+    league.autoCalcSetting.isAutoPayoutForLeague = settings.mainEnabled;
     league.autoCalcSetting.isEarlyPayoutForLeague = settings.earlyEnabled;
     league.autoWaitingTime = settings.mainWaitingTime;
     league.refundWaitingTime = settings.refundWaitingTime;
@@ -264,7 +264,7 @@ export class PopupService {
   }
 
   private handleUpdatedMatchSetting(match: Match, setting: LeagueAutoSettings, state$: BehaviorSubject<MatchState>) {
-    match.autoCalcSetting.isAutoPayoutForMatch = (setting.mainEnabled || setting.earlyEnabled);
+    match.autoCalcSetting.isAutoPayoutForMatch = setting.mainEnabled;
     match.autoCalcSetting.isEarlyPayoutForMatch = setting.earlyEnabled;
     this.refreshMatchService.refreshMatch(state$, match);
   }
