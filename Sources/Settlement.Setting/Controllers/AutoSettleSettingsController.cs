@@ -1,13 +1,10 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Settlement.Core.Models;
 using Settlement.Setting.Requests;
 using Settlement.Setting.Responses;
 
 namespace Settlement.Setting.Controllers;
 
-[AllowAnonymous]
 [ApiController]
 [Route("api/auto-settle-settings")]
 public class AutoSettleSettingsController : ControllerBase

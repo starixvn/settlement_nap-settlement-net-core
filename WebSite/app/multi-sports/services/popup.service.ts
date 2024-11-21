@@ -347,22 +347,14 @@ export class PopupService {
 
   private affectAutoPayoutForMatch(leagueMatch: LeagueMatch) {
     leagueMatch.matches.forEach((item, index) => {
-      if (
-        _.isEqual(
-          item.eventStatus.toLowerCase(),
-          EventStatus.running.toLowerCase()
-        ) ||
-        _.isEqual(
-          item.eventStatus.toLowerCase(),
-          EventStatus.closed.toLowerCase()
-        )
-      ) {
-        item.autoCalcSetting.isAutoPayoutForMatch =
-          leagueMatch.autoCalcSetting.isAutoPayoutForLeague;
-        item.autoCalcSetting.isDirectPayoutForMatch =
-          leagueMatch.autoCalcSetting.isDirectPayoutForLeague;
-        item.autoCalcSetting.matchSetting =
-          leagueMatch.autoCalcSetting.leagueSetting;
+      const { eventStatus } = item;
+      if (_.isEqual(eventStatus.toLowerCase(), EventStatus.running.toLowerCase())
+          || _.isEqual(eventStatus.toLowerCase(), EventStatus.closed.toLowerCase())) {
+        const { isAutoPayoutForLeague, isEarlyPayoutForLeague, isDirectPayoutForLeague, leagueSetting  } = leagueMatch.autoCalcSetting
+        item.autoCalcSetting.isAutoPayoutForMatch = isAutoPayoutForLeague;
+        item.autoCalcSetting.isEarlyPayoutForMatch = isEarlyPayoutForLeague;
+        item.autoCalcSetting.isDirectPayoutForMatch = isDirectPayoutForLeague;
+        item.autoCalcSetting.matchSetting = leagueSetting;
       }
       leagueMatch.matches[index] = { ...item };
     });

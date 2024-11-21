@@ -83,7 +83,7 @@ public class UpdateAutoSettingsHandler : IRequestHandler<UpdateAutoSettingsComma
                    IsEnabled = item.Enabled,
                    IsApplyAll = command.IsApplyAll,
                    LeagueId = command.LeagueId,
-                   //AdminId = currentSession.UserId,
+                   AdminId = currentSession.UserId,
                    Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString()
                }
                : new MatchAutoSettleRunUpdateCriteria
@@ -91,7 +91,7 @@ public class UpdateAutoSettingsHandler : IRequestHandler<UpdateAutoSettingsComma
                    AutoType = bitAutoType,
                    IsEnabled = item.Enabled,
                    MatchId = command.MatchId,
-                   //AdminId = currentSession.UserId,
+                   AdminId = currentSession.UserId,
                    Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString()
                };
         return criteria;
@@ -99,19 +99,35 @@ public class UpdateAutoSettingsHandler : IRequestHandler<UpdateAutoSettingsComma
 
     private async Task WriteLogUpdateSetting(UpdateAutoSettingsCommand command, UpdateResultSettingItem item, Result result)
     {
-        var oldItem = command.OldResultSettings.First(x => x.ResourceType == item.ResourceType && x.SettleType == item.SettleType);
+        var oldItem = command.OldResultSettings
+            .First(x => x.ResourceType == item.ResourceType && x.SettleType == item.SettleType);
 
         var differences = GetSpecificDifferences(oldItem, item);
 
-        var objectInfo = command.TypeObject == "League" ? $"League({command.LeagueId})" : $"Match{command.MatchId}";
+        var objectInfo = command.TypeObject == "League" ? $"League({command.LeagueId})" : $"Match({command.MatchId})";
         var settingTypeInfo = $"for {item.SettleType} {item.ResourceType} ";
 
         var childMatchInfo = command.IsApplyAll && !string.IsNullOrEmpty(result.ChildMatchIds) ? $"Effect child match: {result.ChildMatchIds}" : string.Empty;
 
         var msg = $"NAP: Update auto setting on {objectInfo} {settingTypeInfo} has isApplyAll({command.IsApplyAll.ToString()}) {childMatchInfo} {differences}";
 
-        await logService.WriteLog(msg, ActionChangeLeagueSettingsId);
+        var actionLogId = GetActionLogId(command.TypeObject, item.ResourceType);
+
+        await logService.WriteLog(msg, actionLogId);
     }
+
+    private int GetActionLogId(string typeObject, ResourceType resourceType)
+    {
+        return (typeObject, resourceType) switch
+        {
+            ("League", ResourceType.Main) => 81055,
+            ("League", ResourceType.Early) => 81056,
+            ("Match", ResourceType.Main) => 81057,
+            ("Match", ResourceType.Early) => 81058,
+            _ => 81055 // Default case
+        };
+    }
+
 
     private string GetSpecificDifferences(UpdateResultSettingItem firstObject, UpdateResultSettingItem secondObject)
     {
