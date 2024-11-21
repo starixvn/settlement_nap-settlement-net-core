@@ -1,8 +1,8 @@
-﻿using Fanex.MailDeliver.MailClient.Model;
+﻿using System.Collections.Concurrent;
+using Fanex.MailDeliver.MailClient.Model;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using RazorEngine;
-using RazorEngine.Templating;
+using RazorEngineCore;
 using Settlement.Core.Constants;
 using Settlement.Setting.Models.Notification;
 
@@ -18,6 +18,8 @@ public class SendMailServiceImp(
     IWebHostEnvironment environment)
     : SendMailService
 {
+    private static readonly ConcurrentDictionary<int, IRazorEngineCompiledTemplate> CompiledTemplateCache = new();
+
     public void SendMail(NotificationModel item)
     {
         var mailRecord = new MailRecord
@@ -48,18 +50,27 @@ public class SendMailServiceImp(
         };
     }
 
-    private string MailBody(NotificationModel item)
+    private string MailBody(NotificationModel model)
     {
-        var filePath = environment.WebRootPath;
-        var templateKey = "notification-key";
-        var template = $"{Path.Combine(filePath, "email-templates")}{Path.DirectorySeparatorChar}notification-error.html";
+        var templateFileName = model.SportType == SportType.BasketBall
+            ? "void-bet-email.html"
+            : "notification-error.html";
 
-        if (item.SportType == SportType.BasketBall)
+        var templatePath = Path.Combine(environment.WebRootPath, "email-templates", templateFileName);
+        var template = File.ReadAllText(templatePath);
+
+        return RenderTemplate(template, model);
+    }
+
+    private string RenderTemplate(string template, NotificationModel model)
+    {
+        var hashCode = template.GetHashCode();
+        var compiledTemplate = CompiledTemplateCache.GetOrAdd(hashCode, _ =>
         {
-            templateKey = "void-bet-key";
-            template = $"{Path.Combine(filePath, "email-templates")}{Path.DirectorySeparatorChar}void-bet-email.html";
-        }
+            var razorEngine = new RazorEngine();
+            return razorEngine.Compile(template);
+        });
 
-        return Engine.Razor.RunCompile(File.ReadAllText(template), templateKey, null, item);
+        return compiledTemplate.Run(model);
     }
 }
