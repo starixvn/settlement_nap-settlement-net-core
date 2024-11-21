@@ -1,14 +1,17 @@
-﻿using Fanex.Logging;
+﻿using System.Text.Json;
+using Fanex.Logging;
+using MassTransit;
 using Microsoft.Extensions.Options;
+using ResultAmendment.Contracts;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Sportsbook.Aio.Constants.Cricket;
 using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.Criteria.Cricket;
 using Settlement.Sportsbook.Aio.Models;
-using System.Text.Json;
+using Settlement.Sportsbook.Aio.Services.Cricket;
 
-namespace Settlement.Sportsbook.Aio.Services.Cricket;
+namespace Settlement.Sportsbook.Aio.Services;
 
 public interface ResultAmendmentService
 {
@@ -20,7 +23,8 @@ public interface ResultAmendmentService
 public class ResultAmendmentServiceImp(
     IDynamicRepository repository,
     IOptions<AppSettingsKey> appSettingsKey,
-    GenerateResultAmendmentService generateResultAmendmentService)
+    GenerateResultAmendmentService generateResultAmendmentService,
+    IPublishEndpoint publishEndpoint)
     : ResultAmendmentService
 {
     public async Task<bool> HandleResultAmendment(SettleCriteria settleCriteria, List<ResourceItem> selectedResources)
@@ -54,12 +58,21 @@ public class ResultAmendmentServiceImp(
             Action = settleCriteria.Action
         };
 
-        var resultsChanged = await CheckReSettleTicket(criteria, settleCriteria.Action);
+        var results = await repository.FetchAsync<ResultChanged>(criteria);
+        var resultsChanged = await CheckReSettleTicket(results, settleCriteria.Action);
 
         if (resultsChanged.Count == 0)
         {
             return false;
         }
+
+        await publishEndpoint.Publish(new ResultAmended(
+            settleCriteria.MatchId,
+            settleCriteria.BroadcastSessionId,
+            settleCriteria.SportType,
+            settleCriteria.Action,
+            selectedResources,
+            results.ToList()));
 
         var resultHistoryItems = resultsChanged.Select((item, index)
             => CreateResultHistoryItem(item.ToList(), selectedResources, item.Key, index + 1));
@@ -71,9 +84,8 @@ public class ResultAmendmentServiceImp(
         return true;
     }
 
-    private async Task<List<IGrouping<short, ResultChanged>>> CheckReSettleTicket(CheckReSettleCriteria criteria, string currentAction)
+    private async Task<List<IGrouping<short, ResultChanged>>> CheckReSettleTicket(IEnumerable<ResultChanged> results, string currentAction)
     {
-        var results = await repository.FetchAsync<ResultChanged>(criteria);
 
         var resultsSetActionType = results.Select(x =>
         {

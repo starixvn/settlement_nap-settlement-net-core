@@ -9,7 +9,6 @@ using Settlement.Sportsbook.Aio.Constants;
 using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.Criteria.Tennis;
 using Settlement.Sportsbook.Aio.Requests;
-using Settlement.Sportsbook.Aio.Services.Cricket;
 
 namespace Settlement.Sportsbook.Aio.Services;
 
@@ -266,7 +265,8 @@ public class MultipleServerAioServiceImp(
 
     private async Task<bool> HandleResultAmendment(SettleCriteria settleCriteria, List<ResourceItem> selectedResources)
     {
-        if (settleCriteria.SportType == SportType.Cricket
+        List<int> sports = [SportType.Cricket, SportType.BasketBall, SportType.ESports];
+        if (sports.Contains(settleCriteria.SportType)
             && !settleCriteria.IsChildMatch
             && settleCriteria.Action != ActionType.UnCalculate)
         {
