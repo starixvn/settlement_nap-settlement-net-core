@@ -104,6 +104,11 @@ public class UpdateAutoSettingsHandler : IRequestHandler<UpdateAutoSettingsComma
 
         var differences = GetSpecificDifferences(oldItem, item);
 
+        if (string.IsNullOrEmpty(differences))
+        {
+            return;
+        }
+
         var objectInfo = command.TypeObject == "League" ? $"League({command.LeagueId})" : $"Match({command.MatchId})";
         var settingTypeInfo = $"for {item.SettleType} {item.ResourceType} ";
 
