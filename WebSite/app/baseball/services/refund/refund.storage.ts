@@ -6,7 +6,7 @@ import { AioService } from "../../../shared/services";
 import { ResourceNamePipe } from "../../pipes/resource-name.pipe";
 import { ResultDetail } from "../../../shared/models/sportsbook-sop/result-detail.model";
 import { IntervalBackgroundPipe } from "../../../shared/pipes/interval-background.pipe";
-import { isEqual } from "lodash";
+import { isEqual, isEmpty } from "lodash";
 import { SettlementStatusId, ResourceIds } from "../../../shared/constants";
 @Injectable()
 
@@ -15,8 +15,15 @@ export class RefundStorage {
   private readonly resultPipe = inject(ResourceNamePipe);
   private readonly intervalBackgroundPipe = inject(IntervalBackgroundPipe);
   #match = signal<Match>(null);
+  #isSdtSettle = signal<boolean>(false);
+  #isMercy = signal<boolean>(false);
+  #isAwayEnded = signal<boolean>(false);
+
 
   match = this.#match.asReadonly();
+  isSdtSettle = this.#isSdtSettle.asReadonly();
+  isMercy = this.#isMercy.asReadonly();
+  isAwayEnded = this.#isAwayEnded.asReadonly();
 
   async fetchMatch(matchId: number) {
     const sportType = Number(UrlHelper.getUrlParameter('sportType'));
@@ -53,4 +60,23 @@ export class RefundStorage {
 
     return className + this.intervalBackgroundPipe.transform(resultDetail.settlementStatusId);
   }
+  setSettleDetermine = (value: boolean) => {
+    this.#isSdtSettle.set(value);
+  };
+
+  setAwayEnded = (value: boolean) => {
+    this.#isAwayEnded.set(value);
+  };
+
+  setMercy = (value: boolean) => {
+    this.#isMercy.set(value);
+  };
+
+  isLeader = () => this.#match().permission.isLeader;
+
+  isOtherInfoContain = (otherInfo: string) => this.#match().resultDetails.some((item) => !isEmpty(item.otherInfo) && isEqual(item.otherInfo.toLowerCase(), otherInfo));
+
+  isGetMercy = () =>  this.isLeader() && this.isOtherInfoContain(ResourceIds.mercy.toLowerCase());
+
+  isGetAwayEnded = () => this.isLeader() && this.isOtherInfoContain("a");
 }

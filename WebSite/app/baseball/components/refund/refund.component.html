@@ -3,7 +3,8 @@
   <match-detail [matchDetail]="match().matchDetail" [permission]="match().permission"
     [resultDetail]="resultDetails()"></match-detail>
   <div class="refund-actions">
-    <table-result [match]="match()"> </table-result>
+    <table-result [match]="match()"></table-result>
+    <table-sdt [match]="match()" [mercy]="mercy()" [awayEnded]="awayEnded()"></table-sdt>
   </div>
 </div>
 

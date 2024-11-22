@@ -11,29 +11,51 @@
   <table>
     <thead>
       <tr>
-        <th>Result name</th>
-        <th>
+        <th class="resource-name">Result name</th>
+        <th class="result">Final Score</th>
+        <th class="proceed">
           Select to Proceed
         </th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let game of resultDetails; let last=last;"
-        [ngClass]="{'confirmed-refund': permission.isLeader && game.resultSettingData.isConfirmedRefund}">
-        @if(game.resourceId != extraInningId) {
-        <td>{{ game.resourceId | resourceName:false:matchDetail.sessionTime}}</td>
-        <td [ngClass]="game.ticketStatus.toLowerCase()">
-          <input type="checkbox" [(ngModel)]="game.checked" />
+      <tr *ngFor="let inning of resultDetails; let i = index; let last=last;"
+        [ngClass]="{'confirmed-refund': permission.isLeader && (inning.resultSettingData.isConfirmedRefund || inning.resultSettingData.isConfirmedRefundSdt),
+          'striped': inning.resourceId !== resourceIds.totalHits && (i % 2 !== 0 || inning.resourceId === resourceIds.fullTime || inning.resourceId === resourceIds.extraInning),
+        }">
+        <td>{{ inning.resourceId | resourceName:false:matchDetail.sessionTime}}</td>
+        <td [ngClass]="inning.className">
+           <div class="score score-row">
+            <span class="score-row__team" [matTooltip]="getTextTooltip(homeName,20)" matTooltipPosition="above">{{homeName}}</span>
+            <input type="text" myOnlyInteger [(ngModel)]="inning.homeValue"/>
+          </div>
+          <div class="score score-row">
+            <span class="score-row__team" [matTooltip]="getTextTooltip(awayName,20)" matTooltipPosition="above">{{awayName}}</span>
+            <input type="text" myOnlyInteger [(ngModel)]="inning.awayValue"/>
+          </div> 
         </td>
-        }
+        <td>
+          <input type="checkbox" [(ngModel)]="inning.checked" />
+        </td>
       </tr>
 
       <tr>
-        <td colspan="2">
-          <button *ngIf="permission.isLeader" [ngClass]="{'btn btn-outline-primary button-confirmed': true}"
-            [disabled]="selectedResources.length === 0" (click)="confirmRefund(confirmRefundResources)">
-            Confirm/Undo-confirm Refund
-          </button>
+        <td colspan="3">
+          <button
+							*ngIf="isConfirmRefund && permission.isLeader"
+							class="btn btn-outline-primary button-confirmed"
+							[disabled]="selectedResources.length === 0"
+							(click)="confirmRefund(confirmRefundResources)"
+						>
+							Confirm Refund
+						</button>
+						<button
+							*ngIf="!isConfirmRefund && permission.isLeader"
+							class="btn btn-outline-primary button-confirmed"
+							(click)="undoConfirmedAllResult()"
+						>
+							Undo Confirm Refund All
+						</button>
           <button [ngClass]="{'refund-button': true, 'button-disabled': selectedResources.length === 0}"
             [disabled]="selectedResources.length === 0" (click)="refund()">Refund</button>
         </td>

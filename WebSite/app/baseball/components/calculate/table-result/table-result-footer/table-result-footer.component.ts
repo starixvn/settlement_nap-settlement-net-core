@@ -1,11 +1,10 @@
 import { FormsModule } from "@angular/forms";
 import { Component, inject, OnInit } from "@angular/core";
-import { ResourceIds } from "../../../../constants/resource-id.constant";
 import { CommonModule } from "@angular/common";
 import { NotifyService } from "../../../../services/notify.service";
 import { Language } from "../../../../../shared/language.native";
 import { CalculateService } from "../../../../services/calculate/calculate.service";
-import { TicketStatusText } from "../../../../../shared/constants";
+import { TicketStatusText, ResourceIds } from "../../../../../shared/constants";
 import { CalculateStorage } from "../../../../services/calculate/calculate.storage";
 import { filter, isEqual } from "lodash";
 

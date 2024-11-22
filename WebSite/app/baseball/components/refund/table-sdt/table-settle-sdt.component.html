@@ -1,0 +1,12 @@
+<div>
+    - Marked tickets will NOT be calculated.
+</div>
+<div>
+    <input type="checkbox" id="isSdtSettle" [(ngModel)]="isSdtSettle" (ngModelChange)="changeSdtSettle()"/>&nbsp;<label for="isSdtSettle">Settle determinable tickets of next results.</label>
+</div>
+<div class="check-box">
+    <input type="checkbox" id="isAwayEnded" [(ngModel)]="isAwayEnded" (ngModelChange)="changeAwayEnded()"/>&nbsp;<label for="isAwayEnded"><b>{{matchDetail.awayName}}</b> turn ended normally.</label>
+</div>
+<div>
+    <input type="checkbox" id="isMercy" [(ngModel)]="isMercy" (ngModelChange)="changeMercy()"/>&nbsp;<label for="isMercy">Early Complete / Mercy Rule.</label>
+</div>

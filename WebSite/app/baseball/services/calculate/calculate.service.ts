@@ -18,7 +18,7 @@ import { SaveScoreHandler } from "../../handlers/calculate/save-score.handler";
 import { CalculateHandler } from "../../handlers/calculate/calculate.handler";
 import { CalculateStorage } from "./calculate.storage";
 import { countBy, every, find, isEqual, sumBy } from "lodash";
-import { ResourceIds } from "../../constants/resource-id.constant";
+import { ResourceIds } from "../../../shared/constants";
 import { GeneralResultDetail } from "../../../shared/models";
 import { ConfirmIntervalConsistency } from "../../handlers/calculate/confirm-interval-consistency.handler";
 import { FinalResultCalculateHandler } from "../../handlers/calculate/final-result-calculate.handler";
@@ -37,7 +37,7 @@ export class CalculateService {
   private readonly confirmChangedResultHandler = new ConfirmChangedResultHandler();
   private readonly confirmCalculateHandler = new ConfirmCalculateHandler();
   private readonly saveScoreHandler = new SaveScoreHandler();
-  private readonly   calculateHandler = new CalculateHandler();
+  private readonly calculateHandler = new CalculateHandler();
   private readonly confirmUncalculateHandler = new ConfirmUnCalculateHandler();
   private readonly inningsValidateHandler = new InningsValidateHandler();
 
