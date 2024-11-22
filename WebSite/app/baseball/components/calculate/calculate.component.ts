@@ -27,10 +27,11 @@ import { IntervalCalculationService } from '../../../shared/services';
 })
 export class CalculateComponent implements SportTemplate {
   #storage = inject(CalculateStorage);
+
   isReadyMatch = false;
   applyHedgeMatch: boolean;
-  isResettleTickets = this.#storage.getIsReSettledTickets();
   match: Match;
+  isResettleTickets = this.#storage.isReSettledTickets;
   
   async getMatch(matchId: number) {
     await this.#storage.fetchMatch(matchId);

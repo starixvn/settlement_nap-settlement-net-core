@@ -28,8 +28,8 @@ export class EarlySettlementStorage implements Storage {
   #actionSubmit = '';
   #resultType = signal<string>("");
   #isReSettledTickets = signal<boolean>(false);
-  #ticketStatus = signal<string>("");;
-  #resultStatus = signal<string>("");;
+  #ticketStatus = signal<string>("");
+  #resultStatus = signal<string>("");
 
   match = this.#match.asReadonly();
   resultType = this.#resultType.asReadonly();

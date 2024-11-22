@@ -18,7 +18,7 @@
       <tfoot table-result-footer></tfoot>
     </table>
     <resettle-checker (proceedEvent)="onResettleCheckboxChange($event)"
-      [(checked)]="isResettleTickets"></resettle-checker>
+      [checked]="isResettleTickets()"></resettle-checker>
   </div>
   } @else{
   <not-ready-match></not-ready-match>

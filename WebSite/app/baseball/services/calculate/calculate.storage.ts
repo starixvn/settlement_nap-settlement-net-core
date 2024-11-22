@@ -30,6 +30,7 @@ export class CalculateStorage implements ICalculateStorage {
   #match = signal<Match>(null);
   #isScoreDirect = signal<boolean>(false);
   #isReSettledTickets = signal<boolean>(false);
+  isReSettledTickets = this.#isReSettledTickets.asReadonly();
   #isApplyHedgeMatch = signal<boolean>(false);
   readonly #isMatchSeries = signal<boolean>(false);
 
@@ -38,7 +39,7 @@ export class CalculateStorage implements ICalculateStorage {
   #actionSubmit = '';
 
   isScoreDirect = this.#isScoreDirect.asReadonly();
-  isReSettledTickets = this.#isReSettledTickets.asReadonly();
+
   isMatchSeries = this.#isMatchSeries.asReadonly();
 
   fulltimeResult: ResultDetailBaseBall;
@@ -133,7 +134,6 @@ export class CalculateStorage implements ICalculateStorage {
 
   getIsClickOnCalculate = () => this.#isClickOnCalculate;
 
-  getIsReSettledTickets = () => this.#isReSettledTickets;
 
   selectFinalResult = () => {
     this.#match().resultDetails.forEach((item) => {
