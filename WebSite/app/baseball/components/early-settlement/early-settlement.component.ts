@@ -26,7 +26,8 @@ export class EarlySettlementComponent implements SportTemplate{
   match = this.storage.match;
   isReadyMatch = false;
   mainResult: ResultDetail[];
-  isResettleTickets = this.storage.getIsReSettledTickets();
+  isResettleTickets = this.storage.isReSettledTickets;
+
   async getMatch(matchId: number): Promise<void> {
     await this.storage.fetchMatch(matchId);
     this.storage.groupInning();

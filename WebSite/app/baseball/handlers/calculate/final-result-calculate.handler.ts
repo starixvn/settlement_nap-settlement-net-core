@@ -57,7 +57,7 @@ export class FinalResultCalculateHandler implements BaseHandler {
     }
 
     if (totalScoreHome !== totalScoreAway && (extraInning.homeValue === "0" && extraInning.awayValue === "0")) {
-      extraInning.homeValue = ''; // reset null follow rule
+      extraInning.homeValue = ''; 
       extraInning.awayValue = '';
     }
 

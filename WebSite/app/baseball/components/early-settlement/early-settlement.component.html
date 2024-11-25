@@ -22,7 +22,7 @@
       <div table-result-footer [permission]="match().permission" class="footer"></div>
     </div>
   
-    <resettle-checker (proceedEvent)="onResettleCheckboxChange($event)" [(checked)]="isResettleTickets" />
+    <resettle-checker (proceedEvent)="onResettleCheckboxChange($event)" [checked]="isResettleTickets()" />
   } @else {
     <not-ready-match></not-ready-match>
   }

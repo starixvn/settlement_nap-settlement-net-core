@@ -16,4 +16,5 @@ export interface Storage {
   getApplyingHedgeMatch(): boolean;
   getOriginalResultDetails() : ResultDetail[];
   setResultsCheckedState?: (service: ResultRowStateService) => void;
+  setResultsWarningState?: (resultDetails: ResultDetail[]) => void;
 }

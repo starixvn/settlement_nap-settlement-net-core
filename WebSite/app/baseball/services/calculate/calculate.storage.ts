@@ -6,7 +6,7 @@ import { AioService } from "../../../shared/services";
 import { VerificationBaseService } from "../../../core/services/verification-base.service";
 import { CalculateAction, ResourceIds, ResultStatusId, SettlementStatusId } from "../../../shared/constants";
 import { ResultDetailBaseBall } from "../../models/result-detail.model";
-import { cloneDeep, isMatch } from "lodash";
+import { cloneDeep } from "lodash";
 import { Storage } from "../storage.service";
 import { ResultRowStateService } from "../result-row-state.service";
 import { ResultState } from "../../models/result-state.model";
@@ -30,6 +30,7 @@ export class CalculateStorage implements ICalculateStorage {
   #match = signal<Match>(null);
   #isScoreDirect = signal<boolean>(false);
   #isReSettledTickets = signal<boolean>(false);
+  isReSettledTickets = this.#isReSettledTickets.asReadonly();
   #isApplyHedgeMatch = signal<boolean>(false);
   readonly #isMatchSeries = signal<boolean>(false);
 
@@ -38,7 +39,7 @@ export class CalculateStorage implements ICalculateStorage {
   #actionSubmit = '';
 
   isScoreDirect = this.#isScoreDirect.asReadonly();
-  isReSettledTickets = this.#isReSettledTickets.asReadonly();
+
   isMatchSeries = this.#isMatchSeries.asReadonly();
 
   fulltimeResult: ResultDetailBaseBall;
@@ -133,7 +134,6 @@ export class CalculateStorage implements ICalculateStorage {
 
   getIsClickOnCalculate = () => this.#isClickOnCalculate;
 
-  getIsReSettledTickets = () => this.#isReSettledTickets;
 
   selectFinalResult = () => {
     this.#match().resultDetails.forEach((item) => {
@@ -154,6 +154,13 @@ export class CalculateStorage implements ICalculateStorage {
   setResultsCheckedState = (service: ResultRowStateService) => {
     this.getResultChecked().forEach((inning) => {
       this.setResultState(service,inning);
+    })
+  }
+
+  setResultsWarningState = (resultDetails: ResultDetailBaseBall[]) => {
+    resultDetails.forEach((item) => {
+      item.resultState.invalidHomeScore = true;
+      item.resultState.invalidAwayScore = true;
     })
   }
 
