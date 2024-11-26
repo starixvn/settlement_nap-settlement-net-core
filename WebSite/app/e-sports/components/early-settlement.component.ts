@@ -181,6 +181,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         this.confirmationDialogMessage.message = this.earlyConstraintService.getConfirmMessage(resultDetails, this.match.matchDetail);
         this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
             const resources = this.match.resultDetails.filter((map) => map.checked);
+            this.setTeamResultSettle(this.selectedResources);
             const query = new SettleQuery(this.match.matchDetail.matchId,
                 resources,
                 CalculateAction.earlyCalculate,
@@ -221,6 +222,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     }
 
     private createQueryRefundAndPush() {
+        this.setTeamResultSettle(this.selectedResources);
         const query = new SettleQuery(this.match.matchDetail.matchId,
             this.selectedResources,
             CalculateAction.earlyRefund,
@@ -322,5 +324,12 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
             && !_.isEqual(item.awayValue, '') && Number(item.awayValue) === 0) {
             item.homeValue = item.homeValue.replace(/-/g, '');
         }
+    }
+
+    private setTeamResultSettle(resultDetails: ResultDetail[]) {
+        resultDetails.forEach(result => {
+            result.homeId = `${this.matchDetail.homeId}`;
+            result.awayId = `${this.matchDetail.awayId}`;
+        });
     }
 }

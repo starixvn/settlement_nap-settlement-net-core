@@ -74,12 +74,12 @@ public class ResultAmendmentServiceImp(
             selectedResources,
             results.ToList()));
 
-        var resultHistoryItems = resultsChanged.Select((item, index)
-            => CreateResultHistoryItem(item.ToList(), selectedResources, item.Key, index + 1));
+        //var resultHistoryItems = resultsChanged.Select((item, index)
+        //    => CreateResultHistoryItem(item.ToList(), selectedResources, item.Key, index + 1));
 
-        var resultHistoryInsCriteria = CreateResultHistoryInsCriteria(settleCriteria, resultHistoryItems.ToList());
+        //var resultHistoryInsCriteria = CreateResultHistoryInsCriteria(settleCriteria, resultHistoryItems.ToList());
 
-        InsResultHistory(resultHistoryInsCriteria);
+        //InsResultHistory(resultHistoryInsCriteria);
 
         return true;
     }
