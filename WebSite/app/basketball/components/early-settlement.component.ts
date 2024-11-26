@@ -14,6 +14,7 @@ import { EarlyBaseComponent } from '../../shared/components/sportsbook-sop/early
 import { MatchDetailComponent } from './match-detail.component';
 import { NewMultipleSelectComponent } from '../../shared/components/multiple-select/multiple-select.component';
 import { ResourceNameByIdPipe } from '../pipes/resource-name-by-id.pipe';
+import {ResultControlGroup} from "../../cricket/constants";
 
 @Component({
     selector: 'early-settlement',
@@ -98,6 +99,13 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         });
     }
 
+    private setTeamResultSettle(resultDetails: ResultDetail[]) {
+        resultDetails.forEach(result => {
+            result.homeId = `${this.matchDetail.homeId}`;
+            result.awayId = `${this.matchDetail.awayId}`;
+        });
+    }
+
     public calculate() {
         this.toastrService.clear();
         const existResultConfirmed = _.find(this.selectedResources, item => item.resultSettingData.isConfirmedRefund);
@@ -145,6 +153,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     private confirmCalculation(resultDetails: ResultDetail[]) {
         this.confirmationDialogMessage.message = this.earlyService.getConfirmMessage(resultDetails, this.match.matchDetail);
         this.messageBoxService.confirm(this.confirmationDialogMessage, async () => {
+            this.setTeamResultSettle(this.selectedResources);
             const query = new SettleQuery(this.match.matchDetail,
                 this.selectedResources,
                 CalculateAction.earlyCalculate,
@@ -190,6 +199,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     }
 
     private createQueryRefundAndPush() {
+        this.setTeamResultSettle(this.selectedResources);
         const query = new SettleQuery(this.match.matchDetail,
             this.selectedResources,
             CalculateAction.earlyRefund,
