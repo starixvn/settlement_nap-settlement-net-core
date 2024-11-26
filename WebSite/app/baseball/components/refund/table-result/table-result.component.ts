@@ -1,5 +1,6 @@
 import { FormsModule } from '@angular/forms';
-import { Component, inject, input, OnInit } from '@angular/core';
+import * as _ from "lodash";
+import { Component, inject, input, OnInit, effect } from '@angular/core';
 import { RefundActionBaseComponent } from '../../../../shared/components/sportsbook-sop/refund-action-base.component';
 import { Match } from '../../../models/match.model';
 import { CommonModule } from '@angular/common';
@@ -13,40 +14,49 @@ import { CalculateAction, ResourceIds, SettlementStatusId } from '../../../../sh
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { IntervalBackgroundPipe } from '../../../../shared/pipes/interval-background.pipe';
 import { RefundStorage } from '../../../services/refund/refund.storage';
+import { RefundService } from "../../../services/refund/refund.service";
+
 @Component({
   selector: 'table-result',
   standalone: true,
   imports: [CommonModule, FormsModule, ResourceNamePipe, MatTooltipModule, IntervalBackgroundPipe],
   templateUrl: './table-result.component.html',
 })
-export class TableResultComponent extends RefundActionBaseComponent implements OnInit {
-  match = input.required<Match>();
+export class TableResultComponent implements OnInit {
   #storage = inject(RefundStorage);
+  #refundService = inject(RefundService);
   #notifyService = inject(NotifyService);
   #resultPipe = inject(ResourceNamePipe);
   #backgroundPipe = inject(IntervalBackgroundPipe);
+  match = this.#storage.getMatch()
+  resultDetails = this.match.resultDetails;
+  matchDetail = this.match.matchDetail;
+  selectedResources = this.#storage.getResultChecked();
+  isConfirmRefund: boolean;
   hedgeMatchDetail: HedgeMatchDetail;
   applyHedgeMatch: boolean;
-  resultDetails: ResultDetail[];
-  matchDetail: MatchDetail;
+
   permission: Permission;
   extraInningId = ResourceIds.extraInning;
   homeName: string;
   awayName: string;
   resourceIds = ResourceIds;
+
   public get confirmRefundResources() {
     return this.selectedResources.map((x) => ({...x,resourceName: this.#resultPipe.transform(x.resourceId)}))
   } 
 
+  public get disableButton () {
+    return this.#storage.getResultChecked().length == 0;
+  }
+
   ngOnInit(): void {
-    this.hedgeMatchDetail = this.match().hedgeMatchDetail;
+    this.hedgeMatchDetail = this.#storage.getMatch().hedgeMatchDetail;
     this.applyHedgeMatch = this.hedgeMatchDetail !== null;
-    this.resultDetails = this.match().resultDetails;
-    this.matchDetail = this.match().matchDetail;
-    this.permission = this.match().permission;
+    this.permission = this.match.permission;
     this.homeName = this.matchDetail.homeName;
     this.awayName = this.matchDetail.awayName;
-    this.isConfirmRefund = this.resultDetails.findIndex(result => result.resultSettingData.isConfirmedRefund || result.resultSettingData.isConfirmedRefundSdt) === -1;
+    this.isConfirmRefund = this.resultDetails.some(result => result.resultSettingData.isConfirmedRefund || result.resultSettingData.isConfirmedRefundSdt);
     this.resetHomeAwayAndAddClass(this.resultDetails);
   }
 
@@ -63,48 +73,56 @@ export class TableResultComponent extends RefundActionBaseComponent implements O
         item.className = this.#backgroundPipe.transform(item.settlementStatusId);
     });
   }
+
+
+
   async refund() {
-    const paramsCheckingMarkedTickets = this.generateCheckMarkedTicketsQuery();
-    const res = await this.aioService.checkMarkedTickets(paramsCheckingMarkedTickets);
-    this.toastrService.clear();
-    if (this.existResultNotConfirmed()) {
-      this.toastrService.error(Language.confirmRefund.refundResultNotConfirmed);
-    } else if (res.isExistMarkedTicket) {
-      this.toastrService.error(Language.MarkedTicket);
-    } else {
-      this.#notifyService.confirm(Language.RefundConfirmMessage, () => {
-        this.doRefund();
-      });
-    }
+    // const paramsCheckingMarkedTickets = this.generateCheckMarkedTicketsQuery();
+    // const res = await this.aioService.checkMarkedTickets(paramsCheckingMarkedTickets);
+    // this.toastrService.clear();
+    // if (this.existResultNotConfirmed()) {
+    //   this.toastrService.error(Language.confirmRefund.refundResultNotConfirmed);
+    // } else if (res.isExistMarkedTicket) {
+    //   this.toastrService.error(Language.MarkedTicket);
+    // } else {
+    //   this.#notifyService.confirm(Language.RefundConfirmMessage, () => {
+    //     this.doRefund();
+    //   });
+    // }
   }
 
   private async doRefund() {
-    const query = this.generateRefundQuery(BaseballApiKeys.Settle);
-    const result = await this.aioService.push(query);
-    if (result.errCode === 0) {
-      result.childMatchIds && await this.refundChildMatch(result.childMatchIds, result.settledSessionId);
-      this.refundHedgeMatch(query);
-      this.messageBoxService.closePopup();
-    } else {
-      this.toastrService.error(result.errMsg);
-    }
+    // const query = this.generateRefundQuery(BaseballApiKeys.Settle);
+    // const result = await this.aioService.push(query);
+    // if (result.errCode === 0) {
+    //   result.childMatchIds && await this.refundChildMatch(result.childMatchIds, result.settledSessionId);
+    //   this.refundHedgeMatch(query);
+    //   this.messageBoxService.closePopup();
+    // } else {
+    //   this.toastrService.error(result.errMsg);
+    // }
   }
 
   private async refundChildMatch(childMatchIds: string, parentSessionId: string) {
-    const settleChildMatchQuery = new SettleChildMatchQuery(
-      childMatchIds, 
-      this.selectedResources,
-      CalculateAction.refund, 
-      false);
+    // const settleChildMatchQuery = new SettleChildMatchQuery(
+    //   childMatchIds, 
+    //   this.selectedResources,
+    //   CalculateAction.refund, 
+    //   false);
 
-    settleChildMatchQuery.sportType = this.matchDetail.sportType;
-    settleChildMatchQuery.parentSessionId = parentSessionId;
+    // settleChildMatchQuery.sportType = this.matchDetail.sportType;
+    // settleChildMatchQuery.parentSessionId = parentSessionId;
 
-    await this.aioService.pushChildMatch(settleChildMatchQuery);
+    // await this.aioService.pushChildMatch(settleChildMatchQuery);
   }
 
   confirmRefund(confirmRefundResources?: ResourceItem[]) {
-    
-    console.log(this.#storage.isSdtSettle() +" - "+this.#storage.isMercy() +" - "+ this.#storage.isAwayEnded());
+    this.#notifyService.clearError();
+    this.#refundService.confirmRefund();
+  }
+
+  undoConfirmedAllResult() {
+    this.#notifyService.clearError();
+    this.#refundService.undoConfirmRefund();
   }
 }

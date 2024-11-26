@@ -8,9 +8,21 @@ import { ResultDetail } from "../../../shared/models/sportsbook-sop/result-detai
 import { IntervalBackgroundPipe } from "../../../shared/pipes/interval-background.pipe";
 import { isEqual, isEmpty } from "lodash";
 import { SettlementStatusId, ResourceIds } from "../../../shared/constants";
+import { Storage } from "../storage.service";
+
+export interface IRefundStorage extends Storage  {
+  isMercy() : boolean;
+  isSdtSettle() : boolean;
+  isAwayEnded() : boolean;
+
+  setSettleDetermine(value: boolean): void;
+  setAwayEnded(value: boolean): void;
+  setMercy(value: boolean): void;
+}
+
 @Injectable()
 
-export class RefundStorage {
+export class RefundStorage implements IRefundStorage {
   private readonly aioService = inject(AioService);
   private readonly resultPipe = inject(ResourceNamePipe);
   private readonly intervalBackgroundPipe = inject(IntervalBackgroundPipe);
@@ -18,7 +30,7 @@ export class RefundStorage {
   #isSdtSettle = signal<boolean>(false);
   #isMercy = signal<boolean>(false);
   #isAwayEnded = signal<boolean>(false);
-
+  #isApplyHedgeMatch = signal<boolean>(false);
 
   match = this.#match.asReadonly();
   isSdtSettle = this.#isSdtSettle.asReadonly();
@@ -35,19 +47,30 @@ export class RefundStorage {
     };
     const matchFetched = (await this.aioService.getMatch(matchQuery)) as Match;
     matchFetched.resultDetails.forEach(result => {
-      result.resourceName = this.resultPipe.transform(result.resourceId, true,matchFetched.matchDetail.sessionTime);
+      result.resourceName = this.resultPipe.transform(result.resourceId, false,matchFetched.matchDetail.sessionTime);
       result.className = this.getClass(result);
       result.isDisplayedForMember = matchFetched.permission.isLeader || Number(result.settlementStatusId) !== SettlementStatusId.Running;
     });
     this.#match.set(matchFetched);
   }
 
+  getActionSubmit = () => "";
+
+  isReSettledTickets = () => false;
+  
+  setReSettledTickets = () => {};
+
+  isScoreDirect = () => false;
 
   getResultChecked = () => this.#match().resultDetails.filter(x => x.checked);
 
   getResultDetails = () => this.#match().resultDetails.filter(x => x.resourceId !== ResourceIds.totalHits);
 
-  getMatchId = () => this.#match().matchDetail.matchId;
+  getMatch = () => this.#match();
+
+  getApplyingHedgeMatch = () => this.#isApplyHedgeMatch();
+
+  getMatchDetail = () => this.#match().matchDetail;
 
   getClass(resultDetail: ResultDetail) {
     let className = '';
@@ -72,11 +95,13 @@ export class RefundStorage {
     this.#isMercy.set(value);
   };
 
+  getOriginalResultDetails = () => [];
+
   isLeader = () => this.#match().permission.isLeader;
 
   isOtherInfoContain = (otherInfo: string) => this.#match().resultDetails.some((item) => !isEmpty(item.otherInfo) && isEqual(item.otherInfo.toLowerCase(), otherInfo));
 
-  isGetMercy = () =>  this.isLeader() && this.isOtherInfoContain(ResourceIds.mercy.toLowerCase());
+  isGetMercy = () => this.isLeader() && this.isOtherInfoContain(ResourceIds.mercy.toLowerCase());
 
   isGetAwayEnded = () => this.isLeader() && this.isOtherInfoContain("a");
 }

@@ -359,7 +359,6 @@ public class AioServiceImp(
         var criteria = createQueryService.QueryChangeSetting(request);
         await repository.ExecuteAsync(criteria);
 
-        // TODO
         int[] confirmRefund = [ResultSettingType.ConfirmRefund, ResultSettingType.ConfirmRefundSDT];
         if (confirmRefund.Contains(request.Type))
         {

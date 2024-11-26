@@ -19,5 +19,5 @@ export class NonSelectedHandler implements BaseHandler {
     } else {
       this.nextHandler.handle(storage);
     }
-}
+  }
 }

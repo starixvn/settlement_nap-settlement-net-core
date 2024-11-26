@@ -13,23 +13,20 @@ import { RefundStorage } from '../../../services/refund/refund.storage';
 })
 export class TableSettleSdtComponent implements OnInit{
   #storage = inject(RefundStorage);
-  match = input.required<Match>();
-  mercy = input.required<boolean>();
-  awayEnded = input.required<boolean>();
-  matchDetail: MatchDetail;
   isMercy: boolean;
   isAwayEnded: boolean;
   isSdtSettle: boolean;
+  awayName: string;
   ngOnInit(): void {
-    this.isMercy = this.mercy();
-    this.isAwayEnded = this.awayEnded();
-    this.matchDetail = this.match().matchDetail;
+    this.isMercy = this.#storage.isGetMercy();
+    this.isAwayEnded = this.#storage.isGetAwayEnded();
+    this.awayName = this.#storage.getMatchDetail().awayName;
     this.isSdtSettle = this.isAwayEnded || this.initSdtSettle();
     this.resetAllCheckboxMarkedTicket();
   }
 
   initSdtSettle() {
-    const resultDetails = this.match().resultDetails;
+    const resultDetails = this.#storage.getResultDetails();
     const existResultConfirmedSDT = resultDetails.some(item => item.resultSettingData.isConfirmedRefundSdt);
     if (existResultConfirmedSDT) {
         return true;

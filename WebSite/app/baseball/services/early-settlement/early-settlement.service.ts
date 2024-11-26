@@ -14,12 +14,12 @@ import { SaveScoreHandler } from "../../handlers/calculate/save-score.handler";
 import { CalculateHandler } from "../../handlers/calculate/calculate.handler";
 import { ConfirmUnCalculateHandler } from "../../handlers/uncalculate/confirm-uncalculate.handler";
 import { EarlySettlementStorage } from "./early-settlement.storage";
-import { CheckMarkedTicketHandler } from "../../handlers/refund/check-marked-ticket.handler";
 import { NotifyService } from "../notify.service";
 import { AioService } from "../../../shared/services";
 import { InvalidResultsHandler } from "../../handlers/early-settlement/invalid-results.handler";
 import { ConfirmRefundHandler } from "../../handlers/early-settlement/confirm-refund.handler";
 import { VerifyScoreSourceHandler } from "../../handlers/early-settlement/verify-score-source.handler";
+import { CheckMarkedTicketHandler } from "../../handlers/early-settlement/check-marked-ticket.handler";
 import { ResourceItem } from "../../../shared/models";
 
 @Injectable()

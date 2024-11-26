@@ -21,9 +21,9 @@
     <tbody>
       <tr *ngFor="let inning of resultDetails; let i = index; let last=last;"
         [ngClass]="{'confirmed-refund': permission.isLeader && (inning.resultSettingData.isConfirmedRefund || inning.resultSettingData.isConfirmedRefundSdt),
-          'striped': inning.resourceId !== resourceIds.totalHits && (i % 2 !== 0 || inning.resourceId === resourceIds.fullTime || inning.resourceId === resourceIds.extraInning),
+          'striped': inning.resourceId !== resourceIds.totalHits && (i % 2 == 0 || inning.resourceId === resourceIds.fullTime || inning.resourceId === resourceIds.extraInning),
         }">
-        <td>{{ inning.resourceId | resourceName:false:matchDetail.sessionTime}}</td>
+        <td>{{ inning.resourceName}}</td>
         <td [ngClass]="inning.className">
            <div class="score score-row">
             <span class="score-row__team" [matTooltip]="getTextTooltip(homeName,20)" matTooltipPosition="above">{{homeName}}</span>
@@ -42,22 +42,21 @@
       <tr>
         <td colspan="3">
           <button
-							*ngIf="isConfirmRefund && permission.isLeader"
+							*ngIf="!isConfirmRefund && permission.isLeader"
 							class="btn btn-outline-primary button-confirmed"
-							[disabled]="selectedResources.length === 0"
+							[disabled]="disableButton"
 							(click)="confirmRefund(confirmRefundResources)"
 						>
 							Confirm Refund
 						</button>
 						<button
-							*ngIf="!isConfirmRefund && permission.isLeader"
+							*ngIf="isConfirmRefund && permission.isLeader"
 							class="btn btn-outline-primary button-confirmed"
 							(click)="undoConfirmedAllResult()"
 						>
 							Undo Confirm Refund All
 						</button>
-          <button [ngClass]="{'refund-button': true, 'button-disabled': selectedResources.length === 0}"
-            [disabled]="selectedResources.length === 0" (click)="refund()">Refund</button>
+          <button class="btn btn-outline-primary" [disabled]="disableButton" (click)="refund()">Refund</button>
         </td>
       </tr>
     </tbody>
