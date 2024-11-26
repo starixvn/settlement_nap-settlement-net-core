@@ -2,6 +2,7 @@ using Fanex.Caching.Redis;
 using Fanex.Data;
 using Fanex.Logging.Sentry.RavenClient;
 using Fanex.NAP.Client.Attributes;
+using Fanex.NAP.SignIn;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
