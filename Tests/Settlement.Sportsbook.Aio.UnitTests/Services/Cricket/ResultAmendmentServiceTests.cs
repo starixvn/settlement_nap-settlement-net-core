@@ -7,6 +7,7 @@ using Settlement.Sportsbook.Aio.Services.Cricket;
 
 namespace Settlement.Sportsbook.Aio.UnitTests.Services.Cricket;
 
+using MassTransit;
 using Settlement.Core.Models;
 using Settlement.Sportsbook.Aio.Services;
 
@@ -15,15 +16,17 @@ public class ResultAmendmentServiceTests
     private readonly IDynamicRepository repository;
     private readonly ResultAmendmentService resultAmendmentService;
     private readonly List<string> siteDbServers = ["01", "02"];
+    private readonly IPublishEndpoint publishEndpoint;
 
     public ResultAmendmentServiceTests()
     {
         var appSettingsKey = new AppSettingsKey { SiteDbServer = siteDbServers };
         var options = Options.Create(appSettingsKey);
         repository = Substitute.For<IDynamicRepository>();
+        publishEndpoint = Substitute.For<IPublishEndpoint>();
 
         var generateResultAmendmentService = Substitute.For<GenerateResultAmendmentService>();
-        resultAmendmentService = new ResultAmendmentServiceImp(repository, options, generateResultAmendmentService);
+        resultAmendmentService = new ResultAmendmentServiceImp(repository, options, generateResultAmendmentService, publishEndpoint);
     }
 
     [Fact]

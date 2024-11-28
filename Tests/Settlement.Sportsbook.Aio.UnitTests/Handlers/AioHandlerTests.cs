@@ -22,6 +22,7 @@ public class AioHandlerTests
     private readonly IAioService service;
 
     private readonly ResultAmendmentService resultAmendmentService;
+    private readonly IPublishEndpoint publishEndpoint;
 
     public AioHandlerTests()
     {
@@ -38,7 +39,8 @@ public class AioHandlerTests
         var appSettings = new AppSettingsKey { EnableVerifyingRunningOdds = true };
         var appSettingsOptions = Options.Create(appSettings);
         resultAmendmentService = Substitute.For<ResultAmendmentService>();
-        handler = new AioHandler(service, permission, resultAmendmentService, appSettingsOptions);
+        publishEndpoint = Substitute.For<IPublishEndpoint>();
+        handler = new AioHandler(service, permission, resultAmendmentService, publishEndpoint, appSettingsOptions);
     }
 
     [Fact]
@@ -101,7 +103,7 @@ public class AioHandlerTests
     {
         var appSettings = new AppSettingsKey { EnableVerifyingRunningOdds = false };
         var appSettingsOptions = Options.Create(appSettings);
-        var handlerTemp = new AioHandler(service, permission, resultAmendmentService, appSettingsOptions);
+        var handlerTemp = new AioHandler(service, permission, resultAmendmentService, publishEndpoint, appSettingsOptions);
         var actual = await handlerTemp.Handle(new CheckRunningOddsRequest(), CancellationToken.None);
 
         Assert.True(actual.IsSuccessful);

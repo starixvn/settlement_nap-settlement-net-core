@@ -66,20 +66,24 @@ public class ResultAmendmentServiceImp(
             return false;
         }
 
-        await publishEndpoint.Publish(new ResultAmended(
-            settleCriteria.MatchId,
-            settleCriteria.BroadcastSessionId,
-            settleCriteria.SportType,
-            settleCriteria.Action,
-            selectedResources,
-            results.ToList()));
+        if (settleCriteria.SportType is SportType.BasketBall or SportType.ESports)
+        {
+            await publishEndpoint.Publish(new ResultAmended(
+                settleCriteria.MatchId,
+                settleCriteria.BroadcastSessionId,
+                settleCriteria.SportType,
+                settleCriteria.Action,
+                selectedResources,
+                results.ToList()));
+            return true;
+        }
 
-        //var resultHistoryItems = resultsChanged.Select((item, index)
-        //    => CreateResultHistoryItem(item.ToList(), selectedResources, item.Key, index + 1));
+        var resultHistoryItems = resultsChanged
+            .Select((item, index) => CreateResultHistoryItem(item.ToList(), selectedResources, item.Key, index + 1));
 
-        //var resultHistoryInsCriteria = CreateResultHistoryInsCriteria(settleCriteria, resultHistoryItems.ToList());
+        var resultHistoryInsCriteria = CreateResultHistoryInsCriteria(settleCriteria, resultHistoryItems.ToList());
 
-        //InsResultHistory(resultHistoryInsCriteria);
+        InsResultHistory(resultHistoryInsCriteria);
 
         return true;
     }

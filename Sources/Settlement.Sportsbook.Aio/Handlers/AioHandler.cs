@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Options;
+﻿using MassTransit;
+using Microsoft.Extensions.Options;
+using ResultAmendment.Contracts;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Aio.Criteria.Cricket;
@@ -12,6 +14,7 @@ public class AioHandler(
     IAioService aioService,
     PermissionService permissionService,
     ResultAmendmentService resultAmendmentService,
+    IPublishEndpoint publishEndpoint,
     IOptions<AppSettingsKey> appSettingsKey)
     :
         IRequestHandler<GetMatchRequest, AioMatch>,
@@ -31,8 +34,17 @@ public class AioHandler(
         return await aioService.GetMatch(request);
     }
 
-    public async Task<Result> Handle(SettleRequest request, CancellationToken cancellationToken) =>
-        await aioService.Settle(request);
+    public async Task<Result> Handle(SettleRequest request, CancellationToken cancellationToken)
+    {
+        var result = await aioService.Settle(request);
+
+        if (result.HasResultAmendment && (request.SportType is SportType.BasketBall or SportType.ESports))
+        {
+            await publishEndpoint.Publish(new ResultAmendSettled(request.MatchId, result.SettledSessionId));
+        }
+
+        return result;
+    }
 
     public async Task<List<Models.ResultDetail>> Handle(GetRecalResultRequest request,
         CancellationToken cancellationToken) => await aioService.GetRecalResult(request);
