@@ -1,38 +1,40 @@
 import { FormsModule } from '@angular/forms';
 import * as _ from "lodash";
-import { Component, inject, input, OnInit, effect } from '@angular/core';
-import { RefundActionBaseComponent } from '../../../../shared/components/sportsbook-sop/refund-action-base.component';
-import { Match } from '../../../models/match.model';
+import { Component, inject, OnInit } from '@angular/core';
+import { ResultDetailBaseBall } from '../../../models';
 import { CommonModule } from '@angular/common';
-import { ResourceNamePipe } from '../../../pipes/resource-name.pipe';
-import { HedgeMatchDetail, MatchDetail, Permission, ResultDetail } from '../../../../shared/models/sportsbook-sop';
+import { HedgeMatchDetail, Permission } from '../../../../shared/models/sportsbook-sop';
 import { Language } from '../../../../shared/language.native';
 import { NotifyService } from '../../../services/notify.service';
 import { BaseballApiKeys } from '../../../constants/api-keys.constant';
 import { SettleChildMatchQuery, ResourceItem } from '../../../../shared/models';
-import { CalculateAction, ResourceIds, SettlementStatusId } from '../../../../shared/constants';
+import { CalculateAction, ResourceIds, SettlementStatusId, BackgroundColor } from '../../../../shared/constants';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { IntervalBackgroundPipe } from '../../../../shared/pipes/interval-background.pipe';
 import { RefundStorage } from '../../../services/refund/refund.storage';
 import { RefundService } from "../../../services/refund/refund.service";
+import { ConfirmRefundService } from '../../../services/refund/confirm-refund.service';
 
 @Component({
   selector: 'table-result',
   standalone: true,
-  imports: [CommonModule, FormsModule, ResourceNamePipe, MatTooltipModule, IntervalBackgroundPipe],
+  imports: [CommonModule, FormsModule, MatTooltipModule],
   templateUrl: './table-result.component.html',
 })
 export class TableResultComponent implements OnInit {
   #storage = inject(RefundStorage);
+  #confirmRefundService = inject(ConfirmRefundService);
   #refundService = inject(RefundService);
   #notifyService = inject(NotifyService);
-  #resultPipe = inject(ResourceNamePipe);
   #backgroundPipe = inject(IntervalBackgroundPipe);
   match = this.#storage.getMatch()
+  externalResults = this.#storage.getExternalResults();
+  selectedResources = this.#storage.getResultChecked();
   resultDetails = this.match.resultDetails;
   matchDetail = this.match.matchDetail;
-  selectedResources = this.#storage.getResultChecked();
   isConfirmRefund: boolean;
+  isMercy: boolean;
+  isSdtSettle = this.#storage.isSdtSettle();
   hedgeMatchDetail: HedgeMatchDetail;
   applyHedgeMatch: boolean;
 
@@ -41,10 +43,6 @@ export class TableResultComponent implements OnInit {
   homeName: string;
   awayName: string;
   resourceIds = ResourceIds;
-
-  public get confirmRefundResources() {
-    return this.selectedResources.map((x) => ({...x,resourceName: this.#resultPipe.transform(x.resourceId)}))
-  } 
 
   public get disableButton () {
     return this.#storage.getResultChecked().length == 0;
@@ -56,40 +54,88 @@ export class TableResultComponent implements OnInit {
     this.permission = this.match.permission;
     this.homeName = this.matchDetail.homeName;
     this.awayName = this.matchDetail.awayName;
-    this.isConfirmRefund = this.resultDetails.some(result => result.resultSettingData.isConfirmedRefund || result.resultSettingData.isConfirmedRefundSdt);
+    this.isConfirmRefund = this.resultDetails.some(result => result.resultSettingData.isConfirmedRefund || result.resultSettingData.isConfirmedRefundSdt || result.resultSettingData.isConfirmedRefundMercy);
     this.resetHomeAwayAndAddClass(this.resultDetails);
   }
 
   getTextTooltip(text: string, maxLength: number) {
     return text?.length > maxLength ? text : null;
   }
-  private resetHomeAwayAndAddClass(resultDetails: ResultDetail[]) {
-    resultDetails.forEach((item) => {
-        if (!this.permission.isLeader || !item.resultSettingData.isConfirmedRefundSdt) {
-            const needReset = item.settlementStatusId === SettlementStatusId.Refund || item.settlementStatusId === SettlementStatusId.Running;
-            item.homeValue = needReset ? "" : item.homeValue;
-            item.awayValue = needReset ? "" : item.awayValue;
+
+  disableTotalHitsAndMatch(resourceId: string) {
+    if(this.#storage.isSdtSettle()) {
+      return _.isEqual(resourceId, ResourceIds.totalHits) ;
+    } 
+    else if(this.#storage.isMercy()) {
+      return _.includes([ResourceIds.totalHits, ResourceIds.fullTime], resourceId);
+    }
+  }
+
+  enableInput(resultDetail: ResultDetailBaseBall) {
+    if (resultDetail.checked && this.#storage.isSdtSettle()) {
+      resultDetail.disabled = false;  
+    } else {
+      resultDetail.disabled = true;  
+    }
+  }
+
+  changeScore(resultDetail: ResultDetailBaseBall) {
+    const firstResourceIndex = this.resultDetails.indexOf(resultDetail);
+    const resultDetailAfter = this.resultDetails.slice(firstResourceIndex !== -1 ? firstResourceIndex + 1 : 0);
+    resultDetailAfter.forEach(resource => {
+        if (resource.resourceId !== resultDetail.resourceId) {
+            resource.awayValue = "";
+            resource.homeValue = "";
         }
-        item.className = this.#backgroundPipe.transform(item.settlementStatusId);
+        resource.className = this.inputClass(resource);
+    });
+
+    resultDetail.className = this.inputClass(resultDetail);
+  }
+
+  private inputClass(resultDetail: ResultDetailBaseBall) {
+    const externalResource = this.externalResults.find(r => r.resourceId === resultDetail.resourceId);
+    return externalResource && (!_.isEqual(resultDetail.awayValue, externalResource.awayValue) || !_.isEqual(resultDetail.homeValue, externalResource.homeValue))
+          ? BackgroundColor.scoreSdtNotConsistent : this.#backgroundPipe.transform(resultDetail.settlementStatusId);
+  }
+
+  private resetHomeAwayAndAddClass(resultDetails: ResultDetailBaseBall[]) {
+    resultDetails.forEach((item) => {
+      this.resourceConfirmed(item); 
+      item.disabled = !item.checked;
+      if (!this.permission.isLeader || !item.resultSettingData.isConfirmedRefundSdt) {
+          const needReset = _.includes([SettlementStatusId.Refund, SettlementStatusId.Running], item.settlementStatusId);
+          item.homeValue = needReset ? "" : item.homeValue;
+          item.awayValue = needReset ? "" : item.awayValue;
+      }
+
+      item.className = this.#backgroundPipe.transform(item.settlementStatusId);
     });
   }
 
-
-
-  async refund() {
-    // const paramsCheckingMarkedTickets = this.generateCheckMarkedTicketsQuery();
-    // const res = await this.aioService.checkMarkedTickets(paramsCheckingMarkedTickets);
-    // this.toastrService.clear();
-    // if (this.existResultNotConfirmed()) {
-    //   this.toastrService.error(Language.confirmRefund.refundResultNotConfirmed);
-    // } else if (res.isExistMarkedTicket) {
-    //   this.toastrService.error(Language.MarkedTicket);
-    // } else {
-    //   this.#notifyService.confirm(Language.RefundConfirmMessage, () => {
-    //     this.doRefund();
-    //   });
-    // }
+  private resourceConfirmed(resultDetail: ResultDetailBaseBall) {
+    const flag = this.permission.isLeader && resultDetail.resultSettingData.isConfirmedRefundSdt;
+    if(flag) {
+      const resource = this.externalResults.find(resultConfirmed => resultConfirmed.resourceId === resultDetail.resourceId);
+      resultDetail.homeValue = resource.homeValue;
+      resultDetail.awayValue = resource.awayValue;
+    }
   }
+
+  // async refund() {
+  //   const paramsCheckingMarkedTickets = this.generateCheckMarkedTicketsQuery();
+  //   const res = await this.aioService.checkMarkedTickets(paramsCheckingMarkedTickets);
+  //   this.toastrService.clear();
+  //   if (this.existResultNotConfirmed()) {
+  //     this.toastrService.error(Language.confirmRefund.refundResultNotConfirmed);
+  //   } else if (res.isExistMarkedTicket) {
+  //     this.toastrService.error(Language.MarkedTicket);
+  //   } else {
+  //     this.#notifyService.confirm(Language.RefundConfirmMessage, () => {
+  //       this.doRefund();
+  //     });
+  //   }
+  // }
 
   private async doRefund() {
     // const query = this.generateRefundQuery(BaseballApiKeys.Settle);
@@ -116,13 +162,18 @@ export class TableResultComponent implements OnInit {
     // await this.aioService.pushChildMatch(settleChildMatchQuery);
   }
 
-  confirmRefund(confirmRefundResources?: ResourceItem[]) {
+  async refund() {
     this.#notifyService.clearError();
-    this.#refundService.confirmRefund();
+    this.#refundService.refund();
+  }
+
+  confirmRefund() {
+    this.#notifyService.clearError();
+    this.#confirmRefundService.confirmRefund();
   }
 
   undoConfirmedAllResult() {
     this.#notifyService.clearError();
-    this.#refundService.undoConfirmRefund();
+    this.#confirmRefundService.undoConfirmRefund();
   }
 }

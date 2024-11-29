@@ -1,0 +1,55 @@
+import * as _ from "lodash";
+import { IRefundStorage } from './../../services/refund/refund.storage';
+import { NotifyService } from "../../services/notify.service";
+import { BaseHandler } from "../base.handler.native";
+import { inject } from "@angular/core";
+import { AioService } from "../../../shared/services";
+import { Language } from "../../../shared/language.native";
+
+export class VerifyRefundHandler implements BaseHandler {
+  private nextHandler: BaseHandler;
+  #aioService = inject(AioService);
+  private readonly notifyService = inject(NotifyService);
+
+  setNextHandler(handler: BaseHandler) {
+    this.nextHandler = handler;
+  }
+
+  async handle(storage: IRefundStorage) {
+    if(this.existResultNotConfirmedNormal(storage)) {
+      this.notifyService.error(Language.confirmRefund.refundResultNotConfirmed);
+    } else if (this.isMisMatch(storage)) {
+      this.notifyService.error(Language.confirmRefund.sdtErrorMessage);
+    } else if(await this.isExistMarkedTicket(storage)) {
+      this.notifyService.error(Language.MarkedTicket);
+    } else {
+      this.nextHandler.handle(storage);
+    }
+  }
+
+  isMisMatch(storage: IRefundStorage) {
+    var isMisMatch =  !storage.getResultChecked().every(result => {
+      const resource = storage.getExternalResults().find(x => x.resourceId === result.resourceId);
+      return !_.isUndefined(resource) && (result.resultSettingData.isConfirmedRefundSdt || result.resultSettingData.isConfirmedRefundMercy)
+          && _.isEqual(result.homeValue, resource.homeValue)
+          && _.isEqual(result.awayValue, resource.awayValue)
+    });
+
+    return (storage.isSdtSettle() || storage.isMercy()) && isMisMatch;
+  }
+
+  existResultNotConfirmedNormal(storage: IRefundStorage) {
+    return !storage.isSdtSettle() && !storage.isMercy() &&  _.some(storage.getResultChecked(), item => !item.resultSettingData.isConfirmedRefund);
+  }
+
+  async isExistMarkedTicket(storage: IRefundStorage) {
+    const paramsCheckingMarkedTickets = {
+      matchId: storage.getMatchDetail().matchId,
+      selectedResources: storage.getResultChecked()
+    };
+
+    const res = await this.#aioService.checkMarkedTickets(paramsCheckingMarkedTickets);
+    return res.isExistMarkedTicket
+  } 
+  
+}

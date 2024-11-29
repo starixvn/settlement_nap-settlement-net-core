@@ -4,20 +4,23 @@ import { UrlHelper } from "../../../helper";
 import { Match } from "../../models/match.model";
 import { AioService } from "../../../shared/services";
 import { ResourceNamePipe } from "../../pipes/resource-name.pipe";
-import { ResultDetail } from "../../../shared/models/sportsbook-sop/result-detail.model";
+import { ResultDetail, ExternalResultDetail } from "../../../shared/models/sportsbook-sop";
 import { IntervalBackgroundPipe } from "../../../shared/pipes/interval-background.pipe";
 import { isEqual, isEmpty } from "lodash";
 import { SettlementStatusId, ResourceIds } from "../../../shared/constants";
 import { Storage } from "../storage.service";
+import { ResultDetailBaseBall } from "../../models";
 
 export interface IRefundStorage extends Storage  {
   isMercy() : boolean;
   isSdtSettle() : boolean;
   isAwayEnded() : boolean;
+  isGetSettleSdt() : boolean;
 
   setSettleDetermine(value: boolean): void;
   setAwayEnded(value: boolean): void;
   setMercy(value: boolean): void;
+  getExternalResults() : ExternalResultDetail[];
 }
 
 @Injectable()
@@ -41,7 +44,7 @@ export class RefundStorage implements IRefundStorage {
     const sportType = Number(UrlHelper.getUrlParameter('sportType'));
     const matchQuery = {
       matchId,
-      apikey: BaseballApiKeys.NormalMatch,
+      apikey: BaseballApiKeys.NormalMatchRefund,
       sportType,
       settleType: "MNL"
     };
@@ -64,9 +67,11 @@ export class RefundStorage implements IRefundStorage {
 
   getResultChecked = () => this.#match().resultDetails.filter(x => x.checked);
 
-  getResultDetails = () => this.#match().resultDetails.filter(x => x.resourceId !== ResourceIds.totalHits);
+  getResultDetails = () => this.#match().resultDetails;
 
   getMatch = () => this.#match();
+
+  getExternalResults = () => this.#match().externalResults.length > 0 ? this.#match().externalResults[0].resultDetails : [];
 
   getApplyingHedgeMatch = () => this.#isApplyHedgeMatch();
 
@@ -101,7 +106,29 @@ export class RefundStorage implements IRefundStorage {
 
   isOtherInfoContain = (otherInfo: string) => this.#match().resultDetails.some((item) => !isEmpty(item.otherInfo) && isEqual(item.otherInfo.toLowerCase(), otherInfo));
 
-  isGetMercy = () => this.isLeader() && this.isOtherInfoContain(ResourceIds.mercy.toLowerCase());
+  isGetMercy = () =>  this.isLeader() && this.#match().resultDetails.some((item) => this.isCheckedMercy(item));
 
-  isGetAwayEnded = () => this.isLeader() && this.isOtherInfoContain("a");
+  isCheckedMercy = (item: ResultDetailBaseBall) => item.resultSettingData.isConfirmedRefundMercy || (!isEmpty(item.otherInfo) && isEqual(item.otherInfo.toLowerCase(), ResourceIds.mercy.toLowerCase()));
+
+  isGetAwayEnded = () => this.isLeader() && !this.isOtherInfoContain("a");
+
+  isGetSettleSdt () {
+    if(!this.isLeader()) {
+      return false;
+    }
+
+    const resultDetails = this.#match().resultDetails;
+    const existResultConfirmedSDT = resultDetails.some(item => item.resultSettingData.isConfirmedRefundSdt);
+    if (existResultConfirmedSDT) {
+        return true;
+    }
+
+    const resultConfirmNormal = resultDetails.some(item => item.resultSettingData.isConfirmedRefund);
+
+    if (resultConfirmNormal) {
+        return false;
+    }
+
+    return resultDetails.some(item => item.settlementStatusId === SettlementStatusId.Calculated);
+  }
 }

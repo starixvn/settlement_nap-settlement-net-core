@@ -9,12 +9,13 @@ import { IntervalBackgroundPipe } from '../../../shared/pipes/interval-backgroun
 import { Match } from '../../models/match.model';
 import { ResultDetail } from "../../../shared/models/sportsbook-sop/result-detail.model";
 import { RefundService } from "../../services/refund/refund.service";
+import { ConfirmRefundService } from "../../services/refund/confirm-refund.service";
 
 @Component({
   selector: 'refund',
   standalone: true,
   imports: [MatchDetailComponent, TableResultComponent, TableSettleSdtComponent],
-  providers: [RefundStorage, ResourceNamePipe,IntervalBackgroundPipe, RefundService],
+  providers: [RefundStorage, ResourceNamePipe,IntervalBackgroundPipe, RefundService, ConfirmRefundService],
   templateUrl: './refund.component.html'
 })
 export class RefundComponent implements SportTemplate{

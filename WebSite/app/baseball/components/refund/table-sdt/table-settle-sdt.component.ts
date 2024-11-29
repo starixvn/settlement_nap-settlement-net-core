@@ -1,10 +1,8 @@
 import { FormsModule } from '@angular/forms';
-import { Component, input, OnInit, inject } from '@angular/core';
-import { Match } from '../../../models/match.model';
-import { MatchDetail } from '../../../../shared/models/sportsbook-sop';
-import { SettlementStatusId } from '../../../../shared/constants';
+import { Component, OnInit, inject } from '@angular/core';
+import { SettlementStatusId, ResourceIds } from '../../../../shared/constants';
 import { RefundStorage } from '../../../services/refund/refund.storage';
-
+import * as _ from "lodash";
 @Component({
   selector: 'table-sdt',
   standalone: true,
@@ -20,35 +18,18 @@ export class TableSettleSdtComponent implements OnInit{
   ngOnInit(): void {
     this.isMercy = this.#storage.isGetMercy();
     this.isAwayEnded = this.#storage.isGetAwayEnded();
+    this.isSdtSettle = this.#storage.isGetSettleSdt();
     this.awayName = this.#storage.getMatchDetail().awayName;
-    this.isSdtSettle = this.isAwayEnded || this.initSdtSettle();
     this.resetAllCheckboxMarkedTicket();
-  }
-
-  initSdtSettle() {
-    const resultDetails = this.#storage.getResultDetails();
-    const existResultConfirmedSDT = resultDetails.some(item => item.resultSettingData.isConfirmedRefundSdt);
-    if (existResultConfirmedSDT) {
-        return true;
-    }
-
-    const resultConfirmNormal = resultDetails.some(item => item.resultSettingData.isConfirmedRefund);
-
-    if (resultConfirmNormal) {
-        return false;
-    }
-
-    return resultDetails.some(item => item.settlementStatusId === SettlementStatusId.Calculated);
   }
 
   changeSdtSettle() {
     if(this.isSdtSettle && this.isMercy) {
       this.isMercy = false;
-    } else {
-      this.isAwayEnded = false;
-    }
-
+    } 
+    
     this.resetAllCheckboxMarkedTicket();
+    this.renderInput();
   }
 
   changeMercy() {
@@ -58,6 +39,7 @@ export class TableSettleSdtComponent implements OnInit{
     }
 
     this.resetAllCheckboxMarkedTicket();
+    this.renderInput();
   }
 
   changeAwayEnded() {
@@ -65,13 +47,31 @@ export class TableSettleSdtComponent implements OnInit{
       this.isSdtSettle = true;
       this.isMercy = false;
     }
-
     this.resetAllCheckboxMarkedTicket();
+    this.renderInput();
   }
 
   resetAllCheckboxMarkedTicket() {
     this.#storage.setSettleDetermine(this.isSdtSettle);
     this.#storage.setMercy(this.isMercy);
     this.#storage.setAwayEnded(this.isAwayEnded);
+  }
+
+  renderInput() {
+    const resultDetails = this.#storage.getResultChecked();
+    resultDetails.forEach((item) => {
+      if (this.isSdtSettle) {
+        item.disabled = false;
+        if(_.isEqual(item.resourceId, ResourceIds.totalHits)) {
+          item.disabled = true;
+          item.checked = false;
+        }
+      } else if (this.isMercy && _.includes([ResourceIds.totalHits, ResourceIds.fullTime], item.resourceId)) {
+          item.disabled = true;
+          item.checked = false;
+      } else {
+        item.disabled = true;
+      }
+    });
   }
 }

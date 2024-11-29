@@ -135,15 +135,14 @@ export class AioService {
             hedgeMatchDetail, oldMatchDetail);
     }
 
-    public changeConfirmResultSDTSetting(matchId: number, resourceItems: ResourceItem[], isEnabled: boolean, hedgeMatchDetail: HedgeMatchDetail, is3x3 = false) {
+    public changeConfirmResultSDTSetting(matchId: number, settingType: number, resourceItems: ResourceItem[], isEnabled: boolean, hedgeMatchDetail: HedgeMatchDetail, is3x3 = false) {
         this.warningDialogMessage.title = Language.confirmationBox;
         this.warningDialogMessage.message = isEnabled ?
             Language.confirmRefund.sdtConfirm.replace('{0}', `${resourceItems[0].resourceName}: ${resourceItems[0].homeValue} - ${resourceItems[0].awayValue}`)
             : Language.confirmRefund.undoConfirmAll;
         const resourceIds = resourceItems.map(resource => resource.resourceId).join(',');
         this.messageBoxService.confirm(this.warningDialogMessage, () => {
-            const query = new ResultSettingQuery(matchId, ResultSettingType.confirmRefundSDT,
-                isEnabled, resourceIds, resourceItems);
+            const query = new ResultSettingQuery(matchId, settingType, isEnabled, resourceIds, resourceItems);
             query.is3x3 = is3x3;
             this.changeResultSetting(query).then(async () => {
                 await this.confirmHedgeMatch(query, hedgeMatchDetail);

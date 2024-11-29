@@ -20,22 +20,22 @@
     </thead>
     <tbody>
       <tr *ngFor="let inning of resultDetails; let i = index; let last=last;"
-        [ngClass]="{'confirmed-refund': permission.isLeader && (inning.resultSettingData.isConfirmedRefund || inning.resultSettingData.isConfirmedRefundSdt),
+        [ngClass]="{'confirmed-refund': permission.isLeader && (inning.resultSettingData.isConfirmedRefund || inning.resultSettingData.isConfirmedRefundSdt || inning.resultSettingData.isConfirmedRefundMercy),
           'striped': inning.resourceId !== resourceIds.totalHits && (i % 2 == 0 || inning.resourceId === resourceIds.fullTime || inning.resourceId === resourceIds.extraInning),
         }">
-        <td>{{ inning.resourceName}}</td>
+        <td [ngClass]="{'mercy': inning.otherInfo === 'Mercy'}">{{ inning.resourceName}}</td>
         <td [ngClass]="inning.className">
            <div class="score score-row">
             <span class="score-row__team" [matTooltip]="getTextTooltip(homeName,20)" matTooltipPosition="above">{{homeName}}</span>
-            <input type="text" myOnlyInteger [(ngModel)]="inning.homeValue"/>
+            <input type="text" myOnlyInteger [disabled]="inning.disabled" [(ngModel)]="inning.homeValue" (ngModelChange)="changeScore(inning)"/>
           </div>
           <div class="score score-row">
             <span class="score-row__team" [matTooltip]="getTextTooltip(awayName,20)" matTooltipPosition="above">{{awayName}}</span>
-            <input type="text" myOnlyInteger [(ngModel)]="inning.awayValue"/>
+            <input type="text" myOnlyInteger [disabled]="inning.disabled" [(ngModel)]="inning.awayValue" (ngModelChange)="changeScore(inning)"/>
           </div> 
         </td>
         <td>
-          <input type="checkbox" [(ngModel)]="inning.checked" />
+          <input type="checkbox" [(ngModel)]="inning.checked" [disabled]="disableTotalHitsAndMatch(inning.resourceId)" (ngModelChange)="enableInput(inning)"/>
         </td>
       </tr>
 
@@ -45,7 +45,7 @@
 							*ngIf="!isConfirmRefund && permission.isLeader"
 							class="btn btn-outline-primary button-confirmed"
 							[disabled]="disableButton"
-							(click)="confirmRefund(confirmRefundResources)"
+							(click)="confirmRefund()"
 						>
 							Confirm Refund
 						</button>

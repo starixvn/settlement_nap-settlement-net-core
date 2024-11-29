@@ -104,7 +104,7 @@
   inconsistentValues: "WARNING! Cannot continue due to scores inconsistency. Please recheck and try again.",
   reloadConfirmMessage: "WARNING! There are unsaved changes. Are you sure you want to proceed?",
   remarkSettingTitle: "Hold Settings",
-  warningInputScore: "Please input score!",
+  warningInputScore: "Please input score accordingly.",
   holdResultConfirmMessage: "Are you sure you want to update Hold Result status for this result?",
   holdResultGroupConfirmMessage: "Are you sure you want to update Hold Result status for this results group?",
   fastMarket: {
@@ -200,9 +200,10 @@
     refundResultNotConfirmed: "WARNING! Cannot continue due to selected results are not confirmed to refund. Please confirm refund and try again.",
     calculateResultNotConfirmed: "WARNING! Cannot continue due to selected results are confirmed to refund. Please undo-confirm refund and try again.",
     sdtConfirm: 'WARNING! Are you sure you want to confirm-refund SDT for selected results?<br/>{0}',
-    mercyConfirm: 'WARNING! Are you sure you want to confirm-refund Mercy for selected results?<br/>{0}',
+    mercyConfirm: 'WARNING! Are you sure you want to confirm-refund Mercy for selected results?',
     undoConfirmAll: 'WARNING! Are you sure you want to undo confirm-refund for all results?',
-    sdtErrorMessage: 'Cannot continue with Refund due to confirm state or value mismatch. Please check and try again.'
+    sdtErrorMessage: 'Cannot continue with Refund due to confirm state or value mismatch. Please check and try again.',
+    subsequenceIntervalsErrorMessage: 'Please select all subsequence intervals.'
   },
   gaming: {
     reCalculateConfirmMessage: 'Are you sure you want to Recalculate this match?',
