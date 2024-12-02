@@ -15,7 +15,7 @@
   </ng-container>
   <ng-container *ngIf="sportSupportNewAutoPayout.includes(league.sportType)">
     <div class="auto-info">
-      <span>Main: {{ league.autoWaitingTime | timeConverter }}</span> <br />
+      <span>Main: {{ league.autoMainWaitingTime | timeConverter }}</span> <br />
       <span>Early: {{ league.autoEarlyWaitingTime | timeConverter }}</span>
     </div>
   </ng-container>

@@ -8,6 +8,7 @@ export class LeagueMatch {
     public matches: Match[];
     public collapse = false;
     public autoWaitingTime: number;
+    public autoMainWaitingTime: number;
     public autoEarlyWaitingTime: number;
     public autoRetryTime: number;
     public autoCalcSetting: AutoSetting;

@@ -18,6 +18,9 @@ public class LeagueModel
     [Key("autoEarlyWaitingTime")]
     public int AutoEarlyWaitingTime { get; set; }
 
+    [Key("autoMainWaitingTime")]
+    public int AutoMainWaitingTime { get; set; }
+
     [Key("autoRetryTime")]
     public int AutoRetryTime { get; set; }
 

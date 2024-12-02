@@ -286,6 +286,7 @@ public class MultiSportServiceImp(
                     Name = match.LeagueName,
                     LeagueId = match.LeagueId,
                     AutoWaitingTime = match.AutoWaitingTime,
+                    AutoMainWaitingTime = match.AutoMainWaitingTime,
                     AutoEarlyWaitingTime = match.AutoEarlyWaitingTime,
                     AutoRetryTime = match.AutoRetryTime,
                     AutoCalcSetting = match.AutoCalcSetting,
