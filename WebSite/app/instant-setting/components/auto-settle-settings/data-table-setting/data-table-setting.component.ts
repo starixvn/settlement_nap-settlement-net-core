@@ -28,6 +28,8 @@ import { LeagueAutoSettings } from "../../../../shared/models/league-auto-settin
 import { ResourceType } from "../../../../shared/constants/resource-type.native";
 import { AutoSettleType } from "../../../../shared/constants/auto-settle-type.native";
 import { TypeObject } from "../../../../shared/constants/type-object.native";
+import {BackgroundColor} from "../../../../shared/constants";
+import {SwitchComponent} from "../../../../shared/switch/switch.component";
 
 @Component({
     selector: "app-auto-setting",
@@ -42,6 +44,7 @@ import { TypeObject } from "../../../../shared/constants/type-object.native";
         FormsModule,
         ResourceTypeNamePipe,
         SettleTypeNamePipe,
+        SwitchComponent,
     ],
     providers: [AutoSettleSettingsService],
     standalone: true,
@@ -222,5 +225,13 @@ export class DataTableSettingComponent implements OnInit {
                     ? "#FF0000"
                     : "white",
         };
+    }
+
+    getClassTraderToggle(setting) {
+        return setting.enabled ? BackgroundColor.iconOn : BackgroundColor.iconOff;
+    }
+
+    onSwitchStateChanged($event: boolean) {
+        // setting.isTraderRequired = $event;
     }
 }

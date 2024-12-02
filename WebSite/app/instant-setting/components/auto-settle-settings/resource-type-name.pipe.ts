@@ -8,12 +8,12 @@ import { ResourceType } from "../../../shared/constants/resource-type.native";
 export class ResourceTypeNamePipe implements PipeTransform {
     transform(value: ResourceType, ...args: any[]): string {
         if (value === ResourceType.Main) {
-            return 'Main Result';
+            return 'Main Results';
         }
         if (value === ResourceType.Early) {
-            return 'Early Result';
+            return 'Early Results';
         }
-        return 'Main Result';
+        return 'Main Results';
     }
 
 }
