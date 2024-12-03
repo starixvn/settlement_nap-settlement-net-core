@@ -134,13 +134,13 @@ export class LeagueComponent implements OnInit, OnDestroy {
     const { isAutoPayoutForLeague, isEarlyPayoutForLeague } = this.league.autoCalcSetting;
 
     if (isAutoPayoutForLeague && isEarlyPayoutForLeague) {
-      return "Auto (Both)";
+      return "<div>AUTO <div class='auto-type'>(Main & Early)</div>  </div>";
     }
     if (isAutoPayoutForLeague) {
-      return "Auto (Main)";
+      return "<div>AUTO <div class='auto-type'>(Main)</div>  </div>";
     }
     if (isEarlyPayoutForLeague) {
-      return "Auto (Early)";
+      return "<div>AUTO <div class='auto-type'>(Early)</div>  </div>";
     }
 
     return "OFF";

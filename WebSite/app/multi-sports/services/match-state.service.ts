@@ -260,10 +260,19 @@ export class MatchStateService {
     return "OFF";
   }
 
+
   getAutoNewSetting(autoCalcSetting: AutoSetting) {
-    if(autoCalcSetting.isAutoPayoutForMatch && autoCalcSetting.isEarlyPayoutForMatch)  return "Auto (Both)";
-    if(autoCalcSetting.isAutoPayoutForMatch) return "Auto (Main)";
-    if (autoCalcSetting.isEarlyPayoutForMatch) return "Auto (Early)";
+    const { isAutoPayoutForMatch, isEarlyPayoutForMatch } = autoCalcSetting;
+
+    if (isAutoPayoutForMatch && isEarlyPayoutForMatch) {
+      return "<div>AUTO <div class='auto-type'>(Main & Early)</div>  </div>";
+    }
+    if (isAutoPayoutForMatch) {
+      return "<div>AUTO <div class='auto-type'>(Main)</div>  </div>";
+    }
+    if (isEarlyPayoutForMatch) {
+      return "<div>AUTO <div class='auto-type'>(Early)</div>  </div>";
+    }
 
     return "OFF";
   }

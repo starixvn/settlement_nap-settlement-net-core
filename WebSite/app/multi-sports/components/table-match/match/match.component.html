@@ -110,8 +110,7 @@
 			</div>
 		</td>
 		<td rowspan="2" class="auto-setting auto-setting-text" [ngClass]="matchState.autoSettingBackgroundColor">
-			<div class="cursor-pointer" (click)="changeAutoSetting()">
-				{{ matchState.autoSetting }}</div>
+			<div class="cursor-pointer" (click)="changeAutoSetting()" [innerHTML]="matchState.autoSetting"></div>
 		</td>
 	</tr>
 	<tr class="row-3" [ngClass]="matchState.undecidedColor">

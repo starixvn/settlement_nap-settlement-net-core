@@ -22,5 +22,10 @@
 </td>
 
 <td [ngClass]="{ 'code-link enable': permission.canAutoPayout, 'auto-setting auto-setting-text': true }">
-  <div style="background: none;" class="cursor-pointer" (click)="changeAutoLeague()">{{sportSupportNewAutoPayout.includes(league.sportType) ? getAutoNewSettingLeague(): getAutoSettingLeague() }}</div>
+<!--  <div style="background: none;" class="cursor-pointer" (click)="changeAutoLeague()">{{sportSupportNewAutoPayout.includes(league.sportType) ? getAutoNewSettingLeague(): getAutoSettingLeague() }}</div>-->
+    @if(sportSupportNewAutoPayout.includes(league.sportType)) {
+        <div style="background: none;" class="cursor-pointer new-status-setting"  [innerHTML]="getAutoNewSettingLeague()" (click)="changeAutoLeague()"></div>
+    } @else {
+          <div style="background: none;" class="cursor-pointer" (click)="changeAutoLeague()">{{getAutoSettingLeague() }}</div>
+    }
 </td>

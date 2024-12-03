@@ -22,7 +22,7 @@ import {ControlValueAccessor, NG_VALUE_ACCESSOR} from "@angular/forms";
 export class SwitchComponent implements ControlValueAccessor {
     @Input() labelOff: string = 'No';
     @Input() labelOn: string = 'Yes';
-    @Input() variant: string = 'yes';
+    @Input() variant: string = '';
     @Input() size: string = 'mini';
 
     private onChange: (value: boolean) => void = () => {};

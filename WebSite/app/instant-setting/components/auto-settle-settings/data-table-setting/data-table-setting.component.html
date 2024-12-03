@@ -45,7 +45,7 @@
                             <td><input type="text" zeroFallback myOnlyInteger maxlength="4" [(ngModel)]="setting.waitingTime"/></td>
                             <td [ngStyle]="getBackground(setting)">
                                 @if(setting.settleType !== autoSettleType.AutoRefund) {
-                                    <app-switch [(ngModel)]="setting.isTraderRequired" labelOn="Yes" labelOff="No"/>
+                                    <app-switch [(ngModel)]="setting.isTraderRequired" labelOn="Yes" labelOff="No" variant="yes"/>
                                 }
                             </td>
                             <td [ngStyle]="getBackground(setting)">
