@@ -19,6 +19,7 @@
 			</thead>
 			<tbody>
 				@for(provider of resultSetting.providers; track $index) {
+					
 				<tr [ngClass]="{'bg-disabled' : !provider.isActive}">
 					<td>
 						<div style="margin-top: 5px;">

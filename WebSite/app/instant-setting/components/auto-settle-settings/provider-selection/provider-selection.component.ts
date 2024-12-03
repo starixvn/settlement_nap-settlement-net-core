@@ -24,6 +24,7 @@ export class ProviderSelectionComponent {
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: ResultSetting) {
     this.dialogRef.disableClose = true;
+    console.log(data);
     this.resultSetting = cloneDeep(data);
   }
 
