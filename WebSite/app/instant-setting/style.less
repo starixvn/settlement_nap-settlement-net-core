@@ -262,6 +262,27 @@ table {
             margin-top: 0;
             margin-right: 5px;
         }
+        tbody {
+            tr:nth-child(even) {
+                background-color: #e5ebf2;
+            } 
+
+            tr:nth-child(even).bg-disabled {
+                background-color: darkgray;
+            } 
+
+            tr:nth-child(odd) {
+                background-color: white;
+            } 
+
+            tr:nth-child(odd).bg-disabled {
+                background-color: darkgray;
+            } 
+            
+            .bg-disabled {
+                background-color: darkgray;
+            }
+        }
     }
 
     .toggle (@pos-x, @pos-y) {

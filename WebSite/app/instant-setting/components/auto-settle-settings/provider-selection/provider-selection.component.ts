@@ -6,12 +6,13 @@ import { Component, inject, Inject } from "@angular/core";
 import { Provider, ResultSetting } from "../types";
 import { Store } from "../store";
 import { cloneDeep } from 'lodash'
+import {SwitchComponent} from "../../../../shared/switch/switch.component";
 
 @Component({
   selector: 'provider-selection',
   templateUrl: './provider-selection.component.html',
   standalone: true,
-  imports: [MatDialogModule, DragDropModule, CommonModule, FormsModule],
+  imports: [MatDialogModule, DragDropModule, CommonModule, FormsModule, SwitchComponent],
 })
 export class ProviderSelectionComponent {
 

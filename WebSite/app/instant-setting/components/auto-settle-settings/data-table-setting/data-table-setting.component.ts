@@ -50,6 +50,7 @@ import {SwitchComponent} from "../../../../shared/switch/switch.component";
     standalone: true,
 })
 export class DataTableSettingComponent implements OnInit {
+
     @ViewChild(ToastContainerDirective, { static: true })
     toastContainer: ToastContainerDirective;
 
@@ -203,7 +204,7 @@ export class DataTableSettingComponent implements OnInit {
     openProviderPopup(setting: ResultSetting) {
         this.dialog.closeAll();
         this.dialog.open(ProviderSelectionComponent, {
-            width: "400px",
+            width: "430px",
             data: setting,
         });
     }
@@ -231,7 +232,17 @@ export class DataTableSettingComponent implements OnInit {
         return setting.enabled ? BackgroundColor.iconOn : BackgroundColor.iconOff;
     }
 
-    onSwitchStateChanged($event: boolean) {
-        // setting.isTraderRequired = $event;
+    changeTraderRequired(setting: ResultSetting) {
+        console.log(setting.isTraderRequired);
+        if(!setting.isTraderRequired) {
+            setting.minProvider =  +setting.minProvider === 0 ? 1 : +setting.minProvider;
+        }
+    }
+
+
+    changeMinProvider(setting: ResultSetting) {
+        if(+setting.minProvider === 0) {
+            setting.isTraderRequired = true;
+        }
     }
 }

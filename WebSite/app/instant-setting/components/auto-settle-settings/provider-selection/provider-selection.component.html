@@ -9,30 +9,40 @@
 	<div mat-dialog-content id="modal-body" style="padding: 5px 20px 0 20px !important;">
 		<table class="provider-table">
 			<thead>
-				<th style="padding: 0 5px;">Active</th>
-				<th class="provider">Providers</th>
-				<th>Primary</th>
-				<th>Secondary</th>
-				<th>Unassigned</th>
+				<tr style="background: #295091; color: white;">
+					<th style="padding: 5px 5px;">Active</th>
+					<th class="provider">Providers</th>
+					<th>Primary</th>
+					<th>Secondary</th>
+					<th>Unassigned</th>
+				</tr>
 			</thead>
 			<tbody>
 				@for(provider of resultSetting.providers; track $index) {
-				<tr [ngStyle]="{'background-color' : !provider.isActive ? 'darkgrey' : 'white',}">
-					<td >
-						<span [ngClass]="provider.isActive ? 'toggle-on' : 'toggle-off'"
-							(click)="changeActiveProvider(provider)"></span>
+				<tr [ngClass]="{'bg-disabled' : !provider.isActive}">
+					<td>
+						<div style="margin-top: 5px;">
+							<app-switch [(ngModel)]="provider.isActive" labelOn="Yes" labelOff="No" variant="yes" />
+						</div>
+					</td>
 					<td style="text-align: left;">{{ provider.sourceName}} </td>
 					<td>
-						<input type="radio" [(ngModel)]="provider.priority" [value]="1" [name]="provider.sourceId.toString()"
+						<div style="margin-top: 5px;">
+							<input type="radio" [(ngModel)]="provider.priority" [value]="1" [name]="provider.sourceId.toString()"
 							[disabled]="!provider.isActive" />
+						</div>
 					</td>
 					<td>
-						<input type="radio" [(ngModel)]="provider.priority" [value]="2" [name]="provider.sourceId.toString()"
+						<div style="margin-top: 5px;">
+							<input type="radio" [(ngModel)]="provider.priority" [value]="2" [name]="provider.sourceId.toString()"
 							[disabled]="!provider.isActive" />
+						</div>
 					</td>
 					<td>
-						<input type="radio" [(ngModel)]="provider.priority" [value]="0" [name]="provider.sourceId.toString()"
+						<div style="margin-top: 5px;">
+							<input type="radio" [(ngModel)]="provider.priority" [value]="0" [name]="provider.sourceId.toString()"
 							[disabled]="!provider.isActive" />
+						</div>
 					</td>
 
 				</tr>
