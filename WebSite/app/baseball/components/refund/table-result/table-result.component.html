@@ -34,8 +34,12 @@
             <input type="text" myOnlyInteger [disabled]="inning.disabled" [(ngModel)]="inning.awayValue" (ngModelChange)="changeScore(inning)"/>
           </div> 
         </td>
-        <td>
-          <input type="checkbox" [(ngModel)]="inning.checked" [disabled]="disableTotalHitsAndMatch(inning.resourceId)" (ngModelChange)="enableInput(inning)"/>
+        <td *ngIf="inning.resourceId === resourceIds.extraInning" rowspan="2" class="status">
+          <input id="final-checkbox" type="checkbox" [(ngModel)]="resultDetails[i + 1].checked"
+          [disabled]="disableTotalHitsAndMatch(resultDetails[i + 1].resourceId)" (ngModelChange)="enableInput(inning, resultDetails[i + 1])" />
+        </td>
+        <td *ngIf="inning.resourceId !== resourceIds.extraInning && inning.resourceId !== resourceIds.fullTime">
+          <input type="checkbox" [(ngModel)]="inning.checked" [disabled]="disableTotalHitsAndMatch(inning.resourceId)" (ngModelChange)="enableInput(null, inning)"/>
         </td>
       </tr>
 

@@ -37,9 +37,7 @@ export class TableResultComponent implements OnInit {
   isSdtSettle = this.#storage.isSdtSettle();
   hedgeMatchDetail: HedgeMatchDetail;
   applyHedgeMatch: boolean;
-
   permission: Permission;
-  extraInningId = ResourceIds.extraInning;
   homeName: string;
   awayName: string;
   resourceIds = ResourceIds;
@@ -71,11 +69,20 @@ export class TableResultComponent implements OnInit {
     }
   }
 
-  enableInput(resultDetail: ResultDetailBaseBall) {
-    if (resultDetail.checked && this.#storage.isSdtSettle()) {
-      resultDetail.disabled = false;  
+  enableInput(extraInning: ResultDetailBaseBall, resultDetail: ResultDetailBaseBall) {
+    if (this.#storage.isSdtSettle()) {
+      this.generateSpecialControlSettleDetermine(extraInning, resultDetail);
     } else {
       resultDetail.disabled = true;  
+    }
+  }
+
+  generateSpecialControlSettleDetermine(extraInning: ResultDetailBaseBall, resultDetail: ResultDetailBaseBall) {
+    if (extraInning != null) {
+      resultDetail.disabled = true;
+      extraInning.disabled = !this.#storage.isSelectedMatch();
+    } else {
+      resultDetail.disabled = !resultDetail.checked;  
     }
   }
 
@@ -104,7 +111,8 @@ export class TableResultComponent implements OnInit {
       this.resourceConfirmed(item); 
       item.disabled = !item.checked;
       if (!this.permission.isLeader || !item.resultSettingData.isConfirmedRefundSdt) {
-          const needReset = _.includes([SettlementStatusId.Refund, SettlementStatusId.Running], item.settlementStatusId);
+          const needReset = _.includes([SettlementStatusId.Refund, SettlementStatusId.Running], item.settlementStatusId) 
+          || (_.isEqual(item.resourceId, ResourceIds.fullTime) &&  item.settlementStatusId === SettlementStatusId.RefundSettleDetermined);
           item.homeValue = needReset ? "" : item.homeValue;
           item.awayValue = needReset ? "" : item.awayValue;
       }

@@ -1,8 +1,9 @@
 import { FormsModule } from '@angular/forms';
 import { Component, OnInit, inject } from '@angular/core';
-import { SettlementStatusId, ResourceIds } from '../../../../shared/constants';
+import { ResourceIds } from '../../../../shared/constants';
 import { RefundStorage } from '../../../services/refund/refund.storage';
 import * as _ from "lodash";
+import { ResultDetailBaseBall } from '../../../models';
 @Component({
   selector: 'table-sdt',
   standalone: true,
@@ -58,14 +59,10 @@ export class TableSettleSdtComponent implements OnInit{
   }
 
   renderInput() {
-    const resultDetails = this.#storage.getResultChecked();
+    const resultDetails = this.#storage.getResultDetails();
     resultDetails.forEach((item) => {
       if (this.isSdtSettle) {
-        item.disabled = false;
-        if(_.isEqual(item.resourceId, ResourceIds.totalHits)) {
-          item.disabled = true;
-          item.checked = false;
-        }
+        this.renderInputSdtSettle(item);
       } else if (this.isMercy && _.includes([ResourceIds.totalHits, ResourceIds.fullTime], item.resourceId)) {
           item.disabled = true;
           item.checked = false;
@@ -73,5 +70,21 @@ export class TableSettleSdtComponent implements OnInit{
         item.disabled = true;
       }
     });
+  }
+
+  renderInputSdtSettle(item: ResultDetailBaseBall) {
+    item.disabled = !item.checked;
+      if(_.isEqual(item.resourceId, ResourceIds.totalHits)) {
+        item.disabled = true;
+        item.checked = false;
+      }
+
+      if(_.isEqual(item.resourceId, ResourceIds.extraInning)) { 
+        item.disabled = !this.#storage.isSelectedMatch();
+      }
+
+      if(_.isEqual(item.resourceId, ResourceIds.fullTime)) {
+        item.disabled = true;
+      }
   }
 }

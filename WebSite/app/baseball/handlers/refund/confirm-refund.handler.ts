@@ -6,7 +6,7 @@ import { Language } from "../../../shared/language.native";
 import { AioService } from "../../../shared/services";
 import { ResourceItem, ResultSettingQuery } from '../../../shared/models';
 import { HedgeMatchDetail } from "../../../shared/models/sportsbook-sop";
-import { ResultSettingType } from '../../../shared/constants';
+import { ResourceIds, ResultSettingType } from '../../../shared/constants';
 import * as _ from "lodash";
 
 export class ConfirmRefundHandler implements BaseHandler {
@@ -46,7 +46,9 @@ export class ConfirmRefundHandler implements BaseHandler {
 
   confirmRefundSettleDetermine(storage: IRefundStorage) {
     const match = storage.getMatch();
+    storage.addExtraInning();
     const selectedResources = storage.getResultChecked();
+   
     const hedgeMatch = storage.getApplyingHedgeMatch() ? match.hedgeMatchDetail : null;
     const resourceItems = selectedResources.map(item => new ResourceItem(item.resourceId, item.resourceName, item.homeValue, item.awayValue));
     this.#aioService.changeConfirmResultSDTSetting(match.matchDetail.matchId, ResultSettingType.confirmRefundSDT, resourceItems, true, hedgeMatch, false);

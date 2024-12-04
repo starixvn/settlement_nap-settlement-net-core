@@ -31,14 +31,14 @@ export class RefundHandler implements BaseHandler {
 
   async refundSettleDetermine(storage: IRefundStorage) {
     const match = storage.getMatch();
-    const resultDetails = storage.getResultDetails().filter((item)=> item.resourceId != ResourceIds.totalHits);
+    storage.addExtraInning();
     const selectedResources = storage.getResultChecked();
     selectedResources[0].otherInfo = storage.isAwayEnded() ? "" : "A";
     const hedgeMatch = storage.getApplyingHedgeMatch() ? match.hedgeMatchDetail : null;
 
     this.#notifyService.confirm(Language.RefundConfirmSdtMessage, async () => {
       const query = new SettleQuery(match.matchDetail, selectedResources, CalculateAction.refund, false, "", BaseballApiKeys.Settle);
-      query.determinedType = this.#aioService.generateDeterminedType(resultDetails);
+      query.determinedType = this.generateDeterminedType(selectedResources);
         
       const result = await this.#aioService.push(query);
       if (result.isSuccessful) {
@@ -52,14 +52,13 @@ export class RefundHandler implements BaseHandler {
 
   async refundMercy(storage: IRefundStorage) {
     const match = storage.getMatch();
-    const resultDetails = storage.getResultDetails().filter((item)=> !_.includes([ResourceIds.totalHits, ResourceIds.fullTime], item.resourceId));
     const selectedResources = storage.getResultChecked();
     selectedResources[0].otherInfo = "Mercy";
     const hedgeMatch = storage.getApplyingHedgeMatch() ? match.hedgeMatchDetail : null;
 
-    this.#notifyService.confirm(Language.RefundConfirmSdtMessage, async () => {
+    this.#notifyService.confirm(Language.RefundConfirmMercyMessage, async () => {
       const query = new SettleQuery(match.matchDetail, selectedResources, CalculateAction.refund, false, "", BaseballApiKeys.Settle);
-      query.determinedType = this.#aioService.generateDeterminedType(resultDetails);
+      query.determinedType = this.generateDeterminedType(selectedResources);
         
       const result = await this.#aioService.push(query);
       if (result.isSuccessful) {
@@ -69,6 +68,25 @@ export class RefundHandler implements BaseHandler {
         this.#notifyService.error(result.errMsg);
       }
     });
+  }
+
+  generateDeterminedType(resultDetails: ResultDetail[]) {
+    const roundBitStartAt = 2;
+    const bitArray = new Array<number>(12).fill(0);
+    const resultWithoutFinal = resultDetails
+      .filter(resultDetail => resultDetail.resourceId !== ResourceIds.fullTime);
+
+      resultWithoutFinal.forEach(resultDetail => {
+        var pos = _.isEqual(resultDetail.resourceId, ResourceIds.extraInning) 
+                ? 10 
+                : Number(resultDetail.resourceId.slice(-2));
+         
+        const bitPosition = pos + roundBitStartAt;
+        bitArray[bitPosition] = 1;
+      });
+
+    const reversedBitArray = bitArray.toReversed();
+    return parseInt(reversedBitArray.join(''), 2);
   }
 
   async refundNormal(storage: IRefundStorage) {

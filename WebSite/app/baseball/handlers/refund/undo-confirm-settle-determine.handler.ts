@@ -7,13 +7,19 @@ import { ResourceItem } from '../../../shared/models';
 import { Language } from "../../../shared/language.native";
 import { ResultDetail, HedgeMatchDetail } from "../../../shared/models/sportsbook-sop";
 import { ResourceIds, ResultSettingType } from "../../../shared/constants";
+import { NotifyService } from "../../services/notify.service";
 
 export class UndoConfirmSettleDetermineHandler implements BaseHandler {
   #aioService = inject(AioService);
-
+  private readonly notifyService = inject(NotifyService);
   setNextHandler() {}
 
   handle(storage: IRefundStorage) {
+    if (storage.isMercy() && storage.isSdtSettle()) {
+      this.notifyService.error(Language.sop.inning.SdtAndMercySelected);
+      return;
+    }
+
     const match = storage.getMatch();
     const hedgeMatch = storage.getApplyingHedgeMatch() ? match.hedgeMatchDetail : null;
     const resultDetails = storage.getResultDetails();

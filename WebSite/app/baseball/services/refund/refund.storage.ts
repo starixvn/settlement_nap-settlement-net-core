@@ -1,3 +1,4 @@
+import * as _ from "lodash";
 import { inject, Injectable, signal } from "@angular/core";
 import { BaseballApiKeys } from "../../constants/api-keys.constant";
 import { UrlHelper } from "../../../helper";
@@ -16,11 +17,13 @@ export interface IRefundStorage extends Storage  {
   isSdtSettle() : boolean;
   isAwayEnded() : boolean;
   isGetSettleSdt() : boolean;
+  isSelectedMatch() : boolean;
 
   setSettleDetermine(value: boolean): void;
   setAwayEnded(value: boolean): void;
   setMercy(value: boolean): void;
   getExternalResults() : ExternalResultDetail[];
+  addExtraInning(): void;
 }
 
 @Injectable()
@@ -64,6 +67,8 @@ export class RefundStorage implements IRefundStorage {
   setReSettledTickets = () => {};
 
   isScoreDirect = () => false;
+  
+  isSelectedMatch = () => this.#match().resultDetails.some(item => item.resourceId === ResourceIds.fullTime && item.checked);
 
   getResultChecked = () => this.#match().resultDetails.filter(x => x.checked);
 
@@ -130,5 +135,15 @@ export class RefundStorage implements IRefundStorage {
     }
 
     return resultDetails.some(item => item.settlementStatusId === SettlementStatusId.Calculated);
+  } 
+
+  addExtraInning () {
+    if(this.isSelectedMatch()) {
+      _.forEach(this.getResultDetails(), (item) => {
+        if(item.resourceId === ResourceIds.extraInning) {
+          item.checked = true;
+        }
+      });
+    }
   }
 }

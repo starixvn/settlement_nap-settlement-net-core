@@ -25,6 +25,7 @@ export class ConfirmSettleDetermineHandler implements BaseHandler {
 
   private validateSettleDetermine(storage: IRefundStorage) {
     const resultDetails = storage.getResultDetails().filter(x => x.resourceId !== ResourceIds.totalHits);
+    storage.addExtraInning();
     const selectedResources = storage.getResultChecked();
     const firstSelectedResourceIndex = resultDetails.indexOf(selectedResources[0]);
     
@@ -55,7 +56,7 @@ export class ConfirmSettleDetermineHandler implements BaseHandler {
   private validateResourceNextToFirstSelected(firstResourceIndex: number, resultDetails: ResultDetail[]) {
     const resultDetailAfter = resultDetails.slice(firstResourceIndex + 1);
     const isExistValueNotEmptyAfter = resultDetailAfter.some(resource => !_.isEmpty(resource.awayValue) || !_.isEmpty(resource.homeValue));
-    const isExistValueNotCheckedAfter = resultDetailAfter.some(resource => !resource.checked);
+    const isExistValueNotCheckedAfter = resultDetailAfter.some(resource => !resource.checked && !_.isEqual(resource.resourceId, ResourceIds.extraInning));
     return isExistValueNotCheckedAfter || isExistValueNotEmptyAfter;
   }
 
