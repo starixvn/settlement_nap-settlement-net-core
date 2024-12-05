@@ -6,7 +6,7 @@ import { Language } from "../../../shared/language.native";
 import { AioService } from "../../../shared/services";
 import { ResourceItem, ResultSettingQuery } from '../../../shared/models';
 import { HedgeMatchDetail } from "../../../shared/models/sportsbook-sop";
-import { ResourceIds, ResultSettingType } from '../../../shared/constants';
+import { ResultSettingType } from '../../../shared/constants';
 import * as _ from "lodash";
 
 export class ConfirmRefundHandler implements BaseHandler {

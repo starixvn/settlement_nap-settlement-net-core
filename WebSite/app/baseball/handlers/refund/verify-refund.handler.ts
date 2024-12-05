@@ -18,7 +18,7 @@ export class VerifyRefundHandler implements BaseHandler {
   async handle(storage: IRefundStorage) {
     if(this.existResultNotConfirmedNormal(storage)) {
       this.notifyService.error(Language.confirmRefund.refundResultNotConfirmed);
-    } else if (this.isMisMatch(storage)) {
+    } else if (this.isMisMatchSettleDetermine(storage) || this.isMisMatchMercy(storage)) {
       this.notifyService.error(Language.confirmRefund.sdtErrorMessage);
     } else if(await this.isExistMarkedTicket(storage)) {
       this.notifyService.error(Language.MarkedTicket);
@@ -27,15 +27,31 @@ export class VerifyRefundHandler implements BaseHandler {
     }
   }
 
-  isMisMatch(storage: IRefundStorage) {
+  isMisMatchMercy(storage: IRefundStorage) {
     var isMisMatch =  !storage.getResultChecked().every(result => {
       const resource = storage.getExternalResults().find(x => x.resourceId === result.resourceId);
-      return !_.isUndefined(resource) && (result.resultSettingData.isConfirmedRefundSdt || result.resultSettingData.isConfirmedRefundMercy)
+      return !_.isUndefined(resource) && result.resultSettingData.isConfirmedRefundMercy
           && _.isEqual(result.homeValue, resource.homeValue)
           && _.isEqual(result.awayValue, resource.awayValue)
     });
+    
+    return storage.isMercy() && isMisMatch;
+  }
 
-    return (storage.isSdtSettle() || storage.isMercy()) && isMisMatch;
+  isMisMatchSettleDetermine(storage: IRefundStorage) {
+    var isMisMatch =  !storage.getResultChecked().every(result => {
+      const resource = storage.getExternalResults().find(x => x.resourceId === result.resourceId);
+      return !_.isUndefined(resource) && result.resultSettingData.isConfirmedRefundSdt
+          && _.isEqual(result.homeValue, resource.homeValue)
+          && _.isEqual(result.awayValue, resource.awayValue)
+    });
+    
+    return storage.isSdtSettle() && (isMisMatch || this.inconsistencyAwayEnd(storage));
+  }
+
+  inconsistencyAwayEnd(storage: IRefundStorage) {
+    var flag = storage.getExternalResults().some((item) => !_.isEmpty(item.otherInfo) && _.isEqual(item.otherInfo.toLowerCase(), "a"))
+    return storage.isAwayEnded() && flag;
   }
 
   existResultNotConfirmedNormal(storage: IRefundStorage) {

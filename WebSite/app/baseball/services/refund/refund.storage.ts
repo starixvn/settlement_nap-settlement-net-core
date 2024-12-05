@@ -37,11 +37,13 @@ export class RefundStorage implements IRefundStorage {
   #isMercy = signal<boolean>(false);
   #isAwayEnded = signal<boolean>(false);
   #isApplyHedgeMatch = signal<boolean>(false);
+  #isMatchSeries = signal<boolean>(false);
 
   match = this.#match.asReadonly();
   isSdtSettle = this.#isSdtSettle.asReadonly();
   isMercy = this.#isMercy.asReadonly();
   isAwayEnded = this.#isAwayEnded.asReadonly();
+  isMatchSeries = this.#isMatchSeries.asReadonly();
 
   async fetchMatch(matchId: number) {
     const sportType = Number(UrlHelper.getUrlParameter('sportType'));
@@ -58,6 +60,7 @@ export class RefundStorage implements IRefundStorage {
       result.isDisplayedForMember = matchFetched.permission.isLeader || Number(result.settlementStatusId) !== SettlementStatusId.Running;
     });
     this.#match.set(matchFetched);
+    this.#isMatchSeries.set(matchFetched.matchDetail.sessionTime === 1);
   }
 
   getActionSubmit = () => "";
@@ -109,9 +112,7 @@ export class RefundStorage implements IRefundStorage {
 
   isLeader = () => this.#match().permission.isLeader;
 
-  isOtherInfoContain = (otherInfo: string) => 
-    this.#match().resultDetails.some((item) => !isEmpty(item.otherInfo) && isEqual(item.otherInfo.toLowerCase(), otherInfo))
-    || this.getExternalResults().some((item) => !isEmpty(item.otherInfo) && isEqual(item.otherInfo.toLowerCase(), otherInfo));
+  isOtherInfoContain = (otherInfo: string) => this.getExternalResults().some((item) => !isEmpty(item.otherInfo) && isEqual(item.otherInfo.toLowerCase(), otherInfo));
 
   isGetMercy = () =>  this.isLeader() && this.#match().resultDetails.some((item) => this.isCheckedMercy(item));
 

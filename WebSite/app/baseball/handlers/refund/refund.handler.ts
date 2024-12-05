@@ -7,8 +7,8 @@ import { Language } from "../../../shared/language.native";
 import { BaseballApiKeys} from "../../constants/api-keys.constant";
 import { AioService } from "../../../shared/services";
 import { SettleChildMatchQuery, Result} from "../../../shared/models";
-import { ExternalResultDetail, HedgeMatchDetail, MatchDetail, Permission, ResultDetail, SettleQuery } from "../../../shared/models/sportsbook-sop";
-import { CalculateAction, ResourceIds, SettlementStatusId, SportType, ResultSettingType } from "../../../shared/constants";
+import { HedgeMatchDetail, ResultDetail, SettleQuery } from "../../../shared/models/sportsbook-sop";
+import { CalculateAction, ResourceIds, SportType } from "../../../shared/constants";
 
 export class RefundHandler implements BaseHandler {
   private nextHandler: BaseHandler;
@@ -38,7 +38,7 @@ export class RefundHandler implements BaseHandler {
 
     this.#notifyService.confirm(Language.RefundConfirmSdtMessage, async () => {
       const query = new SettleQuery(match.matchDetail, selectedResources, CalculateAction.refund, false, "", BaseballApiKeys.Settle);
-      query.determinedType = this.generateDeterminedType(selectedResources);
+      query.determinedType = this.generateDeterminedType(selectedResources[0]);
         
       const result = await this.#aioService.push(query);
       if (result.isSuccessful) {
@@ -58,7 +58,7 @@ export class RefundHandler implements BaseHandler {
 
     this.#notifyService.confirm(Language.RefundConfirmMercyMessage, async () => {
       const query = new SettleQuery(match.matchDetail, selectedResources, CalculateAction.refund, false, "", BaseballApiKeys.Settle);
-      query.determinedType = this.generateDeterminedType(selectedResources);
+      query.determinedType = this.generateDeterminedType(selectedResources[0]);
         
       const result = await this.#aioService.push(query);
       if (result.isSuccessful) {
@@ -70,20 +70,18 @@ export class RefundHandler implements BaseHandler {
     });
   }
 
-  generateDeterminedType(resultDetails: ResultDetail[]) {
+  generateDeterminedType(resultDetail: ResultDetail) {
     const roundBitStartAt = 2;
     const bitArray = new Array<number>(12).fill(0);
-    const resultWithoutFinal = resultDetails
-      .filter(resultDetail => resultDetail.resourceId !== ResourceIds.fullTime);
 
-      resultWithoutFinal.forEach(resultDetail => {
+    if (!_.isEqual(resultDetail.resourceId, ResourceIds.fullTime)) {
         var pos = _.isEqual(resultDetail.resourceId, ResourceIds.extraInning) 
                 ? 10 
                 : Number(resultDetail.resourceId.slice(-2));
-         
+        
         const bitPosition = pos + roundBitStartAt;
         bitArray[bitPosition] = 1;
-      });
+    }
 
     const reversedBitArray = bitArray.toReversed();
     return parseInt(reversedBitArray.join(''), 2);

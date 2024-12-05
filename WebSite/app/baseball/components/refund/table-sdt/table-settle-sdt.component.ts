@@ -1,4 +1,5 @@
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { ResourceIds } from '../../../../shared/constants';
 import { RefundStorage } from '../../../services/refund/refund.storage';
@@ -7,11 +8,12 @@ import { ResultDetailBaseBall } from '../../../models';
 @Component({
   selector: 'table-sdt',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, CommonModule],
   templateUrl: './table-settle-sdt.component.html',
 })
 export class TableSettleSdtComponent implements OnInit{
   #storage = inject(RefundStorage);
+  isMatchSeries = this.#storage.isMatchSeries();
   isMercy: boolean;
   isAwayEnded: boolean;
   isSdtSettle: boolean;

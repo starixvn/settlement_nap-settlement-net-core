@@ -4,11 +4,8 @@ import { Component, inject, OnInit } from '@angular/core';
 import { ResultDetailBaseBall } from '../../../models';
 import { CommonModule } from '@angular/common';
 import { HedgeMatchDetail, Permission } from '../../../../shared/models/sportsbook-sop';
-import { Language } from '../../../../shared/language.native';
 import { NotifyService } from '../../../services/notify.service';
-import { BaseballApiKeys } from '../../../constants/api-keys.constant';
-import { SettleChildMatchQuery, ResourceItem } from '../../../../shared/models';
-import { CalculateAction, ResourceIds, SettlementStatusId, BackgroundColor } from '../../../../shared/constants';
+import { ResourceIds, SettlementStatusId, BackgroundColor } from '../../../../shared/constants';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { IntervalBackgroundPipe } from '../../../../shared/pipes/interval-background.pipe';
 import { RefundStorage } from '../../../services/refund/refund.storage';
@@ -30,6 +27,7 @@ export class TableResultComponent implements OnInit {
   match = this.#storage.getMatch()
   externalResults = this.#storage.getExternalResults();
   selectedResources = this.#storage.getResultChecked();
+  isMatchSeries = this.#storage.isMatchSeries();
   resultDetails = this.match.resultDetails;
   matchDetail = this.match.matchDetail;
   isConfirmRefund: boolean;
@@ -102,7 +100,10 @@ export class TableResultComponent implements OnInit {
 
   private inputClass(resultDetail: ResultDetailBaseBall) {
     const externalResource = this.externalResults.find(r => r.resourceId === resultDetail.resourceId);
-    return externalResource && (!_.isEqual(resultDetail.awayValue, externalResource.awayValue) || !_.isEqual(resultDetail.homeValue, externalResource.homeValue))
+    const isConsistentScore = resultDetail.resultSettingData.isConfirmedRefundSdt 
+                        && externalResource 
+                        && (!_.isEqual(resultDetail.awayValue, externalResource.awayValue) || !_.isEqual(resultDetail.homeValue, externalResource.homeValue));
+    return isConsistentScore
           ? BackgroundColor.scoreSdtNotConsistent : this.#backgroundPipe.transform(resultDetail.settlementStatusId);
   }
 

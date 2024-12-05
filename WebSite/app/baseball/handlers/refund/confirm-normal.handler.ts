@@ -1,6 +1,5 @@
 import * as _ from "lodash";
 import { IRefundStorage } from './../../services/refund/refund.storage';
-import { NotifyService } from "../../services/notify.service";
 import { BaseHandler } from "../base.handler.native";
 import { inject } from "@angular/core";
 import { Language } from "../../../shared/language.native";
@@ -9,7 +8,6 @@ import { AioService } from "../../../shared/services";
 export class ConfirmNormalHandler implements BaseHandler {
   private nextHandler: BaseHandler;
   #aioService = inject(AioService);
-  private readonly notifyService = inject(NotifyService);
 
   setNextHandler(handler: BaseHandler) {
     this.nextHandler = handler;
