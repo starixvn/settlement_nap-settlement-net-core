@@ -134,7 +134,7 @@ export class DataTableSettingComponent implements OnInit {
             this.typeObject === "League"
                 ? Language.AutoPayoutSetting.ConfirmMessageForAutoSetting
                 : Language.AutoPayoutSetting.ConfirmMessageForMatch;
-        confirmBox.hasActionOnNoBtn = true;
+        confirmBox.hasActionOnNoBtn =  this.typeObject === "League";
 
         this.messageBoxService.confirm(
             confirmBox,
@@ -143,8 +143,10 @@ export class DataTableSettingComponent implements OnInit {
                 this.handleUpdateSetting();
             },
             () => {
-                this.store.autoSettings.isApplyAll = false;
-                this.handleUpdateSetting();
+                if(this.typeObject === "League") {
+                    this.store.autoSettings.isApplyAll = false;
+                    this.handleUpdateSetting();
+                }
             }
         );
     }

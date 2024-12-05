@@ -15,8 +15,6 @@ public class UpdateAutoSettingsHandler : IRequestHandler<UpdateAutoSettingsComma
     private readonly IHttpContextAccessor accessor;
     private readonly LogService logService;
 
-    private const int ActionChangeLeagueSettingsId = 81048;
-
     public UpdateAutoSettingsHandler(
         IDynamicRepository repository,
         IHttpContextAccessor accessor,
