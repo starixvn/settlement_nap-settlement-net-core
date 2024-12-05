@@ -48,9 +48,10 @@ export class ConfirmRefundHandler implements BaseHandler {
     const match = storage.getMatch();
     storage.addExtraInning();
     const selectedResources = storage.getResultChecked();
-   
+    selectedResources[0].otherInfo = storage.isAwayEnded() ? "" : "A";
+
     const hedgeMatch = storage.getApplyingHedgeMatch() ? match.hedgeMatchDetail : null;
-    const resourceItems = selectedResources.map(item => new ResourceItem(item.resourceId, item.resourceName, item.homeValue, item.awayValue));
+    const resourceItems = selectedResources.map(item => new ResourceItem(item.resourceId, item.resourceName, item.homeValue, item.awayValue, item.otherInfo));
     this.#aioService.changeConfirmResultSDTSetting(match.matchDetail.matchId, ResultSettingType.confirmRefundSDT, resourceItems, true, hedgeMatch, false);
   }
 
