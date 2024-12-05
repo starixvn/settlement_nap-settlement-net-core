@@ -71,12 +71,10 @@ export class DataTableSettingComponent implements OnInit {
 
     ngOnInit(): void {
         this.toastrService.overlayContainer = this.toastContainer;
-
         const leagueId = +UrlHelper.getUrlParameter("leagueId");
         const matchId = +UrlHelper.getUrlParameter("matchId");
         const sportType = +UrlHelper.getUrlParameter("sportType");
         this.typeObject = UrlHelper.getUrlParameter("typeObject") as TypeObject;
-        const refundWaitingTime = +UrlHelper.getUrlParameter("refundWaitingTime");
         const query: GetAutoSettleSettings = {
             leagueId,
             matchId,
@@ -89,7 +87,7 @@ export class DataTableSettingComponent implements OnInit {
         };
 
         this.autoSettleSettingsService.getAutoSetting(query).subscribe((res) => {
-            this.processAutoSettleResponse(res, refundWaitingTime);
+            this.processAutoSettleResponse(res);
         });
 
         this.store.getAutoSettings().subscribe((res) => {
@@ -100,20 +98,7 @@ export class DataTableSettingComponent implements OnInit {
 
     private processAutoSettleResponse(
         res: IAutoSettleSettingsResponse,
-        refundWaitingTime: number
     ) {
-        const refundResultSetting: ResultSetting = {
-            resourceType: ResourceType.Main,
-            settleType: AutoSettleType.AutoRefund,
-            enabled: !!res.resultSettings?.find(
-                (x) => x.resourceType === ResourceType.Main
-            )?.enabled,
-            waitingTime: refundWaitingTime,
-            isTraderRequired: false,
-            minProvider: 0,
-            providers: [],
-        };
-        res.resultSettings.push(refundResultSetting);
 
         this.store.originResultSettings = cloneDeep(res.resultSettings);
         this.store.setAutoSetting(res);

@@ -9,5 +9,5 @@ public class GetAutoSettleSettingResponseItem
     public int WaitingTime { get; set; }
     public bool IsTraderRequired { get; set; }
     public byte MinProvider { get; set; }
-    public List<Provider> Providers { get; set; }
+    public List<Provider> Providers { get; set; } = [];
 }

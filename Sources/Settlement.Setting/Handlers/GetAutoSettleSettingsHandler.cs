@@ -14,8 +14,12 @@ public class GetAutoSettleSettingsHandler(IDynamicRepository repository, IRefDat
 {
     public async Task<GetAutoSettleSettingsResponse> Handle(AutoSettleSettingsQuery query, CancellationToken cancellationToken)
     {
-        ICriteria criteria = CreateSettingsSelCriteria(query);
-        var result = await repository.GetAsync<AutoSettleSetting>(criteria);
+        IGetSettingCriteria payoutCriteria = CreateSettingsSelCriteria(query);
+        var payoutSetting = await repository.GetAsync<AutoSettleSetting>(payoutCriteria);
+
+        IGetSettingCriteria refundCriteria = CreateSettingsSelCriteria(query, 7);
+        var refundSetting = await repository.GetAsync<AutoSettleSetting>(refundCriteria);
+
         var autoSettingBit = await GetAutoSettingBit(query.LeagueId, query.MatchId);
         var providers = await repository.FetchAsync<ProviderInfo>(new GetProviderInfoCriteria
         {
@@ -23,7 +27,7 @@ public class GetAutoSettleSettingsHandler(IDynamicRepository repository, IRefDat
             LeagueId = query.LeagueId
         });
 
-        return CreateGetSettingsResponse(query, result, autoSettingBit, providers);
+        return CreateGetSettingsResponse(query, payoutSetting, refundSetting, autoSettingBit, providers);
     }
 
     private bool IsBitSet(int value, int position) => (value & (1 << position)) != 0;
@@ -42,7 +46,8 @@ public class GetAutoSettleSettingsHandler(IDynamicRepository repository, IRefDat
 
     private GetAutoSettleSettingsResponse CreateGetSettingsResponse(
         AutoSettleSettingsQuery query,
-        AutoSettleSetting setting,
+        AutoSettleSetting payoutSetting,
+        AutoSettleSetting refundSetting,
         int autoSettingBit,
         IEnumerable<ProviderInfo> providers)
     {
@@ -51,10 +56,14 @@ public class GetAutoSettleSettingsHandler(IDynamicRepository repository, IRefDat
             Enabled = IsBitSet(autoSettingBit, AutoSettleBitPosition.AutoPayoutMain - 1),
             ResourceType = ResourceType.Main,
             SettleType = AutoSettleType.AutoPayout,
-            WaitingTime = setting.Main_WaitingTime,
-            MinProvider = setting.Main_NumberProvider,
-            IsTraderRequired = setting.Main_HasTrader,
-            Providers = GetProvidersSetting(setting.Main_PrimaryProvider, setting.Main_SecondaryProvider, setting.Main_InactiveProvider, providers)
+            WaitingTime = payoutSetting.Main_WaitingTime,
+            MinProvider = payoutSetting.Main_NumberProvider,
+            IsTraderRequired = payoutSetting.Main_HasTrader,
+            Providers = GetProvidersSetting(
+                payoutSetting.Main_PrimaryProvider,
+                payoutSetting.Main_SecondaryProvider,
+                payoutSetting.Main_InactiveProvider,
+                providers)
         };
 
         var earlyItem = new GetAutoSettleSettingResponseItem
@@ -62,10 +71,21 @@ public class GetAutoSettleSettingsHandler(IDynamicRepository repository, IRefDat
             Enabled = IsBitSet(autoSettingBit, AutoSettleBitPosition.AutoPayoutEarly - 1),
             ResourceType = ResourceType.Early,
             SettleType = AutoSettleType.AutoPayout,
-            WaitingTime = setting.EAR_WaitingTime,
-            MinProvider = setting.EAR_NumberProvider,
-            IsTraderRequired = setting.EAR_HasTrader,
-            Providers = GetProvidersSetting(setting.EAR_PrimaryProvider, setting.EAR_SecondaryProvider, setting.EAR_InactiveProvider, providers)
+            WaitingTime = payoutSetting.EAR_WaitingTime,
+            MinProvider = payoutSetting.EAR_NumberProvider,
+            IsTraderRequired = payoutSetting.EAR_HasTrader,
+            Providers = GetProvidersSetting(
+                payoutSetting.EAR_PrimaryProvider,
+                payoutSetting.EAR_SecondaryProvider,
+                payoutSetting.EAR_InactiveProvider,
+                providers)
+        };
+
+        var refundItem = new GetAutoSettleSettingResponseItem()
+        {
+            ResourceType = ResourceType.Main,
+            SettleType = AutoSettleType.AutoRefund,
+            WaitingTime = refundSetting.Main_WaitingTime,
         };
 
         return new GetAutoSettleSettingsResponse
@@ -74,21 +94,23 @@ public class GetAutoSettleSettingsHandler(IDynamicRepository repository, IRefDat
             MatchId = query.MatchId,
             TypeObject = query.TypeObject,
             LeagueName = refDataService.GetLeagueName(query.LeagueId),
-            ResultSettings = new List<GetAutoSettleSettingResponseItem> { mainItem, earlyItem }
+            ResultSettings = new List<GetAutoSettleSettingResponseItem> { mainItem, earlyItem, refundItem }
         };
     }
 
-    private static ICriteria CreateSettingsSelCriteria(AutoSettleSettingsQuery query) => query.TypeObject == "League"
+    private static IGetSettingCriteria CreateSettingsSelCriteria(AutoSettleSettingsQuery query, byte AutoType = 6) => query.TypeObject == "League"
            ? new AutoSettleLeagueSettingSelCriteria
            {
                LeagueId = query.LeagueId,
-               SportType = query.SportType
+               SportType = query.SportType,
+               AutoType = AutoType
            }
            : new AutoSettleMatchSettingSelCriteria
            {
                LeagueId = query.LeagueId,
                MatchId = query.MatchId,
-               SportType = query.SportType
+               SportType = query.SportType,
+               AutoType = AutoType
            };
 
     private List<Provider> GetProvidersSetting(

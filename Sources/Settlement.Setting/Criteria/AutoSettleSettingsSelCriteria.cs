@@ -1,8 +1,12 @@
-﻿using Fanex.Data.Repository;
+﻿namespace Settlement.Setting.Criteria;
 
-namespace Settlement.Setting.Criteria;
 
-public class AutoSettleMatchSettingSelCriteria : ICriteria
+public interface IGetSettingCriteria : ICriteria
+{
+    public byte AutoType { get; set; }
+}
+
+public class AutoSettleMatchSettingSelCriteria : IGetSettingCriteria
 {
     public int LeagueId { get; set; }
     public int MatchId { get; set; }
@@ -14,7 +18,7 @@ public class AutoSettleMatchSettingSelCriteria : ICriteria
     public bool IsValid() => true;
 }
 
-public class AutoSettleLeagueSettingSelCriteria : ICriteria
+public class AutoSettleLeagueSettingSelCriteria : IGetSettingCriteria
 {
     public int LeagueId { get; set; }
     public short SportType { get; set; }
