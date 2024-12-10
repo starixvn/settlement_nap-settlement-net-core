@@ -18,13 +18,18 @@ export class VerifyRefundHandler implements BaseHandler {
   async handle(storage: IRefundStorage) {
     if(this.existResultNotConfirmedNormal(storage)) {
       this.notifyService.error(Language.confirmRefund.refundResultNotConfirmed);
-    } else if (this.isMisMatchSettleDetermine(storage) || this.isMisMatchMercy(storage)) {
+    } else if (this.inconsistencyBetweenConfirmAndRefund(storage) || this.isMisMatchSettleDetermine(storage) || this.isMisMatchMercy(storage)) {
       this.notifyService.error(Language.confirmRefund.sdtErrorMessage);
     } else if(await this.isExistMarkedTicket(storage)) {
       this.notifyService.error(Language.MarkedTicket);
     } else {
       this.nextHandler.handle(storage);
     }
+  }
+
+  inconsistencyBetweenConfirmAndRefund(storage: IRefundStorage) {
+    var isMisMatchSelected = storage.getResultChecked().length !== storage.getExternalResults().length;
+    return (storage.isMercy() || storage.isSdtSettle()) && isMisMatchSelected;
   }
 
   isMisMatchMercy(storage: IRefundStorage) {
@@ -51,7 +56,7 @@ export class VerifyRefundHandler implements BaseHandler {
 
   inconsistencyAwayEnd(storage: IRefundStorage) {
     var flag = storage.getExternalResults().some((item) => !_.isEmpty(item.otherInfo) && _.isEqual(item.otherInfo.toLowerCase(), "a"))
-    return storage.isAwayEnded() && flag;
+    return storage.isAwayEnded() === flag;
   }
 
   existResultNotConfirmedNormal(storage: IRefundStorage) {

@@ -28,7 +28,7 @@ export class UndoConfirmSettleDetermineHandler implements BaseHandler {
     if (refundNormal.length > 0) {
       this.undoConfirmNormal(match.matchDetail.matchId, refundNormal, hedgeMatch);
     } else {
-      this.undoConfirmSettleDetermine(storage, match.matchDetail.matchId, resultDetails, hedgeMatch);
+      this.undoConfirmSdtOrMercy(match.matchDetail.matchId, resultDetails, hedgeMatch);
     }
   }
 
@@ -37,13 +37,15 @@ export class UndoConfirmSettleDetermineHandler implements BaseHandler {
     this.#aioService.changeConfirmResultSetting(Language.confirmRefund.undoConfirmAll, matchId, resourceIds, false, hedgeMatch, null, []);
   }
 
-  private undoConfirmSettleDetermine(storage: IRefundStorage, matchId: number, resultDetails: ResultDetail[], hedgeMatch: HedgeMatchDetail) {
+  private undoConfirmSdtOrMercy(matchId: number, resultDetails: ResultDetail[], hedgeMatch: HedgeMatchDetail) {
     var settingType: number;
     var resultConfirmed: ResultDetail[];
-    if (storage.isSdtSettle()) {
+    
+    var hasConfirmedSdt = resultDetails.some(item => item.resultSettingData.isConfirmedRefundSdt && item.resourceId !== ResourceIds.totalHits);
+
+    if (hasConfirmedSdt) {
       settingType = ResultSettingType.confirmRefundSDT;
       resultConfirmed = resultDetails.filter(item => item.resultSettingData.isConfirmedRefundSdt && item.resourceId !== ResourceIds.totalHits);
-   
     } else {
       settingType = ResultSettingType.confirmRefundMercy;
       resultConfirmed = resultDetails.filter(item => item.resultSettingData.isConfirmedRefundMercy && !_.includes([ResourceIds.totalHits, ResourceIds.fullTime], item.resourceId));
