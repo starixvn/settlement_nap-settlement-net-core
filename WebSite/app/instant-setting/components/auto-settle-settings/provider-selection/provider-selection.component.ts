@@ -7,6 +7,7 @@ import { Provider, ResultSetting } from "../types";
 import { Store } from "../store";
 import { cloneDeep } from 'lodash'
 import {SwitchComponent} from "../../../../shared/switch/switch.component";
+import { Language } from "../../../../shared/language.native";
 
 @Component({
   selector: 'provider-selection',
@@ -20,11 +21,10 @@ export class ProviderSelectionComponent {
   private readonly store = inject(Store);
 
   public resultSetting: ResultSetting | null = null;
-  public errorMessage: string;
+  public errorMessage = ""; 
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: ResultSetting) {
     this.dialogRef.disableClose = true;
-    console.log(data);
     this.resultSetting = cloneDeep(data);
   }
 
@@ -36,12 +36,14 @@ export class ProviderSelectionComponent {
   }
 
   submit() {
+    this.errorMessage = "";
+
+    if (!this.resultSetting.providers.some(p => p.isActive && p.priority === 1) && this.resultSetting.providers.some(p => p.isActive && p.priority === 2)) {
+      this.errorMessage = Language.AutoPayoutSetting.MissingPrimarySource;
+      return;
+    }
+
     this.store.setResultSetting(this.resultSetting);
     this.close();
   }
-
-  changeActiveProvider(provider: Provider) {
-    provider.isActive = !provider.isActive;
-  }
-
 }
