@@ -59,10 +59,17 @@ export class ConfirmRefundHandler implements BaseHandler {
     const match = storage.getMatch();
     const selectedResources = storage.getResultChecked();
     const hedgeMatch = storage.getApplyingHedgeMatch() ? match.hedgeMatchDetail : null;
-    const resourceItems = selectedResources.map(item => new ResourceItem(item.resourceId, item.resourceName, item.homeValue, item.awayValue));
-    const resourceIds = resourceItems.map(resource => resource.resourceId).join(',');
+  
+    
     this.notifyService.confirm(Language.confirmRefund.mercyConfirm, () => {
+      const resourceItems = selectedResources.map((item, index) => storage.isMercy() && index === 0 
+        ? new ResourceItem(item.resourceId, item.resourceName, item.homeValue, item.awayValue, "Mercy") 
+        : new ResourceItem(item.resourceId, item.resourceName, item.homeValue, item.awayValue));
+        
+      const resourceIds = resourceItems.map(resource => resource.resourceId).join(',');
+      
       const query = new ResultSettingQuery(match.matchDetail.matchId, ResultSettingType.confirmRefundMercy, true, resourceIds, resourceItems);
+      
       this.#aioService.changeResultSetting(query).then(async () => {
           await this.confirmHedgeMatch(query, hedgeMatch);
       }).finally(() =>  this.notifyService.closePopup());

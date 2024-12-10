@@ -12,17 +12,17 @@ import { SettlementStatusId, ResourceIds } from "../../../shared/constants";
 import { Storage } from "../storage.service";
 import { ResultDetailBaseBall } from "../../models";
 
-export interface IRefundStorage extends Storage  {
-  isMercy() : boolean;
-  isSdtSettle() : boolean;
-  isAwayEnded() : boolean;
-  isGetSettleSdt() : boolean;
-  isSelectedMatch() : boolean;
+export interface IRefundStorage extends Storage {
+  isMercy(): boolean;
+  isSdtSettle(): boolean;
+  isAwayEnded(): boolean;
+  isGetSettleSdt(): boolean;
+  isSelectedMatch(): boolean;
 
   setSettleDetermine(value: boolean): void;
   setAwayEnded(value: boolean): void;
   setMercy(value: boolean): void;
-  getExternalResults() : ExternalResultDetail[];
+  getExternalResults(): ExternalResultDetail[];
   addExtraInning(): void;
 }
 
@@ -55,7 +55,7 @@ export class RefundStorage implements IRefundStorage {
     };
     const matchFetched = (await this.aioService.getMatch(matchQuery)) as Match;
     matchFetched.resultDetails.forEach(result => {
-      result.resourceName = this.resultPipe.transform(result.resourceId, false,matchFetched.matchDetail.sessionTime);
+      result.resourceName = this.resultPipe.transform(result.resourceId, false, matchFetched.matchDetail.sessionTime);
       result.className = this.getClass(result);
       result.isDisplayedForMember = matchFetched.permission.isLeader || Number(result.settlementStatusId) !== SettlementStatusId.Running;
     });
@@ -66,11 +66,11 @@ export class RefundStorage implements IRefundStorage {
   getActionSubmit = () => "";
 
   isReSettledTickets = () => false;
-  
-  setReSettledTickets = () => {};
+
+  setReSettledTickets = () => { };
 
   isScoreDirect = () => false;
-  
+
   isSelectedMatch = () => this.#match().resultDetails.some(item => item.resourceId === ResourceIds.fullTime && item.checked);
 
   getResultChecked = () => this.#match().resultDetails.filter(x => x.checked);
@@ -112,41 +112,43 @@ export class RefundStorage implements IRefundStorage {
 
   isLeader = () => this.#match().permission.isLeader;
 
-  isOtherInfoContain = (otherInfo: string) => this.getExternalResults().some((item) => !isEmpty(item.otherInfo) && isEqual(item.otherInfo.toLowerCase(), otherInfo));
+  isOtherInfoContain = (otherInfo: string) => {
 
-  isGetMercy = () =>  this.isLeader() && this.#match().resultDetails.some((item) => this.isCheckedMercy(item));
+    return this.getResultDetails().some((item) => !isEmpty(item.otherInfo) && isEqual(item.otherInfo.toLowerCase(), otherInfo)) || this.getExternalResults().some((item) => !isEmpty(item.otherInfo) && isEqual(item.otherInfo.toLowerCase(), otherInfo))
+  };
+
+  isGetMercy = () => this.isLeader() && this.#match().resultDetails.some((item) => this.isCheckedMercy(item));
 
   isCheckedMercy = (item: ResultDetailBaseBall) => item.resultSettingData.isConfirmedRefundMercy || (!isEmpty(item.otherInfo) && isEqual(item.otherInfo.toLowerCase(), ResourceIds.mercy.toLowerCase()));
 
-  isGetAwayEnded = () => this.isLeader() && !this.isOtherInfoContain("a");
+  isGetAwayEnded = () => this.isLeader() && !this.isGetMercy() && !this.isOtherInfoContain("a");
 
-  isGetSettleSdt () {
-    if(!this.isLeader()) {
+  isGetSettleSdt() {
+    if (!this.isLeader()) {
       return false;
     }
 
     const resultDetails = this.#match().resultDetails;
-    const existResultConfirmedSDT = resultDetails.some(item => item.resultSettingData.isConfirmedRefundSdt);
-    if (existResultConfirmedSDT) {
-        return true;
-    }
 
-    const resultConfirmNormal = resultDetails.some(item => item.resultSettingData.isConfirmedRefund);
+    return resultDetails.some(item => item.resultSettingData.isConfirmedRefundSdt)
+      || !this.hasConfirmRefundResults(resultDetails) && resultDetails.some(item => item.settlementStatusId === SettlementStatusId.Calculated);
+  }
 
-    if (resultConfirmNormal) {
-        return false;
-    }
-
-    return resultDetails.some(item => item.settlementStatusId === SettlementStatusId.Calculated);
-  } 
-
-  addExtraInning () {
-    if(this.isSelectedMatch()) {
+  addExtraInning() {
+    if (this.isSelectedMatch()) {
       _.forEach(this.getResultDetails(), (item) => {
-        if(item.resourceId === ResourceIds.extraInning) {
-          item.checked = true;
+        if (item.resourceId === ResourceIds.extraInning) {
+          item.checked = true;  
         }
       });
     }
+  }
+
+  private hasConfirmRefundResults(resultDetails: ResultDetailBaseBall[]) : boolean {
+    return resultDetails.some(item =>
+      item.resultSettingData.isConfirmedRefund ||
+      item.resultSettingData.isConfirmedRefundSdt ||
+      item.resultSettingData.isConfirmedRefundMercy
+    );
   }
 }

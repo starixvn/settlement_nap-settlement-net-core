@@ -19,9 +19,7 @@ import { Match, MatchDetail, OtherSportsMatch, Permission, QueryMatch } from '..
 import { ResultDetail } from '../../../shared/models/sportsbook-sop/result-detail.model';
 import { ResourcesIds } from '../../constants';
 import { HedgeMatchDetail } from '../../../shared/models/sportsbook-sop/hedge-match-detail.model';
-import { of } from 'rxjs';
 import { Language } from '../../../shared/language.native';
-import { debug } from 'console';
 
 describe('HalfTimeFullTimeCalculationComponent', () => {
   let component: HalfTimeFullTimeCalculationComponent;
