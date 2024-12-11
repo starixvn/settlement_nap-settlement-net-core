@@ -234,7 +234,7 @@ export class PopupService {
     const dialogData = new DialogDataIframe(title, encodeURI(src));
 
     const subscribe = this.dialogBoxService
-        .popupHasResponse(dialogData, "780px", "450px")
+        .popupHasResponse(dialogData, "780px", "350px")
         .subscribe((result) => {
           if(!result) {
             subscribe.unsubscribe();

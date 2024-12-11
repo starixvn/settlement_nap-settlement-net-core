@@ -6,14 +6,15 @@ import { Component, inject, Inject } from "@angular/core";
 import { Provider, ResultSetting } from "../types";
 import { Store } from "../store";
 import { cloneDeep } from 'lodash'
-import {SwitchComponent} from "../../../../shared/switch/switch.component";
 import { Language } from "../../../../shared/language.native";
+import {SwitchComponent} from "../../../../shared/components/switch/switch.component";
+import {AppTableComponent} from "../../../../shared/components/table/app-table.component";
 
 @Component({
   selector: 'provider-selection',
   templateUrl: './provider-selection.component.html',
   standalone: true,
-  imports: [MatDialogModule, DragDropModule, CommonModule, FormsModule, SwitchComponent],
+  imports: [MatDialogModule, DragDropModule, CommonModule, FormsModule, SwitchComponent,AppTableComponent],
 })
 export class ProviderSelectionComponent {
 
@@ -22,13 +23,13 @@ export class ProviderSelectionComponent {
 
   public resultSetting: ResultSetting | null = null;
   public errorMessage = ""; 
+  public headers: string[] = ['Active','Providers', 'Primary', 'Secondary', 'Unassigned'];
+
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: ResultSetting) {
     this.dialogRef.disableClose = true;
     this.resultSetting = cloneDeep(data);
   }
-
-
 
 
   close() {

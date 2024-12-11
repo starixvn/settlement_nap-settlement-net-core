@@ -29,7 +29,7 @@ import { ResourceType } from "../../../../shared/constants/resource-type.native"
 import { AutoSettleType } from "../../../../shared/constants/auto-settle-type.native";
 import { TypeObject } from "../../../../shared/constants/type-object.native";
 import {BackgroundColor} from "../../../../shared/constants";
-import {SwitchComponent} from "../../../../shared/switch/switch.component";
+import {SwitchComponent} from "../../../../shared/components/switch/switch.component";
 
 @Component({
     selector: "app-auto-setting",
