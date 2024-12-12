@@ -28,12 +28,12 @@ export class VerifyRefundHandler implements BaseHandler {
   }
 
   inconsistencyBetweenConfirmAndRefund(storage: IRefundStorage) {
-    var isMisMatchSelected = storage.getResultChecked().length !== storage.getExternalResults().length;
-    return (storage.isMercy() || storage.isSdtSettle()) && isMisMatchSelected;
+    let isMisMatchSelected = storage.getResultChecked().length !== storage.getExternalResults().length;
+    return this.isSettleSdtOrMercy(storage) && isMisMatchSelected;
   }
 
   isMisMatchMercy(storage: IRefundStorage) {
-    var isMisMatch =  !storage.getResultChecked().every(result => {
+    let isMisMatch =  !storage.getResultChecked().every(result => {
       const resource = storage.getExternalResults().find(x => x.resourceId === result.resourceId);
       return !_.isUndefined(resource) && result.resultSettingData.isConfirmedRefundMercy
           && _.isEqual(result.homeValue, resource.homeValue)
@@ -44,7 +44,7 @@ export class VerifyRefundHandler implements BaseHandler {
   }
 
   isMisMatchSettleDetermine(storage: IRefundStorage) {
-    var isMisMatch =  !storage.getResultChecked().every(result => {
+    let isMisMatch =  !storage.getResultChecked().every(result => {
       const resource = storage.getExternalResults().find(x => x.resourceId === result.resourceId);
       return !_.isUndefined(resource) && result.resultSettingData.isConfirmedRefundSdt
           && _.isEqual(result.homeValue, resource.homeValue)
@@ -55,13 +55,16 @@ export class VerifyRefundHandler implements BaseHandler {
   }
 
   inconsistencyAwayEnd(storage: IRefundStorage) {
-    var flag = storage.getExternalResults().some((item) => !_.isEmpty(item.otherInfo) && _.isEqual(item.otherInfo.toLowerCase(), "a"))
+    let flag = storage.getExternalResults().some((item) => !_.isEmpty(item.otherInfo) && _.isEqual(item.otherInfo.toLowerCase(), "a"))
     return storage.isAwayEnded() === flag;
   }
 
   existResultNotConfirmedNormal(storage: IRefundStorage) {
-    return !storage.isSdtSettle() && !storage.isMercy() &&  _.some(storage.getResultChecked(), item => !item.resultSettingData.isConfirmedRefund);
+    return !this.isSettleSdtOrMercy(storage) &&  _.some(storage.getResultChecked(), item => !item.resultSettingData.isConfirmedRefund);
   }
+
+  isSettleSdtOrMercy = (storage: IRefundStorage) => storage.getResultChecked().some(item => item.resultSettingData.isConfirmedRefundSdt || item.resultSettingData.isConfirmedRefundMercy);
+  
 
   async isExistMarkedTicket(storage: IRefundStorage) {
     const paramsCheckingMarkedTickets = {
@@ -72,5 +75,4 @@ export class VerifyRefundHandler implements BaseHandler {
     const res = await this.#aioService.checkMarkedTickets(paramsCheckingMarkedTickets);
     return res.isExistMarkedTicket
   } 
-  
 }

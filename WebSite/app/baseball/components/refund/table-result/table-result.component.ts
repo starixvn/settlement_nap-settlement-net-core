@@ -11,11 +11,12 @@ import { IntervalBackgroundPipe } from '../../../../shared/pipes/interval-backgr
 import { RefundStorage } from '../../../services/refund/refund.storage';
 import { RefundService } from "../../../services/refund/refund.service";
 import { ConfirmRefundService } from '../../../services/refund/confirm-refund.service';
+import { OnlyIntegerDirective } from '../../../../shared/directives';
 
 @Component({
   selector: 'table-result',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatTooltipModule],
+  imports: [CommonModule, FormsModule, MatTooltipModule, OnlyIntegerDirective],
   templateUrl: './table-result.component.html',
 })
 export class TableResultComponent implements OnInit {
@@ -63,7 +64,7 @@ export class TableResultComponent implements OnInit {
       return _.isEqual(resourceId, ResourceIds.totalHits) ;
     } 
     else if(this.#storage.isMercy()) {
-      return _.includes([ResourceIds.totalHits, ResourceIds.fullTime], resourceId);
+      return _.includes([ResourceIds.totalHits, ResourceIds.fullTime,ResourceIds.InningOne], resourceId);
     }
   }
 
@@ -99,12 +100,14 @@ export class TableResultComponent implements OnInit {
   }
 
   private inputClass(resultDetail: ResultDetailBaseBall) {
+    if (_.isEmpty(resultDetail.awayValue) || _.isEmpty(resultDetail.homeValue)) {
+      return this.#backgroundPipe.transform(resultDetail.settlementStatusId);
+    }
+
     const externalResource = this.externalResults.find(r => r.resourceId === resultDetail.resourceId);
-    const isConsistentScore = resultDetail.resultSettingData.isConfirmedRefundSdt 
-                        && externalResource 
-                        && (!_.isEqual(resultDetail.awayValue, externalResource.awayValue) || !_.isEqual(resultDetail.homeValue, externalResource.homeValue));
-    return isConsistentScore
-          ? BackgroundColor.scoreSdtNotConsistent : this.#backgroundPipe.transform(resultDetail.settlementStatusId);
+    return externalResource && _.isEqual(resultDetail.awayValue, externalResource.awayValue) && _.isEqual(resultDetail.homeValue, externalResource.homeValue)
+          ? this.#backgroundPipe.transform(resultDetail.settlementStatusId) 
+          : BackgroundColor.scoreSdtNotConsistent;
   }
 
   private resetHomeAwayAndAddClass(resultDetails: ResultDetailBaseBall[]) {
@@ -129,46 +132,6 @@ export class TableResultComponent implements OnInit {
       resultDetail.homeValue = resource.homeValue;
       resultDetail.awayValue = resource.awayValue;
     }
-  }
-
-  // async refund() {
-  //   const paramsCheckingMarkedTickets = this.generateCheckMarkedTicketsQuery();
-  //   const res = await this.aioService.checkMarkedTickets(paramsCheckingMarkedTickets);
-  //   this.toastrService.clear();
-  //   if (this.existResultNotConfirmed()) {
-  //     this.toastrService.error(Language.confirmRefund.refundResultNotConfirmed);
-  //   } else if (res.isExistMarkedTicket) {
-  //     this.toastrService.error(Language.MarkedTicket);
-  //   } else {
-  //     this.#notifyService.confirm(Language.RefundConfirmMessage, () => {
-  //       this.doRefund();
-  //     });
-  //   }
-  // }
-
-  private async doRefund() {
-    // const query = this.generateRefundQuery(BaseballApiKeys.Settle);
-    // const result = await this.aioService.push(query);
-    // if (result.errCode === 0) {
-    //   result.childMatchIds && await this.refundChildMatch(result.childMatchIds, result.settledSessionId);
-    //   this.refundHedgeMatch(query);
-    //   this.messageBoxService.closePopup();
-    // } else {
-    //   this.toastrService.error(result.errMsg);
-    // }
-  }
-
-  private async refundChildMatch(childMatchIds: string, parentSessionId: string) {
-    // const settleChildMatchQuery = new SettleChildMatchQuery(
-    //   childMatchIds, 
-    //   this.selectedResources,
-    //   CalculateAction.refund, 
-    //   false);
-
-    // settleChildMatchQuery.sportType = this.matchDetail.sportType;
-    // settleChildMatchQuery.parentSessionId = parentSessionId;
-
-    // await this.aioService.pushChildMatch(settleChildMatchQuery);
   }
 
   async refund() {

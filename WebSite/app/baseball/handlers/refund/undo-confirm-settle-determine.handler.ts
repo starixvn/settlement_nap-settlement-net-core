@@ -38,10 +38,9 @@ export class UndoConfirmSettleDetermineHandler implements BaseHandler {
   }
 
   private undoConfirmSdtOrMercy(matchId: number, resultDetails: ResultDetail[], hedgeMatch: HedgeMatchDetail) {
-    var settingType: number;
-    var resultConfirmed: ResultDetail[];
-    
-    var hasConfirmedSdt = resultDetails.some(item => item.resultSettingData.isConfirmedRefundSdt && item.resourceId !== ResourceIds.totalHits);
+    let settingType: number;
+    let resultConfirmed: ResultDetail[];
+    const hasConfirmedSdt = resultDetails.some(item => item.resultSettingData.isConfirmedRefundSdt && item.resourceId !== ResourceIds.totalHits);
 
     if (hasConfirmedSdt) {
       settingType = ResultSettingType.confirmRefundSDT;

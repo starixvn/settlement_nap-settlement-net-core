@@ -39,7 +39,7 @@ export class RefundHandler implements BaseHandler {
     this.#notifyService.confirm(Language.RefundConfirmSdtMessage, async () => {
       const query = new SettleQuery(match.matchDetail, selectedResources, CalculateAction.refund, false, "", BaseballApiKeys.Settle);
       query.determinedType = this.generateDeterminedType(selectedResources[0]);
-        
+
       const result = await this.#aioService.push(query);
       if (result.isSuccessful) {
         result.childMatchIds && await this.childMatch(result, selectedResources);
@@ -58,7 +58,7 @@ export class RefundHandler implements BaseHandler {
 
     this.#notifyService.confirm(Language.RefundConfirmMercyMessage, async () => {
       const query = new SettleQuery(match.matchDetail, selectedResources, CalculateAction.refund, false, "", BaseballApiKeys.Settle);
-      query.determinedType = this.generateDeterminedType(selectedResources[0]);
+      query.determinedType = this.generateDeterminedType(selectedResources[0], true);
         
       const result = await this.#aioService.push(query);
       if (result.isSuccessful) {
@@ -70,17 +70,20 @@ export class RefundHandler implements BaseHandler {
     });
   }
 
-  generateDeterminedType(resultDetail: ResultDetail) {
+  generateDeterminedType(resultDetail: ResultDetail, isMercy = false) {
     const roundBitStartAt = 2;
     const bitArray = new Array<number>(12).fill(0);
 
     if (!_.isEqual(resultDetail.resourceId, ResourceIds.fullTime)) {
-        var pos = _.isEqual(resultDetail.resourceId, ResourceIds.extraInning) 
+        let pos = _.isEqual(resultDetail.resourceId, ResourceIds.extraInning) 
                 ? 10 
                 : Number(resultDetail.resourceId.slice(-2));
-        
-        const bitPosition = pos + roundBitStartAt;
-        bitArray[bitPosition] = 1;
+
+        if(!isMercy || isMercy && pos > 1) {
+          pos = isMercy ? pos - 1 : pos;
+          const bitPosition = pos + roundBitStartAt;
+          bitArray[bitPosition] = 1;
+        }
     }
 
     const reversedBitArray = bitArray.toReversed();
