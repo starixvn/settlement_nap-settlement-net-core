@@ -1,9 +1,6 @@
 <div *ngIf="!isMatchSeries">
     <div>
-        - Marked tickets will NOT be calculated.
-    </div>
-    <div>
-        <input type="checkbox" id="isSdtSettle" [(ngModel)]="isSdtSettle" (ngModelChange)="changeSdtSettle()"/>&nbsp;<label for="isSdtSettle">Settle determinable tickets of next results.</label>
+        <input type="checkbox" id="isSDTSettle" [(ngModel)]="isSdtSettle" (ngModelChange)="changeSdtSettle()"/>&nbsp;<label for="isSDTSettle">Settle determinable tickets of next results.</label>
     </div>
     <div class="check-box">
         <input type="checkbox" id="isAwayEnded" [(ngModel)]="isAwayEnded" (ngModelChange)="changeAwayEnded()"/>&nbsp;<label for="isAwayEnded"><b>{{awayName}}</b> turn ended normally.</label>

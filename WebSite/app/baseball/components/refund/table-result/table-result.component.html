@@ -12,7 +12,7 @@
     <thead>
       <tr>
         <th class="resource-name">Result name</th>
-        <th class="result" *ngIf="!isMatchSeries">Final Score</th>
+        <th class="result">Final Score</th>
         <th class="proceed">
           Select to Proceed
         </th>
@@ -21,27 +21,26 @@
     <tbody>
       <tr *ngFor="let inning of resultDetails; let i = index; let last=last;"
         [ngClass]="{'confirmed-refund': permission.isLeader && (inning.resultSettingData.isConfirmedRefund || inning.resultSettingData.isConfirmedRefundSdt || inning.resultSettingData.isConfirmedRefundMercy),
-          'striped': inning.resourceId !== resourceIds.totalHits && ((i % 2 == 0 || inning.resourceId === resourceIds.fullTime || inning.resourceId === resourceIds.extraInning) && !isMatchSeries),
-        }">
-        <td [ngClass]="{'mercy': inning.otherInfo === 'Mercy'}">{{ inning.resourceName}}</td>
-        <td *ngIf="!isMatchSeries" [ngClass]="inning.className">
+                  'striped': inning.resourceId !== resourceIds.totalHits && ((i % 2 == 0 || inning.resourceId === resourceIds.fullTime || inning.resourceId === resourceIds.extraInning) && !isMatchSeries)}">
+        <td [ngClass]="{'mercy': permission.isLeader && inning.otherInfo === 'Mercy'}">{{ inning.resourceName}}</td>
+        <td [ngClass]="inning.className">
            <div class="score score-row">
             <span class="score-row__team" [matTooltip]="getTextTooltip(homeName,20)" matTooltipPosition="above">{{homeName}}</span>
-            <input type="text" myOnlyInteger [disabled]="inning.disabled" [(ngModel)]="inning.homeValue" (ngModelChange)="changeScore(inning)"/>
+            <input type="text" myOnlyInteger [disabled]="inning.disabled " [(ngModel)]="inning.homeValue" (ngModelChange)="changeScore(inning)"/>
           </div>
           <div class="score score-row">
             <span class="score-row__team" [matTooltip]="getTextTooltip(awayName,20)" matTooltipPosition="above">{{awayName}}</span>
             <input type="text" myOnlyInteger [disabled]="inning.disabled" [(ngModel)]="inning.awayValue" (ngModelChange)="changeScore(inning)"/>
           </div> 
         </td>
-        <td *ngIf="inning.resourceId === resourceIds.extraInning" rowspan="2" class="status">
+        <td *ngIf="inning.resourceId === resourceIds.extraInning" rowspan="2" class="status temp">
           <input id="final-checkbox" type="checkbox" [(ngModel)]="resultDetails[i + 1].checked"
           [disabled]="disableTotalHitsAndMatch(resultDetails[i + 1].resourceId)" (ngModelChange)="enableInput(inning, resultDetails[i + 1])" />
         </td>
-        <td *ngIf="!isMatchSeries && (inning.resourceId !== resourceIds.extraInning && inning.resourceId !== resourceIds.fullTime)">
+        <td class="temp" *ngIf="!isMatchSeries && (inning.resourceId !== resourceIds.extraInning && inning.resourceId !== resourceIds.fullTime)">
           <input type="checkbox" [(ngModel)]="inning.checked" [disabled]="disableTotalHitsAndMatch(inning.resourceId)" (ngModelChange)="enableInput(null, inning)"/>
         </td>
-        <td *ngIf="isMatchSeries" [ngClass]="inning.className">
+        <td class="temp" *ngIf="isMatchSeries">
           <input type="checkbox" [(ngModel)]="inning.checked" [disabled]="disableTotalHitsAndMatch(inning.resourceId)" (ngModelChange)="enableInput(null, inning)"/>
         </td>
       </tr>

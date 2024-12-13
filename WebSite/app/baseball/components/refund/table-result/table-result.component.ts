@@ -100,7 +100,9 @@ export class TableResultComponent implements OnInit {
   }
 
   private inputClass(resultDetail: ResultDetailBaseBall) {
-    if (_.isEmpty(resultDetail.awayValue) || _.isEmpty(resultDetail.homeValue)) {
+    const isNotConfirmedScore = (!resultDetail.resultSettingData.isConfirmedRefund && !resultDetail.resultSettingData.isConfirmedRefundSdt) 
+                              || _.isEmpty(resultDetail.awayValue) || _.isEmpty(resultDetail.homeValue);
+    if (isNotConfirmedScore) {
       return this.#backgroundPipe.transform(resultDetail.settlementStatusId);
     }
 

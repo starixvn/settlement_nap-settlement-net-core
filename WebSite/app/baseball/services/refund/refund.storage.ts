@@ -113,8 +113,7 @@ export class RefundStorage implements IRefundStorage {
   isLeader = () => this.#match().permission.isLeader;
 
   isOtherInfoContain = (otherInfo: string) => {
-
-    return this.getResultDetails().some((item) => !isEmpty(item.otherInfo) && isEqual(item.otherInfo.toLowerCase(), otherInfo)) || this.getExternalResults().some((item) => !isEmpty(item.otherInfo) && isEqual(item.otherInfo.toLowerCase(), otherInfo))
+    return this.getExternalResults().some((item) => !isEmpty(item.otherInfo) && isEqual(item.otherInfo.toLowerCase(), otherInfo));
   };
 
   isGetMercy = () => this.isLeader() && this.#match().resultDetails.some((item) => this.isCheckedMercy(item));
