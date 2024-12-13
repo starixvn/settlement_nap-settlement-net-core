@@ -1,6 +1,4 @@
-﻿using MediatR;
-
-namespace Settlement.Setting.Requests.LeagueSettings;
+﻿namespace Settlement.Setting.Requests.LeagueSettings;
 
 public class GetLeagueSettingsRequest : IRequest<Models.LeagueSettings.AutoSettings>
 {

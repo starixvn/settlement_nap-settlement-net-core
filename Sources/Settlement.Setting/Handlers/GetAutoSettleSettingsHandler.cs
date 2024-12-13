@@ -14,18 +14,18 @@ public class GetAutoSettleSettingsHandler(IDynamicRepository repository, IRefDat
 {
     public async Task<GetAutoSettleSettingsResponse> Handle(AutoSettleSettingsQuery query, CancellationToken cancellationToken)
     {
-        IGetSettingCriteria payoutCriteria = CreateSettingsSelCriteria(query);
+        var payoutCriteria = CreateSettingsSelCriteria(query);
         var payoutSetting = await repository.GetAsync<AutoSettleSetting>(payoutCriteria);
 
-        IGetSettingCriteria refundCriteria = CreateSettingsSelCriteria(query, 7);
+        var refundCriteria = CreateSettingsSelCriteria(query, 7);
         var refundSetting = await repository.GetAsync<AutoSettleSetting>(refundCriteria);
 
         var autoSettingBit = await GetAutoSettingBit(query.LeagueId, query.MatchId);
-        var providers = await repository.FetchAsync<ProviderInfo>(new GetProviderInfoCriteria
+        var providers = (await repository.FetchAsync<ProviderInfo>(new GetProviderInfoCriteria
         {
             SportType = query.SportType,
             LeagueId = query.LeagueId
-        });
+        })).ToList();
 
         return CreateGetSettingsResponse(query, payoutSetting, refundSetting, autoSettingBit, providers);
     }
@@ -49,7 +49,7 @@ public class GetAutoSettleSettingsHandler(IDynamicRepository repository, IRefDat
         AutoSettleSetting payoutSetting,
         AutoSettleSetting refundSetting,
         int autoSettingBit,
-        IEnumerable<ProviderInfo> providers)
+        List<ProviderInfo> providers)
     {
         var mainItem = new GetAutoSettleSettingResponseItem
         {
@@ -81,11 +81,11 @@ public class GetAutoSettleSettingsHandler(IDynamicRepository repository, IRefDat
                 providers)
         };
 
-        var refundItem = new GetAutoSettleSettingResponseItem()
+        var refundItem = new GetAutoSettleSettingResponseItem
         {
             ResourceType = ResourceType.Main,
             SettleType = AutoSettleType.AutoRefund,
-            WaitingTime = refundSetting.Main_WaitingTime,
+            WaitingTime = refundSetting.Main_WaitingTime
         };
 
         return new GetAutoSettleSettingsResponse
@@ -94,7 +94,7 @@ public class GetAutoSettleSettingsHandler(IDynamicRepository repository, IRefDat
             MatchId = query.MatchId,
             TypeObject = query.TypeObject,
             LeagueName = refDataService.GetLeagueName(query.LeagueId),
-            ResultSettings = new List<GetAutoSettleSettingResponseItem> { mainItem, earlyItem, refundItem }
+            ResultSettings = [mainItem, earlyItem, refundItem]
         };
     }
 

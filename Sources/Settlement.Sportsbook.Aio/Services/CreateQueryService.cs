@@ -59,12 +59,7 @@ public class CreateQueryServiceImp(
             _ => string.Empty
         };
 
-        if (string.IsNullOrEmpty(name))
-        {
-            return string.Empty;
-        }
-
-        return $"""<r n="{name}" v="{(request.IsSettleRelated ? 1 : 0)}"/>""";
+        return string.IsNullOrEmpty(name) ? string.Empty : $"""<r n="{name}" v="{(request.IsSettleRelated ? 1 : 0)}"/>""";
     }
 
     public SettleCriteria QuerySettleChildMatch(SettleChildMatchRequest request)

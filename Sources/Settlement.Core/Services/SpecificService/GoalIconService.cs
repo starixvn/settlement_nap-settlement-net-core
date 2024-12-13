@@ -7,15 +7,8 @@ public interface GoalIconService
     GoalIcon GetGoalIcon(GoalIconQueryModel query);
 }
 
-public class GoalIconServiceImp : GoalIconService
+public class GoalIconServiceImp(FirstGoalLastGoalService firstGoalLastGoalService) : GoalIconService
 {
-    private readonly FirstGoalLastGoalService firstGoalLastGoalService;
-
-    public GoalIconServiceImp(FirstGoalLastGoalService firstGoalLastGoalService)
-    {
-        this.firstGoalLastGoalService = firstGoalLastGoalService;
-    }
-
     public GoalIcon GetGoalIcon(GoalIconQueryModel query)
     {
         var goalIcon = new GoalIcon();

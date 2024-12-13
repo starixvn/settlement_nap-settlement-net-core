@@ -329,7 +329,7 @@ public class InstantCalculateServiceImp(
                 MatchId = request.MatchId,
                 StatusId = 2, // completed,
                 SourceId = 100,
-                TypeId = request.IsHalfTime ? InstantCalculationType.CalcHt : InstantCalculationType.CalcFt,
+                TypeId = request.IsHalfTime ? InstantCalculationType.CalcHt : InstantCalculationType.CalcFt
             };
 
             await repository.ExecuteAsync(updateResultCriteria);

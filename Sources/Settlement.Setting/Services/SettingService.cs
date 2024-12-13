@@ -1,7 +1,4 @@
 ﻿using AutoMapper;
-using Fanex.Data.Repository;
-using Fanex.NAP.Client;
-using Microsoft.AspNetCore.Http;
 using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Core.Services;

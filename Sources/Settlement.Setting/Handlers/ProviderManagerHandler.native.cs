@@ -1,5 +1,4 @@
-﻿using MediatR;
-using Settlement.Core.Models;
+﻿using Settlement.Core.Models;
 using Settlement.Setting.Requests.ProviderManager;
 using Settlement.Setting.Services;
 

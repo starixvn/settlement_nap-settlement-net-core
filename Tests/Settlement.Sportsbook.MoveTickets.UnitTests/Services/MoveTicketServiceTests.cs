@@ -69,7 +69,7 @@ public class MoveTicketServiceTests
         };
 
         var fakeMatches = new List<Match> {
-            CreateMatch(1, "Completed", true),
+            CreateMatch(1, "Completed", true)
         };
 
         repository.FetchMultipleAsync<Match, MatchOverStatus, ParentChildMatchFilter>(Arg.Any<SportsbookCriteria>()).Returns((fakeMatches, [], []));
@@ -92,7 +92,7 @@ public class MoveTicketServiceTests
 
         // Assert
         var expectedMatches = new List<Match> {
-            CreateMatch(1, "Completed", true),
+            CreateMatch(1, "Completed", true)
         };
 
         Assert.Equal(JsonConvert.SerializeObject(expectedMatches), JsonConvert.SerializeObject(actualMatches));

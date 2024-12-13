@@ -1,5 +1,4 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Settlement.Setting.Requests.Notification;
 
 namespace Settlement.Setting.Controllers;

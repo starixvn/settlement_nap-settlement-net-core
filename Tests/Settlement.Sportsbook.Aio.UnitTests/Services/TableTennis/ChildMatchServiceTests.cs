@@ -13,7 +13,7 @@ public class ChildMatchServiceTests
         // Arrange
         var childMatches = new List<ChildMatchModel>
             {
-                new() { ChildMatchType = 12, SportType = 18, },
+                new() { ChildMatchType = 12, SportType = 18 },
                 new() { ChildMatchType = 14, SportType = 18  },
                 new() { ChildMatchType = 15 ,SportType = 18 }
             };
@@ -22,7 +22,7 @@ public class ChildMatchServiceTests
             {
                 new() { ResourceId = "0101"},
                  new() { ResourceId = "0102"},
-                  new() { ResourceId = "0103"},
+                  new() { ResourceId = "0103"}
             };
 
         var tuple = new Tuple<List<ChildMatchModel>, List<ResultDetail>>(childMatches, resultDetails);

@@ -7,15 +7,8 @@ namespace Settlement.Setting.Controllers;
 
 [ApiController]
 [Route("api/auto-settle-settings")]
-public class AutoSettleSettingsController : ControllerBase
+public class AutoSettleSettingsController(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator mediator;
-
-    public AutoSettleSettingsController(IMediator mediator)
-    {
-        this.mediator = mediator;
-    }
-
     [HttpGet]
     [Route("get-settings")]
     public async Task<GetAutoSettleSettingsResponse> GetSettings([FromQuery] AutoSettleSettingsQuery query, CancellationToken cancellationToken)

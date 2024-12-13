@@ -39,8 +39,8 @@ public static class ChildMatchConstant
             { (SportType.TableTennis, 16), "4th Set" },
             { (SportType.TableTennis, 17), "5th Set" },
             { (SportType.TableTennis, 18), "6th Set" },
-            { (SportType.TableTennis, 19), "7th Set" },
-    };
+            { (SportType.TableTennis, 19), "7th Set" }
+        };
 
     public static Dictionary<int, string> ChildMatchValid => new()
         {

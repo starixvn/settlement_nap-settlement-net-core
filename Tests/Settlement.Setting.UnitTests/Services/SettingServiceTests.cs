@@ -114,11 +114,8 @@ public class SettingServiceTests
         // Arrange
         var request = new UpdateHoldMatchSettingRequest
         {
-            HoldSettings = new List<HoldSetting>
-                {
-                    new () { Name ="isMtdHold", IsApplyChild = true, Value = true }
-                },
-            OrgHoldSettings = new()
+            HoldSettings = [new HoldSetting { Name = "isMtdHold", IsApplyChild = true, Value = true }],
+            OrgHoldSettings = []
         };
 
         // Act
@@ -135,7 +132,7 @@ public class SettingServiceTests
         var request = new UpdateHoldMatchSettingRequest
         {
             HoldSettings = [],
-            OrgHoldSettings = new List<HoldSetting>()
+            OrgHoldSettings = []
         };
 
         // Act

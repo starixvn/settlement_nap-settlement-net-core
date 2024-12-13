@@ -11,19 +11,11 @@ public interface IBalanceUpService
     BalanceUp GetBalanceUpDay();
 }
 
-public class BalanceUpServiceImp : IBalanceUpService
+public class BalanceUpServiceImp(
+    IDynamicRepository repository,
+    ICacheService cacheService)
+    : IBalanceUpService
 {
-    private readonly ICacheService cacheService;
-    private readonly IDynamicRepository repository;
-
-    public BalanceUpServiceImp(
-        IDynamicRepository repository,
-        ICacheService cacheService)
-    {
-        this.cacheService = cacheService;
-        this.repository = repository;
-    }
-
     private BalanceUp BalanceUp => repository.Get<BalanceUp>(new GetBalanceUpDayCriteria());
 
     public BalanceUp GetBalanceUpDay() => cacheService.GetOrSet(

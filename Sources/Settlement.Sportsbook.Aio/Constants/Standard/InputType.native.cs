@@ -8,13 +8,7 @@ public static class InputType
 
     public const int YesNoId = 3;
 
-    public static List<int> CoupleScore => new()
-    {
-            8823, 8816
-    };
+    public static List<int> CoupleScore => [8823, 8816];
 
-    public static List<int> YesNo => new()
-    {
-        8815
-    };
+    public static List<int> YesNo => [8815];
 }

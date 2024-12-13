@@ -3,18 +3,14 @@ using Newtonsoft.Json.Serialization;
 using System.Reflection;
 
 namespace Settlement.Core.Services;
-public class IgnorePropertiesResolver : DefaultContractResolver
+public class IgnorePropertiesResolver(IEnumerable<string> propNamesToIgnore) : DefaultContractResolver
 {
-    private readonly HashSet<string> ignoreProps;
-    public IgnorePropertiesResolver(IEnumerable<string> propNamesToIgnore)
-    {
-        this.ignoreProps = new HashSet<string>(propNamesToIgnore);
-    }
+    private readonly HashSet<string> ignoreProps = [..propNamesToIgnore];
 
     protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
     {
-        JsonProperty property = base.CreateProperty(member, memberSerialization);
-        if (this.ignoreProps.Contains(property.PropertyName))
+        var property = base.CreateProperty(member, memberSerialization);
+        if (ignoreProps.Contains(property.PropertyName))
         {
             property.ShouldSerialize = _ => false;
         }

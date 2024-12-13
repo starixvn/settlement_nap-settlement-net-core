@@ -1,6 +1,4 @@
 ﻿using AutoMapper;
-using Fanex.Data.Repository;
-using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Setting.Criteria.LeagueSettings;
@@ -96,17 +94,6 @@ public class LeagueSettingsServiceImp(IDynamicRepository repository,
         }
 
         return updateASResult.ErrCode + updateWTResult.ErrCode > 0 ? new Result(1, $"{updateWTResult.ErrMsg}<br/>{updateASResult.ErrMsg}") : new Result();
-    }
-
-    private async Task<IEnumerable<ProviderInfo>> GetProviderInfo(GetLeagueSettingsRequest request)
-    {
-        var criteria = new GetProviderInfoCriteria
-        {
-            SportType = request.SportType,
-            LeagueId = request.LeagueId
-        };
-
-        return await repository.FetchAsync<ProviderInfo>(criteria);
     }
 
     private async Task<Result> UpdateWaitingTime(UpdateLeagueSettingsRequest request)

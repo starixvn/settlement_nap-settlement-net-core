@@ -1,6 +1,4 @@
-﻿using Fanex.Data.Repository;
-
-namespace Settlement.Setting.Criteria.LeagueSettings;
+﻿namespace Settlement.Setting.Criteria.LeagueSettings;
 public class UpdateLeagueSettingsCriteria : NonQueryCommand
 {
     public int LeagueId { get; set; }

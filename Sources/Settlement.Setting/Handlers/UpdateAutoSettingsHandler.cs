@@ -8,25 +8,13 @@ using Settlement.Setting.Requests;
 
 namespace Settlement.Setting.Handlers;
 
-public class UpdateAutoSettingsHandler : IRequestHandler<UpdateAutoSettingsCommand, Result>
+public class UpdateAutoSettingsHandler(
+    IDynamicRepository repository,
+    IHttpContextAccessor accessor,
+    LogService logService,
+    INapSession napSession)
+    : IRequestHandler<UpdateAutoSettingsCommand, Result>
 {
-    private readonly IDynamicRepository repository;
-    private readonly INapSession currentSession;
-    private readonly IHttpContextAccessor accessor;
-    private readonly LogService logService;
-
-    public UpdateAutoSettingsHandler(
-        IDynamicRepository repository,
-        IHttpContextAccessor accessor,
-        LogService logService,
-        INapSession napSession)
-    {
-        this.repository = repository;
-        this.accessor = accessor;
-        this.logService = logService;
-        this.currentSession = napSession;
-    }
-
     public async Task<Result> Handle(UpdateAutoSettingsCommand command, CancellationToken cancellationToken)
     {
         var results = new List<Result>();
@@ -81,7 +69,7 @@ public class UpdateAutoSettingsHandler : IRequestHandler<UpdateAutoSettingsComma
                    IsEnabled = item.Enabled,
                    IsApplyAll = command.IsApplyAll,
                    LeagueId = command.LeagueId,
-                   AdminId = currentSession.UserId,
+                   AdminId = napSession.UserId,
                    Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString()
                }
                : new MatchAutoSettleRunUpdateCriteria
@@ -89,7 +77,7 @@ public class UpdateAutoSettingsHandler : IRequestHandler<UpdateAutoSettingsComma
                    AutoType = bitAutoType,
                    IsEnabled = item.Enabled,
                    MatchId = command.MatchId,
-                   AdminId = currentSession.UserId,
+                   AdminId = napSession.UserId,
                    Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString()
                };
         return criteria;

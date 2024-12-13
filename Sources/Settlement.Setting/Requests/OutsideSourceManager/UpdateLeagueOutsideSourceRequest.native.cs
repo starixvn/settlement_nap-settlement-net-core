@@ -1,5 +1,4 @@
-﻿using MediatR;
-using Settlement.Setting.Models.OutsideSourceManager;
+﻿using Settlement.Setting.Models.OutsideSourceManager;
 using Settlement.Core.Models;
 
 

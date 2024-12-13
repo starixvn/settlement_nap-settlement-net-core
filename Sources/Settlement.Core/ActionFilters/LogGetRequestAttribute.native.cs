@@ -10,7 +10,7 @@ namespace Settlement.Core.ActionFilters;
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
 public class LogGetRequestAttribute : ActionFilterAttribute
 {
-    public override async void OnActionExecuted(ActionExecutedContext context)
+    public override void OnActionExecuted(ActionExecutedContext context)
     {
         var logger = new Logger();
         var httpContext = context.HttpContext;
@@ -26,7 +26,7 @@ public class LogGetRequestAttribute : ActionFilterAttribute
         stringBuilder.AppendLine($"UserAgent: {request.Headers["User-Agent"]}");
         stringBuilder.AppendLine($"Username: {httpContext.User.Identity?.Name}");
 
-        await logger.InfoAsync(stringBuilder.ToString());
+        logger.Info(stringBuilder.ToString());
 
         base.OnActionExecuted(context);
     }
