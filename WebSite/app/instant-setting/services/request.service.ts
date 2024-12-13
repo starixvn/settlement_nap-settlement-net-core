@@ -47,46 +47,4 @@ export class RequestService {
         const request = this.httpRequestService.postJson<Result>(query, `${this.settingApi}/update-setting-league`);
         return firstValueFrom(request);
     }
-
-    public getLeagueSetting(leagueId: number, sportType: number) {
-        const query = {
-            leagueId,
-            sportType
-        }
-        const request = this.httpRequestService.postJson<AutoSettings>(query, `${this.leagueSettingApi}/get-settings`);
-        return firstValueFrom(request);
-    }
-
-    public updateLeagueSetting(oldSettings: AutoSettings, newSettings: AutoSettings, isApplyAll: boolean) {
-        this.modifyLeagueSettingsQuery(oldSettings);
-        this.modifyLeagueSettingsQuery(newSettings);
-
-        const query = {
-            oldSettings,
-            newSettings,
-            isApplyAll
-        }
-
-        const request = this.httpRequestService.postJson<Result>(query, `${this.leagueSettingApi}/update-settings`);
-        return firstValueFrom(request);
-    }
-
-
-    private modifyLeagueSettingsQuery(leagueSettings: AutoSettings) {
-        const { providers, ...updatedSettings } = leagueSettings;
-        const { mainResultSettings, earlyResultSettings } = updatedSettings;
-
-        const parseAndUpdateProvider = (setting: ResultSettings) => {
-            setting.primaryProvider = this.parseProvider(setting.primaryProvider, providers);
-            setting.secondaryProvider = this.parseProvider(setting.secondaryProvider, providers);
-        };
-
-        parseAndUpdateProvider(mainResultSettings);
-        parseAndUpdateProvider(earlyResultSettings);
-    }
-
-    private parseProvider(providerNames: string, providers: ProviderSource[]): string {
-        const listNames = providerNames.split(', ');
-        return providers.filter(p => listNames.indexOf(p.sourceName) !== -1).map(p => p.sourceId).join(',');
-    }
 }

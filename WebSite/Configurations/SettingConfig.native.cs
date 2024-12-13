@@ -13,7 +13,6 @@ public static class SettingConfig
         services.AddTransient<ProviderSettingService, ProviderSettingServiceImp>();
         services.AddTransient<OutsideSourceSettingService, OutsideSourceSettingServiceImp>();
         services.AddTransient<SendMailService, SendMailServiceImp>();
-        services.AddTransient<LeagueSettingsService, LeagueSettingsServiceImp>();
         services.AddScoped<GetAutoSettleSettingsHandler>();
         services.AddScoped<UpdateAutoSettingsHandler>();
 
@@ -23,6 +22,5 @@ public static class SettingConfig
     {
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(SourceManagerController).Assembly));
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(MatchSettingController).Assembly));
-        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(LeagueSettingsService).Assembly));
     }
 }
