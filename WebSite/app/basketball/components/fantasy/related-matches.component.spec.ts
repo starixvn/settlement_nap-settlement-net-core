@@ -1,9 +1,8 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { RelatedMatchesComponent } from "./related-matches.compoment";
+import { RelatedMatchesComponent } from "./related-matches.component";
 import { ElementRef } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ScoreBySettlementPipe } from "../../../shared/pipes/score-by-settlement.pipe";
-import { BrowserDynamicTestingModule } from "@angular/platform-browser-dynamic/testing";
 import { VerificationFantasyMatchService } from "../../services/verification-fantasy-match.service";
 import { FantasyScoreService } from "../../services/fantasy-score.service";
 import { MessageBoxService } from "../../../shared/services/message-box.service.native";

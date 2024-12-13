@@ -1,10 +1,6 @@
 import { CommonModule } from "@angular/common";
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
-import {
-  FantasyMatch,
-  FantasyRelatedMatch,
-  RelatedMatchResult,
-} from "../../models/fantasy.model";
+import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { FantasyMatch } from "../../models/fantasy.model";
 import * as _ from "lodash";
 import { ResourcesIds } from "../../constants";
 import { ScoreBySettlementPipe } from "../../../shared/pipes/score-by-settlement.pipe";
@@ -16,7 +12,7 @@ import { FantasyScoreService } from "../../services/fantasy-score.service";
 
 @Component({
   selector: "related-matches",
-  templateUrl: "./related-matches.compoment.html",
+  templateUrl: "./related-matches.component.html",
   standalone: true,
   imports: [CommonModule, ScoreBySettlementPipe],
   providers: [

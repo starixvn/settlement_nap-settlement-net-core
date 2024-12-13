@@ -251,4 +251,35 @@ export class VerificationService extends VerificationBaseService {
         const sabaLeague = 42;
         return leagueGroupId === sabaLeague;
     }
+
+    public verifyRelatedResults(
+        quarterResults: ResultDetail[],
+        fullTimeResult: ResultDetail,
+        halfTimeResult: ResultDetail
+    ): [boolean, string] {
+        const message = 'Cannot continue due to related results have been calculated and not selected.'
+        const relatedChecks = [
+            {
+                quarters: [ResourcesIds.quarter1, ResourcesIds.quarter2],
+                condition: () => halfTimeResult.settlementStatusId === SettlementStatusId.Calculated && !halfTimeResult.checked 
+                    || fullTimeResult.settlementStatusId === SettlementStatusId.Calculated && !fullTimeResult.checked,
+                message
+            },
+            {
+                quarters: [ResourcesIds.quarter3, ResourcesIds.quarter4],
+                condition: () => fullTimeResult.settlementStatusId === SettlementStatusId.Calculated && !fullTimeResult.checked,
+                message
+            }
+        ];
+
+        for (const check of relatedChecks) {
+            const hasQuarters = quarterResults.some(result => check.quarters.includes(result.resourceId));
+            if (hasQuarters && check.condition()) {
+                return [false, check.message];
+            }
+        }
+
+        return [true, ''];
+    }
+      
 }
