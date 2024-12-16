@@ -21,7 +21,7 @@ export class TableSettleSdtComponent implements OnInit{
   ngOnInit(): void {
     this.isMercy = this.#storage.isGetMercy();
     this.isAwayEnded = this.#storage.isGetAwayEnded();
-    this.isSdtSettle = this.#storage.isGetSettleSdt();
+    this.isSdtSettle = this.#storage.isGetSettleSdt() && !this.#storage.isMatchSeries();
     this.awayName = this.#storage.getMatchDetail().awayName;
     this.resetAllCheckboxMarkedTicket();
   }

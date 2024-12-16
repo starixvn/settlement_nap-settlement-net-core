@@ -22,6 +22,9 @@ import { ResourceIds } from "../../../shared/constants";
 import { GeneralResultDetail } from "../../../shared/models";
 import { ConfirmIntervalConsistency } from "../../handlers/calculate/confirm-interval-consistency.handler";
 import { FinalResultCalculateHandler } from "../../handlers/calculate/final-result-calculate.handler";
+import { MercyValidateHandler } from "../../handlers/calculate/mercy-validate.handler";
+import { MultiMercyValidateHandler } from "../../handlers/calculate/multi-mercy-validate.handler";
+import { FinalResultMercyCalculateHandler } from "../../handlers/calculate/final-result-mercy-calculate.handler";
 
 @Injectable()
 
@@ -33,6 +36,7 @@ export class CalculateService {
   private readonly verifyScoreSourceHandler = new VerifyScoreSourceHandler();
   private readonly confirmMismatchScoreHandler = new ConfirmMismatchScoreHandler();
   private readonly finalResultCalculateHandler = new FinalResultCalculateHandler();
+  private readonly finalResultMercyCalculateHandler = new FinalResultMercyCalculateHandler();
   private readonly confirmIntervalConsistency = new ConfirmIntervalConsistency();
   private readonly confirmChangedResultHandler = new ConfirmChangedResultHandler();
   private readonly confirmCalculateHandler = new ConfirmCalculateHandler();
@@ -40,6 +44,8 @@ export class CalculateService {
   private readonly calculateHandler = new CalculateHandler();
   private readonly confirmUncalculateHandler = new ConfirmUnCalculateHandler();
   private readonly inningsValidateHandler = new InningsValidateHandler();
+  private readonly mercyValidateHandler = new MercyValidateHandler();
+  private readonly multiMercyValidateHandler = new MultiMercyValidateHandler();
 
   #storage = inject(CalculateStorage);
   #notifyService = inject(NotifyService);
@@ -50,7 +56,10 @@ export class CalculateService {
     this.nonSelectedHandler.setNextHandler(this.resultConfirmedHandler);
     this.resultConfirmedHandler.setNextHandler(this.invalidInputHandler);
     this.invalidInputHandler.setNextHandler(this.inningsValidateHandler);
-    this.inningsValidateHandler.setNextHandler(this.finalResultCalculateHandler);
+    this.inningsValidateHandler.setNextHandler(this.multiMercyValidateHandler);
+    this.multiMercyValidateHandler.setNextHandler(this.mercyValidateHandler);
+    this.mercyValidateHandler.setNextHandler(this.finalResultMercyCalculateHandler);
+    this.finalResultMercyCalculateHandler.setNextHandler(this.finalResultCalculateHandler);
     this.finalResultCalculateHandler.setNextHandler(this.verifyRunningOddsHandler);
     this.verifyRunningOddsHandler.setNextHandler(this.verifyScoreSourceHandler);
     this.verifyScoreSourceHandler.setNextHandler(this.confirmMismatchScoreHandler);

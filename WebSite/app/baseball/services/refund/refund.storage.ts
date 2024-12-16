@@ -18,6 +18,7 @@ export interface IRefundStorage extends Storage {
   isAwayEnded(): boolean;
   isGetSettleSdt(): boolean;
   isSelectedMatch(): boolean;
+  isMatchSeries(): boolean;
 
   setSettleDetermine(value: boolean): void;
   setAwayEnded(value: boolean): void;

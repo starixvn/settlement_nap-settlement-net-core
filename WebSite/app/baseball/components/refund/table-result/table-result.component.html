@@ -26,11 +26,11 @@
         <td [ngClass]="inning.className">
            <div class="score score-row">
             <span class="score-row__team" [matTooltip]="getTextTooltip(homeName,20)" matTooltipPosition="above">{{homeName}}</span>
-            <input type="text" myOnlyInteger [disabled]="inning.disabled " [(ngModel)]="inning.homeValue" (ngModelChange)="changeScore(inning)"/>
+            <input type="text" myOnlyInteger [disabled]="inning.disabled || isMatchSeries" [(ngModel)]="inning.homeValue" (ngModelChange)="changeScore(inning)"/>
           </div>
           <div class="score score-row">
             <span class="score-row__team" [matTooltip]="getTextTooltip(awayName,20)" matTooltipPosition="above">{{awayName}}</span>
-            <input type="text" myOnlyInteger [disabled]="inning.disabled" [(ngModel)]="inning.awayValue" (ngModelChange)="changeScore(inning)"/>
+            <input type="text" myOnlyInteger [disabled]="inning.disabled || isMatchSeries" [(ngModel)]="inning.awayValue" (ngModelChange)="changeScore(inning)"/>
           </div> 
         </td>
         <td *ngIf="inning.resourceId === resourceIds.extraInning" rowspan="2" class="status temp">

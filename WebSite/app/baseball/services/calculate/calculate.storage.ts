@@ -6,7 +6,7 @@ import { AioService } from "../../../shared/services";
 import { VerificationBaseService } from "../../../core/services/verification-base.service";
 import { CalculateAction, ResourceIds, ResultStatusId, SettlementStatusId } from "../../../shared/constants";
 import { ResultDetailBaseBall } from "../../models/result-detail.model";
-import { cloneDeep } from "lodash";
+import { cloneDeep, includes } from "lodash";
 import { Storage } from "../storage.service";
 import { ResultRowStateService } from "../result-row-state.service";
 import { ResultState } from "../../models/result-state.model";
@@ -15,6 +15,9 @@ import { ResultState } from "../../models/result-state.model";
 export interface ICalculateStorage extends Storage  {
   selectFinalResult?: () => void;
   selectResult?: (resourceId: string) => void;
+  getInningsExcludeExtraAndTotalHits(): ResultDetailBaseBall[];
+  getFullTime(): ResultDetailBaseBall;
+  getExtraInning(): ResultDetailBaseBall;
 }
 
 @Injectable(
@@ -103,6 +106,8 @@ export class CalculateStorage implements ICalculateStorage {
   isLeader = () => this.#match().permission.isLeader;
 
   getAllInnings = () => this.#match().resultDetails.filter((item) => item.resourceId !== ResourceIds.fullTime);
+
+  getInningsExcludeExtraAndTotalHits = () => this.#match().resultDetails.filter((item) => !includes([ResourceIds.totalHits, ResourceIds.fullTime, ResourceIds.extraInning], item.resourceId));
 
   getFullTime = () => this.#match().resultDetails.find((item) => item.resourceId === ResourceIds.fullTime);
 

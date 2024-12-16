@@ -191,7 +191,8 @@
     intervalNotSelected: "WARNING! Cannot continue due to related intervals are not selected or calculated.",
     intervalInconsistent: "WARNING! Cannot continue due to selected intervals are inconsistent with Match/Full Time score.",
     inningsNotSelected: "Please calculate all related intervals first or select all related un-calculated intervals at the same time.",
-    extraInningDraw: "Sum all Inning scores has Winner & Loser and E.I. has value. Please check and try again."
+    extraInningDraw: "Sum all Inning scores has Winner & Loser and E.I. has value. Please check and try again.",
+    intervalNotSelectedOrNotCalculated: "WARNING! Related intervals have not been calculated nor selected. Are you sure you want to continue?"
   },
 
   confirmRefund: {
@@ -206,6 +207,14 @@
     sdtErrorMessage: 'Cannot continue with Refund due to confirm state or value mismatch. Please check and try again.',
     subsequenceIntervalsErrorMessage: 'Please select all subsequence intervals.'
   },
+
+  mercy:{
+    invalidIntervals : 'Invalid intervals selected. Please contact Leader or Admin.',
+    invalidIntervalsConfirm : 'WARNING! Invalild intervals calculated or selected. Are you sure you want to continue?',
+    multipleMercy: 'Multiple Mercy Innings exist. Please contact Leader or Admin.',
+    multipleMercyConfirm: 'WARNING!	Multiple Mercy Innings exist. Are you sure you want to continue?',
+  },
+
   gaming: {
     reCalculateConfirmMessage: 'Are you sure you want to Recalculate this match?',
     refundConfirmMessage: 'Are you sure you want to Refund this match?',

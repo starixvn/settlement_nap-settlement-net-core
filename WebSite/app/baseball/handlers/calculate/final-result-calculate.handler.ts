@@ -3,10 +3,10 @@ import { Language } from "../../../shared/language.native";
 import { ResourceNamePipe } from "../../pipes/resource-name.pipe";
 import { NotifyService } from "../../services/notify.service";
 import { BaseHandler } from "../base.handler.native";
-import { Storage } from "../../services/storage.service";
 import { ResourceIds } from "../../../shared/constants";
 import * as _ from "lodash";
 import { IntervalCalculationService } from "../../../shared/services";
+import { ICalculateStorage } from "../../services/calculate/calculate.storage";
 
 export class FinalResultCalculateHandler implements BaseHandler {
   private nextHandler: BaseHandler;
@@ -18,19 +18,10 @@ export class FinalResultCalculateHandler implements BaseHandler {
     this.nextHandler = handler;
   }
 
-  handle(storage: Storage) {
-    const allInnings = storage
-      .getResultDetails()
-      .filter((x) =>
-        ![
-          ResourceIds.totalHits,
-          ResourceIds.fullTime,
-          ResourceIds.extraInning,
-        ].includes(x.resourceId)
-      );
-    const finalResult = storage.getResultDetails().find(x => x.resourceId === ResourceIds.fullTime);
-    const extraInning = storage.getResultDetails().find(x => x.resourceId === ResourceIds.extraInning);
-
+  handle(storage: ICalculateStorage) {
+    const allInnings = storage.getInningsExcludeExtraAndTotalHits();
+    const finalResult = storage.getFullTime();
+    const extraInning = storage.getExtraInning();
     const isScoreDirect = storage.isScoreDirect();
 
     if (!finalResult.checked || isScoreDirect || storage.getMatchDetail().sessionTime === 1) {
@@ -38,10 +29,16 @@ export class FinalResultCalculateHandler implements BaseHandler {
       return;
     }
 
+    const isExistedMercy = allInnings.some(item=> !_.isEmpty(item.otherInfo) && _.isEqual(item.otherInfo.toLowerCase(), ResourceIds.mercy.toLowerCase()));
     const existsNotCheckedOrCalculated = allInnings.some(x => !this.intervalCalculationService.isIntervalCheckedOrCalculated(x));
-    if (existsNotCheckedOrCalculated) {
-      this.notifyService.error(Language.intervalsAndMatch.inningsNotSelected);
-      return;
+    if (!isExistedMercy && existsNotCheckedOrCalculated) {
+      if (storage.isLeader()) {
+        this.notifyService.confirm(Language.intervalsAndMatch.intervalNotSelectedOrNotCalculated, () => this.nextHandler.handle(storage));
+        return;
+      } else {
+        this.notifyService.error(Language.intervalsAndMatch.inningsNotSelected);
+        return;
+      }
     }
 
     const totalScoreHome = _.sumBy(allInnings, x => +x.homeValue);
