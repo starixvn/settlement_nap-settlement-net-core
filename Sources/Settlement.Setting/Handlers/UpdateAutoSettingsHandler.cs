@@ -1,4 +1,5 @@
 ﻿
+using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Setting.Constants;
@@ -102,20 +103,20 @@ public class UpdateAutoSettingsHandler(
 
         var msg = $"NAP: Update auto setting on {objectInfo} {settingTypeInfo} has isApplyAll({command.IsApplyAll.ToString()}) {childMatchInfo} {differences}";
 
-        var actionLogId = GetActionLogId(command.TypeObject, item.ResourceType);
+        var actionLogId = GetActionLogId(command.TypeObject);
 
-        await logService.WriteLog(msg, actionLogId);
+        var logCriteria = new LogCriteria(command.MatchId, msg, actionLogId, napSession.UserId);
+
+        await logService.WriteLog(logCriteria);
     }
 
-    private int GetActionLogId(string typeObject, ResourceType resourceType)
+    private int GetActionLogId(string typeObject)
     {
-        return (typeObject, resourceType) switch
+        return (typeObject) switch
         {
-            ("League", ResourceType.Main) => 81055,
-            ("League", ResourceType.Early) => 81056,
-            ("Match", ResourceType.Main) => 81057,
-            ("Match", ResourceType.Early) => 81058,
-            _ => 81055 // Default case
+            ("League") => 81057,
+            ("Match") => 81058,
+            _ => 81057 // Default case
         };
     }
 
