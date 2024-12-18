@@ -17,12 +17,12 @@ export class ResultConfirmedHandler implements BaseHandler {
   handle(storage: Storage) {
     const existResultConfirmed = find(
       storage.getResultChecked(), 
-      (item) =>item.resultSettingData.isConfirmedRefund && !isEqual(item.resourceId, ResourceIds.extraInning)
+      (item) => storage.isConfirmed(item.resultSettingData) && !isEqual(item.resourceId, ResourceIds.extraInning)
     );
     if (existResultConfirmed) {
       this.notifyService.error(Language.confirmRefund.calculateResultNotConfirmed);
     } else {
       this.nextHandler.handle(storage);
     }
-}
+  }
 }

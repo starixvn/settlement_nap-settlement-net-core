@@ -10,6 +10,7 @@ import { cloneDeep, includes } from "lodash";
 import { Storage } from "../storage.service";
 import { ResultRowStateService } from "../result-row-state.service";
 import { ResultState } from "../../models/result-state.model";
+import { ResultSettingModel } from "../../../shared/models";
 
 
 export interface ICalculateStorage extends Storage  {
@@ -104,6 +105,8 @@ export class CalculateStorage implements ICalculateStorage {
   getOriginalResultDetails = () => this.#originalResultDetails;
 
   isLeader = () => this.#match().permission.isLeader;
+
+  isConfirmed = (resultSetting: ResultSettingModel) => resultSetting.isConfirmedRefund || resultSetting.isConfirmedRefundSdt || resultSetting.isConfirmedRefundMercy;
 
   getAllInnings = () => this.#match().resultDetails.filter((item) => item.resourceId !== ResourceIds.fullTime);
 

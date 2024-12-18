@@ -7,7 +7,7 @@ import { ResourceNamePipe } from "../../pipes/resource-name.pipe";
 import { VerificationBaseService } from "../../../core/services/verification-base.service";
 import { cloneDeep, isEqual, isNil, uniqBy } from "lodash";
 import { GroupMap, ResultDetail } from "../../../shared/models/sportsbook-sop";
-import { ItemsSelect } from "../../../shared/models";
+import { ItemsSelect, ResultSettingModel } from "../../../shared/models";
 import { BackgroundColor, SettlementStatusId, TicketStatusText } from '../../../shared/constants';
 import { Storage } from '../storage.service';
 import { IntervalBackgroundPipe } from "../../../shared/pipes/interval-background.pipe";
@@ -104,6 +104,8 @@ export class EarlySettlementStorage implements Storage {
   setActionSubmit = (action: string) => this.#actionSubmit = action;
 
   isLeader = (): boolean => this.#match().permission.isLeader;
+
+  isConfirmed = (resultSetting: ResultSettingModel) => false;
 
   isScoreDirect = (): boolean => true;
 

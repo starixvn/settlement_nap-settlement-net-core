@@ -31,26 +31,25 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="Fanex.Caching.AspNetCore" Version="2.2.5" />
-		<PackageReference Include="Fanex.Caching.Redis" Version="2.2.5" />
-    <PackageReference Include="Fanex.Caching.Redis.AspNetCore" Version="2.2.5" />
-    <PackageReference Include="Fanex.Data.ProxyClient" Version="1.0.0" />
-    <PackageReference Include="Fanex.Logging.Extensions.AspNetCore" Version="1.0.1" />
-    <PackageReference Include="Fanex.Logging.Extensions.Database" Version="1.0.8" />
-    <PackageReference Include="Fanex.Logging.Sentry.RavenClient" Version="1.0.1.2" />
+		<PackageReference Include="Fanex.Caching.Redis" Version="2.2.7" />
+    <PackageReference Include="Fanex.Data.ProxyClient" Version="1.0.3" />
+    <PackageReference Include="Fanex.Logging.Extensions.AspNetCore" Version="1.1.0" />
+    <PackageReference Include="Fanex.Logging.Extensions.Database" Version="1.1.0" />
+    <PackageReference Include="Fanex.Logging.Sentry.RavenClient" Version="2.0.2" />
     <PackageReference Include="Fanex.MailDeliver.MailClient" Version="2.0.11" />
     <PackageReference Include="Fanex.NAP.Client" Version="2.0.2" />
-    <PackageReference Include="Fanex.NAP.SignIn" Version="2.0.2" />
-		<PackageReference Include="Fanex.RemotingRef" Version="1.5.4" />
+    <PackageReference Include="Fanex.NAP.SignIn" Version="2.0.2.5" />
+		<PackageReference Include="Fanex.RemotingRef" Version="1.5.5.1" />
 		<PackageReference Include="Fanex.Settlement.Converter" Version="1.0.0.1" />
     <PackageReference Include="MediatR" Version="12.4.1" />
-    <PackageReference Include="MessagePack" Version="2.5.187" />
-    <PackageReference Include="MessagePack.AspNetCoreMvcFormatter" Version="2.5.187" />
-    <PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="8.0.10" />
+    <PackageReference Include="MessagePack" Version="3.1.0" />
+    <PackageReference Include="MessagePack.AspNetCoreMvcFormatter" Version="3.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="9.0.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.10" />
+    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="9.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="ONEbook.UM" Version="3.1.6" />
     <PackageReference Include="ONEbook.UM.AspNetCore" Version="3.1.1.1" />

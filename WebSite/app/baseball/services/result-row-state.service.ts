@@ -17,9 +17,9 @@ export class ResultRowStateService {
 
   isConfirmed(resultDetail: ResultDetail) {
     if (isEqual(resultDetail.resourceId, ResourceIds.extraInning)) {
-      return this.storage.isLeader() && this.storage.fulltimeResult.resultSettingData.isConfirmedRefund;
+      return this.storage.isLeader() && this.storage.isConfirmed(this.storage.fulltimeResult.resultSettingData);
     } else {
-      return this.storage.isLeader() && resultDetail.resultSettingData.isConfirmedRefund;
+      return this.storage.isLeader() && this.storage.isConfirmed(resultDetail.resultSettingData);
     }
   }
 

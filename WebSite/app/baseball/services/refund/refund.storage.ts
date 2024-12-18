@@ -11,6 +11,7 @@ import { isEqual, isEmpty } from "lodash";
 import { SettlementStatusId, ResourceIds } from "../../../shared/constants";
 import { Storage } from "../storage.service";
 import { ResultDetailBaseBall } from "../../models";
+import { ResultSettingModel } from "../../../shared/models";
 
 export interface IRefundStorage extends Storage {
   isMercy(): boolean;
@@ -112,6 +113,8 @@ export class RefundStorage implements IRefundStorage {
   getOriginalResultDetails = () => [];
 
   isLeader = () => this.#match().permission.isLeader;
+
+  isConfirmed = (resultSetting: ResultSettingModel) => resultSetting.isConfirmedRefund || resultSetting.isConfirmedRefundSdt || resultSetting.isConfirmedRefundMercy;
 
   isOtherInfoContain = (otherInfo: string) => {
     return this.getExternalResults().some((item) => !isEmpty(item.otherInfo) && isEqual(item.otherInfo.toLowerCase(), otherInfo));

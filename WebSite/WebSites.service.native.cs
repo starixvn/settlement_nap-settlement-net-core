@@ -1,12 +1,10 @@
 using AutoMapper;
 using Fanex.Caching;
-using Fanex.Caching.Redis;
 using Fanex.Data.Repository;
 using Fanex.Logging;
 using Fanex.Logging.Extensions;
 using Fanex.Logging.Extensions.AspNetCore;
 using Fanex.Logging.Extensions.Database;
-using Fanex.Logging.Sentry.RavenClient;
 using Fanex.MailDeliver.MailClient;
 using Fanex.RemotingRef;
 using Fanex.Settlement.Converter.Services;
@@ -31,9 +29,7 @@ using Settlement.Sportsbook.MoveTickets;
 using Settlement.Sportsbook.OtherSports;
 using Settlement.Sportsbook.Soccer;
 using Settlement.ThirdPartyProducts;
-using Settlement.WebSites.App_Start;
 using Settlement.WebSites.Configurations;
-using SharpRaven;
 using StackExchange.Redis;
 using System.IO.Compression;
 using ILogger = Fanex.Logging.ILogger;
@@ -76,7 +72,7 @@ public static class WebSites
         });
     }
 
-    public static void AddRedis(this IServiceCollection services, IConfiguration configuration)
+    public static void AddConfigRedisCache(this IServiceCollection services, IConfiguration configuration)
     {
         var redisConfig = configuration.GetSection("AuthSettings:RedisConfig").Value;
         var redisMultiplexer = ConnectionMultiplexer.Connect(redisConfig);
@@ -91,8 +87,6 @@ public static class WebSites
             options.Configuration = redisConfig;
             options.InstanceName = "Fanex.Settlement.Session-";
         });
-
-        services.AddRedisCache(configuration.GetSection("Fanex.Caching.Redis"));
     }
 
     public static void AddSession(this IServiceCollection services, IConfiguration configuration)
@@ -132,16 +126,6 @@ public static class WebSites
             .FromApplication("Settlement");
         services.Configure<IConfiguration>(configuration);
         services.AddSingleton<IRemotingRefService, RemotingRefService>();
-
-        LogManager
-            .SetDefaultLogCategory(configuration.GetSection("LogCategory").Value)
-            .Use(new List<ILogEngine>
-            {
-                new SentryLogging(new SentryEngineOptions
-                {
-                    Dsn = new Dsn(configuration.GetSection("SentryEngineOptions:Dsn").Value)
-                })
-            });
 
         ExceptionHandler
             .UseConfig(new LoggingConfiguration())
@@ -201,11 +185,6 @@ public static class WebSites
 
         var mapper = mapperConfig.CreateMapper();
         services.AddSingleton(mapper);
-    }
-
-    public static void AddOnebookUM(this IServiceCollection services, IConfiguration configuration)
-    {
-        services.RegisterServiceCollection(configuration);
     }
 
     public static void AddMessagePack(this IServiceCollection services)

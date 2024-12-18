@@ -3,8 +3,8 @@ using Settlement.Core.Services;
 
 namespace Settlement.Sportsbook.MoveTickets.Services;
 
+using Core.Constants;
 using MultipleServer;
-using Settlement.Core.Constants;
 
 public interface IMatchService
 {
