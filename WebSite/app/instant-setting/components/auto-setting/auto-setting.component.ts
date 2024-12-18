@@ -77,18 +77,18 @@ export class AutoSettingComponent implements OnInit {
     this.confirmationDialogMessage.hasActionOnNoBtn = true;
     this.messageBoxService.confirm(
       this.confirmationDialogMessage,
-      () => this.isMultiSelect ? this.updateMultiSetting(true) : this.updateSetting(true),
-      () => this.isMultiSelect ? this.updateMultiSetting(false) : this.updateSetting(false),
+      async () => this.isMultiSelect ? await this.updateMultiSetting(true) : await this.updateSetting(true),
+      async () => this.isMultiSelect ? await this.updateMultiSetting(false) : await this.updateSetting(false),
     );
   }
 
   private confirmMatchSettingSubmission() {
     this.confirmationDialogMessage.message = Language.AutoPayoutSetting.ConfirmMessageForMatch;
-    this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
+    this.messageBoxService.confirm(this.confirmationDialogMessage, async () => {
       if (this.isMultiSelect) {
-        this.changeMultiSettingMatch();
+        await this.changeMultiSettingMatch();
       } else {
-        this.changeSingleSetting();
+        await this.changeSingleSetting();
       }
     });
   }
@@ -111,7 +111,8 @@ export class AutoSettingComponent implements OnInit {
 
   private async changeMultiSettingMatch() {
     const listItem = this.getValueChanged();
-    listItem.forEach(async (item, i) => {
+
+    for (const { item, i } of listItem.map((item, i) => ({ item, i }))) {
       const params = new AutoSettingMatchQuery(
         this.matchId,
         item.type,
@@ -122,11 +123,12 @@ export class AutoSettingComponent implements OnInit {
       if (result.errCode > 0) {
         this.errorMessage = result.errMsg;
         return;
-      } 
+      }
       if (_.isEqual(Number(i), listItem.length - 1)) {
         parent.document.getElementById(this.dialogResponseElement).setAttribute('value', this.parseValueToResponse());
       }
-    });
+    }
+
     this.messageBoxService.closePopup();
   }
 
@@ -184,7 +186,7 @@ export class AutoSettingComponent implements OnInit {
 
   private async updateMultiSetting(isApplyAll: boolean) {
     const listItem = this.getValueChanged();
-    listItem.forEach(async (item, i) => {
+    for (const { item, i } of listItem.map((item, i) => ({ item, i }))) {
       const query = new AutoSettingLeagueQuery(
         this.leagueId,
         item.type,
@@ -199,7 +201,7 @@ export class AutoSettingComponent implements OnInit {
       if (_.isEqual(Number(i), listItem.length - 1)) {
         parent.document.getElementById(this.dialogResponseElement).setAttribute('value', `${this.parseValueToResponse()},${isApplyAll}`);
       }
-    })
+    }
     this.messageBoxService.closePopup();
   }
 
@@ -208,11 +210,11 @@ export class AutoSettingComponent implements OnInit {
     if (_.isEmpty(listValue)) {
       return '0';
     }
-    const typeValue = this.listSetting.filter(item => item.isEnable).map(item => Math.pow(2, item.type - 1)).reduce((a, b) => a + b,0);
+    const typeValue = this.listSetting.filter(item => item.isEnable).map(item => Math.pow(2, item.type - 1)).reduce((a, b) => a + b, 0);
     return typeValue.toString(2).split("").reverse().join("");
   }
 
-  private getValueChanged (){
+  private getValueChanged() {
     return this.listSetting.filter(item => {
       return this.originalListSetting.find(s => s.type === item.type && s.isEnable !== item.isEnable);
     });

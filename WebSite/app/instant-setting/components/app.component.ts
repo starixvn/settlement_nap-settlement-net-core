@@ -1,4 +1,4 @@
-﻿import {
+﻿﻿import {
     Component,
     ComponentFactoryResolver,
     ComponentFactory,
@@ -8,16 +8,15 @@
     ElementRef,
     ComponentRef,
     ChangeDetectorRef,
-    AfterContentChecked,
-    inject
+    AfterContentChecked
 } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { BlockUIService, HttpRequestService, MessageBoxService, ClosePopupService} from '../../shared/services';
-import { AutoSettingComponent } from './auto-setting/auto-setting.component';
-import { RemarkSettingComponent } from './remark-setting/remark-setting.component';
 import { CommonModule } from '@angular/common';
-import {DataTableSettingComponent} from "./auto-settle-settings/data-table-setting/data-table-setting.component";
+import { DataTableSettingComponent } from './auto-settle-settings/data-table-setting/data-table-setting.component';
 import { TimeSettingComponent } from './time-setting/time-setting.component';
+import { RemarkSettingComponent } from './remark-setting/remark-setting.component';
+import { AutoSettingComponent } from './auto-setting/auto-setting.component';
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
@@ -33,14 +32,16 @@ import { TimeSettingComponent } from './time-setting/time-setting.component';
 
 export class AppComponent implements OnInit, AfterContentChecked {
     @ViewChild('container', { read: ViewContainerRef, static: true }) container: ViewContainerRef;
-
-    private readonly componentFactoryResolver = inject(ComponentFactoryResolver)
-    private readonly blockUIService = inject(BlockUIService);
-    private readonly elementRef = inject(ElementRef<HTMLElement>);
-    private readonly changeDetector = inject(ChangeDetectorRef);
-
     public blockUI = false;
     public component: ComponentRef<OnInit>;
+
+    constructor(
+        private readonly componentFactoryResolver: ComponentFactoryResolver,
+        private readonly blockUIService: BlockUIService,
+        private readonly elementRef: ElementRef<HTMLElement>,
+        private readonly changeDetector: ChangeDetectorRef
+        ) {
+    }
 
     ngOnInit() {
         this.blockUIService.blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
@@ -59,6 +60,7 @@ export class AppComponent implements OnInit, AfterContentChecked {
 
     private getComponentFactory(): ComponentFactory<OnInit> {
         const pageType = this.elementRef.nativeElement.getAttribute('page-type');
+
         switch (pageType) {
             case "DirectTime":
             case "InstantTime":

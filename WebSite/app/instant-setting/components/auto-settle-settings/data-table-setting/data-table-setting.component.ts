@@ -220,7 +220,6 @@ export class DataTableSettingComponent implements OnInit {
     }
 
     changeTraderRequired(setting: ResultSetting) {
-        console.log(setting.isTraderRequired);
         if(!setting.isTraderRequired) {
             setting.minProvider =  +setting.minProvider === 0 ? 1 : +setting.minProvider;
         }

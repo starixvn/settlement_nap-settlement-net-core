@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Text.Json;
+using AutoMapper;
 using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
@@ -9,7 +10,6 @@ using Settlement.Setting.Models;
 using Settlement.Setting.Models.LeagueSettings;
 using Settlement.Setting.Requests;
 using Settlement.Setting.Requests.LeagueSettings;
-using System.Text.Json;
 using LogService = Settlement.Core.Services.LogService;
 
 namespace Settlement.Setting.Services;

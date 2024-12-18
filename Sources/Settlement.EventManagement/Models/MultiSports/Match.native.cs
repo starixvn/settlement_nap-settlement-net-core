@@ -7,7 +7,9 @@ public class Match : BaseMatch
         Core.Constants.SportType.VolleyBall,
         Core.Constants.SportType.Badminton,
         Core.Constants.SportType.Cricket,
-        Core.Constants.SportType.Tennis
+        Core.Constants.SportType.Tennis,
+        Core.Constants.SportType.Kabaddi,
+        Core.Constants.SportType.IceHockey,
     ];
 
     [Key("isHavingIntervalScore")]
