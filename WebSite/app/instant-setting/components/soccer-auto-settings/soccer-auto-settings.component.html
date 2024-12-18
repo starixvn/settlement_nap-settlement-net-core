@@ -1,0 +1,21 @@
+<app-table         [tableHeaders]="tableHeaders"
+[tableData]="settings"
+[maxHeight]="'225px'"
+[rowTemplate]="customRow">
+</app-table>
+
+<ng-template #customRow let-row>
+  <tr>
+    <td>Auto Payout</td>
+    <td>
+      <select>
+        @for (item of payoutOptions; track $index) {
+          <option [value]="item.value" [selected]="item.value === row.autoPayout">{{ item.label }}</option>
+        }
+      </select>
+    </td>
+    <td>
+      <app-number-input/>
+    </td>
+  </tr>
+</ng-template>
