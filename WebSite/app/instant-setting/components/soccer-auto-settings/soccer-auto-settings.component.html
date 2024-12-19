@@ -1,21 +1,30 @@
-<app-table         [tableHeaders]="tableHeaders"
-[tableData]="settings"
-[maxHeight]="'225px'"
-[rowTemplate]="customRow">
+<app-table
+  [tableHeaders]="tableHeaders"
+  [tableData]="settings"
+  [maxHeight]="'225px'"
+  [rowTemplate]="customRow"
+>
 </app-table>
+
+
+<div style="display: flex; justify-content: center;column-gap: 10px ;margin-top: 10px;">
+  <app-button (click)="submit()" variant="primary">Submit</app-button>
+  <app-button (click)="submit()" variant="danger">Cancel</app-button>
+</div>
 
 <ng-template #customRow let-row>
   <tr>
-    <td>Auto Payout</td>
+    <td>{{ row.settleType }}</td>
     <td>
-      <select>
-        @for (item of payoutOptions; track $index) {
-          <option [value]="item.value" [selected]="item.value === row.autoPayout">{{ item.label }}</option>
-        }
-      </select>
+        <app-switch [(ngModel)]="row.enabled" labelOff="Off" labelOn="On" />
     </td>
     <td>
-      <app-number-input/>
+      <app-number-input [(ngModel)]="row.waitingTime"/>
+    </td>
+    <td>
+      <input type="checkbox" ([ngModel])="(row.applyToUnCalMatch)" />
     </td>
   </tr>
 </ng-template>
+
+

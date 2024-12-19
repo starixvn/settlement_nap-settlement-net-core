@@ -1,4 +1,4 @@
-import { Component, forwardRef, Input, input } from "@angular/core";
+import { Component, forwardRef, Input } from "@angular/core";
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
 
 @Component({
@@ -19,29 +19,37 @@ export class NumberInputComponent implements ControlValueAccessor {
   @Input() min? = 0;
   @Input() max? = 9999;
 
-  private onChange = (value: number) => {};
+  private onChange = (value: number | null) => {};
   private onTouched = () => {};
 
-  currentValue : number | null = 0;
+  currentValue : number | null = null;
   disabled = false;
 
   onInputChange($event: Event) {
     const input = $event.target as HTMLInputElement;
-    const inputValue = input.value === "" ? null : parseInt(input.value);
-    if (this.isValidNumber(inputValue)) {
-      this.currentValue = inputValue;
-      this.onChange(inputValue);
-    } else {
-      input.value = "0"
-      this.onChange(0)
+    const inputValue = input.value;
+    if(inputValue === '') {
+      this.currentValue = 0;
+      this.onChange(this.currentValue);
+      input.value = "0";
+      return;
+    }
+    
+    const cleanedValue = inputValue.replace(/[^0-9\-+]/g, '');
+    const isValidInteger = /^[-+]?\d*$/.test(cleanedValue);
+    if(isValidInteger && this.isValidNumber(+cleanedValue)) {
+      this.currentValue = +cleanedValue;
+      this.onChange(this.currentValue);
+    } else { 
+      input.value = this.currentValue?.toString() || "";
     }
   }
 
-  writeValue(value: number): void {
+  writeValue(value: number | null): void {
     this.currentValue = value;
   }
 
-  registerOnChange(fn: (value: number) => void): void {
+  registerOnChange(fn: (value: number | null) => void): void {
     this.onChange = fn;
   }
 
@@ -54,9 +62,6 @@ export class NumberInputComponent implements ControlValueAccessor {
   }
 
   private isValidNumber(value: number | null): boolean {
-    if (value === null || isNaN(value)) {
-      return false;
-    }
     if (this.min !== undefined && value < this.min) return false;
     if (this.max !== undefined && value > this.max) return false;
     return true;
