@@ -2,9 +2,6 @@ using AutoMapper;
 using Fanex.Caching;
 using Fanex.Data.Repository;
 using Fanex.Logging;
-using Fanex.Logging.Extensions;
-using Fanex.Logging.Extensions.AspNetCore;
-using Fanex.Logging.Extensions.Database;
 using Fanex.MailDeliver.MailClient;
 using Fanex.RemotingRef;
 using Fanex.Settlement.Converter.Services;
@@ -127,10 +124,6 @@ public static class WebSites
         services.Configure<IConfiguration>(configuration);
         services.AddSingleton<IRemotingRefService, RemotingRefService>();
 
-        ExceptionHandler
-            .UseConfig(new LoggingConfiguration())
-            .UseGetDbExceptionInfo(DatabaseInfoGetters.GetDbExceptionInfo);
-
         AppSettings.AppMailId = configuration.GetSection("MailServer:Id").Value;
         AppSettings.AppMailAddress = configuration.GetSection("MailServer:Address").Value;
     }
@@ -208,13 +201,14 @@ public static class WebSites
         services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Optimal);
         services.AddResponseCompression(options =>
         {
-            options.MimeTypes = new[]{
-                    "text/html",
+            options.MimeTypes =
+            [
+                "text/html",
                     "text/css",
                     "application/javascript",
                     "application/json",
                     "application/x-msgpack"
-            };
+            ];
         });
     }
 }

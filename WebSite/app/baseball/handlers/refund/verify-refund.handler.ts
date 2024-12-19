@@ -28,12 +28,12 @@ export class VerifyRefundHandler implements BaseHandler {
   }
 
   inconsistencyBetweenConfirmAndRefund(storage: IRefundStorage) {
-    let isMisMatchSelected = storage.getResultChecked().length !== storage.getExternalResults().length;
+    const isMisMatchSelected = storage.getResultChecked().length !== storage.getExternalResults().length;
     return this.isSettleSdtOrMercy(storage) && isMisMatchSelected;
   }
 
   isMisMatchMercy(storage: IRefundStorage) {
-    let isMisMatch =  !storage.getResultChecked().every(result => {
+    const isMisMatch =  !storage.getResultChecked().every(result => {
       const resource = storage.getExternalResults().find(x => x.resourceId === result.resourceId);
       return !_.isUndefined(resource) && result.resultSettingData.isConfirmedRefundMercy
           && _.isEqual(result.homeValue, resource.homeValue)
@@ -44,7 +44,7 @@ export class VerifyRefundHandler implements BaseHandler {
   }
 
   isMisMatchSettleDetermine(storage: IRefundStorage) {
-    let isMisMatch =  !storage.getResultChecked().every(result => {
+    const isMisMatch =  !storage.getResultChecked().every(result => {
       const resource = storage.getExternalResults().find(x => x.resourceId === result.resourceId);
       return !_.isUndefined(resource) && result.resultSettingData.isConfirmedRefundSdt
           && _.isEqual(result.homeValue, resource.homeValue)
@@ -55,7 +55,7 @@ export class VerifyRefundHandler implements BaseHandler {
   }
 
   inconsistencyAwayEnd(storage: IRefundStorage) {
-    let flag = storage.getExternalResults().some((item) => !_.isEmpty(item.otherInfo) && _.isEqual(item.otherInfo.toLowerCase(), "a"))
+    const flag = storage.getExternalResults().some((item) => !_.isEmpty(item.otherInfo) && _.isEqual(item.otherInfo.toLowerCase(), "a"))
     return storage.isAwayEnded() === flag;
   }
 

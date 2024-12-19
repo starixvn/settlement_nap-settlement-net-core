@@ -41,7 +41,7 @@ export class ResourceNamePipe implements PipeTransform {
       return isRefund ? 'E.I' : 'Extra Inning';
     }
     
-    if (resourceId == ResourceIds.totalHits) {
+    if (resourceId === ResourceIds.totalHits) {
       return 'Total Hits';
     }
 

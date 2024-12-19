@@ -42,7 +42,7 @@ export class TableResultComponent implements OnInit {
   resourceIds = ResourceIds;
 
   public get disableButton () {
-    return this.#storage.getResultChecked().length == 0;
+    return this.#storage.getResultChecked().length === 0;
   }
 
   ngOnInit(): void {
@@ -66,6 +66,8 @@ export class TableResultComponent implements OnInit {
     else if(this.#storage.isMercy()) {
       return _.includes([ResourceIds.totalHits, ResourceIds.fullTime,ResourceIds.InningOne], resourceId);
     }
+
+    return false;
   }
 
   enableInput(extraInning: ResultDetailBaseBall, resultDetail: ResultDetailBaseBall) {

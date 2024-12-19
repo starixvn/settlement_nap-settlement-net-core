@@ -24,7 +24,7 @@ export class ConfirmMercyHandler implements BaseHandler {
   }
   
   private validateMercy(storage: IRefundStorage) {
-    const resultDetails = storage.getResultDetails().filter(x => !_.includes([ResourceIds.totalHits, ResourceIds.fullTime], x.resourceId));
+    const resultDetails = storage.getResultDetails().filter(x => !_.includes([ResourceIds.totalHits, ResourceIds.fullTime, ResourceIds.extraInning], x.resourceId));
     const selectedResources = storage.getResultChecked();
     const firstSelectedResourceIndex = resultDetails.indexOf(selectedResources[0]);
 

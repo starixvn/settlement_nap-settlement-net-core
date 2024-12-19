@@ -62,6 +62,7 @@ export class RefundStorage implements IRefundStorage {
       result.isDisplayedForMember = matchFetched.permission.isLeader || Number(result.settlementStatusId) !== SettlementStatusId.Running;
     });
     this.#match.set(matchFetched);
+    this.setIsApplyHedgeMatch(!!matchFetched.hedgeMatchDetail);
     this.#isMatchSeries.set(matchFetched.matchDetail.sessionTime === 1);
   }
 
@@ -83,6 +84,8 @@ export class RefundStorage implements IRefundStorage {
 
   getExternalResults = () => this.#match().externalResults.length > 0 ? this.#match().externalResults[0].resultDetails : [];
 
+  setIsApplyHedgeMatch = (isApplyHedgeMatch: boolean) => this.#isApplyHedgeMatch.set(isApplyHedgeMatch);
+  
   getApplyingHedgeMatch = () => this.#isApplyHedgeMatch();
 
   getMatchDetail = () => this.#match().matchDetail;

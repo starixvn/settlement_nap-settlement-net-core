@@ -9,7 +9,7 @@ import { ToastrService } from 'ngx-toastr';
 )
 
 export class NotifyService {
-  private messageBoxService = inject(MessageBoxService);
+  private readonly messageBoxService = inject(MessageBoxService);
   private readonly toastrService = inject(ToastrService);
   private readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage(Language.confirmationBox);
 

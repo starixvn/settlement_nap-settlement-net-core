@@ -1,11 +1,10 @@
 import { Storage } from './../../services/storage.service';
-import { isEmpty, isEqual, includes } from "lodash";
+import { isEmpty, isEqual } from "lodash";
 import { Language } from "../../../shared/language.native";
 import { ResourceIds } from "../../../shared/constants";
 import { NotifyService } from "../../services/notify.service";
 import { BaseHandler } from "../base.handler.native";
 import { inject } from "@angular/core";
-import { SettlementStatusId } from '../../../shared/constants';
 export class MultiMercyValidateHandler implements BaseHandler {
   private nextHandler: BaseHandler;
   private readonly notifyService = inject(NotifyService);

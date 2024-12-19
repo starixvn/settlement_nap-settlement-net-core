@@ -114,7 +114,7 @@ public class AioServiceImp(
 
         resultDetails.ForEach(result =>
         {
-            var isInitialResult = result.ResultStatusId is null || result.ResultStatusId == ResultStatus.Initial || result.ResultStatusId == ResultStatus.Live;
+            var isInitialResult = result.ResultStatusId is null or ResultStatus.Initial or ResultStatus.Live;
             result.HomeValue = isInitialResult ? string.Empty : result.HomeValue;
             result.AwayValue = isInitialResult ? string.Empty : result.AwayValue;
         });
@@ -449,7 +449,7 @@ public class AioServiceImp(
             (0, SportType.TableTennis, _) => GamePlay.Seven,
             (6, SportType.TableTennis, _) => GamePlay.Five,
             (_, SportType.TableTennis, _) => matchDetail.GameSession,
-            (0, SportType.BaseBall, 1) => GamePlay.Seven, // match series
+            (0, SportType.BaseBall, 1) => GamePlay.Seven,
             (0, SportType.BaseBall, _) => GamePlay.Nine,
             (_, _, _) => matchDetail.GameSession
         };

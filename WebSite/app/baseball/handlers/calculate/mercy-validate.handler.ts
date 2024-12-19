@@ -1,10 +1,9 @@
-import { isEmpty, isEqual, includes } from "lodash";
+import { isEmpty, isEqual } from "lodash";
 import { Language } from "../../../shared/language.native";
-import { ResourceIds } from "../../../shared/constants";
+import { ResourceIds, SettlementStatusId } from "../../../shared/constants";
 import { NotifyService } from "../../services/notify.service";
 import { BaseHandler } from "../base.handler.native";
 import { inject } from "@angular/core";
-import { SettlementStatusId } from '../../../shared/constants';
 import { ICalculateStorage } from "../../services/calculate/calculate.storage";
 
 export class MercyValidateHandler implements BaseHandler {

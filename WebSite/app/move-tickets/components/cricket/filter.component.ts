@@ -144,7 +144,7 @@ export class FilterComponent implements OnInit {
         }
     }
 
-    onChangeSport($event: any) {
+    onChangeSport($event) {
         const sportType = $event.target.value;
         this.moveTicketsService.getDate()
         .subscribe((date: DateFilter) => {
