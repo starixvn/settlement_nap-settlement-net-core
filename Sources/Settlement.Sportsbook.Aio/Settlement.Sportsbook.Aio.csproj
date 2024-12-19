@@ -1,40 +1,35 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
-	<PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
-
-	<ItemGroup>
-	  <Compile Remove="Constants\GroupBetType.cs" />
-	  <Compile Remove="Constants\InputType.cs" />
-	  <Compile Remove="Criteria\RefundParlayCriteria.cs" />
-	  <Compile Remove="Models\ChildMatchItem.cs" />
-	  <Compile Remove="Models\MatchResultDetail.cs" />
-	  <Compile Remove="Models\ResourceIdItem.cs" />
-	  <Compile Remove="Models\ResultAio.cs" />
-	  <Compile Remove="MapperFactory\GetFetchService.cs" />
-	  <Compile Remove="Models\VoidBetApiModel.cs" />
-	  <Compile Remove="Requests\CheckMarkedTicketsParlayRequest.cs" />
-	  <Compile Remove="Requests\RefundParlayRequest.cs" />
-	  <Compile Remove="Services\ESport\MoveMatchMapperService.cs" />
-	</ItemGroup>
-
+  <ItemGroup>
+    <Compile Remove="Constants\GroupBetType.cs" />
+    <Compile Remove="Constants\InputType.cs" />
+    <Compile Remove="Criteria\RefundParlayCriteria.cs" />
+    <Compile Remove="Models\ChildMatchItem.cs" />
+    <Compile Remove="Models\MatchResultDetail.cs" />
+    <Compile Remove="Models\ResourceIdItem.cs" />
+    <Compile Remove="Models\ResultAio.cs" />
+    <Compile Remove="MapperFactory\GetFetchService.cs" />
+    <Compile Remove="Models\VoidBetApiModel.cs" />
+    <Compile Remove="Requests\CheckMarkedTicketsParlayRequest.cs" />
+    <Compile Remove="Requests\RefundParlayRequest.cs" />
+    <Compile Remove="Services\ESport\MoveMatchMapperService.cs" />
+  </ItemGroup>
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
-	<ItemGroup>
-		<PackageReference Include="AutoMapper" Version="13.0.1" />
-		<PackageReference Include="Fanex.NAP.Client" Version="2.0.2" />
-		<PackageReference Include="Fanex.Settlement.Converter" Version="1.0.0.1" />
-		<PackageReference Include="MediatR" Version="12.4.1" />
-		<PackageReference Include="StackExchange.Redis" Version="2.8.22" />
-		<PackageReference Include="System.ValueTuple" Version="4.5.0" />
-	</ItemGroup>
-
-	<ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="13.0.1" />
+    <PackageReference Include="Fanex.NAP.Client" Version="2.0.2" />
+    <PackageReference Include="Fanex.Settlement.Converter" Version="1.0.0.1" />
+    <PackageReference Include="MediatR" Version="12.4.1" />
+    <PackageReference Include="StackExchange.Redis" Version="2.8.24" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Fanex.Settlement.ScaleOut\Fanex.Settlement.ScaleOut.csproj" />
     <ProjectReference Include="..\Settlement.Core\Settlement.Core.csproj" />
     <ProjectReference Include="..\Settlement.ResourceInfos\Settlement.ResourceInfos.csproj" />
-	</ItemGroup>
+  </ItemGroup>
 </Project>

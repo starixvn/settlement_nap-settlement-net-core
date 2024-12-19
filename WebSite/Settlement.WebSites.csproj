@@ -1,8 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
-
   <PropertyGroup>
     <InvariantGlobalization>false</InvariantGlobalization>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
   <PropertyGroup>
@@ -14,7 +13,6 @@
     <EmbeddedResource Remove="app\**" />
     <None Remove="app\**" />
   </ItemGroup>
-
   <ItemGroup>
     <None Include="Styles\**">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -26,21 +24,19 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-
-
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="Fanex.Caching.AspNetCore" Version="2.2.5" />
-		<PackageReference Include="Fanex.Caching.Redis" Version="2.2.7" />
+    <PackageReference Include="Fanex.Caching.Redis" Version="2.2.7" />
     <PackageReference Include="Fanex.Data.ProxyClient" Version="1.0.3" />
     <PackageReference Include="Fanex.Logging.Extensions.AspNetCore" Version="1.1.0" />
     <PackageReference Include="Fanex.Logging.Extensions.Database" Version="1.1.0" />
     <PackageReference Include="Fanex.Logging.Sentry.RavenClient" Version="2.0.2" />
     <PackageReference Include="Fanex.MailDeliver.MailClient" Version="2.0.11" />
     <PackageReference Include="Fanex.NAP.Client" Version="2.0.2" />
-    <PackageReference Include="Fanex.NAP.SignIn" Version="2.0.2.5" />
-		<PackageReference Include="Fanex.RemotingRef" Version="1.5.5.1" />
-		<PackageReference Include="Fanex.Settlement.Converter" Version="1.0.0.1" />
+    <PackageReference Include="Fanex.NAP.SignIn" Version="2.0.2.7" />
+    <PackageReference Include="Fanex.RemotingRef" Version="1.5.5.1" />
+    <PackageReference Include="Fanex.Settlement.Converter" Version="1.0.0.1" />
     <PackageReference Include="MediatR" Version="12.4.1" />
     <PackageReference Include="MessagePack" Version="3.1.0" />
     <PackageReference Include="MessagePack.AspNetCoreMvcFormatter" Version="3.1.0" />
@@ -51,12 +47,8 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="9.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="ONEbook.UM" Version="3.1.6" />
-    <PackageReference Include="ONEbook.UM.AspNetCore" Version="3.1.1.1" />
-    <PackageReference Include="ONEbook.UM.AspNetCore.Filters" Version="3.1.1.1" />
-    <PackageReference Include="ONEbook.UM.Transport" Version="3.1.2" />
+    <PackageReference Include="ONEbook.UM" Version="3.1.8" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\Sources\Settlement.EventManagement\Settlement.EventManagement.csproj" />
     <ProjectReference Include="..\Sources\Settlement.FastMarkets\Settlement.FastMarkets.csproj" />
@@ -70,7 +62,6 @@
     <ProjectReference Include="..\Sources\Settlement.Sportsbook.Soccer\Settlement.Sportsbook.Soccer.csproj" />
     <ProjectReference Include="..\Sources\Settlement.ThirdPartyProducts\Settlement.ThirdPartyProducts.csproj" />
   </ItemGroup>
-
   <ItemGroup>
     <Content Update="appsettings.KLDR.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -79,6 +70,4 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-
-  
 </Project>

@@ -48,10 +48,12 @@ export class ConfirmRefundHandler implements BaseHandler {
     const match = storage.getMatch();
     storage.addExtraInning();
     const selectedResources = storage.getResultChecked();
-    selectedResources[0].otherInfo = storage.isAwayEnded() ? "" : "A";
-
     const hedgeMatch = storage.getApplyingHedgeMatch() ? match.hedgeMatchDetail : null;
-    const resourceItems = selectedResources.map(item => new ResourceItem(item.resourceId, item.resourceName, item.homeValue, item.awayValue, item.otherInfo));
+    
+    const resourceItems = selectedResources.map((item, index) => !storage.isAwayEnded() && index === 0 
+      ? new ResourceItem(item.resourceId, item.resourceName, item.homeValue, item.awayValue, "A")
+      : new ResourceItem(item.resourceId, item.resourceName, item.homeValue, item.awayValue));
+    
     this.#aioService.changeConfirmResultSDTSetting(match.matchDetail.matchId, ResultSettingType.confirmRefundSDT, resourceItems, true, hedgeMatch, false);
   }
 
@@ -59,15 +61,13 @@ export class ConfirmRefundHandler implements BaseHandler {
     const match = storage.getMatch();
     const selectedResources = storage.getResultChecked();
     const hedgeMatch = storage.getApplyingHedgeMatch() ? match.hedgeMatchDetail : null;
-  
     
+    const resourceItems = selectedResources.map((item, index) => storage.isMercy() && index === 0 
+      ? new ResourceItem(item.resourceId, item.resourceName, item.homeValue, item.awayValue, "Mercy") 
+      : new ResourceItem(item.resourceId, item.resourceName, item.homeValue, item.awayValue));
+
     this.notifyService.confirm(Language.confirmRefund.mercyConfirm, () => {
-      const resourceItems = selectedResources.map((item, index) => storage.isMercy() && index === 0 
-        ? new ResourceItem(item.resourceId, item.resourceName, item.homeValue, item.awayValue, "Mercy") 
-        : new ResourceItem(item.resourceId, item.resourceName, item.homeValue, item.awayValue));
-        
       const resourceIds = resourceItems.map(resource => resource.resourceId).join(',');
-      
       const query = new ResultSettingQuery(match.matchDetail.matchId, ResultSettingType.confirmRefundMercy, true, resourceIds, resourceItems);
       
       this.#aioService.changeResultSetting(query).then(async () => {

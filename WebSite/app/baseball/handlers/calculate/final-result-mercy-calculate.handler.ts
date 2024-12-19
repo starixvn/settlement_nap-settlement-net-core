@@ -24,18 +24,19 @@ export class FinalResultMercyCalculateHandler implements BaseHandler {
       return;
     }
   
-    if (storage.isLeader()) {
+    const allInningsExcludeTotalHits = storage.getResultDetails().filter((item) => !isEqual(item.resourceId, ResourceIds.totalHits));
+    const lastSelectedIndex = allInningsExcludeTotalHits.findLastIndex(item=>  item.resourceId !== ResourceIds.totalHits && item.checked);
+
+    if (storage.isLeader() && lastSelectedIndex > mercyIndex) {
       this.notifyService.confirm(Language.intervalsAndMatch.intervalNotSelectedOrNotCalculated, () => this.nextHandler.handle(storage));
       return;
     } 
 
-    const allInningsExcludeTotalHits = storage.getResultDetails().filter((item) => !isEqual(item.resourceId, ResourceIds.totalHits));
-    const lastSelectedIndex = allInningsExcludeTotalHits.findLastIndex(item=>  item.resourceId !== ResourceIds.totalHits && item.checked);
-    if (lastSelectedIndex < mercyIndex) {
-      this.nextHandler.handle(storage);
+    if (lastSelectedIndex > mercyIndex) {
+      this.notifyService.error(Language.intervalsAndMatch.inningsNotSelected);
     }
     else {
-      this.notifyService.error(Language.intervalsAndMatch.inningsNotSelected);
+      this.nextHandler.handle(storage);
     }
   }
 }

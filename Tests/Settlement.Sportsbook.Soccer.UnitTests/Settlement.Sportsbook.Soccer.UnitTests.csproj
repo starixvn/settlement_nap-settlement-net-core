@@ -1,17 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
-
   <ItemGroup>
     <Compile Remove="Services\FullTimeBetStatus\HalftimeFullTimeModel.cs" />
     <Compile Remove="Services\FullTimeBetStatus\HalftimeFullTimeProvider.cs" />
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="Fanex.Settlement.Converter" Version="1.0.0.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
@@ -31,13 +28,10 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\..\Sources\Settlement.Sportsbook.Soccer\Settlement.Sportsbook.Soccer.csproj" />
   </ItemGroup>
-
   <ItemGroup>
     <Folder Include="Services\HalfTimeBetStatus\" />
   </ItemGroup>
-
 </Project>

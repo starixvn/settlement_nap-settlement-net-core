@@ -1,12 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
-
   <ItemGroup>
     <Compile Remove="Controllers\**" />
     <Compile Remove="Handlers\**" />
@@ -15,12 +13,10 @@
     <None Remove="Controllers\**" />
     <None Remove="Handlers\**" />
   </ItemGroup>
-
   <ItemGroup>
     <Compile Remove="Services\InstantServiceTests.cs" />
     <Compile Remove="Services\InstantSettingServiceTests.cs" />
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="Fanex.Settlement.Converter" Version="1.0.0.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
@@ -31,9 +27,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\..\Sources\Settlement.Setting\Settlement.Setting.csproj" />
   </ItemGroup>
-
 </Project>

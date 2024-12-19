@@ -2,7 +2,6 @@
 using Fanex.NAP.Client.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ONEbook.UM.AspNetCore.Filters;
 using Settlement.Core.Constants;
 using Settlement.WebSites.Models;
 using System.Diagnostics;
@@ -171,7 +170,6 @@ public class HomeController(INapSession session, IConfiguration configuration) :
 
     [AllowAnonymous]
     [HttpGet]
-    [SkipUMFilter]
     public string Info()
     {
         using var currentProcess = Process.GetCurrentProcess();
