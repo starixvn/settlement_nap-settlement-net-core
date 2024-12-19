@@ -40,7 +40,7 @@ public class AioServiceImp(
     IValidateApiKeyService validateApiKeyService,
     ICreateQueryService createQueryService,
     MultipleServerAioService multipleServerAioService,
-    BasketballEventStatusService basketballEventStatusService,
+    AdjustEventStatusService adjustEventStatusService,
     IConnectionMultiplexer connectionMultiplexer)
     : IAioService
 {
@@ -245,7 +245,7 @@ public class AioServiceImp(
     {
         relatedMatches.ForEach(match =>
         {
-            match.NewEventStatus = basketballEventStatusService.AdjustEventStatusAbandoned(match.EventStatus, match.Results, SportType.BasketBall);
+            match.NewEventStatus = adjustEventStatusService.EventStatusAbandoned(match.EventStatus, match.Results, SportType.BasketBall);
         });
     }
 

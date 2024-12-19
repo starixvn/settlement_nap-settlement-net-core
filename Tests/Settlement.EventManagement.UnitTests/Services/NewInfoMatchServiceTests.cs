@@ -21,7 +21,7 @@ public class NewInfoMatchServiceTests
 
     private readonly EventStatusService eventStatusService;
 
-    private readonly BasketballEventStatusService basketballEventStatusService;
+    private readonly AdjustEventStatusService adjustEventStatusService;
 
     private readonly IDynamicRepository repository;
 
@@ -30,10 +30,10 @@ public class NewInfoMatchServiceTests
         siteMatchService = Substitute.For<SiteMatchService>();
         goalIconService = Substitute.For<GoalIconService>();
         eventStatusService = Substitute.For<EventStatusService>();
-        basketballEventStatusService = Substitute.For<BasketballEventStatusService>();
+        adjustEventStatusService = Substitute.For<AdjustEventStatusService>();
         repository = Substitute.For<IDynamicRepository>();
 
-        service = new NewInfoMatchServiceImp(siteMatchService, goalIconService, eventStatusService, basketballEventStatusService, repository);
+        service = new NewInfoMatchServiceImp(siteMatchService, goalIconService, eventStatusService, adjustEventStatusService, repository);
     }
 
     [Theory]
@@ -72,8 +72,8 @@ public class NewInfoMatchServiceTests
     {
         service.NewEventStatus(new Match { SportType = SportType.BasketBall });
 
-        basketballEventStatusService.Received()
-            .AdjustEventStatusAbandoned(Arg.Any<string>(), Arg.Any<IEnumerable<ResultDetail>>(), Arg.Any<int>());
+        adjustEventStatusService.Received()
+            .EventStatusAbandoned(Arg.Any<string>(), Arg.Any<IEnumerable<ResultDetail>>(), Arg.Any<int>());
         eventStatusService.Received()
             .CheckProcessingStatus(Arg.Any<string>(), Arg.Any<Match>());
     }
@@ -83,8 +83,8 @@ public class NewInfoMatchServiceTests
     {
         service.NewEventStatus(new Match { SportType = SportType.Badminton });
 
-        basketballEventStatusService.DidNotReceive()
-            .AdjustEventStatusAbandoned(Arg.Any<string>(), Arg.Any<IEnumerable<ResultDetail>>(), Arg.Any<int>());
+        adjustEventStatusService.DidNotReceive()
+            .EventStatusAbandoned(Arg.Any<string>(), Arg.Any<IEnumerable<ResultDetail>>(), Arg.Any<int>());
         eventStatusService.Received()
             .CheckProcessingStatus(Arg.Any<string>(), Arg.Any<Match>());
     }

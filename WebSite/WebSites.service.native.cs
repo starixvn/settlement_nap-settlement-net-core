@@ -142,7 +142,7 @@ public static class WebSites
         services.AddSingleton<PermissionService, PermissionServiceImp>();
         services.AddSingleton<XmlConvertService, XmlConvertServiceImp>();
         services.AddTransient<LogService, LogServiceImp>();
-        services.AddTransient<BasketballEventStatusService, BasketballEventStatusServiceImp>();
+        services.AddTransient<AdjustEventStatusService, AdjustEventStatusServiceImp>();
 
         services.AddTransient<IScoreSetService, ScoreSetServiceImp>();
         services.AddTransient<ScaleOutSettleService, ScaleOutSettleServiceImp>();

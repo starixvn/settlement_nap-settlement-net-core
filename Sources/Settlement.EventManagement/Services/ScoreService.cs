@@ -35,7 +35,7 @@ public class ScoreServiceImp(IScoreSetService scoreSetService) : ScoreService
 
     public Score HalftimeScore(int sportType, List<ResultDetail> resultDetails, bool isLeader)
     {
-        List<int> totalPointSports = new() { SportType.BeachVolleyball, SportType.Badminton, SportType.VolleyBall };
+        List<int> totalPointSports = [SportType.BeachVolleyball, SportType.Badminton, SportType.VolleyBall];
         if (SportGroup.SupportSettleDetermine.Contains(sportType))
         {
             ClearScore(sportType, resultDetails, ResourceType.Halftime);
@@ -59,6 +59,7 @@ public class ScoreServiceImp(IScoreSetService scoreSetService) : ScoreService
         var resultSettleSdt = resultDetails.Where(r => (resourceId == ResourceType.Halftime
             ? Resources.ResultHaftTime[sportType].Contains(r.ResourceId)
             : Resources.ResultFullTime[sportType].Contains(r.ResourceId)) && r.SettlementStatusId == SettlementStatus.Abandoned).ToList();
+
         var resultDetail = resultDetails.Find(n => n.ResourceId == resourceId);
         if (resultDetail != null && resultSettleSdt.Any())
         {
