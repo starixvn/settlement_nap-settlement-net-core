@@ -17,10 +17,11 @@ import { DataTableSettingComponent } from './auto-settle-settings/data-table-set
 import { TimeSettingComponent } from './time-setting/time-setting.component';
 import { RemarkSettingComponent } from './remark-setting/remark-setting.component';
 import { AutoSettingComponent } from './auto-setting/auto-setting.component';
+import { SoccerAutoSettingsComponent } from './soccer-auto-settings/soccer-auto-settings.component';
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
-    imports: [TimeSettingComponent, RemarkSettingComponent, AutoSettingComponent, CommonModule],
+    imports: [CommonModule],
     providers: [
         BlockUIService,
         HttpRequestService,
@@ -60,7 +61,7 @@ export class AppComponent implements OnInit, AfterContentChecked {
 
     private getComponentFactory(): ComponentFactory<OnInit> {
         const pageType = this.elementRef.nativeElement.getAttribute('page-type');
-
+        return this.componentFactoryResolver.resolveComponentFactory(SoccerAutoSettingsComponent);
         switch (pageType) {
             case "DirectTime":
             case "InstantTime":
@@ -69,6 +70,8 @@ export class AppComponent implements OnInit, AfterContentChecked {
                 return this.componentFactoryResolver.resolveComponentFactory(RemarkSettingComponent);
             case "AdvancedLeagueSettings":
                 return this.componentFactoryResolver.resolveComponentFactory(DataTableSettingComponent);
+            case "SoccerAutoSettings":
+                return this.componentFactoryResolver.resolveComponentFactory(SoccerAutoSettingsComponent);
             default:
                 return this.componentFactoryResolver.resolveComponentFactory(AutoSettingComponent);
         }

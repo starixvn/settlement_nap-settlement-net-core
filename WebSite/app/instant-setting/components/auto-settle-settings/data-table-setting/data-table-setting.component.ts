@@ -50,7 +50,6 @@ import {SwitchComponent} from "../../../../shared/components/switch/switch.compo
     standalone: true,
 })
 export class DataTableSettingComponent implements OnInit {
-
     @ViewChild(ToastContainerDirective, { static: true })
     toastContainer: ToastContainerDirective;
 
@@ -227,8 +226,7 @@ export class DataTableSettingComponent implements OnInit {
             setting.minProvider =  +setting.minProvider === 0 ? 1 : +setting.minProvider;
         }
     }
-
-
+    
     changeMinProvider(setting: ResultSetting) {
         if(+setting.minProvider === 0) {
             setting.isTraderRequired = true;

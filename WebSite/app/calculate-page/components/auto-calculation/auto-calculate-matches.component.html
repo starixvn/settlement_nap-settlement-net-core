@@ -59,7 +59,7 @@
             <div
               [class]="getClassPayOut(league.autoCalcSetting.isAutoPayoutForLeague, league.autoCalcSetting.isDirectPayoutForLeague)"
               matTooltipPosition="above" [matTooltip]="language.payout.title"
-              (click)="openUpdatePayoutForLeague(league)"></div>
+              (click)="openSoccerAutoSettings(league)"></div>
           </td>
           <td class="instant-time" colspan="2">
             <div>Waiting time: {{ league.directWaitingTime }}sec</div>
@@ -154,7 +154,7 @@
           <td rowspan="2" class="auto-setting">
             <div
               [class]="getClassPayOut(match.autoCalcSetting.isAutoPayoutForMatch, match.autoCalcSetting.isDirectPayoutForMatch)"
-              matTooltipPosition="above" [matTooltip]="language.payout.title" (click)="openUpdatePayout(match)"></div>
+              matTooltipPosition="above" [matTooltip]="language.payout.title" (click)="openSoccerAutoSettings(league,match)"></div>
           </td>
           <td rowspan="2" class="remark-status">
             <div placement="top" [ngClass]="{

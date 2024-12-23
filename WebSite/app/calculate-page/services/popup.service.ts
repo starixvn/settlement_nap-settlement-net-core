@@ -15,6 +15,7 @@ export class PopupService {
     constructor(private readonly dialogBoxService: DialogBoxService,
         private readonly handleActionService: HandleActionsService,
         private readonly requestService: RequestService) { }
+
     public popupLog(matchCode: string, fromDate: string, toDate: string) {
         const src = `/home/log?matchCode=${encodeURIComponent(matchCode)}&fromDate=${fromDate}&toDate=${toDate}&isShowMenu=false&productType=ALL`;
         const dialogData = new DialogDataIframe(Language.SettlementLog, src);
@@ -98,6 +99,16 @@ export class PopupService {
 
                 this.handleActionService.updateAutoPayoutForMatch(league, _.isEqual(result.split(',')[1], 'true'));
             }
+        });
+    }
+
+    openSoccerAutoSettings(league: League, match: CalculationMatch | null = null) {
+        const src = `/apps/auto-setting-league?leagueId=${league.leagueId}&matchId=${match?.matchId || 0}&pageType=SoccerAutoSettings`;
+        const frameSrc = encodeURI(src);
+        const title = match ? Language.payout.titlePopup : Language.payout.titlePopupForLeague;
+        const dialogData = new DialogDataIframe(title, frameSrc);
+        this.dialogBoxService.popupHasResponse(dialogData, '500px', '270px').subscribe(result => {
+
         });
     }
 

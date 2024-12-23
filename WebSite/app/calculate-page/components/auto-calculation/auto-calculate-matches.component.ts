@@ -168,6 +168,12 @@ export class AutoCalculateMatchesComponent extends MatchesBaseComponent implemen
         }
     }
 
+    public openSoccerAutoSettings(league: League, match: CalculationMatch | null = null) {
+        if (this.permission.canAutoPayout) {
+            this.popupService.openSoccerAutoSettings(league, match);
+        }
+    }
+
     public openUpdateTime(league: League, isInstant: boolean) {
         if (this.permission.canAutoPayout) {
             this.popupService.openUpdateTime(league, isInstant);
