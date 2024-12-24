@@ -2,7 +2,9 @@
 
 public class SourceSettleCriteriaBase
 {
-    public byte AutoType { get; set; } // 1: Auto Payout 1, 5: Direct, 6: Auto Payout 2
+    public byte AutoType { get; set; } // 1: Auto Payout 1, 5: Direct, 6: Auto Payout 2, 7: Auto Refund
+    public bool? Enable { get; set; } // for only 7: Auto Refund
+
 
     #region Main
     public int? Main_WaitingTime { get; set; }
@@ -30,6 +32,7 @@ public class SourceSettleCriteriaBase
 public class UpdateLeagueAutoSettleSourceCriteria : SourceSettleCriteriaBase, INonQueryCommand
 {
     public int LeagueId { get; set; }
+
     public string GetSettingKey() => "NAP_Set_AutoPayout_LeagueSetting_Update";
 
     public bool IsValid() => true;
@@ -38,6 +41,7 @@ public class UpdateLeagueAutoSettleSourceCriteria : SourceSettleCriteriaBase, IN
 public class UpdateMatchAutoSettleSourceCriteria : SourceSettleCriteriaBase, INonQueryCommand
 {
     public int MatchId { get; set; }
+
     public string GetSettingKey() => "NAP_Set_AutoPayout_MatchSetting_Update";
 
     public bool IsValid() => true;

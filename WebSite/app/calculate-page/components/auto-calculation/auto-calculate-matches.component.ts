@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
 import { BackGroundService, RequestService, PopupService, HandleActionsService } from '../../services';
 import * as _ from 'lodash';
 import { MatchesBaseComponent } from '../base-component';
@@ -14,6 +14,7 @@ import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { DynamicHeightDirective } from '../../../shared/directives/dynamic-height.directive.native';
 import { CommonModule } from '@angular/common';
+import { AutoCalculateService } from './auto-calculate.service';
 
 @Component({
     selector: 'auto-calculate-matches',
@@ -33,6 +34,8 @@ export class AutoCalculateMatchesComponent extends MatchesBaseComponent implemen
     private subscriber: ISubscription;
     private readonly period = 6000;
     private  readonly intervalTimer = interval(this.period);
+    private readonly autoCalculateService = inject(AutoCalculateService); 
+
     constructor(
         protected popupService: PopupService,
         protected requestService: RequestService,
@@ -79,6 +82,12 @@ export class AutoCalculateMatchesComponent extends MatchesBaseComponent implemen
             return isAutoPayout ? BackgroundColor.iconAutoDisabled :
                 isDirectPayout ? BackgroundColor.iconDirectDisabled : BackgroundColor.iconOffDisabled;
         }
+    }
+
+    public getStatusAutoPayout(league: League, match: CalculationMatch | null = null) {
+        return match
+            ? this.autoCalculateService.getStatusAutoPayoutMatch(match)
+            : this.autoCalculateService.getStatusAutoPayoutLeague(league);
     }
 
     public getTittleInstant(isInstant: boolean) {

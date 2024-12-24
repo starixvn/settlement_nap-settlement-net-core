@@ -1,4 +1,5 @@
-<app-table
+<div class="soccer-auto-settings">
+  <app-table
   [tableHeaders]="tableHeaders"
   [tableData]="settings"
   [maxHeight]="'225px'"
@@ -7,23 +8,28 @@
 </app-table>
 
 
-<div style="display: flex; justify-content: center;column-gap: 10px ;margin-top: 10px;">
+<div class="button-group">
   <app-button (click)="submit()" variant="primary">Submit</app-button>
   <app-button (click)="cancel()" variant="danger">Cancel</app-button>
+</div>
 </div>
 
 <ng-template #customRow let-row>
   <tr>
-    <td>{{ row.settleType }}</td>
+    <td>{{ row.autoFunction }}</td>
     <td>
-        <app-switch [(ngModel)]="row.enabled" labelOff="Off" labelOn="On" />
+      <span>
+        <app-switch [(ngModel)]="row.enabled" labelOff="Off" labelOn="On" size="mini"/>
+      </span>
     </td>
     <td>
-      <app-number-input [(ngModel)]="row.waitingTime"/>
+      @if(row.autoFunction !== 'Auto Payout') {
+        <app-number-input [(ngModel)]="row.waitingTime"/>
+      }
     </td>
     @if(isApplyMatch) {
       <td>
-        <input type="checkbox" ([ngModel])="(row.applyToUnCalMatch)" />
+        <input type="checkbox" ([ngModel])="row.applyToUnCalMatch" />
       </td>
     }
   </tr>

@@ -24,6 +24,7 @@ public class UpdateResultSettingItem
     public bool IsTraderRequired { get; set; }
     public byte MinProvider { get; set; }
     public List<Provider> Providers { get; set; } = [];
+    public bool IsApplyChildMatches { get; set; }
 
     public string PrimaryProvider
         => string.Join(",", Providers.Where(x => x.IsActive && x.Priority == ProviderPriority.Primary).Select(x => x.SourceId));

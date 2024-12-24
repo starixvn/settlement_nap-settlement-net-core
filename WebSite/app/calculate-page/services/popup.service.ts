@@ -9,6 +9,8 @@ import { RequestService } from './request.service';
 import { MatchDetail } from '../../fast-market/models';
 import { Icon } from '../../fast-market/constants';
 import { CalculationMatch, League } from '../models';
+import { HttpParams } from '@angular/common/http';
+import { AutoSettleSettings } from '../models/auto-settle-settings';
 
 @Injectable()
 export class PopupService {
@@ -43,8 +45,8 @@ export class PopupService {
             }
 
             const matchDetail = await this.requestService.getMatchDetail(Number(match.matchId)) as MatchDetail;
-                match.enableFastMarket = _.includes(matchDetail.autoSettingIcon.match, Icon.yes)
-            });
+            match.enableFastMarket = _.includes(matchDetail.autoSettingIcon.match, Icon.yes)
+        });
     }
 
     public openAndHandlePopup(source: string, title: string, width: string, height: string, match: Match) {
@@ -103,13 +105,65 @@ export class PopupService {
     }
 
     openSoccerAutoSettings(league: League, match: CalculationMatch | null = null) {
-        const src = `/apps/auto-setting-league?leagueId=${league.leagueId}&matchId=${match?.matchId || 0}&pageType=SoccerAutoSettings`;
+        const uriParams = this.getParams(league, match);
+        console.log(uriParams.toString());
+        const src = `/apps/auto-setting-league?${uriParams.toString()}`;
         const frameSrc = encodeURI(src);
         const title = match ? Language.payout.titlePopup : Language.payout.titlePopupForLeague;
         const dialogData = new DialogDataIframe(title, frameSrc);
         this.dialogBoxService.popupHasResponse(dialogData, '500px', '270px').subscribe(result => {
+            const setting = Object.assign(new AutoSettleSettings(), JSON.parse(result)) as AutoSettleSettings;
+            console.log(result);
 
+            if(match) {
+                this.setAutoCalcSettingMatch(match,setting);
+            } else {
+                this.setAutoCalcSettingLeague(league,setting);
+            }
         });
+    }
+
+    private setAutoCalcSettingLeague(league: League, setting: AutoSettleSettings) {
+        league.autoCalcSetting.isAutoPayoutForLeague = setting.isAutoPayoutEnabled;
+        league.autoCalcSetting.isDirectPayoutForLeague = setting.isDirectPayoutEnabled;
+        league.enabledAutoRefund = setting.isAutoRefundEnabled;
+        league.refundWaitingTime = setting.refundWaitingTime;
+        league.directWaitingTime = setting.directWaitingTime;
+    }
+
+    private setAutoCalcSettingMatch(match: CalculationMatch,setting: AutoSettleSettings) {
+        match.autoCalcSetting.isAutoPayoutForMatch = setting.isAutoPayoutEnabled;
+        match.autoCalcSetting.isDirectPayoutForMatch = setting.isDirectPayoutEnabled;
+        match.enabledAutoRefundMatch = setting.isAutoRefundEnabled;
+        match.refundWaitingTimeMatch = setting.refundWaitingTime;
+        match.directWaitingTimeMatch = setting.directWaitingTime;
+    }
+
+    private getParams(league: League, match: CalculationMatch | null = null) {
+        let uriParams = new HttpParams()
+            .set('pageType', 'SoccerAutoSettings');
+
+        if (match) {
+            uriParams = uriParams
+                .set('matchId', match.matchId)
+                .set('leagueId', league.leagueId)
+                .set('isAutoPayoutForMatch', match.autoCalcSetting.isAutoPayoutForMatch)
+                .set('isDirectPayoutForMatch', match.autoCalcSetting.isDirectPayoutForMatch)
+                .set('enabledAutoRefundMatch', match.enabledAutoRefundMatch || false)
+                .set('refundWaitingTimeMatch', match.refundWaitingTimeMatch)
+                .set('directWaitingTimeMatch', match.directWaitingTimeMatch)
+                .set('typeObject', 'Match');
+        } else {
+            uriParams = uriParams
+                .set('leagueId', league.leagueId)
+                .set('isAutoPayoutForLeague', league.autoCalcSetting.isAutoPayoutForLeague)
+                .set('isDirectPayoutForLeague', league.autoCalcSetting.isDirectPayoutForLeague)
+                .set('enabledAutoRefund', league.enabledAutoRefund || false)
+                .set('refundWaitingTime', league.refundWaitingTime)
+                .set('directWaitingTime', league.directWaitingTime)
+                .set('typeObject', 'League');
+        }
+        return uriParams;
     }
 
     public openUpdateTime(league: League, isInstant: boolean) {

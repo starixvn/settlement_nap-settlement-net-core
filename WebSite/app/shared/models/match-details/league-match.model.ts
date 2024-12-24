@@ -7,4 +7,5 @@ export class LeagueMatch {
     public matches: Match[];
     public collapse = false;
     public autoCalcSetting: AutoSetting;
+    public enabledAutoRefund: boolean;
 }
