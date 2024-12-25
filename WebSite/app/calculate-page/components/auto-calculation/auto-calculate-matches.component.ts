@@ -15,12 +15,14 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { DynamicHeightDirective } from '../../../shared/directives/dynamic-height.directive.native';
 import { CommonModule } from '@angular/common';
 import { AutoCalculateService } from './auto-calculate.service';
+import { AutoSettleSetting } from '../../models/auto-settle-settings';
+import { UpdateSettingsService } from '../../services/update-settings.service';
 
 @Component({
     selector: 'auto-calculate-matches',
     templateUrl: './auto-calculate-matches.component.html',
     standalone: true,
-    imports: [CommonModule, DynamicHeightDirective, MatTooltipModule, NgbTooltip]
+    imports: [CommonModule, DynamicHeightDirective, MatTooltipModule, NgbTooltip],
 })
 export class AutoCalculateMatchesComponent extends MatchesBaseComponent implements OnChanges, OnInit, OnDestroy {
     @Input() public filterQuery: FilterAutoQuery;
@@ -33,8 +35,9 @@ export class AutoCalculateMatchesComponent extends MatchesBaseComponent implemen
     private readonly autoSettingInstantType = 2;
     private subscriber: ISubscription;
     private readonly period = 6000;
-    private  readonly intervalTimer = interval(this.period);
-    private readonly autoCalculateService = inject(AutoCalculateService); 
+    private readonly intervalTimer = interval(this.period);
+    private readonly autoCalculateService = inject(AutoCalculateService);
+    private readonly updateSettingsService = inject(UpdateSettingsService);
 
     constructor(
         protected popupService: PopupService,
@@ -178,9 +181,20 @@ export class AutoCalculateMatchesComponent extends MatchesBaseComponent implemen
     }
 
     public openSoccerAutoSettings(league: League, match: CalculationMatch | null = null) {
-        if (this.permission.canAutoPayout) {
-            this.popupService.openSoccerAutoSettings(league, match);
+        const { canAutoPayout } = this.permission;
+        if (!canAutoPayout) {
+            return;
         }
+        this.popupService.openSoccerAutoSettings(league, match)
+            .subscribe(result => {
+                const setting = Object.assign(new AutoSettleSetting(), JSON.parse(result));
+                console.log(setting);
+                if (match) {
+                    this.updateSettingsService.setAutoCalcSettingMatch(match, setting);
+                } else {
+                    this.updateSettingsService.setAutoCalcSettingLeague(league, setting);
+                }
+            });
     }
 
     public openUpdateTime(league: League, isInstant: boolean) {

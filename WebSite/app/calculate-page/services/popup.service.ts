@@ -10,7 +10,8 @@ import { MatchDetail } from '../../fast-market/models';
 import { Icon } from '../../fast-market/constants';
 import { CalculationMatch, League } from '../models';
 import { HttpParams } from '@angular/common/http';
-import { AutoSettleSettings } from '../models/auto-settle-settings';
+import { AutoSettleSetting } from '../models/auto-settle-settings';
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class PopupService {
@@ -104,40 +105,17 @@ export class PopupService {
         });
     }
 
-    openSoccerAutoSettings(league: League, match: CalculationMatch | null = null) {
+    openSoccerAutoSettings(league: League, match: CalculationMatch | null = null) : Observable<string> {
         const uriParams = this.getParams(league, match);
         console.log(uriParams.toString());
         const src = `/apps/auto-setting-league?${uriParams.toString()}`;
         const frameSrc = encodeURI(src);
         const title = match ? Language.payout.titlePopup : Language.payout.titlePopupForLeague;
         const dialogData = new DialogDataIframe(title, frameSrc);
-        this.dialogBoxService.popupHasResponse(dialogData, '500px', '270px').subscribe(result => {
-            const setting = Object.assign(new AutoSettleSettings(), JSON.parse(result)) as AutoSettleSettings;
-            console.log(result);
-
-            if(match) {
-                this.setAutoCalcSettingMatch(match,setting);
-            } else {
-                this.setAutoCalcSettingLeague(league,setting);
-            }
-        });
+        
+        return this.dialogBoxService.popupHasResponse(dialogData, '500px', '270px');
     }
 
-    private setAutoCalcSettingLeague(league: League, setting: AutoSettleSettings) {
-        league.autoCalcSetting.isAutoPayoutForLeague = setting.isAutoPayoutEnabled;
-        league.autoCalcSetting.isDirectPayoutForLeague = setting.isDirectPayoutEnabled;
-        league.enabledAutoRefund = setting.isAutoRefundEnabled;
-        league.refundWaitingTime = setting.refundWaitingTime;
-        league.directWaitingTime = setting.directWaitingTime;
-    }
-
-    private setAutoCalcSettingMatch(match: CalculationMatch,setting: AutoSettleSettings) {
-        match.autoCalcSetting.isAutoPayoutForMatch = setting.isAutoPayoutEnabled;
-        match.autoCalcSetting.isDirectPayoutForMatch = setting.isDirectPayoutEnabled;
-        match.enabledAutoRefundMatch = setting.isAutoRefundEnabled;
-        match.refundWaitingTimeMatch = setting.refundWaitingTime;
-        match.directWaitingTimeMatch = setting.directWaitingTime;
-    }
 
     private getParams(league: League, match: CalculationMatch | null = null) {
         let uriParams = new HttpParams()

@@ -19,11 +19,22 @@ public class UpdateSoccerSettingHandler
 
     public async Task<Result> HandleAsync(UpdateAutoSettingsCommand command)
     {
-        // league
-        await UpdateResultSetting(command, AutoSettleType.AutoPayout1);
-        await UpdateResultSetting(command, AutoSettleType.AutoDirect);
+        var payoutSetting = command.ResultSettings.Find(x => x.SettleType == AutoSettleType.AutoPayout1);
+        var directSetting = command.ResultSettings.Find(x => x.SettleType == AutoSettleType.AutoDirect);
+        if (payoutSetting.Enabled)
+        {
+            await UpdateResultSetting(command, AutoSettleType.AutoPayout1);
+        }
+        else if (directSetting.Enabled)
+        {
+            await UpdateResultSetting(command, AutoSettleType.AutoDirect);
+            await UpdateLeagueTimeSetting(command, AutoSettleType.AutoDirect);
 
-        await UpdateLeagueTimeSetting(command, AutoSettleType.AutoDirect);
+        }
+        else
+        {
+            await UpdateResultSetting(command, AutoSettleType.AutoPayout1);
+        }
 
         await UpdateLeagueAutoSettleSource(command, AutoSettleType.AutoRefund);
 
@@ -33,10 +44,11 @@ public class UpdateSoccerSettingHandler
     private async Task UpdateResultSetting(UpdateAutoSettingsCommand command, AutoSettleType settleType)
     {
         var settings = command.ResultSettings.Find(x => x.SettleType == settleType);
-        if (settings == null)
+        var oldSettings = command.OldResultSettings.Find(x => x.SettleType == settleType);
+        if (settings == null || oldSettings == null)
         {
             return;
-        };
+        }
 
         await settingService.UpdateSettingLeague(new SettingLeagueRequest
         {
@@ -50,7 +62,9 @@ public class UpdateSoccerSettingHandler
     private async Task UpdateLeagueTimeSetting(UpdateAutoSettingsCommand command, AutoSettleType settleType)
     {
         var settings = command.ResultSettings.Find(x => x.SettleType == settleType);
-        if (settings == null)
+        var oldSettings = command.OldResultSettings.Find(x => x.SettleType == settleType);
+
+        if (settings == null || oldSettings == null)
         {
             return;
         }
@@ -62,6 +76,7 @@ public class UpdateSoccerSettingHandler
             WaitingTime = settings.WaitingTime
         });
     }
+
     private async Task UpdateLeagueAutoSettleSource(UpdateAutoSettingsCommand command, AutoSettleType settleType)
     {
         var settings = command.ResultSettings.Find(x => x.SettleType == settleType);

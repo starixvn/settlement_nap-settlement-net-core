@@ -19,10 +19,22 @@ public class UpdateMatchSoccerSettingsHandler
 
     public async Task<Result> HandleAsync(UpdateAutoSettingsCommand command)
     {
-        await UpdateResultSetting(command, AutoSettleType.AutoPayout1);
+        var payoutSetting = command.ResultSettings.Find(x => x.SettleType == AutoSettleType.AutoPayout1);
+        var directSetting = command.ResultSettings.Find(x => x.SettleType == AutoSettleType.AutoDirect);
+        if (payoutSetting.Enabled)
+        {
+            await UpdateResultSetting(command, AutoSettleType.AutoPayout1);
+        }
+        else if (directSetting.Enabled)
+        {
+            await UpdateResultSetting(command, AutoSettleType.AutoDirect);
+            await UpdateSettleSource(command, AutoSettleType.AutoDirect);
 
-        await UpdateResultSetting(command, AutoSettleType.AutoDirect);
-        await UpdateSettleSource(command, AutoSettleType.AutoDirect);
+        }
+        else
+        {
+            await UpdateResultSetting(command, AutoSettleType.AutoPayout1);
+        }
 
         await UpdateSettleSource(command, AutoSettleType.AutoRefund);
 

@@ -7,6 +7,7 @@ import * as _ from 'lodash';
 import { AutoCalculatePageComponent, AutoCalculateService } from './auto-calculation';
 import { PageBaseComponent } from './base-component';
 import { NgIf, DatePipe } from '@angular/common';
+import { UpdateSettingsService } from '../services/update-settings.service';
 
 @Component({
     selector: 'app-root',
@@ -25,7 +26,8 @@ import { NgIf, DatePipe } from '@angular/common';
         BackGroundService,
         DetectChangesService,
         AutoCalculateService,
-        GenerateFilterService
+        GenerateFilterService,
+        UpdateSettingsService
     ],
     standalone: true,
     imports: [NgIf],

@@ -13,9 +13,9 @@ import { Language } from "../../../shared/language.native";
 import { ToastContainerDirective, ToastrService } from "ngx-toastr";
 import { UrlHelper } from "../../../helper";
 import { TypeObject } from "../../../shared/constants/type-object.native";
-import { ResultSetting } from "./types";
 import { AutoSettleType } from "../../../shared/constants/auto-settle-type.native";
-
+import { ResultSetting } from "../../../shared/models/settings";
+import * as _ from 'lodash';
 @Component({
   selector: "soccer-auto-settings",
   standalone: true,
@@ -39,16 +39,15 @@ import { AutoSettleType } from "../../../shared/constants/auto-settle-type.nativ
 export class SoccerAutoSettingsComponent implements OnInit {
   @ViewChild(ToastContainerDirective, { static: true })
   private readonly toastContainer: ToastContainerDirective;
-  private readonly soccerAutoSettingsService = inject(
-    SoccerAutoSettingsService
-  );
+  private readonly soccerAutoSettingsService = inject(SoccerAutoSettingsService);
   private readonly dialog = inject(MatDialog);
   private readonly messageBoxService = inject(MessageBoxService);
   private readonly toastrService = inject(ToastrService);
 
   public tableHeaders = [];
   public settings: ResultSetting[] = [];
-  public isApplyMatch = false;
+  public originalSettings: ResultSetting[] = [];
+  public isMatchType = false;
   public leagueId: number;
   public matchId: number;
   public typeObject = "";
@@ -67,54 +66,25 @@ export class SoccerAutoSettingsComponent implements OnInit {
       ],
     };
 
-    const isMatchType = this.typeObject === "Match";
-    this.isApplyMatch = !isMatchType;
+    this.isMatchType = this.typeObject === "Match";
     this.tableHeaders = tableHeadersConfig[this.typeObject];
-
-    // Retrieve common parameters
-    this.matchId = isMatchType ? +UrlHelper.getUrlParameter("matchId") : 0;
+    this.matchId = this.isMatchType ? +UrlHelper.getUrlParameter("matchId") : 0;
     this.leagueId = +UrlHelper.getUrlParameter("leagueId");
-    const refundWaitingTime = +UrlHelper.getUrlParameter(isMatchType ? "refundWaitingTimeMatch" : "refundWaitingTime");
-    const directWaitingTime = +UrlHelper.getUrlParameter(isMatchType ? "directWaitingTimeMatch" : "directWaitingTime");
 
-    // Retrieve enabled settings
-    console.log(typeof UrlHelper.getUrlParameter("isAutoPayoutForLeague"));
-    const isAutoPayoutEnabled = Boolean(
-      JSON.parse(UrlHelper.getUrlParameter(isMatchType ? "isAutoPayoutForMatch" : "isAutoPayoutForLeague")));
-    const isDirectPayoutEnabled = Boolean(
-      JSON.parse(UrlHelper.getUrlParameter(isMatchType ? "isDirectPayoutForMatch" : "isDirectPayoutForLeague")));
-    const isAutoRefundEnabled = Boolean(
-      JSON.parse(UrlHelper.getUrlParameter(isMatchType ? "enabledAutoRefundMatch" : "enabledAutoRefund")));
+    this.setSettings();
+  }
 
-    this.settings = [
-      {
-        settleType: AutoSettleType.AutoPayoutSoccer,
-        autoFunction: "Auto Payout",
-        enabled: isAutoPayoutEnabled,
-        waitingTime: refundWaitingTime,
-        isApplyChildMatches: false,
-      },
-      {
-        settleType: AutoSettleType.AutoDirect,
-        autoFunction: "Direct Payout",
-        enabled: isDirectPayoutEnabled,
-        waitingTime: directWaitingTime,
-        isApplyChildMatches: false,
-      },
-      {
-        settleType: AutoSettleType.AutoRefund,
-        autoFunction: "Auto Refund",
-        enabled: isAutoRefundEnabled,
-        waitingTime: refundWaitingTime,
-        isApplyChildMatches: false,
-      },
-    ];
+  onChangeEnabled(setting: ResultSetting) {
+    if (setting.enabled && setting.settleType === AutoSettleType.AutoPayoutSoccer) {  
+      this.settings.find(s => s.settleType === AutoSettleType.AutoDirect).enabled = false;
+    } else if (setting.enabled && setting.settleType === AutoSettleType.AutoDirect) {
+      this.settings.find(s => s.settleType === AutoSettleType.AutoPayoutSoccer).enabled = false;
+    }
   }
 
   submit() {
     const confirmBox = new ModalDialogMessage(Language.confirmationBox);
-    confirmBox.message =
-      Language.AutoPayoutSetting.ConfirmMessageForAutoSetting;
+    confirmBox.message = Language.AutoPayoutSetting.ConfirmMessageForAutoSetting;
     confirmBox.hasActionOnNoBtn = true;
 
     this.messageBoxService.confirm(
@@ -129,9 +99,8 @@ export class SoccerAutoSettingsComponent implements OnInit {
       leagueId: this.leagueId,
       matchId: this.matchId,
       typeObject: this.typeObject as TypeObject,
-      isApplyAll: this.isApplyMatch,
       resultSettings: this.settings,
-      oldResultSettings: [],
+      oldResultSettings: this.originalSettings,
     });
 
     if (!result.isSuccessful) {
@@ -140,27 +109,59 @@ export class SoccerAutoSettingsComponent implements OnInit {
     }
 
     this.setDialogResponse();
+    this.messageBoxService.closePopup();
   }
 
   private setDialogResponse() {
     const response = {
       leagueId: this.leagueId,
       matchId: this.matchId,
-      refundWaitingTime: this.getSettingValue(AutoSettleType.AutoRefund, 'waitingTime'),
-      directWaitingTime: this.getSettingValue(AutoSettleType.AutoDirect, 'waitingTime'),
-      isAutoPayoutEnabled: this.getSettingValue(AutoSettleType.AutoPayoutSoccer, 'enabled'),
-      isDirectPayoutEnabled: this.getSettingValue(AutoSettleType.AutoDirect, 'enabled'),
-      isAutoRefundEnabled: this.getSettingValue(AutoSettleType.AutoRefund, 'enabled'),
+      typeObject: this.typeObject as TypeObject,
+      resultSettings: this.settings,
     };
 
     parent.document.getElementById("dialog-response")?.setAttribute("value", JSON.stringify(response));
   }
   
-  private getSettingValue(settleType: AutoSettleType, key: keyof ResultSetting): any {
-    return this.settings.find(setting => setting.settleType === settleType)?.[key];
-  }
-
   cancel() {
     this.messageBoxService.closePopup();
+  }
+
+  private setSettings() {
+    const refundWaitingTime = +UrlHelper.getUrlParameter(this.isMatchType ? "refundWaitingTimeMatch" : "refundWaitingTime");
+    const directWaitingTime = +UrlHelper.getUrlParameter(this.isMatchType ? "directWaitingTimeMatch" : "directWaitingTime");
+
+    const isAutoPayoutEnabled = Boolean(
+      JSON.parse(UrlHelper.getUrlParameter(this.isMatchType ? "isAutoPayoutForMatch" : "isAutoPayoutForLeague")));
+    const isDirectPayoutEnabled = Boolean(
+      JSON.parse(UrlHelper.getUrlParameter(this.isMatchType ? "isDirectPayoutForMatch" : "isDirectPayoutForLeague")));
+    const isAutoRefundEnabled = Boolean(
+      JSON.parse(UrlHelper.getUrlParameter(this.isMatchType ? "enabledAutoRefundMatch" : "enabledAutoRefund")));
+
+    this.settings = [
+      {
+        settleType: AutoSettleType.AutoPayoutSoccer,
+        settleTypeName: "Auto Payout",
+        enabled: isAutoPayoutEnabled,
+        waitingTime: refundWaitingTime,
+        isApplyChildMatches: false,
+      },
+      {
+        settleType: AutoSettleType.AutoDirect,
+        settleTypeName: "Direct Payout",
+        enabled: isDirectPayoutEnabled,
+        waitingTime: directWaitingTime,
+        isApplyChildMatches: false,
+      },
+      {
+        settleType: AutoSettleType.AutoRefund,
+        settleTypeName: "Auto Refund",
+        enabled: isAutoRefundEnabled,
+        waitingTime: refundWaitingTime,
+        isApplyChildMatches: false,
+      },
+    ];
+
+    this.originalSettings = _.cloneDeep(this.settings);
   }
 }

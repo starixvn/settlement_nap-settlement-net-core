@@ -66,4 +66,31 @@ public static class LeagueSettingsHelper
             criteria.EAR_InactiveProvider = resultSetting.InactiveProvider;
         }
     }
+
+
+    public static string GetUpdateResultSettingItemDifferences(
+        UpdateResultSettingItem first,
+        UpdateResultSettingItem second,
+        List<string> specificProperties)
+    {
+        var result = new StringBuilder();
+        var type = typeof(UpdateResultSettingItem);
+
+        foreach (var propertyName in specificProperties)
+        {
+            var property = type.GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance);
+            if (property != null)
+            {
+                var value1 = property.GetValue(first);
+                var value2 = property.GetValue(second);
+
+                if (!Equals(value1, value2))
+                {
+                    result.Append($"<br/>{propertyName}: {value1} -> {value2}");
+                }
+            }
+        }
+
+        return result.ToString();
+    }
 }
