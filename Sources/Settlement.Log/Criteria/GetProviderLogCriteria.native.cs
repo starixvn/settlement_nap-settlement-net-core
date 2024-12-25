@@ -12,6 +12,8 @@ public class GetProviderLogCriteria : CriteriaBase
 
     public bool LatestRecord { get; set; }
 
+    public bool IsLive { get; set; }
+
     public override string GetSettingKey() => "NAP_Set_ProviderResultSel";
 
     public override bool IsValid() => MatchId > 0;

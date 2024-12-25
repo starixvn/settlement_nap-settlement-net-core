@@ -13,3 +13,11 @@ public static class LogType
 
     public const string Sum = "s";
 }
+
+public static class DataLogType
+{
+    public const byte AutoPayout = 1;
+
+    public const byte AutoRefund = 2;
+
+}

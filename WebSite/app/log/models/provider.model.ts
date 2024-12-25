@@ -19,6 +19,7 @@ export interface ProviderResultLog {
   resultValue: string;
   remark: string;
   action: string;
+  isLive: boolean;
   autoPayoutStatus: number
 }
 
@@ -33,5 +34,6 @@ export class ProviderFilter {
   public resourceName = "";
   public sourceIds	: string;
   public latestRecord: boolean;
+  public isLive = false;
 }
 

@@ -14,4 +14,6 @@ public class ProviderLogRequest : IRequest<ProviderLog>
     public string SourceIds { get; set; }
 
     public bool LatestRecord { get; set; }
+
+    public bool IsLive { get; set; }
 }
