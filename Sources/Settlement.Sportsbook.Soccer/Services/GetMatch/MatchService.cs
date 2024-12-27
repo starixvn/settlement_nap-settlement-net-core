@@ -66,7 +66,6 @@ public class MatchServiceImp(
 
     public async Task<Match> GetMatch(GetMatchRequest request)
     {
-        var permission = permissionService.GetPermission(CacheSettings.Keys.MemoryCacheManualPermission);
         var match = await fetchDataService.GetMatchInfo(request);
         var resultDetails = await GetResultDetail(request.MatchId);
         var matchDetail = match.MatchDetail;
@@ -100,13 +99,12 @@ public class MatchServiceImp(
             ChildMatches = childMatches,
             FantasyMatch = fantasyMatch,
             HedgeMatchDetail = hedgeMatchDetail,
-            Permission = permission
+            Permission = permissionService.Permission
         };
     }
 
     public async Task<Match> GetMatchRefund(GetMatchRequest request)
     {
-        var permission = permissionService.GetPermission(CacheSettings.Keys.MemoryCacheManualPermission);
         var match = await fetchDataService.GetMatchInfo(request);
         var matchDetail = match.MatchDetail;
         var resultDetails = await GetResultDetail(request.MatchId);
@@ -136,11 +134,11 @@ public class MatchServiceImp(
             HedgeMatchDetail = hedgeMatchDetail,
             BetDaq = betDaq,
             BetFair = betFair,
-            Permission = permission
+            Permission = permissionService.Permission
         };
     }
 
-    private GoalIconQueryModel GoalIconQuery(MatchDetail match)
+    private static GoalIconQueryModel GoalIconQuery(MatchDetail match)
     {
         return new GoalIconQueryModel
         {

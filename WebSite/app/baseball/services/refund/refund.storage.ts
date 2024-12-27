@@ -120,7 +120,12 @@ export class RefundStorage implements IRefundStorage {
   isConfirmed = (resultSetting: ResultSettingModel) => resultSetting.isConfirmedRefund || resultSetting.isConfirmedRefundSdt || resultSetting.isConfirmedRefundMercy;
 
   isOtherInfoContain = (otherInfo: string) => {
-    return this.getExternalResults().some((item) => !isEmpty(item.otherInfo) && isEqual(item.otherInfo.toLowerCase(), otherInfo));
+    const externalResults = this.getExternalResults()
+    if(externalResults.length > 0) {
+      return externalResults.some((item) => !isEmpty(item.otherInfo) && isEqual(item.otherInfo.toLowerCase(), otherInfo)); 
+    } else {
+      return this.getResultDetails().some((item) => !isEqual(item.resourceId, ResourceIds.totalHits) && !isEmpty(item.otherInfo) && isEqual(item.otherInfo.toLowerCase(), otherInfo));
+    }
   };
 
   isGetMercy = () => this.isLeader() && this.#match().resultDetails.some((item) => this.isCheckedMercy(item));

@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Setting.Models;
@@ -29,10 +28,9 @@ public class MatchSettingHandler(
     public async Task<MatchAndPermission> Handle(GetRemarkInfoRequest request, CancellationToken cancellationToken)
     {
         var match = await settingService.GetRemarkInfo(request.MatchId);
-        var permission = permissionService.GetPermission(CacheSettings.Keys.MemoryCacheManualPermission);
         return new MatchAndPermission
         {
-            Permission = permission,
+            Permission = permissionService.Permission,
             Match = match
         };
     }
@@ -48,11 +46,10 @@ public class MatchSettingHandler(
         await settingService.ProcessUpdateHoldMatchSetting(request);
 
         var match = await settingService.GetRemarkInfo(request.MatchId);
-        var permission = permissionService.GetPermission(CacheSettings.Keys.MemoryCacheManualPermission);
 
         return new MatchAndPermission
         {
-            Permission = permission,
+            Permission = permissionService.Permission,
             Match = match
         };
     }

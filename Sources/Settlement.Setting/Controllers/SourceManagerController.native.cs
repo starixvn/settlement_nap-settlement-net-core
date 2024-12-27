@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Settlement.Core.Constants;
 using Settlement.Core.Services;
 using Settlement.Setting.Requests.OutsideSourceManager;
 using Settlement.Setting.Requests.ProviderManager;
@@ -15,7 +14,7 @@ public class SourceManagerController(IMediator mediator, PermissionService permi
     [Route("get-score-source-permission")]
     public IActionResult GetPermission()
     {
-        var permission = permissionService.GetPermission(CacheSettings.Keys.MemoryCacheManualPermission);
+        var permission = permissionService.Permission;
         return Ok(permission.CanChangeScoreSource);
     }
 

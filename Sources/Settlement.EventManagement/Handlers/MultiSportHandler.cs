@@ -17,11 +17,11 @@ public class MultiSportHandler(
 {
     public async Task<MultiSportModel> Handle(FilterMultiSportRequest request, CancellationToken cancellationToken)
     {
-        var permission = permissionService.GetPermission(CacheSettings.Keys.MemoryCacheManualPermission);
+        var permission = permissionService.Permission;
         return new MultiSportModel
         {
             Sports = await multiSportService.GetSportBook(request, permission.IsLeader),
-            Permission = permission
+            Permission = permissionService.Permission
         };
     }
 
@@ -31,7 +31,7 @@ public class MultiSportHandler(
 
     public async Task<IList<MultiSportMatchWaiting>> Handle(RefreshMultiSportRequest request, CancellationToken cancellationToken)
     {
-        var permission = permissionService.GetPermission(CacheSettings.Keys.MemoryCacheManualPermission);
+        var permission = permissionService.Permission;
         var isLeader = permission.IsLeader;
         return await multiSportService.GetWaitingMatches(request, isLeader);
     }

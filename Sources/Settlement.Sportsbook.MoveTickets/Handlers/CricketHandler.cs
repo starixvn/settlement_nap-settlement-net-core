@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.MoveTickets.Models;
@@ -18,11 +17,10 @@ public class CricketHandler(
 {
     public async Task<MultiSportModel> Handle(GetMatchRequest request, CancellationToken cancellationToken)
     {
-        var permission = permissionService.GetPermission(CacheSettings.Keys.MemoryCacheManualPermission);
         return new MultiSportModel
         {
             Sports = await moveTicketService.GetSportBook(request),
-            Permission = permission
+            Permission = permissionService.Permission
         };
     }
 

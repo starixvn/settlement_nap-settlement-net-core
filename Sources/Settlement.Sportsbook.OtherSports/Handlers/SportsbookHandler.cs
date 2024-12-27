@@ -24,12 +24,11 @@ public class SportsbookHandler(
     public async Task<OtherSportsMatchModel> Handle(GetMatchRequest request, CancellationToken cancellationToken)
     {
         var match = await sportsbookService.GetMatch(request);
-        var permission = permissionService.GetPermission(CacheSettings.Keys.MemoryCacheManualPermission);
 
         return new OtherSportsMatchModel
         {
             Match = match,
-            Permission = permission
+            Permission = permissionService.Permission
         };
     }
 

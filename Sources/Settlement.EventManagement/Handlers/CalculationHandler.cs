@@ -18,13 +18,12 @@ public class CalculationHandler(
 {
     public async Task<CalculationLeagues> Handle(FilterCalculationRequest request, CancellationToken cancellationToken)
     {
-        var permission = permissionService.GetPermission(CacheSettings.Keys.MemoryCacheManualPermission);
         var matches = await matchService.GetMatches(request);
 
         return new CalculationLeagues
         {
             Leagues = leagueService.Leagues(matches),
-            Permission = permission
+            Permission = permissionService.Permission
         };
     }
 
@@ -37,12 +36,11 @@ public class CalculationHandler(
 
     public async Task<CalculationLeagues> Handle(FilterAutoCalculationRequest request, CancellationToken cancellationToken)
     {
-        var permission = permissionService.GetPermission(CacheSettings.Keys.MemoryCacheManualPermission);
         var matches = await matchService.GetMatchesAutoCalculate(request);
         return new CalculationLeagues
         {
             Leagues = leagueService.Leagues(matches),
-            Permission = permission
+            Permission = permissionService.Permission
         };
     }
 }

@@ -40,10 +40,7 @@ public class FetchDataServiceTests
         IEnumerable<MatchDetail> matches = new List<MatchDetail> {
             new() { MatchId = 123 }
         };
-        var results = new IEnumerable<object>[4];
 
-        results[0] = matches;
-        results[1] = Substitute.For<IEnumerable<ChildMatchModel>>();
         repository.FetchMultipleAsync<MatchDetail, ChildMatchModel>(Arg.Any<CriteriaBase>()).Returns((matches, new List<ChildMatchModel>()));
 
         // Act
