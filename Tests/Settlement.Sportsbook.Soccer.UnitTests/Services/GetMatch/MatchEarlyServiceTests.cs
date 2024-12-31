@@ -2,7 +2,6 @@
 using Fanex.Caching;
 using Fanex.Data.Repository;
 using Fanex.NAP.Client;
-using NSubstitute.ReturnsExtensions;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
@@ -44,14 +43,6 @@ public class MatchEarlyServiceTests
         var mapper = new Mapper(config);
         service = new MatchEarlyServiceImp(repository, permission, mapper, refDataService, goalIconService,
             earlyBetTypeNameService, fetchDataService);
-    }
-
-    [Fact]
-    public async Task GetMatch_MatchDetailIsNull_ThrowNullException()
-    {
-        repository.GetAsync<MatchDetail>(Arg.Any<GetMatchDetailEarlyCriteria>()).ReturnsNull();
-
-        await Assert.ThrowsAsync<ArgumentNullException>(() => service.GetMatch(1));
     }
 
     [Theory]

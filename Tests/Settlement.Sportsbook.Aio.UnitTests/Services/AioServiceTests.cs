@@ -31,7 +31,7 @@ public class AioServiceTests
         var mapperFactory = Substitute.For<IMapperFactory>();
         multipleServerAioService = Substitute.For<MultipleServerAioService>();
         validateApiKeyService = Substitute.For<IValidateApiKeyService>();
-        var basketballEventStatusService = Substitute.For<BasketballEventStatusService>();
+        var basketballEventStatusService = Substitute.For<AdjustEventStatusService>();
         var connectionMultiplexer = Substitute.For<IConnectionMultiplexer>();
         var mapperConfig = new MapperConfigurationExpression();
         mapperConfig.AddProfile<SportsbookAioAutoMapperProfile>();

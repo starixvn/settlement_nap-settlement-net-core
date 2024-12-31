@@ -169,7 +169,7 @@ describe('AioService', () => {
 
       messageBoxService.confirm = jest.fn();
 
-      service.changeConfirmResultSDTSetting(0, [], isEnable, null);
+      service.changeConfirmResultSDTSetting(0, 3, [], isEnable, null);
 
       expect(messageBoxService.confirm).toHaveBeenCalled();
       expect(service.warningDialogMessage.message).toEqual(message);
@@ -181,7 +181,7 @@ describe('AioService', () => {
       const query = new ResultSettingQuery(0, ResultSettingType.confirmRefundSDT,
         true, '', []);
 
-      service.changeConfirmResultSDTSetting(0, [], true, null);
+      service.changeConfirmResultSDTSetting(0, 3, [], true, null);
       const buttonYes = document.getElementsByClassName("btn-danger")[0] as HTMLElement;
       buttonYes.click();
       tick();
@@ -196,7 +196,7 @@ describe('AioService', () => {
       const hedgeMatch = new HedgeMatchDetail();
       hedgeMatch.matchId = 1;
 
-      service.changeConfirmResultSDTSetting(0, [], true, hedgeMatch);
+      service.changeConfirmResultSDTSetting(0, 3, [], true, hedgeMatch);
       const buttonYes = document.getElementsByClassName("btn-danger")[0] as HTMLElement;
       buttonYes.click();
       tick();

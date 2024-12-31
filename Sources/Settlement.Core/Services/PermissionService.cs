@@ -1,5 +1,4 @@
-﻿using Fanex.Caching;
-using Fanex.NAP.Client;
+﻿using Fanex.NAP.Client;
 using Fanex.NAP.Client.Configuration;
 using Fanex.NAP.Client.Services;
 using Settlement.Core.Models;
@@ -11,10 +10,9 @@ using Configurations;
 public abstract class PermissionService(
     INapSession session,
     IUserService userService,
-    ICacheService cacheService,
     INapSettings siteSettings)
 {
-    protected abstract Permission Permission { get; }
+    public abstract Permission Permission { get; }
 
     protected bool HasPermission(string functionKey, Constant.Policy policy)
     {
@@ -24,25 +22,15 @@ public abstract class PermissionService(
             functionKey,
             policy);
     }
-
-    public Permission GetPermission(string cacheKey)
-    {
-        var key = $"{cacheKey}-{session.UserId}";
-        return cacheService.GetOrSet(
-            key,
-            () => Permission,
-            new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(2)));
-    }
 }
 
 public class PermissionServiceImp(
     INapSession session,
     IUserService userService,
-    ICacheService cacheService,
     INapSettings siteSettings)
-    : PermissionService(session, userService, cacheService, siteSettings)
+    : PermissionService(session, userService, siteSettings)
 {
-    protected override Permission Permission => new()
+    public override Permission Permission => new()
     {
         CanCalculate = HasPermission(SettlementFunctionKeys.SportsbookCalculate, Constant.Policy.Host),
         CanMarkPending = HasPermission(SettlementFunctionKeys.SportsbookMarkPendingMatch, Constant.Policy.Host),

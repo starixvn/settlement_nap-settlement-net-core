@@ -70,41 +70,26 @@ public class MatchServiceImp(
 
     public List<Match> GetScoreForMatchBySportType(List<Match> matches, List<ResultDetail> resultDetails, int sportType, bool isLeader = false)
     {
-        switch (sportType)
+        var sportTypeMappings = new Dictionary<int, Func<List<Match>, List<ResultDetail>, bool, List<Match>>>
         {
-            case SportType.Tennis:
-                return matchResultDetailService.TennisResultDetail(matches, resultDetails, isLeader);
+            { SportType.Tennis, matchResultDetailService.TennisResultDetail },
+            { SportType.BasketBall, matchResultDetailService.BasketballResultDetail },
+            { SportType.ESports, matchResultDetailService.ESportsResultDetail },
+            { SportType.Badminton, matchResultDetailService.BadmintonResultDetail },
+            { SportType.Cricket, matchResultDetailService.CricketResultDetail },
+            { SportType.BeachVolleyball, matchResultDetailService.BeachVolleyballResultDetail },
+            { SportType.VolleyBall, matchResultDetailService.VolleyballResultDetail },
+            { SportType.Bandy, matchResultDetailService.BandyResultDetail },
+            { SportType.TableTennis, matchResultDetailService.TableTennisResultDetail },
+            { SportType.BaseBall, matchResultDetailService.BaseballResultDetail }
+        };
 
-            case SportType.BasketBall:
-                return matchResultDetailService.BasketballResultDetail(matches, resultDetails, isLeader);
-
-            case SportType.ESports:
-                return matchResultDetailService.ESportsResultDetail(matches, resultDetails, isLeader);
-
-            case SportType.Badminton:
-                return matchResultDetailService.BadmintonResultDetail(matches, resultDetails, isLeader);
-
-            case SportType.Cricket:
-                return matchResultDetailService.CricketResultDetail(matches, resultDetails, isLeader);
-
-            case SportType.BeachVolleyball:
-                return matchResultDetailService.BeachVolleyballResultDetail(matches, resultDetails, isLeader);
-
-            case SportType.VolleyBall:
-                return matchResultDetailService.VolleyballResultDetail(matches, resultDetails, isLeader);
-
-            case SportType.Bandy:
-                return matchResultDetailService.BandyResultDetail(matches, resultDetails, isLeader);
-
-            case SportType.TableTennis:
-                return matchResultDetailService.TableTennisResultDetail(matches, resultDetails, isLeader);
-
-            case SportType.BaseBall:
-                return matchResultDetailService.BaseballResultDetail(matches, resultDetails, isLeader);
-
-            default:
-                return LoadExternalResults(matches, resultDetails, sportType);
+        if (sportTypeMappings.TryGetValue(sportType, out var resultDetailFunc))
+        {
+            return resultDetailFunc(matches, resultDetails, isLeader);
         }
+
+        return LoadExternalResults(matches, resultDetails, sportType);
     }
 
     private List<Match> LoadExternalResults(List<Match> matches, List<ResultDetail> resultDetails, int sportType)

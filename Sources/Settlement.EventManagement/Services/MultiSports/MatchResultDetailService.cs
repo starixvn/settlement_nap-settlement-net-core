@@ -1,5 +1,6 @@
 ﻿namespace Settlement.EventManagement.Services.MultiSports;
 
+using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Match = Models.MultiSports.Match;
@@ -64,7 +65,7 @@ public class MatchResultDetailServiceImp(
 
     public List<Match> BaseballResultDetail(List<Match> matches, List<ResultDetail> resultDetails, bool isLeader)
     {
-        var resources = new List<string> { "0101", "0102", "0103", "0104", "0105", "0106", "0107", "0108", "0109", "EI" };
+        var resources = Resources.ResultFullTime[SportType.BaseBall].ToList();
         return SetMatchInfo(matches, resultDetails, resources, isLeader);
     }
 

@@ -1,5 +1,4 @@
-﻿using Settlement.Core.Constants;
-using Settlement.Core.Models;
+﻿using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.FastMarkets.Models;
 using Settlement.FastMarkets.Requests;
@@ -26,7 +25,7 @@ public class FastMarketHandler(
 {
     public async Task<MatchDetail> Handle(MatchDetailRequest request, CancellationToken cancellationToken)
     {
-        var permission = permissionService.GetPermission(CacheSettings.Keys.MemoryCacheManualPermission);
+        var permission = permissionService.Permission;
         var matchDetail = await matchDetailService.MatchInfo(request.MatchId);
         matchDetail.AutoSettingIcon.Disabled = !permission.AutoSettlement;
         return matchDetail;
@@ -34,7 +33,7 @@ public class FastMarketHandler(
 
     public async Task<FastMarketModel> Handle(BetTypeIntervalRequest request, CancellationToken cancellationToken)
     {
-        var permission = permissionService.GetPermission(CacheSettings.Keys.MemoryCacheManualPermission);
+        var permission = permissionService.Permission;
         var fastMarketModel = await fastMarketService.Query(request.MatchId);
         fastMarketModel.Permission = permission;
         return fastMarketModel;

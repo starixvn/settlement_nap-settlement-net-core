@@ -1,10 +1,13 @@
+using Fanex.Caching.Redis;
 using Fanex.Data;
+using Fanex.Logging.Sentry.RavenClient;
 using Fanex.NAP.Client.Attributes;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
 using Microsoft.AspNetCore.Mvc;
-using ONEbook.UM.AspNetCore.Filters;
+using ONEbook.UM.DependencyInjection;
+using ONEbook.UM.Filters;
 using Settlement.Core.Models;
 using Settlement.WebSites;
 using Settlement.WebSites.Middleware;
@@ -18,17 +21,21 @@ services.AddAuthorizationPolicy();
 
 services.AddAuthentication(configuration);
 
-services.AddRedis(configuration);
+services.AddRedisCache(configuration.GetSection("Fanex.Caching.Redis"));
+
+services.AddConfigRedisCache(configuration);
 
 services.AddSession(configuration);
 
-services.AddOnebookUM(configuration);
+services.AddOneBookUm(configuration);
 
 services.AddNapClient(configuration);
 
 services.AddNapServices(configuration);
 
 services.AddFanexData(configuration);
+
+services.AddFanexLogSentry(configuration);
 
 services.AddAutoMapper();
 
@@ -43,6 +50,7 @@ services.AddMessagePack();
 services.Configure<AppSettingsKey>(configuration);
 
 services.AddRazorPages();
+
 services.AddControllersWithViews(options =>
 {
     options.Filters.Add(new ServiceFilterAttribute(typeof(CheckUMFilterAttribute)));
@@ -57,7 +65,6 @@ services.AddDataProtection().UseCryptographicAlgorithms(
         ValidationAlgorithm = ValidationAlgorithm.HMACSHA256
     });
 
-// WEB Application
 var app = builder.Build();
 
 app.UseDeveloperExceptionPage();

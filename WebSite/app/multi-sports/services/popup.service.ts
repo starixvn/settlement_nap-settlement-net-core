@@ -185,6 +185,9 @@ export class PopupService {
     } else if (_.isEqual(sportType, SportType.eSports)) {
       this.properties.width = "920px";
       this.properties.height = "600px";
+    } else if (sportType === SportType.baseBall) {
+      this.properties.width = "700px";
+      this.properties.height = "1000px";
     } else {
       this.properties.width = "780px";
       this.properties.height = "600px";

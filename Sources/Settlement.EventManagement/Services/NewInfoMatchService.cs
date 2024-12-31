@@ -39,7 +39,7 @@ public class NewInfoMatchServiceImp(
     SiteMatchService siteMatchService,
     GoalIconService goalIconService,
     EventStatusService eventStatusService,
-    BasketballEventStatusService basketballEventStatusService,
+    AdjustEventStatusService adjustEventStatusService,
     IDynamicRepository repository)
     : NewInfoMatchService
 {
@@ -93,7 +93,7 @@ public class NewInfoMatchServiceImp(
     public string NewEventStatus(BaseMatch match, IEnumerable<ResultDetail> resultDetails = null)
     {
         var eventStatus = SportGroup.SupportSettleDetermine.Contains(match.SportType)
-            ? basketballEventStatusService.AdjustEventStatusAbandoned(match.EventStatus, resultDetails, match.SportType)
+            ? adjustEventStatusService.EventStatusAbandoned(match.EventStatus, resultDetails, match.SportType)
             : match.EventStatus;
 
         return eventStatusService.CheckProcessingStatus(eventStatus, match);

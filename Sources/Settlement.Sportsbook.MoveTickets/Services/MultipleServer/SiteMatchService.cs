@@ -1,7 +1,7 @@
 ﻿namespace Settlement.Sportsbook.MoveTickets.Services.MultipleServer;
 
-using Settlement.Core.Constants;
-using Settlement.Core.Models;
+using Core.Constants;
+using Core.Models;
 
 public interface SiteMatchService
 {
@@ -17,7 +17,6 @@ public interface SiteMatchService
 public class SiteMatchServiceImp : SiteMatchService
 {
     private const int MatchPen = 202;
-
 
     public int? IsCalculatingSingle(Match match)
     {

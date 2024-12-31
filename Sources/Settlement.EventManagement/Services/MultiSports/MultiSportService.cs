@@ -141,8 +141,8 @@ public class MultiSportServiceImp(
         var criteria = new OSTicketInfoSelCriteria
         {
             MatchInfo = JsonSerializer.Serialize(matchesInfo),
-            MatchOverStatus = matchesOverStatus.Any() ? JsonSerializer.Serialize(matchesOverStatus) : string.Empty,
-            ChildMatchInfo = parentChildMatchFilters.Any() ? JsonSerializer.Serialize(parentChildMatchFilters) : string.Empty,
+            MatchOverStatus = matchesOverStatus.Count == 0 ? string.Empty : JsonSerializer.Serialize(matchesOverStatus),
+            ChildMatchInfo = parentChildMatchFilters.Count == 0 ? string.Empty : JsonSerializer.Serialize(parentChildMatchFilters),
             OverStatus = filterCriteria.OverStatus,
             MatchCode = filterCriteria.MatchCode
         };

@@ -25,16 +25,18 @@ public static class Resources
 {
     public static Dictionary<int, string[]> ResultHaftTime => new()
     {
-        {SportType.BasketBall, new[] { "Q1", "Q2"} }
+        {SportType.BasketBall, ["Q1", "Q2"] },
+        {SportType.BaseBall, []}
     };
 
     public static Dictionary<int, string[]> ResultFullTime => new()
     {
-        {SportType.BasketBall, new[] { "Q1", "Q2", "Q3", "Q4", "OT"} }
+        {SportType.BasketBall, ["Q1", "Q2", "Q3", "Q4", "OT"] },
+        {SportType.BaseBall, ["0101", "0102", "0103", "0104", "0105", "0106", "0107", "0108", "0109", "EI"]}
     };
 
     public static Dictionary<int, string[]> ExtraResults => new()
     {
-        {SportType.BaseBall, new[] { "8816" } },
+        {SportType.BaseBall, ["8816"] },
     };
 }

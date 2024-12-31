@@ -1,11 +1,11 @@
-import { find, isEmpty, isNil } from "lodash";
+import { find, isEmpty, isNil, isEqual } from "lodash";
 import { Language } from "../../../shared/language.native";
 import { NotifyService } from "../../services/notify.service";
 import { ResultDetail } from "../../../shared/models/sportsbook-sop";
-import { ResourceIds } from "../../constants/resource-id.constant";
+import { ResourceIds } from "../../../shared/constants/resource-id.native";
 import { BaseHandler } from "../base.handler.native";
 import { inject } from "@angular/core";
-import { Storage } from "../../services/storage.service";
+import { ICalculateStorage } from "../../services/calculate/calculate.storage";
 import { ResultRowStateService } from "../../services/result-row-state.service";
 
 export class InvalidInputHandler implements BaseHandler {
@@ -18,8 +18,10 @@ export class InvalidInputHandler implements BaseHandler {
     this.nextHandler = handler;
   }
 
-  handle(storage: Storage) {
-    if (this.invalidInputScore(storage.getResultChecked())) {
+  handle(storage: ICalculateStorage) {
+    const isExistedMercy = storage.getInningsExcludeExtraAndTotalHits().some(item=> !isEmpty(item.otherInfo) && isEqual(item.otherInfo.toLowerCase(), ResourceIds.mercy.toLowerCase()));
+    
+    if ((!isExistedMercy|| storage.isLeader()) && this.invalidInputScore(storage.getResultChecked())) {
       storage.setResultsCheckedState(this.resultRowState);
       this.notifyService.error(storage.isLeader() ? Language.sop.leader.blankScore : Language.sop.nonLeader.blankScore);
     } else {

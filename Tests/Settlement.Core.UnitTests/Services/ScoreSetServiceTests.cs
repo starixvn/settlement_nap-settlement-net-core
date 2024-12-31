@@ -9,7 +9,7 @@ public class ScoreSetServiceTests
 {
     private readonly IScoreSetService service = new ScoreSetServiceImp();
 
-    private readonly bool isLeader = true;
+    private const bool isLeader = true;
 
     [Fact]
     public void GetScore_HasResultDetailWithSettlementStatusIdIsRefund_ReturnsROnScore()
@@ -88,10 +88,18 @@ public class ScoreSetServiceTests
     public void GetScore_HasResultDetailWithSettlementStatusIdIsRunningAndScoreIsNotNull_ReturnsCorrectScore()
     {
         // Arrange
-        var resultDetail = new ResultDetail { MatchId = 1, HomeValue = "1", AwayValue = "2", SettlementStatusId = SettlementStatus.Running };
+        var resultDetail = new ResultDetail
+        {
+            MatchId = 1,
+            HomeValue = "1",
+            AwayValue = "2",
+            SettlementStatusId = SettlementStatus.Running,
+            ResultStatusId = ResultStatus.Confirmed
+        };
         var expectedScore = new Score("1", "2")
         {
-            IsNotSettled = true
+            IsNotSettled = true,
+            IsConfirmed = true
         };
 
         // Act

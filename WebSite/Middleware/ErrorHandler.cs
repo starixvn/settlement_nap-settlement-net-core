@@ -12,7 +12,6 @@ public class ErrorHandler(
     IConfiguration configuration,
     IMaintenanceService maintenanceService)
 {
-    public IConfiguration Configuration { get; } = configuration;
 
     public async Task InvokeAsync(HttpContext context)
     {
@@ -70,7 +69,7 @@ public class ErrorHandler(
 
         await context.Response.WriteAsync(exception.Message);
 
-        var env = Configuration.GetSection("Fanex.NAP.Client:Environment").Value;
+        var env = configuration.GetSection("Fanex.NAP.Client:Environment").Value;
 
         if (exception.StackTrace != null && !env.Equals("LIVE", StringComparison.CurrentCultureIgnoreCase))
         {

@@ -1,4 +1,6 @@
-﻿export * from './modal-dialog-message.model';
+﻿import { from } from 'rxjs';
+
+export * from './modal-dialog-message.model';
 export * from './result.model';
 export * from './default-setting.model';
 export * from './items-select.model';
@@ -29,3 +31,4 @@ export * from './change-setting-result.model';
 export * from './changed-match-setting.model';
 export * from './match-details/goal-icon.model';
 export * from './resource-item.model';
+export * from './settle-childmatch.model';

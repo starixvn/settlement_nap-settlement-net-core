@@ -1,5 +1,5 @@
 import { MessageBoxService } from './../../services/message-box.service.native';
-import { CalculateAction, ResourceIds, SettlementStatusId, SportType } from "../../constants";
+import { CalculateAction, ResourceIds, SettlementStatusId, SportType, ResultSettingType } from "../../constants";
 import { Language } from "../../language.native";
 import { AioService, BlockUIService } from "../../services";
 import { ExternalResultDetail, HedgeMatchDetail, MatchDetail, Permission, ResultDetail, SettleQuery } from "../../models/sportsbook-sop";
@@ -125,18 +125,18 @@ export class RefundActionBaseComponent {
         }
     }
 
-    undoConfirmedAllResult(confirmRefundResources?: ResourceItem[]) {
+    undoConfirmedAllResult() {
         this.toastrService.clear();
         const hedgeMatch = this.applyHedgeMatch ? this.hedgeMatchDetail : null;
         const refundNormal = this.resultDetails.filter(item => item.resultSettingData.isConfirmedRefund);
         if (refundNormal.length > 0) {
             const resourceIds = refundNormal.map(resource => resource.resourceId).join(',');
             this.aioService.changeConfirmResultSetting(Language.confirmRefund.undoConfirmAll, this.matchDetail.matchId, resourceIds, false,
-                hedgeMatch,null,confirmRefundResources);
+                hedgeMatch,null,[]);
         } else {
             const resultConfirmed = this.resultDetails.filter(item => item.resultSettingData.isConfirmedRefundSdt)
             const resourceItems = resultConfirmed.map(item => new ResourceItem(item.resourceId, item.resourceName, item.homeValue, item.awayValue))
-            this.aioService.changeConfirmResultSDTSetting(this.matchDetail.matchId, resourceItems, false, hedgeMatch);
+            this.aioService.changeConfirmResultSDTSetting(this.matchDetail.matchId, ResultSettingType.confirmRefundSDT, resourceItems, false, hedgeMatch);
         }
     }
 
@@ -154,7 +154,7 @@ export class RefundActionBaseComponent {
             this.toastrService.error(Language.confirmRefund.sdtErrorMessage);
         } else {
             const resourceItems = selectedResources.map(item => new ResourceItem(item.resourceId, item.resourceName, item.homeValue, item.awayValue))
-            this.aioService.changeConfirmResultSDTSetting(this.matchDetail.matchId, resourceItems, true, hedgeMatch, this.isIgnoreForMatch3x3);
+            this.aioService.changeConfirmResultSDTSetting(this.matchDetail.matchId, ResultSettingType.confirmRefundSDT,  resourceItems, true, hedgeMatch, this.isIgnoreForMatch3x3);
         }
     }
 

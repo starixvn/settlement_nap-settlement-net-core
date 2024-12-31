@@ -1,16 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
-
   <ItemGroup>
     <Compile Remove="Services\Tennis\GameTotalResourceName.cs" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\Settlement.Core\Settlement.Core.csproj" />
   </ItemGroup>
-
 </Project>

@@ -2,13 +2,13 @@
 
 namespace Settlement.Sportsbook.MoveTickets.Services;
 
+using Core.Constants;
 using Criteria;
 using Fanex.Data.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Models;
 using Requests;
-using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 

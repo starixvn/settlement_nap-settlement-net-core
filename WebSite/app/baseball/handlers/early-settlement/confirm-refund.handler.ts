@@ -7,8 +7,8 @@ import { Language } from "../../../shared/language.native";
 
 export class ConfirmRefundHandler implements BaseHandler {
   private nextHandler: BaseHandler;
-  private notifyService = inject(NotifyService);
-  private resultsChecker = inject(ResultCheckerService);
+  private readonly notifyService = inject(NotifyService);
+  private readonly resultsChecker = inject(ResultCheckerService);
 
   setNextHandler(handler: BaseHandler) {
     this.nextHandler = handler;

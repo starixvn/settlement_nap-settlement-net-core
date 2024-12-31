@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Options;
-using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Aio.Criteria.Cricket;
@@ -29,7 +28,7 @@ public class AioHandler(
 {
     public async Task<AioMatch> Handle(GetMatchRequest request, CancellationToken cancellationToken)
     {
-        request.Permission = permissionService.GetPermission(CacheSettings.Keys.MemoryCacheManualPermission);
+        request.Permission = permissionService.Permission;
         return await aioService.GetMatch(request);
     }
 

@@ -149,7 +149,7 @@ public static class SportGroup
 
     public static readonly int[] VirtualSports = [SportType.VirtualDogs, SportType.VirtualHorses];
 
-    public static readonly int[] SupportSettleDetermine = [SportType.BasketBall];
+    public static readonly int[] SupportSettleDetermine = [SportType.BasketBall, SportType.BaseBall];
 
     public static readonly int[] SOP =
     [

@@ -45,7 +45,7 @@ public class LeagueSettingsServiceTests
         {
             LeagueId = 1,
             LeagueName = "Premier League",
-            Providers = new List<ProviderInfo>()
+            Providers = []
         };
 
         repository.GetAsync<LeagueSettings>(Arg.Any<GetLeagueSettings>()).Returns(leagueSettings);

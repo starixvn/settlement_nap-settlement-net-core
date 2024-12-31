@@ -390,15 +390,10 @@ export class CalculationActionsComponent implements SportTemplate {
       this.adjustHalfTimeScoreOnChange(true);
     }
 
-    if (
-      this.fullTime.settlementStatusId === SettlementStatusId.Calculated ||
+    if (this.fullTime.settlementStatusId === SettlementStatusId.Calculated ||
       this.fullTime.settlementStatusId === SettlementStatusId.Refund ||
-      this.fullTime.settlementStatusId ===
-      SettlementStatusId.RefundSettleDetermined
-    ) {
-      this.fullTime.isScoreMismatched = this.verificationService.isMismatchedWarning(
-        this.fullTime
-      );
+      this.fullTime.settlementStatusId === SettlementStatusId.RefundSettleDetermined) {
+      this.fullTime.isScoreMismatched = this.verificationService.isMismatchedWarning(this.fullTime);
     } else {
       this.adjustFinalScoreOnChange(true);
     }
@@ -904,9 +899,7 @@ export class CalculationActionsComponent implements SportTemplate {
 
   private resetHomeAway(resultDetails: ResultDetail[]) {
     resultDetails.forEach((map) => {
-      const needReset =
-        this.basketballService.isFinalSdt(map, this.quarterResults) ||
-        map.settlementStatusId === SettlementStatusId.Refund;
+      const needReset = this.basketballService.isFinalSdt(map, this.quarterResults) || map.settlementStatusId === SettlementStatusId.Refund;
       map.homeValue = needReset ? "" : map.homeValue;
       map.awayValue = needReset ? "" : map.awayValue;
     });

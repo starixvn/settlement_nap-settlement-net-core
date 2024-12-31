@@ -6,8 +6,7 @@ import { ResultDetail } from '../../../../../shared/models/sportsbook-sop';
 import * as _ from 'lodash';
 import { ResultRowStateService } from '../../../../services/result-row-state.service';
 import { VerificationBaseService } from '../../../../../core/services/verification-base.service';
-import { ResourceIds } from '../../../../constants/resource-id.constant';
-import { SettlementStatusId } from '../../../../../shared/constants';
+import { SettlementStatusId, ResourceIds } from '../../../../../shared/constants';
 import { NotifyService } from '../../../../services/notify.service';
 import { ResultState } from '../../../../models/result-state.model';
 import { ResultDetailBaseBall } from '../../../../models/result-detail.model';
@@ -48,8 +47,23 @@ export class TableResultBodyComponent implements OnInit {
     });
   }
   ngOnInit(): void {
+    this.resetHomeAwayForMatch();
     this.autoFillScoreOnLoad();
     this.autoFillOutsideScoreOnLoad();
+  }
+
+  private resetHomeAwayForMatch() {
+    _.forEach(this.innings, (inning) => {
+      if (this.isRefundMatch(inning)) {
+        inning.homeValue = "";
+        inning.awayValue = "";
+      }
+    });
+  }
+
+  private isRefundMatch(inning: ResultDetailBaseBall) {
+    return _.isEqual(inning.resourceId, ResourceIds.fullTime) 
+          && _.includes([SettlementStatusId.RefundSettleDetermined, SettlementStatusId.Refund], inning.settlementStatusId);
   }
 
   checkInningIsMatched(map: ResultDetail) {
@@ -77,7 +91,8 @@ export class TableResultBodyComponent implements OnInit {
     this.#verificationService.autoFillScore(map);
     if (isOnLoad) {
       if (this.#storage.fulltimeResult.settlementStatusId === SettlementStatusId.Calculated
-        || this.#storage.fulltimeResult.settlementStatusId === SettlementStatusId.Refund) {
+        || this.#storage.fulltimeResult.settlementStatusId === SettlementStatusId.Refund
+        || this.#storage.fulltimeResult.settlementStatusId === SettlementStatusId.RefundSettleDetermined) {
         this.#storage.fulltimeResult.isScoreMismatched = this.#verificationService.isMismatchedWarning(this.#storage.fulltimeResult);
       } else {
         this.adjustFinalScoreOnChange(isOnLoad);
@@ -97,7 +112,7 @@ export class TableResultBodyComponent implements OnInit {
     if (innings.length > 0) {
       _.forEach(innings, (map) => {
         map.isScoreMismatched = this.#verificationService.isMismatchedWarning(map);
-        if (map.settlementStatusId !== SettlementStatusId.Refund) {
+        if (this.statusNotRefunded(map.settlementStatusId)) {
           this.verifyAndAutoFillScore(map, true);
         }
       });
@@ -157,11 +172,17 @@ export class TableResultBodyComponent implements OnInit {
 
   private adjustFinalScoreOnChange(isOnload = false) {
     this.changeScore();
-
-    if ((_.isEmpty(this.#storage.fulltimeResult.homeValue) && _.isEmpty(this.#storage.fulltimeResult.awayValue))
-      && (isOnload && this.#storage.fulltimeResult.settlementStatusId !== SettlementStatusId.Refund || !isOnload)) {
+    if (_.isEmpty(this.#storage.fulltimeResult.homeValue) && _.isEmpty(this.#storage.fulltimeResult.awayValue)
+      && ((isOnload && this.statusNotRefunded(this.#storage.fulltimeResult.settlementStatusId)) || !isOnload)) {
       this.#verificationService.autoFillScore(this.#storage.fulltimeResult);
     }
+  }
+
+  private statusNotRefunded(settlementStatusId: number) {
+    return (
+      settlementStatusId !== SettlementStatusId.Refund &&
+      settlementStatusId !== SettlementStatusId.RefundSettleDetermined
+    );
   }
 
   getTextTooltip(text: string, maxLength: number) {

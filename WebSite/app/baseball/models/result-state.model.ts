@@ -1,5 +1,5 @@
 import { ResultDetail } from "../../shared/models/sportsbook-sop";
-import { ResourceIds } from "../constants/resource-id.constant";
+import { ResourceIds } from "../../shared/constants/resource-id.native";
 import { ResultRowStateService } from "../services/result-row-state.service";
 
 export class ResultState {

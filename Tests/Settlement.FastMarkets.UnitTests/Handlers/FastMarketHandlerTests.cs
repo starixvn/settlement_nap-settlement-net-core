@@ -39,7 +39,7 @@ public class FastMarketHandlerTests
         var result = new Result();
         settingService.UpdateWaterBreakSetting(Arg.Any<UpdateWaterBreakSettingRequest>()).Returns(result);
 
-        var actual = await handler.Handle(new UpdateWaterBreakSettingRequest(), new CancellationToken());
+        var actual = await handler.Handle(new UpdateWaterBreakSettingRequest(), CancellationToken.None);
 
         Assert.Equal(result, actual);
     }
@@ -50,7 +50,7 @@ public class FastMarketHandlerTests
         var result = new Result();
         fastMarketService.Calculate(Arg.Any<SettleRequest>()).Returns(result);
 
-        var actual = await handler.Handle(new SettleRequest(), new CancellationToken());
+        var actual = await handler.Handle(new SettleRequest(), CancellationToken.None);
 
         Assert.Equal(result, actual);
     }
@@ -61,7 +61,7 @@ public class FastMarketHandlerTests
         var result = new MarkedTickets();
         matchDetailService.CheckingMarkedTickets(Arg.Any<CheckingMarkedTicketsRequest>()).Returns(result);
 
-        var actual = await handler.Handle(new CheckingMarkedTicketsRequest(), new CancellationToken());
+        var actual = await handler.Handle(new CheckingMarkedTicketsRequest(), CancellationToken.None);
 
         Assert.Equal(result, actual);
     }
@@ -78,7 +78,7 @@ public class FastMarketHandlerTests
         };
         matchDetailService.MatchInfo(Arg.Any<int>()).Returns(result);
 
-        var actual = await handler.Handle(new MatchDetailRequest(), new CancellationToken());
+        var actual = await handler.Handle(new MatchDetailRequest(), CancellationToken.None);
 
         Assert.Equal(result, actual);
     }
@@ -91,7 +91,7 @@ public class FastMarketHandlerTests
         result.Permission = permission;
         fastMarketService.Query(Arg.Any<int>()).Returns(result);
 
-        var actual = await handler.Handle(new BetTypeIntervalRequest(), new CancellationToken());
+        var actual = await handler.Handle(new BetTypeIntervalRequest(), CancellationToken.None);
 
         Assert.Equal(result, actual);
     }
@@ -102,7 +102,7 @@ public class FastMarketHandlerTests
         var result = new List<FastMarketResult>();
         fastMarketService.GetLatestResult(Arg.Any<GetLatestResultRequest>()).Returns(result);
 
-        var actual = await handler.Handle(new GetLatestResultRequest(), new CancellationToken());
+        var actual = await handler.Handle(new GetLatestResultRequest(), CancellationToken.None);
 
         Assert.Equal(result, actual);
     }
@@ -113,7 +113,7 @@ public class FastMarketHandlerTests
         var result = new List<TimeMachineResult>();
         fastMarketService.GetTimeMachineResult(Arg.Any<GetTimeMachineResultRequest>()).Returns(result);
 
-        var actual = await handler.Handle(new GetTimeMachineResultRequest(), new CancellationToken());
+        var actual = await handler.Handle(new GetTimeMachineResultRequest(), CancellationToken.None);
 
         Assert.Equal(result, actual);
     }

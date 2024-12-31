@@ -9,8 +9,8 @@ import { InputType } from '../../constants/input-type.constant';
 
 export class VerifyScoreSourceHandler implements BaseHandler {
   private nextHandler: BaseHandler;
-  private verify = inject(VerificationResultsService);
-  private notifyService = inject(NotifyService);
+  private readonly verify = inject(VerificationResultsService);
+  private readonly notifyService = inject(NotifyService);
 
   setNextHandler(handler: BaseHandler) {
     this.nextHandler = handler;

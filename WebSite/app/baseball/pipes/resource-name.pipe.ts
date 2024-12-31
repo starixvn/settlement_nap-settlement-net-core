@@ -34,14 +34,14 @@ export class ResourceNamePipe implements PipeTransform {
 
   private getSpecialSetName(resourceId: string,isRefund:boolean,leagueType: number): string {
     if (resourceId === ResourceIds.fullTime) { 
-      return leagueType === 1 ? 'Series' : 'Match'; // match normal
+      return leagueType === 1 ? 'Series' : 'Match'; 
     }  
     
     if (resourceId === ResourceIds.extraInning) {
       return isRefund ? 'E.I' : 'Extra Inning';
     }
     
-    if (resourceId == ResourceIds.totalHits) {
+    if (resourceId === ResourceIds.totalHits) {
       return 'Total Hits';
     }
 

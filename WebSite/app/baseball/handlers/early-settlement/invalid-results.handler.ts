@@ -9,7 +9,7 @@ import { InputType } from "../../constants/input-type.constant";
 
 export class InvalidResultsHandler implements BaseHandler {
   private nextHandler: BaseHandler;
-  private notifyService = inject(NotifyService);
+  private readonly notifyService = inject(NotifyService);
 
   setNextHandler(handler: BaseHandler) {
     this.nextHandler = handler;

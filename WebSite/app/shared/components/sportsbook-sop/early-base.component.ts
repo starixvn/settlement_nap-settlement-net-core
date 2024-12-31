@@ -298,7 +298,7 @@ export class EarlyBaseComponent {
 
         const existResultConfirmed = _.find(this.selectedResources, item => item.resultSettingData.isConfirmedRefund);
         if (existResultConfirmed) {
-            this.undoConfirmedResult(this.selectedResources, this.matchDetail.matchId, resourceIds,confirmRefundResources);
+            this.undoConfirmedResult(this.selectedResources, this.matchDetail.matchId, resourceIds, confirmRefundResources);
         } else {
             this.aioService.changeConfirmResultSetting(
                 Language.confirmRefund.confirmRefund, 
@@ -316,7 +316,7 @@ export class EarlyBaseComponent {
         resultDetails: ResultDetail[], 
         matchId: number, 
         resourceIds: string,
-        confirmRefundResources: any[]) {
+        confirmRefundResources: ResultDetail[]) {
         const resultNotConfirmed = _.find(resultDetails, item => !item.resultSettingData.isConfirmedRefund);
         if (_.isNil(resultNotConfirmed)) {
             this.aioService.changeConfirmResultSetting(Language.confirmRefund.undoConfirm, matchId, resourceIds, false, null,null,confirmRefundResources);

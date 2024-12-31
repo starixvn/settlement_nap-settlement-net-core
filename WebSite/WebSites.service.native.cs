@@ -1,12 +1,7 @@
 using AutoMapper;
 using Fanex.Caching;
-using Fanex.Caching.Redis;
 using Fanex.Data.Repository;
 using Fanex.Logging;
-using Fanex.Logging.Extensions;
-using Fanex.Logging.Extensions.AspNetCore;
-using Fanex.Logging.Extensions.Database;
-using Fanex.Logging.Sentry.RavenClient;
 using Fanex.MailDeliver.MailClient;
 using Fanex.RemotingRef;
 using Fanex.Settlement.Converter.Services;
@@ -31,9 +26,7 @@ using Settlement.Sportsbook.MoveTickets;
 using Settlement.Sportsbook.OtherSports;
 using Settlement.Sportsbook.Soccer;
 using Settlement.ThirdPartyProducts;
-using Settlement.WebSites.App_Start;
 using Settlement.WebSites.Configurations;
-using SharpRaven;
 using StackExchange.Redis;
 using System.IO.Compression;
 using ILogger = Fanex.Logging.ILogger;
@@ -76,7 +69,7 @@ public static class WebSites
         });
     }
 
-    public static void AddRedis(this IServiceCollection services, IConfiguration configuration)
+    public static void AddConfigRedisCache(this IServiceCollection services, IConfiguration configuration)
     {
         var redisConfig = configuration.GetSection("AuthSettings:RedisConfig").Value;
         var redisMultiplexer = ConnectionMultiplexer.Connect(redisConfig);
@@ -91,8 +84,6 @@ public static class WebSites
             options.Configuration = redisConfig;
             options.InstanceName = "Fanex.Settlement.Session-";
         });
-
-        services.AddRedisCache(configuration.GetSection("Fanex.Caching.Redis"));
     }
 
     public static void AddSession(this IServiceCollection services, IConfiguration configuration)
@@ -133,20 +124,6 @@ public static class WebSites
         services.Configure<IConfiguration>(configuration);
         services.AddSingleton<IRemotingRefService, RemotingRefService>();
 
-        LogManager
-            .SetDefaultLogCategory(configuration.GetSection("LogCategory").Value)
-            .Use(new List<ILogEngine>
-            {
-                new SentryLogging(new SentryEngineOptions
-                {
-                    Dsn = new Dsn(configuration.GetSection("SentryEngineOptions:Dsn").Value)
-                })
-            });
-
-        ExceptionHandler
-            .UseConfig(new LoggingConfiguration())
-            .UseGetDbExceptionInfo(DatabaseInfoGetters.GetDbExceptionInfo);
-
         AppSettings.AppMailId = configuration.GetSection("MailServer:Id").Value;
         AppSettings.AppMailAddress = configuration.GetSection("MailServer:Address").Value;
     }
@@ -158,7 +135,7 @@ public static class WebSites
         services.AddSingleton<PermissionService, PermissionServiceImp>();
         services.AddSingleton<XmlConvertService, XmlConvertServiceImp>();
         services.AddTransient<LogService, LogServiceImp>();
-        services.AddTransient<BasketballEventStatusService, BasketballEventStatusServiceImp>();
+        services.AddTransient<AdjustEventStatusService, AdjustEventStatusServiceImp>();
 
         services.AddTransient<IScoreSetService, ScoreSetServiceImp>();
         services.AddTransient<ScaleOutSettleService, ScaleOutSettleServiceImp>();
@@ -203,11 +180,6 @@ public static class WebSites
         services.AddSingleton(mapper);
     }
 
-    public static void AddOnebookUM(this IServiceCollection services, IConfiguration configuration)
-    {
-        services.RegisterServiceCollection(configuration);
-    }
-
     public static void AddMessagePack(this IServiceCollection services)
     {
         services.AddMvc().AddMvcOptions(option =>
@@ -229,13 +201,14 @@ public static class WebSites
         services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Optimal);
         services.AddResponseCompression(options =>
         {
-            options.MimeTypes = new[]{
-                    "text/html",
+            options.MimeTypes =
+            [
+                "text/html",
                     "text/css",
                     "application/javascript",
                     "application/json",
                     "application/x-msgpack"
-            };
+            ];
         });
     }
 }

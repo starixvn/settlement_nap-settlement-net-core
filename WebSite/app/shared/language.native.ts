@@ -20,6 +20,7 @@
   RefundConfirmationBox: 'Refund confirmation box',
   RefundConfirmMessage: 'Are you sure you want to REFUND/CANCEL? This function is only in use when the match cancel?',
   RefundConfirmSdtMessage: 'Are you sure you want to REFUND with SETTLE DETERMINED TICKETS for selected results? This function is only in use when the match suspended.',
+  RefundConfirmMercyMessage: 'Are you sure you want to REFUND with MERCY RULE for selected results? This function is only in use when the match ended with Mercy applied.',
   RefundFullMessage: "Are you sure you want to REFUND FULLTIME? This function is only in use when the match cancel?",
   RefundParlayConfirmMessage: 'Are you sure you want to REFUND PARLAY this match?',
   RefundParlayFullTime: "Are you sure you want to REFUND PARLAY FULL TIME this match?",
@@ -104,7 +105,7 @@
   inconsistentValues: "WARNING! Cannot continue due to scores inconsistency. Please recheck and try again.",
   reloadConfirmMessage: "WARNING! There are unsaved changes. Are you sure you want to proceed?",
   remarkSettingTitle: "Hold Settings",
-  warningInputScore: "Please input score!",
+  warningInputScore: "Please input score accordingly.",
   holdResultConfirmMessage: "Are you sure you want to update Hold Result status for this result?",
   holdResultGroupConfirmMessage: "Are you sure you want to update Hold Result status for this results group?",
   fastMarket: {
@@ -162,6 +163,7 @@
       NotSelectUncalculationTypeMessage: 'Please select Innings/Match to Uncalculate.',
       NotInputSelectedInnings: 'Please input score for selected Innings.',
       NotInputFinalScore: 'Please input score for Match.',
+      SdtAndMercySelected: 'Please select only 1 option "Settle determinable tickets of next results" or "Early Complete/Mercy Rule."',
     },
     leader: {
       blankScore: `WARNING! Selected intervals' "Final Score" must not be blank. Please input "Final Score" values!`,
@@ -189,7 +191,8 @@
     intervalNotSelected: "WARNING! Cannot continue due to related intervals are not selected or calculated.",
     intervalInconsistent: "WARNING! Cannot continue due to selected intervals are inconsistent with Match/Full Time score.",
     inningsNotSelected: "Please calculate all related intervals first or select all related un-calculated intervals at the same time.",
-    extraInningDraw: "Sum all Inning scores has Winner & Loser and E.I. has value. Please check and try again."
+    extraInningDraw: "Sum all Inning scores has Winner & Loser and E.I. has value. Please check and try again.",
+    intervalNotSelectedOrNotCalculated: "WARNING! Related intervals have not been calculated nor selected. Are you sure you want to continue?"
   },
 
   confirmRefund: {
@@ -199,9 +202,19 @@
     refundResultNotConfirmed: "WARNING! Cannot continue due to selected results are not confirmed to refund. Please confirm refund and try again.",
     calculateResultNotConfirmed: "WARNING! Cannot continue due to selected results are confirmed to refund. Please undo-confirm refund and try again.",
     sdtConfirm: 'WARNING! Are you sure you want to confirm-refund SDT for selected results?<br/>{0}',
+    mercyConfirm: 'WARNING! Are you sure you want to confirm-refund Mercy for selected results?',
     undoConfirmAll: 'WARNING! Are you sure you want to undo confirm-refund for all results?',
-    sdtErrorMessage: 'Cannot continue with Refund due to confirm state or value mismatch. Please check and try again.'
+    sdtErrorMessage: 'Cannot continue with Refund due to confirm state or value mismatch. Please check and try again.',
+    subsequenceIntervalsErrorMessage: 'Please select all subsequence intervals.'
   },
+
+  mercy:{
+    invalidIntervals : 'Invalid intervals selected. Please contact Leader or Admin.',
+    invalidIntervalsConfirm : 'WARNING! Invalild intervals calculated or selected. Are you sure you want to continue?',
+    multipleMercy: 'Multiple Mercy Innings exist. Please contact Leader or Admin.',
+    multipleMercyConfirm: 'WARNING!	Multiple Mercy Innings exist. Are you sure you want to continue?',
+  },
+
   gaming: {
     reCalculateConfirmMessage: 'Are you sure you want to Recalculate this match?',
     refundConfirmMessage: 'Are you sure you want to Refund this match?',
