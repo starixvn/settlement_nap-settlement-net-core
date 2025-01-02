@@ -17,9 +17,9 @@ export const SportSingleAutoType = [
   SportType.cricket,
   SportType.tennis,
   SportType.eSports,
-  SportType.iceHockey,
+  // SportType.iceHockey,
   SportType.basketBall,
-  SportType.kabaddi, 
+  // SportType.kabaddi, 
   SportType.volleyBall,
   SportType.baseBall,
 ];
