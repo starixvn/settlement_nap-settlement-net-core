@@ -1,6 +1,7 @@
 ﻿using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using Settlement.Core.Constants;
 using Settlement.Core.Criteria;
 using Settlement.Core.Models;
@@ -158,6 +159,8 @@ public class MultipleServerAioServiceImp(
 
     public async Task<Result> Settle(SettleRequest request)
     {
+        await Fanex.Logging.LogService.InfoAsync($"Settle: {JsonConvert.SerializeObject(request)}");
+
         var criteria = createQueryService.QuerySettle(request);
         var result = await Execute(criteria, request.SelectedResources);
         result.SettledSessionId = criteria.BroadcastSessionId;
@@ -246,6 +249,9 @@ public class MultipleServerAioServiceImp(
         await UpdateMatchInfo(criteria);
 
         await WriteLog(criteria);
+
+        await Fanex.Logging.LogService.InfoAsync($"UpdateInfoAndSettle: {JsonConvert.SerializeObject(criteria)}");
+
 
         var isResultAmendment = await HandleResultAmendment(criteria, selectedResources);
 

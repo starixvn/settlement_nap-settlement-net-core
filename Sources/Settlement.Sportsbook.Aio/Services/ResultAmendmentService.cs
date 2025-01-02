@@ -68,6 +68,7 @@ public class ResultAmendmentServiceImp(
 
         if (settleCriteria.SportType is SportType.BasketBall or SportType.ESports)
         {
+            await LogService.InfoAsync($"Push ResultAmendmentService {DateTime.Now} {settleCriteria.MatchId} {settleCriteria.BroadcastSessionId} {settleCriteria.Action}");
             await publishEndpoint.Publish(new ResultAmended(
                 settleCriteria.MatchId,
                 settleCriteria.BroadcastSessionId,
