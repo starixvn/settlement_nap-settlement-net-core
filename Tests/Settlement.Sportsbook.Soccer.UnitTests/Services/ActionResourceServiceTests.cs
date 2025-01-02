@@ -8,7 +8,7 @@ namespace Settlement.Sportsbook.Soccer.UnitTests.Services;
 
 public class ActionResourceServiceTests
 {
-    private readonly IActionResourceService service;
+    private readonly ActionResourceServiceImp service;
 
     public ActionResourceServiceTests()
     {

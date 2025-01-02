@@ -20,7 +20,7 @@ public class SettleEarlyServiceTests
 
     private readonly ScaleOutSettleService scaleOutSettleService;
 
-    private readonly SettleEarlyService service;
+    private readonly SettleEarlyServiceImp service;
 
     private readonly LogService logService;
 

@@ -46,6 +46,7 @@ export class FinalResultCalculateHandler implements BaseHandler {
 
   private checkInnings(allInnings: ResultDetailBaseBall[], storage: ICalculateStorage) {
     const isExistedMercy = allInnings.some(item=> !_.isEmpty(item.otherInfo) && _.isEqual(item.otherInfo.toLowerCase(), ResourceIds.mercy.toLowerCase()));
+    const existsNotCheckedOrCalculated = allInnings.some(x => !this.intervalCalculationService.isIntervalCheckedOrCalculated(x));
   
     if (!isExistedMercy && existsNotCheckedOrCalculated) {
         if (storage.isLeader()) {
@@ -64,6 +65,8 @@ export class FinalResultCalculateHandler implements BaseHandler {
 
   
   private checkExtraInning(allInnings: ResultDetailBaseBall[], extraInning: ResultDetailBaseBall) {
+    const totalScoreHome = _.sumBy(allInnings, x => +x.homeValue);
+    const totalScoreAway = _.sumBy(allInnings, x => +x.awayValue);
 
     if (totalScoreHome !== totalScoreAway &&
         !_.isEmpty(extraInning.homeValue) &&
@@ -73,54 +76,11 @@ export class FinalResultCalculateHandler implements BaseHandler {
         return true; 
     }
 
-    this.clearExtraInningIfNeeded(totalScoreHome, totalScoreAway, extraInning);
-
-    this.nextHandler.handle(storage);
-  }
-
-  private clearExtraInningIfNeeded(totalScoreHome: number, totalScoreAway: number, extraInning: ResultDetail) {
     if (totalScoreHome !== totalScoreAway && (extraInning.homeValue === "0" && extraInning.awayValue === "0")) {
         extraInning.homeValue = ''; 
         extraInning.awayValue = '';
     }
-  }
 
     return false; 
-    return totalScoreHome !== totalScoreAway &&
-        (!_.isEmpty(extraInning.homeValue) &&
-        !_.isEmpty(extraInning.awayValue) &&
-        (extraInning.homeValue !== "0" || extraInning.awayValue !== "0"));
-  }
-
-  private calculateTotalScores(allInnings: ResultDetail[]) {
-    const totalScoreHome = _.sumBy(allInnings, x => +x.homeValue);
-    const totalScoreAway = _.sumBy(allInnings, x => +x.awayValue);
-    return { totalScoreHome, totalScoreAway };
-  }
-
-  private hasUncheckedInnings(allInnings: ResultDetail[]) {
-    return allInnings.some(x => !this.intervalCalculationService.isIntervalCheckedOrCalculated(x));
-  }
-
-  private shouldProceed(finalResult: ResultDetail, isScoreDirect: boolean, storage: Storage) {
-    return !finalResult.checked || isScoreDirect || storage.getMatchDetail().sessionTime === 1;
-  }
-
-  private getFilteredInnings(storage: Storage) {
-    return storage.getResultDetails().filter(x => 
-        ![
-            ResourceIds.totalHits,
-            ResourceIds.fullTime,
-            ResourceIds.extraInning,
-        ].includes(x.resourceId)
-    );
-  }
-
-  private getFinalResult(storage: Storage) {
-    return storage.getResultDetails().find(x => x.resourceId === ResourceIds.fullTime);
-  }
-
-  private getExtraInning(storage: Storage) {
-    return storage.getResultDetails().find(x => x.resourceId === ResourceIds.extraInning);
   }
 }

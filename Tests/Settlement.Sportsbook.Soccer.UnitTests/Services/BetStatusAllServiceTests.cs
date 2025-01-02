@@ -8,7 +8,7 @@ public class BetStatusAllServiceTests
 {
     private readonly IValidationService validationService;
     private readonly IGoalRecordService goalRecordService;
-    private readonly IBetStatusAllService service;
+    private readonly BetStatusAllServiceImp service;
 
     public BetStatusAllServiceTests()
     {
