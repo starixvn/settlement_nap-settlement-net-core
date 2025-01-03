@@ -10,6 +10,8 @@ public class ResultDetail : ResultDetailBase
 {
     private string value;
 
+    private const int ToBase = 2;
+
     public int? MatchId { get; set; }
 
     public string ResourceId { get; set; }
@@ -36,6 +38,13 @@ public class ResultDetail : ResultDetailBase
     public byte? SettlementStatusId { get; set; }
 
     public string OtherInfo { get; set; }
+
+    public byte ResultSetting { get; set; }
+
+    public ResultDetailSetting ResultSettingData => new()
+    {
+        ResultSetting = Convert.ToString(ResultSetting, ToBase).Reverse()
+    };
 
     private static string UppercaseFirst(string value)
     {

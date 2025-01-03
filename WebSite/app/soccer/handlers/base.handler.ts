@@ -1,0 +1,12 @@
+import { Storage } from '../storage/storage.service';
+export interface BaseHandler {
+  setNextHandler(handler: BaseHandler): void;
+  handle(storage: Storage): void ;
+}
+
+export interface MatchDetailContext {
+  matchDetail: any;
+  storage: any;     
+  verifyScoreGoalService: any; 
+  confirmCopyScore(message: string): void;
+}

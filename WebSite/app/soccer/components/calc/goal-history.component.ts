@@ -1,10 +1,15 @@
-import { Component, Input } from "@angular/core";
+import { FormsModule } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
 import * as _ from "lodash";
 import { GoalRecord } from "./models/match.model";
+import { CommonModule } from '@angular/common';
 
 @Component({
     selector: 'goal-history',
+    standalone: true,
+    imports: [FormsModule, CommonModule],
     templateUrl: './goal-history.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 
 export class GoalHistoryComponent {
@@ -32,7 +37,6 @@ export class GoalHistoryComponent {
             const team =  _.isEqual(item, 'H') ? 'Home' : 'Away';
             goalRecords.push(new GoalRecord(team, home, away));
         });
-
         return goalRecords;
     }
 

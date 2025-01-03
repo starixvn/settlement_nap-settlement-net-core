@@ -7,6 +7,22 @@
 .calculate-popup {
     padding-left: 3px;
     width: 790px !important;
+
+    .calc-bottom {
+        width: 560px;
+        position: relative;
+
+        .goal-history {
+            position: absolute;
+            right: 0;
+        }
+
+        .resettle-checker {
+            position: absolute;
+            left: 0;
+        }
+    }
+
 }
 
 .refund-popup {
@@ -403,7 +419,7 @@ soccer-ticket-count {
     }
 }
 
-.calc-action {
+.calculate-action {
     .row-2 {
         padding-left: 218px !important;
         text-align: left !important;
@@ -411,17 +427,34 @@ soccer-ticket-count {
 
     .uncalculate {
         width: 100px !important;
+    }
 
+    table td {
+        text-align: center;
+        text-align: -webkit-center;
     }
 }
 
-.calc-popup .calc-action .row-1 .action-button {
-    width: 60%;
-    text-align: initial;
+.calc-popup .calculate-action .action-button {
+    width: 100%;
+    height: 30px;
+
+    .instant {
+        width: 130px;
+    }
 }
 
-.calc-popup .calc-action {
+.calc-popup .calculate-action {
     width: 560px;
+
+    .mismatched {
+        background-color: #f40000;
+    }
+
+    .save-score {
+        float: right;
+        width: 130px;
+    }
 }
 
 .refund-action {

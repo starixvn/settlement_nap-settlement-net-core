@@ -40,7 +40,7 @@ import {
 } from '../../constants';
 import { Language } from '../../../shared/language.native';
 import { ResultSettingModel } from '../../../shared/models';
-import { MatchDetailComponent } from './match-detail.component';
+import { MatchDetailComponent } from '../common/match-detail.component';
 import { ScoreBySettlementPipe } from '../../../shared/pipes/score-by-settlement.pipe';
 import { ToastContainerDirective, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 

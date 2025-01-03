@@ -1,9 +1,9 @@
-import { MessageBoxService, BlockUIService, HttpRequestService } from './../../../shared/services';
+import { MessageBoxService, BlockUIService, HttpRequestService } from '../../../shared/services';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatchDetailComponent } from './match-detail.component';
 import { HttpClientModule } from '@angular/common/http';
-import { Match } from './models';
+import { Match } from '../early/models';
 import { ScoreBySettlementPipe } from '../../../shared/pipes/score-by-settlement.pipe';
+import { MatchDetailComponent } from './match-detail.component';
 
 
 describe('Soccer - MatchDetailComponent', () => {

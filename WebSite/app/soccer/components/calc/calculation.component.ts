@@ -1,4 +1,6 @@
-import { Component, ViewChild } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { CalculateAction } from './../../../shared/constants/calculate-action.native';
+import { Component, inject, ViewChild } from '@angular/core';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import { ChildMatch, FantasyRelatedMatch, HedgeMatchDetail, Match, MatchDetail, Score, UndoChecking } from './models/match.model';
 import { Soccer } from '../soccer.model';
@@ -6,7 +8,7 @@ import { RequestService } from './services/request.service';
 import { VerifyMatchService } from './services/verify-match.service';
 import { TimeMinute, LeagueGroup } from './models/constant.native';
 import * as _ from 'lodash';
-import { TicketStatusText, BackgroundColor, CalculateAction, SettlementStatusId, ResultStatusId } from '../../../shared/constants';
+import { TicketStatusText, BackgroundColor, SettlementStatusId, ResultStatusId } from '../../../shared/constants';
 import { ClosePopupService, MessageBoxService } from '../../../shared/services';
 import { ModalDialogMessage } from '../../../shared/models';
 import { Language } from '../../../shared/language.native';
@@ -16,17 +18,48 @@ import { VerifyScoreGoalService } from './services/verify-score-goal.service';
 import { VerificationBaseService } from '../../services/verification-base.service';
 import { BetStatus, ResourceIds } from '../../constants';
 import { ResultDetail } from '../../models';
+import { CalculationActionComponent } from './calculation-action.component';
+import { CommonModule } from '@angular/common';
+import { CalculateStorage } from '../../storage/calculate.storage';
+import { ResettleCheckerComponent } from '../../../shared/components/resettle-checker/resettle-checker.component';
+import { FantasyComponent } from './fantasy.component';
+import { NotReadyMatchComponent } from '../../../shared/components/not-ready-match/not-ready-match.component';
+import { RefundChildMatchComponent } from './refund-child-match.component';
+import { MatchDetailComponent } from '../common/match-detail.component';
+import { MatTooltip } from '@angular/material/tooltip';
+import { SoccerTicketCountComponent } from './soccer-ticket-count.component';
+import { CalculateService } from './services/calculate.service';
+import { ScoreService } from './services/score.service';
+import { GoalHistoryComponent } from './goal-history.component';
+import { GoalRecordWithSemicolonService } from './services/goal-record-with-semicolon.service';
 
 @Component({
     selector: 'calculation',
     templateUrl: './calculation.component.html',
+    standalone: true,
+    imports: [
+        CalculationActionComponent,
+        ResettleCheckerComponent,
+        NotReadyMatchComponent,
+        FantasyComponent,
+        RefundChildMatchComponent,
+        MatchDetailComponent,
+        SoccerTicketCountComponent,
+        GoalHistoryComponent,
+        MatTooltip,
+        CommonModule,
+        FormsModule],
     providers: [
         VerifyMatchService,
         RequestService,
         ClosePopupService,
         VerifyActionService,
         VerifyScoreGoalService,
-        VerificationBaseService
+        VerificationBaseService,
+        CalculateStorage,
+        CalculateService,
+        ScoreService,
+        GoalRecordWithSemicolonService 
     ]
 })
 export class CalculationComponent implements Soccer {
@@ -40,36 +73,30 @@ export class CalculationComponent implements Soccer {
     public isReSettledTickets: boolean;
     public matchDetail: MatchDetail;
     public dialogMessage = new ModalDialogMessage();
-    constructor(
-        private readonly requestService: RequestService,
-        private readonly verifyMatchService: VerifyMatchService,
-        private readonly messageBoxService: MessageBoxService,
-        private readonly closePopupService: ClosePopupService,
-        private readonly verifyActionService: VerifyActionService,
-        private readonly toastrService: ToastrService) {
+    constructor() {
         this.dialogMessage.title = Language.confirmationBox;
     }
 
+    private readonly requestService = inject(RequestService);
+    private readonly verifyMatchService = inject(VerifyMatchService);
+    private readonly messageBoxService = inject(MessageBoxService);
+    private readonly closePopupService = inject(ClosePopupService);
+    private readonly verifyActionService = inject(VerifyActionService);
+    #storage = inject(CalculateStorage);
+
     async getMatch(matchId: number) {
-        this.toastrService.overlayContainer = this.toastContainer;
+        this.#storage.setToastrOverlay(this.toastContainer);
         this.match = await this.requestService.getMatch(matchId);
+        this.#storage.setMatch(this.match);
         this.matchDetail = this.match.matchDetail;
         this.isMatchReady = this.isReadyToSettle(this.matchDetail);
         this.childMatches = this.match.childMatches;
         this.hedgeMatchDetail = this.match.hedgeMatchDetail;
         this.applyHedgeMatch = this.hedgeMatchDetail != null && !this.hedgeMatchDetail.isUndecided;
         this.matchDetail.originalGoalRecord = this.matchDetail.goalRecord;
-        this.relatedMatches =  this.matchDetail.isFantasyMatch 
+        this.relatedMatches = this.matchDetail.isFantasyMatch
             ? this.match.fantasyMatch.relatedMatches.filter((match) => !match.isDeleted)
             : []
-    }
-
-    public getErrorMsg(value: string) {
-        if (!_.isEmpty(value)) {
-            this.toastrService.error(value);
-        } else {
-            this.toastrService.clear();
-        }
     }
 
     private isReadyToSettle(matchDetail: MatchDetail) {
@@ -138,12 +165,12 @@ export class CalculationComponent implements Soccer {
 
     public async calculateHalfTime() {
         this.resetAllWarning();
-        const errorMessage = await this.verifyActionService.verifyFirstHalf(this.matchDetail,this.relatedMatches);
+        const errorMessage = await this.verifyActionService.verifyFirstHalf(this.matchDetail, this.relatedMatches);
 
         if (_.isEmpty(errorMessage)) {
             this.confirmHalftime();
         } else {
-            this.toastrService.error(errorMessage);
+            this.#storage.error(errorMessage);
         }
     }
 
@@ -168,7 +195,7 @@ export class CalculationComponent implements Soccer {
         if (_.isEmpty(errorMessage)) {
             this.confirmFullTime();
         } else {
-            this.toastrService.error(errorMessage);
+            this.#storage.error(errorMessage);
         }
     }
 
@@ -196,7 +223,7 @@ export class CalculationComponent implements Soccer {
         if (_.isEmpty(errorMessage)) {
             this.confirmAll();
         } else {
-            this.toastrService.error(errorMessage);
+            this.#storage.error(errorMessage);
         }
     }
 
@@ -235,7 +262,7 @@ export class CalculationComponent implements Soccer {
         const resultHalfTime = _.find(this.match.resultDetails, item => item.resourceId === ResourceIds.halfTime) ?? new ResultDetail();
         if (_.includes(betStatus, BetStatus.abandoned1H)
             || (_.includes(betStatus, `${BetStatus.refunded};`) && _.isEqual(resultHalfTime.settlementStatusId, SettlementStatusId.Refund))) {
-            this.toastrService.error(Language.CannotUncalculateFTMessage);
+            this.#storage.error(Language.CannotUncalculateFTMessage);
         } else {
             this.confirmUnCalcFt();
         }
@@ -249,7 +276,7 @@ export class CalculationComponent implements Soccer {
         if (_.isEmpty(errorMessage)) {
             this.confirmUnCalcInstant(matchId, result);
         } else {
-            this.toastrService.error(errorMessage);
+            this.#storage.error(errorMessage);
         }
     }
 
@@ -276,7 +303,7 @@ export class CalculationComponent implements Soccer {
             if (result.isSuccessful) {
                 this.closePopupService.closePopup();
             } else {
-                this.toastrService.error(result.errMsg);
+                this.#storage.error(result.errMsg);
             }
         });
     }
@@ -287,7 +314,7 @@ export class CalculationComponent implements Soccer {
         this.matchDetail.isWarningFinalHomeScore = false;
         this.matchDetail.isWarningFinalAwayScore = false;
         this.matchDetail.isWarningGoalRecord = false;
-        this.toastrService.clear();
+        this.#storage.clear();
     }
 
     private autoCheckedReSettledTickets() {
@@ -307,12 +334,12 @@ export class CalculationComponent implements Soccer {
             await this.alertMessageToLetstalkForFastMarket(this.matchDetail.matchId, actionName);
             this.closePopupService.closePopup();
         } else {
-            this.toastrService.error(result.errMsg);
+            this.#storage.error(result.errMsg);
         }
     }
 
     private async alertMessageToLetstalkForFastMarket(matchId: number, actionName: string) {
-        if(_.includes([CalculateAction.calculateFullTime, CalculateAction.calculate], actionName)) {
+        if (_.includes([CalculateAction.calculateFullTime, CalculateAction.calculate], actionName)) {
             await this.requestService.alertMessageToLetstalkForFastMarket(matchId, actionName);
         }
     }
@@ -324,7 +351,7 @@ export class CalculationComponent implements Soccer {
         if (result.isSuccessful) {
             this.closePopupService.closePopup();
         } else {
-            this.toastrService.error(result.errMsg);
+            this.#storage.error(result.errMsg);
         }
     }
 }

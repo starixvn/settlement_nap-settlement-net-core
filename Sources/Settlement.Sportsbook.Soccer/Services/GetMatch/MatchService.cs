@@ -70,7 +70,8 @@ public class MatchServiceImp(
         var resultDetails = await GetResultDetail(request.MatchId);
         var matchDetail = match.MatchDetail;
         matchDetail.RefDataService = refDataService;
-        matchDetail = HandleResultDetailSoccer(matchDetail, resultDetails);
+        HandleExternalResultDetailSoccer(matchDetail, resultDetails);
+        HandleResultDetailSoccer(matchDetail, resultDetails);
 
         var goalIconQuery = GoalIconQuery(matchDetail);
         matchDetail.GoalIcon = goalIconService.GetGoalIcon(goalIconQuery);
@@ -110,7 +111,7 @@ public class MatchServiceImp(
         var resultDetails = await GetResultDetail(request.MatchId);
 
         matchDetail.RefDataService = refDataService;
-        matchDetail = HandleResultDetailSoccer(matchDetail, resultDetails);
+        HandleExternalResultDetailSoccer(matchDetail, resultDetails);
         var goalIconQuery = GoalIconQuery(matchDetail);
         matchDetail.GoalIcon = goalIconService.GetGoalIcon(goalIconQuery);
 
@@ -185,11 +186,13 @@ public class MatchServiceImp(
         };
     }
 
-    private static MatchDetail HandleResultDetailSoccer(MatchDetail match, List<ResultDetail> resultDetails)
+    private static void HandleExternalResultDetailSoccer(MatchDetail match, List<ResultDetail> resultDetails)
     {
         var externalResultDetail = resultDetails.Where(result => result.SourceId == SourceType.Sbo).ToList();
+        var internalResultDetail = resultDetails.Where(result => result.SourceId == SourceType.Normal).ToList();
         var halfTimeResult = externalResultDetail.Find(result => result.ResourceId == ResourceType.Halftime);
         var fullTimeResult = externalResultDetail.Find(result => result.ResourceId == ResourceType.Final);
+
 
         if (halfTimeResult != null && !string.IsNullOrWhiteSpace(halfTimeResult.AwayValue) && !string.IsNullOrWhiteSpace(halfTimeResult.HomeValue))
         {
@@ -202,8 +205,23 @@ public class MatchServiceImp(
             match.ExFTAwayScore = int.Parse(fullTimeResult.AwayValue);
             match.ExFTHomeScore = int.Parse(fullTimeResult.HomeValue);
         }
+    }
 
-        return match;
+    private static void HandleResultDetailSoccer(MatchDetail match, List<ResultDetail> resultDetails)
+    {
+        var internalResultDetail = resultDetails.Where(result => result.SourceId == SourceType.Normal).ToList();
+        var halfTimeResult = internalResultDetail.Find(result => result.ResourceId == ResourceType.Halftime);
+        var fullTimeResult = internalResultDetail.Find(result => result.ResourceId == ResourceType.Final);
+
+        if (halfTimeResult != null)
+        {
+            halfTimeResult.TicketStatus = match.HtStatus;
+        }
+
+        if (fullTimeResult != null)
+        {
+            fullTimeResult.TicketStatus = match.FtStatus;
+        }
     }
 
     public async Task<MatchDetail> GetLatestMatchDetail(GetLatestMatchDetailRequest request)

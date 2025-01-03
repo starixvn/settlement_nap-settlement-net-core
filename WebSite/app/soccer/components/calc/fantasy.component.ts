@@ -8,10 +8,16 @@ import { BetStatus } from "../../constants";
 import { FantasyMatch, FantasyMatchDetail, FantasyRelatedMatch, Score } from "./models/match.model";
 import { VerifyMatchService } from "./services/verify-match.service";
 import { VerifyScoreGoalService } from "./services/verify-score-goal.service";
+import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
+import { ScorePipe } from "../../pipes/score.pipe";
 
 @Component({
     selector: 'fantasy',
     templateUrl: './fantasy.component.html',
+    standalone: true,
+    imports: [CommonModule, FormsModule, ScorePipe],
+
 })
 
 export class FantasyComponent implements OnInit {
