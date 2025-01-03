@@ -1,6 +1,6 @@
 ﻿namespace Settlement.EventManagement.Criteria;
 
-using CoreConsts = Settlement.Core.Constants;
+using CoreConstants = Settlement.Core.Constants;
 
 public class LeagueCalculationCriteria : CriteriaBase
 {
@@ -8,7 +8,7 @@ public class LeagueCalculationCriteria : CriteriaBase
 
     public DateTime ToDate { get; set; }
 
-    public int SportType => CoreConsts.SportType.Soccer;
+    public int SportType => CoreConstants.SportType.Soccer;
 
     public override string GetSettingKey()
     {

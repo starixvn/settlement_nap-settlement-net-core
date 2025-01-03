@@ -1,6 +1,4 @@
-﻿using MediatR;
-
-namespace Settlement.Setting.Requests.ProviderManager;
+﻿namespace Settlement.Setting.Requests.ProviderManager;
 
 using Models.ProviderManager;
 

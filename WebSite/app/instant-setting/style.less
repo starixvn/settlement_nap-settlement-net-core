@@ -4,14 +4,51 @@
 @title-color: #1d3968;
 
 .content {
-    width: auto;
-
-    .check-box {
-        padding-left: 180px;
-    }
-
+    //width: 700px;
     .button-payout-setting {
         margin-left: 200px;
+    }
+}
+table {
+    border-collapse: collapse;
+    width: 100%;
+    line-height: 22px;
+    text-align: center;
+
+    td,
+    th {
+        border: solid 1px #cbcbcb;
+        padding: 1px;
+    }
+
+    thead {
+        background-color: #295091;
+        border: 1px solid #cbc9ca;
+        color: #fff;
+        padding-right: 15px;
+
+        tr {
+            border-collapse: collapse;
+            line-height: 17px;
+            text-align: center;
+
+            th {
+                vertical-align: middle;
+                text-align: center;
+                font-weight: normal;
+                width: 25px;
+                min-width: 25px;
+            }
+        }
+    }
+
+    .source-link {
+        color: #fff !important;
+        text-decoration: underline;
+
+        &:hover {
+            color: #d2592d !important;
+        }
     }
 }
 
@@ -126,11 +163,6 @@
     z-index: 1050 !important;
 }
 
-.line {
-    border-bottom: 1px solid black;
-    margin-left: 8px;
-}
-
 .league-setting {
     font-weight: bold;
     line-height: 30px;
@@ -183,8 +215,9 @@
         position: absolute;
         height: 20px;
         width: 36px;
-        margin-left: 4px;
-        margin-top: 6px;
+        margin-left: -15px;
+        margin-top: -9px;
+        cursor: pointer;
     }
 
     .toggle-on {
@@ -199,33 +232,61 @@
         width: 40px;
         text-align-last: center;
     }
+    input{
+        width: 40px;
+        height: 17px;
+    }
 }
 
 .provider-selection {
     .provider-table {
-        width: 100%;
-
-        thead {
-            background-color: white;
-            border: none;
-            color: @title-color;
-            font-weight: bold;
-        }
-
-        td:not(:first-child),
-        thead :not(:first-child) {
-            text-align: center;
-        }
-
-        .provider {
-            width: 30%;
-        }
 
         input[type="radio"] {
             margin-top: 0;
             margin-right: 5px;
         }
+        tbody {
+            tr:nth-child(even) {
+                background-color: #e5ebf2;
+            } 
+
+            tr:nth-child(even).bg-disabled {
+                background-color: darkgray;
+            } 
+
+            tr:nth-child(odd) {
+                background-color: white;
+            } 
+
+            tr:nth-child(odd).bg-disabled {
+                background-color: darkgray;
+            } 
+            
+            .bg-disabled {
+                background-color: darkgray;
+            }
+        }
     }
+
+    .toggle (@pos-x, @pos-y) {
+        background: url(@sprite) no-repeat;
+        background-position: @pos-x @pos-y;
+        position: absolute;
+        height: 20px;
+        width: 36px;
+        margin-left: -15px;
+        margin-top: -9px;
+        cursor: pointer;
+    }
+
+    .toggle-on {
+        .toggle(-120px, -30px);
+    }
+
+    .toggle-off {
+        .toggle(-64px, -30px);
+    }
+
 }
 
 .bottom {
@@ -247,6 +308,7 @@
 }
 
 .hold-setting-table {
+    text-align: left ;
     th {
         padding-bottom: 5px;
     }
@@ -263,4 +325,23 @@
     .text-center {
         text-align: center;
     }
+}
+
+.auto-container {
+    text-align: center;
+}
+
+.icon-on {
+    background: url(@sprite) no-repeat;
+    background-position: -35px -292px;
+    .icon(45px, 16px, 8px);
+    cursor: pointer;
+    display: inline-block;
+}
+
+.icon-off {
+    background: url(@sprite) no-repeat -84px -292px;
+    .icon(45px, 16px, 8px);
+    cursor: pointer;
+    display: inline-block;
 }

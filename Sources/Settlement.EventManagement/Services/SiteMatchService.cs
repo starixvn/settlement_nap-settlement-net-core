@@ -144,12 +144,7 @@ public class SiteMatchServiceImp : SiteMatchService
             return TicketStatus.Running;
         }
 
-        if (match.IsWaitingEarlyBetTypes)
-        {
-            return TicketStatus.Waiting;
-        }
-
-        return TicketStatus.Completed;
+        return match.IsWaitingEarlyBetTypes ? TicketStatus.Waiting : TicketStatus.Completed;
     }
 
     private static bool IsExistedWaitingEarlyBetTypes(BaseMatch match)

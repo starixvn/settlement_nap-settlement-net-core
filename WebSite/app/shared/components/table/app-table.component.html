@@ -1,0 +1,16 @@
+<div class="table-container" [ngStyle]="{ 'max-height': maxHeight }">
+    <table class="custom-table">
+        <thead>
+        <tr>
+            @for(header of tableHeaders;track  header) {
+                <th>{{ header }}</th>
+            }
+        </tr>
+        </thead>
+        <tbody>
+        <ng-container *ngFor="let row of tableData ; let i = index">
+            <ng-container *ngTemplateOutlet="rowTemplate; context: { $implicit: row, index: i }"></ng-container>
+        </ng-container>
+        </tbody>
+    </table>
+</div>

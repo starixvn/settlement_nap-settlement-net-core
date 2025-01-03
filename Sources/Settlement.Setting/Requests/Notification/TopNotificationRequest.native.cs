@@ -1,5 +1,4 @@
-﻿using MediatR;
-using Settlement.Setting.Models.Notification;
+﻿using Settlement.Setting.Models.Notification;
 
 namespace Settlement.Setting.Requests.Notification;
 

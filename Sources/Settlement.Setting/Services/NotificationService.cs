@@ -1,6 +1,4 @@
-﻿using Fanex.Data.Repository;
-using Fanex.NAP.Client;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Setting.Criteria.Notification;

@@ -510,7 +510,7 @@ public class InstantResourceServiceTests
                 HomeValue = "A"
             }
         };
-        var expectedSerializedString = "<XmlResults><Resources><XmlResource /></Resources></XmlResults>";
+        const string expectedSerializedString = "<XmlResults><Resources><XmlResource /></Resources></XmlResults>";
         xmlConvertService.Serialize(Arg.Any<XmlResults>()).Returns(expectedSerializedString);
 
         // Act

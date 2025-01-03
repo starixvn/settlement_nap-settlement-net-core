@@ -30,6 +30,8 @@ public class MatchEarlyServiceImp(
         var criteria = new GetMatchDetailEarlyCriteria { MatchId = matchId };
         var matchDetail = await repository.GetAsync<MatchDetail>(criteria);
 
+        ArgumentNullException.ThrowIfNull(matchDetail);
+
         matchDetail.RefDataService = refDataService;
 
         var goalIconQuery = mapper.Map<MatchDetail, GoalIconQueryModel>(matchDetail);

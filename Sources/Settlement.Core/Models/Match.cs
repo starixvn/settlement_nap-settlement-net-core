@@ -245,18 +245,13 @@ public class Match
             {
                 return "LIVE! - 1H";
             }
-            else if (IsFullTime)
+
+            if (IsFullTime)
             {
                 return "LIVE! - 2H";
             }
-            else if (IsBreakTime)
-            {
-                return "LIVE!";
-            }
-            else
-            {
-                return string.Empty;
-            }
+
+            return IsBreakTime ? "LIVE!" : string.Empty;
         }
     }
 
@@ -287,14 +282,8 @@ public class Match
             {
                 return Live;
             }
-            else if (ConfirmCompleted)
-            {
-                return ConfirmScore;
-            }
-            else
-            {
-                return string.Empty;
-            }
+
+            return ConfirmCompleted ? ConfirmScore : string.Empty;
         }
     }
 
@@ -340,7 +329,7 @@ public class Match
 
     #endregion ExternalScore
 
-    public List<SiteMatch> SiteMatch { get; set; } = new();
+    public List<SiteMatch> SiteMatch { get; set; } = [];
 
     public int EventStatusReason { get; set; }
 

@@ -1,6 +1,4 @@
-﻿using Fanex.Data.Repository;
-
-namespace Settlement.Setting.Criteria.LeagueSettings;
+﻿namespace Settlement.Setting.Criteria.LeagueSettings;
 public class GetLeagueSettings : CriteriaBase
 {
     public int SportType { get; set; }

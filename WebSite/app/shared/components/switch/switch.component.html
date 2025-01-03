@@ -1,0 +1,8 @@
+<div class="switch" [ngClass]="'switch-' + variant + ' switch-' + size">
+    <div class="switch-control" [class.switch-checked]="checked" (click)="toggleSwitch()">
+        <label *ngIf="!checked" class="label-off">{{ labelOff }}</label>
+        <div class="switch-circle" [class.switch-checked]="checked"></div>
+        <label *ngIf="checked" class="label-on">{{ labelOn }}</label>
+    </div>
+</div>
+

@@ -1,6 +1,4 @@
-﻿using Fanex.Data.Repository;
-
-namespace Settlement.Setting.Criteria;
+﻿namespace Settlement.Setting.Criteria;
 
 public class GetSettingCriteria : CriteriaBase
 {

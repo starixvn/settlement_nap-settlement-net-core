@@ -2,6 +2,8 @@
 
 namespace Settlement.EventManagement.Services.MultiSports;
 
+using System.Text;
+using System.Text.Json;
 using Criteria;
 using Fanex.Data.Repository;
 using Microsoft.Extensions.Caching.Memory;
@@ -9,10 +11,7 @@ using Requests;
 using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.EventManagement.Models.MultiSports;
-using System.Text;
-using System.Text.Json;
 using Match = Models.MultiSports.Match;
-
 using MatchFilterTuple = (List<Models.MultiSports.Match> Matches, List<MatchOverStatus> MatchOverStatuses, List<ParentChildMatchFilter> ParentChildMatchFilters);
 
 public interface IMultiSportService
@@ -287,6 +286,8 @@ public class MultiSportServiceImp(
                     Name = match.LeagueName,
                     LeagueId = match.LeagueId,
                     AutoWaitingTime = match.AutoWaitingTime,
+                    AutoMainWaitingTime = match.AutoMainWaitingTime,
+                    AutoEarlyWaitingTime = match.AutoEarlyWaitingTime,
                     AutoRetryTime = match.AutoRetryTime,
                     AutoCalcSetting = match.AutoCalcSetting,
                     Matches = [],

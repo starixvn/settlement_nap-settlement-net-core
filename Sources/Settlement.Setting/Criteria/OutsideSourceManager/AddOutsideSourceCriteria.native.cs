@@ -1,6 +1,4 @@
-﻿using Fanex.Data.Repository;
-
-namespace Settlement.Setting.Criteria.OutsideSourceManager;
+﻿namespace Settlement.Setting.Criteria.OutsideSourceManager;
 
 public class AddOutsideSourceCriteria : NonQueryCommand
 {

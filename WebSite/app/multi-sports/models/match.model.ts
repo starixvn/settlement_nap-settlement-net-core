@@ -53,4 +53,5 @@ export class Match {
      public offerLive: boolean;
      public applyDirect: boolean;
      public autoCalcSetting : AutoSetting;
+     public refundWaitingTime: number;
 }

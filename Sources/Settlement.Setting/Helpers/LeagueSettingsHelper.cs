@@ -1,5 +1,6 @@
-﻿using Settlement.Setting.Criteria.LeagueSettings;
-using System.Text;
+﻿using Settlement.Setting.Criteria;
+using Settlement.Setting.Criteria.LeagueSettings;
+using Settlement.Setting.Requests;
 
 namespace Settlement.Setting.Helpers;
 
@@ -37,5 +38,32 @@ public static class LeagueSettingsHelper
         }
 
         return hasDifferentPropFlag ? result.ToString() : string.Empty;
+    }
+
+
+    public static void MapProviderDetails(UpdateResultSettingItem resultSetting, SourceSettleCriteriaBase criteria, bool isMain)
+    {
+        if (isMain)
+        {
+            criteria.Main_WaitingTime = resultSetting.WaitingTime;
+            criteria.Main_HasTrader = resultSetting.IsTraderRequired;
+            criteria.Main_NumberProvider = resultSetting.MinProvider;
+            criteria.Main_PrimaryProvider = resultSetting.PrimaryProvider;
+            criteria.Main_TotalPrimaryProvider = resultSetting.TotalPrimaryProvider;
+            criteria.Main_SecondaryProvider = resultSetting.SecondaryProvider;
+            criteria.Main_TotalSecondaryProvider = resultSetting.TotalSecondaryProvider;
+            criteria.Main_InactiveProvider = resultSetting.InactiveProvider;
+        }
+        else
+        {
+            criteria.EAR_WaitingTime = resultSetting.WaitingTime;
+            criteria.EAR_HasTrader = resultSetting.IsTraderRequired;
+            criteria.EAR_NumberProvider = resultSetting.MinProvider;
+            criteria.EAR_PrimaryProvider = resultSetting.PrimaryProvider;
+            criteria.EAR_TotalPrimaryProvider = resultSetting.TotalPrimaryProvider;
+            criteria.EAR_SecondaryProvider = resultSetting.SecondaryProvider;
+            criteria.EAR_TotalSecondaryProvider = resultSetting.TotalSecondaryProvider;
+            criteria.EAR_InactiveProvider = resultSetting.InactiveProvider;
+        }
     }
 }

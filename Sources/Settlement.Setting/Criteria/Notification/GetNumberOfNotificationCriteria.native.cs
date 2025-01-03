@@ -1,5 +1,4 @@
 ﻿using Fanex.Data;
-using Fanex.Data.Repository;
 
 namespace Settlement.Setting.Criteria.Notification;
 

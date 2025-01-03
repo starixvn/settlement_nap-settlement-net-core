@@ -1,11 +1,11 @@
 
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnInit, SimpleChanges, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { MultiSportsStore } from '../../services/multi-sports.store';
-import { RefreshMatchService, SportMatchService } from '../../services';
-import { MultiSport, SportMatch } from '../../models';
+import { RefreshMatchService } from '../../services';
+import { SportMatch } from '../../models';
 import * as _ from 'lodash';
 import { CommonModule } from '@angular/common';
-import { Subject, Subscription, interval, map, takeUntil, Observable, BehaviorSubject } from 'rxjs';
+import { Subject, Subscription, interval, map, takeUntil } from 'rxjs';
 import { LeagueComponent } from './league/league.component';
 import { MatchComponent } from './match/match.component';
 import { DynamicHeightDirective } from '../../../shared/directives';

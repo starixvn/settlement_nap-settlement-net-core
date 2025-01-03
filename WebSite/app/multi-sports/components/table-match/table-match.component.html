@@ -48,7 +48,7 @@
         <table class="table-calculation">
           <tbody>
             @for (league of sport.leagues; track league.leagueId) {
-            <tr league-row [league]="league" class="league-name"> </tr>
+            <tr league-row [league]="league" class="league-name" style="line-height: 10px;"> </tr>
             @for (match of league.matches; track match.matchId) {
             <match [isShow]="!league.collapse" [match]="match"> </match>
             }

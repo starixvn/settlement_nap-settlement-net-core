@@ -37,11 +37,11 @@ public class FilterServiceTests
 
     private static List<League> FakeLeagues =>
     [
-        new League { SportType = SportType.Diving },
-        new League { SportType = SportType.Badminton },
-        new League { SportType = SportType.Soccer },
-        new League { SportType = SportType.Soccer },
-        new League { SportType = SportType.OtherSports }
+        new() { SportType = SportType.Diving },
+        new() { SportType = SportType.Badminton },
+        new() { SportType = SportType.Soccer },
+        new() { SportType = SportType.Soccer },
+        new() { SportType = SportType.OtherSports }
     ];
 
     [Fact]

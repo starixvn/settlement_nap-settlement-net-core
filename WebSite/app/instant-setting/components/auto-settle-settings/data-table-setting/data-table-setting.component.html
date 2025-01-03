@@ -1,0 +1,79 @@
+<span toastContainer></span>
+<div class="league-setting">
+    @if(title) {
+        <div class="league">
+            <div class="icon"></div>
+            {{ title }}
+        </div>
+    }
+
+    @if(resultSettings.length) {
+        <div class="content">
+            <table>
+                <thead>
+                <tr>
+                    <th rowspan="2" class="code" scope="col">Auto Function</th>
+                    <th rowspan="2" class="kick-off-time" scope="col">Result Flow</th>
+                    <th rowspan="2" class="event" scope="col">Enable</th>
+                    <th rowspan="2" class="interval-score" scope="col">Waiting Time (second)</th>
+                    <th rowspan="2" class="score" scope="col">Trader Required</th>
+                    <th colspan="2" class="confirm" scope="col">Provider Required</th>
+                </tr>
+                <tr>
+                    <th scope="col">Minimum</th>
+                    <th scope="col">Source</th>
+                </tr>
+                </thead>
+                <tbody>
+                    @for(setting of resultSettings; track $index) {
+                        <tr>
+                            @if(setting.settleType === autoSettleType.AutoPayout && setting.resourceType === resourceType.Main) {
+                                <td rowspan="2"> {{setting.settleType | settleTypeName}} </td>
+                            }
+                            @if(setting.settleType ===  autoSettleType.AutoRefund) {
+                                <td> {{setting.settleType | settleTypeName}} </td>
+                            }
+                            <td> {{setting.resourceType | resourceTypeName}} </td>
+                            <td>
+                                @if(setting.settleType !== autoSettleType.AutoRefund) {
+                                    <app-switch [(ngModel)]="setting.enabled" labelOn="Yes" labelOff="No" variant="yes"/>
+                                } @else {
+                                    <span>Follow Auto Payout</span>
+                                }
+                            </td>
+                            <td><input type="text" zeroFallback myOnlyInteger maxlength="4" [(ngModel)]="setting.waitingTime"/></td>
+                            <td [ngStyle]="getBackground(setting)">
+                                @if(setting.settleType !== autoSettleType.AutoRefund) {
+                                    <app-switch [(ngModel)]="setting.isTraderRequired" labelOn="Yes" labelOff="No" variant="yes" (ngModelChange)="changeTraderRequired(setting)"/>
+                                }
+                            </td>
+                            <td [ngStyle]="getBackground(setting)">
+                                @if(setting.settleType !== autoSettleType.AutoRefund) {
+                                    <select [(ngModel)]="setting.minProvider" (ngModelChange)="changeMinProvider(setting)">
+                                        @for(option of minProviderOptions;track $index) {
+                                            <option [value]="option">{{option}}</option>
+                                        }
+                                    </select>
+                                }
+                            </td>
+                            <td>
+                                @if(setting.settleType !== 7) {
+                                    <div role="button" (click)="openProviderPopup(setting)" style="text-decoration:underline;color: #3362ef;cursor: pointer; text-align: left; padding: 0 10px">
+                                        <div>Primary: &nbsp; {{ getProvidersName(1,setting) }}</div>
+                                        <div>Secondary: &nbsp; {{ getProvidersName(2,setting)  }}</div>
+                                    </div>
+                                }
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+        </div>
+        <div class="line"></div>
+        <div class="bottom">
+            <button type="button" style="margin-right: 16px;" class="btn btn-primary" (click)="submit()">Submit</button>
+            <button type="button" class="btn btn-danger" (click)="cancel()">Cancel</button>
+        </div>
+    }
+</div>

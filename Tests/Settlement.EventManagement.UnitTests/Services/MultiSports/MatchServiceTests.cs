@@ -143,7 +143,7 @@ public class MatchServiceTests
 
         newInfoMatchService.GetAutoSetting(Arg.Any<List<Match>>()).Returns(x => x[0] as List<Match>);
 
-        var matches = await service.SetNewMatchInfo([new()], []);
+        var matches = await service.SetNewMatchInfo([new Match()], []);
         var match = matches.ToList()[0];
 
         Assert.True(match.IsExistsConfirmedEarly);

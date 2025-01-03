@@ -30,7 +30,7 @@ public class SportsbookCriteria : MultipleSiteCriteria
 
     public override string GetSettingKey()
     {
-        return $"NAP_Set_MatchOtherSportsSel";
+        return "NAP_Set_MatchOtherSportsSel";
     }
 
     public override bool IsValid()

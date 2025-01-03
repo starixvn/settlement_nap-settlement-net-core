@@ -31,10 +31,10 @@ public class GetDateFilterServiceTests
 
     private static List<LeagueTypeModel> FakeLeagues =>
     [
-        new LeagueTypeModel { SportType = SportType.Diving },
-        new LeagueTypeModel { SportType = SportType.Badminton },
-        new LeagueTypeModel { SportType = SportType.Badminton },
-        new LeagueTypeModel { SportType = SportType.OtherSports }
+        new() { SportType = SportType.Diving },
+        new() { SportType = SportType.Badminton },
+        new() { SportType = SportType.Badminton },
+        new() { SportType = SportType.OtherSports }
     ];
 
     [Fact]

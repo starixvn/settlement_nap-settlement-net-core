@@ -4,7 +4,7 @@ import { HttpRequestService } from '../../shared/services';
 import { firstValueFrom } from 'rxjs';
 import { TimeSettingQuery, GetRemarkQuery, ChangeSettingQuery, RemarkAndPermission, ChangeHoldMatchSettingQuery } from '../models';
 import { AutoSettingLeagueQuery, AutoSettingMatchQuery, Result } from '../../shared/models';
-import { LeagueSettings, ProviderSource, ResultSettings } from '../../shared/models/league-settings.model';
+import { AutoSettings, ProviderSource, ResultSettings } from '../../shared/models/league-settings.model';
 
 @Injectable()
 export class RequestService {
@@ -46,47 +46,5 @@ export class RequestService {
     public updateSettingLeague(query: AutoSettingLeagueQuery) {
         const request = this.httpRequestService.postJson<Result>(query, `${this.settingApi}/update-setting-league`);
         return firstValueFrom(request);
-    }
-
-    public getLeagueSetting(leagueId: number, sportType: number) {
-        const query = {
-            leagueId,
-            sportType
-        }
-        const request = this.httpRequestService.postJson<LeagueSettings>(query, `${this.leagueSettingApi}/get-settings`);
-        return firstValueFrom(request);
-    }
-
-    public updateLeagueSetting(oldSettings: LeagueSettings, newSettings: LeagueSettings, isApplyAll: boolean) {
-        this.modifyLeagueSettingsQuery(oldSettings);
-        this.modifyLeagueSettingsQuery(newSettings);
-
-        const query = {
-            oldSettings,
-            newSettings,
-            isApplyAll
-        }
-
-        const request = this.httpRequestService.postJson<Result>(query, `${this.leagueSettingApi}/update-settings`);
-        return firstValueFrom(request);
-    }
-
-
-    private modifyLeagueSettingsQuery(leagueSettings: LeagueSettings) {
-        const { providers, ...updatedSettings } = leagueSettings;
-        const { mainResultSettings, earlyResultSettings } = updatedSettings;
-
-        const parseAndUpdateProvider = (setting: ResultSettings) => {
-            setting.primaryProvider = this.parseProvider(setting.primaryProvider, providers);
-            setting.secondaryProvider = this.parseProvider(setting.secondaryProvider, providers);
-        };
-
-        parseAndUpdateProvider(mainResultSettings);
-        parseAndUpdateProvider(earlyResultSettings);
-    }
-
-    private parseProvider(providerNames: string, providers: ProviderSource[]): string {
-        const listNames = providerNames.split(', ');
-        return providers.filter(p => listNames.indexOf(p.sourceName) !== -1).map(p => p.sourceId).join(',');
     }
 }

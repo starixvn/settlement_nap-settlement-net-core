@@ -7,7 +7,9 @@ public class Match : BaseMatch
         Core.Constants.SportType.VolleyBall,
         Core.Constants.SportType.Badminton,
         Core.Constants.SportType.Cricket,
-        Core.Constants.SportType.Tennis
+        Core.Constants.SportType.Tennis,
+        Core.Constants.SportType.Kabaddi,
+        Core.Constants.SportType.IceHockey,
     ];
 
     [Key("isHavingIntervalScore")]
@@ -51,6 +53,12 @@ public class Match : BaseMatch
     public int AutoWaitingTime { get; set; }
 
     [IgnoreMember]
+    public int AutoEarlyWaitingTime { get; set; }
+
+    [IgnoreMember]
+    public int AutoMainWaitingTime { get; set; }
+
+    [Key("refundWaitingTime")]
     public int RefundWaitingTime { get; set; }
 
     [IgnoreMember]

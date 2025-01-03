@@ -9,5 +9,6 @@ export const SettingType = {
 export const AutoSettingPosition = {
     autoPayout:0,
     autoInstant: 2,
-    directPayout: 4
+    directPayout: 4,
+    earlyPayout: 5,
 }

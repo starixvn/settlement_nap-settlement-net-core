@@ -1,0 +1,97 @@
+<div class="provider-selection">
+  <h1
+    mat-dialog-title
+    cdkDrag
+    cdkDragRootElement=".cdk-overlay-pane"
+    cdkDragBoundary=".cdk-overlay-container"
+    cdkDragHandle
+  >
+    <label class="title"> Provider Sources </label>
+    <button type="button" class="close dialog-close" (click)="close()">
+      X
+    </button>
+  </h1>
+  <div
+    mat-dialog-content
+    id="modal-body"
+    style="padding: 5px 20px 0 20px !important"
+  >
+    <div class="provider-table">
+      <app-table
+        [tableHeaders]="headers"
+        [tableData]="resultSetting.providers"
+        [maxHeight]="'225px'"
+        [rowTemplate]="customRow"
+      >
+      </app-table>
+    </div>
+    <div class="message-box" *ngIf="errorMessage">
+      <div class="icon error" style="margin-top: 5px"></div>
+      <div class="message-info error">{{ errorMessage }}</div>
+    </div>
+    <div class="line"></div>
+  </div>
+
+  <div class="bottom">
+    <button
+      type="button"
+      style="margin-right: 16px"
+      class="btn btn-primary"
+      (click)="submit()"
+    >
+      Submit
+    </button>
+    <button type="button" class="btn btn-danger" (click)="close()">
+      Cancel
+    </button>
+  </div>
+</div>
+
+<ng-template #customRow let-row>
+  <tr [ngClass]="{ 'bg-disabled': !row.isActive }">
+    <td>
+      <div style="margin-top: 5px">
+        <app-switch
+          [(ngModel)]="row.isActive"
+          labelOn="Yes"
+          labelOff="No"
+          variant="yes"
+        />
+      </div>
+    </td>
+    <td style="text-align: left">{{ row.sourceName }}</td>
+    <td>
+      <div style="margin-top: 5px">
+        <input
+          type="radio"
+          [(ngModel)]="row.priority"
+          [value]="1"
+          [name]="row.sourceId.toString()"
+          [disabled]="!row.isActive"
+        />
+      </div>
+    </td>
+    <td>
+      <div style="margin-top: 5px">
+        <input
+          type="radio"
+          [(ngModel)]="row.priority"
+          [value]="2"
+          [name]="row.sourceId.toString()"
+          [disabled]="!row.isActive"
+        />
+      </div>
+    </td>
+    <td>
+      <div style="margin-top: 5px">
+        <input
+          type="radio"
+          [(ngModel)]="row.priority"
+          [value]="0"
+          [name]="row.sourceId.toString()"
+          [disabled]="!row.isActive"
+        />
+      </div>
+    </td>
+  </tr>
+</ng-template>

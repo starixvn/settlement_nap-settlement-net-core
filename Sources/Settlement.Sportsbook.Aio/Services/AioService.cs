@@ -399,7 +399,7 @@ public class AioServiceImp(
         }
     }
 
-    string GetResourceName(IEnumerable<ResourceItem> resources, string resourceId)
+    private string GetResourceName(IEnumerable<ResourceItem> resources, string resourceId)
         => resources?.FirstOrDefault(z => z.ResourceId == resourceId)?.ResourceName;
 
     public async Task<Result> SettleChildMatch(SettleChildMatchRequest request)
@@ -424,7 +424,8 @@ public class AioServiceImp(
         var earlyResults = resultDetails
             .Except(mainResults)
             .Except(extraResults)
-            .Except([finalResult]);
+            .Except([finalResult])
+            .ToList();
 
         SetIntervalsForResults(mainResults, mainResources);
 
@@ -468,7 +469,7 @@ public class AioServiceImp(
 
     private bool IsIntervalSport(int sportType)
     {
-        int[] intervalSports = { SportType.Tennis, SportType.TableTennis, SportType.BaseBall };
+        int[] intervalSports = [SportType.Tennis, SportType.TableTennis, SportType.BaseBall];
         return intervalSports.Contains(sportType);
     }
 
@@ -480,9 +481,10 @@ public class AioServiceImp(
     private List<ResultDetail> GetSetResults(List<ResultDetail> resultDetails, List<ResourceIndex> mainResources)
     {
         var resourceIds = mainResources.Select(x => x.ResourceId).ToList();
-        var predicate = (ResultDetail result) => result.ResourceId != ResourceType.Final && resourceIds.Contains(result.ResourceId);
 
-        return resultDetails.Where(predicate).ToList();
+        return resultDetails.Where((Func<ResultDetail, bool>)Predicate).ToList();
+
+        bool Predicate(ResultDetail result) => result.ResourceId != ResourceType.Final && resourceIds.Contains(result.ResourceId);
     }
 
     private List<ResultDetail> GetExtraResults(List<ResultDetail> resultDetails)

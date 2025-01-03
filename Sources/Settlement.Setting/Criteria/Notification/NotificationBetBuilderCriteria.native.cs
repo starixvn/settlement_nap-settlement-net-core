@@ -1,6 +1,4 @@
-﻿using Fanex.Data.Repository;
-
-namespace Settlement.Setting.Criteria.Notification;
+﻿namespace Settlement.Setting.Criteria.Notification;
 
 public class NotificationBetBuilderCriteria : CriteriaBase
 {

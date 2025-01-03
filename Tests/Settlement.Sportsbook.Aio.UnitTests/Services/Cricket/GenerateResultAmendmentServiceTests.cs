@@ -68,12 +68,12 @@ public class GenerateResultAmendmentServiceTests
         // Arrange
         var resultsChanged = new List<ResultChanged>
             {
-                new() { ResourceId = "00", HomeValue = "1", AwayValue = "0" },
+                new() { ResourceId = "00", HomeValue = "1", AwayValue = "0" }
             };
 
         var selectedResources = new List<ResourceItem>
             {
-                new () { ResourceId = "00", HomeValue = "2", AwayValue = "0" },
+                new () { ResourceId = "00", HomeValue = "2", AwayValue = "0" }
             };
 
         xmlConvertService.Serialize(Arg.Any<CricketResult>()).Returns("SerializedResult");
@@ -93,12 +93,12 @@ public class GenerateResultAmendmentServiceTests
         // Arrange
         var resultsChanged = new List<ResultChanged>
             {
-                new() { ResourceId = "H1", HomeValue = "1", AwayValue = "0" },
+                new() { ResourceId = "H1", HomeValue = "1", AwayValue = "0" }
             };
 
         var selectedResources = new List<ResourceItem>
             {
-                new () { ResourceId = "H1", HomeValue = "2", AwayValue = "0" },
+                new () { ResourceId = "H1", HomeValue = "2", AwayValue = "0" }
             };
 
         xmlConvertService.Serialize(Arg.Any<CricketResult>()).Returns("SerializedResult");
@@ -118,12 +118,12 @@ public class GenerateResultAmendmentServiceTests
         // Arrange
         var resultsChanged = new List<ResultChanged>
             {
-                new() { ResourceId = "94421", HomeValue = "1", AwayValue = "0" },
+                new() { ResourceId = "94421", HomeValue = "1", AwayValue = "0" }
             };
 
         var selectedResources = new List<ResourceItem>
             {
-                new () { ResourceId = "94421", HomeValue = "2", AwayValue = "0" },
+                new () { ResourceId = "94421", HomeValue = "2", AwayValue = "0" }
             };
 
         xmlConvertService.Serialize(Arg.Any<CricketResult>()).Returns("SerializedResult");
@@ -143,12 +143,12 @@ public class GenerateResultAmendmentServiceTests
         // Arrange
         var resultsChanged = new List<ResultChanged>
             {
-                new() { ResourceId = "9446", HomeValue = "1", AwayValue = "0" },
+                new() { ResourceId = "9446", HomeValue = "1", AwayValue = "0" }
             };
 
         var selectedResources = new List<ResourceItem>
             {
-                new () { ResourceId = "9446", HomeValue = "2", AwayValue = "0" },
+                new () { ResourceId = "9446", HomeValue = "2", AwayValue = "0" }
             };
 
         xmlConvertService.Serialize(Arg.Any<CricketResult>()).Returns("SerializedResult");
@@ -168,12 +168,12 @@ public class GenerateResultAmendmentServiceTests
         // Arrange
         var resultsChanged = new List<ResultChanged>
             {
-                new() { ResourceId = "97081", HomeValue = "1", AwayValue = "0" },
+                new() { ResourceId = "97081", HomeValue = "1", AwayValue = "0" }
             };
 
         var selectedResources = new List<ResourceItem>
             {
-                new () { ResourceId = "97081", HomeValue = "2", AwayValue = "0" },
+                new () { ResourceId = "97081", HomeValue = "2", AwayValue = "0" }
             };
 
         xmlConvertService.Serialize(Arg.Any<CricketResult>()).Returns("SerializedResult");
@@ -193,12 +193,12 @@ public class GenerateResultAmendmentServiceTests
         // Arrange
         var resultsChanged = new List<ResultChanged>
             {
-                new() { ResourceId = "96681", HomeValue = "1", AwayValue = "0",OtherInfo = "12" },
+                new() { ResourceId = "96681", HomeValue = "1", AwayValue = "0",OtherInfo = "12" }
             };
 
         var selectedResources = new List<ResourceItem>
             {
-                new () { ResourceId = "96681", HomeValue = "2", AwayValue = "0",OtherInfo = "12" },
+                new () { ResourceId = "96681", HomeValue = "2", AwayValue = "0",OtherInfo = "12" }
             };
 
         xmlConvertService.Serialize(Arg.Any<CricketResult>()).Returns("SerializedResult");
@@ -218,12 +218,12 @@ public class GenerateResultAmendmentServiceTests
         // Arrange
         var resultsChanged = new List<ResultChanged>
             {
-                new() { ResourceId = "96761", HomeValue = "1", AwayValue = "0",OtherInfo = "12" },
+                new() { ResourceId = "96761", HomeValue = "1", AwayValue = "0",OtherInfo = "12" }
             };
 
         var selectedResources = new List<ResourceItem>
             {
-                new () { ResourceId = "96761", HomeValue = "2", AwayValue = "0",OtherInfo = "12" },
+                new () { ResourceId = "96761", HomeValue = "2", AwayValue = "0",OtherInfo = "12" }
             };
 
         xmlConvertService.Serialize(Arg.Any<CricketResult>()).Returns("SerializedResult");
@@ -243,12 +243,12 @@ public class GenerateResultAmendmentServiceTests
         // Arrange
         var resultsChanged = new List<ResultChanged>
             {
-                new() { ResourceId = "96621", HomeValue = "A", AwayValue = "0",OtherInfo = "12" },
+                new() { ResourceId = "96621", HomeValue = "A", AwayValue = "0",OtherInfo = "12" }
             };
 
         var selectedResources = new List<ResourceItem>
             {
-                new () { ResourceId = "96621", HomeValue = "N", AwayValue = "0",OtherInfo = "12" },
+                new () { ResourceId = "96621", HomeValue = "N", AwayValue = "0",OtherInfo = "12" }
             };
 
         xmlConvertService.Serialize(Arg.Any<CricketResult>()).Returns("SerializedResult");
@@ -268,12 +268,12 @@ public class GenerateResultAmendmentServiceTests
         // Arrange
         var resultsChanged = new List<ResultChanged>
             {
-                new() { ResourceId = "94841002", HomeValue = "A", AwayValue = "0",OtherInfo = "12" },
+                new() { ResourceId = "94841002", HomeValue = "A", AwayValue = "0",OtherInfo = "12" }
             };
 
         var selectedResources = new List<ResourceItem>
             {
-                new () { ResourceId = "94841002", HomeValue = "N", AwayValue = "0",OtherInfo = "12" },
+                new () { ResourceId = "94841002", HomeValue = "N", AwayValue = "0",OtherInfo = "12" }
             };
 
         xmlConvertService.Serialize(Arg.Any<CricketResult>()).Returns("SerializedResult");
@@ -293,12 +293,12 @@ public class GenerateResultAmendmentServiceTests
         // Arrange
         var resultsChanged = new List<ResultChanged>
             {
-                new() { ResourceId = "9490100201", HomeValue = "A", AwayValue = "0",OtherInfo = "12" },
+                new() { ResourceId = "9490100201", HomeValue = "A", AwayValue = "0",OtherInfo = "12" }
             };
 
         var selectedResources = new List<ResourceItem>
             {
-                new () { ResourceId = "9490100201", HomeValue = "N", AwayValue = "0",OtherInfo = "12" },
+                new () { ResourceId = "9490100201", HomeValue = "N", AwayValue = "0",OtherInfo = "12" }
             };
 
         xmlConvertService.Serialize(Arg.Any<CricketResult>()).Returns("SerializedResult");

@@ -1,8 +1,10 @@
 export class AutoSetting {
     isAutoPayoutForLeague: boolean;
-    isAutoPayoutForMatch: boolean;
+    isEarlyPayoutForLeague: boolean;
     isDirectPayoutForLeague: boolean;
+    isAutoPayoutForMatch: boolean;
     isDirectPayoutForMatch: boolean;
+    isEarlyPayoutForMatch: boolean;
     isInstantForLeague: boolean;
     isInstantForMatch: boolean;
     matchSetting: string;

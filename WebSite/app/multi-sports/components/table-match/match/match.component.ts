@@ -13,7 +13,7 @@ import { PipesModule } from '../../../../shared/pipes/pipes.module.native';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 import { MultiSportsStore } from '../../../services/multi-sports.store';
-import { SportSupportInstant } from '../../../constants/sport-instant';
+import {SportNewAutoPayout, SportSupportInstant} from '../../../constants/sport-instant';
 import { MatchState } from '../../../models/match-state.model';
 import { IntervalScorePipe } from '../../../../shared/pipes/interval-score.pipe';
 import { MatchStateService } from '../../../services/match-state.service';
@@ -61,8 +61,13 @@ export class MatchComponent implements OnChanges, OnInit {
   }
 
   changeAutoSetting() {
-    if (this.store.state.permission.canAutoPayout) {
-      this.popupService.openUpdatePayoutForMatch(this.match, this.state$);
+    const { permission } = this.store.state;
+    if (permission.canAutoPayout) {
+      if(SportNewAutoPayout.includes(this.match.sportType)) {
+        this.popupService.openAutoSettleSetting("Match", null, this.match, this.state$, () => {})
+      } else {
+        this.popupService.openUpdatePayoutForMatch(this.match, this.state$);
+      }
     }
   }
 

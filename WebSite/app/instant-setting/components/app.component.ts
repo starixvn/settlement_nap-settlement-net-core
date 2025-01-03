@@ -1,4 +1,4 @@
-﻿import {
+﻿﻿import {
     Component,
     ComponentFactoryResolver,
     ComponentFactory,
@@ -12,15 +12,15 @@
 } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { BlockUIService, HttpRequestService, MessageBoxService, ClosePopupService} from '../../shared/services';
-import { TimeSettingComponent } from './time-setting.component';
-import { AutoSettingComponent } from './auto-setting.component';
-import { RemarkSettingComponent } from './remark-setting.component';
-import { LeagueAutoSettingsComponent } from './league-auto-settings/league-auto-settings.component';
 import { CommonModule } from '@angular/common';
+import { DataTableSettingComponent } from './auto-settle-settings/data-table-setting/data-table-setting.component';
+import { TimeSettingComponent } from './time-setting/time-setting.component';
+import { RemarkSettingComponent } from './remark-setting/remark-setting.component';
+import { AutoSettingComponent } from './auto-setting/auto-setting.component';
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
-    imports: [TimeSettingComponent, RemarkSettingComponent, LeagueAutoSettingsComponent, AutoSettingComponent, CommonModule],
+    imports: [TimeSettingComponent, RemarkSettingComponent, AutoSettingComponent, CommonModule],
     providers: [
         BlockUIService,
         HttpRequestService,
@@ -60,6 +60,7 @@ export class AppComponent implements OnInit, AfterContentChecked {
 
     private getComponentFactory(): ComponentFactory<OnInit> {
         const pageType = this.elementRef.nativeElement.getAttribute('page-type');
+
         switch (pageType) {
             case "DirectTime":
             case "InstantTime":
@@ -67,7 +68,7 @@ export class AppComponent implements OnInit, AfterContentChecked {
             case "RemarkSetting":
                 return this.componentFactoryResolver.resolveComponentFactory(RemarkSettingComponent);
             case "AdvancedLeagueSettings":
-                return this.componentFactoryResolver.resolveComponentFactory(LeagueAutoSettingsComponent);
+                return this.componentFactoryResolver.resolveComponentFactory(DataTableSettingComponent);
             default:
                 return this.componentFactoryResolver.resolveComponentFactory(AutoSettingComponent);
         }

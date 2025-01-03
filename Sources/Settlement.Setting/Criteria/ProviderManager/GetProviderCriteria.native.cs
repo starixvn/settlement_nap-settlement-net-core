@@ -1,6 +1,4 @@
-﻿using Fanex.Data.Repository;
-
-namespace Settlement.Setting.Criteria.ProviderManager;
+﻿namespace Settlement.Setting.Criteria.ProviderManager;
 
 public class GetProviderCriteria : CriteriaBase
 {

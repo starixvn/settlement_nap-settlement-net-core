@@ -26,7 +26,7 @@ public class MatchResultDetailServiceTests
             scoreService);
     }
 
-    private static List<Match> Matches => [new Match { MatchId = 1 }];
+    private static List<Match> Matches => [new() { MatchId = 1 }];
 
     private static List<ResultDetail> ResultDetail => [];
 

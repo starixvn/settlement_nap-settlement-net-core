@@ -34,6 +34,4 @@ reports/
 #Nuget packages folder
 packages/
 node_modules/
-
-#editor
 *.idea/

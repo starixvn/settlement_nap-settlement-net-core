@@ -1,6 +1,6 @@
 ﻿namespace Settlement.EventManagement.Models.Calculation;
 
-using CoreConst = Settlement.Core.Constants;
+using CoreConstants = Settlement.Core.Constants;
 
 [MessagePackObject]
 public class Match : BaseMatch
@@ -123,7 +123,7 @@ public class Match : BaseMatch
     }
 
     [IgnoreMember]
-    private string TypeName => InstantCalculationType == CoreConst.InstantCalculationType.CalcHt ? "HT" : "FT";
+    private string TypeName => InstantCalculationType == CoreConstants.InstantCalculationType.CalcHt ? "HT" : "FT";
 
     [IgnoreMember]
     private string ConfirmScore => $"{InstantHomeScore}-{InstantAwayScore} ({TypeName})";
@@ -132,18 +132,18 @@ public class Match : BaseMatch
     private bool RemarkSetting => !Remark.IsUndecided && !Remark.IsPending && !Remark.IsMtdHold && !Remark.IsKeyHold;
 
     [IgnoreMember]
-    private bool IsInstantLive => EventStatus.Equals(CoreConst.EventStatus.Running)
-        && InstantStatusId == Settlement.Core.Constants.InstantStatus.Live && RemarkSetting;
+    private bool IsInstantLive => EventStatus.Equals(CoreConstants.EventStatus.Running)
+        && InstantStatusId == CoreConstants.InstantStatus.Live && RemarkSetting;
 
     [IgnoreMember]
-    private bool CheckEventStatus => NewEventStatus.Equals(CoreConst.EventStatus.Waiting)
-                                     || NewEventStatus.Equals(CoreConst.EventStatus.Calculating)
-                                     || EventStatus.Equals(CoreConst.EventStatus.Running)
-                                     || EventStatus.IgnoreCaseEquals(CoreConst.EventStatus.RefundHt);
+    private bool CheckEventStatus => NewEventStatus.Equals(CoreConstants.EventStatus.Waiting)
+                                     || NewEventStatus.Equals(CoreConstants.EventStatus.Calculating)
+                                     || EventStatus.Equals(CoreConstants.EventStatus.Running)
+                                     || EventStatus.IgnoreCaseEquals(CoreConstants.EventStatus.RefundHt);
 
     [IgnoreMember]
-    private bool ConfirmCompleted => InstantStatusId == CoreConst.InstantStatus.Complete
-        || (InstantStatusId == CoreConst.InstantStatus.Confirm && CheckEventStatus);
+    private bool ConfirmCompleted => InstantStatusId == CoreConstants.InstantStatus.Complete
+        || (InstantStatusId == CoreConstants.InstantStatus.Confirm && CheckEventStatus);
 
     [Key("instantStatus")]
     public string InstantStatus

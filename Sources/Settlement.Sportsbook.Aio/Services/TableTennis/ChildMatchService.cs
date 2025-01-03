@@ -19,7 +19,7 @@ public class ChildMatchService : IMapperService
         }
     }
 
-    private static IEnumerable<ChildMatchModel> VerifyChildMatches(IEnumerable<ChildMatchModel> childMatches, IEnumerable<ResultDetail> resultDetails)
+    private static IEnumerable<ChildMatchModel> VerifyChildMatches(List<ChildMatchModel> childMatches, IEnumerable<ResultDetail> resultDetails)
     {
         var resourceIds = resultDetails.Select(x => x.ResourceId).ToArray();
         var totalPointMatch = childMatches.Where(x => x.RelatedResourceId == totalPoints);

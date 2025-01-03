@@ -1,0 +1,123 @@
+.switch {
+  display: inline-flex;
+  align-items: center;
+
+  .switch-control {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 60px;
+    height: 24px;
+    background: #dd7e6d;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+
+    &.switch-checked {
+      background: #4caf50;
+    }
+
+    .switch-circle {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: white;
+      border-radius: 50%;
+      top: 2px;
+      left: 2px;
+      transition: all 0.3s ease;
+
+      &.switch-checked {
+        left: 38px; /* Adjust based on switch width */
+      }
+    }
+
+    .label-off {
+      position: absolute;
+      right: 5px;
+      font-size: 12px;
+      color: white;
+      transition: opacity 0.3s ease;
+      opacity: 1;
+    }
+
+    .label-on {
+      position: absolute;
+      left: 5px;
+      font-size: 12px;
+      color: white;
+      transition: opacity 0.3s ease;
+      opacity: 1;
+    }
+  }
+
+  /* MINI SIZE */
+  &.switch-mini .switch-control {
+    width: 35px;
+    height: 15px;
+
+    .switch-circle {
+      width: 13px;
+      height: 13px;
+      top: 1px;
+      left: 1px;
+
+      &.switch-checked {
+        left: 21px;
+      }
+    }
+
+    .label-off, .label-on {
+      font-size: 8px;
+    }
+
+    .label-on {
+      left: 5px;
+    }
+
+    .label-off {
+      right: 2px;
+    }
+  }
+
+  /* SMALL SIZE */
+  &.switch-small .switch-control {
+    width: 45px;
+    height: 20px;
+
+    .switch-circle {
+      width: 18px;
+      height: 18px;
+      top: 1px;
+      left: 1px;
+
+      &.switch-checked {
+        left: 26px; /* Adjust based on switch width */
+      }
+    }
+
+    .label-off,
+    .label-on {
+      font-size: 10px;
+      font-weight: bold;
+    }
+  }
+
+  /* VARIANT YES/NO */
+  &.switch-yes .switch-control {
+
+
+    .label-off,
+    .label-on {
+      font-size: 10px;
+      //font-weight: bold;
+    }
+    .label-on {
+      left: 3px;
+    }
+
+    .label-off {
+      right: 5px;
+    }
+  }
+}

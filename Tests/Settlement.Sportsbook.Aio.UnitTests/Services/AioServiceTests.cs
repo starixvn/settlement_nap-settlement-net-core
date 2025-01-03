@@ -144,7 +144,7 @@ public class AioServiceTests
     public async Task GetMatch_GetResultDetailsOnGameSession_ReturnsCorrectResultDetails()
     {
         // Arrange
-        short gameSession = 3;
+        const short gameSession = 3;
         var request = new GetMatchRequest();
         var fakeMatch = new Models.MatchDetail { MatchId = 1, SportType = SportType.Tennis, GameSession = gameSession };
         repository.GetAsync<Models.MatchDetail>(Arg.Any<ICriteria>()).Returns(fakeMatch);
@@ -253,13 +253,13 @@ public class AioServiceTests
         {
             IsFantasy = true,
             ActionName = "CAL",
-            SelectedResources = new List<ResourceItem>
-            {
-                new()
+            SelectedResources =
+            [
+                new ResourceItem
                 {
                     ResourceId = "00"
                 }
-            }
+            ]
         };
 
         // Act

@@ -1,0 +1,30 @@
+.table-container {
+  overflow-y: auto;
+  scrollbar-color: #888;
+  scrollbar-width: thin;
+
+  .custom-table {
+    width: 100%;
+    border-collapse: collapse;
+
+    thead {
+      background-color: unset !important;
+    }
+
+    thead th {
+      position: sticky;
+      top: 0;
+      background: #3b5fa3;
+      z-index: 2;
+      text-align: left;
+      padding: 8px;
+      border: 1px solid #ddd;
+      width: unset !important;
+      min-width: unset !important;
+    }
+    tbody td {
+      padding: 8px;
+      border: 1px solid #ddd;
+    }
+  }
+}

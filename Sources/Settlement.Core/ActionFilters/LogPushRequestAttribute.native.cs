@@ -9,7 +9,7 @@ namespace Settlement.Core.ActionFilters;
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
 public class LogPushRequestAttribute : ActionFilterAttribute
 {
-    public override async void OnActionExecuting(ActionExecutingContext context)
+    public override void OnActionExecuting(ActionExecutingContext context)
     {
         var logger = new Logger();
         var model = context.ActionArguments;
@@ -21,7 +21,7 @@ public class LogPushRequestAttribute : ActionFilterAttribute
         stringBuilder.AppendLine($"Url ({request.GetDisplayUrl()}) push: {serialString}");
         stringBuilder.AppendLine($"Username: {httpContext.User.Identity?.Name}");
 
-        await logger.InfoAsync(stringBuilder.ToString());
+        logger.Info(stringBuilder.ToString());
 
         base.OnActionExecuting(context);
     }

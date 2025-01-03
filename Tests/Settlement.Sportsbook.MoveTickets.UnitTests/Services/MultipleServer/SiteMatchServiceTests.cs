@@ -100,7 +100,7 @@ public class SiteMatchServiceTests
         var match = new Match
         {
             IsExistEarlyBetTypes = true,
-            IsRunningEarlyBetTypes = isRunningEarlyBetTypesMain,
+            IsRunningEarlyBetTypes = isRunningEarlyBetTypesMain
         };
 
         var result = service.EarlySettlementStatus(match);
@@ -115,7 +115,7 @@ public class SiteMatchServiceTests
         var match = new Match
         {
             IsExistEarlyBetTypes = true,
-            IsWaitingEarlyBetTypes = isWaitingEarlyBetTypesSite,
+            IsWaitingEarlyBetTypes = isWaitingEarlyBetTypesSite
         };
 
         var result = service.EarlySettlementStatus(match);

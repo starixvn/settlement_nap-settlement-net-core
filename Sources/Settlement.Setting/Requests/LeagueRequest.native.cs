@@ -1,6 +1,4 @@
-﻿using MediatR;
-
-namespace Settlement.Setting.Requests;
+﻿namespace Settlement.Setting.Requests;
 
 public class LeagueRequest : IRequest<string>
 {
