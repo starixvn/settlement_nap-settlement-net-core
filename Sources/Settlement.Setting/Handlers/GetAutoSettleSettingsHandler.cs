@@ -60,9 +60,9 @@ public class GetAutoSettleSettingsHandler(IDynamicRepository repository, IRefDat
             MinProvider = payoutSetting.Main_NumberProvider,
             IsTraderRequired = payoutSetting.Main_HasTrader,
             Providers = GetProvidersSetting(
-                payoutSetting.Main_PrimaryProvider,
-                payoutSetting.Main_SecondaryProvider,
-                payoutSetting.Main_InactiveProvider,
+                payoutSetting.Main_PrimaryProvider ?? string.Empty,
+                payoutSetting.Main_SecondaryProvider ?? string.Empty,
+                payoutSetting.Main_InactiveProvider ?? string.Empty,
                 providers)
         };
 
@@ -75,9 +75,9 @@ public class GetAutoSettleSettingsHandler(IDynamicRepository repository, IRefDat
             MinProvider = payoutSetting.EAR_NumberProvider,
             IsTraderRequired = payoutSetting.EAR_HasTrader,
             Providers = GetProvidersSetting(
-                payoutSetting.EAR_PrimaryProvider,
-                payoutSetting.EAR_SecondaryProvider,
-                payoutSetting.EAR_InactiveProvider,
+                payoutSetting.EAR_PrimaryProvider ?? string.Empty,
+                payoutSetting.EAR_SecondaryProvider ?? string.Empty,
+                payoutSetting.EAR_InactiveProvider ?? string.Empty,
                 providers)
         };
 
