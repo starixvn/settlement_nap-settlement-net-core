@@ -1,9 +1,9 @@
-import { isEmpty, findLast } from "lodash";
+import { isEmpty, findLast, isEqual } from "lodash";
 import { Language } from "../../../shared/language.native";
 import { NotifyService } from "../../services/notify.service";
 import { BaseHandler } from "../base.handler.native";
 import { inject } from "@angular/core";
-import { SettlementStatusId } from '../../../shared/constants';
+import { ResourceIds, SettlementStatusId } from '../../../shared/constants';
 import { ICalculateStorage } from "../../services/calculate/calculate.storage";
 
 export class InningsValidateHandler implements BaseHandler {
@@ -15,13 +15,14 @@ export class InningsValidateHandler implements BaseHandler {
   }
 
   handle(storage: ICalculateStorage) {
+    const resultChecked = storage.getResultChecked();
     const allInnings = storage.getInningsExcludeExtraAndTotalHits();
-    const last =findLast(storage.getResultChecked());
+    const last =findLast(resultChecked);
     const previousInnings = allInnings.filter((x) => x.resourceId < last.resourceId);
     const inningsRunning = previousInnings.filter((x) => !x.checked 
                           && (x.settlementStatusId === SettlementStatusId.Running || x.settlementStatusId === SettlementStatusId.Refund));    
-    
-    if (isEmpty(inningsRunning)) {
+    const isOnlyTotalHits = resultChecked.length === 1 && isEqual(last.resourceId, ResourceIds.totalHits);
+    if (isEmpty(inningsRunning) || isOnlyTotalHits) {
       this.nextHandler.handle(storage);
     } else {
       storage.setResultsWarningState(inningsRunning);
