@@ -39,8 +39,9 @@ export class VerifyRefundHandler implements BaseHandler {
           && _.isEqual(result.homeValue, resource.homeValue)
           && _.isEqual(result.awayValue, resource.awayValue)
     });
-    
-    return storage.isMercy() && isMisMatch;
+   
+    const isConfirmedRefundMercy = storage.getResultChecked().some(item =>  item.resultSettingData.isConfirmedRefundMercy)
+    return (isConfirmedRefundMercy != storage.isMercy()) || (storage.isMercy() && isMisMatch);
   }
 
   isMisMatchSettleDetermine(storage: IRefundStorage) {

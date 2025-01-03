@@ -130,7 +130,7 @@ export class TableResultComponent implements OnInit {
   }
 
   private resourceConfirmed(resultDetail: ResultDetailBaseBall) {
-    const flag = this.permission.isLeader && resultDetail.resultSettingData.isConfirmedRefundSdt;
+    const flag = this.permission.isLeader && (resultDetail.resultSettingData.isConfirmedRefundSdt || resultDetail.resultSettingData.isConfirmedRefundMercy);
     if(flag) {
       const resource = this.externalResults.find(resultConfirmed => resultConfirmed.resourceId === resultDetail.resourceId);
       resultDetail.homeValue = resource.homeValue;

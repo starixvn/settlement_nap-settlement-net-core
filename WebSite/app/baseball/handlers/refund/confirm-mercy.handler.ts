@@ -32,6 +32,8 @@ export class ConfirmMercyHandler implements BaseHandler {
       this.notifyService.error(Language.confirmRefund.sdtErrorMessage);
     } else if(this.validateResourceNextToFirstSelected(firstSelectedResourceIndex, resultDetails)) {
       this.notifyService.error(Language.confirmRefund.subsequenceIntervalsErrorMessage);
+    } else if(this.validateResourceNextToFirstNotEmptyScore(firstSelectedResourceIndex, resultDetails)) {
+      this.notifyService.error(Language.sop.invalidResultByBetType);
     } else {
       this.nextHandler.handle(storage);
     }    
@@ -42,10 +44,13 @@ export class ConfirmMercyHandler implements BaseHandler {
     return resultDetailBefore.some(resource => resource.settlementStatusId !== SettlementStatusId.Calculated);
   }
 
+  private validateResourceNextToFirstNotEmptyScore(firstResourceIndex: number, resultDetails: ResultDetail[]) {
+    const resultDetailAfter = resultDetails.slice(firstResourceIndex);
+    return resultDetailAfter.some(resource => !_.isEmpty(resource.awayValue) || !_.isEmpty(resource.homeValue));
+  }
+
   private validateResourceNextToFirstSelected(firstResourceIndex: number, resultDetails: ResultDetail[]) {
     const resultDetailAfter = resultDetails.slice(firstResourceIndex + 1);
-    const isExistValueNotEmptyAfter = resultDetailAfter.some(resource => !_.isEmpty(resource.awayValue) || !_.isEmpty(resource.homeValue));
-    const isExistValueNotCheckedAfter = resultDetailAfter.some(resource => !resource.checked && !_.isEqual(resource.resourceId, ResourceIds.extraInning));
-    return isExistValueNotCheckedAfter || isExistValueNotEmptyAfter;
+    return resultDetailAfter.some(resource => !resource.checked && !_.isEqual(resource.resourceId, ResourceIds.extraInning));
   }
 }
