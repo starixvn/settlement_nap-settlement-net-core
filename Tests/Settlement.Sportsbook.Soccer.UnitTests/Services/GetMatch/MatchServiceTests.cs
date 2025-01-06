@@ -13,6 +13,8 @@ using MatchDetail = Settlement.Sportsbook.Soccer.Models.MatchDetail;
 namespace Settlement.Sportsbook.Soccer.UnitTests.Services.GetMatch;
 
 using Fanex.Caching;
+using Fanex.NAP.Client.Configuration;
+using Fanex.NAP.Client.Services;
 using Settlement.Core.Services.SpecificService;
 using Soccer.Services.GetMatch;
 
@@ -25,16 +27,19 @@ public class MatchServiceTests
     private readonly GoalIconService goalIconService;
 
     private readonly IFetchDataService fetchDataService;
-    private readonly IMatchService service;
+    private readonly MatchServiceImp service;
 
     public MatchServiceTests()
     {
         repository = Substitute.For<IDynamicRepository>();
+        var napSettings = Substitute.For<INapSettings>();
+        var userService = Substitute.For<IUserService>();
         var napSession = Substitute.For<INapSession>();
         var cacheService = Substitute.For<ICacheService>();
         napSession.UserId = 1;
         cacheService.GetOrSet(Arg.Any<string>(), Arg.Any<Func<Permission>>(), Arg.Any<CacheItemOptions>()).Returns(new Permission());
-        var permission = Substitute.For<PermissionService>(napSession, null, cacheService, null);
+        var permissionService = Substitute.For<PermissionService>(napSession, userService, napSettings);
+
         refDataService = Substitute.For<IRefDataService>();
         goalIconService = Substitute.For<GoalIconService>();
         fetchDataService = Substitute.For<IFetchDataService>();
@@ -42,7 +47,7 @@ public class MatchServiceTests
         mapperConfig.AddProfile<SoccerAutoMapperProfile>();
         var config = new MapperConfiguration(mapperConfig);
         var mapper = new Mapper(config);
-        service = new MatchServiceImp(repository, permission, mapper, refDataService, goalIconService, fetchDataService);
+        service = new MatchServiceImp(repository, permissionService, mapper, refDataService, goalIconService, fetchDataService);
     }
 
     [Fact]

@@ -6,7 +6,6 @@ using Microsoft.Extensions.Options;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
-using Settlement.Gaming.Constants;
 using Settlement.Gaming.Criteria.NumberGame;
 using Settlement.Gaming.Models;
 using Settlement.Gaming.Models.NumberGame;
@@ -75,10 +74,10 @@ public class SettlementServiceImp(
     {
         var actionId = request.Action.ToUpperInvariant() switch
         {
-            ActionType.CalculateAll => ActionId.Cal,
-            ActionType.CalculateHalfTime => ActionId.CalHt,
-            ActionType.RefundAll => ActionId.Refund,
-            ActionType.RefundFullTime => ActionId.RefundFt,
+            ActionType.CalculateAll => ActionId.NumberGameCal,
+            ActionType.CalculateHalfTime => ActionId.NumberGameCalHt,
+            ActionType.RefundAll => ActionId.NumberGameRefund,
+            ActionType.RefundFullTime => ActionId.NumberGameRefundFt,
             _ => 0
         };
 

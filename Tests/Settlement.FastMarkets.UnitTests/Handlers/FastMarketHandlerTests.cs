@@ -1,5 +1,7 @@
 ﻿using Fanex.Caching;
 using Fanex.NAP.Client;
+using Fanex.NAP.Client.Configuration;
+using Fanex.NAP.Client.Services;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.FastMarkets.Handlers;
@@ -23,10 +25,14 @@ public class FastMarketHandlerTests
     public FastMarketHandlerTests()
     {
         var napSession = Substitute.For<INapSession>();
-        var cacheService = Substitute.For<ICacheService>();
         napSession.UserId = 1;
+
+        var cacheService = Substitute.For<ICacheService>();
+        var napSettings = Substitute.For<INapSettings>();
+        var userService = Substitute.For<IUserService>();
         cacheService.GetOrSet(Arg.Any<string>(), Arg.Any<Func<Permission>>(), Arg.Any<CacheItemOptions>()).Returns(new Permission());
-        var permissionService = Substitute.For<PermissionService>(napSession, null, cacheService, null);
+        var permissionService = Substitute.For<PermissionService>(napSession, userService, napSettings);
+        permissionService.Permission.Returns(new Permission());
         matchDetailService = Substitute.For<IMatchDetailService>();
         fastMarketService = Substitute.For<IFastMarketService>();
         settingService = Substitute.For<ISettingService>();
@@ -76,6 +82,7 @@ public class FastMarketHandlerTests
                 Disabled = true
             }
         };
+
         matchDetailService.MatchInfo(Arg.Any<int>()).Returns(result);
 
         var actual = await handler.Handle(new MatchDetailRequest(), CancellationToken.None);

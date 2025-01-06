@@ -1,5 +1,7 @@
 ﻿using Fanex.Caching;
 using Fanex.NAP.Client;
+using Fanex.NAP.Client.Configuration;
+using Fanex.NAP.Client.Services;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
@@ -19,16 +21,21 @@ public class AioHandlerTests
     private readonly PermissionService permission;
 
     private readonly IAioService service;
+
     private readonly ResultAmendmentService resultAmendmentService;
 
     public AioHandlerTests()
     {
         service = Substitute.For<IAioService>();
-        var napSession = Substitute.For<INapSession>();
         var cacheService = Substitute.For<ICacheService>();
+        var userService = Substitute.For<IUserService>();
+        var napSettings = Substitute.For<INapSettings>();
+        var napSession = Substitute.For<INapSession>();
         napSession.UserId = 1;
         cacheService.GetOrSet(Arg.Any<string>(), Arg.Any<Func<Permission>>(), Arg.Any<CacheItemOptions>()).Returns(new Permission());
-        permission = Substitute.For<PermissionService>(napSession, null, cacheService, null);
+
+        permission = Substitute.For<PermissionService>(napSession, userService, napSettings);
+
         var appSettings = new AppSettingsKey { EnableVerifyingRunningOdds = true };
         var appSettingsOptions = Options.Create(appSettings);
         resultAmendmentService = Substitute.For<ResultAmendmentService>();
@@ -41,7 +48,7 @@ public class AioHandlerTests
         var result = new AioMatch();
         service.GetMatch(Arg.Any<GetMatchRequest>()).Returns(result);
 
-        var actual = await handler.Handle(new GetMatchRequest(), new CancellationToken());
+        var actual = await handler.Handle(new GetMatchRequest(), CancellationToken.None);
 
         Assert.Equal(result, actual);
     }
@@ -52,7 +59,7 @@ public class AioHandlerTests
         var result = new Result();
         service.Settle(Arg.Any<SettleRequest>()).Returns(result);
 
-        var actual = await handler.Handle(new SettleRequest(), new CancellationToken());
+        var actual = await handler.Handle(new SettleRequest(), CancellationToken.None);
 
         Assert.Equal(result, actual);
     }
@@ -63,7 +70,7 @@ public class AioHandlerTests
         var result = new List<Models.ResultDetail>();
         service.GetRecalResult(Arg.Any<GetRecalResultRequest>()).Returns(result);
 
-        var actual = await handler.Handle(new GetRecalResultRequest(), new CancellationToken());
+        var actual = await handler.Handle(new GetRecalResultRequest(), CancellationToken.None);
 
         Assert.Equal(result, actual);
     }
@@ -74,7 +81,7 @@ public class AioHandlerTests
         var result = new MarkedTickets();
         service.CheckMarkedTickets(Arg.Any<CheckMarkedTicketsRequest>()).Returns(result);
 
-        var actual = await handler.Handle(new CheckMarkedTicketsRequest(), new CancellationToken());
+        var actual = await handler.Handle(new CheckMarkedTicketsRequest(), CancellationToken.None);
 
         Assert.Equal(result, actual);
     }
@@ -85,7 +92,7 @@ public class AioHandlerTests
         var result = new Result { ErrCode = 1 };
         service.VerifyNoRunningOdds(Arg.Any<CheckRunningOddsRequest>()).Returns(result);
 
-        var actual = await handler.Handle(new CheckRunningOddsRequest(), new CancellationToken());
+        var actual = await handler.Handle(new CheckRunningOddsRequest(), CancellationToken.None);
 
         Assert.Equal(result, actual);
     }
@@ -96,7 +103,7 @@ public class AioHandlerTests
         var appSettings = new AppSettingsKey { EnableVerifyingRunningOdds = false };
         var appSettingsOptions = Options.Create(appSettings);
         var handlerTemp = new AioHandler(service, permission, resultAmendmentService, appSettingsOptions);
-        var actual = await handlerTemp.Handle(new CheckRunningOddsRequest(), new CancellationToken());
+        var actual = await handlerTemp.Handle(new CheckRunningOddsRequest(), CancellationToken.None);
 
         Assert.True(actual.IsSuccessful);
         await service.DidNotReceive().VerifyNoRunningOdds(Arg.Any<CheckRunningOddsRequest>());
@@ -108,7 +115,7 @@ public class AioHandlerTests
         var result = new Result();
         service.SaveScore(Arg.Any<SaveScoreRequest>()).Returns(result);
 
-        var actual = await handler.Handle(new SaveScoreRequest(), new CancellationToken());
+        var actual = await handler.Handle(new SaveScoreRequest(), CancellationToken.None);
 
         Assert.Equal(result, actual);
     }
@@ -119,7 +126,7 @@ public class AioHandlerTests
         var result = new Result();
         service.SettleChildMatch(Arg.Any<SettleChildMatchRequest>()).Returns(result);
 
-        var actual = await handler.Handle(new SettleChildMatchRequest(), new CancellationToken());
+        var actual = await handler.Handle(new SettleChildMatchRequest(), CancellationToken.None);
 
         Assert.Equal(result, actual);
     }
@@ -129,7 +136,7 @@ public class AioHandlerTests
     {
         service.ResultSetting(Arg.Any<ResultSettingRequest>()).Returns(true);
 
-        var actual = await handler.Handle(new ResultSettingRequest(), new CancellationToken());
+        var actual = await handler.Handle(new ResultSettingRequest(), CancellationToken.None);
 
         Assert.True(actual);
     }
@@ -139,7 +146,7 @@ public class AioHandlerTests
     {
         await resultAmendmentService.UpdateResultHistory(Arg.Any<ResultHistoryUpdateCriteria>());
 
-        var actual = await handler.Handle(new UpdateSettlementResultHistoryStatusRequest(), new CancellationToken());
+        var actual = await handler.Handle(new UpdateSettlementResultHistoryStatusRequest(), CancellationToken.None);
 
         Assert.True(actual);
     }

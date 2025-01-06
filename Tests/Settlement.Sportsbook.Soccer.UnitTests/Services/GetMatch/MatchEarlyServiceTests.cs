@@ -11,6 +11,8 @@ using MatchDetail = Settlement.Sportsbook.Soccer.Models.MatchDetail;
 
 namespace Settlement.Sportsbook.Soccer.UnitTests.Services.GetMatch;
 
+using Fanex.NAP.Client.Configuration;
+using Fanex.NAP.Client.Services;
 using Settlement.Core.Services.SpecificService;
 using Soccer.Services.GetMatch;
 
@@ -27,12 +29,14 @@ public class MatchEarlyServiceTests
     public MatchEarlyServiceTests()
     {
         repository = Substitute.For<IDynamicRepository>();
-
+        var napSettings = Substitute.For<INapSettings>();
+        var userService = Substitute.For<IUserService>();
         var napSession = Substitute.For<INapSession>();
         var cacheService = Substitute.For<ICacheService>();
         napSession.UserId = 1;
         cacheService.GetOrSet(Arg.Any<string>(), Arg.Any<Func<Permission>>(), Arg.Any<CacheItemOptions>()).Returns(new Permission());
-        var permission = Substitute.For<PermissionService>(napSession, null, cacheService, null);
+        var permissionService = Substitute.For<PermissionService>(napSession, userService, napSettings);
+
         var refDataService = Substitute.For<IRefDataService>();
         var goalIconService = Substitute.For<GoalIconService>();
         earlyBetTypeNameService = Substitute.For<EarlyBetTypeNameService>();
@@ -41,7 +45,7 @@ public class MatchEarlyServiceTests
         mapperConfig.AddProfile<SoccerAutoMapperProfile>();
         var config = new MapperConfiguration(mapperConfig);
         var mapper = new Mapper(config);
-        service = new MatchEarlyServiceImp(repository, permission, mapper, refDataService, goalIconService,
+        service = new MatchEarlyServiceImp(repository, permissionService, mapper, refDataService, goalIconService,
             earlyBetTypeNameService, fetchDataService);
     }
 

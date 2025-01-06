@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Fanex.Caching;
 using Fanex.NAP.Client;
+using Fanex.NAP.Client.Configuration;
+using Fanex.NAP.Client.Services;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.MoveTickets.Handlers;
@@ -23,11 +25,15 @@ public class CricketHandlerTests
         mapperConfig.AddProfile<SportsbookMoveTicketAutoMapperProfile>();
         moveTicketService = Substitute.For<MoveTicketService>();
         moveActionService = Substitute.For<MoveActionService>();
+        var napSettings = Substitute.For<INapSettings>();
+        var userService = Substitute.For<IUserService>();
         var napSession = Substitute.For<INapSession>();
         var cacheService = Substitute.For<ICacheService>();
         napSession.UserId = 1;
         cacheService.GetOrSet(Arg.Any<string>(), Arg.Any<Func<Permission>>(), Arg.Any<CacheItemOptions>()).Returns(new Permission());
-        var permissionService = Substitute.For<PermissionService>(napSession, null, cacheService, null);
+        var permissionService = Substitute.For<PermissionService>(napSession, userService, napSettings);
+        permissionService.Permission.Returns(new Permission());
+
         handler = new CricketHandler(moveTicketService, permissionService, moveActionService);
     }
 
@@ -37,7 +43,7 @@ public class CricketHandlerTests
         var listSport = new List<SportModel>();
         moveTicketService.GetSportBook(Arg.Any<GetMatchRequest>()).Returns(listSport);
 
-        var actual = await handler.Handle(new GetMatchRequest(), new CancellationToken());
+        var actual = await handler.Handle(new GetMatchRequest(), CancellationToken.None);
 
         Assert.Equal(listSport, actual.Sports);
     }
@@ -56,7 +62,7 @@ public class CricketHandlerTests
 
         moveTicketService.GetSportBook(Arg.Any<GetMatchRequest>()).Returns(result);
 
-        var actual = await handler.Handle(new GetMatchRequest(), new CancellationToken());
+        var actual = await handler.Handle(new GetMatchRequest(), CancellationToken.None);
         var expected = new MultiSportModel
         {
             Sports = result,
@@ -73,7 +79,7 @@ public class CricketHandlerTests
 
         moveActionService.MoveTicket(Arg.Any<MoveTicketRequest>()).Returns(result);
 
-        var actual = await handler.Handle(new MoveTicketRequest(), new CancellationToken());
+        var actual = await handler.Handle(new MoveTicketRequest(), CancellationToken.None);
 
         Assert.Equal(result, actual);
     }

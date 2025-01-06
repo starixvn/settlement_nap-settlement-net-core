@@ -1,4 +1,4 @@
-﻿
+﻿using Settlement.Core.Constants;
 using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
@@ -6,6 +6,7 @@ using Settlement.Setting.Constants;
 using Settlement.Setting.Criteria;
 using Settlement.Setting.Factories;
 using Settlement.Setting.Requests;
+using ResourceType = Settlement.Setting.Constants.ResourceType;
 
 namespace Settlement.Setting.Handlers;
 
@@ -16,6 +17,8 @@ public class UpdateAutoSettingsHandler(
     INapSession napSession)
     : IRequestHandler<UpdateAutoSettingsCommand, Result>
 {
+    private const string League = "League";
+
     public async Task<Result> Handle(UpdateAutoSettingsCommand command, CancellationToken cancellationToken)
     {
         var results = new List<Result>();
@@ -26,7 +29,13 @@ public class UpdateAutoSettingsHandler(
             results.Add(result);
         }
 
-        return new Result();
+        var resultFailed = results.Where(r => r.ErrCode > 0).ToList();
+
+        return new Result
+        {
+            ErrCode = resultFailed.Count,
+            ErrMsg = string.Join(" | ", resultFailed.Select(r => r.ErrMsg).ToArray())
+        };
     }
 
     private async Task<Result> ProcessResultSetting(UpdateAutoSettingsCommand command, UpdateResultSettingItem item)
@@ -56,14 +65,13 @@ public class UpdateAutoSettingsHandler(
         };
     }
 
-
     private AutoSettleRunUpdateCriteria CreateSettingRunCriteriaFactory(UpdateAutoSettingsCommand command, UpdateResultSettingItem item)
     {
         var bitAutoType = item.ResourceType == ResourceType.Main && item.SettleType == AutoSettleType.AutoPayout
             ? AutoSettleBitPosition.AutoPayoutMain
             : AutoSettleBitPosition.AutoPayoutEarly;
 
-        AutoSettleRunUpdateCriteria criteria = command.TypeObject == "League"
+        AutoSettleRunUpdateCriteria criteria = string.Equals(command.TypeObject, League)
                ? new LeagueAutoSettleRunUpdateCriteria
                {
                    AutoType = bitAutoType,
@@ -96,7 +104,7 @@ public class UpdateAutoSettingsHandler(
             return;
         }
 
-        var objectInfo = command.TypeObject == "League" ? $"League({command.LeagueId})" : $"Match({command.MatchId})";
+        var objectInfo = string.Equals(command.TypeObject, League) ? $"League({command.LeagueId})" : $"Match({command.MatchId})";
         var settingTypeInfo = $"for {item.SettleType} {item.ResourceType} ";
 
         var childMatchInfo = command.IsApplyAll && !string.IsNullOrEmpty(result.ChildMatchIds) ? $"Effect child match: {result.ChildMatchIds}" : string.Empty;
@@ -110,18 +118,17 @@ public class UpdateAutoSettingsHandler(
         await logService.WriteLog(logCriteria);
     }
 
-    private int GetActionLogId(string typeObject)
+    private static int GetActionLogId(string typeObject)
     {
         return (typeObject) switch
         {
-            ("League") => 81057,
-            ("Match") => 81058,
-            _ => 81057 // Default case
+            ("League") => ActionId.AutoPayoutSettingLeague,
+            ("Match") => ActionId.AutoPayoutSettingMatch,
+            _ => 0
         };
     }
 
-
-    private string GetSpecificDifferences(UpdateResultSettingItem firstObject, UpdateResultSettingItem secondObject)
+    private static string GetSpecificDifferences(UpdateResultSettingItem firstObject, UpdateResultSettingItem secondObject)
     {
         var result = new StringBuilder();
         List<string> specificProperties = ["Enabled", "WaitingTime", "IsTraderRequired", "MinProvider", "PrimaryProvider", "SecondaryProvider", "InactiveProvider"];
@@ -145,7 +152,7 @@ public class UpdateAutoSettingsHandler(
         return result.ToString();
     }
 
-    private INonQueryCommand CreateSettingSourceCriteria(UpdateAutoSettingsCommand command, UpdateResultSettingItem item)
+    private static INonQueryCommand CreateSettingSourceCriteria(UpdateAutoSettingsCommand command, UpdateResultSettingItem item)
     {
         SettingSourceCriteriaStrategy strategy = command.TypeObject switch
         {
