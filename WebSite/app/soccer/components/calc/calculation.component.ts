@@ -1,7 +1,7 @@
 import { FormsModule } from '@angular/forms';
 import { CalculateAction } from './../../../shared/constants/calculate-action.native';
 import { Component, inject, ViewChild } from '@angular/core';
-import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
+import { ToastContainerDirective, ToastContainerModule, ToastrService } from 'ngx-toastr';
 import { ChildMatch, FantasyRelatedMatch, HedgeMatchDetail, Match, MatchDetail, Score, UndoChecking } from './models/match.model';
 import { Soccer } from '../soccer.model';
 import { RequestService } from './services/request.service';
@@ -48,7 +48,8 @@ import { GoalRecordWithSemicolonService } from './services/goal-record-with-semi
         GoalHistoryComponent,
         MatTooltip,
         CommonModule,
-        FormsModule],
+        FormsModule,
+        ToastContainerModule],
     providers: [
         VerifyMatchService,
         RequestService,
@@ -70,7 +71,6 @@ export class CalculationComponent implements Soccer {
     public hedgeMatchDetail: HedgeMatchDetail;
     public applyHedgeMatch: boolean;
     public isMatchReady: boolean;
-    public isReSettledTickets: boolean;
     public matchDetail: MatchDetail;
     public dialogMessage = new ModalDialogMessage();
     constructor() {
@@ -81,7 +81,6 @@ export class CalculationComponent implements Soccer {
     private readonly verifyMatchService = inject(VerifyMatchService);
     private readonly messageBoxService = inject(MessageBoxService);
     private readonly closePopupService = inject(ClosePopupService);
-    private readonly verifyActionService = inject(VerifyActionService);
     #storage = inject(CalculateStorage);
 
     async getMatch(matchId: number) {
@@ -105,7 +104,11 @@ export class CalculationComponent implements Soccer {
     }
 
     public onResettleCheckboxChange(checked: boolean) {
-        this.isReSettledTickets = checked;
+        this.#storage.setIsResettleTicket(checked);
+    }
+
+     get isReSettledTickets() {
+        return this.#storage.getIsResettleTicket();
     }
 
     private get isPinGoal() {
@@ -157,103 +160,10 @@ export class CalculationComponent implements Soccer {
     }
 
     public autoFillFantasyMatch(event: Score) {
-        this.matchDetail.halfTimeHomeScore = event.halfTimeHomeScore;
-        this.matchDetail.halfTimeAwayScore = event.halfTimeAwayScore;
-        this.matchDetail.finalHomeScore = event.finalHomeScore;
-        this.matchDetail.finalAwayScore = event.finalAwayScore;
-    }
-
-    public async calculateHalfTime() {
-        this.resetAllWarning();
-        const errorMessage = await this.verifyActionService.verifyFirstHalf(this.matchDetail, this.relatedMatches);
-
-        if (_.isEmpty(errorMessage)) {
-            this.confirmHalftime();
-        } else {
-            this.#storage.error(errorMessage);
-        }
-    }
-
-    private async confirmHalftime() {
-        const needConfirm = await this.verifyActionService.isScoreChangedFirstHalf(this.matchDetail, this.isReSettledTickets);
-        if (needConfirm) {
-            this.autoCheckedReSettledTickets();
-        } else {
-            this.dialogMessage.message = Language.doubleCheckCalculateHalfTime;
-            this.messageBoxService.confirm(this.dialogMessage, () => {
-                this.dialogMessage.message = Language.checkAgainCalculateHalfTime;
-                this.messageBoxService.confirm(this.dialogMessage, () => {
-                    this.doCalculate(CalculateAction.calculateHalfTime);
-                });
-            });
-        }
-    }
-
-    public async calculateFullTime() {
-        this.resetAllWarning();
-        const errorMessage = await this.verifyActionService.verifyFullTime(this.matchDetail, this.selectedChildMatches, this.relatedMatches);
-        if (_.isEmpty(errorMessage)) {
-            this.confirmFullTime();
-        } else {
-            this.#storage.error(errorMessage);
-        }
-    }
-
-    private async confirmFullTime() {
-        const needConfirm = await this.verifyActionService.isScoreChangedFullTime(this.matchDetail, this.isReSettledTickets);
-        if (needConfirm) {
-            this.autoCheckedReSettledTickets();
-        } else {
-            const confirmRefundMessage = this.selectedChildMatches.length > 0
-                ? Language.soccer.confirmAutoRefundChildMatch : "";
-
-            this.dialogMessage.message = `${Language.doubleCheckCalculateFullTime}${confirmRefundMessage}`;
-            this.messageBoxService.confirm(this.dialogMessage, () => {
-                this.dialogMessage.message = Language.checkAgainCalculateFullTime;
-                this.messageBoxService.confirm(this.dialogMessage, () => {
-                    this.doCalculate(CalculateAction.calculateFullTime);
-                });
-            });
-        }
-    }
-
-    public async calculateAll() {
-        this.resetAllWarning();
-        const errorMessage = await this.verifyActionService.verifyAll(this.matchDetail, this.selectedChildMatches, this.relatedMatches);
-        if (_.isEmpty(errorMessage)) {
-            this.confirmAll();
-        } else {
-            this.#storage.error(errorMessage);
-        }
-    }
-
-    private async confirmAll() {
-        const needConfirm = await this.verifyActionService.isScoreChangedAll(this.matchDetail, this.isReSettledTickets);
-        if (needConfirm) {
-            this.autoCheckedReSettledTickets();
-        } else {
-            const confirmRefundMessage = this.selectedChildMatches.length > 0
-                ? Language.soccer.confirmAutoRefundChildMatch : "";
-
-            this.dialogMessage.message = `${Language.doubleCheckCalculateAll}${confirmRefundMessage}`;
-            this.messageBoxService.confirm(this.dialogMessage, () => {
-                this.dialogMessage.message = Language.checkAgainCalculateAll;
-                this.messageBoxService.confirm(this.dialogMessage, () => {
-                    this.doCalculate(CalculateAction.calculate);
-                });
-            });
-        }
-    }
-
-    public async unCalculate() {
-        this.resetAllWarning();
-        this.dialogMessage.message = Language.UncalculationConfirmMessage;
-        this.messageBoxService.confirm(this.dialogMessage, () => {
-            this.dialogMessage.message = Language.checkAgainUnSettleConfirmation;
-            this.messageBoxService.confirm(this.dialogMessage, () => {
-                this.doCalculate(CalculateAction.unCalculate);
-            });
-        });
+        this.matchDetail.halfTimeHomeScore = event.halfTimeHomeScore.toString();
+        this.matchDetail.halfTimeAwayScore = event.halfTimeAwayScore.toString();
+        this.matchDetail.finalHomeScore = event.finalHomeScore.toString();
+        this.matchDetail.finalAwayScore = event.finalAwayScore.toString();
     }
 
     public async unCalculateFT() {
@@ -317,33 +227,6 @@ export class CalculationComponent implements Soccer {
         this.#storage.clear();
     }
 
-    private autoCheckedReSettledTickets() {
-        this.dialogMessage.message = Language.recalculateNotification;
-        this.messageBoxService.confirm(this.dialogMessage, () => {
-            this.isReSettledTickets = true;
-        });
-    }
-
-    private async doCalculate(actionName: string) {
-        const childMatchIds = _.isEmpty(this.childMatches) || _.isEqual(actionName, CalculateAction.calculateHalfTime)
-            ? null : (_.isEmpty(this.selectedChildMatchIds) ? '0' : this.selectedChildMatchIds);
-        const hedgeMatchId = this.applyHedgeMatch ? this.hedgeMatchDetail.matchId : 0;
-        const query = new SettleQuery(this.matchDetail, hedgeMatchId, actionName, this.isReSettledTickets, childMatchIds);
-        const result = await this.requestService.calculate(query);
-        if (result.isSuccessful) {
-            await this.alertMessageToLetstalkForFastMarket(this.matchDetail.matchId, actionName);
-            this.closePopupService.closePopup();
-        } else {
-            this.#storage.error(result.errMsg);
-        }
-    }
-
-    private async alertMessageToLetstalkForFastMarket(matchId: number, actionName: string) {
-        if (_.includes([CalculateAction.calculateFullTime, CalculateAction.calculate], actionName)) {
-            await this.requestService.alertMessageToLetstalkForFastMarket(matchId, actionName);
-        }
-    }
-
     private async doUnCalculateFt() {
         const hedgeMatchId = this.applyHedgeMatch ? this.hedgeMatchDetail.matchId : 0;
         const query = new UncalculateFullTimeQuery(this.matchDetail, this.match.resultDetails, hedgeMatchId);
@@ -353,5 +236,9 @@ export class CalculationComponent implements Soccer {
         } else {
             this.#storage.error(result.errMsg);
         }
+    }
+
+    changeApplyHedgeMatch(){
+        this.#storage.setIsAppleHedgeMatch(this.applyHedgeMatch);
     }
 }

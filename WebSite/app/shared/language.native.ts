@@ -15,6 +15,7 @@
     + 'You will not be able to cancel the CALCULATION and REUSE this match!',
   CalculationAdditionalConfirmation: 'Are you sure you want to proceed with the results below?',
   UncalculationConfirmMessage: 'WARNING! Please double check and confirm this match really needs to be UNSETTLED!',
+  CannotUnalcuteHalfTime: 'This function has not supported. Select all results instead.',
   UncalculateFTConfirmMessage: 'WARNING! Please double check and confirm this match really needs to be UNSETTLED FULL TIME!',
   CannotUncalculateFTMessage: 'WARNING! cannot proceed due to match has been Refunded All. Please recheck or use Uncalculate All instead.',
   RefundConfirmationBox: 'Refund confirmation box',

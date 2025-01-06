@@ -37,10 +37,10 @@ export interface HedgeMatchDetail {
 
 export interface MatchDetail extends MatchDetailBase {
     playTime: number,
-    exHTHomeScore: number,
-    exHTAwayScore: number,
-    exFTHomeScore: number,
-    exFTAwayScore: number,
+    exHTHomeScore: string,
+    exHTAwayScore: string,
+    exFTHomeScore: string,
+    exFTAwayScore: string,
     isFantasyMatch: boolean,
     isInstant: boolean,
     hasInstantCompleted: boolean,

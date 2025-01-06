@@ -33,18 +33,18 @@
       <td [ngClass]="halfTimeResult.resultState">
         <input type="text" myOnlyInteger
           [disabled]="!halfTimeResult.checked  || halfTimeResult.resultSettingData.isHoldResult"
-          [(ngModel)]="matchDetail.halfTimeHomeScore" (ngModelChange)="scoreChanged(halfTimeResult)" />
+          [(ngModel)]="halfTimeResult.homeValue" (ngModelChange)="scoreChanged(halfTimeResult)" />
         &nbsp;
         <input type="text" myOnlyInteger
           [disabled]="!halfTimeResult.checked  || halfTimeResult.resultSettingData.isHoldResult"
-          [(ngModel)]="matchDetail.halfTimeAwayScore" (ngModelChange)="scoreChanged(halfTimeResult)" />
+          [(ngModel)]="halfTimeResult.awayValue" (ngModelChange)="scoreChanged(halfTimeResult)" />
       </td>
       <td [ngClass]="{ mismatched: halfTimeResult.isMismatch}">
         {{ matchDetail.exHTHomeScore }} - {{ matchDetail.exHTAwayScore }}
       </td>
       <td>
         <input id="final-checkbox" type="checkbox" [(ngModel)]="halfTimeResult.checked"
-          [disabled]="halfTimeResult.resultSettingData.isHoldResult" />
+          [disabled]="halfTimeResult.resultSettingData.isHoldResult" (ngModelChange)="selectResult()" />
       </td>
       <td>
         <div [ngClass]="halfTimeResult.resultSettingData.iconHoldResult" (click)="isChangeSetting(halfTimeResult)">
@@ -58,18 +58,18 @@
       <td [ngClass]="fullTimeResult.resultState">
         <input type="text" myOnlyInteger
           [disabled]="!fullTimeResult.checked || fullTimeResult.resultSettingData.isHoldResult"
-          [(ngModel)]="matchDetail.finalHomeScore" />
+          [(ngModel)]="fullTimeResult.homeValue" />
         &nbsp;
         <input type="text" myOnlyInteger
           [disabled]="!fullTimeResult.checked || fullTimeResult.resultSettingData.isHoldResult"
-          [(ngModel)]="matchDetail.finalAwayScore" />
+          [(ngModel)]="fullTimeResult.awayValue" />
       </td>
       <td [ngClass]="{ mismatched: fullTimeResult.isMismatch}">
         {{ matchDetail.exFTHomeScore }} - {{ matchDetail.exFTAwayScore }}
       </td>
       <td>
         <input id="final-checkbox" type="checkbox" [(ngModel)]="fullTimeResult.checked"
-          [disabled]="fullTimeResult.resultSettingData.isHoldResult" />
+          [disabled]="fullTimeResult.resultSettingData.isHoldResult" (ngModelChange)="selectResult()" />
       </td>
       <td>
         <div [ngClass]="fullTimeResult.resultSettingData.iconHoldResult" (click)="isChangeSetting(fullTimeResult)">
@@ -89,19 +89,18 @@
     </tr>
     <tr>
       <td colSpan="100%" class="action-button">
-        <button [ngClass]="{ button: true, 'button-disabled': !enableAction}" (click)="calculate()">Calculate</button>
+        <button [ngClass]="{ button: true}" [disabled]="!enableAction" (click)="calculate()">Calculate</button>
 
-        <button *ngIf="permission.canUncalculate" [ngClass]="{ button: true, 'button-disabled': !enableAction}"
-          [disabled]="!enableAction" (click)="uncalculate()">
+        <button *ngIf="permission.canUncalculate" [ngClass]="{ button: true}" [disabled]="!enableAction"
+          (click)="uncalculate()">
           Uncalculate
         </button>
 
-        <button *ngIf="permission.canUncalculateInstant"
-          [ngClass]="{ 'button instant': true, 'button-disabled': !enableAction}" [disabled]="!enableAction"
-          (click)="uncalculate()">
+        <button *ngIf="permission.canUncalculateInstant" [ngClass]="{ 'button instant': true}"
+          [disabled]="!enableAction" (click)="uncalculate()">
           Uncalculate Ins.Settle
         </button>
-        <button class="new-refund-button save-score" [disabled]="isSaveScoreDisabled()" (click)="saveScore()">Save
+        <button class="new-refund-button save-score" [disabled]="!enableAction" (click)="saveScore()">Save
           Trader Score</button>
       </td>
     </tr>

@@ -12,129 +12,20 @@ export class VerifyActionService {
     private readonly verifyScoreGoalService: VerifyScoreGoalService,
     private readonly requestService: RequestService) { }
 
-  public async verifyFirstHalf(matchDetail: MatchDetail, relatedMatches: FantasyRelatedMatch[]) {
-    if (this.verifyScoreGoalService.verifyScoreHalfTime(matchDetail)) {
-      return Language.warningInputScore;
-    }
-
-    if (this.verifyScoreGoalService.goalRecordNotExistSemicolon(matchDetail)) {
-      matchDetail.isWarningGoalRecord = true;
-      return Language.soccer.needSemicolonOnGoalRecord;
-    }
-
-    if (matchDetail.applyGoalRecord && this.verifyScoreGoalService.isHtGoalRecordInvalid(matchDetail)) {
-      matchDetail.isWarningGoalRecord = true;
-      return Language.soccer.halfTimeGoalRecordNotConsistent;
-    }
-
-    if (matchDetail.isScoreInconsistent) {
-      return Language.soccer.confirmWithInconsistentScore;
-    }
-
-    if (matchDetail.isFantasyMatch && this.isFirstHalfRelatedMatchesNotCalc(relatedMatches)) {
-      return Language.fantasyMatch.relatedMatchesNotCalc;
-    }
-
-    return this.checkNewStatus(matchDetail, CalculateAction.calculateHalfTime);
-  }
-
-  private isFirstHalfRelatedMatchesNotCalc(relatedMatches: FantasyRelatedMatch[] = []) {
+  isFirstHalfRelatedMatchesNotCalc(relatedMatches: FantasyRelatedMatch[] = []) {
     return relatedMatches.some(x => x.htSettlementStatusId !== SettlementStatusId.Calculated)
   }
 
-  private async checkNewStatus(matchDetail: MatchDetail, actionName: string) {
+  async checkNewStatus(matchDetail: MatchDetail, actionName: string) {
     const result = await this.requestService.checkNewStatus(matchDetail.matchId, actionName);
     return result.isSuccessful ? "" : result.errMsg;
   }
 
-  public async verifyFullTime(matchDetail: MatchDetail, selectedChildMatches: ChildMatch[], relatedMatches: FantasyRelatedMatch[]) {
-    if (this.verifyScoreGoalService.verifyScoreFullTime(matchDetail)) {
-      return Language.warningInputScore;
-    }
-    if (this.verifyScoreGoalService.verifyScoreForChildMatch(matchDetail, selectedChildMatches)) {
-      return Language.soccer.childMatchesErrorMessage;
-    }
-
-    if (this.isRefundHalfTimeAndHasSemicolon(matchDetail)) {
-      matchDetail.isWarningGoalRecord = true;
-      return Language.soccer.noNeedSemicolonOnGoalRecord;
-    }
-    if (this.isNotRefundHalfTimeAndHasNotSemicolon(matchDetail)) {
-      matchDetail.isWarningGoalRecord = true;
-      return Language.soccer.needSemicolonOnGoalRecord;
-    }
-    if (this.verifyScoreGoalService.isHTGoalRecordConsistent(matchDetail)) {
-      matchDetail.isWarningGoalRecord = true;
-      return Language.soccer.halfTimeGoalRecordNotConsistent;
-    }
-    if (this.verifyScoreGoalService.isFullTimeGoalRecordInvalid(matchDetail)) {
-      matchDetail.isWarningGoalRecord = true;
-      return Language.soccer.goalRecordNotConsistent;
-    }
-    if (matchDetail.isScoreInconsistent) {
-      return Language.soccer.incorrectHalftimeAndFullTimeScore;
-    }
-
-    if (this.isFantasyMatchAndRelatedMatches(matchDetail,relatedMatches)) {
-      return Language.fantasyMatch.relatedMatchesNotCalc;
-    }
-    return this.checkNewStatus(matchDetail, CalculateAction.calculateFullTime);
-
-  }
-
-  private isNotRefundHalfTimeAndHasNotSemicolon(matchDetail: MatchDetail) {
-    return !this.verifyScoreGoalService.isRefundHalfTime(matchDetail) && this.verifyScoreGoalService.goalRecordNotExistSemicolon(matchDetail)
-  }
-
-  private isRefundHalfTimeAndHasSemicolon(matchDetail: MatchDetail) {
-   return this.verifyScoreGoalService.isRefundHalfTime(matchDetail) && this.verifyScoreGoalService.goalRecordExistSemicolon(matchDetail)
-  }
-
-  private isFantasyMatchAndRelatedMatches(matchDetail: MatchDetail, relatedMatches: FantasyRelatedMatch[]) {
-    return matchDetail.isFantasyMatch && this.isFullTimeRelatedMatchesNotCalc(relatedMatches);
-  }
-
-  private isFullTimeRelatedMatchesNotCalc(relatedMatches: FantasyRelatedMatch[] = []) {
+  isFullTimeRelatedMatchesNotCalc(relatedMatches: FantasyRelatedMatch[] = []) {
     return relatedMatches.some(x => x.ftSettlementStatusId !== SettlementStatusId.Calculated)
   }
-
-  public async verifyAll(matchDetail: MatchDetail, selectedChildMatches: ChildMatch[], relatedMatches: FantasyRelatedMatch[]) {
-    if (this.verifyScoreGoalService.verifyScoreAll(matchDetail)) {
-      return Language.warningInputScore;
-    }
-
-    if (this.verifyScoreGoalService.verifyScoreForChildMatch(matchDetail, selectedChildMatches)) {
-      return Language.soccer.childMatchesErrorMessage;
-    }
-
-    if (this.verifyScoreGoalService.goalRecordNotExistSemicolon(matchDetail)) {
-      matchDetail.isWarningGoalRecord = true;
-      return Language.soccer.needSemicolonOnGoalRecord;
-    }
-
-    if (this.verifyScoreGoalService.isHTGoalRecordConsistent(matchDetail)) {
-      matchDetail.isWarningGoalRecord = true;
-      return Language.soccer.halfTimeGoalRecordNotConsistent;
-    }
-
-    if (this.verifyScoreGoalService.isFullTimeGoalRecordInvalid(matchDetail)) {
-      matchDetail.isWarningGoalRecord = true;
-      return Language.soccer.goalRecordNotConsistent;
-    }
-
-    if (matchDetail.isScoreInconsistent) {
-      return Language.soccer.incorrectHalftimeAndFullTimeScore;
-    }
-
-    if (matchDetail.isFantasyMatch && this.isAllResultRelatedMatchesNotCalc(relatedMatches)) {
-      return Language.fantasyMatch.relatedMatchesNotCalc;
-
-    }
-
-    return this.checkNewStatus(matchDetail, CalculateAction.calculate);
-  }
-
-  private isAllResultRelatedMatchesNotCalc(relatedMatches: FantasyRelatedMatch[] = []) {
+  
+  isAllResultRelatedMatchesNotCalc(relatedMatches: FantasyRelatedMatch[] = []) {
     return this.isFirstHalfRelatedMatchesNotCalc(relatedMatches) || this.isFullTimeRelatedMatchesNotCalc(relatedMatches);
   }
 

@@ -54,8 +54,8 @@ export class CalculationActionComponent implements OnInit {
     this.#calculateService.copyScore();
   }
 
-  private getResultSettingIcon(result: ResultDetail) {
-    return result.resultSettingData.isHoldResult ? 'icon-yes' : 'icon-no';
+  selectResult(){
+    this.enableAction = this.halfTimeResult.checked || this.fullTimeResult.checked;
   }
 
   isChangeSetting(resultDetail: ResultDetail) {
@@ -67,7 +67,9 @@ export class CalculationActionComponent implements OnInit {
       const result = await this.#aioService.changeResultSetting(query);
       resultDetail.resultSettingData.isHoldResult = result;
       resultDetail.resultSettingData.iconHoldResult = this.getResultSettingIcon(resultDetail);
-
+      if(result){
+        resultDetail.checked = false;
+      }
     });
   }
 
@@ -88,19 +90,37 @@ export class CalculationActionComponent implements OnInit {
   }
 
   calculate() {
-
+    this.#storage.clear();
+    this.#storage.setHaftTimeScore(this.halfTimeResult.homeValue, this.halfTimeResult.awayValue)
+    this.#storage.setFullTimeScore(this.fullTimeResult.homeValue, this.fullTimeResult.awayValue)
+    const { checked: isHalfTime } = this.halfTimeResult;
+    const { checked: isFullTime } = this.fullTimeResult;
+  
+    if (isHalfTime && isFullTime) {
+      this.#calculateService.calculateALL();
+    } else if (isHalfTime) {
+      this.#calculateService.calculateHalfTime();
+    } else if (isFullTime) {
+      this.#calculateService.calculateFullTime();
+    }
   }
 
   uncalculate() {
-
+    this.#storage.clear();
+    const { checked: isHalfTime } = this.halfTimeResult;
+    const { checked: isFullTime } = this.fullTimeResult;
+  
+    if (isHalfTime && isFullTime) {
+      this.#calculateService.uncalculateAll();
+    } else if (isFullTime) {
+      this.#calculateService.uncalculateFT();
+    } else {
+      this.#storage.error(Language.UncalculateFTConfirmMessage);
+    }
   }
 
   saveScore() {
 
-  }
-
-  isSaveScoreDisabled() {
-    return false;
   }
 
   goalRecordModelChange(value: string){
@@ -110,5 +130,9 @@ export class CalculationActionComponent implements OnInit {
 
   private changeResultState(resultDetail: ResultDetail) {
     resultDetail.resultState = `${resultDetail.ticketStatus.toLowerCase()} ${resultDetail.isMismatch ? 'mismatched' : ''}`;
+  }
+
+  private getResultSettingIcon(result: ResultDetail) {
+    return result.resultSettingData.isHoldResult ? 'icon-yes' : 'icon-no';
   }
 }

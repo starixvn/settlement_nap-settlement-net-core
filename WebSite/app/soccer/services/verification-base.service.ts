@@ -6,8 +6,8 @@ import { MatchDetailBase } from "../models";
 
 @Injectable()
 export class VerificationBaseService {
-    public isEmptyScore(value: number) {
-        return _.isNull(value) || _.isEmpty(value.toString());
+    public isEmptyScore(value: string) {
+        return _.isNull(value) || _.isEmpty(value);
     }
 
     public isEmpty(value: string) {

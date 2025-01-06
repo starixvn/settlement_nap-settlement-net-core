@@ -145,7 +145,7 @@ export class VerifyScoreGoalService extends VerificationBaseService{
         return new Score(halfTimeHomeScore, halfTimeAwayScore, finalHomeScore, finalAwayScore);
     }
 
-    public isScoresValid(home: number, away: number) {
+    public isScoresValid(home: string, away: string) {
         return !this.isEmptyScore(home) && !this.isEmptyScore(away);
     }
 

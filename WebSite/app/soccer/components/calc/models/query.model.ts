@@ -14,10 +14,10 @@ export class SettleQuery {
     public isExistFgNg: boolean;
     public isEnabledGoalRecordHt: boolean;
     public isEnabledGoalRecordFt: boolean;
-    public halfTimeHomeScore: number;
-    public halfTimeAwayScore: number;
-    public finalHomeScore: number;
-    public finalAwayScore: number;
+    public halfTimeHomeScore: string;
+    public halfTimeAwayScore: string;
+    public finalHomeScore: string;
+    public finalAwayScore: string;
     public isResettledTickets: boolean;
     public childMatchIds: string;
     public leagueGroupId: number;
@@ -92,8 +92,8 @@ export class UncalculateFullTimeQuery {
     public resultDetails: ResultDetail[];
     public hedgeMatchId: number;
     public isApplyHedging: boolean;
-    public halfTimeHome: number;
-    public halfTimeAway: number;
+    public halfTimeHome: string;
+    public halfTimeAway: string;
 
     constructor(matchDetail: MatchDetail, resultDetails: ResultDetail[], hedgeMatchId: number) {
         this.isExistFgLg = matchDetail.isExistFgLg;

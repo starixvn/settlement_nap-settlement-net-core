@@ -1,0 +1,37 @@
+import { AbstractHandler } from "../abstract.handler";
+import { Storage } from "../../storage/storage.service";
+import { ClosePopupService } from "../../../shared/services";
+import { inject } from "@angular/core";
+import { RequestService } from "../../components/calc/services/request.service";
+import { includes, isEmpty, isEqual } from "lodash";
+import { CalculateAction } from "../../../shared/constants";
+import { SettleQuery } from "../../components/calc/models/query.model";
+
+
+export class CalculateHandler extends AbstractHandler {
+  readonly #closePopupService = inject(ClosePopupService);
+  readonly #requestService = inject(RequestService);
+
+  public async handle(storage: Storage): Promise<void> {
+    const actionName = storage.getCalculateAction();
+    const { matchDetail, hedgeMatchDetail, childMatches } = storage.getMatch();
+    const selectedChildMatchIds = childMatches.filter(x => x.checked).map(x => x.matchId).join(',');
+    const childMatchIds = isEmpty(childMatches) || isEqual(actionName, CalculateAction.calculateHalfTime)
+      ? null : (isEmpty(selectedChildMatchIds) ? '0' : selectedChildMatchIds);
+    const hedgeMatchId = storage.isApplyHedgeMatch() ? hedgeMatchDetail.matchId : 0;
+    const query = new SettleQuery(matchDetail, hedgeMatchId, actionName, storage.getIsResettleTicket(), childMatchIds);
+    const result = await this.#requestService.calculate(query);
+    if (result.isSuccessful) {
+      await this.alertMessageToLetsTalkForFastMarket(matchDetail.matchId, actionName);
+      this.#closePopupService.closePopup();
+    } else {
+      storage.error(result.errMsg);
+    }
+  }
+
+  private async alertMessageToLetsTalkForFastMarket(matchId: number, actionName: string) {
+    if (includes([CalculateAction.calculateFullTime, CalculateAction.calculate], actionName)) {
+      await this.#requestService.alertMessageToLetstalkForFastMarket(matchId, actionName);
+    }
+  }
+}

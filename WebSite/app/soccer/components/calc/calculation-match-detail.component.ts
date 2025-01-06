@@ -67,43 +67,5 @@ export class CalculationMatchDetailComponent implements OnInit {
         this.scoreChange.emit(this.matchDetail);
     }
 
-    public copyScore() {
-        this.errorMsgEmitter.emit("");
-        const isExtFTScoreValid = this.verifyScoreGoalService.isScoresValid(this.matchDetail.exFTHomeScore, this.matchDetail.exFTAwayScore);
-        const isExtHTScoreValid = this.verifyScoreGoalService.isScoresValid(this.matchDetail.exHTHomeScore, this.matchDetail.exHTAwayScore);
-        if (this.verifyScoreGoalService.isFullTimeSettled(this.matchDetail)) {
-            this.errorMsgEmitter.emit(Language.soccer.matchAlreadySettled);
-        } else if (this.verifyScoreGoalService.isHalfTimeSettled(this.matchDetail)) {
-            if (isExtFTScoreValid) {
-                this.confirmCopyScore(Language.soccer.confirmCopyFinalScore, CalculateAction.copyFTScore);
-            } else {
-                this.errorMsgEmitter.emit(Language.soccer.halfTimeAlreadySettled);
-            }
-        } else {
-            if (!isExtHTScoreValid && !isExtFTScoreValid) {
-                this.errorMsgEmitter.emit(Language.soccer.noSBOScore);
-            } else if (!isExtHTScoreValid && isExtFTScoreValid) {
-                this.confirmCopyScore(Language.soccer.confirmCopyFinalScore, CalculateAction.copyFTScore);
-            } else if (isExtHTScoreValid && !isExtFTScoreValid) {
-                this.confirmCopyScore(Language.soccer.confirmCopyHalfTimeScore, CalculateAction.copyHTScore);
-            } else {
-                this.confirmCopyScore(Language.soccer.confirmCopyScore, CalculateAction.copyAllScore);
-            }
-        }
-    }
-
-    private confirmCopyScore(message: string, type: string) {
-        this.dialogMessage.message = message;
-        this.messageBoxService.confirm(this.dialogMessage, () => {
-            if (_.isEqual(type, CalculateAction.copyHTScore) || _.isEqual(type, CalculateAction.copyAllScore)) {
-                this.matchDetail.halfTimeHomeScore = Number(this.matchDetail.exHTHomeScore);
-                this.matchDetail.halfTimeAwayScore = Number(this.matchDetail.exHTAwayScore);
-            }
-            if (_.isEqual(type, CalculateAction.copyFTScore) || _.isEqual(type, CalculateAction.copyAllScore)) {
-                this.matchDetail.finalHomeScore = Number(this.matchDetail.exFTHomeScore);
-                this.matchDetail.finalAwayScore = Number(this.matchDetail.exFTAwayScore);
-            }
-            this.changeScore();
-        });
-    }
+  
 }
