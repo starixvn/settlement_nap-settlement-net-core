@@ -18,7 +18,7 @@
 		</Setting>
 		<Setting Key="NAP_Set_FantasyMatchOSSel" SpName="NAP_Set_FantasyMatchOSSel" DbName="DBPRO.bodb02.wsv_nap" />
 		<Setting Key="NAP_Admin_MajorRound_Sel" SpName="NAP_Admin_MajorRound_Sel" DbName="DBPRO.bodb02.wsv_nap" />
-		<Setting Key="NAP_Set_MatchOtherSportsSel" SpName="NAP_Set_MatchOtherSportsSel" DbName="DBPRO.bodb02.wsv_nap" />
+		<Setting Key="NAP_Set_MatchOtherSportsSel" SpName="NAP_Set_MatchOtherSportsSel_UAT3" DbName="DBPRO.bodb02.wsv_nap" />
 		<Setting Key="NAP_Set_AutoRefundOS_ResultIns" SpName="NAP_Set_AutoRefundOS_ResultIns" DbName="DBPRO.bodb02.wsv_nap" />
 	</Function>
 	<Function Name="MoveTickets">
@@ -46,17 +46,17 @@
 	<Function Name="Setting">
 		<Setting Key="NAP_Set_ExternalResultDetailOSIns" SpName="NAP_Set_ExternalResultDetailOSIns" DbName="DBPRO.bodb02.wsv_nap" />
 		<Setting Key="NAP_Set_ExternalResultDetailESIns" SpName="NAP_Set_ExternalResultDetailESIns" DbName="DBPRO.bodb02.wsv_nap" />
-		<Setting Key="NAP_Set_AutoPayout_SettingMatchUpd" SpName="NAP_Set_AutoPayout_SettingMatchUpd" DbName="DBPRO.bodb02.wsv_nap" />
+		<Setting Key="NAP_Set_AutoPayout_SettingMatchUpd" SpName="NAP_Set_AutoPayout_SettingMatchUpd_UAT3" DbName="DBPRO.bodb02.wsv_nap" />
 		<Setting Key="NAP_SelSports" SpName="NAP_SelSports" DbName="DBPRO.bodb02.wsv_nap" />
 		<Setting Key="NAP_Set_LeagueSel" SpName="NAP_Set_LeagueSel" DbName="DBPRO.bodb02.wsv_nap" />
 		<Setting Key="NAP_Set_SettlementStatusUpd" SpName="NAP_Set_SettlementStatusUpd" DbName="DBPRO.bodb02.wsv_nap" />
 		<Setting Key="NAP_Set_WaitingTimeLeagueUpd" SpName="NAP_Set_WaitingTimeLeagueUpd" DbName="DBPRO.bodb02.wsv_nap" />
 		<Setting Key="NAP_Set_AutoSettingSel" SpName="NAP_Set_AutoSettingSel" DbName="DBPRO.bodb02.wsv_nap" />
-		<Setting Key="NAP_Set_AutoPayout_LeagueSetting_Sel" SpName="NAP_Set_AutoPayout_LeagueSetting_Sel" DbName="DBPRO.bodb02.wsv_nap" />
-		<Setting Key="NAP_Set_AutoPayout_MatchSetting_Sel" SpName="NAP_Set_AutoPayout_MatchSetting_Sel" DbName="DBPRO.bodb02.wsv_nap" />
-		<Setting Key="NAP_Set_AutoPayout_SettingLeagueUpd" SpName="NAP_Set_AutoPayout_SettingLeagueUpd" DbName="DBPRO.bodb02.wsv_nap" />
-		<Setting Key="NAP_Set_AutoPayout_LeagueSetting_Update" SpName="NAP_Set_AutoPayout_LeagueSetting_Update" DbName="DBPRO.bodb02.wsv_nap" />
-		<Setting Key="NAP_Set_AutoPayout_MatchSetting_Update" SpName="NAP_Set_AutoPayout_MatchSetting_Update" DbName="DBPRO.bodb02.wsv_nap" />
+		<Setting Key="NAP_Set_AutoPayout_LeagueSetting_Sel" SpName="NAP_Set_AutoPayout_LeagueSetting_Sel_UAT3" DbName="DBPRO.bodb02.wsv_nap" />
+		<Setting Key="NAP_Set_AutoPayout_MatchSetting_Sel" SpName="NAP_Set_AutoPayout_MatchSetting_Sel_UAT3" DbName="DBPRO.bodb02.wsv_nap" />
+		<Setting Key="NAP_Set_AutoPayout_SettingLeagueUpd" SpName="NAP_Set_AutoPayout_SettingLeagueUpd_UAT3" DbName="DBPRO.bodb02.wsv_nap" />
+		<Setting Key="NAP_Set_AutoPayout_LeagueSetting_Update" SpName="NAP_Set_AutoPayout_LeagueSetting_Update_UAT3" DbName="DBPRO.bodb02.wsv_nap" />
+		<Setting Key="NAP_Set_AutoPayout_MatchSetting_Update" SpName="NAP_Set_AutoPayout_MatchSetting_Update_UAT3" DbName="DBPRO.bodb02.wsv_nap" />
 		<Setting Key="NAP_Set_AutoPayout_SourceInfo_Sel" SpName="NAP_Set_AutoPayout_SourceInfo_Sel" DbName="DBPRO.bodb02.wsv_nap" />
 	</Function>
 	<Function Name="Select match Info">
@@ -217,10 +217,10 @@
 			<Setting Key="NAP_Set_WaitingSel_DBSITE03" SpName="NAP_Set_WaitingSel" DbName="DBSITE03.bodb02.wsv_nap" TimeOut="60" />
 		</Function>
 		<Function Name="NAP_Set_AutoPayout_MatchSel">
-			<Setting Key="NAP_Set_AutoPayout_MatchSel_DBTXN" SpName="NAP_Set_AutoPayout_MatchSel" DbName="DBTXN.bodb02.wsv_nap" TimeOut="120" />
-			<Setting Key="NAP_Set_AutoPayout_MatchSel_DBSITE01" SpName="NAP_Set_AutoPayout_MatchSel" DbName="DBSITE01.bodb02.wsv_nap" TimeOut="120" />
-			<Setting Key="NAP_Set_AutoPayout_MatchSel_DBSITE02" SpName="NAP_Set_AutoPayout_MatchSel" DbName="DBSITE02.bodb02.wsv_nap" TimeOut="120" />
-			<Setting Key="NAP_Set_AutoPayout_MatchSel_DBSITE03" SpName="NAP_Set_AutoPayout_MatchSel" DbName="DBSITE03.bodb02.wsv_nap" TimeOut="120" />
+			<Setting Key="NAP_Set_AutoPayout_MatchSel_DBTXN" SpName="NAP_Set_AutoPayout_MatchSel_UAT3" DbName="DBTXN.bodb02.wsv_nap" TimeOut="120" />
+			<Setting Key="NAP_Set_AutoPayout_MatchSel_DBSITE01" SpName="NAP_Set_AutoPayout_MatchSel_UAT3" DbName="DBSITE01.bodb02.wsv_nap" TimeOut="120" />
+			<Setting Key="NAP_Set_AutoPayout_MatchSel_DBSITE02" SpName="NAP_Set_AutoPayout_MatchSel_UAT3" DbName="DBSITE02.bodb02.wsv_nap" TimeOut="120" />
+			<Setting Key="NAP_Set_AutoPayout_MatchSel_DBSITE03" SpName="NAP_Set_AutoPayout_MatchSel_UAT3" DbName="DBSITE03.bodb02.wsv_nap" TimeOut="120" />
 		</Function>
 		<Function Name="NAP_Set_AutoPayout_WaitingSel">
 			<Setting Key="NAP_Set_AutoPayout_WaitingSel_DBTXN" SpName="NAP_Set_AutoPayout_WaitingSel" DbName="DBTXN.bodb02.wsv_nap" TimeOut="60" />

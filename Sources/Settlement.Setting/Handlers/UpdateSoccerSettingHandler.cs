@@ -50,7 +50,7 @@ public class UpdateSoccerSettingHandler
             return;
         }
 
-        await settingService.UpdateSettingLeague(new SettingLeagueRequest
+        var result = await settingService.UpdateSettingLeague(new SettingLeagueRequest
         {
             LeagueId = command.LeagueId,
             AutoType = (int)settleType,
@@ -83,7 +83,7 @@ public class UpdateSoccerSettingHandler
         if (settings == null)
         {
             return;
-        };
+        }
 
         var criteria = new UpdateLeagueAutoSettleSourceCriteria
         {
