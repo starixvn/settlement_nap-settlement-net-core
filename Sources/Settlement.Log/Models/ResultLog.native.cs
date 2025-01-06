@@ -61,4 +61,8 @@ public class ResultLog
     }
 
     public string Action { get; set; }
+
+    public byte DataType { get; set; }
+
+    public bool IsLive { get; set; }
 }

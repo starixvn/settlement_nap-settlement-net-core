@@ -1,90 +1,103 @@
-﻿
-  @if(providerLog.matchDetail){
-  <div class="provider-title">
-    <div class="icon"></div>
-      {{providerLog.matchDetail.sportName}} - {{providerLog.matchDetail.leagueName}}
-      - {{providerLog.matchDetail.homeName}} -vs- {{providerLog.matchDetail.awayName}}
-      - Event date: {{providerLog.matchDetail.eventDate | date : 'mediumDate'}}
-    
-  </div>
-  }
-  
-    <table class="table-calculation">
-      <thead>
-        <tr>
-          <th class="index">
-            #
-          </th>
-          <th class="goal-record">
-            Resource Id
-          </th>
-          <th class="resource-name">
-            Result Type
-          </th>
-          <th class="action">
-            Action
-          </th>
-          <th class="result-string">
-            Time
-          </th>
-          <th class="result-string">
-            Provider Name
-          </th>
-          <th class="result-string">
-            Result Value
-          </th>
-          <th>
-            Remark
-          </th>
-        </tr>
-      </thead>
-    </table>
-    <div dynamicHeight style="overflow-y: scroll;">
-      <table class="table-calculation">
-        <colgroup>
-          <col class="index"/>
-          <col class="goal-record" />
-          <col class="resource-name" />
-          <col class="action"/>
-          <col class="result-string" />
-          <col class="result-string" />
-          <col class="result-string" />
-        </colgroup>
-        <tbody>
-          @for (log of providerLog.providerResultLog; track log; let i = $index) {
-            <tr [ngClass]="{'bold': log.autoPayoutStatus !== 0}">
-              <td>
-                {{i+1}}
-              </td>
-              <td>
-                {{log.resourceId}}
-              </td>
-              <td>
-                {{log.resourceName}}
-              </td>
-              <td>
-                {{log.action}}
-              </td>
-              <td>
-                {{log.createDate | date : 'mediumDate' }} {{log.createDate | date : 'hh:mm:ss a' }}
-              </td>
-              <td>
-                {{log.sourceName}}
-              </td>
-              <td>
-                {{log.resultValue}}
-              </td>
-              <td>
-                <div [innerHTML]="log.remark">
-                </div>
-              </td>
-            </tr>
-          }
-          @if (providerLog.providerResultLog == null || providerLog.providerResultLog.length ==0) {
-            <tr>
-              <td colspan="8">There is no information available</td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    </div>
+﻿@if(providerLog.matchDetail){
+<div class="provider-title">
+  <div class="icon"></div>
+  {{providerLog.matchDetail.sportName}} - {{providerLog.matchDetail.leagueName}}
+  - {{providerLog.matchDetail.homeName}} -vs- {{providerLog.matchDetail.awayName}}
+  - Event date: {{providerLog.matchDetail.eventDate | date : 'mediumDate'}}
+
+</div>
+}
+
+<table class="table-calculation">
+  <thead>
+    <tr>
+      <th class="index">
+        #
+      </th>
+      <th class="goal-record">
+        Resource Id
+      </th>
+      <th class="resource-name">
+        Result Type
+      </th>
+      <th class="action">
+        Action
+      </th>
+      <th class="action">
+        Is Live Score
+      </th>
+      <th class="result-string">
+        Time
+      </th>
+      <th class="result-string">
+        Provider Name
+      </th>
+      <th class="result-string">
+        Result Value
+      </th>
+      <th>
+        Remark
+      </th>
+    </tr>
+  </thead>
+</table>
+<div dynamicHeight style="overflow-y: scroll;">
+  <table class="table-calculation">
+    <colgroup>
+      <col class="index" />
+      <col class="goal-record" />
+      <col class="resource-name" />
+      <col class="action" />
+      <col class="action" />
+      <col class="result-string" />
+      <col class="result-string" />
+      <col class="result-string" />
+    </colgroup>
+    <tbody>
+      @for (log of providerLog.providerResultLog; track log; let i = $index) {
+      <tr [ngClass]="{'bold': log.autoPayoutStatus !== 0}">
+        <td>
+          {{i+1}}
+        </td>
+        <td>
+          {{log.resourceId}}
+        </td>
+        <td>
+          {{log.resourceName}}
+        </td>
+        <td>
+          {{log.action}}
+        </td>
+        @if(log.action.toLocaleLowerCase() == providerAction) {
+        <td>
+          {{log.isLive ? 'Yes' : 'No'}}
+        </td>
+        }
+        @else {
+        <td>
+          -
+        </td>
+        }
+        <td>
+          {{log.createDate | date : 'mediumDate' }} {{log.createDate | date : 'hh:mm:ss a' }}
+        </td>
+        <td>
+          {{log.sourceName}}
+        </td>
+        <td>
+          {{log.resultValue}}
+        </td>
+        <td>
+          <div [innerHTML]="log.remark">
+          </div>
+        </td>
+      </tr>
+      }
+      @if (providerLog.providerResultLog == null || providerLog.providerResultLog.length ==0) {
+      <tr>
+        <td colspan="8">There is no information available</td>
+      </tr>
+      }
+    </tbody>
+  </table>
+</div>

@@ -2,6 +2,7 @@
 using Fanex.Data.Repository;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
+using Settlement.Log.Contants;
 using Settlement.Log.Criteria;
 using Settlement.Log.Models;
 using Settlement.Log.Requests;
@@ -27,6 +28,12 @@ public class ProviderLogServiceImp(
     : ProviderLogService
 {
     private readonly IResourceNameService resourceNameService = new ResourceNameService(new MapperFactoryBase());
+
+    private const string autoPayoutAction = "Auto Payout";
+
+    private const string autoRefundAction = "Auto Refund";
+
+    private const string noneAction = "Received";
 
     public async Task<MatchDetail> GetMatchDetail(int matchId)
     {
@@ -61,7 +68,8 @@ public class ProviderLogServiceImp(
 
         return listResultLogs
             .Where(item =>
-                (item.ResourceName ?? string.Empty).Contains(request.ResourceName.Trim(), StringComparison.InvariantCultureIgnoreCase));
+                (item.ResourceName ?? string.Empty).Contains(request.ResourceName.Trim(), StringComparison.InvariantCultureIgnoreCase))
+            .Where(item => request.IsLive ? item.IsLive : true);
     }
 
     private IEnumerable<ResultLog> GenerateResourceName(List<ResultLog> resultLogs, int sportType)
@@ -82,7 +90,7 @@ public class ProviderLogServiceImp(
     {
         var criteria = mapper.Map<ProviderLogRequest, GetProviderLogCriteria>(request);
         var resultLogs = (await repository.FetchAsync<ResultLog>(criteria)).ToList();
-        resultLogs.ForEach(x => { x.Action = x.SourceName.Equals("-") ? "Auto Payout" : "received"; });
+        resultLogs.ForEach(x => x.Action = GetAction(x));
 
         return resultLogs;
     }
@@ -102,5 +110,15 @@ public class ProviderLogServiceImp(
         resultLogs.ForEach(log => { log.Action = "confirmed"; });
 
         return resultLogs;
+    }
+
+    private static string GetAction(ResultLog log)
+    {
+        if (log.DataType == DataLogType.AutoRefund)
+        {
+            return autoRefundAction;
+        }
+
+        return log.SourceName.Equals("-") ? autoPayoutAction : noneAction;
     }
 }

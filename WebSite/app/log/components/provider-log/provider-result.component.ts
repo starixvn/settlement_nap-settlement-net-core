@@ -9,4 +9,5 @@ import { ProviderLog } from '../../models';
 
 export class ProviderMatchesComponent{
     @Input() public readonly providerLog: ProviderLog;
+    readonly providerAction = 'received';
 }

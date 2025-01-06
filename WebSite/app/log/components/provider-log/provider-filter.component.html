@@ -26,8 +26,13 @@
           Provider
         </label>
         <div>
-          <new-multiple-select (formValue)="onSelectProvider($event)" [multipleSelect]="providerSelect"></new-multiple-select>
+          <new-multiple-select (formValue)="onSelectProvider($event)"
+            [multipleSelect]="providerSelect"></new-multiple-select>
         </div>
+      </div>
+      <div class="col-md-1 field">
+        <input id="isLive" name="isLive" type="checkbox" value="true" [(ngModel)]="filter.isLive">
+        <label for="isLive" class="bold">&nbsp;Is Live Score</label>
       </div>
       <div class="col-md-1 field">
         <input id="latestRecord" name="latestRecord" type="checkbox" value="true" [(ngModel)]="filter.latestRecord">

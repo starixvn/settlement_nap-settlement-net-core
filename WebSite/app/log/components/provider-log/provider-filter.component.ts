@@ -11,19 +11,19 @@ import {  ProviderFilter, ProviderName, ProviderLog } from '../../models';
 })
 
 export class ProviderFilterComponent implements OnInit {
-    @Output() public readonly searchAction = new EventEmitter();
-    @Output() public readonly providerLog = new EventEmitter<ProviderLog>();
-    public readonly warningDialogMessage: ModalDialogMessage = new ModalDialogMessage();
-    public providerSelect = new MultipleSelect();
-    public providerSelected: string;
-    public filter = new ProviderFilter();
+    @Output()  readonly searchAction = new EventEmitter();
+    @Output()  readonly providerLog = new EventEmitter<ProviderLog>();
+     readonly warningDialogMessage: ModalDialogMessage = new ModalDialogMessage();
+     providerSelect = new MultipleSelect();
+     providerSelected: string;
+     filter = new ProviderFilter();
 
     constructor(
         private readonly messageBoxService: MessageBoxService,
         private readonly providerService: ProviderService) {
     }
 
-    public ngOnInit() {
+     ngOnInit() {
         this.providerService.getProviderName().subscribe((listProvider: ProviderName[]) => {
             this.providerSelect = new MultipleSelect();
             this.providerSelect.isCheckAll = true;
@@ -35,11 +35,11 @@ export class ProviderFilterComponent implements OnInit {
         });
     }
 
-    public onSelectProvider(value: ItemsSelect[]) {
+     onSelectProvider(value: ItemsSelect[]) {
         this.providerSelected = value.map(item => Number(item.value)).join();
     }
 
-    public search() {
+     search() {
         if (this.isValidInput()) {
             this.filter.sourceIds = this.providerSelected;
             this.providerService.search(this.filter).subscribe((providerLog: ProviderLog) => {
