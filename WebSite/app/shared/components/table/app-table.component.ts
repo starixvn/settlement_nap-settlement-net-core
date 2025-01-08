@@ -13,6 +13,6 @@ import {CommonModule, NgStyle} from "@angular/common";
 export class AppTableComponent<T> {
     @Input() tableHeaders: string[] = [];
     @Input() tableData: T[] = [];
-    @Input() maxHeight: string = '400px';
-    @Input() rowTemplate!: TemplateRef<any>;
+    @Input() maxHeight = '400px';
+    @Input() rowTemplate!: TemplateRef<T>;
 }
