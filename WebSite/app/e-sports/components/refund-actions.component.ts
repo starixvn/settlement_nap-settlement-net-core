@@ -26,11 +26,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
     public isRefundOldMatch: boolean;
     public oldMatchDetail: HedgeMatchDetail;
     public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage(Language.confirmationBox);
-    private resourceNameByIdPipe = inject(ResourceNameByIdPipe);
-
-    // constructor(private injector: Injector) { super();
-    //     this.resourceNameByIdPipe = this.injector.get(ResourceNameByIdPipe);
-    // }
+    private readonly resourceNameByIdPipe = inject(ResourceNameByIdPipe);
 
     async getMatch(matchId: number): Promise<void> {
         this.initService();

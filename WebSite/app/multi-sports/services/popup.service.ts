@@ -219,7 +219,7 @@ export class PopupService {
   }
 
   public async openAutoSettleSetting(typeObject: TypeObject, league: LeagueMatch, match: Match, state$: BehaviorSubject<MatchState>, triggerRerender: () => void) {
-    const getParam = (key: keyof LeagueMatch | keyof Match, defaultValue: number = 0) =>
+    const getParam = (key: keyof LeagueMatch | keyof Match, defaultValue = 0) =>
         league?.[key] || match?.[key] || defaultValue;
 
     const params = new HttpParams()

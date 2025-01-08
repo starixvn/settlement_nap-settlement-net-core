@@ -10,10 +10,4 @@ public static class AssertExtension
     {
         Assert.Equal(JsonConvert.SerializeObject(expected), JsonConvert.SerializeObject(actual));
     }
-
-    public static string RemoveSessionId(this string value)
-    {
-        var index = value.IndexOf("\"BroadcastSessionId\"", StringComparison.Ordinal);
-        return value.Remove(index, 60);
-    }
 }
