@@ -24,7 +24,6 @@ export class ConfirmFullTimeHandler extends AbstractHandler {
       this.#messageBoxService.confirm(storage.getConfirmMessage(), () => {
         storage.setConfirmMessage(Language.checkAgainCalculateFullTime);
         this.#messageBoxService.confirm(storage.getConfirmMessage(), () => {
-          storage.setCalculateAction(CalculateAction.calculateFullTime);
           super.handle(storage);
         });
       });

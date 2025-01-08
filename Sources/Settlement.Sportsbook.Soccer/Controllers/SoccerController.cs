@@ -61,4 +61,7 @@ public class SoccerController(IMediator mediator) : ControllerBase
 
     [Route("third-party-bet-tickets-checking"), HttpPost]
     public async Task<IActionResult> ThirdPartyBetTicketsChecking(GetMatchDetailThirdPartyBetTicketsRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+
+    [Route("get-result-detail"), HttpGet]
+    public async Task<IActionResult> GetResultDetail(int matchId) => Ok(await mediator.Send(new GetResultDetailRequest { MatchId = matchId }).ConfigureAwait(false));
 }

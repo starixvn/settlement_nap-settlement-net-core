@@ -4,6 +4,7 @@ import { HttpRequestService } from "../../../../shared/services";
 import { InstantCalculationQuery, SettleQuery, UncalculateFullTimeQuery } from "../models/query.model";
 import { Result } from "../../../../shared/models";
 import { Match, MatchDetail, UndoChecking } from "../models/match.model";
+import { ResultDetail } from "../../../models";
 
 @Injectable()
 export class RequestService {
@@ -69,6 +70,11 @@ export class RequestService {
         };
         const fastMarketApi = "/api/fast-market";
         const request = this.httpRequestService.postJson(query, `${fastMarketApi}/insert-message-letstalk`);
+        return firstValueFrom(request);
+    }
+
+    public getResultDetail(matchId: number) {
+        const request =  this.httpRequestService.getJson<ResultDetail[]>(`${this.soccerApi}/get-match?=matchId=${matchId}`);
         return firstValueFrom(request);
     }
 }

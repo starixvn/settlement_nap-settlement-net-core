@@ -29,6 +29,8 @@ public interface IMatchService
     Task<List<MatchMoveBetTicket>> GetMatchDetailThirdPartyBetTicket(GetMatchDetailThirdPartyBetTicketsRequest request);
 
     Task<FantasyMatch> GetRelatedMatches(int matchId);
+
+    Task<List<ResultDetail>> GetResultDetail(int matchId);
 }
 
 public class MatchServiceImp(
@@ -152,7 +154,7 @@ public class MatchServiceImp(
         };
     }
 
-    private async Task<List<ResultDetail>> GetResultDetail(int matchId)
+    public async Task<List<ResultDetail>> GetResultDetail(int matchId)
     {
         var resultDetailCriteria = new GetResultDetailCriteria { MatchIdList = matchId.ToString() };
         return (await repository.FetchAsync<ResultDetail>(resultDetailCriteria)).ToList();
@@ -189,7 +191,6 @@ public class MatchServiceImp(
     private static void HandleExternalResultDetailSoccer(MatchDetail match, List<ResultDetail> resultDetails)
     {
         var externalResultDetail = resultDetails.Where(result => result.SourceId == SourceType.Sbo).ToList();
-        var internalResultDetail = resultDetails.Where(result => result.SourceId == SourceType.Normal).ToList();
         var halfTimeResult = externalResultDetail.Find(result => result.ResourceId == ResourceType.Halftime);
         var fullTimeResult = externalResultDetail.Find(result => result.ResourceId == ResourceType.Final);
 

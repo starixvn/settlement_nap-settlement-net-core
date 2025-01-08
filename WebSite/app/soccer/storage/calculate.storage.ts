@@ -12,7 +12,7 @@ export class CalculateStorage implements Storage {
   private readonly verifyScoreGoalService = inject(VerifyScoreGoalService);
   private readonly toastrService = inject(ToastrService);
   #match = signal<Match>(null);
-  #matchDetail = signal<MatchDetail>(null);
+  #matchDetail : MatchDetail;
   #isResettleTicket = false;
   #isApplyHedgeMatch = false;
 
@@ -38,12 +38,9 @@ export class CalculateStorage implements Storage {
     return this.#isResettleTicket;
   }
 
-  getMatchDetail() {
-    return this.#matchDetail();
-  }
 
   getRelatedMatches() {
-    return this.#matchDetail().isFantasyMatch
+    return this.#matchDetail.isFantasyMatch
       ? this.#match().fantasyMatch.relatedMatches.filter((match) => !match.isDeleted)
       : [];
   }
@@ -83,15 +80,17 @@ export class CalculateStorage implements Storage {
 
   setMatch(match: Match) {
     this.#match.set(match);
-    this.#matchDetail.set(match.matchDetail);
+    this.#matchDetail = this.#match().matchDetail;
   }
 
   setHaftTimeScore(homeScore: string, awayScore: string) {
-    this.#matchDetail.set({ ...this.#matchDetail(), halfTimeHomeScore: homeScore, halfTimeAwayScore: awayScore });
+    this.#matchDetail.halfTimeHomeScore =  homeScore;
+    this.#matchDetail.halfTimeAwayScore = awayScore;
   }
 
   setFullTimeScore(homeScore: string, awayScore: string) {
-    this.#matchDetail.set({ ...this.#matchDetail(), finalHomeScore: homeScore, finalAwayScore: awayScore });
+    this.#matchDetail.finalHomeScore = homeScore;
+    this.#matchDetail.finalAwayScore = awayScore;
   }
 
   // Other Methods
@@ -104,14 +103,19 @@ export class CalculateStorage implements Storage {
   }
 
   clear() {
-    this.toastrService.clear();
+    this.toastrService.clear()
+    this.#matchDetail.isWarningHalfTimeAwayScore = false;
+    this.#matchDetail.isWarningHalfTimeHomeScore = false;
+    this.#matchDetail.isWarningFinalAwayScore = false;
+    this.#matchDetail.isWarningFinalHomeScore = false;
+    this.#matchDetail.isWarningGoalRecord = false;
   }
 
   changeScore() {
-    const { halfTimeHomeScore, halfTimeAwayScore, finalHomeScore, finalAwayScore } = this.#matchDetail();
+    const { halfTimeHomeScore, halfTimeAwayScore, finalHomeScore, finalAwayScore } = this.#matchDetail;
     const htExists = !this.verifyScoreGoalService.isEmptyScore(halfTimeHomeScore) && !this.verifyScoreGoalService.isEmptyScore(halfTimeAwayScore);
     const ftExists = !this.verifyScoreGoalService.isEmptyScore(finalHomeScore) && !this.verifyScoreGoalService.isEmptyScore(finalAwayScore);
     const isInconsistent = Number(halfTimeHomeScore) > Number(finalHomeScore) || Number(halfTimeAwayScore) > Number(finalAwayScore);
-    this.#matchDetail.set({ ...this.#matchDetail(), isScoreInconsistent: htExists && ftExists && isInconsistent });
+    this.#matchDetail.isScoreInconsistent =  htExists && ftExists && isInconsistent;
   }
 }

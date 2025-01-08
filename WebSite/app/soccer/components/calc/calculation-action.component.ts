@@ -40,11 +40,14 @@ export class CalculationActionComponent implements OnInit {
 
   ngOnInit() {
     this.permission = this.#storage.getPermission();
-    this.matchDetail = this.#storage.getMatchDetail();
-    this.halfTimeResult = this.#storage.match().resultDetails?.find((item) => item.sourceId === 0 && item.resourceId === ResourceIds.halfTime) ?? new ResultDetail();
-    this.fullTimeResult = this.#storage.match().resultDetails?.find((item) => item.sourceId === 0 && item.resourceId === ResourceIds.fullTime) ?? new ResultDetail();
+    const { matchDetail, resultDetails } = this.#storage.match();
+    this.matchDetail = matchDetail;
+    this.halfTimeResult = resultDetails?.find((item) => item.sourceId === 0 && item.resourceId === ResourceIds.halfTime) ?? new ResultDetail();
+    this.fullTimeResult = resultDetails?.find((item) => item.sourceId === 0 && item.resourceId === ResourceIds.fullTime) ?? new ResultDetail();
     this.halfTimeResult.resultSettingData.iconHoldResult = this.getResultSettingIcon(this.halfTimeResult);
     this.fullTimeResult.resultSettingData.iconHoldResult = this.getResultSettingIcon(this.fullTimeResult);
+    this.changeResultState(this.halfTimeResult);
+    this.changeResultState(this.fullTimeResult);
     this.matchDetail.applyGoalRecord = this.disableGoalRecordCheckbox = this.matchDetail.isExistFgLg
     || this.matchDetail.isExistHtFgLg || this.matchDetail.isExistResultAndFirstTeamScore
     || this.matchDetail.isEnabledGoalRecordHt || this.matchDetail.isEnabledGoalRecordFt;
@@ -115,12 +118,13 @@ export class CalculationActionComponent implements OnInit {
     } else if (isFullTime) {
       this.#calculateService.uncalculateFT();
     } else {
-      this.#storage.error(Language.UncalculateFTConfirmMessage);
+      this.#storage.error(Language.CannotUncalculateHalfTime);
     }
   }
 
   saveScore() {
-
+    this.#storage.clear();
+    this.#calculateService.saveScore();
   }
 
   goalRecordModelChange(value: string){
@@ -133,6 +137,6 @@ export class CalculationActionComponent implements OnInit {
   }
 
   private getResultSettingIcon(result: ResultDetail) {
-    return result.resultSettingData.isHoldResult ? 'icon-yes' : 'icon-no';
+    return result.resultSettingData?.isHoldResult ? 'icon-yes' : 'icon-no';
   }
 }

@@ -10,15 +10,6 @@ import { EarlySettlementComponent } from './components/early/early-settlement.co
 import { MatchDetailComponent } from './components/common/match-detail.component';
 import { GroupNameByIdPipe } from './pipes/group-name-by-id.pipe';
 import { PipesModule } from '../shared/pipes/pipes.module.native';
-import { CalculationComponent } from './components/calc/calculation.component';
-import {
-    FantasyComponent,
-    GoalHistoryComponent,
-    CalculationMatchDetailComponent,
-    RefundChildMatchComponent,
-    SoccerTicketCountComponent
-} from './components/calc';
-import { ScorePipe } from './pipes/score.pipe';
 import { MaterialModule } from '../shared/material-module';
 import { OnlyGoalRecordDirective } from './directives/only-goal-record.directive.native';
 import { ToastContainerModule, ToastNoAnimationModule } from 'ngx-toastr';
@@ -61,7 +52,6 @@ import { CalculateActionsComponent } from "../tennis/components/calculate-action
         OnlyFirstTenScoreDirective,
         EarlySettlementComponent,
         GroupNameByIdPipe,
-        CalculationMatchDetailComponent,
         OnlyGoalRecordDirective,
         RefundComponent,
         SpecificBettypeComponent,

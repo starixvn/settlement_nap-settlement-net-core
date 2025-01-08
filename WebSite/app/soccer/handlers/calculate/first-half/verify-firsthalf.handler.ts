@@ -3,8 +3,7 @@ import { FantasyRelatedMatch, MatchDetail } from "../../../components/calc/model
 import { VerifyScoreGoalService } from "../../../components/calc/services/verify-score-goal.service";
 import { AbstractHandler } from "../../abstract.handler";
 import { Language } from "../../../../shared/language.native";
-import { CalculateAction, SettlementStatusId } from "../../../../shared/constants";
-import { RequestService } from "../../../components/calc/services/request.service";
+import { CalculateAction } from "../../../../shared/constants";
 import { Storage } from "../../../storage/storage.service";
 import { VerifyActionService } from "../../../components/calc/services/verify-action.service";
 
@@ -26,6 +25,7 @@ export class VerifyFirstHalfHandler extends AbstractHandler {
 
 
   private async verifyFirstHalf(matchDetail: MatchDetail, relatedMatches: FantasyRelatedMatch[]) {
+    console.log(matchDetail);
     if (this.#verifyScoreGoalService.verifyScoreHalfTime(matchDetail)) {
       return Language.warningInputScore;
     }

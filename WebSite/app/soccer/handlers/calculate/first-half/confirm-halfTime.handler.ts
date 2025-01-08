@@ -25,7 +25,6 @@ export class ConfirmHalfTimeHandler extends AbstractHandler {
       this.#messageBoxService.confirm(storage.getConfirmMessage(), () => {
         storage.setConfirmMessage( Language.checkAgainCalculateHalfTime);
         this.#messageBoxService.confirm(storage.getConfirmMessage(), () => {
-          storage.setCalculateAction(CalculateAction.calculateHalfTime);
           super.handle(storage);
         });
       });

@@ -31,11 +31,11 @@
       <td [ngClass]="matchDetail.htStatus.toLowerCase()" class="set-status">{{ matchDetail.htStatus }}
       </td>
       <td [ngClass]="halfTimeResult.resultState">
-        <input type="text" myOnlyInteger
+        <input type="text" myOnlyInteger [ngClass]="{'warning':matchDetail.isWarningHalfTimeHomeScore}"
           [disabled]="!halfTimeResult.checked  || halfTimeResult.resultSettingData.isHoldResult"
           [(ngModel)]="halfTimeResult.homeValue" (ngModelChange)="scoreChanged(halfTimeResult)" />
         &nbsp;
-        <input type="text" myOnlyInteger
+        <input type="text" myOnlyInteger [ngClass]="{'warning':matchDetail.isWarningHalfTimeAwayScore}"
           [disabled]="!halfTimeResult.checked  || halfTimeResult.resultSettingData.isHoldResult"
           [(ngModel)]="halfTimeResult.awayValue" (ngModelChange)="scoreChanged(halfTimeResult)" />
       </td>
@@ -56,11 +56,11 @@
       <td [ngClass]="matchDetail.ftStatus.toLowerCase()" class="set-status">{{ matchDetail.ftStatus }}
       </td>
       <td [ngClass]="fullTimeResult.resultState">
-        <input type="text" myOnlyInteger
+        <input type="text" myOnlyInteger [ngClass]="{'warning':matchDetail.isWarningFinalHomeScore}"
           [disabled]="!fullTimeResult.checked || fullTimeResult.resultSettingData.isHoldResult"
           [(ngModel)]="fullTimeResult.homeValue" />
         &nbsp;
-        <input type="text" myOnlyInteger
+        <input type="text" myOnlyInteger [ngClass]="{'warning':matchDetail.isWarningFinalAwayScore}"
           [disabled]="!fullTimeResult.checked || fullTimeResult.resultSettingData.isHoldResult"
           [(ngModel)]="fullTimeResult.awayValue" />
       </td>

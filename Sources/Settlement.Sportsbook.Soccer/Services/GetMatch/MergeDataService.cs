@@ -1,4 +1,6 @@
-﻿namespace Settlement.Sportsbook.Soccer.Services.GetMatch;
+﻿using Settlement.Core.Constants;
+
+namespace Settlement.Sportsbook.Soccer.Services.GetMatch;
 
 using Models;
 using Settlement.Core.Models;
@@ -75,25 +77,30 @@ public class MergeDataServiceImp : IMergeDataService
     {
         if (ticketCount.BetCount == 0)
         {
-            return "No Ticket";
+            return TicketStatus.NoTicket;
         }
 
         if (ticketCount.BetRunningCount > 0)
         {
-            return "Running";
+            return TicketStatus.Running;
         }
 
         if (ticketCount.BetMarkedCount > 0)
         {
-            return "Marked";
+            return TicketStatus.Marked;
         }
 
         if (ticketCount.BetWaitingCount > 0 && ticketCount.BetWaitingCount == ticketCount.BetCount)
         {
-            return "Waiting";
+            return TicketStatus.Waiting;
         }
 
-        return "Calculated";
+        if (ticketCount.BetRefundedCount > 0)
+        {
+            return TicketStatus.Refunded;
+        }
+
+        return TicketStatus.Calculated;
     }
 
     public List<ChildMatchModel> MergeDataChildMatches(List<ChildMatchModel> childMatches, List<SiteMatch> siteMatches)

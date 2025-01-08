@@ -15,6 +15,10 @@ import { UncalculateHandler } from "../../../handlers/calculate/all/uncalculate.
 import { CheckBetStatusHandler } from "../../../handlers/calculate/full-time/check-betstatus.handler";
 import { ConfirmUncalcFTHandler } from "../../../handlers/calculate/full-time/confirm-uncalcFT.handler";
 import { UncalculateFTHandler } from "../../../handlers/calculate/full-time/uncalculate-ft.handler";
+import { CalculateAction } from "../../../../shared/constants";
+import { VerifySettledResultHandler } from "../../../handlers/calculate/save-score/verify-settled-result.handler";
+import { VerifyScoreHandler } from "../../../handlers/calculate/save-score/verify-score.hanlder";
+import { SaveScoreHandler } from "../../../handlers/calculate/save-score/save-score.handler";
 
 @Injectable()
 
@@ -35,11 +39,18 @@ export class CalculateService {
   #verifyAllHandler = new VerifyAllHandler();
   #confirmAllHandler = new ConfirmAllHandler();
 
+  //uncalc-ALL
   #uncalculateHandler = new UncalculateHandler();
 
+  //Uncalc-FT
   #checkBetStatusHandler = new CheckBetStatusHandler();
   #confirmUncalcFTHandler = new ConfirmUncalcFTHandler();
   #uncalculateFTHandler = new UncalculateFTHandler();
+
+  //Save-Score
+  #verifySettledResultHandler = new VerifySettledResultHandler();
+  #verifyScoreHandler = new VerifyScoreHandler();
+  #saveScoreHandler = new SaveScoreHandler();
 
   #calculateHandler = new CalculateHandler();
   #storage = inject(CalculateStorage);
@@ -67,21 +78,31 @@ export class CalculateService {
     .setNextHandler(this.#confirmUncalcFTHandler)
     .setNextHandler(this.#uncalculateFTHandler);
 
+    this.#verifySettledResultHandler
+    .setNextHandler(this.#verifyScoreHandler)
+    .setNextHandler(this.#saveScoreHandler);
   }
 
   copyScore(){
     this.#matchSettledHandler.handle(this.#storage);
   }
 
+  saveScore(){
+    this.#verifySettledResultHandler.handle(this.#storage);
+  }
+
   calculateHalfTime(){
+    this.#storage.setCalculateAction(CalculateAction.calculateHalfTime);
     this.#verifyHalfTimeHandler.handle(this.#storage);
   }
 
   calculateALL(){
+    this.#storage.setCalculateAction(CalculateAction.calculate);
     this.#verifyAllHandler.handle(this.#storage);
   }
 
   calculateFullTime(){
+    this.#storage.setCalculateAction(CalculateAction.calculateFullTime);
     this.#verifyFullTimeHandler.handle(this.#storage);
   }
 

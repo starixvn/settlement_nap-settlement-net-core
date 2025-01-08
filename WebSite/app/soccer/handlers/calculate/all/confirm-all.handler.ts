@@ -24,7 +24,6 @@ export class ConfirmAllHandler extends AbstractHandler {
         this.#messageBoxService.confirm(storage.getConfirmMessage(), () => {
           storage.setConfirmMessage(Language.checkAgainCalculateAll);
           this.#messageBoxService.confirm(storage.getConfirmMessage(), () => {
-            storage.setCalculateAction(CalculateAction.calculate);
             super.handle(storage);
           });
         });
