@@ -70,16 +70,16 @@ describe('Soccer - Verify Goal Record with semicolon', () => {
 
         it('Should return homeGoal when finalScore is not empty and first character goalrecord = H', () => {
             matchDetail.goalRecord = "H";
-            matchDetail.finalHomeScore = 2;
-            matchDetail.finalAwayScore = 1;
+            matchDetail.finalHomeScore = '2';
+            matchDetail.finalAwayScore = '1';
             const goalIcon = service.oneCharacterFulTimeGoalRecord(matchDetail, matchDetail.goalRecord, goal);
             expect(goalIcon.homeGoal).toEqual(GoalNameIcon.firstLastGoal);
         });
 
         it('Should return awayGoal when finalScore is not empty and first character goalrecord = A', () => {
             matchDetail.goalRecord = "A";
-            matchDetail.finalHomeScore = 2;
-            matchDetail.finalAwayScore = 1;
+            matchDetail.finalHomeScore = '2';
+            matchDetail.finalAwayScore = '1';
             const goalIcon = service.oneCharacterFulTimeGoalRecord(matchDetail, matchDetail.goalRecord, goal);
             expect(goalIcon.awayGoal).toEqual(GoalNameIcon.firstLastGoal);
         });

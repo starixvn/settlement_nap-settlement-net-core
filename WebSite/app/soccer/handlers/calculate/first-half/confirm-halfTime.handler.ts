@@ -1,12 +1,9 @@
 import { inject } from "@angular/core";
-import { VerifyScoreGoalService } from "../../../components/calc/services/verify-score-goal.service";
-import { AbstractHandler } from "../../abstract.handler";
-import { MatchDetail } from "../../../components/calc/models/match.model";
-import { Storage } from "../../../storage/storage.service";
+import { AbstractHandler } from "../../abstract.handler.native";
+import { Storage } from "../../../storage/storage.service.native";
 import { VerifyActionService } from "../../../components/calc/services/verify-action.service";
 import { Language } from '../../../../shared/language.native';
 import { MessageBoxService } from '../../../../shared/services';
-import { CalculateAction } from "../../../../shared/constants";
 
 export class ConfirmHalfTimeHandler extends AbstractHandler {
    readonly #verifyActionService = inject(VerifyActionService);

@@ -1,7 +1,7 @@
 import { inject } from "@angular/core";
 import { VerifyScoreGoalService } from "../../../components/calc/services/verify-score-goal.service";
-import { Storage } from "../../../storage/storage.service";
-import { AbstractHandler } from "../../abstract.handler";
+import { Storage } from "../../../storage/storage.service.native";
+import { AbstractHandler } from "../../abstract.handler.native";
 import { MatchDetail } from "../../../components/calc/models/match.model";
 import { Language } from "../../../../shared/language.native";
 import { ScoreService } from "../../../components/calc/services/score.service";

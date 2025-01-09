@@ -19,6 +19,8 @@ import { CalculateAction } from "../../../../shared/constants";
 import { VerifySettledResultHandler } from "../../../handlers/calculate/save-score/verify-settled-result.handler";
 import { VerifyScoreHandler } from "../../../handlers/calculate/save-score/verify-score.hanlder";
 import { SaveScoreHandler } from "../../../handlers/calculate/save-score/save-score.handler";
+import { VerifyScoreInstantHandler } from "../../../handlers/calculate/uncalc-instant/verify-score-instant.handler";
+import { PushInstantScoreHandler } from "../../../handlers/calculate/uncalc-instant/push-instant-score.handler";
 
 @Injectable()
 
@@ -52,6 +54,9 @@ export class CalculateService {
   #verifyScoreHandler = new VerifyScoreHandler();
   #saveScoreHandler = new SaveScoreHandler();
 
+  #verifyScoreInstant = new VerifyScoreInstantHandler();
+  #pushInstantScore = new PushInstantScoreHandler();
+
   #calculateHandler = new CalculateHandler();
   #storage = inject(CalculateStorage);
 
@@ -81,6 +86,8 @@ export class CalculateService {
     this.#verifySettledResultHandler
     .setNextHandler(this.#verifyScoreHandler)
     .setNextHandler(this.#saveScoreHandler);
+
+    this.#verifyScoreInstant.setNextHandler(this.#pushInstantScore);
   }
 
   copyScore(){
@@ -113,4 +120,9 @@ export class CalculateService {
   uncalculateFT(){
     this.#checkBetStatusHandler.handle(this.#storage);
   }
+
+  unCalcInstant(){
+    this.#verifyScoreInstant.handle(this.#storage);
+  }
+
 }

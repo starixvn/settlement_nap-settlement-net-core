@@ -30,11 +30,11 @@ describe(`Soccer - AppComponent`, () => {
                 HttpClientModule,
                 MaterialModule,
                 ToastNoAnimationModule.forRoot(),
-                ToastrModule.forRoot()
+                ToastrModule.forRoot(),
+                CalculationComponent
             ],
             declarations: [
                 AppComponent,
-                CalculationComponent,
                 RefundComponent,
                 EarlySettlementComponent,
                 GroupNameByIdPipe,

@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ScorePipe } from '../../pipes/score.pipe';
 import { MaterialModule } from '../../../shared/material-module';
-import { RefundMatchDetailComponent } from './refund-match-detail.component';
 import { MoveBetComponent } from './move-bet.component';
 import { RefundComponent } from './refund.component';
 import { RequestService } from './services/request.service';
@@ -13,17 +12,18 @@ import { VerifyMatchService } from './services/verify-match.service';
 import { BlockUIService, HttpRequestService, MessageBoxService } from '../../../shared/services';
 import { ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 import { HttpClientModule } from '@angular/common/http';
-import { MainRefundButtonStatus } from './model/button-status';
+import { MainRefundButtonStatus } from './model/button-status.model';
 import { BetDaq, BetFair, MatchDetail, Match, HedgeMatchDetail } from './model/match.model';
 import { of } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { MarkedTicketsModel } from '../../../shared/models';
 import { Language } from '../../../shared/language.native';
-import { RefundType } from './model/constant.native';
+import { RefundType } from './model/constant.model';
 import { ModalDialogComponent } from '../../../shared/components/modal-dialog/modal-dialog.component';
 import { ModalContentDialogComponent } from '../../../shared/components/modal-dialog/modal-content-dialog.component';
 import { MatDialogRef } from '@angular/material/dialog';
 import { ConfirmRefundComponent } from './confirm-refund.component';
+import { MatchDetailComponent } from '../common/match-detail.component';
 
 describe('RefundComponent', () => {
   let component: RefundComponent;
@@ -74,9 +74,7 @@ describe('RefundComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [
-        RefundComponent,
-        RefundMatchDetailComponent,
-        ScorePipe
+        RefundComponent
       ],
       providers: [
         RequestService,
@@ -89,6 +87,8 @@ describe('RefundComponent', () => {
         { provide: ToastrService, useClass: ToastrService },
       ],
       imports: [
+        ScorePipe,
+        MatchDetailComponent,
         NoopAnimationsModule,
         ModalDialogComponent,
         ModalContentDialogComponent,

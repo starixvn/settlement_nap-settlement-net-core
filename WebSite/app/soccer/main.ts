@@ -1,7 +1,7 @@
 import { enableProdMode, importProvidersFrom } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { environment } from '../environments/environment';
-import { AppModule } from './app.module';
+import { AppModule } from './app.module.native';
 import { bootstrapApplication } from '@angular/platform-browser';
 import { AppComponent } from './components/app.component';
 import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-browser/animations';

@@ -14,9 +14,9 @@ describe('Soccer - MatchDetailComponent', () => {
         TestBed.configureTestingModule({
             imports: [
                 HttpClientModule,
-                ScoreBySettlementPipe
+                ScoreBySettlementPipe,
+                MatchDetailComponent
             ],
-            declarations: [MatchDetailComponent],
             providers: [
                 HttpRequestService,
                 BlockUIService,

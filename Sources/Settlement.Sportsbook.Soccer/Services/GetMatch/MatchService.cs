@@ -218,10 +218,18 @@ public class MatchServiceImp(
         {
             halfTimeResult.TicketStatus = match.HtStatus;
         }
+        else
+        {
+            resultDetails.Add(new ResultDetail { ResourceId = ResourceType.Halftime, SourceId = SourceType.Normal, });
+        }
 
         if (fullTimeResult != null)
         {
             fullTimeResult.TicketStatus = match.FtStatus;
+        }
+        else
+        {
+            resultDetails.Add(new ResultDetail { ResourceId = ResourceType.Final, SourceId = SourceType.Normal, });
         }
     }
 

@@ -1,5 +1,5 @@
-import { AbstractHandler } from "../abstract.handler";
-import { Storage } from "../../storage/storage.service";
+import { AbstractHandler } from "../abstract.handler.native";
+import { Storage } from "../../storage/storage.service.native";
 import { ClosePopupService } from "../../../shared/services";
 import { inject } from "@angular/core";
 import { RequestService } from "../../components/calc/services/request.service";

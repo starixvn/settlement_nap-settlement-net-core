@@ -1,9 +1,9 @@
 import { inject } from "@angular/core";
 import { ClosePopupService } from "../../../../shared/services";
-import { AbstractHandler } from "../../abstract.handler";
+import { AbstractHandler } from "../../abstract.handler.native";
 import { UncalculateFullTimeQuery } from "../../../components/calc/models/query.model";
 import { RequestService } from "../../../components/calc/services/request.service";
-import { Storage } from "../../../storage/storage.service";
+import { Storage } from "../../../storage/storage.service.native";
 
 export class UncalculateFTHandler extends AbstractHandler {
   #closePopupService = inject(ClosePopupService);

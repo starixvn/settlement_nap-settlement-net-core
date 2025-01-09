@@ -106,7 +106,7 @@ describe('Soccer - EarlySettlementComponent', () => {
     const resultSettingData = new ResultSettingModel();
     const resultDetail: ResultDetail = {
         resourceId: "M1",
-        resourceName:'',
+        resourceName: '',
         ticketStatus: "",
         map: 0,
         betType: "",
@@ -127,6 +127,9 @@ describe('Soccer - EarlySettlementComponent', () => {
         isSettleDetermined: null,
         isAwayValueWarning: null,
         resultSettingData,
+        sourceId: 0,
+        isMismatch: false,
+        resultState: ''
     };
 
     const permission = {
@@ -148,8 +151,7 @@ describe('Soccer - EarlySettlementComponent', () => {
             .configureTestingModule({
                 declarations: [
                     EarlySettlementComponent,
-                    GroupNameByIdPipe,
-                    MatchDetailComponent],
+                    GroupNameByIdPipe],
                 providers: [
                     HttpClientModule,
                     AioService,
@@ -169,6 +171,7 @@ describe('Soccer - EarlySettlementComponent', () => {
                     ToastrService,
                 ],
                 imports: [
+                    MatchDetailComponent,
                     NoopAnimationsModule,
                     ScoreBySettlementPipe,
                     TicketCountComponent,

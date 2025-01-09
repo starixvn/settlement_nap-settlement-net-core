@@ -1,5 +1,5 @@
-import { AbstractHandler } from "../../abstract.handler";
-import { Storage } from "../../../storage/storage.service";
+import { AbstractHandler } from "../../abstract.handler.native";
+import { Storage } from "../../../storage/storage.service.native";
 import { Language } from "../../../../shared/language.native";
 import { inject } from "@angular/core";
 import { MessageBoxService } from "../../../../shared/services";

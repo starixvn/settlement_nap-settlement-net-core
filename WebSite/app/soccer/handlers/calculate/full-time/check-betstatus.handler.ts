@@ -1,5 +1,5 @@
-import { AbstractHandler } from "../../abstract.handler";
-import { Storage } from "../../../storage/storage.service";
+import { AbstractHandler } from "../../abstract.handler.native";
+import { Storage } from "../../../storage/storage.service.native";
 import { BetStatus, ResourceIds } from "../../../constants";
 import { SettlementStatusId } from "../../../../shared/constants";
 import { ResultDetail } from "../../../models";

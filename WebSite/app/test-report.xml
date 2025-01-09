@@ -1,38 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testExecutions version="1">
-  <file path="D:\Projects\nap-settlement-net-core\WebSite\app\baseball\components\calculate\table-result\table-result-body\table-result-body.component.spec.ts">
-    <testCase name="TableResultRowComponent should create" duration="52">
-      <failure message="TypeError: Cannot read properties of null (reading &apos;resultDetails&apos;)"><![CDATA[TypeError: Cannot read properties of null (reading 'resultDetails')
-    at CalculateStorage.getResultDetails (D:\Projects\nap-settlement-net-core\WebSite\app\baseball\services\calculate\calculate.storage.ts:87:41)
-    at new TableResultBodyComponent (D:\Projects\nap-settlement-net-core\WebSite\app\baseball\components\calculate\table-result\table-result-body\table-result-body.component.ts:31:27)
-    at NodeInjectorFactory.TableResultBodyComponent_Factory [as factory] (ng:///TableResultBodyComponent/ɵfac.js:5:10)
-    at getNodeInjectable (D:\Projects\nap-settlement-net-core\WebSite\app\node_modules\@angular\core\fesm2022\core.mjs:5984:44)
-    at createRootComponent (D:\Projects\nap-settlement-net-core\WebSite\app\node_modules\@angular\core\fesm2022\core.mjs:15998:35)
-    at ComponentFactory.create (D:\Projects\nap-settlement-net-core\WebSite\app\node_modules\@angular\core\fesm2022\core.mjs:15858:29)
-    at initComponent (D:\Projects\nap-settlement-net-core\WebSite\app\node_modules\@angular\core\fesm2022\testing.mjs:1979:51)
-    at _ZoneDelegate.invoke (D:\Projects\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone.umd.js:412:32)
-    at ProxyZoneSpec.Object.<anonymous>.ProxyZoneSpec.onInvoke (D:\Projects\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone-testing.umd.js:2164:43)
-    at _ZoneDelegate.invoke (D:\Projects\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone.umd.js:411:38)
-    at Object.onInvoke (D:\Projects\nap-settlement-net-core\WebSite\app\node_modules\@angular\core\fesm2022\core.mjs:14882:33)
-    at _ZoneDelegate.invoke (D:\Projects\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone.umd.js:411:38)
-    at ZoneImpl.run (D:\Projects\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone.umd.js:147:47)
-    at NgZone.run (D:\Projects\nap-settlement-net-core\WebSite\app\node_modules\@angular\core\fesm2022\core.mjs:14733:28)
-    at _TestBedImpl.createComponent (D:\Projects\nap-settlement-net-core\WebSite\app\node_modules\@angular\core\fesm2022\testing.mjs:1990:41)
-    at Function.createComponent (D:\Projects\nap-settlement-net-core\WebSite\app\node_modules\@angular\core\fesm2022\testing.mjs:1783:37)
-    at D:\Projects\nap-settlement-net-core\WebSite\app\baseball\components\calculate\table-result\table-result-body\table-result-body.component.spec.ts:44:23
-    at Generator.next (<anonymous>)
-    at fulfilled (D:\Projects\nap-settlement-net-core\WebSite\app\baseball\components\calculate\table-result\table-result-body\table-result-body.component.spec.ts:5:58)
-    at _ZoneDelegate.invoke (D:\Projects\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone.umd.js:412:32)
-    at ProxyZoneSpec.Object.<anonymous>.ProxyZoneSpec.onInvoke (D:\Projects\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone-testing.umd.js:2164:43)
-    at _ZoneDelegate.invoke (D:\Projects\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone.umd.js:411:38)
-    at ZoneImpl.run (D:\Projects\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone.umd.js:147:47)
-    at D:\Projects\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone.umd.js:2557:42
-    at _ZoneDelegate.invokeTask (D:\Projects\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone.umd.js:445:37)
-    at ProxyZoneSpec.Object.<anonymous>.ProxyZoneSpec.onInvokeTask (D:\Projects\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone-testing.umd.js:2195:43)
-    at _ZoneDelegate.invokeTask (D:\Projects\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone.umd.js:444:42)
-    at ZoneImpl.runTask (D:\Projects\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone.umd.js:195:51)
-    at drainMicroTaskQueue (D:\Projects\nap-settlement-net-core\WebSite\app\node_modules\zone.js\bundles\zone.umd.js:634:39)
-    at processTicksAndRejections (node:internal/process/task_queues:95:5)]]></failure>
-    </testCase>
+  <file path="D:\nap-settlement-net-core\WebSite\app\soccer\handlers\calculate\full-time\confirm-uncalcFT.handler.spec.ts">
+    <testCase name="ConfirmUncalcFTHandler should set confirm message and call messageBoxService.confirm twice" duration="19"/>
   </file>
 </testExecutions>

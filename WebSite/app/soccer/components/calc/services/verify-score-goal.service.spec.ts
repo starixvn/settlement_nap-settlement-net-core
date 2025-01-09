@@ -72,10 +72,10 @@ describe('Soccer - verify score goal', () => {
         });
 
         it('should return true when first half score is different from lastest score', () => {
-            matchDetail.halfTimeAwayScore = 1;
-            matchDetail.halfTimeHomeScore = 1;
+            matchDetail.halfTimeAwayScore = '1';
+            matchDetail.halfTimeHomeScore = '1';
             lastestMatchDetail = _.cloneDeep(matchDetail);
-            lastestMatchDetail.halfTimeAwayScore = 2;
+            lastestMatchDetail.halfTimeAwayScore = '2';
 
             const actual = service.isResultChangedFirstHalf(matchDetail, lastestMatchDetail);
 
@@ -135,20 +135,20 @@ describe('Soccer - verify score goal', () => {
 
     describe('isResultChangedFullTime', () => {
         it('should return false when final value is not changed', () => {
-            lastestMatchDetail.finalHomeScore = 1;
-            lastestMatchDetail.finalAwayScore = 2;
-            matchDetail.finalHomeScore = 1;
-            matchDetail.finalAwayScore = 2;
+            lastestMatchDetail.finalHomeScore = '1';
+            lastestMatchDetail.finalAwayScore = '2';
+            matchDetail.finalHomeScore = '1';
+            matchDetail.finalAwayScore = '2';
 
             const actual = service.isResultChangedFullTime(matchDetail, lastestMatchDetail);
             expect(actual).toBe(false);
         });
 
         it('should return true when final value is changed', () => {
-            lastestMatchDetail.finalHomeScore = 1;
-            lastestMatchDetail.finalAwayScore = 2;
-            matchDetail.finalHomeScore = 2;
-            matchDetail.finalAwayScore = 1;
+            lastestMatchDetail.finalHomeScore = '1';
+            lastestMatchDetail.finalAwayScore = '2';
+            matchDetail.finalHomeScore = '2';
+            matchDetail.finalAwayScore = '1';
 
             const actual = service.isResultChangedFullTime(matchDetail, lastestMatchDetail);
             expect(actual).toBe(true);
@@ -243,7 +243,7 @@ describe('Soccer - verify score goal', () => {
     describe('verifyScoreHalfTime', () => {
         it('should return true when score is null', () => {
             matchDetail.halfTimeAwayScore = null;
-            matchDetail.halfTimeHomeScore = 1;
+            matchDetail.halfTimeHomeScore = '1';
 
             const actual = service.verifyScoreHalfTime(matchDetail);
 
@@ -251,8 +251,8 @@ describe('Soccer - verify score goal', () => {
         });
 
         it('should return false  when all score is valid', () => {
-            matchDetail.halfTimeAwayScore = 2;
-            matchDetail.halfTimeHomeScore = 1;
+            matchDetail.halfTimeAwayScore = '2';
+            matchDetail.halfTimeHomeScore = '1';
 
             const actual = service.verifyScoreHalfTime(matchDetail);
 
@@ -263,7 +263,7 @@ describe('Soccer - verify score goal', () => {
     describe('verifyScoreFullTime', () => {
         it('should return true when score is null', () => {
             matchDetail.finalHomeScore = null;
-            matchDetail.finalAwayScore = 1;
+            matchDetail.finalAwayScore = '1';
 
             const actual = service.verifyScoreFullTime(matchDetail);
 
@@ -271,8 +271,8 @@ describe('Soccer - verify score goal', () => {
         });
 
         it('should return false  when all score is valid', () => {
-            matchDetail.finalHomeScore = 2;
-            matchDetail.finalAwayScore = 1;
+            matchDetail.finalHomeScore = '2';
+            matchDetail.finalAwayScore = '1';
 
             const actual = service.verifyScoreFullTime(matchDetail);
 
@@ -398,8 +398,8 @@ describe('Soccer - verify score goal', () => {
     });
 
     it('isScoresValid - should return true when scores are valid', () => {
-        expect(service.isScoresValid(1, 2)).toBeTruthy();
-        expect(service.isScoresValid(null, 2)).toBeFalsy();
+        expect(service.isScoresValid('1', '2')).toBeTruthy();
+        expect(service.isScoresValid(null, '2')).toBeFalsy();
     });
 
     describe('verifyScoreForChildMatch', () => {
@@ -408,8 +408,8 @@ describe('Soccer - verify score goal', () => {
         });
 
         it('should return true when home score equal away score', () => {
-            matchDetail.finalAwayScore = 1;
-            matchDetail.finalHomeScore = 1;
+            matchDetail.finalAwayScore = '1';
+            matchDetail.finalHomeScore = '1';
 
             expect(service.verifyScoreForChildMatch(matchDetail, [childMatch])).toBeTruthy();
         });

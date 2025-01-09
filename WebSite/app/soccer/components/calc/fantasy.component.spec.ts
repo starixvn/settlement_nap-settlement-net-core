@@ -55,9 +55,7 @@ describe('GoalHistoryComponent', () => {
                 NgbModule,
                 FormsModule,
                 ModalDialogComponent,
-                ModalContentDialogComponent
-            ],
-            declarations: [
+                ModalContentDialogComponent,
                 FantasyComponent,
                 ScorePipe
             ],

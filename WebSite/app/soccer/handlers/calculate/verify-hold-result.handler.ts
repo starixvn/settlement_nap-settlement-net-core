@@ -1,8 +1,8 @@
 import { inject } from "@angular/core";
 import { CalculateAction } from "../../../shared/constants";
 import { ResourceIds } from "../../constants";
-import { Storage } from "../../storage/storage.service";
-import { AbstractHandler } from "../abstract.handler";
+import { Storage } from "../../storage/storage.service.native";
+import { AbstractHandler } from "../abstract.handler.native";
 import { RequestService } from "../../components/calc/services/request.service";
 import { Language } from "../../../shared/language.native";
 
@@ -10,7 +10,7 @@ export class VerifyHoldResultHandler extends AbstractHandler {
   #requestService = inject(RequestService);
 
   async handle(storage: Storage) {
-    let { matchDetail } = storage.getMatch();
+    const { matchDetail } = storage.getMatch();
     let newestResultDetails = await this.#requestService.getResultDetail(matchDetail.matchId);
     if (storage.getCalculateAction() === CalculateAction.calculateHalfTime) {
       newestResultDetails = newestResultDetails.filter((resultDetail) => resultDetail.resourceId === ResourceIds.fullTime);

@@ -122,6 +122,11 @@ export class CalculationActionComponent implements OnInit {
     }
   }
 
+  unCalcInstant(){
+    this.#storage.clear();
+    this.#calculateService.unCalcInstant();
+  }
+
   saveScore() {
     this.#storage.clear();
     this.#calculateService.saveScore();
@@ -133,7 +138,7 @@ export class CalculationActionComponent implements OnInit {
   }
 
   private changeResultState(resultDetail: ResultDetail) {
-    resultDetail.resultState = `${resultDetail.ticketStatus.toLowerCase()} ${resultDetail.isMismatch ? 'mismatched' : ''}`;
+    resultDetail.resultState = `${_.isUndefined(resultDetail.ticketStatus) ?  '' : resultDetail.ticketStatus.toLowerCase()} ${resultDetail.isMismatch ? 'mismatched' : ''}`;
   }
 
   private getResultSettingIcon(result: ResultDetail) {

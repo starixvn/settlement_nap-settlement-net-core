@@ -97,7 +97,7 @@
         </button>
 
         <button *ngIf="permission.canUncalculateInstant" [ngClass]="{ 'button instant': true}"
-          [disabled]="!enableAction" (click)="uncalculate()">
+          [disabled]="!enableAction" (click)="unCalcInstant()">
           Uncalculate Ins.Settle
         </button>
         <button class="new-refund-button save-score" [disabled]="!enableAction" (click)="saveScore()">Save

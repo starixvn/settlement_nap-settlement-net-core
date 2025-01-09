@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { BlockUIService, HttpRequestService, MessageBoxService } from '../../../shared/services';
-import { RefundType } from './model/constant.native';
+import { RefundType } from './model/constant.model';
 import { MatchMoveBet } from './model/match.model';
 import { RequestService } from './services/request.service';
 import * as _ from 'lodash';

@@ -5,7 +5,7 @@ import { EventStatus, SettlementStatusId } from "../../../../shared/constants";
 import { ResultDetail } from "../../../models";
 import { MatchDetail } from "../model/match.model";
 import { ResourceIds } from "../../../constants/resourceIds.native";
-import { MainRefundButtonStatus, SubRefundAllButtonStatus, SubRefundFTButtonStatus } from "../model/button-status";
+import { MainRefundButtonStatus, SubRefundAllButtonStatus, SubRefundFTButtonStatus } from "../model/button-status.model";
 import { VerificationBaseService } from "../../../services/verification-base.service";
 
 @Injectable()

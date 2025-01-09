@@ -1,5 +1,4 @@
 import { FormsModule } from '@angular/forms';
-import { CalculateAction } from './../../../shared/constants/calculate-action.native';
 import { Component, inject, ViewChild } from '@angular/core';
 import { ToastContainerDirective, ToastContainerModule, ToastrService } from 'ngx-toastr';
 import { ChildMatch, FantasyRelatedMatch, HedgeMatchDetail, Match, MatchDetail, Score, UndoChecking } from './models/match.model';
@@ -9,14 +8,14 @@ import { VerifyMatchService } from './services/verify-match.service';
 import { TimeMinute, LeagueGroup } from './models/constant.native';
 import * as _ from 'lodash';
 import { TicketStatusText, BackgroundColor, SettlementStatusId, ResultStatusId } from '../../../shared/constants';
-import { ClosePopupService, MessageBoxService } from '../../../shared/services';
+import { ClosePopupService, HttpRequestService, MessageBoxService } from '../../../shared/services';
 import { ModalDialogMessage } from '../../../shared/models';
 import { Language } from '../../../shared/language.native';
 import { InstantCalculationQuery, SettleQuery, UncalculateFullTimeQuery } from './models/query.model';
 import { VerifyActionService } from './services/verify-action.service';
 import { VerifyScoreGoalService } from './services/verify-score-goal.service';
 import { VerificationBaseService } from '../../services/verification-base.service';
-import { BetStatus, ResourceIds } from '../../constants';
+import { ResourceIds } from '../../constants';
 import { ResultDetail } from '../../models';
 import { CalculationActionComponent } from './calculation-action.component';
 import { CommonModule } from '@angular/common';
@@ -52,6 +51,7 @@ import { GoalRecordWithSemicolonService } from './services/goal-record-with-semi
         ToastContainerModule],
     providers: [
         VerifyMatchService,
+        HttpRequestService,
         RequestService,
         ClosePopupService,
         VerifyActionService,
@@ -115,14 +115,6 @@ export class CalculationComponent implements Soccer {
         return this.matchDetail.leagueGroupId === LeagueGroup.pinGoal;
     }
 
-    private get selectedChildMatches() {
-        return _.filter(this.childMatches, item => item.checked);
-    }
-
-    private get selectedChildMatchIds() {
-        return this.selectedChildMatches.map(item => item.matchId).join(",");
-    }
-
     public get isDisableCalculate() {
         const flag = (this.matchDetail.isInstant || this.matchDetail.hasInstantCompleted)
             && this.matchDetail.playTime <= TimeMinute.firstHalf && this.matchDetail.confirmHT === 0;
@@ -164,78 +156,6 @@ export class CalculationComponent implements Soccer {
         this.matchDetail.halfTimeAwayScore = event.halfTimeAwayScore.toString();
         this.matchDetail.finalHomeScore = event.finalHomeScore.toString();
         this.matchDetail.finalAwayScore = event.finalAwayScore.toString();
-    }
-
-    public async unCalculateFT() {
-        this.resetAllWarning();
-        const betStatus = this.matchDetail.betStatus?.toLocaleLowerCase();
-        const resultHalfTime = _.find(this.match.resultDetails, item => item.resourceId === ResourceIds.halfTime) ?? new ResultDetail();
-        if (_.includes(betStatus, BetStatus.abandoned1H)
-            || (_.includes(betStatus, `${BetStatus.refunded};`) && _.isEqual(resultHalfTime.settlementStatusId, SettlementStatusId.Refund))) {
-            this.#storage.error(Language.CannotUncalculateFTMessage);
-        } else {
-            this.confirmUnCalcFt();
-        }
-    }
-
-    public async unCalcInstant() {
-        this.resetAllWarning();
-        const matchId = this.matchDetail.matchId;
-        const result = await this.requestService.undoCheckingScore(matchId);
-        const errorMessage = result.errMsg;
-        if (_.isEmpty(errorMessage)) {
-            this.confirmUnCalcInstant(matchId, result);
-        } else {
-            this.#storage.error(errorMessage);
-        }
-    }
-
-    private confirmUnCalcFt() {
-        this.dialogMessage.message = Language.UncalculateFTConfirmMessage;
-        this.messageBoxService.confirm(this.dialogMessage, () => {
-            this.dialogMessage.message = Language.checkAgainUncalculateFTConfirmation;
-            this.messageBoxService.confirm(this.dialogMessage, () => {
-                this.doUnCalculateFt();
-            });
-        });
-    }
-
-    private async confirmUnCalcInstant(matchId: number, scoreResult: UndoChecking) {
-        const currentScore = `${scoreResult.homeScore}-${scoreResult.awayScore}`;
-        const halfTime = scoreResult.isHt ? "(HT)" : "(FT)";
-        const goalRecord = _.isEmpty(scoreResult.goalRecord) ? "" : scoreResult.goalRecord.toUpperCase();
-        const message = `${Language.soccer.confirmUnCalcInstant} <b>${currentScore} [${goalRecord}] ${halfTime}</b>`;
-
-        this.dialogMessage.message = message;
-        this.messageBoxService.confirm(this.dialogMessage, async () => {
-            const query = new InstantCalculationQuery(matchId, scoreResult);
-            const result = await this.requestService.pushInstantScore(query);
-            if (result.isSuccessful) {
-                this.closePopupService.closePopup();
-            } else {
-                this.#storage.error(result.errMsg);
-            }
-        });
-    }
-
-    private resetAllWarning() {
-        this.matchDetail.isWarningHalfTimeHomeScore = false;
-        this.matchDetail.isWarningHalfTimeAwayScore = false;
-        this.matchDetail.isWarningFinalHomeScore = false;
-        this.matchDetail.isWarningFinalAwayScore = false;
-        this.matchDetail.isWarningGoalRecord = false;
-        this.#storage.clear();
-    }
-
-    private async doUnCalculateFt() {
-        const hedgeMatchId = this.applyHedgeMatch ? this.hedgeMatchDetail.matchId : 0;
-        const query = new UncalculateFullTimeQuery(this.matchDetail, this.match.resultDetails, hedgeMatchId);
-        const result = await this.requestService.unCalculateFt(query);
-        if (result.isSuccessful) {
-            this.closePopupService.closePopup();
-        } else {
-            this.#storage.error(result.errMsg);
-        }
     }
 
     changeApplyHedgeMatch(){

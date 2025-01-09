@@ -1,11 +1,11 @@
 import { inject } from "@angular/core";
 import { ChildMatch, FantasyRelatedMatch, MatchDetail } from "../../../components/calc/models/match.model";
 import { VerifyScoreGoalService } from "../../../components/calc/services/verify-score-goal.service";
-import { AbstractHandler } from "../../abstract.handler";
+import { AbstractHandler } from "../../abstract.handler.native";
 import { Language } from "../../../../shared/language.native";
 import { CalculateAction } from "../../../../shared/constants";
 import { VerifyActionService } from "../../../components/calc/services/verify-action.service";
-import {  Storage } from "../../../storage/storage.service";
+import {  Storage } from "../../../storage/storage.service.native";
 
 export class VerifyAllHandler extends AbstractHandler {
   #verifyScoreGoalService = inject(VerifyScoreGoalService);

@@ -8,7 +8,7 @@ import { BlockUIService, HttpRequestService, MessageBoxService } from '../../../
 import { VerificationBaseService } from '../../services/verification-base.service';
 
 import { ConfirmScoreComponent } from './confirm-score.component';
-import { RefundType } from './model/constant.native';
+import { RefundType } from './model/constant.model';
 import { BetDaq, BetFair, Match, MatchDetail } from './model/match.model';
 import { RequestService } from './services/request.service';
 import { VerifyActionService } from './services/verify-action.service';
@@ -93,9 +93,9 @@ describe('ConfirmScoreComponent', () => {
   describe('ChangeScore', () => {
     it('Score inconsistent false when HT score empty', () => {
       matchDetail.halfTimeAwayScore = null;
-      matchDetail.halfTimeHomeScore = 1;
-      matchDetail.finalAwayScore = 1;
-      matchDetail.finalHomeScore = 1;
+      matchDetail.halfTimeHomeScore = '1';
+      matchDetail.finalAwayScore = '1';
+      matchDetail.finalHomeScore = '1';
       component.matchDetail = matchDetail;
 
       component.changeScore();
@@ -104,10 +104,10 @@ describe('ConfirmScoreComponent', () => {
     });
 
     it('Score inconsistent false when FT score empty', () => {
-      matchDetail.halfTimeAwayScore = 1;
-      matchDetail.halfTimeHomeScore = 1;
+      matchDetail.halfTimeAwayScore = '1';
+      matchDetail.halfTimeHomeScore = '1';
       matchDetail.finalAwayScore = null;
-      matchDetail.finalHomeScore = 1;
+      matchDetail.finalHomeScore = '1';
       component.matchDetail = matchDetail;
 
       component.changeScore();
@@ -116,10 +116,10 @@ describe('ConfirmScoreComponent', () => {
     });
 
     it('Score inconsistent true when FT score slower than HT score', () => {
-      matchDetail.halfTimeAwayScore = 1;
-      matchDetail.halfTimeHomeScore = 2;
-      matchDetail.finalAwayScore = 1;
-      matchDetail.finalHomeScore = 1;
+      matchDetail.halfTimeAwayScore = '1';
+      matchDetail.halfTimeHomeScore = '2';
+      matchDetail.finalAwayScore = '1';
+      matchDetail.finalHomeScore = '1';
       component.matchDetail = matchDetail;
 
       component.changeScore();
@@ -130,8 +130,8 @@ describe('ConfirmScoreComponent', () => {
 
   describe('change', () => {
     it('should enable input ht and clear ft score when type is refund All', () => {
-      matchDetail.finalAwayScore = 1;
-      matchDetail.finalHomeScore = 1;
+      matchDetail.finalAwayScore = '1';
+      matchDetail.finalHomeScore = '1';
       component.matchDetail = matchDetail;
       component.isRefundAll = true;
       component.change();
@@ -143,16 +143,16 @@ describe('ConfirmScoreComponent', () => {
     });
 
     it('should enable input ft when type is refund FT', () => {
-      matchDetail.finalAwayScore = 1;
-      matchDetail.finalHomeScore = 1;
+      matchDetail.finalAwayScore = '1';
+      matchDetail.finalHomeScore = '1';
       component.matchDetail = matchDetail;
       component.isRefundAll = false;
       component.change();
 
       expect(component.disableInputFT).toBeFalsy();
       expect(component.disableInputHT).toBeTruthy();
-      expect(component.matchDetail.finalAwayScore).toEqual(1);
-      expect(component.matchDetail.finalHomeScore).toEqual(1);
+      expect(component.matchDetail.finalAwayScore).toEqual('1');
+      expect(component.matchDetail.finalHomeScore).toEqual('1');
     });
   });
 

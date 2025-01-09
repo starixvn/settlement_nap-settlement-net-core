@@ -8,7 +8,7 @@ describe('GoalHistoryComponent', () => {
 
     beforeEach(async () => {
         TestBed.configureTestingModule({
-            declarations: [
+            imports: [
                 GoalHistoryComponent
             ]
         }).compileComponents();

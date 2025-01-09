@@ -7,7 +7,7 @@ import { of } from 'rxjs';
 import { Language } from '../../../shared/language.native';
 import { MaterialModule } from '../../../shared/material-module';
 import { BlockUIService, HttpRequestService, MessageBoxService } from '../../../shared/services';
-import { RefundType } from './model/constant.native';
+import { RefundType } from './model/constant.model';
 import { MatchMoveBet } from './model/match.model';
 
 import { MoveBetComponent } from './move-bet.component';

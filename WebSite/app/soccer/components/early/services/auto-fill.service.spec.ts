@@ -42,7 +42,7 @@ export class CreateDataTest {
             isInvalidSelectedProceed: false,
             isNotExistedValue: true,
             resultSettingData: new ResultSettingModel(),
-        };
+        } as ResultDetail;
     }
 }
 

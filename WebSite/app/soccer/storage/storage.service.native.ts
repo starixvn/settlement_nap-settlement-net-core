@@ -1,5 +1,5 @@
 import { ModalDialogMessage } from "../../shared/models";
-import { FantasyRelatedMatch, Match } from "../components/calc/models/match.model";
+import { FantasyRelatedMatch, Match, UndoChecking } from "../components/calc/models/match.model";
 
 export interface Storage {
   getMatch(): Match
@@ -11,5 +11,6 @@ export interface Storage {
   setCalculateAction(action: string): void
   getCalculateAction(): string
   isApplyHedgeMatch(): boolean
+  getInstantScore(): UndoChecking
   error(message: string)
 }

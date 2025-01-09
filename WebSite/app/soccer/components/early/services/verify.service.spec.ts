@@ -36,7 +36,7 @@ export class CreateDataTest {
             isInvalidSelectedProceed: false,
             isNotExistedValue: false,
             resultSettingData: new ResultSettingModel(),
-        };
+        } as ResultDetail;
     }
 }
 

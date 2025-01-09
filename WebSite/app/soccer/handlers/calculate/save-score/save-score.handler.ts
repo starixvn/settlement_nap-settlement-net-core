@@ -1,9 +1,9 @@
 import { inject } from "@angular/core";
-import { AbstractHandler } from "../../abstract.handler";
-import { RequestService } from "../../../../bet-builder/services";
-import { Storage } from "../../../storage/storage.service";
+import { AbstractHandler } from "../../abstract.handler.native";
+import { Storage } from "../../../storage/storage.service.native";
 import { Language } from "../../../../shared/language.native";
 import { ClosePopupService, MessageBoxService } from "../../../../shared/services";
+import { RequestService } from "../../../components/calc/services/request.service";
 
 export class SaveScoreHandler extends AbstractHandler {
   #requestService = inject(RequestService);

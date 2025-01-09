@@ -1,5 +1,5 @@
-import { Storage } from "../storage/storage.service";
-import { BaseHandler } from "./base.handler";
+import { Storage } from "../storage/storage.service.native";
+import { BaseHandler } from "./base.handler.native";
 
 export abstract class AbstractHandler implements BaseHandler {
   private nextHandler: BaseHandler | null = null;

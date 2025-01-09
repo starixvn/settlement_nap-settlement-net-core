@@ -1,7 +1,7 @@
 import { VerifyScoreGoalService } from './../../../components/calc/services/verify-score-goal.service';
 import { Language } from '../../../../shared/language.native';
-import { AbstractHandler } from '../../abstract.handler';
-import { Storage } from '../../../storage/storage.service';
+import { AbstractHandler } from '../../abstract.handler.native';
+import { Storage } from '../../../storage/storage.service.native';
 import { inject } from '@angular/core';
 import { ResultDetail } from '../../../models';
 export class VerifyScoreHandler extends AbstractHandler {

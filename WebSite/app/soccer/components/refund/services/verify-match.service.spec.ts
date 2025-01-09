@@ -2,7 +2,7 @@ import { TestBed } from "@angular/core/testing";
 import { SettlementStatusId } from "../../../../shared/constants";
 import { ResultDetail } from "../../../models";
 import { BetStatus } from "../../../constants";
-import { MainRefundButtonStatus, SubRefundAllButtonStatus, SubRefundFTButtonStatus } from "../model/button-status";
+import { MainRefundButtonStatus, SubRefundAllButtonStatus, SubRefundFTButtonStatus } from "../model/button-status.model";
 import { MatchDetail } from "../model/match.model";
 import { VerifyMatchService } from "./verify-match.service";
 
@@ -135,7 +135,7 @@ describe('Soccer refund - VerifyMatchService', () => {
     });
 
     it('validateScoreFullTime - return true when exist score empty', () => {
-        matchDetail.finalAwayScore = 1;
+        matchDetail.finalAwayScore = '1';
         matchDetail.finalHomeScore = null;
 
         expect(service.validateScoreFullTime(matchDetail)).toBeTruthy();
@@ -144,7 +144,7 @@ describe('Soccer refund - VerifyMatchService', () => {
     });
 
     it('validateScoreHalfTime - return true when exist score empty', () => {
-        matchDetail.halfTimeAwayScore = 1;
+        matchDetail.halfTimeAwayScore = '1';
         matchDetail.halfTimeHomeScore = null;
 
         expect(service.validateScoreHalfTime(matchDetail)).toBeTruthy();

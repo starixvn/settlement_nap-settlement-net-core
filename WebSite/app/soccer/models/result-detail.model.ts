@@ -15,7 +15,13 @@ export class ResultDetail extends GeneralResultDetail{
     public isSettleDeterminedOriginal: boolean;
     public isInvalidSelectedProceed: boolean;
     public isNotExistedValue: boolean;
-    public resultSettingData: ResultSettingModel;
+    public resultSettingData: ResultSettingModel = {
+        isHoldResult: false,
+        isConfirmedRefund: false,
+        isConfirmedRefundSdt: false,
+        isConfirmedRefundMercy: false,
+        iconHoldResult: ''
+    };
     public isMismatch: boolean;
     public resultState: string;
 }

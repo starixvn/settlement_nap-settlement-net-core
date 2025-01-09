@@ -1,8 +1,7 @@
 import { inject } from "@angular/core";
 import { VerifyActionService } from "../../../components/calc/services/verify-action.service";
-import { AbstractHandler } from "../../abstract.handler";
-import { CalculateAction } from "../../../../shared/constants";
-import { Storage } from "../../../storage/storage.service";
+import { AbstractHandler } from "../../abstract.handler.native";
+import { Storage } from "../../../storage/storage.service.native";
 import { Language } from "../../../../shared/language.native";
 import { MessageBoxService } from "../../../../shared/services";
 

@@ -1,9 +1,9 @@
 import { inject, Injectable, signal } from "@angular/core";
 import { ModalDialogMessage } from "../../shared/models";
-import { Match, MatchDetail } from "../components/calc/models/match.model";
+import { Match, MatchDetail, UndoChecking } from "../components/calc/models/match.model";
 import { VerifyScoreGoalService } from "../components/calc/services/verify-score-goal.service";
 import { ToastContainerDirective, ToastrService } from "ngx-toastr";
-import { Storage } from "./storage.service";
+import { Storage } from "./storage.service.native";
 import * as _ from "lodash";
 import { Language } from "../../shared/language.native";
 
@@ -12,11 +12,12 @@ export class CalculateStorage implements Storage {
   private readonly verifyScoreGoalService = inject(VerifyScoreGoalService);
   private readonly toastrService = inject(ToastrService);
   #match = signal<Match>(null);
-  #matchDetail : MatchDetail;
+
+  #matchDetail: MatchDetail;
   #isResettleTicket = false;
   #isApplyHedgeMatch = false;
-
   #calculateAction: string;
+  #instantScore: UndoChecking
 
   match = this.#match.asReadonly();
   readonly dialogMessage = new ModalDialogMessage(Language.confirmationBox);
@@ -30,7 +31,7 @@ export class CalculateStorage implements Storage {
     return this.dialogMessage;
   }
 
-  isApplyHedgeMatch(){
+  isApplyHedgeMatch() {
     return this.#isApplyHedgeMatch;
   }
 
@@ -55,6 +56,10 @@ export class CalculateStorage implements Storage {
 
   getHedgeMatchDetail() {
     return this.#match().hedgeMatchDetail;
+  }
+
+  getInstantScore(){
+    return this.#instantScore;
   }
 
   // Setters
@@ -84,13 +89,17 @@ export class CalculateStorage implements Storage {
   }
 
   setHaftTimeScore(homeScore: string, awayScore: string) {
-    this.#matchDetail.halfTimeHomeScore =  homeScore;
+    this.#matchDetail.halfTimeHomeScore = homeScore;
     this.#matchDetail.halfTimeAwayScore = awayScore;
   }
 
   setFullTimeScore(homeScore: string, awayScore: string) {
     this.#matchDetail.finalHomeScore = homeScore;
     this.#matchDetail.finalAwayScore = awayScore;
+  }
+
+  setInstantScore(score: UndoChecking) {
+    this.#instantScore = score;
   }
 
   // Other Methods
@@ -116,6 +125,6 @@ export class CalculateStorage implements Storage {
     const htExists = !this.verifyScoreGoalService.isEmptyScore(halfTimeHomeScore) && !this.verifyScoreGoalService.isEmptyScore(halfTimeAwayScore);
     const ftExists = !this.verifyScoreGoalService.isEmptyScore(finalHomeScore) && !this.verifyScoreGoalService.isEmptyScore(finalAwayScore);
     const isInconsistent = Number(halfTimeHomeScore) > Number(finalHomeScore) || Number(halfTimeAwayScore) > Number(finalAwayScore);
-    this.#matchDetail.isScoreInconsistent =  htExists && ftExists && isInconsistent;
+    this.#matchDetail.isScoreInconsistent = htExists && ftExists && isInconsistent;
   }
 }
