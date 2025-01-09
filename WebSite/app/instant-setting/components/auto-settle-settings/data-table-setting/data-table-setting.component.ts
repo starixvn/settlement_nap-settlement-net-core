@@ -62,7 +62,7 @@ export class DataTableSettingComponent implements OnInit {
     private readonly messageBoxService = inject(MessageBoxService);
     private readonly toastrService = inject(ToastrService);
 
-    public title = "";
+    public leagueName = "";
     public minProviderOptions = [0, 1, 2];
     public resultSettings: ResultSetting[] = [];
     public typeObject: TypeObject;
@@ -73,6 +73,7 @@ export class DataTableSettingComponent implements OnInit {
         this.toastrService.overlayContainer = this.toastContainer;
         const leagueId = +UrlHelper.getUrlParameter("leagueId");
         const matchId = +UrlHelper.getUrlParameter("matchId");
+        const matchCode = UrlHelper.getUrlParameter("matchCode") ?? '';
         const sportType = +UrlHelper.getUrlParameter("sportType");
         this.typeObject = UrlHelper.getUrlParameter("typeObject") as TypeObject;
         const query: GetAutoSettleSettings = {
@@ -92,7 +93,9 @@ export class DataTableSettingComponent implements OnInit {
 
         this.store.getAutoSettings().subscribe((res) => {
             this.resultSettings = res.resultSettings;
-            this.title = res.leagueName;
+            this.leagueName = this.typeObject === "Match" 
+                ? `${res.leagueName} - Match Code/Id: ${decodeURIComponent(matchCode || '')}/${matchId}` 
+                : res.leagueName;
         });
     }
 

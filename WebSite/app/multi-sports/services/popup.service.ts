@@ -229,7 +229,7 @@ export class PopupService {
         .set('sportType', getParam('sportType'))
         .set('refundWaitingTime', getParam('refundWaitingTime'));
 
-    const src = `/apps/advanced-auto-setting-league?${params.toString()}`;
+    const src = `/apps/advanced-auto-setting-league?${params.toString()}&matchCode=${match?.matchCode}`;
     const title = typeObject === "Match" ? Language.payout.titlePopup : Language.payout.titlePopupForLeague;
     const dialogData = new DialogDataIframe(title, encodeURI(src));
 
