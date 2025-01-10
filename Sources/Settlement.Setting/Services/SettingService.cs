@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using AutoMapper;
+using Settlement.Core.Constants;
 using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
@@ -45,17 +46,37 @@ public class SettingServiceImp(
 
     public async Task<Result> UpdateSettingLeague(SettingLeagueRequest query)
     {
+        // TODO
         var criteria = mapper.Map<SettingLeagueRequest, UpdateSettingLeagueCriteria>(query);
         criteria.AdminId = currentSession.UserId;
         criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
+
         await repository.ExecuteAsync(criteria);
 
-        return new Result
+        var result = new Result
         {
             ErrCode = criteria.ErrCode,
             ErrMsg = criteria.ErrMsg,
             ChildMatchIds = criteria.UpdatedMatchIds
         };
+
+        WriteLogUpdateLeagueSetting(query, result);
+
+        return result;
+    }
+
+    private void WriteLogUpdateLeagueSetting(SettingLeagueRequest query, Result result)
+    {
+        var autoTypeInfo = GetAutoTypeInfo(query.AutoType);
+
+        var childMatchInfo = query.IsApplyAll && !string.IsNullOrEmpty(result.ChildMatchIds)
+            ? $"Effect child match: {result.ChildMatchIds}"
+            : string.Empty;
+
+        var msg = $"NAP: Update auto setting on league({query.LeagueId}) has {autoTypeInfo}({query.IsEnabled.ToString()}) isApplyAll({query.IsApplyAll}) {childMatchInfo}";
+        var logCriteria = new LogCriteria(0, msg, ActionId.AutoPayoutSettingLeague, currentSession.UserId);
+
+        logService.WriteLog(logCriteria);
     }
 
     public async Task<Result> UpdateSettingMatch(SettingMatchRequest query)
@@ -63,13 +84,27 @@ public class SettingServiceImp(
         var criteria = mapper.Map<SettingMatchRequest, UpdateSettingMatchCriteria>(query);
         criteria.AdminId = currentSession.UserId;
         criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
-        await repository.ExecuteAsync(criteria);
 
-        return new Result
+        await repository.ExecuteAsync(criteria);
+        var result = new Result
         {
             ErrCode = criteria.ErrCode,
             ErrMsg = criteria.ErrMsg
         };
+
+        WriteLogUpdateMatchSetting(query);
+
+        return result;
+    }
+
+    private void WriteLogUpdateMatchSetting(SettingMatchRequest query)
+    {
+        var autoTypeInfo = GetAutoTypeInfo(query.AutoType);
+
+        var msg = $"NAP: Update auto setting on match({query.MatchId}) has {autoTypeInfo}({query.IsEnabled.ToString()})";
+        var logCriteria = new LogCriteria(query.MatchId, msg, ActionId.AutoPayoutSettingMatch, currentSession.UserId);
+
+        logService.WriteLog(logCriteria);
     }
 
     public async Task<RemarkQueryModel> GetRemarkInfo(int matchId)
@@ -251,5 +286,16 @@ public class SettingServiceImp(
         };
 
         return await repository.FetchAsync<ProviderInfo>(criteria);
+    }
+
+    private static string GetAutoTypeInfo(int autoType)
+    {
+        var autoTypeInfo = autoType switch
+        {
+            (int)AutoSettleType.AutoDirect => "Direct Payout",
+            (int)AutoSettleType.AutoPayoutSoccer => "Auto Payout",
+            _ => ""
+        };
+        return autoTypeInfo;
     }
 }
