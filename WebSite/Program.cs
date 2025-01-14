@@ -27,7 +27,7 @@ services.AddConfigRedisCache(configuration);
 
 services.AddSession(configuration);
 
-services.AddOneBookUm(configuration);
+services.AddOneBookUmForWeb(configuration);
 
 services.AddNapClient(configuration);
 
