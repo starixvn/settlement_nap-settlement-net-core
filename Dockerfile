@@ -7,6 +7,7 @@ FROM hub.nexdev.net/base/dotnet/core/sdk:9.0-alpine AS builder
 ENV NUGET_PACKAGES=/src/packages
 COPY --from=deps $NUGET_PACKAGES/. $NUGET_PACKAGES/
 
+
 WORKDIR /src
 COPY ./Sources/Settlement.Core/*.csproj ./Sources/Settlement.Core/
 COPY ./Sources/Settlement.ResourceInfos/*.csproj ./Sources/Settlement.ResourceInfos/
