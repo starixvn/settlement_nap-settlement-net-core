@@ -7,7 +7,7 @@ namespace Settlement.Core.UnitTests.Services;
 
 public class ScoreSetServiceTests
 {
-    private readonly IScoreSetService service = new ScoreSetServiceImp();
+    private readonly ScoreSetServiceImp service = new ScoreSetServiceImp();
 
     private const bool isLeader = true;
 

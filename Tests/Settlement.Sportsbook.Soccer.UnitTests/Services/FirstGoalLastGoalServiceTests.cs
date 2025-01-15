@@ -328,25 +328,15 @@ public class FirstGoalLastGoalServiceTests
     [Theory]
     [InlineData("A")]
     [InlineData("AH")]
-    public void GetHalftimeGoalByGoalRecord_GoalRecordHasNoSemicolon_ReturnsHomeIsNull(string goalRecord)
+    [InlineData(";")]
+    public void GetHalftimeGoalByGoalRecord_GoalRecordHasNoSemicolon_ReturnsExpectedGoal(string goalRecord)
     {
         // Act
         var goalIcon = service.GetHalftimeGoalByGoalRecord(goalRecord);
 
         // Assert
-        Assert.Null(goalIcon.Home);
-    }
-
-    [Theory]
-    [InlineData("A")]
-    [InlineData("AH")]
-    public void GetHalftimeGoalByGoalRecord_GoalRecordHasNoSemicolon_ReturnsAwayIsNull(string goalRecord)
-    {
-        // Act
-        var goalIcon = service.GetHalftimeGoalByGoalRecord(goalRecord);
-
-        // Assert
-        Assert.Null(goalIcon.Away);
+        var expected = new GoalModel();
+        AssertExtension.AreEqual(expected, goalIcon);
     }
 
     [Theory]
@@ -359,17 +349,6 @@ public class FirstGoalLastGoalServiceTests
 
         // Assert
         Assert.Equal(HtFirstLastGoal, goalIcon.Home);
-    }
-
-    [Theory]
-    [InlineData("H;")]
-    [InlineData("Hh;")]
-    public void GetHalftimeGoalByGoalRecord_GoalRecordHasSemicolonAndFirstLastIsH_ReturnsAwayIsNull(string goalRecord)
-    {
-        // Act
-        var goalIcon = service.GetHalftimeGoalByGoalRecord(goalRecord);
-
-        // Assert
         Assert.Null(goalIcon.Away);
     }
 
@@ -383,17 +362,6 @@ public class FirstGoalLastGoalServiceTests
 
         // Assert
         Assert.Equal(HtFirstLastGoal, goalIcon.Away);
-    }
-
-    [Theory]
-    [InlineData("A;")]
-    [InlineData("Aa;")]
-    public void GetHalftimeGoalByGoalRecord_GoalRecordHasSemicolonAndFirstLastIsA_ReturnsHomeIsNull(string goalRecord)
-    {
-        // Act
-        var goalIcon = service.GetHalftimeGoalByGoalRecord(goalRecord);
-
-        // Assert
         Assert.Null(goalIcon.Home);
     }
 

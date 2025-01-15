@@ -15,6 +15,8 @@ public interface FirstGoalLastGoalService
 
 public class FirstGoalLastGoalServiceImp : FirstGoalLastGoalService
 {
+    private const char CharA = 'a';
+    private const char CharH = 'h';
     private const string HtPrefix = "ht-";
     private const string HtFirstLastGoalSymbol = "1FL:";
     private const string FtFirstLastGoalSymbol = "FL:";
@@ -118,25 +120,33 @@ public class FirstGoalLastGoalServiceImp : FirstGoalLastGoalService
             return goal;
         }
 
-        var halfTimeGoalRecord = goalRecord[..indexSemicolon];
-        const StringComparison comparisonType = StringComparison.CurrentCultureIgnoreCase;
-        if (halfTimeGoalRecord.StartsWith("a", comparisonType) && halfTimeGoalRecord.EndsWith("a", comparisonType))
+        var halfTimeGoalRecord = goalRecord[..indexSemicolon].ToLowerInvariant();
+        var startsWithA = halfTimeGoalRecord.StartsWith(CharA);
+        var startsWithH = halfTimeGoalRecord.StartsWith(CharH);
+        var endsWithA = halfTimeGoalRecord.EndsWith(CharA);
+        var endsWithH = halfTimeGoalRecord.EndsWith(CharH);
+
+        if (startsWithA && endsWithA)
         {
             goal.Away = HtFirstLastGoal;
         }
-        else if (halfTimeGoalRecord.StartsWith("h", comparisonType) && halfTimeGoalRecord.EndsWith("h", comparisonType))
+        else if (startsWithH && endsWithH)
         {
             goal.Home = HtFirstLastGoal;
         }
-        else if (halfTimeGoalRecord.StartsWith("a", comparisonType) && halfTimeGoalRecord.EndsWith("h", comparisonType))
+        else if (startsWithA && endsWithH)
         {
             goal.Away = HtFirstGoal;
             goal.Home = HtLastGoal;
         }
-        else if (halfTimeGoalRecord.StartsWith("h", comparisonType) && halfTimeGoalRecord.EndsWith("a", comparisonType))
+        else if (startsWithH && endsWithA)
         {
             goal.Home = HtFirstGoal;
             goal.Away = HtLastGoal;
+        }
+        else
+        {
+            return goal;
         }
 
         return goal;
@@ -144,15 +154,19 @@ public class FirstGoalLastGoalServiceImp : FirstGoalLastGoalService
 
     public GoalModel GetFullTimeGoalByGoalRecord(string goalRecord, bool isFinalScore)
     {
-        var fullTimeGoalRecord = goalRecord.Replace(";", string.Empty);
+        var fullTimeGoalRecord = goalRecord.Replace(";", string.Empty).ToLowerInvariant();
         var goal = new GoalModel();
-        const StringComparison comparisonType = StringComparison.CurrentCultureIgnoreCase;
-        if (fullTimeGoalRecord.StartsWith("a", comparisonType))
+        var startsWithA = fullTimeGoalRecord.StartsWith(CharA);
+        var startsWithH = fullTimeGoalRecord.StartsWith(CharH);
+        var endsWithA = fullTimeGoalRecord.EndsWith(CharA);
+        var endsWithH = fullTimeGoalRecord.EndsWith(CharH);
+
+        if (startsWithA)
         {
             goal.Away = FirstGoal;
         }
 
-        if (fullTimeGoalRecord.StartsWith("h", comparisonType))
+        if (startsWithH)
         {
             goal.Home = FirstGoal;
         }
@@ -162,12 +176,12 @@ public class FirstGoalLastGoalServiceImp : FirstGoalLastGoalService
             return goal;
         }
 
-        if (fullTimeGoalRecord.EndsWith("a", comparisonType))
+        if (endsWithA)
         {
             goal.Away = string.IsNullOrWhiteSpace(goal.Away) ? LastGoal : FirstLastGoal;
         }
 
-        if (fullTimeGoalRecord.EndsWith("h", comparisonType))
+        if (endsWithH)
         {
             goal.Home = string.IsNullOrWhiteSpace(goal.Home) ? LastGoal : FirstLastGoal;
         }

@@ -6,7 +6,7 @@ import { AutoSettleType } from "../../../shared/constants/auto-settle-type.nativ
     standalone: true,
 })
 export class SettleTypeNamePipe implements PipeTransform {
-    transform(value: AutoSettleType, ...args: any[]): any {
+    transform(value: AutoSettleType): string {
         if (value === AutoSettleType.AutoPayout) {
             return 'Auto Payout';
         }

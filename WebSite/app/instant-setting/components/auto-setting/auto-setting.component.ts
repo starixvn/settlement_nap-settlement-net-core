@@ -77,10 +77,23 @@ export class AutoSettingComponent implements OnInit {
     this.confirmationDialogMessage.hasActionOnNoBtn = true;
     this.messageBoxService.confirm(
       this.confirmationDialogMessage,
-      async () => this.isMultiSelect ? await this.updateMultiSetting(true) : await this.updateSetting(true),
-      async () => this.isMultiSelect ? await this.updateMultiSetting(false) : await this.updateSetting(false),
+      async () => {
+        if (this.isMultiSelect) {
+           await this.updateMultiSetting(true);
+        } else {
+          await this.updateSetting(true);
+        } 
+      },
+      async () => {
+        if (this.isMultiSelect) {
+          await this.updateMultiSetting(false);
+        } else {
+          await this.updateSetting(false);
+        }
+      }
     );
   }
+  
 
   private confirmMatchSettingSubmission() {
     this.confirmationDialogMessage.message = Language.AutoPayoutSetting.ConfirmMessageForMatch;
@@ -112,11 +125,11 @@ export class AutoSettingComponent implements OnInit {
   private async changeMultiSettingMatch() {
     const listItem = this.getValueChanged();
 
-    for (const { item, i } of listItem.map((item, i) => ({ item, i }))) {
+    for (const { item: currentItem, index } of listItem.map((item, i) => ({ item, index: i }))) {
       const params = new AutoSettingMatchQuery(
         this.matchId,
-        item.type,
-        item.isEnable,
+        currentItem.type,
+        currentItem.isEnable,
       );
 
       const result = await this.requestService.updateSettingMatch(params);
@@ -124,7 +137,7 @@ export class AutoSettingComponent implements OnInit {
         this.errorMessage = result.errMsg;
         return;
       }
-      if (_.isEqual(Number(i), listItem.length - 1)) {
+      if (_.isEqual(Number(index), listItem.length - 1)) {
         parent.document.getElementById(this.dialogResponseElement).setAttribute('value', this.parseValueToResponse());
       }
     }
@@ -186,11 +199,11 @@ export class AutoSettingComponent implements OnInit {
 
   private async updateMultiSetting(isApplyAll: boolean) {
     const listItem = this.getValueChanged();
-    for (const { item, i } of listItem.map((item, i) => ({ item, i }))) {
+    for (const { item: currentItem, index } of listItem.map((item, i) => ({ item, index: i }))) {
       const query = new AutoSettingLeagueQuery(
         this.leagueId,
-        item.type,
-        item.isEnable,
+        currentItem.type,
+        currentItem.isEnable,
         isApplyAll,
       );
       const result = await this.requestService.updateSettingLeague(query);
@@ -198,7 +211,7 @@ export class AutoSettingComponent implements OnInit {
         this.errorMessage = result.errMsg;
         return;
       }
-      if (_.isEqual(Number(i), listItem.length - 1)) {
+      if (_.isEqual(Number(index), listItem.length - 1)) {
         parent.document.getElementById(this.dialogResponseElement).setAttribute('value', `${this.parseValueToResponse()},${isApplyAll}`);
       }
     }

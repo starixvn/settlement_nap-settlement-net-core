@@ -1,4 +1,4 @@
-import {Component, forwardRef, Input, OnInit} from "@angular/core";
+import {Component, forwardRef, Input} from "@angular/core";
 import {NgClass, NgIf} from "@angular/common";
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from "@angular/forms";
 
@@ -20,16 +20,16 @@ import {ControlValueAccessor, NG_VALUE_ACCESSOR} from "@angular/forms";
     ],
 })
 export class SwitchComponent implements ControlValueAccessor {
-    @Input() labelOff: string = 'No';
-    @Input() labelOn: string = 'Yes';
-    @Input() variant: string = '';
-    @Input() size: string = 'mini';
+    @Input() labelOff = 'No';
+    @Input() labelOn = 'Yes';
+    @Input() variant = '';
+    @Input() size = 'mini';
 
     private onChange: (value: boolean) => void = () => {};
     private onTouched: () => void = () => {};
 
-    checked: boolean = true;
-    disabled: boolean = false;
+    checked = true;
+    disabled = false;
 
     writeValue(value: boolean): void {
         this.checked = value;

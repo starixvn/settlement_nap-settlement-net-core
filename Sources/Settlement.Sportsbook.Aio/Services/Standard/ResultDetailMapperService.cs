@@ -19,15 +19,20 @@ public class ResultDetailMapperServiceImp : IMapperService
             listEarly.ForEach(x =>
             {
                 (x.BetType, x.BetTypeName) = resourceNameService.GetResourceName(x.ResourceId, KeyConstants.BaseballKey);
-                x.InputType = getInputType(x.BetType);
+                x.InputType = GetInputType(x.BetType);
             });
         }
     }
 
-    private int getInputType(string betType)
+    private static int GetInputType(string betType)
     {
-        return InputType.CoupleScore.Contains(Convert.ToInt32(betType)) ? InputType.CoupleScoreId :
-            InputType.YesNo.Contains(Convert.ToInt32(betType)) ? InputType.YesNoId :
-            InputType.HomeAwayId;
+        var betTypeId = Convert.ToInt32(betType);
+
+        if (InputType.CoupleScore.Contains(betTypeId))
+        {
+            return InputType.CoupleScoreId;
+        }
+
+        return InputType.YesNo.Contains(betTypeId) ? InputType.YesNoId : InputType.HomeAwayId;
     }
 }

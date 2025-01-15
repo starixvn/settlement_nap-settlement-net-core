@@ -6,7 +6,7 @@ import { ResourceType } from "../../../shared/constants/resource-type.native";
     standalone: true
 })
 export class ResourceTypeNamePipe implements PipeTransform {
-    transform(value: ResourceType, ...args: any[]): string {
+    transform(value: ResourceType): string {
         if (value === ResourceType.Main) {
             return 'Main Results';
         }
