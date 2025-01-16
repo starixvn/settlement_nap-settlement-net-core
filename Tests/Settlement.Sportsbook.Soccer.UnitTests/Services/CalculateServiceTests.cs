@@ -201,4 +201,46 @@ public class CalculateServiceTests
         await scaleOutSettleService.Received(2).UpdateMatchInfo(Arg.Any<UpdateMatchInfoRequest>());
         await repository.Received(6).ExecuteAsync(Arg.Any<CalculateCriteria>());
     }
+    [Theory]
+    [InlineData(0, "", true)]
+    [InlineData(1, "Error", false)]
+    public async Task SaveScore_Always_ReturnCorrectResult(int errorCode, string errorMsg, bool result)
+    {
+        var request = new SaveScoreRequest
+        {
+            HalfTimeHomeScore = "1",
+            HalfTimeAwayScore = "0",
+            FullTimeHomeScore = "2",
+            FullTimeAwayScore = "1"
+        };
+
+        repository.ExecuteAsync(Arg.Do<SaveScoreCriteria>(c =>
+        {
+            c.ErrCode = errorCode;
+            c.ErrMsg = errorMsg;
+        }));
+
+        var actual = await service.SaveScore(request);
+
+        Assert.Equal(result, actual.IsSuccessful);
+    }
+
+    [Fact]
+    public async Task SaveScore_ValidRequest_LogAction()
+    {
+        var request = new SaveScoreRequest
+        {
+            HalfTimeHomeScore = "1",
+            HalfTimeAwayScore = "0",
+            FullTimeHomeScore = "2",
+            FullTimeAwayScore = "1"
+        };
+        repository.ExecuteAsync(Arg.Do<SaveScoreCriteria>(c => c.ErrCode = 0));
+
+        await service.SaveScore(request);
+
+        await logService.Received().ActionLog(Arg.Any<int>(), Arg.Is("HT(1-0),<br/>FT(2-1)"), Arg.Is(0));
+    }
+
+
 }

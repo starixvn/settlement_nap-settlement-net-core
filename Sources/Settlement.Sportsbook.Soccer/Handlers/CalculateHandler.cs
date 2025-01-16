@@ -22,7 +22,8 @@ public class CalculateHandler(
         IRequestHandler<UndoCheckingRequest, UndoCheckingModel>,
         IRequestHandler<InstantCalculationRequest, Result>,
         IRequestHandler<UncalculateFtRequest, Result>,
-        IRequestHandler<GetResultDetailRequest, IEnumerable<ResultDetail>>
+        IRequestHandler<GetResultDetailRequest, IEnumerable<ResultDetail>>,
+        IRequestHandler<SaveScoreRequest, Result>
 
 {
     public async Task<Match> Handle(GetMatchRequest request, CancellationToken cancellationToken)
@@ -64,5 +65,10 @@ public class CalculateHandler(
     public async Task<IEnumerable<ResultDetail>> Handle(GetResultDetailRequest request, CancellationToken cancellationToken)
     {
         return await matchService.GetResultDetail(request.MatchId);
+    }
+
+    public async Task<Result> Handle(SaveScoreRequest request, CancellationToken cancellationToken)
+    {
+        return await calculateService.SaveScore(request);
     }
 }

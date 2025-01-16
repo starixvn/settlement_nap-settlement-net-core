@@ -4,17 +4,23 @@ import { Storage } from "../../../storage/storage.service.native";
 import { Language } from "../../../../shared/language.native";
 import { ClosePopupService, MessageBoxService } from "../../../../shared/services";
 import { RequestService } from "../../../components/calc/services/request.service";
+import { Result } from "../../../../shared/models";
 
 export class SaveScoreHandler extends AbstractHandler {
   #requestService = inject(RequestService);
   #messageBoxService = inject(MessageBoxService);
   #closePopupService = inject(ClosePopupService);
   handle(storage: Storage) {
+    const { matchDetail} = storage.getMatch();
     storage.setConfirmMessage(Language.SaveTraderScore);
     this.#messageBoxService.confirm(storage.getConfirmMessage(), () => {
-      // this.#requestService.saveScore(storage.getMatch().id).subscribe(() => {
-        this.#closePopupService.closePopup();        
-      // }
+       this.#requestService.saveScore(matchDetail).then((result: Result) => {
+        if(result.isSuccessful){
+          this.#closePopupService.closePopup();      
+        } else{
+          storage.error(result.errMsg);
+        }
+       });
       });
     }
   }

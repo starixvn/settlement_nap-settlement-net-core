@@ -64,4 +64,7 @@ public class SoccerController(IMediator mediator) : ControllerBase
 
     [Route("get-result-detail"), HttpGet]
     public async Task<IActionResult> GetResultDetail(int matchId) => Ok(await mediator.Send(new GetResultDetailRequest { MatchId = matchId }).ConfigureAwait(false));
+
+    [Route("save-score"), HttpPost]
+    public async Task<IActionResult> SaveScore(SaveScoreRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 }

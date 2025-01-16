@@ -4,7 +4,7 @@ import { DatePipe } from "@angular/common";
 import { AioService } from './aio.service';
 import { HttpRequestService, BlockUIService, MessageBoxService } from '../../shared/services';
 import { HedgeMatchDetail, ResultDetail, SaveScoreQuery } from '../models/sportsbook-sop';
-import { GeneralResultDetail, ResultSettingModel, ResultSettingQuery } from '../models';
+import { GeneralResultDetail, ResourceItem, ResultSettingModel, ResultSettingQuery } from '../models';
 import { ResourceIds, ResultSettingType } from '../constants';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ClosePopupService } from './close-popup.service.native';
@@ -18,6 +18,7 @@ describe('AioService', () => {
   let messageBoxService: MessageBoxService;
   const result = new ResultDetail();
   result.resultSettingData = new ResultSettingModel();
+  const resourceItem = new ResourceItem('resourceId', 'resourceName', 'resourceType', 'resourceValue')
   beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [
@@ -153,6 +154,7 @@ describe('AioService', () => {
       service.changeResultSetting = jest.fn().mockReturnValue(Promise.resolve(true));
       const query = new ResultSettingQuery(0, ResultSettingType.confirmRefund,
         false, '');
+        query.confirmRefundResources = []
 
       service.undoConfirmedResult([result], 0, '', null);
 
@@ -169,19 +171,20 @@ describe('AioService', () => {
 
       messageBoxService.confirm = jest.fn();
 
-      service.changeConfirmResultSDTSetting(0, 3, [], isEnable, null);
+      service.changeConfirmResultSDTSetting(0, 3, [resourceItem], isEnable, null);
 
       expect(messageBoxService.confirm).toHaveBeenCalled();
-      expect(service.warningDialogMessage.message).toEqual(message);
+      expect(service.warningDialogMessage.message).toEqual(message.replace('{0}', 'resourceName: resourceType - resourceValue'));
     });
 
     it('should change push request and close popup when click ok on confirm box', fakeAsync(() => {
       service.changeResultSetting = jest.fn().mockReturnValue(Promise.resolve(true));
       messageBoxService.closePopupNotChanged = jest.fn();
       const query = new ResultSettingQuery(0, ResultSettingType.confirmRefundSDT,
-        true, '', []);
+        true, 'resourceId', [resourceItem]);
+        query.is3x3 = false
 
-      service.changeConfirmResultSDTSetting(0, 3, [], true, null);
+      service.changeConfirmResultSDTSetting(0, 3, [resourceItem], true, null);
       const buttonYes = document.getElementsByClassName("btn-danger")[0] as HTMLElement;
       buttonYes.click();
       tick();
@@ -196,7 +199,7 @@ describe('AioService', () => {
       const hedgeMatch = new HedgeMatchDetail();
       hedgeMatch.matchId = 1;
 
-      service.changeConfirmResultSDTSetting(0, 3, [], true, hedgeMatch);
+      service.changeConfirmResultSDTSetting(0, 3, [resourceItem], true, hedgeMatch);
       const buttonYes = document.getElementsByClassName("btn-danger")[0] as HTMLElement;
       buttonYes.click();
       tick();
@@ -222,6 +225,7 @@ describe('AioService', () => {
       messageBoxService.closePopupNotChanged = jest.fn();
       const query = new ResultSettingQuery(0, ResultSettingType.confirmRefund,
         true, '01');
+        query.confirmRefundResources = []
 
       service.changeConfirmResultSetting("", 0, '01', true, null);
       const buttonYes = document.getElementsByClassName("btn-danger")[0] as HTMLElement;

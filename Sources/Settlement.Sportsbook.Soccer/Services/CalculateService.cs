@@ -1,5 +1,5 @@
-﻿using Settlement.Core.Criteria;
-using Settlement.Core.Constants;
+﻿using Settlement.Core.Constants;
+using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Soccer.Constants;
@@ -19,6 +19,8 @@ public interface ICalculateService
     Task<Result> UncalculateFt(UncalculateFtRequest request);
 
     Task<Result> CheckStatus(CheckStatusRequest request);
+
+    Task<Result> SaveScore(SaveScoreRequest request);
 }
 
 public class CalculateServiceImp(
@@ -268,5 +270,40 @@ public class CalculateServiceImp(
         };
 
         await scaleOutSettleService.UpdateAutoRefundChildMatch(requestRefundChildMatch);
+    }
+
+    public async Task<Result> SaveScore(SaveScoreRequest request)
+    {
+        var criteria = new SaveScoreCriteria();
+
+        await repository.ExecuteAsync(criteria);
+
+        if (criteria.ErrCode == 0)
+        {
+            var message = createMessageSaveScore(request);
+            await logService.ActionLog(request.MatchId, message, 0);
+            return new Result();
+        }
+
+        return new Result
+        {
+            ErrCode = criteria.ErrCode,
+            ErrMsg = criteria.ErrMsg
+        };
+    }
+
+    private string createMessageSaveScore(SaveScoreRequest request)
+    {
+        List<string> strings = [];
+        if (!string.IsNullOrEmpty(request.HalfTimeAwayScore) && !string.IsNullOrEmpty(request.HalfTimeHomeScore))
+        {
+            strings.Add($"HT({request.HalfTimeHomeScore}-{request.HalfTimeAwayScore})");
+        }
+        if (!string.IsNullOrEmpty(request.FullTimeHomeScore) && !string.IsNullOrEmpty(request.FullTimeAwayScore))
+        {
+            strings.Add($"FT({request.FullTimeHomeScore}-{request.FullTimeAwayScore})");
+        }
+
+        return string.Join(",<br/>", strings);
     }
 }
