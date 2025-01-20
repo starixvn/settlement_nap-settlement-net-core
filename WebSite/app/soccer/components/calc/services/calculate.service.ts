@@ -114,6 +114,7 @@ export class CalculateService {
   }
 
   uncalculateAll(){
+    this.#storage.setCalculateAction(CalculateAction.unCalculate);
     this.#uncalculateHandler.handle(this.#storage);
   }
 

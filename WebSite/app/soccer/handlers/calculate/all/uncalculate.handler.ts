@@ -8,7 +8,7 @@ import { CalculateAction } from "../../../../shared/constants";
 export class UncalculateHandler extends AbstractHandler {
   #messageBoxService = inject(MessageBoxService);
 
-  async handler(storage: Storage) {
+  async handle(storage: Storage) {
     storage.setConfirmMessage(Language.UncalculationConfirmMessage);
     this.#messageBoxService.confirm(storage.getConfirmMessage(), () => {
       storage.setConfirmMessage(Language.checkAgainUnSettleConfirmation);

@@ -138,7 +138,7 @@ export class CalculationActionComponent implements OnInit {
   }
 
   private changeResultState(resultDetail: ResultDetail) {
-    resultDetail.resultState = `${_.isUndefined(resultDetail.ticketStatus) ?  '' : resultDetail.ticketStatus.toLowerCase()} ${resultDetail.isMismatch ? 'mismatched' : ''}`;
+    resultDetail.resultState = `${_.isNull(resultDetail.ticketStatus) ?  '' : resultDetail.ticketStatus.toLowerCase()} ${resultDetail.isMismatch ? 'mismatched' : ''}`;
   }
 
   private getResultSettingIcon(result: ResultDetail) {

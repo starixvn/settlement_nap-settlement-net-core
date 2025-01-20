@@ -9,11 +9,11 @@
 <ng-template #header>
   <thead>
     <tr>
-      <th scope="col" rowspan="2" class="result">Result</th>
-      <th scope="col" rowspan="2" class="status">Ticket Status</th>
-      <th scope="col" rowspan="2">Final Score</th>
+      <th scope="col" rowspan="2">Result</th>
+      <th scope="col" rowspan="2">Ticket Status</th>
+      <th scope="col" rowspan="2" colspan="2">Final Score</th>
       <th scope="col">Provider Score</th>
-      <th scope="col" rowspan="2" class="status">
+      <th scope="col" rowspan="2">
         Select to Proceed
       </th>
       <th scope="col" rowspan="2">Hold Result</th>
@@ -31,11 +31,12 @@
       <td [ngClass]="matchDetail.htStatus.toLowerCase()" class="set-status">{{ matchDetail.htStatus }}
       </td>
       <td [ngClass]="halfTimeResult.resultState">
-        <input type="text" myOnlyInteger [ngClass]="{'warning':matchDetail.isWarningHalfTimeHomeScore}"
+        <input type="text" myOnlyInteger tabindex="1" [ngClass]="{'warning':matchDetail.isWarningHalfTimeHomeScore}"
           [disabled]="!halfTimeResult.checked  || halfTimeResult.resultSettingData.isHoldResult"
           [(ngModel)]="halfTimeResult.homeValue" (ngModelChange)="scoreChanged(halfTimeResult)" />
-        &nbsp;
-        <input type="text" myOnlyInteger [ngClass]="{'warning':matchDetail.isWarningHalfTimeAwayScore}"
+      </td>
+      <td [ngClass]="halfTimeResult.resultState">
+        <input type="text" myOnlyInteger tabindex="2" [ngClass]="{'warning':matchDetail.isWarningHalfTimeAwayScore}"
           [disabled]="!halfTimeResult.checked  || halfTimeResult.resultSettingData.isHoldResult"
           [(ngModel)]="halfTimeResult.awayValue" (ngModelChange)="scoreChanged(halfTimeResult)" />
       </td>
@@ -56,11 +57,12 @@
       <td [ngClass]="matchDetail.ftStatus.toLowerCase()" class="set-status">{{ matchDetail.ftStatus }}
       </td>
       <td [ngClass]="fullTimeResult.resultState">
-        <input type="text" myOnlyInteger [ngClass]="{'warning':matchDetail.isWarningFinalHomeScore}"
+        <input type="text" myOnlyInteger tabindex="3" [ngClass]="{'warning':matchDetail.isWarningFinalHomeScore}"
           [disabled]="!fullTimeResult.checked || fullTimeResult.resultSettingData.isHoldResult"
           [(ngModel)]="fullTimeResult.homeValue" />
-        &nbsp;
-        <input type="text" myOnlyInteger [ngClass]="{'warning':matchDetail.isWarningFinalAwayScore}"
+      </td>
+      <td [ngClass]="fullTimeResult.resultState">
+        <input type="text" myOnlyInteger tabindex="4" [ngClass]="{'warning':matchDetail.isWarningFinalAwayScore}"
           [disabled]="!fullTimeResult.checked || fullTimeResult.resultSettingData.isHoldResult"
           [(ngModel)]="fullTimeResult.awayValue" />
       </td>
