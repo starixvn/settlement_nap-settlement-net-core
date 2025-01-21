@@ -206,41 +206,47 @@ public class CalculateServiceTests
     [InlineData(1, "Error", false)]
     public async Task SaveScore_Always_ReturnCorrectResult(int errorCode, string errorMsg, bool result)
     {
-        var request = new SaveScoreRequest
+        var query = new SaveScoreRequest
         {
-            HalfTimeHomeScore = "1",
-            HalfTimeAwayScore = "0",
-            FullTimeHomeScore = "2",
-            FullTimeAwayScore = "1"
+            MatchId = 12345,
+            ResultDetails = new List<ResultDetail>
+            {
+                new ResultDetail { ResourceId = ResourceType.Final, HomeValue = "2", AwayValue = "1" }
+            }
         };
-
-        repository.ExecuteAsync(Arg.Do<SaveScoreCriteria>(c =>
+        var criteria = new SaveScoreCriteria
         {
-            c.ErrCode = errorCode;
-            c.ErrMsg = errorMsg;
-        }));
+            ErrCode = errorCode,
+            ErrMsg = errorMsg
+        };
+        createCriteriaService.CreateSaveScoreCriteria(Arg.Any<SaveScoreRequest>()).Returns(criteria);
+        await repository.ExecuteAsync(Arg.Any<SaveScoreCriteria>());
 
-        var actual = await service.SaveScore(request);
+        var actual = await service.SaveScore(query);
 
         Assert.Equal(result, actual.IsSuccessful);
     }
 
     [Fact]
-    public async Task SaveScore_ValidRequest_LogAction()
+    public async Task SaveScore_ValidRequest_LogsAction()
     {
-        var request = new SaveScoreRequest
+        var query = new SaveScoreRequest
         {
-            HalfTimeHomeScore = "1",
-            HalfTimeAwayScore = "0",
-            FullTimeHomeScore = "2",
-            FullTimeAwayScore = "1"
+            MatchId = 12345,
+            ResultDetails = new List<ResultDetail>
+            {
+                new ResultDetail { ResourceId = ResourceType.Final, HomeValue = "2", AwayValue = "1" }
+            }
         };
-        repository.ExecuteAsync(Arg.Do<SaveScoreCriteria>(c => c.ErrCode = 0));
+        var criteria = new SaveScoreCriteria
+        {
+            ErrCode = 0
+        };
+        createCriteriaService.CreateSaveScoreCriteria(Arg.Any<SaveScoreRequest>()).Returns(criteria);
+        await repository.ExecuteAsync(Arg.Any<SaveScoreCriteria>());
 
-        await service.SaveScore(request);
+        await service.SaveScore(query);
 
-        await logService.Received().ActionLog(Arg.Any<int>(), Arg.Is("HT(1-0),<br/>FT(2-1)"), Arg.Is(0));
+        await logService.Received().ActionLog(Arg.Any<int>(), Arg.Is<string>(r => r == "FT(2-1)"), Arg.Any<int>());
     }
-
-
 }

@@ -29,6 +29,8 @@ public interface ICreateCriteriaService
     public InsertLogCriteria CreateUnCalculateFtLogCriteria(UncalculateFtRequest request);
 
     public InsertLogCriteria CreateRefundLogCriteria(RefundRequest request);
+
+    public SaveScoreCriteria CreateSaveScoreCriteria(SaveScoreRequest request);
 }
 
 public class CreateCriteriaServiceImp(
@@ -38,7 +40,8 @@ public class CreateCriteriaServiceImp(
     XmlConvertService xmlConvertService,
     IMapper mapper,
     IBetStatusAllService betStatusAllService,
-    IMatchService matchService)
+    IMatchService matchService,
+    INapSession session)
     : ICreateCriteriaService
 {
     public CalculateCriteria CreateCalculateCriteria(SettleRequest request)
@@ -343,6 +346,24 @@ public class CreateCriteriaServiceImp(
             Sporttype = SportType.Soccer,
             AdminId = request.AdminId,
             SelectedResources = selectedResources
+        };
+    }
+
+    public SaveScoreCriteria CreateSaveScoreCriteria(SaveScoreRequest request)
+    {
+        var resourceItems = request.ResultDetails.Select(requestResultDetail =>
+            new ResourceItem
+            {
+                ResourceId = requestResultDetail.ResourceId,
+                HomeValue = requestResultDetail.HomeValue,
+                AwayValue = requestResultDetail.AwayValue
+            }).ToList();
+
+        return new SaveScoreCriteria
+        {
+            MatchId = request.MatchId,
+            UserId = session.UserId,
+            SelectedResources = CreateResources(resourceItems)
         };
     }
 }

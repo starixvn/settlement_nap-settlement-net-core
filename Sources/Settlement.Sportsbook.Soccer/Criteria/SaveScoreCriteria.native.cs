@@ -7,13 +7,7 @@ public class SaveScoreCriteria : NonQueryCommand, IReturnValue
 
     public int UserId { get; set; }
 
-    public string OutsideSources { get; set; }
-
-    public string Sources { get; set; }
-
-    public bool IsTrader { get; set; }
-
-    public string Ip { get; set; }
+    public string SelectedResources { get; set; }
 
     public int ErrCode { get; set; }
 
@@ -21,7 +15,7 @@ public class SaveScoreCriteria : NonQueryCommand, IReturnValue
 
     public override string GetSettingKey()
     {
-        return "NAP_Set_ExternalResultDetailOSIns";
+        return "NAP_Set_ExternalResultDetailUpd";
     }
 
     public override bool IsValid()

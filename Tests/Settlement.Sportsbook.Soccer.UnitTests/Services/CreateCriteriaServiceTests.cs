@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Fanex.NAP.Client;
 using Microsoft.AspNetCore.Http;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
@@ -23,6 +24,8 @@ public class CreateCriteriaServiceTests
 
     private readonly IMatchService matchService;
 
+    private readonly INapSession napSession;
+
     public CreateCriteriaServiceTests()
     {
         var accessor = Substitute.For<IHttpContextAccessor>();
@@ -31,6 +34,7 @@ public class CreateCriteriaServiceTests
         resourceService = Substitute.For<IResourceService>();
         betStatusAllService = Substitute.For<IBetStatusAllService>();
         matchService = Substitute.For<IMatchService>();
+        napSession = Substitute.For<INapSession>();
         var context = new DefaultHttpContext
         {
             Connection =
@@ -44,8 +48,9 @@ public class CreateCriteriaServiceTests
         mapperConfig.AddProfile<SoccerAutoMapperProfile>();
         var config = new MapperConfiguration(mapperConfig);
         var mapper = new Mapper(config);
+
         service = new CreateCriteriaServiceImp(resourceService, accessor, soccerBetStatusService,
-            xmlConvertService, mapper, betStatusAllService, matchService);
+            xmlConvertService, mapper, betStatusAllService, matchService, napSession);
     }
 
     [Fact]
@@ -293,5 +298,50 @@ public class CreateCriteriaServiceTests
         var criteria = service.CreateUnCalculateFtCriteria(request);
 
         Assert.Equal(string.Empty, criteria.GoalRecord);
+    }
+    [Fact]
+    public void CreateSaveScoreCriteria_ValidRequest_ReturnsCorrectCriteria()
+    {
+        // Arrange
+        var request = new SaveScoreRequest
+        {
+            MatchId = 1,
+            ResultDetails = new List<ResultDetail>
+            {
+                new ResultDetail { ResourceId = "R1", HomeValue = "1", AwayValue = "0" },
+                new ResultDetail { ResourceId = "R2", HomeValue = "2", AwayValue = "1" }
+            }
+        };
+        var expectedResources = "<Resources><Resource Id=\"R1\" Home=\"1\" /><Resource Id=\"R2\" Home=\"2\" /></Resources>";
+        xmlConvertService.Serialize(Arg.Any<Resources<ResourceItem>>()).Returns(expectedResources);
+
+        // Act
+        var criteria = service.CreateSaveScoreCriteria(request);
+
+        // Assert
+        Assert.Equal(request.MatchId, criteria.MatchId);
+        Assert.Equal(napSession.UserId, criteria.UserId);
+        Assert.Equal(expectedResources, criteria.SelectedResources);
+    }
+
+    [Fact]
+    public void CreateSaveScoreCriteria_EmptyResultDetails_ReturnsEmptySelectedResources()
+    {
+        // Arrange
+        var request = new SaveScoreRequest
+        {
+            MatchId = 1,
+            ResultDetails = new List<ResultDetail>()
+        };
+        var expectedResources = "<Resources></Resources>";
+        xmlConvertService.Serialize(Arg.Any<Resources<ResourceItem>>()).Returns(expectedResources);
+
+        // Act
+        var criteria = service.CreateSaveScoreCriteria(request);
+
+        // Assert
+        Assert.Equal(request.MatchId, criteria.MatchId);
+        Assert.Equal(napSession.UserId, criteria.UserId);
+        Assert.Equal(expectedResources, criteria.SelectedResources);
     }
 }

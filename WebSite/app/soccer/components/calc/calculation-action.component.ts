@@ -21,7 +21,7 @@ import { GoalRecordWithOutSemicolonService } from './services/goal-record-with-o
   selector: 'calculation-action',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  providers: [ GoalIconService, GoalRecordWithOutSemicolonService],
+  providers: [GoalIconService, GoalRecordWithOutSemicolonService],
   templateUrl: './calculation-action.component.html',
 })
 export class CalculationActionComponent implements OnInit {
@@ -49,15 +49,15 @@ export class CalculationActionComponent implements OnInit {
     this.changeResultState(this.halfTimeResult);
     this.changeResultState(this.fullTimeResult);
     this.matchDetail.applyGoalRecord = this.disableGoalRecordCheckbox = this.matchDetail.isExistFgLg
-    || this.matchDetail.isExistHtFgLg || this.matchDetail.isExistResultAndFirstTeamScore
-    || this.matchDetail.isEnabledGoalRecordHt || this.matchDetail.isEnabledGoalRecordFt;
+      || this.matchDetail.isExistHtFgLg || this.matchDetail.isExistResultAndFirstTeamScore
+      || this.matchDetail.isEnabledGoalRecordHt || this.matchDetail.isEnabledGoalRecordFt;
   }
 
   copyScore() {
     this.#calculateService.copyScore();
   }
 
-  selectResult(){
+  selectResult() {
     this.enableAction = this.halfTimeResult.checked || this.fullTimeResult.checked;
   }
 
@@ -70,22 +70,23 @@ export class CalculationActionComponent implements OnInit {
       const result = await this.#aioService.changeResultSetting(query);
       resultDetail.resultSettingData.isHoldResult = result;
       resultDetail.resultSettingData.iconHoldResult = this.getResultSettingIcon(resultDetail);
-      if(result){
+      if (result) {
         resultDetail.checked = false;
       }
     });
   }
 
   scoreChanged(resultDetail: ResultDetail) {
+    this.#storage.clear();
     this.#storage.changeScore();
     if (resultDetail.resourceId === ResourceIds.halfTime) {
-      resultDetail.isMismatch = !_.isNaN(this.matchDetail.exHTHomeScore) &&
-        !_.isNaN(this.matchDetail.exHTAwayScore) &&
+      resultDetail.isMismatch = !this.isEmptyScore(this.matchDetail.exHTHomeScore) &&
+        !this.isEmptyScore(this.matchDetail.exHTAwayScore) &&
         (!_.isEqual(this.halfTimeResult.homeValue, this.matchDetail.exHTHomeScore) ||
           !_.isEqual(this.halfTimeResult.awayValue, this.matchDetail.exHTAwayScore));
     } else {
-      resultDetail.isMismatch = !_.isNaN(this.matchDetail.exFTAwayScore) &&
-        _.isNaN(this.matchDetail.exFTAwayScore) &&
+      resultDetail.isMismatch = !this.isEmptyScore(this.matchDetail.exFTAwayScore) &&
+      !this.isEmptyScore(this.matchDetail.exFTAwayScore) &&
         (!_.isEqual(this.fullTimeResult.homeValue, this.matchDetail.exFTHomeScore) ||
           !_.isEqual(this.fullTimeResult.awayValue, this.matchDetail.exFTAwayScore));
     }
@@ -98,7 +99,7 @@ export class CalculationActionComponent implements OnInit {
     this.#storage.setFullTimeScore(this.fullTimeResult.homeValue, this.fullTimeResult.awayValue)
     const { checked: isHalfTime } = this.halfTimeResult;
     const { checked: isFullTime } = this.fullTimeResult;
-  
+
     if (isHalfTime && isFullTime) {
       this.#calculateService.calculateALL();
     } else if (isHalfTime) {
@@ -112,7 +113,7 @@ export class CalculationActionComponent implements OnInit {
     this.#storage.clear();
     const { checked: isHalfTime } = this.halfTimeResult;
     const { checked: isFullTime } = this.fullTimeResult;
-  
+
     if (isHalfTime && isFullTime) {
       this.#calculateService.uncalculateAll();
     } else if (isFullTime) {
@@ -122,7 +123,7 @@ export class CalculationActionComponent implements OnInit {
     }
   }
 
-  unCalcInstant(){
+  unCalcInstant() {
     this.#storage.clear();
     this.#calculateService.unCalcInstant();
   }
@@ -132,16 +133,20 @@ export class CalculationActionComponent implements OnInit {
     this.#calculateService.saveScore();
   }
 
-  goalRecordModelChange(value: string){
+  goalRecordModelChange(value: string) {
     this.matchDetail.goalRecord = value;
     this.matchDetail.goalIcon = this.#goalIconService.generateGoalIcon(this.matchDetail);
   }
 
   private changeResultState(resultDetail: ResultDetail) {
-    resultDetail.resultState = `${_.isNull(resultDetail.ticketStatus) ?  '' : resultDetail.ticketStatus.toLowerCase()} ${resultDetail.isMismatch ? 'mismatched' : ''}`;
+    resultDetail.resultState = `${_.isNull(resultDetail.ticketStatus) ? '' : resultDetail.ticketStatus.toLowerCase()} ${resultDetail.isMismatch ? 'mismatched' : ''}`;
   }
 
   private getResultSettingIcon(result: ResultDetail) {
     return result.resultSettingData?.isHoldResult ? 'icon-yes' : 'icon-no';
+  }
+
+  private isEmptyScore(value: string) {
+    return _.isNull(value) || _.isEmpty(value) || _.isNaN(value); 
   }
 }

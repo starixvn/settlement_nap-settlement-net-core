@@ -30,8 +30,7 @@ public class CalculateServiceImp(
     ICreateCriteriaService createCriteriaService,
     ScaleOutSettleService scaleOutSettleService,
     LogService logService,
-    IMatchService matchService)
-    : ICalculateService
+    IMatchService matchService) : ICalculateService
 {
     public async Task<Result> Calculate(SettleRequest request)
     {
@@ -274,14 +273,15 @@ public class CalculateServiceImp(
 
     public async Task<Result> SaveScore(SaveScoreRequest request)
     {
-        var criteria = new SaveScoreCriteria();
+        var criteria = createCriteriaService.CreateSaveScoreCriteria(request);
 
         await repository.ExecuteAsync(criteria);
 
         if (criteria.ErrCode == 0)
         {
+            const int actionLog = 81059;
             var message = createMessageSaveScore(request);
-            await logService.ActionLog(request.MatchId, message, 0);
+            await logService.ActionLog(request.MatchId, message, actionLog);
             return new Result();
         }
 
@@ -294,15 +294,7 @@ public class CalculateServiceImp(
 
     private string createMessageSaveScore(SaveScoreRequest request)
     {
-        List<string> strings = [];
-        if (!string.IsNullOrEmpty(request.HalfTimeAwayScore) && !string.IsNullOrEmpty(request.HalfTimeHomeScore))
-        {
-            strings.Add($"HT({request.HalfTimeHomeScore}-{request.HalfTimeAwayScore})");
-        }
-        if (!string.IsNullOrEmpty(request.FullTimeHomeScore) && !string.IsNullOrEmpty(request.FullTimeAwayScore))
-        {
-            strings.Add($"FT({request.FullTimeHomeScore}-{request.FullTimeAwayScore})");
-        }
+        var strings = request.ResultDetails.Select(r => $"{(r.ResourceId == ResourceType.Final ? "FT" : "HT")}({r.HomeValue}-{r.AwayValue})").ToList();
 
         return string.Join(",<br/>", strings);
     }
