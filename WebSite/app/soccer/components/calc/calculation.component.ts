@@ -1,17 +1,16 @@
 import { FormsModule } from '@angular/forms';
 import { Component, inject, ViewChild } from '@angular/core';
-import { ToastContainerDirective, ToastContainerModule, ToastrService } from 'ngx-toastr';
-import { ChildMatch, FantasyRelatedMatch, HedgeMatchDetail, Match, MatchDetail, Score, UndoChecking } from './models/match.model';
+import { ToastContainerDirective, ToastContainerModule } from 'ngx-toastr';
+import { ChildMatch, FantasyRelatedMatch, HedgeMatchDetail, Match, MatchDetail, Score } from './models/match.model';
 import { Soccer } from '../soccer.model';
 import { RequestService } from './services/request.service';
 import { VerifyMatchService } from './services/verify-match.service';
 import { TimeMinute, LeagueGroup } from './models/constant.native';
 import * as _ from 'lodash';
-import { TicketStatusText, BackgroundColor, SettlementStatusId, ResultStatusId } from '../../../shared/constants';
-import { ClosePopupService, HttpRequestService, MessageBoxService } from '../../../shared/services';
+import { TicketStatusText, BackgroundColor, ResultStatusId } from '../../../shared/constants';
+import { ClosePopupService, HttpRequestService } from '../../../shared/services';
 import { ModalDialogMessage } from '../../../shared/models';
 import { Language } from '../../../shared/language.native';
-import { InstantCalculationQuery, SettleQuery, UncalculateFullTimeQuery } from './models/query.model';
 import { VerifyActionService } from './services/verify-action.service';
 import { VerifyScoreGoalService } from './services/verify-score-goal.service';
 import { VerificationBaseService } from '../../services/verification-base.service';
@@ -60,27 +59,25 @@ import { GoalRecordWithSemicolonService } from './services/goal-record-with-semi
         CalculateStorage,
         CalculateService,
         ScoreService,
-        GoalRecordWithSemicolonService 
+        GoalRecordWithSemicolonService
     ]
 })
 export class CalculationComponent implements Soccer {
     @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
-    public match: Match;
-    public relatedMatches: FantasyRelatedMatch[];
-    public childMatches: ChildMatch[];
-    public hedgeMatchDetail: HedgeMatchDetail;
-    public applyHedgeMatch: boolean;
-    public isMatchReady: boolean;
-    public matchDetail: MatchDetail;
-    public dialogMessage = new ModalDialogMessage();
+    match: Match;
+    relatedMatches: FantasyRelatedMatch[];
+    childMatches: ChildMatch[];
+    hedgeMatchDetail: HedgeMatchDetail;
+    applyHedgeMatch: boolean;
+    isMatchReady: boolean;
+    matchDetail: MatchDetail;
+    dialogMessage = new ModalDialogMessage();
     constructor() {
         this.dialogMessage.title = Language.confirmationBox;
     }
 
     private readonly requestService = inject(RequestService);
     private readonly verifyMatchService = inject(VerifyMatchService);
-    private readonly messageBoxService = inject(MessageBoxService);
-    private readonly closePopupService = inject(ClosePopupService);
     #storage = inject(CalculateStorage);
 
     async getMatch(matchId: number) {
@@ -103,11 +100,11 @@ export class CalculationComponent implements Soccer {
             || this.verifyMatchService.isEndFirstHalf(matchDetail) || this.verifyMatchService.isPinGoal(matchDetail);
     }
 
-    public onResettleCheckboxChange(checked: boolean) {
+    onResettleCheckboxChange(checked: boolean) {
         this.#storage.setIsResettleTicket(checked);
     }
 
-     get isReSettledTickets() {
+    get isReSettledTickets() {
         return this.#storage.getIsResettleTicket();
     }
 
@@ -115,18 +112,18 @@ export class CalculationComponent implements Soccer {
         return this.matchDetail.leagueGroupId === LeagueGroup.pinGoal;
     }
 
-    public get isDisableCalculate() {
+    get isDisableCalculate() {
         const flag = (this.matchDetail.isInstant || this.matchDetail.hasInstantCompleted)
             && this.matchDetail.playTime <= TimeMinute.firstHalf && this.matchDetail.confirmHT === 0;
 
         return this.isPinGoal ? false : flag;
     }
 
-    public get halftimeTicketStatusBackground() {
+    get halftimeTicketStatusBackground() {
         return this.getTicketStatusBackground(this.matchDetail.htStatus);
     }
 
-    public get fullTimeTicketStatusBackground() {
+    get fullTimeTicketStatusBackground() {
         return this.getTicketStatusBackground(this.matchDetail.ftStatus);
     }
 
@@ -135,30 +132,30 @@ export class CalculationComponent implements Soccer {
             ? BackgroundColor.calculated
             : _.isEqual(status, TicketStatusText.marked) ? BackgroundColor.backgroundMarked : "";
     }
-    public get isDisableFulltimeCalculate() {
+    get isDisableFulltimeCalculate() {
         const flag = this.matchDetail.playTime <= TimeMinute.firstHalf
             || this.matchDetail.isHtOnly || _.isEqual(this.matchDetail.htStatus, TicketStatusText.running);
 
         return this.isPinGoal ? false : flag;
     }
 
-    public get isDisableUncalculateFT() {
+    get isDisableUncalculateFT() {
         const resultHalfTime = _.find(this.match.resultDetails, item => item.resourceId === ResourceIds.halfTime) ?? new ResultDetail();
         return !(_.isEqual(resultHalfTime.resultStatusId, ResultStatusId.ManualCompleted)
             || _.isEqual(resultHalfTime.resultStatusId, ResultStatusId.AutoCompleted));
     }
-    public get isDisableFulltimeTextbox() {
+    get isDisableFulltimeTextbox() {
         return this.isPinGoal ? false : this.matchDetail.isHtOnly;
     }
 
-    public autoFillFantasyMatch(event: Score) {
+    autoFillFantasyMatch(event: Score) {
         this.matchDetail.halfTimeHomeScore = event.halfTimeHomeScore.toString();
         this.matchDetail.halfTimeAwayScore = event.halfTimeAwayScore.toString();
         this.matchDetail.finalHomeScore = event.finalHomeScore.toString();
         this.matchDetail.finalAwayScore = event.finalAwayScore.toString();
     }
 
-    changeApplyHedgeMatch(){
+    changeApplyHedgeMatch() {
         this.#storage.setIsAppleHedgeMatch(this.applyHedgeMatch);
     }
 }

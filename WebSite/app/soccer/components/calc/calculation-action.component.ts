@@ -42,15 +42,28 @@ export class CalculationActionComponent implements OnInit {
     this.permission = this.#storage.getPermission();
     const { matchDetail, resultDetails } = this.#storage.match();
     this.matchDetail = matchDetail;
-    this.halfTimeResult = resultDetails?.find((item) => item.sourceId === 0 && item.resourceId === ResourceIds.halfTime) ?? new ResultDetail();
-    this.fullTimeResult = resultDetails?.find((item) => item.sourceId === 0 && item.resourceId === ResourceIds.fullTime) ?? new ResultDetail();
+    
+    this.halfTimeResult = this.initializeResultDetail(resultDetails, ResourceIds.halfTime);
+    this.fullTimeResult = this.initializeResultDetail(resultDetails, ResourceIds.fullTime);
+
     this.halfTimeResult.resultSettingData.iconHoldResult = this.getResultSettingIcon(this.halfTimeResult);
     this.fullTimeResult.resultSettingData.iconHoldResult = this.getResultSettingIcon(this.fullTimeResult);
     this.changeResultState(this.halfTimeResult);
     this.changeResultState(this.fullTimeResult);
-    this.matchDetail.applyGoalRecord = this.disableGoalRecordCheckbox = this.matchDetail.isExistFgLg
-      || this.matchDetail.isExistHtFgLg || this.matchDetail.isExistResultAndFirstTeamScore
-      || this.matchDetail.isEnabledGoalRecordHt || this.matchDetail.isEnabledGoalRecordFt;
+
+    this.matchDetail.applyGoalRecord = this.disableGoalRecordCheckbox = this.calculateGoalRecordState(matchDetail);
+  }
+
+  private initializeResultDetail(resultDetails: ResultDetail[] | undefined, resourceId: string): ResultDetail {
+    return resultDetails?.find((item) => item.sourceId === 0 && item.resourceId === resourceId) ?? new ResultDetail();
+  }
+
+  private calculateGoalRecordState(matchDetail: MatchDetail): boolean {
+    return matchDetail.isExistFgLg ||
+      matchDetail.isExistHtFgLg ||
+      matchDetail.isExistResultAndFirstTeamScore ||
+      matchDetail.isEnabledGoalRecordHt ||
+      matchDetail.isEnabledGoalRecordFt;
   }
 
   copyScore() {
@@ -79,17 +92,16 @@ export class CalculationActionComponent implements OnInit {
   scoreChanged(resultDetail: ResultDetail) {
     this.#storage.clear();
     this.#storage.changeScore();
-    if (resultDetail.resourceId === ResourceIds.halfTime) {
-      resultDetail.isMismatch = !this.isEmptyScore(this.matchDetail.exHTHomeScore) &&
-        !this.isEmptyScore(this.matchDetail.exHTAwayScore) &&
-        (!_.isEqual(this.halfTimeResult.homeValue, this.matchDetail.exHTHomeScore) ||
-          !_.isEqual(this.halfTimeResult.awayValue, this.matchDetail.exHTAwayScore));
-    } else {
-      resultDetail.isMismatch = !this.isEmptyScore(this.matchDetail.exFTAwayScore) &&
-      !this.isEmptyScore(this.matchDetail.exFTAwayScore) &&
-        (!_.isEqual(this.fullTimeResult.homeValue, this.matchDetail.exFTHomeScore) ||
-          !_.isEqual(this.fullTimeResult.awayValue, this.matchDetail.exFTAwayScore));
-    }
+    const isHalfTime = resultDetail.resourceId === ResourceIds.halfTime;
+    const homeScore = isHalfTime ? this.matchDetail.exHTHomeScore : this.matchDetail.exFTHomeScore;
+    const awayScore = isHalfTime ? this.matchDetail.exHTAwayScore : this.matchDetail.exFTAwayScore;
+    const homeValue = isHalfTime ? this.halfTimeResult.homeValue : this.fullTimeResult.homeValue;
+    const awayValue = isHalfTime ? this.halfTimeResult.awayValue : this.fullTimeResult.awayValue;
+
+    resultDetail.isMismatch = !this.isEmptyScore(homeScore) &&
+      !this.isEmptyScore(awayScore) &&
+      (!_.isEqual(homeValue, homeScore) || !_.isEqual(awayValue, awayScore));
+
     this.changeResultState(resultDetail);
   }
 
