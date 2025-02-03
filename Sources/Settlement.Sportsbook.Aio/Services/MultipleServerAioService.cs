@@ -159,7 +159,7 @@ public class MultipleServerAioServiceImp(
 
     public async Task<Result> Settle(SettleRequest request)
     {
-        await Fanex.Logging.LogService.InfoAsync($"Settle: {JsonConvert.SerializeObject(request)}");
+        await Fanex.Logging.LogService.WarnAsync($"Settle at {DateTime.Now}: {JsonConvert.SerializeObject(request)}");
 
         var criteria = createQueryService.QuerySettle(request);
         var result = await Execute(criteria, request.SelectedResources);
@@ -250,7 +250,7 @@ public class MultipleServerAioServiceImp(
 
         await WriteLog(criteria);
 
-        await Fanex.Logging.LogService.InfoAsync($"UpdateInfoAndSettle: {JsonConvert.SerializeObject(criteria)}");
+        await Fanex.Logging.LogService.WarnAsync($"UpdateInfoAndSettle at {DateTime.Now}: {JsonConvert.SerializeObject(criteria)}");
 
 
         var isResultAmendment = await HandleResultAmendment(criteria, selectedResources);
@@ -262,6 +262,8 @@ public class MultipleServerAioServiceImp(
         });
 
         await Task.WhenAll(tasks);
+
+        await Fanex.Logging.LogService.WarnAsync($"Done ProfilePush at {DateTime.Now}: {JsonConvert.SerializeObject(criteria)}");
 
         return new Result
         {
