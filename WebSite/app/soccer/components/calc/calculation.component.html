@@ -16,9 +16,9 @@
 
     <calculation-action></calculation-action>
     <div class="calc-bottom">
-      <goal-history [goalRecord]="matchDetail.goalRecord" class="goal-history"></goal-history>
       <resettle-checker [checked]="isReSettledTickets" class="resettle-checker"
         (proceedEvent)="onResettleCheckboxChange($event)"></resettle-checker>
+      <goal-history [goalRecord]="matchDetail.goalRecord" class="goal-history"></goal-history>
     </div>
     @if (match.permission.canRefund && childMatches !== null && childMatches.length > 0) {
     <refund-child-match [matchDetail]="matchDetail" [(childMatches)]="childMatches"></refund-child-match>
