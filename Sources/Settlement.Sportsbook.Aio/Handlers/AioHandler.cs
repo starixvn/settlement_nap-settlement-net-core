@@ -41,7 +41,9 @@ public class AioHandler(
 
         if (result.HasResultAmendment && (request.SportType is SportType.BasketBall or SportType.ESports))
         {
-            await publishEndpoint.Publish(new ResultAmendSettled(request.MatchId, result.SettledSessionId));
+            await publishEndpoint.Publish(
+                new ResultAmendSettled(request.MatchId, result.SettledSessionId, result.IsOrg),
+                new CancellationTokenSource(TimeSpan.FromSeconds(3)).Token);
         }
 
         return result;

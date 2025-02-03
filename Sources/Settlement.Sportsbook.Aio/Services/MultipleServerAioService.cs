@@ -255,19 +255,39 @@ public class MultipleServerAioServiceImp(
 
         var isResultAmendment = await HandleResultAmendment(criteria, selectedResources);
 
-        var tasks = appSettingsKey.Value.SiteDbServer.Select(server =>
-        {
-            criteria.DbServer = server;
-            return repository.ExecuteAsync(criteria);
-        });
-
-        await Task.WhenAll(tasks);
+        var result = await PushResultSettleAllSites(criteria);
 
         await Fanex.Logging.LogService.WarnAsync($"Done ProfilePush at {DateTime.Now}: {JsonConvert.SerializeObject(criteria)}");
 
         return new Result
         {
-            HasResultAmendment = isResultAmendment
+            HasResultAmendment = isResultAmendment,
+            ErrCode = result.ErrCode,
+            ErrMsg = result.ErrMsg,
+            IsOrg = result.IsOrg
+        };
+    }
+
+    private async Task<Result> PushResultSettleAllSites(SettleCriteria criteria)
+    {
+        var tasks = appSettingsKey.Value.SiteDbServer
+            .Select(server => PushResultSettleOneSite(criteria, server))
+            .ToList();
+
+        var results = await Task.WhenAll(tasks);
+
+        return results.First();
+    }
+
+    private async Task<Result> PushResultSettleOneSite(SettleCriteria criteria, string server)
+    {
+        criteria.DbServer = server;
+        await repository.ExecuteAsync(criteria);
+        return new Result
+        {
+            ErrCode = criteria.ErrCode,
+            ErrMsg = criteria.ErrMsg,
+            IsOrg = criteria.IsOrg
         };
     }
 

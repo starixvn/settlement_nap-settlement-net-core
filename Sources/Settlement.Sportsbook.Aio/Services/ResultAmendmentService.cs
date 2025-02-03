@@ -75,7 +75,8 @@ public class ResultAmendmentServiceImp(
                 settleCriteria.SportType,
                 settleCriteria.Action,
                 selectedResources,
-                results.ToList()));
+                results.ToList()),
+                new CancellationTokenSource(TimeSpan.FromSeconds(1)).Token);
             return true;
         }
 

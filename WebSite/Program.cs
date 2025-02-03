@@ -58,6 +58,11 @@ services.AddMassTransit(x =>
             h.Password(builder.Configuration.GetValue("RabbitMQ:Password", "guest"));
         });
 
+        cfg.UseMessageRetry(retryConfig =>
+        {
+            retryConfig.Interval(1, TimeSpan.FromSeconds(1));
+        });
+
         cfg.ConfigureEndpoints(context);
     });
 });
