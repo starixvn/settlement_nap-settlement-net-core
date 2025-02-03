@@ -1,14 +1,12 @@
 import { FormsModule } from '@angular/forms';
-import { Component, EventEmitter, inject, Input, input, NgModule, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
-import { Match, MatchDetail } from './models/match.model';
+import { Component, inject, OnInit } from '@angular/core';
+import { MatchDetail } from './models/match.model';
 import { ResourceIds } from '../../constants';
-import { GoalIcon, ResultDetail } from '../../models';
+import { ResultDetail } from '../../models';
 import { CommonModule } from '@angular/common';
-import { ModalDialogMessage, Result, ResultSettingQuery } from '../../../shared/models';
-import { ToastrService } from 'ngx-toastr';
-import { VerifyScoreGoalService } from './services/verify-score-goal.service';
+import { ResultSettingQuery } from '../../../shared/models';
 import { Language } from '../../../shared/language.native';
-import { CalculateAction, ResultSettingType } from '../../../shared/constants';
+import { ResultSettingType, SettlementStatusId } from '../../../shared/constants';
 import { AioService, MessageBoxService } from '../../../shared/services';
 import * as _ from 'lodash';
 import { CalculateStorage } from '../../storage/calculate.storage';
@@ -16,11 +14,14 @@ import { CalculateService } from './services/calculate.service';
 import { Permission } from '../../../shared/models/sportsbook-sop';
 import { GoalIconService } from './services/goal-icon.service';
 import { GoalRecordWithOutSemicolonService } from './services/goal-record-with-out-semicolon.service';
+import { OnlyGoalRecordDirective } from '../../directives/only-goal-record.directive.native';
+import { ScoreService } from './services/score.service';
+
 
 @Component({
   selector: 'calculation-action',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, OnlyGoalRecordDirective],
   providers: [GoalIconService, GoalRecordWithOutSemicolonService],
   templateUrl: './calculation-action.component.html',
 })
@@ -29,6 +30,7 @@ export class CalculationActionComponent implements OnInit {
   #messageBoxService = inject(MessageBoxService);
   #goalIconService = inject(GoalIconService);
   #aioService = inject(AioService);
+  #scoreService = inject(ScoreService);
   #storage = inject(CalculateStorage);
 
   matchDetail: MatchDetail;
@@ -42,20 +44,16 @@ export class CalculationActionComponent implements OnInit {
     this.permission = this.#storage.getPermission();
     const { matchDetail, resultDetails } = this.#storage.match();
     this.matchDetail = matchDetail;
-    
-    this.halfTimeResult = this.initializeResultDetail(resultDetails, ResourceIds.halfTime);
-    this.fullTimeResult = this.initializeResultDetail(resultDetails, ResourceIds.fullTime);
+
+    this.halfTimeResult = this.#storage.getHalfTimeResult();
+    this.fullTimeResult = this.#storage.getFullTimeResult();
 
     this.halfTimeResult.resultSettingData.iconHoldResult = this.getResultSettingIcon(this.halfTimeResult);
     this.fullTimeResult.resultSettingData.iconHoldResult = this.getResultSettingIcon(this.fullTimeResult);
-    this.changeResultState(this.halfTimeResult);
-    this.changeResultState(this.fullTimeResult);
+    this.scoreChanged(this.halfTimeResult);
+    this.scoreChanged(this.fullTimeResult);
 
     this.matchDetail.applyGoalRecord = this.disableGoalRecordCheckbox = this.calculateGoalRecordState(matchDetail);
-  }
-
-  private initializeResultDetail(resultDetails: ResultDetail[] | undefined, resourceId: string): ResultDetail {
-    return resultDetails?.find((item) => item.sourceId === 0 && item.resourceId === resourceId) ?? new ResultDetail();
   }
 
   private calculateGoalRecordState(matchDetail: MatchDetail): boolean {
@@ -68,6 +66,7 @@ export class CalculationActionComponent implements OnInit {
 
   copyScore() {
     this.#calculateService.copyScore();
+    this.scoreChanged(this.halfTimeResult);
   }
 
   selectResult() {
@@ -92,18 +91,15 @@ export class CalculationActionComponent implements OnInit {
   scoreChanged(resultDetail: ResultDetail) {
     this.#storage.clear();
     this.#storage.changeScore();
+
     const isHalfTime = resultDetail.resourceId === ResourceIds.halfTime;
-    const homeScore = isHalfTime ? this.matchDetail.exHTHomeScore : this.matchDetail.exFTHomeScore;
-    const awayScore = isHalfTime ? this.matchDetail.exHTAwayScore : this.matchDetail.exFTAwayScore;
-    const homeValue = isHalfTime ? this.halfTimeResult.homeValue : this.fullTimeResult.homeValue;
-    const awayValue = isHalfTime ? this.halfTimeResult.awayValue : this.fullTimeResult.awayValue;
+    const { homeExScore, awayExScore, homeValue, awayValue } = this.getScores(isHalfTime);
 
-    resultDetail.isMismatch = !this.isEmptyScore(homeScore) &&
-      !this.isEmptyScore(awayScore) &&
-      (!_.isEqual(homeValue, homeScore) || !_.isEqual(awayValue, awayScore));
+    resultDetail.isMismatch = this.checkMismatch(homeExScore, awayExScore, homeValue, awayValue);
 
-    this.changeResultState(resultDetail);
+    this.#scoreService.changeResultState(resultDetail);
   }
+
 
   calculate() {
     this.#storage.clear();
@@ -150,15 +146,28 @@ export class CalculationActionComponent implements OnInit {
     this.matchDetail.goalIcon = this.#goalIconService.generateGoalIcon(this.matchDetail);
   }
 
-  private changeResultState(resultDetail: ResultDetail) {
-    resultDetail.resultState = `${_.isNull(resultDetail.ticketStatus) ? '' : resultDetail.ticketStatus.toLowerCase()} ${resultDetail.isMismatch ? 'mismatched' : ''}`;
-  }
-
   private getResultSettingIcon(result: ResultDetail) {
     return result.resultSettingData?.isHoldResult ? 'icon-yes' : 'icon-no';
   }
 
   private isEmptyScore(value: string) {
-    return _.isNull(value) || _.isEmpty(value) || _.isNaN(value); 
+    return _.isNull(value) || _.isEmpty(value) || _.isNaN(value);
+  }
+
+  private getScores(isHalfTime: boolean) {
+    return {
+      homeExScore: isHalfTime ? this.matchDetail.exHTHomeScore : this.matchDetail.exFTHomeScore,
+      awayExScore: isHalfTime ? this.matchDetail.exHTAwayScore : this.matchDetail.exFTAwayScore,
+      homeValue: isHalfTime ? this.halfTimeResult.homeValue : this.fullTimeResult.homeValue,
+      awayValue: isHalfTime ? this.halfTimeResult.awayValue : this.fullTimeResult.awayValue,
+    };
+  }
+
+  private checkMismatch(homeScore: string, awayScore: string, homeValue: string, awayValue: string) {
+    return !this.isEmptyScore(homeScore) &&
+      !this.isEmptyScore(awayScore) &&
+      !this.isEmptyScore(homeValue) &&
+      !this.isEmptyScore(awayValue) &&
+      (!_.isEqual(homeValue, homeScore) || !_.isEqual(awayValue, awayScore));
   }
 }

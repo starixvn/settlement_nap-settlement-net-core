@@ -1,7 +1,7 @@
 <div class="league">
     <div class="icon">
     </div>
-    {{matchDetail.leagueName}}
+    SOCCER - {{matchDetail.leagueName}}
 </div>
 <table class="table-calculation">
     <thead>
@@ -70,5 +70,7 @@
     </tfoot>
     }
 </table>
+@if(pageType !== pageTypeEnum.Refund){
 <div (click)="refresh()" class="icon-refresh">
 </div>
+}

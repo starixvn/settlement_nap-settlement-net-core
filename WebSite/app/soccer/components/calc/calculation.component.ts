@@ -93,6 +93,7 @@ export class CalculationComponent implements Soccer {
         this.relatedMatches = this.matchDetail.isFantasyMatch
             ? this.match.fantasyMatch.relatedMatches.filter((match) => !match.isDeleted)
             : []
+        this.#storage.resetHomeAway();
     }
 
     private isReadyToSettle(matchDetail: MatchDetail) {

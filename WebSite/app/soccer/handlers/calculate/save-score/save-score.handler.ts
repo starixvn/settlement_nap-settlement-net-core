@@ -12,9 +12,10 @@ export class SaveScoreHandler extends AbstractHandler {
   #closePopupService = inject(ClosePopupService);
   handle(storage: Storage) {
     const { matchDetail, resultDetails} = storage.getMatch();
+    const selectedResult = resultDetails.filter((result) => result.checked);
     storage.setConfirmMessage(Language.SaveTraderScore);
     this.#messageBoxService.confirm(storage.getConfirmMessage(), () => {
-       this.#requestService.saveScore(matchDetail.matchId, resultDetails).then((result: Result) => {
+       this.#requestService.saveScore(matchDetail.matchId, selectedResult).then((result: Result) => {
         if(result.isSuccessful){
           this.#closePopupService.closePopup();      
         } else{

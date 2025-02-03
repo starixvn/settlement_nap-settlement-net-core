@@ -1,7 +1,8 @@
 import { Directive, ElementRef, HostListener, Input } from '@angular/core';
 
 @Directive({
-    selector: '[myOnlyGoalRecord]'
+    selector: '[myOnlyGoalRecord]',
+    standalone: true
 })
 export class OnlyGoalRecordDirective {
     private readonly navigationKeys = [

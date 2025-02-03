@@ -6,6 +6,7 @@ import { Language } from "../../../../shared/language.native";
 import { CalculateAction } from "../../../../shared/constants";
 import { VerifyActionService } from "../../../components/calc/services/verify-action.service";
 import {  Storage } from "../../../storage/storage.service.native";
+import { ResultDetail } from "../../../models";
 
 export class VerifyAllHandler extends AbstractHandler {
   #verifyScoreGoalService = inject(VerifyScoreGoalService);
@@ -13,11 +14,11 @@ export class VerifyAllHandler extends AbstractHandler {
 
 
   async handle(storage: Storage) {
-      const {matchDetail, childMatches, fantasyMatch} = storage.getMatch();
+      const {matchDetail, childMatches, fantasyMatch, resultDetails} = storage.getMatch();
       const relatedMatches = fantasyMatch?.relatedMatches;
       const selectedChildMatches = childMatches.filter(x => x.checked);
   
-      const errorMessage = await this.verifyAll(matchDetail, selectedChildMatches, relatedMatches);
+      const errorMessage = await this.verifyAll(resultDetails, matchDetail, selectedChildMatches, relatedMatches);
       if (errorMessage) {
         storage.error(errorMessage);
         return;
@@ -25,8 +26,8 @@ export class VerifyAllHandler extends AbstractHandler {
       super.handle(storage);
     }
 
-  private  async verifyAll(matchDetail: MatchDetail, selectedChildMatches: ChildMatch[], relatedMatches: FantasyRelatedMatch[]) {
-      if (this.#verifyScoreGoalService.verifyScoreAll(matchDetail)) {
+  private  async verifyAll(resultDetails: ResultDetail[], matchDetail: MatchDetail, selectedChildMatches: ChildMatch[], relatedMatches: FantasyRelatedMatch[]) {
+      if (this.#verifyScoreGoalService.verifyScoreAll(resultDetails, matchDetail)) {
         return Language.warningInputScore;
       }
   

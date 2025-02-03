@@ -28,7 +28,8 @@
   <tbody>
     <tr>
       <td style="font-weight: bold;">First Half</td>
-      <td [ngClass]="matchDetail.htStatus.toLowerCase()" class="set-status">{{ matchDetail.htStatus }}
+      <td style="font-weight: bold;" [ngClass]="matchDetail.htStatus.toLowerCase()" class="set-status">
+        {{ matchDetail.htStatus }}
       </td>
       <td [ngClass]="halfTimeResult.resultState">
         <input type="text" myOnlyInteger tabindex="1" [ngClass]="{'warning':matchDetail.isWarningHalfTimeHomeScore}"
@@ -54,24 +55,26 @@
     </tr>
     <tr>
       <td style="font-weight: bold;">Full Time</td>
-      <td [ngClass]="matchDetail.ftStatus.toLowerCase()" class="set-status">{{ matchDetail.ftStatus }}
+      <td style="font-weight: bold;" [ngClass]="matchDetail.ftStatus.toLowerCase()" class="set-status">
+        {{matchDetail.ftStatus }}
       </td>
       <td [ngClass]="fullTimeResult.resultState">
         <input type="text" myOnlyInteger tabindex="3" [ngClass]="{'warning':matchDetail.isWarningFinalHomeScore}"
           [disabled]="!fullTimeResult.checked || fullTimeResult.resultSettingData.isHoldResult"
-          [(ngModel)]="fullTimeResult.homeValue" />
+          [(ngModel)]="fullTimeResult.homeValue" (ngModelChange)="scoreChanged(fullTimeResult)" />
       </td>
       <td [ngClass]="fullTimeResult.resultState">
         <input type="text" myOnlyInteger tabindex="4" [ngClass]="{'warning':matchDetail.isWarningFinalAwayScore}"
           [disabled]="!fullTimeResult.checked || fullTimeResult.resultSettingData.isHoldResult"
-          [(ngModel)]="fullTimeResult.awayValue" />
+          [(ngModel)]="fullTimeResult.awayValue" (ngModelChange)="scoreChanged(fullTimeResult)" />
       </td>
       <td [ngClass]="{ mismatched: fullTimeResult.isMismatch}">
         {{ matchDetail.exFTHomeScore }} - {{ matchDetail.exFTAwayScore }}
       </td>
       <td>
         <input id="final-checkbox" type="checkbox" [(ngModel)]="fullTimeResult.checked"
-          [disabled]="fullTimeResult.resultSettingData.isHoldResult" (ngModelChange)="selectResult()" />
+          [disabled]="halfTimeResult.resultSettingData.isHoldResult || fullTimeResult.resultSettingData.isHoldResult"
+          (ngModelChange)="selectResult()" />
       </td>
       <td>
         <div [ngClass]="fullTimeResult.resultSettingData.iconHoldResult" (click)="isChangeSetting(fullTimeResult)">
@@ -98,8 +101,9 @@
           Uncalculate
         </button>
 
-        <button *ngIf="permission.canUncalculateInstant" [ngClass]="{ 'button instant': true}"
-          [disabled]="!enableAction" (click)="unCalcInstant()">
+        <button *ngIf="permission.canUncalculateInstant"
+          [ngClass]="{ 'button instant': true, 'button-disabled': !matchDetail.hasInstantCompleted}"
+          [disabled]="!matchDetail.hasInstantCompleted" (click)="unCalcInstant()">
           Uncalculate Ins.Settle
         </button>
         <button class="new-refund-button save-score" [disabled]="!enableAction" (click)="saveScore()">Save

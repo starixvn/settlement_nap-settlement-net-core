@@ -56,8 +56,8 @@ describe('VerifyFirstHalfHandler', () => {
   });
 
 
-  it('should return warningInputScore if verifyScoreHalfTime is true', async () => {
-    verifyScoreGoalService.verifyScoreHalfTime = jest.fn().mockReturnValue(true);
+  it('should return warningInputScore if verifyScore is true', async () => {
+    verifyScoreGoalService.verifyScore = jest.fn().mockReturnValue(true);
 
     await handler.handle(storage);
 
@@ -65,7 +65,7 @@ describe('VerifyFirstHalfHandler', () => {
   });
 
   it('should return needSemicolonOnGoalRecord if goalRecordNotExistSemicolon is true', async () => {
-    verifyScoreGoalService.verifyScoreHalfTime = jest.fn().mockReturnValue(false);
+    verifyScoreGoalService.verifyScore = jest.fn().mockReturnValue(false);
     verifyScoreGoalService.goalRecordNotExistSemicolon = jest.fn().mockReturnValue(true);
 
     await handler.handle(storage);
@@ -76,7 +76,7 @@ describe('VerifyFirstHalfHandler', () => {
 
   it('should return halfTimeGoalRecordNotConsistent if isHtGoalRecordInvalid is true', async () => {
     matchDetail.applyGoalRecord = true;
-    verifyScoreGoalService.verifyScoreHalfTime = jest.fn().mockReturnValue(false);
+    verifyScoreGoalService.verifyScore = jest.fn().mockReturnValue(false);
     verifyScoreGoalService.goalRecordNotExistSemicolon = jest.fn().mockReturnValue(false);
     verifyScoreGoalService.isHtGoalRecordInvalid = jest.fn().mockReturnValue(true);
 
@@ -88,7 +88,7 @@ describe('VerifyFirstHalfHandler', () => {
   it('should return confirmWithInconsistentScore if isScoreInconsistent is true', async () => {
     matchDetail.isScoreInconsistent = true;
     verifyScoreGoalService.isHtGoalRecordInvalid = jest.fn().mockReturnValue(true);
-    verifyScoreGoalService.verifyScoreHalfTime = jest.fn().mockReturnValue(false);
+    verifyScoreGoalService.verifyScore = jest.fn().mockReturnValue(false);
     verifyScoreGoalService.goalRecordNotExistSemicolon = jest.fn().mockReturnValue(false);
 
     await handler.handle(storage);
@@ -98,7 +98,7 @@ describe('VerifyFirstHalfHandler', () => {
 
   it('should return relatedMatchesNotCalc if isFirstHalfRelatedMatchesNotCalc is true', async () => {
     matchDetail.isFantasyMatch = true;
-    verifyScoreGoalService.verifyScoreHalfTime = jest.fn().mockReturnValue(false);
+    verifyScoreGoalService.verifyScore = jest.fn().mockReturnValue(false);
     verifyScoreGoalService.goalRecordNotExistSemicolon = jest.fn().mockReturnValue(false);
     verifyActionService.isFirstHalfRelatedMatchesNotCalc = jest.fn().mockReturnValue(true);
 
@@ -108,7 +108,7 @@ describe('VerifyFirstHalfHandler', () => {
   });
 
   it('should call checkNewStatus if no conditions are met', async () => {
-    verifyScoreGoalService.verifyScoreHalfTime = jest.fn().mockReturnValue(false);
+    verifyScoreGoalService.verifyScore = jest.fn().mockReturnValue(false);
     verifyScoreGoalService.goalRecordNotExistSemicolon = jest.fn().mockReturnValue(false);
     verifyActionService.checkNewStatus = jest.fn().mockReturnValue(null);
 
@@ -119,7 +119,7 @@ describe('VerifyFirstHalfHandler', () => {
 
   it('should return the result of checkNewStatus if no other conditions are met', async () => {
     const expectedResult = 'new status';
-    verifyScoreGoalService.verifyScoreHalfTime = jest.fn().mockReturnValue(false);
+    verifyScoreGoalService.verifyScore = jest.fn().mockReturnValue(false);
     verifyScoreGoalService.goalRecordNotExistSemicolon = jest.fn().mockReturnValue(false);
     verifyActionService.checkNewStatus = jest.fn().mockReturnValue(expectedResult);
 

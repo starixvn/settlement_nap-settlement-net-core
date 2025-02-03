@@ -70,6 +70,7 @@ public class MergeDataServiceImp : IMergeDataService
         baseTicketCounts.BetMarkedCount += siteTicketCounts.BetMarkedCount;
         baseTicketCounts.BetSettledCount += siteTicketCounts.BetSettledCount;
         baseTicketCounts.BetWaitingCount += siteTicketCounts.BetWaitingCount;
+        baseTicketCounts.BetRefundedCount += siteTicketCounts.BetRefundedCount;
         baseTicketCounts.BetCount += siteTicketCounts.BetCount;
     }
 

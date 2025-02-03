@@ -3,6 +3,8 @@ import * as _ from "lodash";
 import { EventStatus, TicketStatusText } from "../../../../shared/constants";
 import { ChildMatch, FantasyRelatedMatch, MatchDetail, Score } from '../models/match.model';
 import { VerificationBaseService } from "../../../services/verification-base.service";
+import { ResultDetail } from "../../../models";
+import { ResourceIds } from '../../../constants';
 
 @Injectable()
 export class VerifyScoreGoalService extends VerificationBaseService{
@@ -71,27 +73,23 @@ export class VerifyScoreGoalService extends VerificationBaseService{
         return false;
     }
 
-    public verifyScoreHalfTime(matchDetail: MatchDetail) {
-        if (this.isEmptyScore(matchDetail.halfTimeHomeScore) || this.isEmptyScore(matchDetail.halfTimeAwayScore)) {
-            matchDetail.isWarningHalfTimeHomeScore = this.isEmptyScore(matchDetail.halfTimeHomeScore);
-            matchDetail.isWarningHalfTimeAwayScore = this.isEmptyScore(matchDetail.halfTimeAwayScore);
+    public verifyScore(resultDetail: ResultDetail, matchDetail: MatchDetail, isHalfTime = true) {
+        if (this.isEmptyScore(resultDetail.homeValue) || this.isEmptyScore(resultDetail.awayValue)) {
+            if (isHalfTime) {
+                matchDetail.isWarningHalfTimeHomeScore = this.isEmptyScore(resultDetail.homeValue);
+                matchDetail.isWarningHalfTimeAwayScore = this.isEmptyScore(resultDetail.awayValue);
+            } else {
+                matchDetail.isWarningFinalHomeScore = this.isEmptyScore(resultDetail.homeValue);
+                matchDetail.isWarningFinalAwayScore = this.isEmptyScore(resultDetail.awayValue);
+            }
             return true;
         }
         return false;
     }
 
-    public verifyScoreFullTime(matchDetail: MatchDetail) {
-        if (this.isEmptyScore(matchDetail.finalHomeScore) || this.isEmptyScore(matchDetail.finalAwayScore)) {
-            matchDetail.isWarningFinalHomeScore = this.isEmptyScore(matchDetail.finalHomeScore);
-            matchDetail.isWarningFinalAwayScore = this.isEmptyScore(matchDetail.finalAwayScore);
-            return true;
-        }
-        return false;
-    }
-
-    public verifyScoreAll(matchDetail: MatchDetail) {
-        const isHTEmpty = this.verifyScoreHalfTime(matchDetail);
-        const isFTEmpty = this.verifyScoreFullTime(matchDetail);
+    public verifyScoreAll(resultDetails: ResultDetail[], matchDetail: MatchDetail) {
+        const isHTEmpty = this.verifyScore(resultDetails.find(r => r.resourceId === ResourceIds.halfTime), matchDetail, true);
+        const isFTEmpty = this.verifyScore(resultDetails.find(r => r.resourceId === ResourceIds.fullTime), matchDetail, false);
         return isFTEmpty || isHTEmpty;
     }
 

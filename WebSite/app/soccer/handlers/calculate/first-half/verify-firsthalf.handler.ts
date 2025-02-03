@@ -3,9 +3,10 @@ import { FantasyRelatedMatch, MatchDetail } from "../../../components/calc/model
 import { VerifyScoreGoalService } from "../../../components/calc/services/verify-score-goal.service";
 import { AbstractHandler } from "../../abstract.handler.native";
 import { Language } from "../../../../shared/language.native";
-import { CalculateAction } from "../../../../shared/constants";
+import { CalculateAction, ResourceIds } from "../../../../shared/constants";
 import { Storage } from "../../../storage/storage.service.native";
 import { VerifyActionService } from "../../../components/calc/services/verify-action.service";
+import { ResultDetail } from "../../../models";
 
 
 export class VerifyFirstHalfHandler extends AbstractHandler {
@@ -13,9 +14,9 @@ export class VerifyFirstHalfHandler extends AbstractHandler {
   #verifyActionService = inject(VerifyActionService);
 
   public async handle(storage: Storage) {
-    const { matchDetail } = storage.getMatch();
-
-    const errorMessage = await this.verifyFirstHalf(matchDetail, storage.getRelatedMatches());
+    const { matchDetail, resultDetails } = storage.getMatch();
+    const halftimeResult = resultDetails.find(x => x.resourceId === ResourceIds.halfTime);
+    const errorMessage = await this.verifyFirstHalf(halftimeResult, matchDetail, storage.getRelatedMatches());
     if (errorMessage) {
       storage.error(errorMessage);
       return;
@@ -24,8 +25,8 @@ export class VerifyFirstHalfHandler extends AbstractHandler {
   }
 
 
-  private async verifyFirstHalf(matchDetail: MatchDetail, relatedMatches: FantasyRelatedMatch[]) {
-    if (this.#verifyScoreGoalService.verifyScoreHalfTime(matchDetail)) {
+  private async verifyFirstHalf(halftimeResult: ResultDetail, matchDetail: MatchDetail, relatedMatches: FantasyRelatedMatch[]) {
+    if (this.#verifyScoreGoalService.verifyScore(halftimeResult, matchDetail)) {
       return Language.warningInputScore;
     }
 

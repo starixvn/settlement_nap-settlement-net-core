@@ -1,4 +1,4 @@
-import { inject, Injectable, signal } from "@angular/core";
+import { ChangeDetectorRef, inject, Injectable, signal } from "@angular/core";
 import { ModalDialogMessage } from "../../shared/models";
 import { Match, MatchDetail, UndoChecking } from "../components/calc/models/match.model";
 import { VerifyScoreGoalService } from "../components/calc/services/verify-score-goal.service";
@@ -6,6 +6,9 @@ import { ToastContainerDirective, ToastrService } from "ngx-toastr";
 import { Storage } from "./storage.service.native";
 import * as _ from "lodash";
 import { Language } from "../../shared/language.native";
+import { ResourceIds } from "../constants";
+import { ResultDetail } from "../models";
+import { ResultStatusId, SettlementStatusId } from "../../shared/constants";
 
 @Injectable()
 export class CalculateStorage implements Storage {
@@ -17,7 +20,9 @@ export class CalculateStorage implements Storage {
   #isResettleTicket = false;
   #isApplyHedgeMatch = false;
   #calculateAction: string;
-  #instantScore: UndoChecking
+  #instantScore: UndoChecking;
+  #halfTimeResult: ResultDetail;
+  #fullTimeResult: ResultDetail;
 
   match = this.#match.asReadonly();
   readonly dialogMessage = new ModalDialogMessage(Language.confirmationBox);
@@ -25,6 +30,14 @@ export class CalculateStorage implements Storage {
   // Getters
   getMatch() {
     return this.#match();
+  }
+
+  getHalfTimeResult(){
+    return this.#halfTimeResult;
+  }
+
+  getFullTimeResult(){
+    return this.#fullTimeResult;
   }
 
   getConfirmMessage() {
@@ -86,23 +99,44 @@ export class CalculateStorage implements Storage {
   setMatch(match: Match) {
     this.#match.set(match);
     this.#matchDetail = this.#match().matchDetail;
+    this.#halfTimeResult = this.#match().resultDetails.find((result) => result.resourceId === ResourceIds.halfTime);
+    this.#fullTimeResult = this.#match().resultDetails.find((result) => result.resourceId === ResourceIds.fullTime);
   }
+  
 
   setHaftTimeScore(homeScore: string, awayScore: string) {
-    this.#matchDetail.halfTimeHomeScore = homeScore;
-    this.#matchDetail.halfTimeAwayScore = awayScore;
+    this.#halfTimeResult.homeValue = homeScore;
+    this.#halfTimeResult.awayValue = awayScore;
   }
 
   setFullTimeScore(homeScore: string, awayScore: string) {
-    this.#matchDetail.finalHomeScore = homeScore;
-    this.#matchDetail.finalAwayScore = awayScore;
+    this.#fullTimeResult.homeValue = homeScore;
+    this.#fullTimeResult.awayValue = awayScore;
   }
 
   setInstantScore(score: UndoChecking) {
     this.#instantScore = score;
   }
 
+  updateMatchDetailScore() {
+    this.#matchDetail.finalAwayScore = this.#fullTimeResult.awayValue;
+    this.#matchDetail.finalHomeScore = this.#fullTimeResult.homeValue;
+    this.#matchDetail.halfTimeAwayScore = this.#halfTimeResult.awayValue;
+    this.#matchDetail.halfTimeHomeScore = this.#halfTimeResult.homeValue;
+  }
+
   // Other Methods
+
+  resetHomeAway() {
+    const statusNeedReset = [SettlementStatusId.Refund, SettlementStatusId.RefundFullTime, SettlementStatusId.RefundHalfTime];
+      this.#match().resultDetails.forEach((map) => {
+        const hideScore = statusNeedReset.some(status => map.settlementStatusId === status)
+          || (map.resultStatusId !== ResultStatusId.ManualCompleted && map.resultStatusId !== ResultStatusId.AutoCompleted);
+        map.homeValue = hideScore ? "" : map.homeValue;
+        map.awayValue = hideScore ? "" : map.awayValue;
+      });
+    }
+    
   error(message: string) {
     if (!_.isEmpty(message)) {
       this.toastrService.error(message);
@@ -121,10 +155,9 @@ export class CalculateStorage implements Storage {
   }
 
   changeScore() {
-    const { halfTimeHomeScore, halfTimeAwayScore, finalHomeScore, finalAwayScore } = this.#matchDetail;
-    const htExists = !this.verifyScoreGoalService.isEmptyScore(halfTimeHomeScore) && !this.verifyScoreGoalService.isEmptyScore(halfTimeAwayScore);
-    const ftExists = !this.verifyScoreGoalService.isEmptyScore(finalHomeScore) && !this.verifyScoreGoalService.isEmptyScore(finalAwayScore);
-    const isInconsistent = Number(halfTimeHomeScore) > Number(finalHomeScore) || Number(halfTimeAwayScore) > Number(finalAwayScore);
+    const htExists = !this.verifyScoreGoalService.isEmptyScore(this.#halfTimeResult.homeValue) && !this.verifyScoreGoalService.isEmptyScore(this.#halfTimeResult.awayValue);
+    const ftExists = !this.verifyScoreGoalService.isEmptyScore(this.#fullTimeResult.homeValue) && !this.verifyScoreGoalService.isEmptyScore(this.#fullTimeResult.awayValue);
+    const isInconsistent = Number(this.#halfTimeResult.homeValue) > Number(this.#fullTimeResult.homeValue) || Number(this.#halfTimeResult.awayValue) > Number(this.#fullTimeResult.awayValue);
     this.#matchDetail.isScoreInconsistent = htExists && ftExists && isInconsistent;
   }
 }

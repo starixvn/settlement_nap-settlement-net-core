@@ -7,17 +7,20 @@ import { ChildMatch, FantasyRelatedMatch, MatchDetail } from "../../../component
 import { Language } from "../../../../shared/language.native";
 import { CalculateAction, SettlementStatusId } from "../../../../shared/constants";
 import { VerifyActionService } from "../../../components/calc/services/verify-action.service";
+import { ResourceIds } from "../../../constants";
+import { ResultDetail } from "../../../models";
 
 export class VerifyFulltimeHandler extends AbstractHandler {
    #verifyScoreGoalService = inject(VerifyScoreGoalService);
   #verifyActionService = inject(VerifyActionService);
 
    async handle(storage: Storage) {
-    const {matchDetail, childMatches, fantasyMatch} = storage.getMatch();
+    const {matchDetail, childMatches, fantasyMatch, resultDetails} = storage.getMatch();
+    const fulltimeResult = resultDetails.find(x => x.resourceId === ResourceIds.fullTime);
     const relatedMatches = fantasyMatch?.relatedMatches;
     const selectedChildMatches = childMatches.filter(x => x.checked);
 
-    const errorMessage = await this.verifyFullTime(matchDetail, selectedChildMatches, relatedMatches);
+    const errorMessage = await this.verifyFullTime(fulltimeResult, matchDetail, selectedChildMatches, relatedMatches);
     if (errorMessage) {
       storage.error(errorMessage);
       return;
@@ -25,8 +28,9 @@ export class VerifyFulltimeHandler extends AbstractHandler {
     super.handle(storage);
   }
 
-  private async verifyFullTime(matchDetail: MatchDetail, selectedChildMatches: ChildMatch[], relatedMatches: FantasyRelatedMatch[]) {
-    if (this.#verifyScoreGoalService.verifyScoreFullTime(matchDetail)) {
+  private async verifyFullTime(fulltime: ResultDetail, matchDetail: MatchDetail, selectedChildMatches: ChildMatch[], relatedMatches: FantasyRelatedMatch[]) {
+    
+    if (this.#verifyScoreGoalService.verifyScore(fulltime, matchDetail, false)) {
       return Language.warningInputScore;
     }
     if (this.#verifyScoreGoalService.verifyScoreForChildMatch(matchDetail, selectedChildMatches)) {

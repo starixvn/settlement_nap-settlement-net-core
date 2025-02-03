@@ -97,7 +97,7 @@ public class MatchServiceImp(
         return new Match
         {
             MatchDetail = matchDetail,
-            ResultDetails = resultDetails,
+            ResultDetails = resultDetails.Where(result => result.SourceId == SourceType.Normal),
             TicketCounts = match.TicketCounts,
             ChildMatches = childMatches,
             FantasyMatch = fantasyMatch,
@@ -194,17 +194,18 @@ public class MatchServiceImp(
         var halfTimeResult = externalResultDetail.Find(result => result.ResourceId == ResourceType.Halftime);
         var fullTimeResult = externalResultDetail.Find(result => result.ResourceId == ResourceType.Final);
 
-
-        if (halfTimeResult != null && !string.IsNullOrWhiteSpace(halfTimeResult.AwayValue) && !string.IsNullOrWhiteSpace(halfTimeResult.HomeValue))
+        if (halfTimeResult != null && !string.IsNullOrWhiteSpace(halfTimeResult.AwayValue) &&
+            !string.IsNullOrWhiteSpace(halfTimeResult.HomeValue))
         {
-            match.ExHTAwayScore = int.Parse(halfTimeResult.AwayValue);
-            match.ExHTHomeScore = int.Parse(halfTimeResult.HomeValue);
+            match.ExHTAwayScore = halfTimeResult.AwayValue;
+            match.ExHTHomeScore = halfTimeResult.HomeValue;
         }
 
-        if (fullTimeResult != null && !string.IsNullOrWhiteSpace(fullTimeResult.AwayValue) && !string.IsNullOrWhiteSpace(fullTimeResult.HomeValue))
+        if (fullTimeResult != null && !string.IsNullOrWhiteSpace(fullTimeResult.AwayValue) &&
+            !string.IsNullOrWhiteSpace(fullTimeResult.HomeValue))
         {
-            match.ExFTAwayScore = int.Parse(fullTimeResult.AwayValue);
-            match.ExFTHomeScore = int.Parse(fullTimeResult.HomeValue);
+            match.ExFTAwayScore = fullTimeResult.AwayValue;
+            match.ExFTHomeScore = fullTimeResult.HomeValue;
         }
     }
 

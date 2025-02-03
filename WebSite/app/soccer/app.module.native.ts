@@ -52,7 +52,6 @@ import { CalculateActionsComponent } from "../tennis/components/calculate-action
         OnlyFirstTenScoreDirective,
         EarlySettlementComponent,
         GroupNameByIdPipe,
-        OnlyGoalRecordDirective,
         RefundComponent,
         SpecificBettypeComponent,
         ConfirmRefundComponent,

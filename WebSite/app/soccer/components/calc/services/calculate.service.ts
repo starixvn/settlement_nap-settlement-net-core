@@ -99,16 +99,19 @@ export class CalculateService {
   }
 
   calculateHalfTime(){
+    this.#storage.updateMatchDetailScore();
     this.#storage.setCalculateAction(CalculateAction.calculateHalfTime);
     this.#verifyHalfTimeHandler.handle(this.#storage);
   }
 
   calculateALL(){
+    this.#storage.updateMatchDetailScore();
     this.#storage.setCalculateAction(CalculateAction.calculate);
     this.#verifyAllHandler.handle(this.#storage);
   }
 
   calculateFullTime(){
+    this.#storage.updateMatchDetailScore();
     this.#storage.setCalculateAction(CalculateAction.calculateFullTime);
     this.#verifyFullTimeHandler.handle(this.#storage);
   }
