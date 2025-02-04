@@ -57,7 +57,7 @@ describe('UncalculateHandler', () => {
     storage.getConfirmMessage = jest.fn().mockReturnValue(modal);
 
 
-    handler.handler(storage);
+    handler.handle(storage);
 
     modal.message = Language.UncalculationConfirmMessage;
     expect(storage.setConfirmMessage).toHaveBeenNthCalledWith(1, Language.UncalculationConfirmMessage);

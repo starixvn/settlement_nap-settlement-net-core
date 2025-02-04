@@ -13,12 +13,12 @@ export class VerifyScoreGoalService extends VerificationBaseService{
             || betStatus.includes(`${EventStatus.refund};`) || betStatus.includes(EventStatus.abandonedFirstHalf);
     }
 
-    public isResultChangedFirstHalf(matchDetail: MatchDetail, lastestMatchDetail: MatchDetail) {
-        const isExistHalftime = !this.isEmptyScore(lastestMatchDetail.halfTimeHomeScore)
-            && !this.isEmptyScore(lastestMatchDetail.halfTimeAwayScore);
+    public isResultChangedFirstHalf(halfTimeResult: ResultDetail, lastestMatchDetail: MatchDetail) {
+        const isExistHalftime = !this.isEmptyScore(lastestMatchDetail.halfTimeHomeScore.toString())
+            && !this.isEmptyScore(lastestMatchDetail.halfTimeAwayScore.toString());
 
-        return isExistHalftime && (!_.isEqual(matchDetail.halfTimeHomeScore.toString(), lastestMatchDetail.halfTimeHomeScore.toString())
-            || !_.isEqual(matchDetail.halfTimeAwayScore.toString(), lastestMatchDetail.halfTimeAwayScore.toString()));
+        return isExistHalftime && (!_.isEqual(halfTimeResult.homeValue, lastestMatchDetail.halfTimeHomeScore.toString())
+            || !_.isEqual(halfTimeResult.awayValue, lastestMatchDetail.halfTimeAwayScore.toString()));
 
     }
 
@@ -38,12 +38,12 @@ export class VerifyScoreGoalService extends VerificationBaseService{
             || betStatus.includes(`${EventStatus.refund};`) || betStatus.includes(EventStatus.abandoned);
     }
 
-    public isResultChangedFullTime(matchDetail: MatchDetail, lastestMatchDetail: MatchDetail) {
-        const isExistFinalScore = !this.isEmptyScore(lastestMatchDetail.finalHomeScore)
-            && !this.isEmptyScore(lastestMatchDetail.finalAwayScore);
+    public isResultChangedFullTime(fullTimeResult: ResultDetail, lastestMatchDetail: MatchDetail) {
+        const isExistFinalScore = !this.isEmptyScore(lastestMatchDetail.finalHomeScore.toString())
+            && !this.isEmptyScore(lastestMatchDetail.finalAwayScore.toString());
 
-        return isExistFinalScore && (!_.isEqual(matchDetail.finalHomeScore.toString(), lastestMatchDetail.finalHomeScore.toString())
-            || !_.isEqual(matchDetail.finalAwayScore.toString(), lastestMatchDetail.finalAwayScore.toString()));
+        return isExistFinalScore && (!_.isEqual(fullTimeResult.homeValue, lastestMatchDetail.finalHomeScore.toString())
+            || !_.isEqual(fullTimeResult.awayValue, lastestMatchDetail.finalAwayScore.toString()));
     }
 
     public isGoalRecordChangedFullTime(matchDetail: MatchDetail, lastestMatchDetail: MatchDetail) {

@@ -12,7 +12,7 @@ export class ConfirmFullTimeHandler extends AbstractHandler {
   public async handle(storage: Storage): Promise<void> {
     const { matchDetail, childMatches } = storage.getMatch();
     const selectedChildMatches = childMatches.filter((childMatch) => childMatch.checked);
-    const needConfirm = await this.#verifyActionService.isScoreChangedFullTime(matchDetail, storage.getIsResettleTicket());
+    const needConfirm = await this.#verifyActionService.isScoreChangedFullTime(matchDetail, storage.getIsResettleTicket(), storage.getFullTimeResult());
     if (needConfirm) {
       this.autoCheckedReSettledTickets(storage);
     } else {

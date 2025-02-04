@@ -1,10 +1,10 @@
 import { Injectable } from "@angular/core";
 import * as _ from "lodash";
-import { TicketStatusText, CalculateAction, SettlementStatusId } from "../../../../shared/constants";
-import { Language } from '../../../../shared/language.native';
-import { ChildMatch, FantasyRelatedMatch, MatchDetail } from '../models/match.model';
+import { TicketStatusText, SettlementStatusId } from "../../../../shared/constants";
+import { FantasyRelatedMatch, MatchDetail } from '../models/match.model';
 import { VerifyScoreGoalService } from "./verify-score-goal.service";
 import { RequestService } from './request.service';
+import { ResultDetail } from "../../../models";
 
 @Injectable()
 export class VerifyActionService {
@@ -29,7 +29,7 @@ export class VerifyActionService {
     return this.isFirstHalfRelatedMatchesNotCalc(relatedMatches) || this.isFullTimeRelatedMatchesNotCalc(relatedMatches);
   }
 
-  public async isScoreChangedFirstHalf(matchDetail: MatchDetail, isReSettledTickets: boolean) {
+  public async isScoreChangedFirstHalf(matchDetail: MatchDetail, isReSettledTickets: boolean, halfTimeResult: ResultDetail) {
     if (isReSettledTickets) {
       return false;
     }
@@ -38,12 +38,12 @@ export class VerifyActionService {
 
     return _.isEqual(lastestMatch.htStatus, TicketStatusText.calculated)
       && (this.verifyScoreGoalService.isSettledFirstHalf(lastestMatch.betStatus)
-        || this.verifyScoreGoalService.isResultChangedFirstHalf(matchDetail, lastestMatch)
+        || this.verifyScoreGoalService.isResultChangedFirstHalf(halfTimeResult, lastestMatch)
         || this.verifyScoreGoalService.isGoalRecordChangedFirstHalf(matchDetail, lastestMatch));
 
   }
 
-  public async isScoreChangedFullTime(matchDetail: MatchDetail, isReSettledTickets: boolean) {
+  public async isScoreChangedFullTime(matchDetail: MatchDetail, isReSettledTickets: boolean, fulltimeResult: ResultDetail) {
     if (isReSettledTickets) {
       return false;
     }
@@ -51,12 +51,12 @@ export class VerifyActionService {
 
     return _.isEqual(lastestMatch.ftStatus, TicketStatusText.calculated)
       && (this.verifyScoreGoalService.isSettledFullTime(lastestMatch.betStatus)
-        || this.verifyScoreGoalService.isResultChangedFullTime(matchDetail, lastestMatch)
+        || this.verifyScoreGoalService.isResultChangedFullTime(fulltimeResult, lastestMatch)
         || this.verifyScoreGoalService.isGoalRecordChangedFullTime(matchDetail, lastestMatch));
 
   }
 
-  public async isScoreChangedAll(matchDetail: MatchDetail, isReSettledTickets: boolean) {
+  public async isScoreChangedAll(matchDetail: MatchDetail, isReSettledTickets: boolean, halfTimeResult: ResultDetail, fulltimeResult: ResultDetail) {
     if (isReSettledTickets) {
       return false;
     }
@@ -65,8 +65,8 @@ export class VerifyActionService {
     return (_.isEqual(lastestMatch.htStatus, TicketStatusText.calculated)
       || _.isEqual(lastestMatch.ftStatus, TicketStatusText.calculated))
       && (this.verifyScoreGoalService.isSettledAll(lastestMatch.betStatus)
-        || this.verifyScoreGoalService.isResultChangedFirstHalf(matchDetail, lastestMatch)
-        || this.verifyScoreGoalService.isResultChangedFullTime(matchDetail, lastestMatch)
+        || this.verifyScoreGoalService.isResultChangedFirstHalf(halfTimeResult, lastestMatch)
+        || this.verifyScoreGoalService.isResultChangedFullTime(fulltimeResult, lastestMatch)
         || this.verifyScoreGoalService.isGoalRecordChangedAll(matchDetail, lastestMatch));
 
   }

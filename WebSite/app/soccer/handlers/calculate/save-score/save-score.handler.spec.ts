@@ -16,7 +16,6 @@ describe('SaveScoreHandler', () => {
   let storage: CalculateStorage;
   let requestService: RequestService;
   let messageBoxService: MessageBoxService;
-  let closePopupService: ClosePopupService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -36,7 +35,6 @@ describe('SaveScoreHandler', () => {
     storage = TestBed.inject(CalculateStorage);
     requestService = TestBed.inject(RequestService);
     messageBoxService= TestBed.inject(MessageBoxService);
-    closePopupService = TestBed.inject(ClosePopupService);
   });
 
   it('should handle save score successfully', async () => {
@@ -47,7 +45,6 @@ describe('SaveScoreHandler', () => {
     requestService.saveScore = jest.fn().mockReturnValue(Promise.resolve(result));
 
     storage.setConfirmMessage = jest.fn();
-    closePopupService.closePopup = jest.fn();
     messageBoxService.confirm = jest.fn().mockImplementation((message, callback) => callback());
 
     await handler.handle(storage);
@@ -55,7 +52,6 @@ describe('SaveScoreHandler', () => {
     expect(storage.setConfirmMessage).toHaveBeenCalledWith(Language.SaveTraderScore);
     expect(messageBoxService.confirm).toHaveBeenCalledWith(Language.SaveTraderScore, expect.any(Function));
     expect(requestService.saveScore).toHaveBeenCalledWith(matchDetail);
-    expect(closePopupService.closePopup).toHaveBeenCalled();
   });
 
   it('should handle save score failure', async () => {

@@ -12,7 +12,7 @@ export class ConfirmAllHandler extends AbstractHandler {
   async handle(storage: Storage): Promise<void> {
     const { matchDetail, childMatches } = storage.getMatch();
     const selectedChildMatches = childMatches.filter((childMatch) => childMatch.checked);
-    const needConfirm = await this.#verifyActionService.isScoreChangedAll(matchDetail, storage.getIsResettleTicket());
+    const needConfirm = await this.#verifyActionService.isScoreChangedAll(matchDetail, storage.getIsResettleTicket(), storage.getHalfTimeResult(), storage.getFullTimeResult());
     if (needConfirm) {
       this.autoCheckedReSettledTickets(storage);
     } else {

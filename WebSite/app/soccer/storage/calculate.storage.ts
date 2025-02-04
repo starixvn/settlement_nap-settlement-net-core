@@ -130,8 +130,7 @@ export class CalculateStorage implements Storage {
   resetHomeAway() {
     const statusNeedReset = [SettlementStatusId.Refund, SettlementStatusId.RefundFullTime, SettlementStatusId.RefundHalfTime];
       this.#match().resultDetails.forEach((map) => {
-        const hideScore = statusNeedReset.some(status => map.settlementStatusId === status)
-          || (map.resultStatusId !== ResultStatusId.ManualCompleted && map.resultStatusId !== ResultStatusId.AutoCompleted);
+        const hideScore = statusNeedReset.some(status => map.settlementStatusId === status);
         map.homeValue = hideScore ? "" : map.homeValue;
         map.awayValue = hideScore ? "" : map.awayValue;
       });

@@ -5,6 +5,7 @@ import { GoalNameIcon } from '../models/constant.native';
 import { GoalIcon } from '../../../models/goal-icon.model';
 import { VerifyScoreGoalService } from "./verify-score-goal.service";
 import { Goal } from "../../../constants";
+import { ResultDetail } from "../../../models";
 
 @Injectable()
 export class GoalRecordWithOutSemicolonService {
@@ -21,13 +22,13 @@ export class GoalRecordWithOutSemicolonService {
         return goalIcon;
     }
 
-    public manyCharacterGoalRecord(matchDetail: MatchDetail, goalRecord: string, goalIcon: GoalIcon) {
+    public manyCharacterGoalRecord(fulltimeResult: ResultDetail, goalRecord: string, goalIcon: GoalIcon) {
         const goalRecordLength = goalRecord.length;
         const left = goalRecord.substring(0, 1);
         const right = goalRecord.substring(goalRecordLength - 1, goalRecordLength);
 
-        if (!this.verifyScoreGoalService.isEmptyScore(matchDetail.finalHomeScore) 
-            && !this.verifyScoreGoalService.isEmptyScore(matchDetail.finalAwayScore)) {
+        if (!this.verifyScoreGoalService.isEmptyScore(fulltimeResult.homeValue) 
+            && !this.verifyScoreGoalService.isEmptyScore(fulltimeResult.awayValue)) {
             if (_.isEqual(left, Goal.home) && _.isEqual(right, Goal.home)) {
                 goalIcon.homeGoal = GoalNameIcon.firstLastGoal;
             } else if (_.isEqual(left, Goal.away) && _.isEqual(right, Goal.away)) {

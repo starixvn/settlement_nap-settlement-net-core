@@ -14,11 +14,11 @@ export class VerifyAllHandler extends AbstractHandler {
 
 
   async handle(storage: Storage) {
-      const {matchDetail, childMatches, fantasyMatch, resultDetails} = storage.getMatch();
+      const {matchDetail, childMatches, fantasyMatch} = storage.getMatch();
       const relatedMatches = fantasyMatch?.relatedMatches;
       const selectedChildMatches = childMatches.filter(x => x.checked);
   
-      const errorMessage = await this.verifyAll(resultDetails, matchDetail, selectedChildMatches, relatedMatches);
+      const errorMessage = await this.verifyAll(storage, matchDetail, selectedChildMatches, relatedMatches);
       if (errorMessage) {
         storage.error(errorMessage);
         return;
@@ -26,8 +26,9 @@ export class VerifyAllHandler extends AbstractHandler {
       super.handle(storage);
     }
 
-  private  async verifyAll(resultDetails: ResultDetail[], matchDetail: MatchDetail, selectedChildMatches: ChildMatch[], relatedMatches: FantasyRelatedMatch[]) {
-      if (this.#verifyScoreGoalService.verifyScoreAll(resultDetails, matchDetail)) {
+  private  async verifyAll(storage: Storage, matchDetail: MatchDetail, selectedChildMatches: ChildMatch[], relatedMatches: FantasyRelatedMatch[]) {
+      const {resultDetails }  = storage.getMatch();
+    if (this.#verifyScoreGoalService.verifyScoreAll(resultDetails, matchDetail)) {
         return Language.warningInputScore;
       }
   
@@ -40,12 +41,12 @@ export class VerifyAllHandler extends AbstractHandler {
         return Language.soccer.needSemicolonOnGoalRecord;
       }
   
-      if (this.#verifyScoreGoalService.isHTGoalRecordConsistent(matchDetail)) {
+      if (this.#verifyScoreGoalService.isHTGoalRecordConsistentWithResultDetail(matchDetail, storage.getHalfTimeResult())) {
         matchDetail.isWarningGoalRecord = true;
         return Language.soccer.halfTimeGoalRecordNotConsistent;
       }
   
-      if (this.#verifyScoreGoalService.isFullTimeGoalRecordInvalid(matchDetail)) {
+      if (this.#verifyScoreGoalService.isFullTimeGoalRecordInvalidWithResultDetail(matchDetail, storage.getFullTimeResult())) {
         matchDetail.isWarningGoalRecord = true;
         return Language.soccer.goalRecordNotConsistent;
       }

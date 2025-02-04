@@ -49,7 +49,7 @@ export class VerifyFulltimeHandler extends AbstractHandler {
       matchDetail.isWarningGoalRecord = true;
       return Language.soccer.halfTimeGoalRecordNotConsistent;
     }
-    if (this.#verifyScoreGoalService.isFullTimeGoalRecordInvalid(matchDetail)) {
+    if (this.#verifyScoreGoalService.isFullTimeGoalRecordInvalidWithResultDetail(matchDetail, fulltime)) {
       matchDetail.isWarningGoalRecord = true;
       return Language.soccer.goalRecordNotConsistent;
     }

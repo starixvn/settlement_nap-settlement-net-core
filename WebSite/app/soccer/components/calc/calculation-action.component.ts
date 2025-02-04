@@ -65,15 +65,17 @@ export class CalculationActionComponent implements OnInit {
   }
 
   copyScore() {
+    this.#storage.clear();
     this.#calculateService.copyScore();
-    this.scoreChanged(this.halfTimeResult);
   }
 
   selectResult() {
+    this.#storage.clear();
     this.enableAction = this.halfTimeResult.checked || this.fullTimeResult.checked;
   }
 
   isChangeSetting(resultDetail: ResultDetail) {
+    this.#storage.clear();
     const query = new ResultSettingQuery(this.matchDetail.matchId, ResultSettingType.holdResult,
       !resultDetail.resultSettingData.isHoldResult, resultDetail.resourceId);
     this.#storage.setConfirmMessage(Language.holdResultConfirmMessage);
@@ -142,8 +144,9 @@ export class CalculationActionComponent implements OnInit {
   }
 
   goalRecordModelChange(value: string) {
+    this.#storage.clear();
     this.matchDetail.goalRecord = value;
-    this.matchDetail.goalIcon = this.#goalIconService.generateGoalIcon(this.matchDetail);
+    this.matchDetail.goalIcon = this.#goalIconService.generateGoalIcon(this.matchDetail, this.halfTimeResult, this.fullTimeResult);
   }
 
   private getResultSettingIcon(result: ResultDetail) {

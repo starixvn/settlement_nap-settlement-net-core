@@ -1,8 +1,11 @@
 import { ModalDialogMessage } from "../../shared/models";
 import { FantasyRelatedMatch, Match, UndoChecking } from "../components/calc/models/match.model";
+import { ResultDetail } from "../models";
 
 export interface Storage {
   getMatch(): Match
+  getHalfTimeResult(): ResultDetail
+  getFullTimeResult(): ResultDetail
   getRelatedMatches(): FantasyRelatedMatch[]
   getIsResettleTicket(): boolean
   setIsResettleTicket(value: boolean): void

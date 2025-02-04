@@ -35,13 +35,13 @@ export class VerifyFirstHalfHandler extends AbstractHandler {
       return Language.soccer.needSemicolonOnGoalRecord;
     }
 
-    if (matchDetail.applyGoalRecord && this.#verifyScoreGoalService.isHtGoalRecordInvalid(matchDetail)) {
+    if (matchDetail.applyGoalRecord && this.#verifyScoreGoalService.isHtGoalRecordInvalidWithResultDetail(matchDetail, halftimeResult)) {
       matchDetail.isWarningGoalRecord = true;
       return Language.soccer.halfTimeGoalRecordNotConsistent;
     }
 
     if (matchDetail.isScoreInconsistent) {
-      return Language.soccer.confirmWithInconsistentScore;
+      return Language.soccer.incorrectHalftimeAndFullTimeScore;
     }
 
     if (matchDetail.isFantasyMatch && this.#verifyActionService.isFirstHalfRelatedMatchesNotCalc(relatedMatches)) {

@@ -150,10 +150,8 @@ export class CalculationComponent implements Soccer {
     }
 
     autoFillFantasyMatch(event: Score) {
-        this.matchDetail.halfTimeHomeScore = event.halfTimeHomeScore.toString();
-        this.matchDetail.halfTimeAwayScore = event.halfTimeAwayScore.toString();
-        this.matchDetail.finalHomeScore = event.finalHomeScore.toString();
-        this.matchDetail.finalAwayScore = event.finalAwayScore.toString();
+        this.#storage.setFullTimeScore(event.finalHomeScore.toString(), event.finalAwayScore.toString());
+        this.#storage.setHaftTimeScore(event.halfTimeHomeScore.toString(), event.halfTimeAwayScore.toString());
     }
 
     changeApplyHedgeMatch() {

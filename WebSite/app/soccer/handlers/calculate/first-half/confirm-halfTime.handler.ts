@@ -11,7 +11,7 @@ export class ConfirmHalfTimeHandler extends AbstractHandler {
 
   public async handle(storage: Storage): Promise<void> {
     const {matchDetail} = storage.getMatch();
-    const needConfirm = await this.#verifyActionService.isScoreChangedFirstHalf(matchDetail, storage.getIsResettleTicket());
+    const needConfirm = await this.#verifyActionService.isScoreChangedFirstHalf(matchDetail, storage.getIsResettleTicket(), storage.getHalfTimeResult());
     if (needConfirm) {
       storage.setConfirmMessage(Language.recalculateNotification)
       this.#messageBoxService.confirm(storage.getConfirmMessage(), () => {
