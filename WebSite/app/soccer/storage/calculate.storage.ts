@@ -101,6 +101,7 @@ export class CalculateStorage implements Storage {
     this.#matchDetail = this.#match().matchDetail;
     this.#halfTimeResult = this.#match().resultDetails.find((result) => result.resourceId === ResourceIds.halfTime);
     this.#fullTimeResult = this.#match().resultDetails.find((result) => result.resourceId === ResourceIds.fullTime);
+    this.#isApplyHedgeMatch = this.#match().hedgeMatchDetail != null && !this.#match().hedgeMatchDetail.isUndecided;;
   }
   
 

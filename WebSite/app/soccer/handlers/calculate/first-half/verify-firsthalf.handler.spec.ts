@@ -10,6 +10,7 @@ import { CalculateStorage } from '../../../storage/calculate.storage';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { HttpClientModule } from '@angular/common/http';
 import { RequestService } from '../../../components/calc/services/request.service';
+import { ResultDetail } from '../../../models';
 
 describe('VerifyFirstHalfHandler', () => {
   let handler: VerifyFirstHalfHandler;
@@ -52,6 +53,7 @@ describe('VerifyFirstHalfHandler', () => {
     matchDetail.isFantasyMatch = false;
     storage.getMatch = jest.fn().mockReturnValue(match);
     storage.getRelatedMatches = jest.fn().mockReturnValue([]);
+    storage.getHalfTimeResult= jest.fn().mockReturnValue(new ResultDetail()),
     storage.error = jest.fn();
   });
 
@@ -78,7 +80,7 @@ describe('VerifyFirstHalfHandler', () => {
     matchDetail.applyGoalRecord = true;
     verifyScoreGoalService.verifyScore = jest.fn().mockReturnValue(false);
     verifyScoreGoalService.goalRecordNotExistSemicolon = jest.fn().mockReturnValue(false);
-    verifyScoreGoalService.isHtGoalRecordInvalid = jest.fn().mockReturnValue(true);
+    verifyScoreGoalService.isHtGoalRecordInvalidWithResultDetail = jest.fn().mockReturnValue(true);
 
     await handler.handle(storage);
 
@@ -87,13 +89,13 @@ describe('VerifyFirstHalfHandler', () => {
 
   it('should return confirmWithInconsistentScore if isScoreInconsistent is true', async () => {
     matchDetail.isScoreInconsistent = true;
-    verifyScoreGoalService.isHtGoalRecordInvalid = jest.fn().mockReturnValue(true);
+    verifyScoreGoalService.isHtGoalRecordInvalidWithResultDetail = jest.fn().mockReturnValue(true);
     verifyScoreGoalService.verifyScore = jest.fn().mockReturnValue(false);
     verifyScoreGoalService.goalRecordNotExistSemicolon = jest.fn().mockReturnValue(false);
 
     await handler.handle(storage);
 
-    expect(storage.error).toHaveBeenCalledWith(Language.soccer.confirmWithInconsistentScore);
+    expect(storage.error).toHaveBeenCalledWith(Language.soccer.incorrectHalftimeAndFullTimeScore);
   });
 
   it('should return relatedMatchesNotCalc if isFirstHalfRelatedMatchesNotCalc is true', async () => {

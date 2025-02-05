@@ -88,7 +88,7 @@ export class CalculationComponent implements Soccer {
         this.isMatchReady = this.isReadyToSettle(this.matchDetail);
         this.childMatches = this.match.childMatches;
         this.hedgeMatchDetail = this.match.hedgeMatchDetail;
-        this.applyHedgeMatch = this.hedgeMatchDetail != null && !this.hedgeMatchDetail.isUndecided;
+        this.applyHedgeMatch = this.#storage.isApplyHedgeMatch();
         this.matchDetail.originalGoalRecord = this.matchDetail.goalRecord;
         this.relatedMatches = this.matchDetail.isFantasyMatch
             ? this.match.fantasyMatch.relatedMatches.filter((match) => !match.isDeleted)

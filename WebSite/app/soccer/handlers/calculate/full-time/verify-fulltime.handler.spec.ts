@@ -13,6 +13,7 @@ import { RequestService } from "../../../components/calc/services/request.servic
 import { ClosePopupService, MessageBoxService } from "../../../../shared/services";
 import { Permission } from "../../../../shared/models/sportsbook-sop/permission.model";
 import { AbstractHandler } from "../../abstract.handler.native";
+import { ResultDetail } from "../../../models";
 
 describe("VerifyFulltimeHandler", () => {
   let handler: VerifyFulltimeHandler;
@@ -56,21 +57,21 @@ describe("VerifyFulltimeHandler", () => {
     storage.error = jest.fn();
     matchDetail.isScoreInconsistent = false;
     storage.getMatch = jest.fn().mockReturnValue(match);
+    storage.getFullTimeResult= jest.fn().mockReturnValue(new ResultDetail()),
 
-    verifyScoreGoalService.verifyScoreFullTime = jest.fn().mockReturnValue(false);
+    verifyScoreGoalService.verifyScore = jest.fn().mockReturnValue(false);
     verifyScoreGoalService.verifyScoreForChildMatch = jest.fn().mockReturnValue(false);
     verifyScoreGoalService.goalRecordExistSemicolon = jest.fn().mockReturnValue(false);
 
     verifyScoreGoalService.isRefundHalfTime = jest.fn().mockReturnValue(false);
     verifyScoreGoalService.goalRecordNotExistSemicolon = jest.fn().mockReturnValue(false)
     verifyScoreGoalService.isHTGoalRecordConsistent = jest.fn().mockReturnValue(false);
-    verifyScoreGoalService.isFullTimeGoalRecordInvalid = jest.fn().mockReturnValue(false);
-    verifyScoreGoalService.isFullTimeGoalRecordInvalid = jest.fn().mockReturnValue(false);
+    verifyScoreGoalService.isFullTimeGoalRecordInvalidWithResultDetail = jest.fn().mockReturnValue(false);
     verifyActionService.isFullTimeRelatedMatchesNotCalc = jest.fn().mockReturnValue(false);
   });
 
   it("should return warningInputScore if verifyScoreFullTime returns true", async () => {
-    verifyScoreGoalService.verifyScoreFullTime = jest.fn().mockReturnValue(true);
+    verifyScoreGoalService.verifyScore = jest.fn().mockReturnValue(true);
 
     await handler.handle(storage);
 
@@ -112,7 +113,7 @@ describe("VerifyFulltimeHandler", () => {
   });
 
   it("should return goalRecordNotConsistent if isFullTimeGoalRecordInvalid returns true", async () => {
-    verifyScoreGoalService.isFullTimeGoalRecordInvalid = jest.fn().mockReturnValue(true);
+    verifyScoreGoalService.isFullTimeGoalRecordInvalidWithResultDetail = jest.fn().mockReturnValue(true);
 
     await handler.handle(storage);
 

@@ -1,7 +1,6 @@
 import { VerifyScoreHandler } from './verify-score.hanlder';
 import { VerifyScoreGoalService } from '../../../components/calc/services/verify-score-goal.service';
 import { Language } from '../../../../shared/language.native';
-import { Storage } from '../../../storage/storage.service.native';
 import { ResultDetail } from '../../../models';
 import { TestBed } from '@angular/core/testing';
 import { CalculateStorage } from '../../../storage/calculate.storage';

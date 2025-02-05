@@ -11,6 +11,7 @@ import { ToastrModule, ToastrService } from "ngx-toastr";
 import { ChildMatch, Match, MatchDetail } from "../../../components/calc/models/match.model";
 import { Permission } from "../../../../shared/models/sportsbook-sop/permission.model";
 import { Storage } from "../../../storage/storage.service.native";
+import { ResultDetail } from "../../../models";
 
 describe('ConfirmAllHandler', () => {
   let handler: ConfirmAllHandler;
@@ -64,6 +65,8 @@ describe('ConfirmAllHandler', () => {
           getMatch: jest.fn(),
           setConfirmMessage: jest.fn(),
           getConfirmMessage: jest.fn(),
+          getHalfTimeResult: jest.fn().mockReturnValue(new ResultDetail()),
+          getFullTimeResult: jest.fn().mockReturnValue(new ResultDetail())
         } as unknown as Storage;
   });
 

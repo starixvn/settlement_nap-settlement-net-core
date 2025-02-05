@@ -15,7 +15,7 @@ public class SaveScoreCriteria : NonQueryCommand, IReturnValue
 
     public override string GetSettingKey()
     {
-        return "NAP_Set_ExternalResultDetailUpd";
+        return "NAP_Set_ResultDetailUpd";
     }
 
     public override bool IsValid()

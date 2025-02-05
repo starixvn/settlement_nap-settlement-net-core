@@ -1,4 +1,6 @@
-﻿using Settlement.Core.Constants;
+﻿using Fanex.Settlement.ScaleOut.Criteria.Update;
+using Settlement.Core.Configurations;
+using Settlement.Core.Constants;
 using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
@@ -282,6 +284,7 @@ public class CalculateServiceImp(
             const int actionLog = 81059;
             var message = createMessageSaveScore(request);
             await logService.ActionLog(request.MatchId, message, actionLog);
+            await updateResult(criteria, request);
             return new Result();
         }
 
@@ -290,6 +293,34 @@ public class CalculateServiceImp(
             ErrCode = criteria.ErrCode,
             ErrMsg = criteria.ErrMsg
         };
+    }
+
+    private async Task updateResult(SaveScoreCriteria saveScoreCriteria, SaveScoreRequest request)
+    {
+        var criteria = new UpdateMatchInfoCriteria()
+        {
+            MatchId = saveScoreCriteria.MatchId,
+            Action = SettlementFunctionKeys.SaveScore,
+            AdminId = saveScoreCriteria.UserId
+        };
+
+        foreach (var result in request.ResultDetails)
+        {
+            switch (result.ResourceId)
+            {
+                case ResourceType.Final:
+                    criteria.FullTimeHome = int.Parse(result.HomeValue);
+                    criteria.FullTimeAway = int.Parse(result.AwayValue);
+                    break;
+                case ResourceType.Halftime:
+                    criteria.HalfTimeHome = int.Parse(result.HomeValue);
+                    criteria.HalfTimeAway = int.Parse(result.AwayValue);
+                    break;
+                default: continue;
+            }
+        }
+
+        await repository.ExecuteAsync(criteria);
     }
 
     private string createMessageSaveScore(SaveScoreRequest request)

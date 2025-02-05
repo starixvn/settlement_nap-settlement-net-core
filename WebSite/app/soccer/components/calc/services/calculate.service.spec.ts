@@ -17,6 +17,7 @@ import { RequestService } from './request.service';
 import { ScoreService } from './score.service';
 import { VerifyActionService } from './verify-action.service';
 import { ClosePopupService } from '../../../../shared/services';
+import { Storage } from '../../../storage/storage.service.native';
 
 describe('CalculateService', () => {
   let service: CalculateService;

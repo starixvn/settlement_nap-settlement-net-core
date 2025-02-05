@@ -50,6 +50,13 @@ describe('VerifyAllHandler', () => {
     storage = TestBed.inject(CalculateStorage) ;
     match.matchDetail.isScoreInconsistent = false;
     match.matchDetail.isFantasyMatch = false;
+
+    verifyScoreGoalService.verifyScoreAll = jest.fn().mockReturnValue(false);
+    verifyScoreGoalService.verifyScoreForChildMatch = jest.fn().mockReturnValue(false);
+    verifyScoreGoalService.goalRecordNotExistSemicolon = jest.fn().mockReturnValue(false);
+    verifyScoreGoalService.isHTGoalRecordConsistentWithResultDetail = jest.fn().mockReturnValue(false);
+    verifyScoreGoalService.isFullTimeGoalRecordInvalidWithResultDetail = jest.fn().mockReturnValue(false);
+    verifyActionService.isAllResultRelatedMatchesNotCalc = jest.fn().mockReturnValue(false);
   });
 
   it('should handle verification errors correctly', async () => {
@@ -67,7 +74,6 @@ describe('VerifyAllHandler', () => {
     storage.error = jest.fn();
     storage.getMatch = jest.fn().mockReturnValue(match);
 
-    verifyScoreGoalService.verifyScoreAll = jest.fn().mockReturnValue(false);
     verifyScoreGoalService.verifyScoreForChildMatch = jest.fn().mockReturnValue(true);
 
     await handler.handle(storage);
@@ -79,8 +85,6 @@ describe('VerifyAllHandler', () => {
     storage.error = jest.fn();
     storage.getMatch = jest.fn().mockReturnValue(match);
 
-    verifyScoreGoalService.verifyScoreAll = jest.fn().mockReturnValue(false);
-    verifyScoreGoalService.verifyScoreForChildMatch = jest.fn().mockReturnValue(false);
     verifyScoreGoalService.goalRecordNotExistSemicolon = jest.fn().mockReturnValue(true);
 
     await handler.handle(storage);
@@ -92,10 +96,7 @@ describe('VerifyAllHandler', () => {
     storage.getMatch = jest.fn().mockReturnValue(match);
     storage.error = jest.fn();
 
-    verifyScoreGoalService.verifyScoreAll = jest.fn().mockReturnValue(false);
-    verifyScoreGoalService.verifyScoreForChildMatch = jest.fn().mockReturnValue(false);
-    verifyScoreGoalService.goalRecordNotExistSemicolon = jest.fn().mockReturnValue(false);
-    verifyScoreGoalService.isHTGoalRecordConsistent = jest.fn().mockReturnValue(true);
+    verifyScoreGoalService.isHTGoalRecordConsistentWithResultDetail = jest.fn().mockReturnValue(true);
 
     await handler.handle(storage);
 
@@ -106,11 +107,7 @@ describe('VerifyAllHandler', () => {
     storage.getMatch = jest.fn().mockReturnValue(match);
     storage.error = jest.fn();
 
-    verifyScoreGoalService.verifyScoreAll = jest.fn().mockReturnValue(false);
-    verifyScoreGoalService.verifyScoreForChildMatch = jest.fn().mockReturnValue(false);
-    verifyScoreGoalService.goalRecordNotExistSemicolon = jest.fn().mockReturnValue(false);
-    verifyScoreGoalService.isHTGoalRecordConsistent = jest.fn().mockReturnValue(false);
-    verifyScoreGoalService.isFullTimeGoalRecordInvalid = jest.fn().mockReturnValue(true);
+    verifyScoreGoalService.isFullTimeGoalRecordInvalidWithResultDetail = jest.fn().mockReturnValue(true);
 
     await handler.handle(storage);
 
@@ -122,13 +119,6 @@ describe('VerifyAllHandler', () => {
     storage.getMatch = jest.fn().mockReturnValue(match);
     storage.error = jest.fn();
 
-    verifyScoreGoalService.verifyScoreAll = jest.fn().mockReturnValue(false);
-    verifyScoreGoalService.verifyScoreForChildMatch = jest.fn().mockReturnValue(false);
-    verifyScoreGoalService.goalRecordNotExistSemicolon = jest.fn().mockReturnValue(false);
-    verifyScoreGoalService.isHTGoalRecordConsistent = jest.fn().mockReturnValue(false);
-    verifyScoreGoalService.isFullTimeGoalRecordInvalid = jest.fn().mockReturnValue(false);
-
-
     await handler.handle(storage);
 
     expect(storage.error).toHaveBeenCalledWith(Language.soccer.incorrectHalftimeAndFullTimeScore);
@@ -139,11 +129,6 @@ describe('VerifyAllHandler', () => {
     storage.getMatch = jest.fn().mockReturnValue(match);
     storage.error = jest.fn();
 
-    verifyScoreGoalService.verifyScoreAll = jest.fn().mockReturnValue(false);
-    verifyScoreGoalService.verifyScoreForChildMatch = jest.fn().mockReturnValue(false);
-    verifyScoreGoalService.goalRecordNotExistSemicolon = jest.fn().mockReturnValue(false);
-    verifyScoreGoalService.isHTGoalRecordConsistent = jest.fn().mockReturnValue(false);
-    verifyScoreGoalService.isFullTimeGoalRecordInvalid = jest.fn().mockReturnValue(false);
     verifyActionService.isAllResultRelatedMatchesNotCalc = jest.fn().mockReturnValue(true);
 
     await handler.handle(storage);
@@ -155,12 +140,6 @@ describe('VerifyAllHandler', () => {
     storage.getMatch = jest.fn().mockReturnValue(match);
     storage.error = jest.fn();
 
-    verifyScoreGoalService.verifyScoreAll = jest.fn().mockReturnValue(false);
-    verifyScoreGoalService.verifyScoreForChildMatch = jest.fn().mockReturnValue(false);
-    verifyScoreGoalService.goalRecordNotExistSemicolon = jest.fn().mockReturnValue(false);
-    verifyScoreGoalService.isHTGoalRecordConsistent = jest.fn().mockReturnValue(false);
-    verifyScoreGoalService.isFullTimeGoalRecordInvalid = jest.fn().mockReturnValue(false);
-    verifyActionService.isAllResultRelatedMatchesNotCalc = jest.fn().mockReturnValue(false);
     verifyActionService.checkNewStatus = jest.fn().mockReturnValue("mock error");
 
     await handler.handle(storage);
@@ -171,12 +150,6 @@ describe('VerifyAllHandler', () => {
   it('should call super.handle if no errors', async () => {
     storage.getMatch = jest.fn().mockReturnValue(match);
 
-    verifyScoreGoalService.verifyScoreAll = jest.fn().mockReturnValue(false);
-    verifyScoreGoalService.verifyScoreForChildMatch = jest.fn().mockReturnValue(false);
-    verifyScoreGoalService.goalRecordNotExistSemicolon = jest.fn().mockReturnValue(false);
-    verifyScoreGoalService.isHTGoalRecordConsistent = jest.fn().mockReturnValue(false);
-    verifyScoreGoalService.isFullTimeGoalRecordInvalid = jest.fn().mockReturnValue(false);
-    verifyActionService.isAllResultRelatedMatchesNotCalc = jest.fn().mockReturnValue(false);
     verifyActionService.checkNewStatus = jest.fn().mockReturnValue(null);
 
     AbstractHandler.prototype.handle = jest.fn();

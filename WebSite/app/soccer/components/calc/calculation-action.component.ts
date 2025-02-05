@@ -42,7 +42,7 @@ export class CalculationActionComponent implements OnInit {
 
   ngOnInit() {
     this.permission = this.#storage.getPermission();
-    const { matchDetail, resultDetails } = this.#storage.match();
+    const { matchDetail } = this.#storage.match();
     this.matchDetail = matchDetail;
 
     this.halfTimeResult = this.#storage.getHalfTimeResult();
@@ -99,7 +99,7 @@ export class CalculationActionComponent implements OnInit {
 
     resultDetail.isMismatch = this.checkMismatch(homeExScore, awayExScore, homeValue, awayValue);
 
-    this.#scoreService.changeResultState(resultDetail);
+    this.#scoreService.changeResultState();
   }
 
 

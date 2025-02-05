@@ -17,28 +17,32 @@ export class ScoreService {
                      if (isEqual(type, CalculateAction.copyHTScore) || isEqual(type, CalculateAction.copyAllScore)) {
                             this.#storage.setHaftTimeScore(matchDetail.exHTHomeScore, matchDetail.exHTAwayScore);
                             this.#storage.getHalfTimeResult().isMismatch = false;
-                            this.changeResultState(this.#storage.getHalfTimeResult());
                      }
                      if (isEqual(type, CalculateAction.copyFTScore) || isEqual(type, CalculateAction.copyAllScore)) {
                             this.#storage.setFullTimeScore(matchDetail.exFTHomeScore, matchDetail.exFTAwayScore);
                             this.#storage.getFullTimeResult().isMismatch = false;
-                            this.changeResultState(this.#storage.getFullTimeResult());
                      }
                      this.#storage.changeScore();
+                     this.changeResultState();
               });
        }
 
-       changeResultState(resultDetail: ResultDetail) {
-              if (resultDetail.settlementStatusId === SettlementStatusId.Calculated) {
-                     resultDetail.resultState = 'calculated';
-              } else if (resultDetail.settlementStatusId === SettlementStatusId.Running || isNull(resultDetail.settlementStatusId)) {
-                     resultDetail.resultState = '';
-              } else {
-                     resultDetail.resultState = 'refunded';
-              }
-
-              if (resultDetail.isMismatch) {
-                     resultDetail.resultState += ' mismatched';
-              }
+       changeResultState() {
+              const { matchDetail} = this.#storage.getMatch();
+              const resultDetails = [this.#storage.getHalfTimeResult(), this.#storage.getFullTimeResult()];
+              resultDetails.forEach(resultDetail => {
+                     if (resultDetail.settlementStatusId === SettlementStatusId.Calculated) {
+                            resultDetail.resultState = 'calculated';
+                     } else if (resultDetail.settlementStatusId === SettlementStatusId.Running || isNull(resultDetail.settlementStatusId)) {
+                            resultDetail.resultState = '';
+                     } else {
+                            resultDetail.resultState = 'refunded';
+                     }
+       
+                     if (resultDetail.isMismatch || matchDetail.isScoreInconsistent) {
+                            resultDetail.resultState += ' mismatched';
+                     }
+              });
+       
        }
 }

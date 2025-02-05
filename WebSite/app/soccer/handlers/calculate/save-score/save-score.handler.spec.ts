@@ -1,6 +1,5 @@
 import { TestBed } from '@angular/core/testing';
 import { SaveScoreHandler } from './save-score.handler';
-import { Storage } from '../../../storage/storage.service.native';
 import { Language } from '../../../../shared/language.native';
 import { ClosePopupService, MessageBoxService } from '../../../../shared/services';
 import { RequestService } from '../../../components/calc/services/request.service';
@@ -10,6 +9,7 @@ import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { HttpClientModule } from '@angular/common/http';
 import { VerifyScoreGoalService } from '../../../components/calc/services/verify-score-goal.service';
 import { MatchDetail } from '../../../components/calc/models/match.model';
+import { ResultDetail } from '../../../models';
 
 describe('SaveScoreHandler', () => {
   let handler: SaveScoreHandler;
@@ -39,8 +39,9 @@ describe('SaveScoreHandler', () => {
 
   it('should handle save score successfully', async () => {
     const result = { isSuccessful: true, errMsg: '' } as Result;
-    const matchDetail = { } as MatchDetail;
-    storage.getMatch = jest.fn().mockReturnValue({matchDetail });
+    const matchDetail = { matchId: 123} as MatchDetail;
+    const resultDetails = new Array<ResultDetail>();
+    storage.getMatch = jest.fn().mockReturnValue({matchDetail , resultDetails});
     storage.getConfirmMessage = jest.fn().mockReturnValue(Language.SaveTraderScore);
     requestService.saveScore = jest.fn().mockReturnValue(Promise.resolve(result));
 
@@ -51,13 +52,14 @@ describe('SaveScoreHandler', () => {
 
     expect(storage.setConfirmMessage).toHaveBeenCalledWith(Language.SaveTraderScore);
     expect(messageBoxService.confirm).toHaveBeenCalledWith(Language.SaveTraderScore, expect.any(Function));
-    expect(requestService.saveScore).toHaveBeenCalledWith(matchDetail);
+    expect(requestService.saveScore).toHaveBeenCalledWith(123, []);
   });
 
   it('should handle save score failure', async () => {
     const result = { isSuccessful: false, errMsg: 'error' } as Result;
-    const matchDetail = { } as MatchDetail;
-    storage.getMatch = jest.fn().mockReturnValue({ matchDetail });
+    const matchDetail = { matchId: 123} as MatchDetail;
+    const resultDetails = new Array<ResultDetail>();
+    storage.getMatch = jest.fn().mockReturnValue({ matchDetail, resultDetails });
     storage.getConfirmMessage = jest.fn().mockReturnValue(Language.SaveTraderScore);
     requestService.saveScore = jest.fn().mockReturnValue(Promise.resolve(result));
 
@@ -69,7 +71,7 @@ describe('SaveScoreHandler', () => {
 
     expect(storage.setConfirmMessage).toHaveBeenCalledWith(Language.SaveTraderScore);
     expect(messageBoxService.confirm).toHaveBeenCalledWith(Language.SaveTraderScore, expect.any(Function));
-    expect(requestService.saveScore).toHaveBeenCalledWith(matchDetail);
+    expect(requestService.saveScore).toHaveBeenCalledWith(123, []);
     expect(storage.error).toHaveBeenCalledWith(result.errMsg);
   });
 });
