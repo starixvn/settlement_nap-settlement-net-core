@@ -69,6 +69,7 @@ public class ResultAmendmentServiceImp(
         if (settleCriteria.SportType is SportType.BasketBall or SportType.ESports)
         {
             await LogService.InfoAsync($"Push ResultAmendmentService {DateTime.Now} {settleCriteria.MatchId} {settleCriteria.BroadcastSessionId} {settleCriteria.Action}");
+            Console.WriteLine($"Push ResultAmendmentService {DateTime.Now} {settleCriteria.MatchId} {settleCriteria.BroadcastSessionId} {settleCriteria.Action}");
             await publishEndpoint.Publish(new ResultAmended(
                 settleCriteria.MatchId,
                 settleCriteria.BroadcastSessionId,
@@ -76,7 +77,7 @@ public class ResultAmendmentServiceImp(
                 settleCriteria.Action,
                 selectedResources,
                 results.ToList()),
-                new CancellationTokenSource(TimeSpan.FromSeconds(1)).Token);
+                new CancellationTokenSource(TimeSpan.FromSeconds(3)).Token);
             return true;
         }
 

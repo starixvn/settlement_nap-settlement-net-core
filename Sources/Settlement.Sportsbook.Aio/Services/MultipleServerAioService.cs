@@ -250,8 +250,8 @@ public class MultipleServerAioServiceImp(
 
         await WriteLog(criteria);
 
-        await Fanex.Logging.LogService.WarnAsync($"UpdateInfoAndSettle at {DateTime.Now}: {JsonConvert.SerializeObject(criteria)}");
-
+        await Fanex.Logging.LogService.InfoAsync($"UpdateInfoAndSettle at {DateTime.Now}: {JsonConvert.SerializeObject(criteria)}");
+        Console.WriteLine($"UpdateInfoAndSettle at {DateTime.Now}: {JsonConvert.SerializeObject(criteria)}");
 
         var isResultAmendment = await HandleResultAmendment(criteria, selectedResources);
 
