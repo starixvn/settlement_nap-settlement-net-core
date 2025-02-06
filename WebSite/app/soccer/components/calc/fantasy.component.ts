@@ -11,6 +11,7 @@ import { VerifyScoreGoalService } from "./services/verify-score-goal.service";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { ScorePipe } from "../../pipes/score.pipe";
+import { CalculateStorage } from "../../storage/calculate.storage";
 
 @Component({
     selector: 'fantasy',
@@ -23,14 +24,14 @@ import { ScorePipe } from "../../pipes/score.pipe";
 export class FantasyComponent implements OnInit {
     @Input() public fantasyMatch: FantasyMatch;
     @Output() public readonly autoFillScore = new EventEmitter<Score>();
-    @Output() public readonly errorMsgEmitter = new EventEmitter<string>();
     public fantasyMatchDetail: FantasyMatchDetail;
     public relatedMatches: FantasyRelatedMatch[];
     public isDeleted: boolean;
     private readonly dialogMessage = new ModalDialogMessage();
     constructor(private readonly messageBoxService: MessageBoxService,
         private readonly verifyMatchService: VerifyMatchService,
-        private readonly verifyScoreGoalService: VerifyScoreGoalService) {
+        private readonly verifyScoreGoalService: VerifyScoreGoalService,
+    private readonly storage: CalculateStorage) {
         this.dialogMessage.title = Language.confirmationBox;
     }
 
@@ -48,10 +49,10 @@ export class FantasyComponent implements OnInit {
     public verifyAndFillFantasyMatch() {
         const homeTeams = this.fantasyMatchDetail.fantasyHomeTeam.split(',');
         const awayTeams = this.fantasyMatchDetail.fantasyAwayTeam.split(',');
-        this.errorMsgEmitter.emit('');
+        this.storage.error('');
         const relatedTeams = _.concat(homeTeams, awayTeams);
         if (this.verifyMatchService.isRelatedMatchesInsufficient(relatedTeams, this.relatedMatches)) {
-            this.errorMsgEmitter.emit(Language.fantasyMatch.insufficientRelatedMatches);
+            this.storage.error(Language.fantasyMatch.insufficientRelatedMatches);
         } else if (this.verifyMatchService.isExistHoldMatch(this.relatedMatches)) {
             this.dialogMessage.message = Language.fantasyMatch.confirmAutoFillOnHoldMatch;
             this.messageBoxService.confirm(this.dialogMessage, () => {
@@ -66,7 +67,7 @@ export class FantasyComponent implements OnInit {
         const isExistNotCalculatedMatch = _.some(this.relatedMatches, (match) =>
             !_.isEqual(match.eventStatus.toLowerCase(), EventStatus.completed.toLowerCase()) || this.isMatchRefunded(match));
         if (isExistNotCalculatedMatch) {
-            this.errorMsgEmitter.emit(Language.fantasyMatch.warningMatchNotCalculated);
+            this.storage.error(Language.fantasyMatch.warningMatchNotCalculated);
         } else {
             this.dialogMessage.message = Language.fantasyMatch.confirmAutoFillFantasyMatch;
             this.messageBoxService.confirm(this.dialogMessage, () => {

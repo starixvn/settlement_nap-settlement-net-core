@@ -20,90 +20,90 @@ import { ClosePopupService } from '../../../../shared/services';
 import { Storage } from '../../../storage/storage.service.native';
 
 describe('CalculateService', () => {
-  let service: CalculateService;
-  let storage: CalculateStorage;
+    let service: CalculateService;
+    let storage: CalculateStorage;
 
-  beforeEach(() => {
+    beforeEach(() => {
 
-    TestBed.configureTestingModule({
-    imports: [HttpClientModule, ToastrModule.forRoot()],
-      providers: [
-        CalculateService,
-        CalculateStorage,
-        MatchSettledHandler,
-        VerifySettledResultHandler,
-        VerifyFirstHalfHandler,
-        VerifyAllHandler,
-        VerifyFulltimeHandler,
-        UncalculateHandler,
-        CheckBetStatusHandler,
-        VerifyScoreInstantHandler,
-        VerifyScoreGoalService,
-        ToastrService,
-        RequestService,
-        ScoreService,
-        VerifyActionService,
-        ClosePopupService
-      ]
+        TestBed.configureTestingModule({
+            imports: [HttpClientModule, ToastrModule.forRoot()],
+            providers: [
+                CalculateService,
+                CalculateStorage,
+                MatchSettledHandler,
+                VerifySettledResultHandler,
+                VerifyFirstHalfHandler,
+                VerifyAllHandler,
+                VerifyFulltimeHandler,
+                UncalculateHandler,
+                CheckBetStatusHandler,
+                VerifyScoreInstantHandler,
+                VerifyScoreGoalService,
+                ToastrService,
+                RequestService,
+                ScoreService,
+                VerifyActionService,
+                ClosePopupService
+            ]
+        });
+
+        storage = TestBed.inject(CalculateStorage);
+        service = TestBed.inject(CalculateService);
+
     });
 
-      storage = TestBed.inject(CalculateStorage);
-      service = TestBed.inject(CalculateService);
+    it('should call handle on matchSettledHandler when copyScore is called', () => {
+        MatchSettledHandler.prototype.handle = jest.fn();
 
-  });
+        service.copyScore();
 
-  it('should call handle on matchSettledHandler when copyScore is called', () => {
-      const spy = jest.spyOn(MatchSettledHandler.prototype, 'handle').mockImplementation(() => {});
+        expect(MatchSettledHandler.prototype.handle).toHaveBeenCalledWith(storage);
+    });
 
-      service.copyScore();
+    it('should call handle on verifySettledResultHandler when saveScore is called', () => {
+        VerifySettledResultHandler.prototype.handle = jest.fn();
 
-      expect(spy).toHaveBeenCalledWith(storage);
-  });
+        service.saveScore();
 
-  it('should call handle on verifySettledResultHandler when saveScore is called', () => {
-      const spy = jest.spyOn(VerifySettledResultHandler.prototype, 'handle').mockImplementation(() => {});
-    
-      service.saveScore();
+        expect(VerifySettledResultHandler.prototype.handle).toHaveBeenCalledWith(storage);
+    });
 
-      expect(spy).toHaveBeenCalledWith(storage);
-  });
+    it('should set calculate action to calculateHalfTime and call handle on verifyHalfTimeHandler when calculateHalfTime is called', () => {
+        VerifyFirstHalfHandler.prototype.handle = jest.fn();
+        service.calculateHalfTime();
+        expect(storage.getCalculateAction()).toBe(CalculateAction.calculateHalfTime);
+        expect(VerifyFirstHalfHandler.prototype.handle).toHaveBeenCalledWith(storage);
+    });
 
-  it('should set calculate action to calculateHalfTime and call handle on verifyHalfTimeHandler when calculateHalfTime is called', () => {
-      const spy = jest.spyOn(VerifyFirstHalfHandler.prototype, 'handle').mockImplementation(() => Promise.resolve());
-      service.calculateHalfTime();
-      expect(storage.getCalculateAction()).toBe(CalculateAction.calculateHalfTime);
-      expect(spy).toHaveBeenCalledWith(storage);
-  });
+    it('should set calculate action to calculate and call handle on verifyAllHandler when calculateALL is called', () => {
+        VerifyAllHandler.prototype.handle = jest.fn();
+        service.calculateALL();
+        expect(storage.getCalculateAction()).toBe(CalculateAction.calculate);
+        expect(VerifyAllHandler.prototype.handle).toHaveBeenCalledWith(storage);
+    });
 
-  it('should set calculate action to calculate and call handle on verifyAllHandler when calculateALL is called', () => {
-      const spy = jest.spyOn(VerifyAllHandler.prototype, 'handle').mockImplementation(() => Promise.resolve());
-      service.calculateALL();
-      expect(storage.getCalculateAction()).toBe(CalculateAction.calculate);
-      expect(spy).toHaveBeenCalledWith(storage);
-  });
+    it('should set calculate action to calculateFullTime and call handle on verifyFullTimeHandler when calculateFullTime is called', () => {
+        VerifyFulltimeHandler.prototype.handle = jest.fn();
+        service.calculateFullTime();
+        expect(storage.getCalculateAction()).toBe(CalculateAction.calculateFullTime);
+        expect(VerifyFulltimeHandler.prototype.handle).toHaveBeenCalledWith(storage);
+    });
 
-  it('should set calculate action to calculateFullTime and call handle on verifyFullTimeHandler when calculateFullTime is called', () => {
-      const spy = jest.spyOn(VerifyFulltimeHandler.prototype, 'handle').mockImplementation(() => Promise.resolve());
-      service.calculateFullTime();
-      expect(storage.getCalculateAction()).toBe(CalculateAction.calculateFullTime);
-      expect(spy).toHaveBeenCalledWith(storage);
-  });
+    it('should call handle on uncalculateHandler when uncalculateAll is called', () => {
+        UncalculateHandler.prototype.handle = jest.fn();
+        service.uncalculateAll();
+        expect(UncalculateHandler.prototype.handle).toHaveBeenCalledWith(storage);
+    });
 
-  it('should call handle on uncalculateHandler when uncalculateAll is called', () => {
-      const spy = jest.spyOn(UncalculateHandler.prototype, 'handle').mockImplementation(() => {});
-      service.uncalculateAll();
-      expect(spy).toHaveBeenCalledWith(storage);
-  });
+    it('should call handle on checkBetStatusHandler when uncalculateFT is called', () => {
+        CheckBetStatusHandler.prototype.handle = jest.fn();
+        service.uncalculateFT();
+        expect(CheckBetStatusHandler.prototype.handle).toHaveBeenCalledWith(storage);
+    });
 
-  it('should call handle on checkBetStatusHandler when uncalculateFT is called', () => {
-      const spy = jest.spyOn(CheckBetStatusHandler.prototype, 'handle').mockImplementation(() => {});
-      service.uncalculateFT();
-      expect(spy).toHaveBeenCalledWith(storage);
-  });
-
-  it('should call handle on verifyScoreInstant when unCalcInstant is called', () => {
-      const spy = jest.spyOn(VerifyScoreInstantHandler.prototype, 'handle').mockImplementation(() => Promise.resolve());
-      service.unCalcInstant();
-      expect(spy).toHaveBeenCalledWith(storage);
-  });
+    it('should call handle on verifyScoreInstant when unCalcInstant is called', () => {
+        VerifyScoreInstantHandler.prototype.handle = jest.fn().mockResolvedValue(undefined);
+        service.unCalcInstant();
+        expect(VerifyScoreInstantHandler.prototype.handle).toHaveBeenCalledWith(storage);
+    });
 });

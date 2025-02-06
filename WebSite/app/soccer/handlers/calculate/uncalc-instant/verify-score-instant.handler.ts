@@ -1,4 +1,3 @@
-
 import { inject } from "@angular/core";
 import { RequestService } from "../../../components/calc/services/request.service";
 import { Storage } from "../../../storage/storage.service.native";
@@ -13,6 +12,7 @@ export class VerifyScoreInstantHandler extends AbstractHandler {
     const result = await this.#requestService.undoCheckingScore(matchDetail.matchId);
     const errorMessage = result.errMsg;
     if (isEmpty(errorMessage)) {
+      storage.setInstantScore(result);
       super.handle(storage);
     } else {
       storage.error(errorMessage);

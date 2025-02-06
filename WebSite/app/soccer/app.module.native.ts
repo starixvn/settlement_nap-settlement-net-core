@@ -45,7 +45,8 @@ import { CalculateActionsComponent } from "../tennis/components/calculate-action
     NotReadyMatchComponent,
     OnlyIntegerDirective,
     CalculateActionsComponent,
-    MatchDetailComponent
+    MatchDetailComponent,
+    OnlyGoalRecordDirective
 ],
     declarations: [
         AppComponent,

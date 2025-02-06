@@ -16,12 +16,13 @@ import { GoalIconService } from './services/goal-icon.service';
 import { GoalRecordWithOutSemicolonService } from './services/goal-record-with-out-semicolon.service';
 import { OnlyGoalRecordDirective } from '../../directives/only-goal-record.directive.native';
 import { ScoreService } from './services/score.service';
+import { OnlyIntegerDirective } from '../../../shared/directives';
 
 
 @Component({
   selector: 'calculation-action',
   standalone: true,
-  imports: [CommonModule, FormsModule, OnlyGoalRecordDirective],
+  imports: [CommonModule, FormsModule, OnlyGoalRecordDirective, OnlyIntegerDirective],
   providers: [GoalIconService, GoalRecordWithOutSemicolonService],
   templateUrl: './calculation-action.component.html',
 })
@@ -166,11 +167,11 @@ export class CalculationActionComponent implements OnInit {
     };
   }
 
-  private checkMismatch(homeScore: string, awayScore: string, homeValue: string, awayValue: string) {
-    return !this.isEmptyScore(homeScore) &&
-      !this.isEmptyScore(awayScore) &&
+  private checkMismatch(homeExScore: string, awayExScore: string, homeValue: string, awayValue: string) {
+    return !this.isEmptyScore(homeExScore) &&
+      !this.isEmptyScore(awayExScore) &&
       !this.isEmptyScore(homeValue) &&
       !this.isEmptyScore(awayValue) &&
-      (!_.isEqual(homeValue, homeScore) || !_.isEqual(awayValue, awayScore));
+      (!_.isEqual(homeValue, homeExScore) || !_.isEqual(awayValue, awayExScore));
   }
 }

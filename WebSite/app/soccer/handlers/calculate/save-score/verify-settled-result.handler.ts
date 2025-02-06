@@ -1,16 +1,17 @@
-import { TicketStatusText } from "../../../../shared/constants";
+import { ResultStatusId, TicketStatusText } from "../../../../shared/constants";
 import { Language } from "../../../../shared/language.native";
 import { Storage } from "../../../storage/storage.service.native";
 import { AbstractHandler } from "../../abstract.handler.native";
 
-export class VerifySettledResultHandler extends AbstractHandler{
+export class VerifySettledResultHandler extends AbstractHandler {
   handle(storage: Storage) {
-    const { resultDetails} = storage.getMatch();
-    const resultSelected = resultDetails.filter((resultDetail) => resultDetail.checked);
-    const isExistSettledResult = resultSelected.some((resultDetail) => resultDetail.ticketStatus === TicketStatusText.calculated);
+    const { resultDetails } = storage.getMatch();
+    const settledResult = resultDetails.filter((resultDetail) => resultDetail.checked
+      && (resultDetail.resultStatusId === ResultStatusId.AutoCompleted
+        || resultDetail.resultStatusId === ResultStatusId.ManualCompleted));
 
-    if(isExistSettledResult) {
-      storage.error(Language.saveScore.specificSettledResult.replace('{0}', resultSelected.map((resultDetail) => resultDetail.resourceName).join(', ')));
+    if (settledResult.length > 0) {
+      storage.error(Language.saveScore.specificSettledResult.replace('{0}', settledResult.map((resultDetail) => resultDetail.resourceName).join(', ')));
     } else {
       super.handle(storage);
     }

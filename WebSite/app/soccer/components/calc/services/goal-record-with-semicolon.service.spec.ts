@@ -4,6 +4,7 @@ import { GoalNameIcon } from '../models/constant.native';
 import { CreateDataTest } from './create-data-test.native';
 import { GoalIcon } from '../../../models/goal-icon.model';
 import { VerifyScoreGoalService } from "./verify-score-goal.service";
+import { ResultDetail } from '../../../models';
 
 describe('Soccer - Verify Goal Record with semicolon', () => {
     let service: GoalRecordWithSemicolonService;
@@ -70,33 +71,29 @@ describe('Soccer - Verify Goal Record with semicolon', () => {
 
         it('Should return homeGoal when finalScore is not empty and first character goalrecord = H', () => {
             matchDetail.goalRecord = "H";
-            matchDetail.finalHomeScore = '2';
-            matchDetail.finalAwayScore = '1';
-            const goalIcon = service.oneCharacterFulTimeGoalRecord(matchDetail, matchDetail.goalRecord, goal);
+            const fulltime = { homeValue: '2', awayValue: '1' } as unknown as ResultDetail;
+            const goalIcon = service.oneCharacterFulTimeGoalRecord(fulltime, matchDetail.goalRecord, goal);
             expect(goalIcon.homeGoal).toEqual(GoalNameIcon.firstLastGoal);
         });
 
         it('Should return awayGoal when finalScore is not empty and first character goalrecord = A', () => {
             matchDetail.goalRecord = "A";
-            matchDetail.finalHomeScore = '2';
-            matchDetail.finalAwayScore = '1';
-            const goalIcon = service.oneCharacterFulTimeGoalRecord(matchDetail, matchDetail.goalRecord, goal);
+            const fulltime = { homeValue: '2', awayValue: '1' } as unknown as ResultDetail;
+            const goalIcon = service.oneCharacterFulTimeGoalRecord(fulltime, matchDetail.goalRecord, goal);
             expect(goalIcon.awayGoal).toEqual(GoalNameIcon.firstLastGoal);
         });
 
         it('Should return homeGoal when finalScore is empty and first character goalrecord = H', () => {
             matchDetail.goalRecord = "H";
-            matchDetail.finalHomeScore = null;
-            matchDetail.finalAwayScore = null;
-            const goalIcon = service.oneCharacterFulTimeGoalRecord(matchDetail, matchDetail.goalRecord, goal);
+            const fulltime = { homeValue: null, awayValue: null } as unknown as ResultDetail;
+            const goalIcon = service.oneCharacterFulTimeGoalRecord(fulltime, matchDetail.goalRecord, goal);
             expect(goalIcon.homeGoal).toEqual(GoalNameIcon.firstGoal);
         });
 
         it('Should return awayGoal when finalScore is empty and first character goalrecord = A', () => {
             matchDetail.goalRecord = "A";
-            matchDetail.finalHomeScore = null;
-            matchDetail.finalAwayScore = null;
-            const goalIcon = service.oneCharacterFulTimeGoalRecord(matchDetail, matchDetail.goalRecord, goal);
+            const fulltime = { homeValue: null, awayValue: null } as unknown as ResultDetail;
+            const goalIcon = service.oneCharacterFulTimeGoalRecord(fulltime, matchDetail.goalRecord, goal);
             expect(goalIcon.awayGoal).toEqual(GoalNameIcon.firstGoal);
         });
     })

@@ -23,6 +23,7 @@ describe('CalculationActionComponent', () => {
   let fixture: ComponentFixture<CalculationActionComponent>;
   let storage: CalculateStorage;
   let calculateService: CalculateService;
+  let scoreService: ScoreService;
 
   const matchDetail = {
     ftStatus: '',
@@ -32,17 +33,23 @@ describe('CalculationActionComponent', () => {
     isExistResultAndFirstTeamScore: false,
     isEnabledGoalRecordHt: false,
     isEnabledGoalRecordFt: false,
+    exHTHomeScore: '2',
+    exHTAwayScore: '1'
   } as MatchDetail;
+
+  const firstHalfResult = { resourceId: ResourceIds.halfTime, resultSettingData: {} } as ResultDetail;
+  const fullTimeResult = { resourceId: ResourceIds.fullTime, resultSettingData: {} } as ResultDetail;
 
   const match: Match = {
     matchDetail: matchDetail,
     permission: new Permission(),
     ticketCounts: [],
-    resultDetails: [],
+    resultDetails: [fullTimeResult, firstHalfResult],
     hedgeMatchDetail: undefined,
     fantasyMatch: undefined,
     childMatches: []
   };
+
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -68,6 +75,7 @@ describe('CalculationActionComponent', () => {
     fixture = TestBed.createComponent(CalculationActionComponent);
     storage = TestBed.inject(CalculateStorage);
     calculateService = TestBed.inject(CalculateService);
+    scoreService  = TestBed.inject(ScoreService);
     component = fixture.componentInstance;
     storage.setMatch(match);
     fixture.detectChanges();
@@ -121,13 +129,15 @@ describe('CalculationActionComponent', () => {
 
   it('scoreChanged - should update resultDetail isMismatch and call changeResultState', () => {
     const resultDetail = { resourceId: ResourceIds.halfTime, homeValue: '1', awayValue: '1', isMismatch: false } as ResultDetail;
-    component.matchDetail.exHTHomeScore = '2';
-    component.matchDetail.exHTAwayScore = '2';
+    component.matchDetail = matchDetail;
+    component.halfTimeResult = resultDetail;
+
+    scoreService.changeResultState = jest.fn();
 
     component.scoreChanged(resultDetail);
 
     expect(resultDetail.isMismatch).toBe(true);
-    expect(resultDetail.resultState).toEqual(' mismatched');
+    expect(scoreService.changeResultState).toHaveBeenCalled();
   });
 
   describe('calculate', () => {

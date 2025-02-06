@@ -33,7 +33,7 @@ export class VerifyFulltimeHandler extends AbstractHandler {
     if (this.#verifyScoreGoalService.verifyScore(fulltime, matchDetail, false)) {
       return Language.warningInputScore;
     }
-    if (this.#verifyScoreGoalService.verifyScoreForChildMatch(matchDetail, selectedChildMatches)) {
+    if (this.#verifyScoreGoalService.verifyScoreForChildMatch(fulltime, selectedChildMatches)) {
       return Language.soccer.childMatchesErrorMessage;
     }
 

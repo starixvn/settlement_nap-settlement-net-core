@@ -15,5 +15,6 @@ export interface Storage {
   getCalculateAction(): string
   isApplyHedgeMatch(): boolean
   getInstantScore(): UndoChecking
+  setInstantScore(score: UndoChecking): void
   error(message: string)
 }

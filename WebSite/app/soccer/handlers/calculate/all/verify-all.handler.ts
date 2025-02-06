@@ -32,7 +32,7 @@ export class VerifyAllHandler extends AbstractHandler {
         return Language.warningInputScore;
       }
   
-      if (this.#verifyScoreGoalService.verifyScoreForChildMatch(matchDetail, selectedChildMatches)) {
+      if (this.#verifyScoreGoalService.verifyScoreForChildMatch(storage.getFullTimeResult(), selectedChildMatches)) {
         return Language.soccer.childMatchesErrorMessage;
       }
   

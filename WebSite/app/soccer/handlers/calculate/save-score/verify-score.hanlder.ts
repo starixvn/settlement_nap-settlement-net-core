@@ -12,7 +12,7 @@ export class VerifyScoreHandler extends AbstractHandler {
   
     if(this.verifyScore(resultSelected)) {
       storage.error(Language.warningInputScore);
-    } {
+    } else{
       super.handle(storage);
     }
   }

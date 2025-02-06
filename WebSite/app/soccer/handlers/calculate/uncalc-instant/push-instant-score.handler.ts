@@ -11,7 +11,7 @@ export class PushInstantScoreHandler extends AbstractHandler {
   #messageBoxService = inject(MessageBoxService)
   #requestService = inject(RequestService);
   #closePopupService = inject(ClosePopupService);
-  async Handle(storage: Storage) {
+  async handle(storage: Storage) {
     const scoreResult = storage.getInstantScore();
     const { matchDetail} = storage.getMatch();
     const currentScore = `${scoreResult.homeScore}-${scoreResult.awayScore}`;

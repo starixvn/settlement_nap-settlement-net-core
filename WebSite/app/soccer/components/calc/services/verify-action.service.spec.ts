@@ -1,54 +1,22 @@
 
-import { fakeAsync, TestBed, tick } from '@angular/core/testing';
+import {  TestBed } from '@angular/core/testing';
 import { VerifyScoreGoalService } from './verify-score-goal.service';
 import { RequestService } from './request.service';
 import { VerifyActionService } from './verify-action.service';
 import { BlockUIService, HttpRequestService, MessageBoxService } from '../../../../shared/services';
 import { HttpClientModule } from '@angular/common/http';
 import { CreateDataTest } from './create-data-test.native';
-import { Language } from '../../../../shared/language.native';
-import { Result } from '../../../../shared/models';
-import { of } from 'rxjs';
 import { TicketStatusText } from '../../../../shared/constants';
-import { ChildMatch, FantasyRelatedMatch } from '../models/match.model';
+import { ResultDetail } from '../../../models';
+import { ResourceIds } from '../../../constants';
 describe('Soccer - verify action service', () => {
     let service: VerifyActionService;
     let verifyScoreGoalService: VerifyScoreGoalService;
     let requestService: RequestService;
     const matchDetail = CreateDataTest.MatchDetail();
 
-    const unSuccessfulResult: Result = {
-        errCode: 1,
-        errMsg: "errorMessage",
-        isSuccessful: false,
-        childMatchIds: '',
-        settledSessionId: "",
-        hasResultAmendment: false
-    };
-
-    const successfulResult = {
-        errCode: 0,
-        errMsg: "",
-        isSuccessful: true,
-        childMatchIds: '',
-        settledSessionId: "",
-        hasResultAmendment: false
-    };
-
-    const childMatch: ChildMatch = {
-        matchId: 1,
-        matchCode: 'string',
-        isExistMarkedTicket: false,
-        isExistRunningTicket: false,
-        isRefund: '',
-        eventStatus: '',
-        eventStatusColor: '',
-        betStatus: '',
-        checked: true,
-        isPending: false,
-        homeName: 'home',
-        awayName: 'away',
-    } 
+    const halftime = { resourceId: ResourceIds.halfTime} as ResultDetail;
+    const fulltime = { resourceId: ResourceIds.fullTime} as ResultDetail;
 
     beforeEach(() => TestBed.configureTestingModule({
         providers: [
@@ -79,7 +47,7 @@ describe('Soccer - verify action service', () => {
             matchDetail.htStatus = TicketStatusText.running;
             jest.spyOn(requestService, 'getLastestMatchResult').mockReturnValue(Promise.resolve(matchDetail));
 
-            const actual = await service.isScoreChangedFirstHalf(matchDetail, false);
+            const actual = await service.isScoreChangedFirstHalf(matchDetail, false, halftime);
 
             expect(actual).toBeFalsy();
         });
@@ -89,7 +57,7 @@ describe('Soccer - verify action service', () => {
             jest.spyOn(requestService, 'getLastestMatchResult').mockReturnValue(Promise.resolve(matchDetail));
             jest.spyOn(verifyScoreGoalService, 'isSettledFirstHalf').mockReturnValue(true);
 
-            const actual = await service.isScoreChangedFirstHalf(matchDetail, false);
+            const actual = await service.isScoreChangedFirstHalf(matchDetail, false, halftime);
 
             expect(actual).toBeTruthy();
         });
@@ -100,7 +68,7 @@ describe('Soccer - verify action service', () => {
             jest.spyOn(verifyScoreGoalService, 'isSettledFirstHalf').mockReturnValue(false);
             jest.spyOn(verifyScoreGoalService, 'isResultChangedFirstHalf').mockReturnValue(true);
 
-            const actual = await service.isScoreChangedFirstHalf(matchDetail, false);
+            const actual = await service.isScoreChangedFirstHalf(matchDetail, false, halftime);
 
             expect(actual).toBeTruthy();
         });
@@ -112,7 +80,7 @@ describe('Soccer - verify action service', () => {
             jest.spyOn(verifyScoreGoalService, 'isResultChangedFirstHalf').mockReturnValue(false);
             jest.spyOn(verifyScoreGoalService, 'isGoalRecordChangedFirstHalf').mockReturnValue(true);
 
-            const actual = await service.isScoreChangedFirstHalf(matchDetail, false);
+            const actual = await service.isScoreChangedFirstHalf(matchDetail, false, halftime);
 
             expect(actual).toBeTruthy();
         });
@@ -124,7 +92,7 @@ describe('Soccer - verify action service', () => {
             jest.spyOn(requestService, 'getLastestMatchResult').mockReturnValue(Promise.resolve(matchDetail));
             jest.spyOn(verifyScoreGoalService, 'isSettledFullTime').mockReturnValue(true);
 
-            const actual = await service.isScoreChangedFullTime(matchDetail, false);
+            const actual = await service.isScoreChangedFullTime(matchDetail, false, fulltime);
 
             expect(actual).toBeFalsy();
         });
@@ -133,7 +101,7 @@ describe('Soccer - verify action service', () => {
             jest.spyOn(requestService, 'getLastestMatchResult').mockReturnValue(Promise.resolve(matchDetail));
             jest.spyOn(verifyScoreGoalService, 'isSettledFullTime').mockReturnValue(true);
 
-            const actual = await service.isScoreChangedFullTime(matchDetail, false);
+            const actual = await service.isScoreChangedFullTime(matchDetail, false, fulltime);
 
             expect(actual).toBeTruthy();
         });
@@ -144,7 +112,7 @@ describe('Soccer - verify action service', () => {
             jest.spyOn(verifyScoreGoalService, 'isSettledFullTime').mockReturnValue(false);
             jest.spyOn(verifyScoreGoalService, 'isResultChangedFullTime').mockReturnValue(true);
 
-            const actual = await service.isScoreChangedFullTime(matchDetail, false);
+            const actual = await service.isScoreChangedFullTime(matchDetail, false, fulltime);
 
             expect(actual).toBeTruthy();
         });
@@ -156,7 +124,7 @@ describe('Soccer - verify action service', () => {
             jest.spyOn(verifyScoreGoalService, 'isResultChangedFullTime').mockReturnValue(false);
             jest.spyOn(verifyScoreGoalService, 'isGoalRecordChangedFullTime').mockReturnValue(true);
 
-            const actual = await service.isScoreChangedFullTime(matchDetail, false);
+            const actual = await service.isScoreChangedFullTime(matchDetail, false, fulltime);
 
             expect(actual).toBeTruthy();
         });
@@ -169,7 +137,7 @@ describe('Soccer - verify action service', () => {
             jest.spyOn(requestService, 'getLastestMatchResult').mockReturnValue(Promise.resolve(matchDetail));
             jest.spyOn(verifyScoreGoalService, 'isSettledAll').mockReturnValue(true);
 
-            const actual = await service.isScoreChangedAll(matchDetail, false);
+            const actual = await service.isScoreChangedAll(matchDetail, false, halftime, fulltime);
 
             expect(actual).toBeFalsy();
         });
@@ -179,7 +147,7 @@ describe('Soccer - verify action service', () => {
             jest.spyOn(requestService, 'getLastestMatchResult').mockReturnValue(Promise.resolve(matchDetail));
             jest.spyOn(verifyScoreGoalService, 'isSettledAll').mockReturnValue(true);
 
-            const actual = await service.isScoreChangedAll(matchDetail, false);
+            const actual = await service.isScoreChangedAll(matchDetail, false, halftime, fulltime);
 
             expect(actual).toBeFalsy();
         });
@@ -189,7 +157,7 @@ describe('Soccer - verify action service', () => {
             jest.spyOn(requestService, 'getLastestMatchResult').mockReturnValue(Promise.resolve(matchDetail));
             jest.spyOn(verifyScoreGoalService, 'isSettledAll').mockReturnValue(true);
 
-            const actual = await service.isScoreChangedAll(matchDetail, false);
+            const actual = await service.isScoreChangedAll(matchDetail, false, halftime, fulltime);
 
             expect(actual).toBeTruthy();
         });
@@ -200,7 +168,7 @@ describe('Soccer - verify action service', () => {
             jest.spyOn(verifyScoreGoalService, 'isSettledAll').mockReturnValue(false);
             jest.spyOn(verifyScoreGoalService, 'isResultChangedFirstHalf').mockReturnValue(true);
 
-            const actual = await service.isScoreChangedAll(matchDetail, false);
+            const actual = await service.isScoreChangedAll(matchDetail, false, halftime, fulltime);
 
             expect(actual).toBeTruthy();
             matchDetail.htStatus = TicketStatusText.calculated;
@@ -213,7 +181,7 @@ describe('Soccer - verify action service', () => {
             jest.spyOn(verifyScoreGoalService, 'isResultChangedFirstHalf').mockReturnValue(false);
             jest.spyOn(verifyScoreGoalService, 'isResultChangedFullTime').mockReturnValue(true);
 
-            const actual = await service.isScoreChangedAll(matchDetail, false);
+            const actual = await service.isScoreChangedAll(matchDetail, false, halftime, fulltime);
 
             expect(actual).toBeTruthy();
             matchDetail.htStatus = TicketStatusText.calculated;
@@ -228,7 +196,7 @@ describe('Soccer - verify action service', () => {
             jest.spyOn(verifyScoreGoalService, 'isResultChangedFullTime').mockReturnValue(false);
             jest.spyOn(verifyScoreGoalService, 'isGoalRecordChangedAll').mockReturnValue(true);
 
-            const actual = await service.isScoreChangedAll(matchDetail, false);
+            const actual = await service.isScoreChangedAll(matchDetail, false, halftime, fulltime);
 
             expect(actual).toBeTruthy();
         });

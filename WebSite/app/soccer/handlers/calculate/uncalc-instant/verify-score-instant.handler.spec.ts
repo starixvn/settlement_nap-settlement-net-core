@@ -36,11 +36,13 @@ describe('VerifyScoreHandler', () => {
     requestService.undoCheckingScore = jest.fn().mockResolvedValue({ errMsg: '' });
 
     const superHandleSpy = jest.spyOn(AbstractHandler.prototype, 'handle');
+    storage.setInstantScore = jest.fn();
 
     await handler.handle(storage);
 
     expect(requestService.undoCheckingScore).toHaveBeenCalledWith(matchDetail.matchId);
     expect(superHandleSpy).toHaveBeenCalledWith(storage);
+    expect(storage.setInstantScore).toHaveBeenCalled();
   });
 
   it('should call storage.error if there is an error message', async () => {

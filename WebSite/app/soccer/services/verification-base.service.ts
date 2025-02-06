@@ -6,7 +6,10 @@ import { MatchDetailBase, ResultDetail } from "../models";
 
 @Injectable()
 export class VerificationBaseService {
-    public isEmptyScore(value: string) {
+    public isEmptyScore(value: string | number) {
+        if (_.isNumber(value)) {
+            return false;
+        }
         return _.isNull(value) || _.isEmpty(value);
     }
 

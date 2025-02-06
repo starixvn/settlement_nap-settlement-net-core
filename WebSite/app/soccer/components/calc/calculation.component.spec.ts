@@ -15,7 +15,7 @@ import {
 import { CalculationComponent } from './calculation.component';
 import { BlockUIService, ClosePopupService, HttpRequestService, MessageBoxService } from '../../../shared/services';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { ChildMatch, Match, MatchDetail, Score, UndoChecking } from './models/match.model';
+import { ChildMatch, FantasyMatch, FantasyRelatedMatch, Match, MatchDetail, Score, UndoChecking } from './models/match.model';
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { VerifyMatchService } from './services/verify-match.service';
 import { RequestService } from './services/request.service';
@@ -28,14 +28,13 @@ import { ResettleCheckerComponent } from '../../../shared/components/resettle-ch
 import { NotReadyMatchComponent } from '../../../shared/components/not-ready-match/not-ready-match.component';
 import { ModalDialogComponent } from '../../../shared/components/modal-dialog/modal-dialog.component';
 import { ModalContentDialogComponent } from '../../../shared/components/modal-dialog/modal-content-dialog.component';
+import { CalculateStorage } from '../../storage/calculate.storage';
 
 describe('CalculationComponent', () => {
   let component: CalculationComponent;
   let fixture: ComponentFixture<CalculationComponent>;
   let requestService: RequestService;
-  let messageBoxService: MessageBoxService;
-  let toastrService: ToastrService;
-  let closePopupService: ClosePopupService;
+  let storage: CalculateStorage;
   const matchDetail = {} as MatchDetail;
   matchDetail.matchId = 12345;
   matchDetail.eventStatus = "";
@@ -95,22 +94,12 @@ describe('CalculationComponent', () => {
     fixture = TestBed.createComponent(CalculationComponent);
     component = fixture.componentInstance;
     requestService = fixture.debugElement.injector.get(RequestService);
-    messageBoxService = fixture.debugElement.injector.get(MessageBoxService);
-    toastrService = fixture.debugElement.injector.get(ToastrService);
-    closePopupService = fixture.debugElement.injector.get(ClosePopupService);
+    storage = fixture.debugElement.injector.get(CalculateStorage);
     fixture.detectChanges();
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
-  });
-
-  it('getMatch - should get match information', async () => {
-    requestService.getMatch = jest.fn().mockReturnValue(Promise.resolve(match));
-
-    await component.getMatch(12345);
-
-    expect(component.matchDetail.matchId).toEqual(12345);
   });
 
   it('onResettleCheckboxChange - should check resettle checkbox', () => {
@@ -248,12 +237,97 @@ describe('CalculationComponent', () => {
       finalAwayScore: 4
     };
 
+    storage.setFullTimeScore = jest.fn();
+    storage.setHaftTimeScore = jest.fn();
+
     component.autoFillFantasyMatch(score);
 
-    expect(component.matchDetail.halfTimeHomeScore).toEqual('1');
-    expect(component.matchDetail.halfTimeAwayScore).toEqual('2');
-    expect(component.matchDetail.finalHomeScore).toEqual('3');
-    expect(component.matchDetail.finalAwayScore).toEqual('4');
+    expect(storage.setFullTimeScore).toHaveBeenCalledWith('3', '4');
+    expect(storage.setHaftTimeScore).toHaveBeenCalledWith('1', '2');
+  });
+
+  describe('getMatch', () => {
+    it('should set toastr overlay', async () => {
+      const setToastrOverlaySpy = jest.spyOn(storage, 'setToastrOverlay');
+      requestService.getMatch = jest.fn().mockResolvedValue(match);
+
+      await component.getMatch(12345);
+
+      expect(setToastrOverlaySpy).toHaveBeenCalledWith(component.toastContainer);
+    });
+
+    it('should set match and match details', async () => {
+      requestService.getMatch = jest.fn().mockResolvedValue(match);
+
+      await component.getMatch(12345);
+
+      expect(component.match).toEqual(match);
+      expect(component.matchDetail).toEqual(match.matchDetail);
+    });
+
+    it('should set childMatches and hedgeMatchDetail', async () => {
+      requestService.getMatch = jest.fn().mockResolvedValue(match);
+
+      await component.getMatch(12345);
+
+      expect(component.childMatches).toEqual(match.childMatches);
+      expect(component.hedgeMatchDetail).toEqual(match.hedgeMatchDetail);
+    });
+
+    it('should set applyHedgeMatch', async () => {
+      const isApplyHedgeMatchSpy = jest.spyOn(storage, 'isApplyHedgeMatch');
+      requestService.getMatch = jest.fn().mockResolvedValue(match);
+
+      await component.getMatch(12345);
+
+      expect(isApplyHedgeMatchSpy).toHaveBeenCalled();
+      expect(component.applyHedgeMatch).toEqual(isApplyHedgeMatchSpy.mock.results[0].value);
+    });
+
+    it('should set originalGoalRecord', async () => {
+      requestService.getMatch = jest.fn().mockResolvedValue(match);
+
+      await component.getMatch(12345);
+
+      expect(component.matchDetail.originalGoalRecord).toEqual(match.matchDetail.goalRecord);
+    });
+
+    it('should set relatedMatches when isFantasyMatch is true', async () => {
+      match.matchDetail.isFantasyMatch = true;
+      match.fantasyMatch = { relatedMatches: [{ isDeleted: false }, { isDeleted: true }] } as unknown as FantasyMatch;
+      requestService.getMatch = jest.fn().mockReturnValue(Promise.resolve(match));
+
+      await component.getMatch(12345);
+
+      expect(component.relatedMatches).toEqual([{ isDeleted: false }]);
+    });
+
+    it('should set relatedMatches to empty array when isFantasyMatch is false', async () => {
+      match.matchDetail.isFantasyMatch = false;
+      requestService.getMatch = jest.fn().mockReturnValue(Promise.resolve(match));
+
+      await component.getMatch(12345);
+
+      expect(component.relatedMatches).toEqual([]);
+    });
+
+    it('should reset home and away', async () => {
+      const resetHomeAwaySpy = jest.spyOn(storage, 'resetHomeAway');
+      requestService.getMatch = jest.fn().mockReturnValue(Promise.resolve(match));
+
+      await component.getMatch(12345);
+
+      expect(resetHomeAwaySpy).toHaveBeenCalled();
+    });
+  });
+
+  it('changeApplyHedgeMatch- should call setIsAppleHedgeMatch with applyHedgeMatch value', () => {
+    const setIsAppleHedgeMatchSpy = jest.spyOn(storage, 'setIsAppleHedgeMatch');
+    component.applyHedgeMatch = true;
+
+    component.changeApplyHedgeMatch();
+
+    expect(setIsAppleHedgeMatchSpy).toHaveBeenCalledWith(true);
   });
 });
 

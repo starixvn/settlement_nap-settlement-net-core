@@ -4,6 +4,7 @@ import { CalculateStorage } from './calculate.storage';
 import { VerifyScoreGoalService } from '../components/calc/services/verify-score-goal.service';
 import { Match } from '../components/calc/models/match.model';
 import { HttpClientModule } from '@angular/common/http';
+import { ResourceIds } from '../constants';
 
 describe('CalculateStorage', () => {
   let storage: CalculateStorage;
@@ -31,7 +32,7 @@ describe('CalculateStorage', () => {
   });
 
   it('should set and get match', () => {
-    const mockMatch = { matchDetail: {} } as Match;
+    const mockMatch = { matchDetail: {}, resultDetails: [] } as Match;
 
     storage.setMatch(mockMatch);
 
@@ -85,7 +86,8 @@ describe('CalculateStorage', () => {
           halfTimeAwayScore: '1',
           finalHomeScore: '2',
           finalAwayScore: '2'
-        }
+        },
+        resultDetails: [ { resourceId: ResourceIds.halfTime }, { resourceId: ResourceIds.fullTime } ]
       } as Match;
       storage.setMatch(mockMatch);
     });

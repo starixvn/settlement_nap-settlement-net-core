@@ -14,11 +14,11 @@ export class VerifyScoreGoalService extends VerificationBaseService{
     }
 
     public isResultChangedFirstHalf(halfTimeResult: ResultDetail, lastestMatchDetail: MatchDetail) {
-        const isExistHalftime = !this.isEmptyScore(lastestMatchDetail.halfTimeHomeScore.toString())
-            && !this.isEmptyScore(lastestMatchDetail.halfTimeAwayScore.toString());
+        const isExistHalftime = !this.isEmptyScore(lastestMatchDetail.halfTimeHomeScore?.toString())
+            && !this.isEmptyScore(lastestMatchDetail.halfTimeAwayScore?.toString());
 
-        return isExistHalftime && (!_.isEqual(halfTimeResult.homeValue, lastestMatchDetail.halfTimeHomeScore.toString())
-            || !_.isEqual(halfTimeResult.awayValue, lastestMatchDetail.halfTimeAwayScore.toString()));
+        return isExistHalftime && (!_.isEqual(halfTimeResult.homeValue, lastestMatchDetail.halfTimeHomeScore?.toString())
+            || !_.isEqual(halfTimeResult.awayValue, lastestMatchDetail.halfTimeAwayScore?.toString()));
 
     }
 
@@ -39,11 +39,11 @@ export class VerifyScoreGoalService extends VerificationBaseService{
     }
 
     public isResultChangedFullTime(fullTimeResult: ResultDetail, lastestMatchDetail: MatchDetail) {
-        const isExistFinalScore = !this.isEmptyScore(lastestMatchDetail.finalHomeScore.toString())
-            && !this.isEmptyScore(lastestMatchDetail.finalAwayScore.toString());
+        const isExistFinalScore = !this.isEmptyScore(lastestMatchDetail.finalHomeScore?.toString())
+            && !this.isEmptyScore(lastestMatchDetail.finalAwayScore?.toString());
 
-        return isExistFinalScore && (!_.isEqual(fullTimeResult.homeValue, lastestMatchDetail.finalHomeScore.toString())
-            || !_.isEqual(fullTimeResult.awayValue, lastestMatchDetail.finalAwayScore.toString()));
+        return isExistFinalScore && (!_.isEqual(fullTimeResult.homeValue, lastestMatchDetail.finalHomeScore?.toString())
+            || !_.isEqual(fullTimeResult.awayValue, lastestMatchDetail.finalAwayScore?.toString()));
     }
 
     public isGoalRecordChangedFullTime(matchDetail: MatchDetail, lastestMatchDetail: MatchDetail) {
@@ -147,7 +147,7 @@ export class VerifyScoreGoalService extends VerificationBaseService{
         return !this.isEmptyScore(home) && !this.isEmptyScore(away);
     }
 
-    public verifyScoreForChildMatch(matchDetail: MatchDetail, selectedChildMatches: ChildMatch[]) {
-        return selectedChildMatches.length > 0 && _.isEqual(matchDetail.finalAwayScore.toString(), matchDetail.finalHomeScore.toString());
+    public verifyScoreForChildMatch(fulltimeResult: ResultDetail, selectedChildMatches: ChildMatch[]) {
+        return selectedChildMatches.length > 0 && _.isEqual(fulltimeResult.homeValue?.toString(), fulltimeResult.awayValue?.toString());
     }
 }
