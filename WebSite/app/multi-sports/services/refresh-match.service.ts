@@ -24,7 +24,7 @@ export class RefreshMatchService {
     });
   }
 
-  private getMatches(param: MatchRequest) {
+  getMatches(param: MatchRequest) {
     const url = `/api/multi-sports/auto-refresh`;
     return this.httpRequestService.postMessagePack(param, url, false);
   }

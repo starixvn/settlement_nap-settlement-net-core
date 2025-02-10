@@ -17,7 +17,7 @@ public class MultiSportControllerTests
     public MultiSportControllerTests()
     {
         mediator = Substitute.For<IMediator>();
-        controller = new MultiSportController(mediator);
+        controller = new MultiSportController(mediator, null, null);
     }
 
     [Fact]

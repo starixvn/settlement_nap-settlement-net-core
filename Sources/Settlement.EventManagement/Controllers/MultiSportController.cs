@@ -1,11 +1,15 @@
 ﻿using Settlement.EventManagement.Models;
+using Settlement.EventManagement.Models.MultiSports;
 using Settlement.EventManagement.Requests;
 
 namespace Settlement.EventManagement.Controllers;
 
 [ApiController]
 [Route("api/multi-sports")]
-public class MultiSportController(IMediator mediator) : ControllerBase
+public class MultiSportController(
+    IMediator mediator,
+    PermissionService permissionService,
+    HttpService httpService) : ControllerBase
 {
     [HttpGet]
     [Route("get-date")]
@@ -26,7 +30,13 @@ public class MultiSportController(IMediator mediator) : ControllerBase
 
     [HttpPost]
     [Route("auto-refresh")]
-    public async Task<IActionResult> RefreshMatches(RefreshMultiSportRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+    public async Task<IActionResult> RefreshMatches(RefreshMultiSportRequest request)
+    {
+        request.IsLeader = permissionService.Permission.IsLeader;
+        var matches = await httpService.HttpPost<List<MultiSportMatchWaiting>>("multi-sports/auto-refresh", request);
+
+        return Ok(matches);
+    }
 
     [HttpPost]
     [Route("getSport")]
