@@ -1,8 +1,7 @@
-﻿using Settlement.Core.Criteria;
-using Settlement.Core.Constants;
+﻿using Settlement.Core.Constants;
+using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
-using Settlement.Sportsbook.Soccer.Constants;
 using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Requests;
 
@@ -100,15 +99,7 @@ public class RefundServiceImp(
 
     private async Task<Result> ValidateBeforeExecute(RefundCriteria criteria)
     {
-        var request = new EventTicketRequest
-        {
-            MatchId = criteria.MatchId,
-            Action = criteria.Action,
-            SpName = criteria.SpName,
-            Mode = ActionKey.ActionDictionary[criteria.Action],
-            SDTRecord = criteria.SdtRecord,
-            ResourceResult = criteria.ResourceResult
-        };
+        var request = createCriteriaService.CreateEventTicketReturnRequest(criteria);
         var resultMessage = await scaleOutSettleService.ValidateEventAndTicket(request);
         return new Result
         {
