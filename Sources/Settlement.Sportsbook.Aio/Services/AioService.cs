@@ -1,4 +1,6 @@
-﻿using Settlement.Core.Constants;
+﻿using AutoEarlyRefund.Contracts;
+using MassTransit;
+using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Aio.Constants;
@@ -41,7 +43,8 @@ public class AioServiceImp(
     ICreateQueryService createQueryService,
     MultipleServerAioService multipleServerAioService,
     AdjustEventStatusService adjustEventStatusService,
-    IConnectionMultiplexer connectionMultiplexer)
+    IConnectionMultiplexer connectionMultiplexer,
+    IPublishEndpoint publishEndpoint)
     : IAioService
 {
     private const string KeyConfirmRefund = "SettlementConfirmRefund";
@@ -366,6 +369,17 @@ public class AioServiceImp(
         }
 
         //TODO
+        await publishEndpoint.Publish(new ResultsRefundConfirmed(
+            request.MatchId
+            ,
+            0,
+            1,
+            0,
+            "ConfirmRefund",
+            request.Type,
+            request.SelectedResources.ToList()
+            )
+            );
 
         return criteria.IsEnabled;
     }

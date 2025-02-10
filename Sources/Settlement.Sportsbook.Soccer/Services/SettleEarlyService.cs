@@ -1,5 +1,4 @@
-﻿using AutoEarlyRefund.Contracts;
-using MassTransit;
+﻿using MassTransit;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Soccer.Criteria;
@@ -23,28 +22,28 @@ public class SettleEarlyServiceImp(
 {
     public async Task<Result> CalculateEarly(SettleEarlyRequest request)
     {
-        //var criteria = createCriteriaService.CreateCalculateEarlyCriteria(request);
-        //var requestChecking = await ValidateBeforeExecute(criteria);
-        //if (requestChecking.ErrCode > 0)
-        //{
-        //    return requestChecking;
-        //}
+        var criteria = createCriteriaService.CreateCalculateEarlyCriteria(request);
+        var requestChecking = await ValidateBeforeExecute(criteria);
+        if (requestChecking.ErrCode > 0)
+        {
+            return requestChecking;
+        }
 
-        //await WriteDirectlyLog(request);
+        await WriteDirectlyLog(request);
 
-        //await UpdateMatchInfo(criteria);
+        await UpdateMatchInfo(criteria);
 
-        //var result = await Execute(criteria);
+        var result = await Execute(criteria);
 
         //TODO
         if (request is { ActionName: "REFUND" })
         {
-            await publishEndpoint.Publish(new ResultRefunded(request.MatchId, request.ActionName, request.SelectedResources));
+            //await publishEndpoint.Publish(new ResultRefunded(request.MatchId, request.ActionName, request.SelectedResources));
         }
 
-        return new Result();
+        //return new Result();
 
-        //return result;
+        return result;
     }
 
     private async Task WriteDirectlyLog(SettleEarlyRequest request)

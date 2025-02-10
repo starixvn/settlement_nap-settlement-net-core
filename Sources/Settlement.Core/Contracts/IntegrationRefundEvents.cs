@@ -2,24 +2,22 @@
 
 namespace AutoEarlyRefund.Contracts;
 
-public record MatchCalculated(
+public record ResultsRefunded(
     int MatchId,
-    int Action,
-    int EventId);
-
-public record MatchRefunded(
-    int MatchId,
-    int Action,
-    int EventId);
-
-public record ResultCalculated(
-    int MatchId,
-    int Action,
-    List<ResourceItem> Resources);
-
-public record ResultRefunded(
-    int MatchId,
+    int LeagueId,
+    short ShortType,
+    short ChildMatchType,
     string Action,
-    List<ResourceItem> Resources);
+    List<ResourceItem> Resources
+    );
 
-public record ResultRefundConfirmed();
+public record ResultsRefundConfirmed(
+    int MatchId
+    ,
+    int LeagueId,
+    short ShortType,
+    short ChildMatchType,
+    string Action,
+    int Type,
+    List<ResourceItem> Resources
+    );
