@@ -11,14 +11,26 @@ public class CricketResult
 
 public class CricketResultItem
 {
+    private string home;
+    private string away;
+
+
     [XmlAttribute("Id")]
     public string ResourceId { get; set; }
 
     [XmlAttribute("Home")]
-    public string Home { get; set; }
+    public string Home
+    {
+        get => home;
+        set => home = (value ?? string.Empty).ToUpper();
+    }
 
     [XmlAttribute("Away")]
-    public string Away { get; set; }
+    public string Away
+    {
+        get => away;
+        set => away = (value ?? string.Empty).ToUpper();
+    }
 
     [XmlAttribute("RefBettypeID")]
     public string RefBetTypeId { get; set; }
