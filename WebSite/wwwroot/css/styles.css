@@ -119,24 +119,6 @@ thead {
                 margin-top: 0;
             }
 
-        .table-calculation .league-name div {
-            background: url("images/sprite.png") no-repeat;
-        }
-
-            .table-calculation .league-name div.leagues-icon-refresh {
-                background-position: -31px -62px;
-                width: 16px;
-                height: 14px;
-                margin-right: 3px;
-                float: right;
-                display: block;
-                cursor: pointer;
-            }
-
-                .table-calculation .league-name div.leagues-icon-refresh:hover {
-                    background-position: -49px -62px;
-                }
-
     .table-calculation .code {
         min-width: 100px;
         width: 100px;

@@ -7,7 +7,7 @@ import { Permission } from '../../shared/models/sportsbook-sop/permission.model'
 import { MatchWaiting } from '../models/match-waiting.model';
 import { MatchState } from '../models/match-state.model';
 import { MultiSportsStore } from './multi-sports.store';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { MatchStateService } from './match-state.service';
 @Injectable()
 export class RefreshMatchService {
@@ -18,15 +18,16 @@ export class RefreshMatchService {
     private readonly matchStateService: MatchStateService,
     private readonly store: MultiSportsStore) { }
 
-  refreshMatches(currentSportMatches: SportMatch[], request: MatchRequest) {
-    this.getMatches(request).subscribe((matchesWaiting: MatchWaiting[]) => {
+  async refreshMatches(currentSportMatches: SportMatch[], request: MatchRequest) {
+    await this.getMatches(request).then((matchesWaiting: MatchWaiting[]) => {
       this.changeInfoAfterRefreshMatches(currentSportMatches, matchesWaiting);
     });
   }
 
-  getMatches(param: MatchRequest) {
+  async getMatches(param: MatchRequest) {
     const url = `/api/multi-sports/auto-refresh`;
-    return this.httpRequestService.postMessagePack(param, url, false);
+    const task = this.httpRequestService.postMessagePack(param, url, false);
+    return firstValueFrom(task);
   }
 
   private changeInfoAfterRefreshMatches(currentSportMatches: SportMatch[], matches: MatchWaiting[]) {

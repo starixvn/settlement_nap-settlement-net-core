@@ -1,11 +1,11 @@
 
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { MultiSportsStore } from '../../services/multi-sports.store';
 import { RefreshMatchService } from '../../services';
 import { SportMatch } from '../../models';
 import * as _ from 'lodash';
 import { CommonModule } from '@angular/common';
-import { Subject, Subscription, interval, map, takeUntil } from 'rxjs';
+import { Subject, map, takeUntil } from 'rxjs';
 import { LeagueComponent } from './league/league.component';
 import { MatchComponent } from './match/match.component';
 import { DynamicHeightDirective } from '../../../shared/directives';
@@ -20,23 +20,20 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
 })
 export class TableMatchComponent implements OnInit {
   public sports: SportMatch[];
-  private subscriber: Subscription;
   private readonly period = 6000;
-  public intervalTimer = interval(this.period);
   ngUnsubscribe = new Subject();
-  constructor(public store: MultiSportsStore,
-    private readonly cd: ChangeDetectorRef,
-    private readonly refreshMatchesService: RefreshMatchService) {
-  }
+  refreshMatchesService = inject(RefreshMatchService);
+  changeDetectorRef = inject(ChangeDetectorRef);
+  store = inject(MultiSportsStore);
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.store.state$.pipe(
       takeUntil(this.ngUnsubscribe),
       map(state => state.sports),
     ).subscribe(data => {
       this.sports = data;
 
-      this.cd.markForCheck();
+      this.changeDetectorRef.markForCheck();
     });
     this.refreshMatches();
   }
@@ -44,22 +41,26 @@ export class TableMatchComponent implements OnInit {
   ngOnDestroy() {
     this.ngUnsubscribe.next(1);
     this.ngUnsubscribe.complete();
-    if (this.subscriber) {
-      this.subscriber.unsubscribe();
-    }
   }
 
   collapseSport(sport: SportMatch) {
     sport.collapse = !sport.collapse;
   }
 
+  private async refreshMatches() {
+    let isChecking = false;
+    while (true) {
+      if (!isChecking) {
+        isChecking = true;
+        if (this.store.enableRefresh) {
+          await this.refreshMatchesService.refreshMatches(this.sports, this.store.request);
+          this.changeDetectorRef.markForCheck();
+        }
 
-  private refreshMatches() {
-    this.subscriber = this.intervalTimer.subscribe(() => {
-      if (this.store.enableRefresh) {
-        this.refreshMatchesService.refreshMatches(this.sports, this.store.request);
-        this.cd.markForCheck();
+        isChecking = false;
       }
-    });
+
+      await new Promise((resolve) => setTimeout(resolve, this.period));
+    }
   }
 }

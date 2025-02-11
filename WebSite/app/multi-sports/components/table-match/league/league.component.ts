@@ -1,6 +1,5 @@
 import { MessageBoxService } from './../../../../shared/services/message-box.service.native';
-
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from "@angular/core";
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,  OnDestroy, OnInit } from "@angular/core";
 import { LeagueMatch } from "../../../models";
 import { CommonModule } from "@angular/common";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -15,13 +14,11 @@ import { Language } from "../../../../shared/language.native";
 import { AutoSettingPosition } from "../../../constants";
 import { HandleActionsService, MultiSportService, PopupService } from "../../../services";
 import { TimeConverterPipe } from '../../../../shared/pipes/time-converter.pipe';
-import { MatchComponent } from '../match/match.component';
-import { reflectTypeEntityToDeclaration } from "@angular/compiler-cli/src/ngtsc/reflection";
 @Component({
   selector: 'tr[league-row]',
   templateUrl: './league.component.html',
   standalone: true,
-  imports: [CommonModule, MatTooltipModule, TimeConverterPipe, MatchComponent],
+  imports: [CommonModule, MatTooltipModule, TimeConverterPipe],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 
@@ -134,13 +131,13 @@ export class LeagueComponent implements OnInit, OnDestroy {
     const { isAutoPayoutForLeague, isEarlyPayoutForLeague } = this.league.autoCalcSetting;
 
     if (isAutoPayoutForLeague && isEarlyPayoutForLeague) {
-      return "<div>AUTO <div class='auto-type'>(Main & Early)</div>  </div>";
+      return "AUTO <div class='auto-type'>(Main & Early)</div>";
     }
     if (isAutoPayoutForLeague) {
-      return "<div>AUTO <div class='auto-type'>(Main)</div>  </div>";
+      return "AUTO <div class='auto-type'>(Main)</div>";
     }
     if (isEarlyPayoutForLeague) {
-      return "<div>AUTO <div class='auto-type'>(Early)</div>  </div>";
+      return "AUTO <div class='auto-type'>(Early)</div>";
     }
 
     return "OFF";
