@@ -1,4 +1,6 @@
-﻿using MassTransit;
+﻿using AutoEarlyRefund.Contracts;
+using MassTransit;
+using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Soccer.Criteria;
@@ -36,12 +38,14 @@ public class SettleEarlyServiceImp(
         var result = await Execute(criteria);
 
         //TODO
-        if (request is { ActionName: "REFUND" })
-        {
-            //await publishEndpoint.Publish(new ResultRefunded(request.MatchId, request.ActionName, request.SelectedResources));
-        }
+        await publishEndpoint.Publish(new ResultsRefunded(
+            request.MatchId
+            , 0
+            , SportType.Soccer
+            , 202
+            , request.ActionName
+            , request.SelectedResources));
 
-        //return new Result();
 
         return result;
     }

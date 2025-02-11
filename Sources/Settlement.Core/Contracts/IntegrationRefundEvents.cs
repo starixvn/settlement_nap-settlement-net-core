@@ -12,8 +12,7 @@ public record ResultsRefunded(
     );
 
 public record ResultsRefundConfirmed(
-    int MatchId
-    ,
+    int MatchId,
     int LeagueId,
     short ShortType,
     short ChildMatchType,
