@@ -6,7 +6,7 @@ namespace Settlement.Sportsbook.Soccer.UnitTests.Services;
 
 public class GoalRecordServiceTests
 {
-    private readonly IGoalRecordService service = new GoalRecordServiceImp();
+    private readonly GoalRecordServiceImp service = new GoalRecordServiceImp();
 
     [Fact]
     public void NoGoalFullTime_Always_ReturnsZeroFirstGoalLastGoal()

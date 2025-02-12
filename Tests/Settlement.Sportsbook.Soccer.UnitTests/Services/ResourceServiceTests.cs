@@ -13,7 +13,7 @@ public class ResourceServiceTests
 
     private readonly IGoalRecordService goalRecordService;
 
-    private readonly IResourceService service;
+    private readonly ResourceServiceImp service;
 
     public ResourceServiceTests()
     {

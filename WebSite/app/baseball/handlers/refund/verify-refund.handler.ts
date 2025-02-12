@@ -55,7 +55,7 @@ export class VerifyRefundHandler implements BaseHandler {
     
     const isConfirmedRefundSdt = storage.getResultChecked().some(item => item.resultSettingData.isConfirmedRefundSdt);
     const inconsistencyAwayEnd = isMisMatch || this.inconsistencyAwayEnd(storage);
-    return (isConfirmedRefundSdt != storage.isSdtSettle()) || (storage.isSdtSettle() && inconsistencyAwayEnd);
+    return (isConfirmedRefundSdt !== storage.isSdtSettle()) || (storage.isSdtSettle() && inconsistencyAwayEnd);
   }
 
   inconsistencyAwayEnd(storage: IRefundStorage) {

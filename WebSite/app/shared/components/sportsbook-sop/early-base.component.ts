@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import { Component, Injector } from '@angular/core';
 import { ResultDetail, GroupMap, Permission, SaveScoreQuery, MatchDetail } from '../../models/sportsbook-sop';
-import { ItemsSelect, ModalDialogMessage, MultipleSelect, ResultSettingQuery } from '../../models';
+import { ItemsSelect, ModalDialogMessage, MultipleSelect, ResultSettingQuery, ResourceItem } from '../../models';
 import { BackgroundColor, CalculateAction, ResultSettingType, ResultStatusId, SettlementStatusId, TicketStatusText } from '../../constants';
 import { AioService, MessageBoxService } from '../../services';
 import { VerificationBaseService } from '../../../core/services/verification-base.service';
@@ -294,7 +294,7 @@ export class EarlyBaseComponent {
         this.toastrService.clear();
         const resourceIds = _.join(this.selectedResources.map(item => item.resourceId), ',');
     
-        const confirmRefundResources = this.selectedResources.map(x => ({...x,resourceName: x.betTypeName}));
+        const confirmRefundResources = this.selectedResources.map(x => ({...x, resourceName: x.betTypeName}));
 
         const existResultConfirmed = _.find(this.selectedResources, item => item.resultSettingData.isConfirmedRefund);
         if (existResultConfirmed) {

@@ -1,5 +1,3 @@
-//new pipe
-
 import { Pipe, PipeTransform } from '@angular/core';
 import { ResourceIds } from '../../shared/constants';
 
@@ -60,5 +58,4 @@ export class ResourceNamePipe implements PipeTransform {
         return 'th';
     }
   }
-
 }

@@ -21,7 +21,7 @@ public class RefundServiceTests
 
     private readonly ICreateCriteriaService createCriteriaService;
 
-    private readonly IRefundService service;
+    private readonly RefundServiceImp service;
 
     private readonly LogService logService;
 

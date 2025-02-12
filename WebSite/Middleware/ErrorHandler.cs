@@ -11,7 +11,6 @@ public class ErrorHandler(
     IConfiguration configuration,
     IMaintenanceService maintenanceService)
 {
-
     public async Task InvokeAsync(HttpContext context)
     {
         var body = string.Empty;
@@ -51,50 +50,38 @@ public class ErrorHandler(
 
     private async Task WriteLog(HttpContext context, Exception exception, string body)
     {
-        try
-        {
-            var logMessage = new LogMessage(exception.Message)
-                .AddSection("Request Info", GetRequestInfo(context, body))
-                .AddSection("Server Info", CommonInfoGetters.GetServerInfo())
-                .AddSection("Exception Info", CommonInfoGetters.GetExceptionInfo(exception))
-                .ToString();
+        var logMessage = new LogMessage(exception.Message)
+            .AddSection("Request Info", GetRequestInfo(context, body))
+            .AddSection("Server Info", CommonInfoGetters.GetServerInfo())
+            .AddSection("Exception Info", CommonInfoGetters.GetExceptionInfo(exception))
+            .ToString();
 
-            await logger.ErrorAsync(logMessage);
-        }
-        catch
-        {
-        }
+        await logger.ErrorAsync(logMessage);
     }
 
     private async Task WriteResponse(HttpContext context, Exception exception)
     {
-        try
+        var method = context.Request.Method.ToLowerInvariant();
+        var requestedWith = context.Request.Headers["X-Requested-With"];
+
+        if (context.Response.HasStarted)
         {
-            var method = context.Request.Method.ToLowerInvariant();
-            var requestedWith = context.Request.Headers["X-Requested-With"];
-
-            if (context.Response.HasStarted)
-            {
-                return;
-            }
-
-            if (method is "post" or "put" or "delete" && requestedWith == "XMLHttpRequest")
-            {
-                context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-            }
-
-            await context.Response.WriteAsync(exception.Message);
-
-            var env = configuration.GetSection("Fanex.NAP.Client:Environment").Value;
-
-            if (exception.StackTrace != null && !env.Equals("LIVE", StringComparison.CurrentCultureIgnoreCase))
-            {
-                await context.Response.WriteAsync(Environment.NewLine);
-                await context.Response.WriteAsync(exception.StackTrace);
-            }
+            return;
         }
-        catch
+
+        if (method is "post" or "put" or "delete" && requestedWith == "XMLHttpRequest")
         {
+            context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+        }
+
+        await context.Response.WriteAsync(exception.Message);
+
+        var env = configuration.GetSection("Fanex.NAP.Client:Environment").Value;
+
+        if (exception.StackTrace != null && !env.Equals("LIVE", StringComparison.CurrentCultureIgnoreCase))
+        {
+            await context.Response.WriteAsync(Environment.NewLine);
+            await context.Response.WriteAsync(exception.StackTrace);
         }
     }
 }

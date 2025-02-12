@@ -15,7 +15,7 @@ public class SoccerBetStatusServiceTests
     private readonly Soccer.Services.FullTimeBetStatus.IBetStatusService fullTimeBetStatusService;
     private readonly Soccer.Services.HalfTimeBetStatus.IBetStatusService halfTimeBetStatusService;
 
-    private readonly ISoccerBetStatusService service;
+    private readonly SoccerBetStatusServiceImp service;
 
     public SoccerBetStatusServiceTests()
     {

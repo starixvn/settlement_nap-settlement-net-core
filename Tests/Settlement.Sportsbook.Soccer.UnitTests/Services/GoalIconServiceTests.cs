@@ -8,7 +8,7 @@ public class GoalIconServiceTests
 {
     private readonly FirstGoalLastGoalService firstGoalLastGoalService;
 
-    private readonly GoalIconService service;
+    private readonly GoalIconServiceImp service;
 
     public GoalIconServiceTests()
     {

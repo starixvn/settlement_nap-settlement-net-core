@@ -1,10 +1,8 @@
-﻿using MediatR;
-using Settlement.Core.Models;
-using Settlement.Gaming.Models;
+﻿using Settlement.Gaming.Models;
 
 namespace Settlement.Gaming.Requests;
 
-public class Happy5SettlementRequest : IRequest<Result>
+public class Happy5SettlementRequest
 {
     public int MatchId { get; set; }
 
@@ -14,5 +12,5 @@ public class Happy5SettlementRequest : IRequest<Result>
 
     public string Action { get; set; }
 
-    public Permission Permission { get; set; }
+    public string Ip { get; set; }
 }

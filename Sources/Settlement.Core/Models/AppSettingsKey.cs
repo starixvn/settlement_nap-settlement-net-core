@@ -8,4 +8,5 @@ public class AppSettingsKey
 
     public bool EnableVerifyingRunningOdds { get; set; }
 
+    public string InternalApiBase { get; set; }
 }

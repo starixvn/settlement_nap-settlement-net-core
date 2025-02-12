@@ -117,6 +117,7 @@ public static class WebSites
         services.AddSingleton<ICacheService, CacheService>();
 
         services.AddTransient<IBalanceUpService, BalanceUpServiceImp>();
+        services.AddScoped<HttpService>();
 
         RefDataTypeContainer
             .ConnectTo(new Uri(configuration.GetSection("Fanex.RemotingRef.Service.Url").Value))

@@ -4,8 +4,8 @@ using Fanex.Settlement.ScaleOut.Models;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.Extensions.Options;
-using Settlement.Core.Criteria;
 using Settlement.Core.Constants;
+using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Soccer.Criteria;
@@ -23,11 +23,9 @@ public class CalculateServiceTests
 
     private readonly ICreateCriteriaService createCriteriaService;
 
-    private readonly ICalculateService service;
+    private readonly CalculateServiceImp service;
 
     private readonly LogService logService;
-
-    //private readonly MatchService matchService;
 
     public CalculateServiceTests()
     {

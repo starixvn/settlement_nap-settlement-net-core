@@ -19,7 +19,7 @@ public class CreateCriteriaServiceTests
 
     private readonly IBetStatusAllService betStatusAllService;
 
-    private readonly ICreateCriteriaService service;
+    private readonly CreateCriteriaServiceImp service;
 
     private readonly IMatchService matchService;
 

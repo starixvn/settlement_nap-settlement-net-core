@@ -1,9 +1,6 @@
-﻿using MediatR;
-using Settlement.Gaming.Models.Happy5;
+﻿namespace Settlement.Gaming.Requests;
 
-namespace Settlement.Gaming.Requests;
-
-public class Happy5MatchRequest : IRequest<HappyFive>
+public class Happy5MatchRequest
 {
     public string MatchCode { get; set; }
 
