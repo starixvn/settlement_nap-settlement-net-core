@@ -32,7 +32,7 @@ describe('CalculateStorage', () => {
   });
 
   it('should set and get match', () => {
-    const mockMatch = { matchDetail: {}, resultDetails: [] } as Match;
+    const mockMatch = { matchDetail: {}, resultDetails: [{resourceId: ResourceIds.halfTime}, {resourceId: ResourceIds.fullTime}] } as Match;
 
     storage.setMatch(mockMatch);
 

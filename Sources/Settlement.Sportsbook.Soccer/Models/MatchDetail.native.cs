@@ -44,8 +44,6 @@ public class MatchDetail
 
     public string EventStatus { get; set; }
 
-    public bool IsHtOnly { get; set; }
-
     public bool IsExistFgLg { get; set; }
 
     public bool IsExistHtFgLg { get; set; }

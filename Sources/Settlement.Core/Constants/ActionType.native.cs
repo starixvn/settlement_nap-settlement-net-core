@@ -21,6 +21,8 @@ public static class ActionType
     public const string BetDaq = "BETDAQ";
 
     public const string MoveTicket = "MoveTicket";
+
+    public const string InstHT = "INST-HT";
 }
 
 public static class ActionId

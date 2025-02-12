@@ -15,7 +15,7 @@
     + 'You will not be able to cancel the CALCULATION and REUSE this match!',
   CalculationAdditionalConfirmation: 'Are you sure you want to proceed with the results below?',
   UncalculationConfirmMessage: 'WARNING! Please double check and confirm this match really needs to be UNSETTLED!',
-  CannotUncalculateHalfTime: 'This function has not supported. Select all results instead.',
+  CannotUncalculateHalfTime: 'Failed: This function has not supported. Select all results instead.',
   UncalculateFTConfirmMessage: 'WARNING! Please double check and confirm this match really needs to be UNSETTLED FULL TIME!',
   CannotUncalculateFTMessage: 'WARNING! cannot proceed due to match has been Refunded All. Please recheck or use Uncalculate All instead.',
   RefundConfirmationBox: 'Refund confirmation box',
@@ -246,6 +246,9 @@
     relatedMatchesNotCalc: "Cannot continue due to some Parent-match scores have not been calculated."
   },
   soccer: {
+    CannotUncalculateFullTime: 'Failed: HT has not been settled. Select all results instead.',
+    halfTimeNotSettleYet: "Failed: result (HT) has not been settled.",
+    scoreNotConfirmed: "Failed: result(s) ({0}) has not been confirmed or {0} play-time not ended.",
     noNeedSemicolonOnGoalRecord: "Goal Record must not contain \";\" character, please correct Goal Record and then try again.",
     needSemicolonOnGoalRecord: "Goal Record must contain \";\" character, please correct Goal Record and then try again.",
     halfTimeGoalRecordNotConsistent: "Goal Record is not consistent with the HALFTIME Score, please correct Goal Record before calculating.",

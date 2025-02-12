@@ -1,4 +1,5 @@
 ﻿using Settlement.Core.Constants;
+using Settlement.Core.Models;
 using Settlement.Sportsbook.Soccer.Constants;
 using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Requests;
@@ -20,6 +21,8 @@ public interface InstantResourceService
     string RemoveBetStatus(InstantCalculationRequest request);
 
     string GenerateResource(List<XmlResource> resources);
+
+    string GenerateResource(List<ResourceItem> selectedResources);
 }
 
 public class InstantResourceServiceImp(
@@ -350,5 +353,15 @@ public class InstantResourceServiceImp(
         return resources.Count > 0
             ? xmlConvertService.Serialize(new XmlResults { Resources = resources })
             : string.Empty;
+    }
+
+    public string GenerateResource(List<ResourceItem> selectedResources)
+    {
+        var resources = new Resources<ResourceItem>
+        {
+            ResourceItems = selectedResources
+        };
+
+        return xmlConvertService.Serialize(resources);
     }
 }

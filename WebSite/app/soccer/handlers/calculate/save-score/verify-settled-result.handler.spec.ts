@@ -1,6 +1,6 @@
 import { VerifySettledResultHandler } from './verify-settled-result.handler';
 import { Storage } from '../../../storage/storage.service.native';
-import { TicketStatusText } from '../../../../shared/constants';
+import { ResultStatusId, TicketStatusText } from '../../../../shared/constants';
 import { Language } from '../../../../shared/language.native';
 import { AbstractHandler } from '../../abstract.handler.native';
 import { Match } from '../../../components/calc/models/match.model';
@@ -19,8 +19,8 @@ describe('VerifySettledResultHandler', () => {
 
   it('should call storage.error if there is a settled result', () => {
     const resultDetails = [
-      { checked: true, ticketStatus: TicketStatusText.calculated, resourceName: 'Result 1' },
-      { checked: false, ticketStatus: TicketStatusText.running, resourceName: 'Result 2' },
+      { checked: true, resultStatusId: ResultStatusId.AutoCompleted, resourceName: 'Result 1' },
+      { checked: false, resultStatusId: ResultStatusId.RunningOne, resourceName: 'Result 2' },
     ];
     storageMock.getMatch.mockReturnValue({ resultDetails } as Match);
 

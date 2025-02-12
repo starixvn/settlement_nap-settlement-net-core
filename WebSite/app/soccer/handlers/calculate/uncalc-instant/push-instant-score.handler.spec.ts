@@ -1,5 +1,4 @@
 import { TestBed } from '@angular/core/testing';
-import { PushInstantScoreHandler } from './push-instant-score.handler';
 import { MessageBoxService } from '../../../../shared/services';
 import { RequestService } from '../../../components/calc/services/request.service';
 import { ClosePopupService } from '../../../../shared/services';
@@ -9,6 +8,7 @@ import { CalculateStorage } from '../../../storage/calculate.storage';
 import { HttpClientModule } from '@angular/common/http';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { VerifyScoreGoalService } from '../../../components/calc/services/verify-score-goal.service';
+import { PushInstantScoreHandler } from './push-instant-score.handler';
 
 
 describe('PushInstantScore', () => {
@@ -54,7 +54,7 @@ describe('PushInstantScore', () => {
 
     requestService.pushInstantScore = jest.fn().mockResolvedValue({ isSuccessful: true });
 
-    await handler.Handle(storage);
+    await handler.handle(storage);
 
     expect(storage.setConfirmMessage).toHaveBeenCalledWith(expect.stringContaining('2-1'));
     expect(messageBoxService.confirm).toHaveBeenCalledWith(confirmMessage, expect.any(Function));
@@ -78,7 +78,7 @@ describe('PushInstantScore', () => {
 
     requestService.pushInstantScore = jest.fn().mockResolvedValue({ isSuccessful: false, errMsg: errorMessage });
 
-    await handler.Handle(storage);
+    await handler.handle(storage);
 
     expect(storage.setConfirmMessage).toHaveBeenCalledWith(expect.stringContaining('2-1'));
     expect(messageBoxService.confirm).toHaveBeenCalledWith(confirmMessage, expect.any(Function));

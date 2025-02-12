@@ -1,6 +1,6 @@
 import { Storage } from '../storage/storage.service.native';
 export interface BaseHandler {
-  setNextHandler(handler: BaseHandler): void;
+  setNextHandler(handler: BaseHandler): BaseHandler;
   handle(storage: Storage): void ;
 }
 

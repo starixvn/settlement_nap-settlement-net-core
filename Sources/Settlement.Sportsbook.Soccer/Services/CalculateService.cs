@@ -290,7 +290,7 @@ public class CalculateServiceImp(
 
     private async Task updateResult(SaveScoreCriteria saveScoreCriteria, SaveScoreRequest request)
     {
-        var criteria = new UpdateMatchInfoCriteria()
+        var criteria = new UpdateMatchInfoCriteria
         {
             MatchId = saveScoreCriteria.MatchId,
             Action = SettlementFunctionKeys.SaveScore,

@@ -29,6 +29,7 @@ import { NotReadyMatchComponent } from '../../../shared/components/not-ready-mat
 import { ModalDialogComponent } from '../../../shared/components/modal-dialog/modal-dialog.component';
 import { ModalContentDialogComponent } from '../../../shared/components/modal-dialog/modal-content-dialog.component';
 import { CalculateStorage } from '../../storage/calculate.storage';
+import { some } from 'lodash';
 
 describe('CalculationComponent', () => {
   let component: CalculationComponent;
@@ -108,125 +109,6 @@ describe('CalculationComponent', () => {
     expect(component.isReSettledTickets).toBe(true);
   });
 
-  describe('isDisableCalculate', () => {
-    it('should return false when match is pin goal match', () => {
-      matchDetail.leagueGroupId = 113;
-      component.matchDetail = matchDetail;
-
-      const result = component.isDisableCalculate;
-
-      expect(result).toBe(false);
-    });
-
-    it('should return true when match cannot be calculated', () => {
-      matchDetail.leagueGroupId = 0;
-      matchDetail.isInstant = true;
-      matchDetail.hasInstantCompleted = true;
-      matchDetail.playTime = 13;
-      matchDetail.confirmHT = 0;
-      component.matchDetail = matchDetail;
-
-      const result = component.isDisableCalculate;
-
-      expect(result).toBe(true);
-    });
-
-    it('should return false when match is ready to calculate', () => {
-      matchDetail.isInstant = false;
-      matchDetail.hasInstantCompleted = false;
-      matchDetail.playTime = 53;
-      matchDetail.confirmHT = 1;
-      component.matchDetail = matchDetail;
-
-      const result = component.isDisableCalculate;
-
-      expect(result).toBe(false);
-    });
-  });
-
-  describe('ticketStatusBackground (halfTime & fullTime)', () => {
-    it('should return background calculated when status is calculated', () => {
-      matchDetail.htStatus = 'Calculated';
-      component.matchDetail = matchDetail;
-
-      const result = component.halftimeTicketStatusBackground;
-
-      expect(result).toEqual('bg-calculated');
-    });
-
-    it('should return background marked when status is marked', () => {
-      matchDetail.ftStatus = 'Marked';
-      component.matchDetail = matchDetail;
-
-      const result = component.fullTimeTicketStatusBackground;
-
-      expect(result).toEqual('bg-marked');
-    });
-
-    it('should return empty when status is running', () => {
-      matchDetail.ftStatus = 'Running';
-      component.matchDetail = matchDetail;
-
-      const result = component.fullTimeTicketStatusBackground;
-
-      expect(result).toEqual('');
-    });
-  });
-
-  describe('isDisableFulltimeCalculate', () => {
-    it('should return false when match is pin goal match', () => {
-      matchDetail.leagueGroupId = 113;
-      component.matchDetail = matchDetail;
-
-      const result = component.isDisableFulltimeCalculate;
-
-      expect(result).toBe(false);
-    });
-
-    it('should return true when match cannot be calculated', () => {
-      matchDetail.leagueGroupId = 0;
-      matchDetail.isHtOnly = true;
-      matchDetail.htStatus = 'Running';
-      matchDetail.playTime = 13;
-      component.matchDetail = matchDetail;
-
-      const result = component.isDisableFulltimeCalculate;
-
-      expect(result).toBe(true);
-    });
-
-    it('should return false when match is ready to calculate', () => {
-      matchDetail.isHtOnly = false;
-      matchDetail.htStatus = 'Completed';
-      matchDetail.playTime = 53;
-      component.matchDetail = matchDetail;
-
-      const result = component.isDisableFulltimeCalculate;
-
-      expect(result).toBe(false);
-    });
-  });
-
-  describe('isDisableFulltimeTextbox', () => {
-    it('should return false when match is pin goal match', () => {
-      matchDetail.leagueGroupId = 113;
-      component.matchDetail = matchDetail;
-
-      const result = component.isDisableFulltimeTextbox;
-
-      expect(result).toBe(false);
-    });
-
-    it('should return isHtOnly when match is not pin goal', () => {
-      matchDetail.leagueGroupId = 0;
-      matchDetail.isHtOnly = true;
-      component.matchDetail = matchDetail;
-
-      const result = component.isDisableFulltimeTextbox;
-
-      expect(result).toBe(true);
-    });
-  });
 
   it('autoFillFantasyMatch - should fill match score', () => {
     component.matchDetail = matchDetail;
@@ -312,12 +194,13 @@ describe('CalculationComponent', () => {
     });
 
     it('should reset home and away', async () => {
-      const resetHomeAwaySpy = jest.spyOn(storage, 'resetHomeAway');
       requestService.getMatch = jest.fn().mockReturnValue(Promise.resolve(match));
-
+      storage.setMatch = jest.fn();
+      storage.resetHomeAway = jest.fn();
+      
       await component.getMatch(12345);
 
-      expect(resetHomeAwaySpy).toHaveBeenCalled();
+      expect(storage.resetHomeAway).toHaveBeenCalled();
     });
   });
 

@@ -51,7 +51,14 @@ describe('Soccer - VerifyMatchService', () => {
         const data =  CreateDataTest.MatchDetail();
         data.leagueGroupId = 113;
         data.playTime = 1
-        expect(service.isPinGoal(data)).toBe(true);
+        expect(service.isPinGoalOrSaba(data)).toBe(true);
+    });
+
+    it('Should return true when there are leagueGroupId = 42 and playTime > 0.', () => {
+        const data =  CreateDataTest.MatchDetail();
+        data.leagueGroupId = 42;
+        data.playTime = 1
+        expect(service.isPinGoalOrSaba(data)).toBe(true);
     });
 
     it('Should return true when there are playTime > 45.', () => {

@@ -10,6 +10,7 @@ import { VerifyScoreGoalService } from '../../../components/calc/services/verify
 import { CalculateStorage } from '../../../storage/calculate.storage';
 import { RequestService } from '../../../components/calc/services/request.service';
 import { ModalDialogMessage } from '../../../../shared/models';
+import { ResultStatusId } from '../../../../shared/constants';
 
 describe('ConfirmUncalcFTHandler', () => {
   let handler: ConfirmUncalcFTHandler;
@@ -38,7 +39,7 @@ describe('ConfirmUncalcFTHandler', () => {
 
   it('should set confirm message and call messageBoxService.confirm twice', () => {
     const superHandleSpy = jest.spyOn(AbstractHandler.prototype, 'handle');
-    
+    storage.getHalfTimeResult = jest.fn().mockReturnValue({ resultStatusId: ResultStatusId.AutoCompleted });
     messageBoxService.confirm = jest.fn().mockImplementation((message: ModalDialogMessage, callback) => callback());
 
     handler.handle(storage);
@@ -50,6 +51,46 @@ describe('ConfirmUncalcFTHandler', () => {
     message.message = Language.checkAgainUncalculateFTConfirmation;
     expect(storage.setConfirmMessage).toHaveBeenNthCalledWith(2,Language.checkAgainUncalculateFTConfirmation);
     expect(messageBoxService.confirm).toHaveBeenNthCalledWith(2,message, expect.any(Function));
+    expect(superHandleSpy).toHaveBeenCalledWith(storage);
+  });
+
+  it('should call storage.error and return if halfTimeResult is not AutoCompleted or ManualCompleted', () => {
+    const halfTimeResult = { resultStatusId: ResultStatusId.RunningOne };
+    storage.getHalfTimeResult = jest.fn().mockReturnValue(halfTimeResult);
+    storage.error = jest.fn();
+
+    handler.handle(storage);
+
+    expect(storage.error).toHaveBeenCalledWith(Language.soccer.CannotUncalculateFullTime);
+  });
+
+  it('should proceed with confirmation if halfTimeResult is AutoCompleted', () => {
+    const halfTimeResult = { resultStatusId: ResultStatusId.AutoCompleted };
+    storage.getHalfTimeResult = jest.fn().mockReturnValue(halfTimeResult);
+    const superHandleSpy = jest.spyOn(AbstractHandler.prototype, 'handle');
+    messageBoxService.confirm = jest.fn().mockImplementation((message: ModalDialogMessage, callback) => callback());
+
+    handler.handle(storage);
+
+    expect(storage.setConfirmMessage).toHaveBeenNthCalledWith(1, Language.UncalculateFTConfirmMessage);
+    expect(messageBoxService.confirm).toHaveBeenNthCalledWith(1, message, expect.any(Function));
+    expect(storage.setConfirmMessage).toHaveBeenNthCalledWith(2, Language.checkAgainUncalculateFTConfirmation);
+    expect(messageBoxService.confirm).toHaveBeenNthCalledWith(2, message, expect.any(Function));
+    expect(superHandleSpy).toHaveBeenCalledWith(storage);
+  });
+
+  it('should proceed with confirmation if halfTimeResult is ManualCompleted', () => {
+    const halfTimeResult = { resultStatusId: ResultStatusId.ManualCompleted };
+    storage.getHalfTimeResult = jest.fn().mockReturnValue(halfTimeResult);
+    const superHandleSpy = jest.spyOn(AbstractHandler.prototype, 'handle');
+    messageBoxService.confirm = jest.fn().mockImplementation((message: ModalDialogMessage, callback) => callback());
+
+    handler.handle(storage);
+
+    expect(storage.setConfirmMessage).toHaveBeenNthCalledWith(1, Language.UncalculateFTConfirmMessage);
+    expect(messageBoxService.confirm).toHaveBeenNthCalledWith(1, message, expect.any(Function));
+    expect(storage.setConfirmMessage).toHaveBeenNthCalledWith(2, Language.checkAgainUncalculateFTConfirmation);
+    expect(messageBoxService.confirm).toHaveBeenNthCalledWith(2, message, expect.any(Function));
     expect(superHandleSpy).toHaveBeenCalledWith(storage);
   });
 });

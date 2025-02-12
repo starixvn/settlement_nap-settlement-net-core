@@ -23,7 +23,8 @@ public class InstantCalculateServiceImp(
     InstantResourceService instantResourceService,
     IOptions<AppSettingsKey> appSettingsKey,
     ScaleOutSettleService scaleOutSettleService,
-    PushInstantCalculationService pushInstantService)
+    PushInstantCalculationService pushInstantService,
+    IResourceService resourceService)
     : InstantCalculateService
 {
     private async Task<Result> CalculateCheckingInfo(MatchCheckingCriteria criteria)
@@ -263,8 +264,10 @@ public class InstantCalculateServiceImp(
             SpName = "NAP_Admin_Settlement_InstantCalculation_Push",
             IsAuto = false,
             Mode = null,
-            InstantKey = request.InstantKey
+            InstantKey = request.InstantKey,
+            SelectedResources = instantResourceService.GenerateResource(resourceService.CreateResourceByAction(request.Mode))
         };
+
         var resultMessage = await scaleOutSettleService.ValidateEventAndTicket(requestChecking);
 
         return new Result

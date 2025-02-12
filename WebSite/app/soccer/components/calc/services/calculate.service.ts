@@ -21,6 +21,7 @@ import { VerifyScoreHandler } from "../../../handlers/calculate/save-score/verif
 import { SaveScoreHandler } from "../../../handlers/calculate/save-score/save-score.handler";
 import { VerifyScoreInstantHandler } from "../../../handlers/calculate/uncalc-instant/verify-score-instant.handler";
 import { PushInstantScoreHandler } from "../../../handlers/calculate/uncalc-instant/push-instant-score.handler";
+import { VerifyScoreConfirmHandler } from "../../../handlers/calculate/all/verify-score-confirm.handler";
 
 @Injectable()
 
@@ -32,14 +33,17 @@ export class CalculateService {
   //calc-HT
   #verifyHalfTimeHandler = new VerifyFirstHalfHandler();
   #confirmHalfTimeHandler = new ConfirmHalfTimeHandler ();
+  #verifyScoreConfirmHalfTimeHandler = new VerifyScoreConfirmHandler();
 
   //calc-FT
   #verifyFullTimeHandler = new VerifyFulltimeHandler();
   #confirmFullTimeHandler = new ConfirmFullTimeHandler();
+  #verifyScoreConfirmFullTimeHandler = new VerifyScoreConfirmHandler();
 
   //calc-ALL
   #verifyAllHandler = new VerifyAllHandler();
   #confirmAllHandler = new ConfirmAllHandler();
+  #verifyScoreConfirmHandler = new VerifyScoreConfirmHandler();
 
   //uncalc-ALL
   #uncalculateHandler = new UncalculateHandler();
@@ -61,28 +65,35 @@ export class CalculateService {
   #storage = inject(CalculateStorage);
 
   constructor(){
+  
     this.#matchSettledHandler
     .setNextHandler(this.#halfTimeSettledHandler)
     .setNextHandler(this.#scoreValidationHandler);
 
-    this.#verifyHalfTimeHandler
+     //calc-HT
+    this.#verifyHalfTimeHandler.setNextHandler(this.#verifyScoreConfirmHalfTimeHandler)
     .setNextHandler(this.#confirmHalfTimeHandler)
     .setNextHandler(this.#calculateHandler);
 
-    this.#verifyFullTimeHandler
+    //calc-FT
+    this.#verifyFullTimeHandler.setNextHandler(this.#verifyScoreConfirmFullTimeHandler)
     .setNextHandler(this.#confirmFullTimeHandler)
     .setNextHandler(this.#calculateHandler);
 
-    this.#verifyAllHandler
+    //calc-ALL
+    this.#verifyAllHandler.setNextHandler(this.#verifyScoreConfirmHandler)
     .setNextHandler(this.#confirmAllHandler)
     .setNextHandler(this.#calculateHandler);
 
+    //uncalc-ALL
     this.#uncalculateHandler.setNextHandler(this.#calculateHandler);
 
+    //Uncalc-FT
     this.#checkBetStatusHandler
     .setNextHandler(this.#confirmUncalcFTHandler)
     .setNextHandler(this.#uncalculateFTHandler);
 
+     //Save-Score
     this.#verifySettledResultHandler
     .setNextHandler(this.#verifyScoreHandler)
     .setNextHandler(this.#saveScoreHandler);

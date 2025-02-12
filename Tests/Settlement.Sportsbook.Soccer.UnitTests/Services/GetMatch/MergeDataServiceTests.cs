@@ -1,5 +1,5 @@
-﻿using Settlement.Sportsbook.Soccer.Models;
-using Settlement.Core.Models;
+﻿using Settlement.Core.Models;
+using Settlement.Sportsbook.Soccer.Models;
 using MatchDetail = Settlement.Sportsbook.Soccer.Models.MatchDetail;
 
 namespace Settlement.Sportsbook.Soccer.UnitTests.Services.GetMatch;
@@ -58,12 +58,13 @@ public class MergeDataServiceTests
     }
 
     [Theory]
-    [InlineData(0, 0, 0, 0, "No Ticket")]
-    [InlineData(1, 1, 0, 0, "Running")]
-    [InlineData(1, 0, 1, 0, "Marked")]
-    [InlineData(1, 0, 0, 1, "Waiting")]
-    [InlineData(1, 0, 0, 0, "Calculated")]
-    public void MergeSiteMatch_Always_GenerateStatus(int betCount, int betRunningCount, int betMarkedCount, int betWaitingCount, string status)
+    [InlineData(0, 0, 0, 0, 0, 0, "No Ticket")]
+    [InlineData(1, 1, 0, 0, 0, 0, "Running")]
+    [InlineData(1, 0, 1, 0, 0, 0, "Marked")]
+    [InlineData(1, 0, 0, 1, 0, 0, "Waiting")]
+    [InlineData(1, 0, 0, 0, 2, 2, "Refunded")]
+    [InlineData(1, 0, 0, 0, 2, 1, "Calculated")]
+    public void MergeSiteMatch_Always_GenerateStatus(int betCount, int betRunningCount, int betMarkedCount, int betWaitingCount, int betCalculatedCount, int betRefundedCount, string status)
     {
         //Arrange
         var mainMatch = new MatchDetail { SiteMatch = [] };
@@ -73,7 +74,9 @@ public class MergeDataServiceTests
             BetCount = betCount,
             BetRunningCount = betRunningCount,
             BetMarkedCount = betMarkedCount,
-            BetWaitingCount = betWaitingCount
+            BetWaitingCount = betWaitingCount,
+            BetSettledCount = betCalculatedCount,
+            BetRefundedCount = betRefundedCount
         };
 
         var ticketCountFt = new TicketCounts
@@ -82,7 +85,9 @@ public class MergeDataServiceTests
             BetCount = betCount,
             BetRunningCount = betRunningCount,
             BetMarkedCount = betMarkedCount,
-            BetWaitingCount = betWaitingCount
+            BetWaitingCount = betWaitingCount,
+            BetSettledCount = betCalculatedCount,
+            BetRefundedCount = betRefundedCount
         };
 
         //act

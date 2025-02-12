@@ -96,12 +96,12 @@ public class MergeDataServiceImp : IMergeDataService
             return TicketStatus.Waiting;
         }
 
-        if (ticketCount.BetRefundedCount > 0)
+        if (ticketCount.BetSettledCount > ticketCount.BetRefundedCount)
         {
-            return TicketStatus.Refunded;
+            return TicketStatus.Calculated;
         }
 
-        return TicketStatus.Calculated;
+        return TicketStatus.Refunded;
     }
 
     public List<ChildMatchModel> MergeDataChildMatches(List<ChildMatchModel> childMatches, List<SiteMatch> siteMatches)

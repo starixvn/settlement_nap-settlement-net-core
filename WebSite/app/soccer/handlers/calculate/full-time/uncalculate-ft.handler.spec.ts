@@ -10,6 +10,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { HedgeMatchDetail, Match, MatchDetail } from '../../../components/calc/models/match.model';
 import { Permission } from '../../../../shared/models/sportsbook-sop/permission.model';
 import { Result } from '../../../../shared/models';
+import { ResultStatusId } from '../../../../shared/constants';
+import { Language } from '../../../../shared/language.native';
 
 describe('UncalculateFTHandler', () => {
   let handler: UncalculateFTHandler;

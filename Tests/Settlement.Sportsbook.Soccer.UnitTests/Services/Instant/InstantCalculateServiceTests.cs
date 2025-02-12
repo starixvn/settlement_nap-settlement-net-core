@@ -27,12 +27,15 @@ public class InstantCalculateServiceTests
 
     private readonly PushInstantCalculationService pushInstantCalculationService;
 
+    private readonly IResourceService resourceService;
+
     public InstantCalculateServiceTests()
     {
         repository = Substitute.For<IDynamicRepository>();
         instantResourceService = Substitute.For<InstantResourceService>();
         scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
         pushInstantCalculationService = Substitute.For<PushInstantCalculationService>();
+        resourceService = Substitute.For<IResourceService>();
 
         var mapperConfig = new MapperConfigurationExpression();
         mapperConfig.AddProfile<SoccerAutoMapperProfile>();
@@ -41,7 +44,7 @@ public class InstantCalculateServiceTests
         var appSettings = new AppSettingsKey { SiteDbServer = ["DB01", "DB02", "DB03"] };
         var option = Options.Create(appSettings);
 
-        service = new InstantCalculateServiceImp(repository, mapper, instantResourceService, option, scaleOutSettleService, pushInstantCalculationService);
+        service = new InstantCalculateServiceImp(repository, mapper, instantResourceService, option, scaleOutSettleService, pushInstantCalculationService, resourceService);
     }
 
     [Fact]

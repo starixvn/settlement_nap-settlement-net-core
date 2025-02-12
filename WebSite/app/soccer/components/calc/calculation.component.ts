@@ -5,17 +5,13 @@ import { ChildMatch, FantasyRelatedMatch, HedgeMatchDetail, Match, MatchDetail, 
 import { Soccer } from '../soccer.model';
 import { RequestService } from './services/request.service';
 import { VerifyMatchService } from './services/verify-match.service';
-import { TimeMinute, LeagueGroup } from './models/constant.native';
 import * as _ from 'lodash';
-import { TicketStatusText, BackgroundColor, ResultStatusId } from '../../../shared/constants';
 import { ClosePopupService, HttpRequestService } from '../../../shared/services';
 import { ModalDialogMessage } from '../../../shared/models';
 import { Language } from '../../../shared/language.native';
 import { VerifyActionService } from './services/verify-action.service';
 import { VerifyScoreGoalService } from './services/verify-score-goal.service';
 import { VerificationBaseService } from '../../services/verification-base.service';
-import { ResourceIds } from '../../constants';
-import { ResultDetail } from '../../models';
 import { CalculationActionComponent } from './calculation-action.component';
 import { CommonModule } from '@angular/common';
 import { CalculateStorage } from '../../storage/calculate.storage';
@@ -98,7 +94,7 @@ export class CalculationComponent implements Soccer {
 
     private isReadyToSettle(matchDetail: MatchDetail) {
         return this.verifyMatchService.isCompletedMatch(matchDetail) || this.verifyMatchService.isInstantMatch(matchDetail)
-            || this.verifyMatchService.isEndFirstHalf(matchDetail) || this.verifyMatchService.isPinGoal(matchDetail);
+            || this.verifyMatchService.isEndFirstHalf(matchDetail) || this.verifyMatchService.isPinGoalOrSaba(matchDetail);
     }
 
     onResettleCheckboxChange(checked: boolean) {
@@ -107,46 +103,6 @@ export class CalculationComponent implements Soccer {
 
     get isReSettledTickets() {
         return this.#storage.getIsResettleTicket();
-    }
-
-    private get isPinGoal() {
-        return this.matchDetail.leagueGroupId === LeagueGroup.pinGoal;
-    }
-
-    get isDisableCalculate() {
-        const flag = (this.matchDetail.isInstant || this.matchDetail.hasInstantCompleted)
-            && this.matchDetail.playTime <= TimeMinute.firstHalf && this.matchDetail.confirmHT === 0;
-
-        return this.isPinGoal ? false : flag;
-    }
-
-    get halftimeTicketStatusBackground() {
-        return this.getTicketStatusBackground(this.matchDetail.htStatus);
-    }
-
-    get fullTimeTicketStatusBackground() {
-        return this.getTicketStatusBackground(this.matchDetail.ftStatus);
-    }
-
-    private getTicketStatusBackground(status: string) {
-        return _.isEqual(status, TicketStatusText.calculated)
-            ? BackgroundColor.calculated
-            : _.isEqual(status, TicketStatusText.marked) ? BackgroundColor.backgroundMarked : "";
-    }
-    get isDisableFulltimeCalculate() {
-        const flag = this.matchDetail.playTime <= TimeMinute.firstHalf
-            || this.matchDetail.isHtOnly || _.isEqual(this.matchDetail.htStatus, TicketStatusText.running);
-
-        return this.isPinGoal ? false : flag;
-    }
-
-    get isDisableUncalculateFT() {
-        const resultHalfTime = _.find(this.match.resultDetails, item => item.resourceId === ResourceIds.halfTime) ?? new ResultDetail();
-        return !(_.isEqual(resultHalfTime.resultStatusId, ResultStatusId.ManualCompleted)
-            || _.isEqual(resultHalfTime.resultStatusId, ResultStatusId.AutoCompleted));
-    }
-    get isDisableFulltimeTextbox() {
-        return this.isPinGoal ? false : this.matchDetail.isHtOnly;
     }
 
     autoFillFantasyMatch(event: Score) {

@@ -46,7 +46,6 @@ export interface MatchDetail extends MatchDetailBase {
     hasInstantCompleted: boolean,
     confirmHT: number,
     confirmFT: number,
-    isHtOnly: boolean,
     isLive: boolean
 }
 

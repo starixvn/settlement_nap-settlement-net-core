@@ -13,7 +13,7 @@ public interface FirstGoalLastGoalService
     GoalModel GetFullTimeGoalByGoalRecord(string goalRecord, bool isFinalScore);
 }
 
-public sealed class FirstGoalLastGoalServiceImp : FirstGoalLastGoalService
+public class FirstGoalLastGoalServiceImp : FirstGoalLastGoalService
 {
     private const char CharA = 'a';
     private const char CharH = 'h';
@@ -102,7 +102,7 @@ public sealed class FirstGoalLastGoalServiceImp : FirstGoalLastGoalService
         return goalIcon;
     }
 
-    public GoalModel CreateGoalIconModelOnBetStatus(string betStatus)
+    public virtual GoalModel CreateGoalIconModelOnBetStatus(string betStatus)
     {
         var goalValue = betStatus.Split('-');
 

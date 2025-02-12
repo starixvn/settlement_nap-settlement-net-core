@@ -15,8 +15,8 @@ export class VerifyMatchService {
         return (matchDetail.isInstant || matchDetail.hasInstantCompleted) && matchDetail.playTime > 0;
     }
 
-    public isPinGoal(matchDetail: MatchDetail) {
-        return matchDetail.leagueGroupId === LeagueGroup.pinGoal && matchDetail.playTime >= 0;
+    public isPinGoalOrSaba(matchDetail: MatchDetail) {
+        return (matchDetail.leagueGroupId === LeagueGroup.pinGoal || matchDetail.leagueGroupId === LeagueGroup.sabaVirtual) && matchDetail.playTime >= 0;
     }
 
     public isEndFirstHalf(matchDetail: MatchDetail) {

@@ -31,7 +31,6 @@ export class MatchDetail {
     public isCalculated: boolean;
     public isRefund: boolean;
     public isCalRefund: boolean;
-    public isHtOnly: boolean;
     public isHalfTimeCal: boolean;
     public isScoreDirect: boolean;
     public originalHalfTimeHomeScore?: number;

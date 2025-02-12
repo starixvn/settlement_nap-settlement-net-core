@@ -8,7 +8,7 @@ import * as _ from "lodash";
 import { Language } from "../../shared/language.native";
 import { ResourceIds } from "../constants";
 import { ResultDetail } from "../models";
-import { ResultStatusId, SettlementStatusId } from "../../shared/constants";
+import {  SettlementStatusId } from "../../shared/constants";
 
 @Injectable()
 export class CalculateStorage implements Storage {
