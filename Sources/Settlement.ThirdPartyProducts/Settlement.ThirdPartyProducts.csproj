@@ -8,7 +8,7 @@
     <PackageReference Include="Fanex.NAP.Client" Version="2.0.2" />
     <PackageReference Include="Fanex.Settlement.Converter" Version="1.0.0.1" />
     <PackageReference Include="MediatR" Version="12.4.1" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.2" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Fanex.Settlement.ScaleOut\Fanex.Settlement.ScaleOut.csproj" />

@@ -69,7 +69,7 @@ public class ProviderLogServiceImp(
         return listResultLogs
             .Where(item =>
                 (item.ResourceName ?? string.Empty).Contains(request.ResourceName.Trim(), StringComparison.InvariantCultureIgnoreCase))
-            .Where(item => request.IsLive ? item.IsLive : true);
+            .Where(item => !request.IsLive || item.IsLive);
     }
 
     private IEnumerable<ResultLog> GenerateResourceName(List<ResultLog> resultLogs, int sportType)
