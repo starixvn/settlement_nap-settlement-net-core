@@ -5,7 +5,7 @@ import {
   AioService,
   BlockUIService,
 } from "../../shared/services";
-import {  ModalDialogMessage } from "../../shared/models";
+import { ModalDialogMessage } from "../../shared/models";
 import { Language } from "../../shared/language.native";
 import {
   CalculateAction,
@@ -45,7 +45,7 @@ import { ExternalSourceNamePipe } from "../../shared/pipes/external-source-name.
 import { ResourceNameByIdPipe } from "../pipes/resource-name-by-id.pipe";
 import { CalculationMatchDetailComponent } from "./calculation-match-detail.component";
 import { CalculateCommonModule } from "../../shared/modules/calculate-common.module";
-import { RelatedMatchesComponent } from "./fantasy/related-matches.compoment";
+import { RelatedMatchesComponent } from "./fantasy/related-matches.component";
 import { FantasyMatch } from "../models/fantasy.model";
 import { SourceIds } from "../constants/source-ids";
 import { VerificationFantasyMatchService } from "../services/verification-fantasy-match.service";
@@ -74,16 +74,18 @@ import { VerificationFantasyMatchService } from "../services/verification-fantas
 export class CalculationActionsComponent implements SportTemplate {
   @ViewChild(ToastContainerDirective, { static: true })
   toastContainer: ToastContainerDirective;
+
   private readonly basketballService = inject(BasketballService);
   private readonly messageBoxService = inject(MessageBoxService);
   private readonly betStatusService = inject(BetStatusService);
   private readonly aioService = inject(AioService);
   private readonly cashOutService = inject(CashOutService);
-  private  readonly verificationService = inject(VerificationService);
+  private readonly verificationService = inject(VerificationService);
   private readonly verificationFantasyMatchService = inject(VerificationFantasyMatchService);
-  private  readonly toastrService = inject(ToastrService);
+  private readonly toastrService = inject(ToastrService);
   private readonly blockUiService = inject(BlockUIService);
   readonly overTimeId = ResourcesIds.ot;
+
   blockUI = false;
   match: Match;
   matchDetail: MatchDetail;
@@ -107,9 +109,9 @@ export class CalculationActionsComponent implements SportTemplate {
       sportType: SportType.basketBall,
       settleType: "MNL",
     };
-    this.match = (await this.aioService.getMatch(matchQuery)) as Match; 
+    this.match = (await this.aioService.getMatch(matchQuery)) as Match;
     this.isReadyMatch = this.match.matchDetail.playTime >= KickOffTime.playTime;
-  
+
     this.cloneResultDetail();
 
     this.init();
@@ -136,19 +138,19 @@ export class CalculationActionsComponent implements SportTemplate {
   }
 
   init() {
-    this.resultDetails = this.basketballService.getResultDetail(
-      this.match.resultDetails
-    );
+    this.resultDetails = this.basketballService.getResultDetail(this.match.resultDetails);
     this.verificationService.generateExternalScores(
       this.match,
       this.resultDetails,
       SportType.cricket,
       this.maxProviderCol
     );
+
     this.resetHomeAway(this.resultDetails);
     this.matchDetail = this.match.matchDetail;
     this.fantasyMatch = this.match.fantasyMatch;
     this.hedgeMatchDetail = this.match.hedgeMatchDetail;
+
     this.applyHedgeMatch = this.hedgeMatchDetail != null;
     this.disableScoreDirect = this.verificationService.isTicketOnQuarter(
       this.resultDetails,
@@ -221,12 +223,12 @@ export class CalculationActionsComponent implements SportTemplate {
   }
 
   public get providerCount() {
-    return this.match.resultDetails[0].externalScores.filter(x => 
+    return this.match.resultDetails[0].externalScores.filter(x =>
       x.sourceId !== ScoreSourceType.trader && x.sourceId < ScoreSourceType.screenshot).length
   }
 
   public get outSideCount() {
-    return this.match.resultDetails[0].externalScores.filter(x => 
+    return this.match.resultDetails[0].externalScores.filter(x =>
       x.sourceId !== ScoreSourceType.trader && x.sourceId >= ScoreSourceType.screenshot).length
   }
 
@@ -491,59 +493,53 @@ export class CalculationActionsComponent implements SportTemplate {
     return text?.length > maxLength ? text : null;
   }
 
-  calculate() {
-    this.toastrService.clear();
-    this.match.isClickOnCalculate = true;
-    const existResultConfirmed = _.find(
-      this.selectedResources,
+  private isExistResultConfirmed() {
+    return !_.isNil(_.find(this.selectedResources,
       (item) =>
         (item.resultSettingData.isConfirmedRefund ||
           item.resultSettingData.isConfirmedRefundSdt) &&
         !_.isEqual(item.resourceId, ResourcesIds.ot)
-    );
+    ));
+  }
+
+  calculate() {
+    this.toastrService.clear();
+    this.match.isClickOnCalculate = true;
+
     if (_.isEmpty(this.selectedResources)) {
       this.toastrService.error(Language.NotSelectCalculationTypeMessage);
-    } else if (!_.isNil(existResultConfirmed)) {
-      this.toastrService.error(
-        Language.confirmRefund.calculateResultNotConfirmed
-      );
-    } else if (
-      this.verificationService.isInputScoreInvalid(
-        this.selectedResources,
-        this.match.isScoreDirect
-      )
-    ) {
-      this.toastrService.error(
-        this.isLeader
-          ? Language.sop.leader.blankScore
-          : Language.sop.nonLeader.blankScore
-      );
-    } else if (
-      this.verificationService.isFtScoreLowerThanHtScore(
-        this.firstHalf,
-        this.fullTime,
-        false
-      )
-    ) {
-      this.toastrService.error(Language.inconsistentValues);
-    } else if (
-      this.verificationService.verifyIntervalsCalculated(
-        this.firstHalf,
-        this.firstHalfResults,
-        this.match.isScoreDirect
-      ) ||
-      this.verificationService.verifyIntervalsCalculated(
-        this.fullTime,
-        this.quartersWithoutOverTime,
-        this.match.isScoreDirect
-      )
-    ) {
-      this.toastrService.error(Language.IntervalWarning);
-    } else if(this.matchDetail.isFantasy && this.verificationFantasyMatchService.isResultRelatedMatchesNotCalc(this.selectedResources,this.fantasyMatch.relatedMatches)) {
-      this.toastrService.error(Language.fantasyMatch.relatedMatchesNotCalc);
-    } else {
-      this.verifyRunningOdds();
+      return;
     }
+
+    const isExistResultConfirmed = this.isExistResultConfirmed()
+    if (isExistResultConfirmed) {
+      this.toastrService.error(Language.confirmRefund.calculateResultNotConfirmed);
+      return;
+    }
+
+    if (this.verificationService.isInputScoreInvalid(this.selectedResources, this.match.isScoreDirect)) {
+      this.toastrService.error(this.isLeader
+        ? Language.sop.leader.blankScore
+        : Language.sop.nonLeader.blankScore);
+      return;
+    }
+
+    if (this.verificationService.isFtScoreLowerThanHtScore(this.firstHalf, this.fullTime, false)) {
+      this.toastrService.error(Language.inconsistentValues);
+      return;
+    }
+
+    if (this.verificationService.verifyIntervalsCalculated(this.firstHalf, this.firstHalfResults, this.match.isScoreDirect)
+      || this.verificationService.verifyIntervalsCalculated(this.fullTime, this.quartersWithoutOverTime, this.match.isScoreDirect)) {
+      this.toastrService.error(Language.IntervalWarning);
+      return;
+    }
+    if (this.matchDetail.isFantasy && this.verificationFantasyMatchService.isResultRelatedMatchesNotCalc(this.selectedResources, this.fantasyMatch.relatedMatches)) {
+      this.toastrService.error(Language.fantasyMatch.relatedMatchesNotCalc);
+      return;
+    }
+    this.verifyRunningOdds();
+
   }
 
   private async verifyRunningOdds() {
@@ -606,31 +602,38 @@ export class CalculationActionsComponent implements SportTemplate {
   }
 
   private async confirmChangedResults() {
-    if (this.isReSettledTickets) {
-      this.confirmCalculation();
-    } else {
-      const getBasketballResultQuery = {
-        matchId: this.matchDetail.matchId,
-        apikey: BasketballApiKeys.normalMatch,
-        sportType: SportType.basketBall,
-      };
-      const noOverTime = this.selectedResources.filter(
-        (quarter) => !_.isEqual(quarter.resourceId, ResourcesIds.ot)
-      );
-      const needConfirm = await this.aioService.verifyChangedSettledTickets(
-        noOverTime,
-        getBasketballResultQuery
-      );
-      if (needConfirm) {
-        this.confirmationDialogMessage.message =
-          Language.recalculateNotification;
-        this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
-          this.isReSettledTickets = true;
-        });
-      } else {
-        this.confirmCalculation();
-      }
+    const getBasketballResultQuery = {
+      matchId: this.matchDetail.matchId,
+      apikey: BasketballApiKeys.normalMatch,
+      sportType: SportType.basketBall,
+    };
+    const noOverTime = this.selectedResources.filter((quarter) => !_.isEqual(quarter.resourceId, ResourcesIds.ot));
+    const hasChangedSettledTickets = await this.aioService.verifyChangedSettledTickets(noOverTime, getBasketballResultQuery);
+    if (!hasChangedSettledTickets) {
+      return this.confirmCalculation();
     }
+
+    const [isValid, errorMessage] = this.verificationService.verifyRelatedResults(
+      this.selectedResources,
+      this.fullTime,
+      this.firstHalf
+    );
+
+    if (!isValid) {
+      return this.toastrService.error(errorMessage);
+    }
+
+    if (this.isReSettledTickets) {
+      return this.confirmCalculation();
+    }
+
+    this.messageBoxService.confirm(
+      {
+        ...this.confirmationDialogMessage,
+        message: Language.recalculateNotification,
+      },
+      () => (this.isReSettledTickets = true)
+    );
   }
 
   private confirmCalculation() {
@@ -1046,11 +1049,11 @@ export class CalculationActionsComponent implements SportTemplate {
 
   public canSettleResult(result: ResultDetail) {
     const isRunning = _.isEqual(result.ticketStatus, TicketStatusText.running)
-      || _.isEqual(result.resultStatus, ResultStatus.noResult) 
+      || _.isEqual(result.resultStatus, ResultStatus.noResult)
       || _.isEqual(result.resultStatus, ResultStatus.running);
 
-    return isRunning 
-        && !result.isScoreMismatched 
-        && this.verificationService.isValidTraderConfirmScore(result);
+    return isRunning
+      && !result.isScoreMismatched
+      && this.verificationService.isValidTraderConfirmScore(result);
   }
 }

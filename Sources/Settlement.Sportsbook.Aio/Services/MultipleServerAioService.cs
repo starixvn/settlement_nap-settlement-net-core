@@ -9,7 +9,6 @@ using Settlement.Sportsbook.Aio.Constants;
 using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.Criteria.Tennis;
 using Settlement.Sportsbook.Aio.Requests;
-using Settlement.Sportsbook.Aio.Services.Cricket;
 
 namespace Settlement.Sportsbook.Aio.Services;
 
@@ -161,13 +160,13 @@ public class MultipleServerAioServiceImp(
     {
         var criteria = createQueryService.QuerySettle(request);
         var result = await Execute(criteria, request.SelectedResources);
+        result.SettledSessionId = criteria.BroadcastSessionId;
 
         int[] sportChildMatches = [SportType.Cricket, SportType.BaseBall];
         if (sportChildMatches.Contains(request.SportType) && result.IsSuccessful)
         {
             var childMatchIds = await GetChildMatchIds(criteria.MatchId, criteria.Action, criteria.SelectedResources);
             result.ChildMatchIds = childMatchIds;
-            result.SettledSessionId = criteria.BroadcastSessionId;
         }
 
         await HandleRefundGameWinner(request, result);
@@ -250,23 +249,44 @@ public class MultipleServerAioServiceImp(
 
         var isResultAmendment = await HandleResultAmendment(criteria, selectedResources);
 
-        var tasks = appSettingsKey.Value.SiteDbServer.Select(server =>
-        {
-            criteria.DbServer = server;
-            return repository.ExecuteAsync(criteria);
-        });
-
-        await Task.WhenAll(tasks);
+        var result = await PushResultSettleAllSites(criteria);
 
         return new Result
         {
-            HasResultAmendment = isResultAmendment
+            HasResultAmendment = isResultAmendment,
+            ErrCode = result.ErrCode,
+            ErrMsg = result.ErrMsg,
+            IsOrg = result.IsOrg
+        };
+    }
+
+    private async Task<Result> PushResultSettleAllSites(SettleCriteria criteria)
+    {
+        var tasks = appSettingsKey.Value.SiteDbServer
+            .Select(server => PushResultSettleOneSite(criteria, server))
+            .ToList();
+
+        var results = await Task.WhenAll(tasks);
+
+        return results.First();
+    }
+
+    private async Task<Result> PushResultSettleOneSite(SettleCriteria criteria, string server)
+    {
+        criteria.DbServer = server;
+        await repository.ExecuteAsync(criteria);
+        return new Result
+        {
+            ErrCode = criteria.ErrCode,
+            ErrMsg = criteria.ErrMsg,
+            IsOrg = criteria.IsOrg
         };
     }
 
     private async Task<bool> HandleResultAmendment(SettleCriteria settleCriteria, List<ResourceItem> selectedResources)
     {
-        if (settleCriteria.SportType == SportType.Cricket
+        List<int> sports = [SportType.Cricket, SportType.BasketBall, SportType.ESports];
+        if (sports.Contains(settleCriteria.SportType)
             && !settleCriteria.IsChildMatch
             && settleCriteria.Action != ActionType.UnCalculate)
         {

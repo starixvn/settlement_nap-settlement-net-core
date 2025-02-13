@@ -10,6 +10,7 @@ public class Result
     public DateTime StartTime { get; set; }
     public DateTime EndTime { get; set; }
     public bool HasResultAmendment { get; set; }
+    public bool IsOrg { get; set; }
     public string SettledSessionId { get; set; }
     public bool IsSuccessful => string.IsNullOrEmpty(ErrMsg) && ErrCode == 0;
 

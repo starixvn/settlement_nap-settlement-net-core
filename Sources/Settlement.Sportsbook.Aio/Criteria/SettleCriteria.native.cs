@@ -26,6 +26,8 @@ public class SettleCriteria : NonQueryCommand
 
     public string ErrMsg { get; set; }
 
+    public bool IsOrg { get; set; } = true; //OUTPUT
+
     public int? RefResultStatus { get; set; }
 
     public int DeterminedType { get; set; }

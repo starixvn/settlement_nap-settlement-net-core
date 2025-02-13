@@ -2,6 +2,7 @@
 using Fanex.NAP.Client;
 using Fanex.NAP.Client.Configuration;
 using Fanex.NAP.Client.Services;
+using MassTransit;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
@@ -10,7 +11,6 @@ using Settlement.Sportsbook.Aio.Handlers;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Requests;
 using Settlement.Sportsbook.Aio.Services;
-using Settlement.Sportsbook.Aio.Services.Cricket;
 
 namespace Settlement.Sportsbook.Aio.UnitTests.Handlers;
 
@@ -23,6 +23,7 @@ public class AioHandlerTests
     private readonly IAioService service;
 
     private readonly ResultAmendmentService resultAmendmentService;
+    private readonly IPublishEndpoint publishEndpoint;
 
     public AioHandlerTests()
     {
@@ -39,7 +40,8 @@ public class AioHandlerTests
         var appSettings = new AppSettingsKey { EnableVerifyingRunningOdds = true };
         var appSettingsOptions = Options.Create(appSettings);
         resultAmendmentService = Substitute.For<ResultAmendmentService>();
-        handler = new AioHandler(service, permission, resultAmendmentService, appSettingsOptions);
+        publishEndpoint = Substitute.For<IPublishEndpoint>();
+        handler = new AioHandler(service, permission, resultAmendmentService, publishEndpoint, appSettingsOptions);
     }
 
     [Fact]
@@ -102,7 +104,7 @@ public class AioHandlerTests
     {
         var appSettings = new AppSettingsKey { EnableVerifyingRunningOdds = false };
         var appSettingsOptions = Options.Create(appSettings);
-        var handlerTemp = new AioHandler(service, permission, resultAmendmentService, appSettingsOptions);
+        var handlerTemp = new AioHandler(service, permission, resultAmendmentService, publishEndpoint, appSettingsOptions);
         var actual = await handlerTemp.Handle(new CheckRunningOddsRequest(), CancellationToken.None);
 
         Assert.True(actual.IsSuccessful);

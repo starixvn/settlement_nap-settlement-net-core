@@ -1,11 +1,13 @@
-﻿using Microsoft.Extensions.Options;
+﻿using MassTransit;
+using Microsoft.Extensions.Options;
+using ResultAmendment.Contracts;
+using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Aio.Criteria.Cricket;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Requests;
 using Settlement.Sportsbook.Aio.Services;
-using Settlement.Sportsbook.Aio.Services.Cricket;
 
 namespace Settlement.Sportsbook.Aio.Handlers;
 
@@ -13,6 +15,7 @@ public class AioHandler(
     IAioService aioService,
     PermissionService permissionService,
     ResultAmendmentService resultAmendmentService,
+    IPublishEndpoint publishEndpoint,
     IOptions<AppSettingsKey> appSettingsKey)
     :
         IRequestHandler<GetMatchRequest, AioMatch>,
@@ -32,8 +35,20 @@ public class AioHandler(
         return await aioService.GetMatch(request);
     }
 
-    public async Task<Result> Handle(SettleRequest request, CancellationToken cancellationToken) =>
-        await aioService.Settle(request);
+    public async Task<Result> Handle(SettleRequest request, CancellationToken cancellationToken)
+    {
+        var result = await aioService.Settle(request);
+
+        if (result.HasResultAmendment && (request.SportType is SportType.BasketBall or SportType.ESports))
+        {
+            Console.WriteLine($"Push ResultAmend at {DateTime.Now} with {request.MatchId} {result.SettledSessionId} {result.IsOrg}");
+            await publishEndpoint.Publish(
+                new ResultAmendSettled(request.MatchId, result.SettledSessionId, result.IsOrg),
+                new CancellationTokenSource(TimeSpan.FromSeconds(3)).Token);
+        }
+
+        return result;
+    }
 
     public async Task<List<Models.ResultDetail>> Handle(GetRecalResultRequest request,
         CancellationToken cancellationToken) => await aioService.GetRecalResult(request);
