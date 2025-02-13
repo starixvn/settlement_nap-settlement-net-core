@@ -254,7 +254,9 @@ export class EarlySettlementComponent implements Soccer {
             const query = new SettleQuery(this.matchId,
                 CalculateAction.unCalculate,
                 selectedResultDetails,
-                this.isReSettledTickets);
+                this.isReSettledTickets,
+            this.match.matchDetail.childMatchType,
+        this.match.matchDetail.sportType);
             this.push(query);
         });
     }
@@ -300,7 +302,7 @@ export class EarlySettlementComponent implements Soccer {
             const resourceIds = _.join(selectedResources.map(item => item.resourceId), ',');
             const resourceItems = selectedResources.map(item => new ResourceItem(item.resourceId, item.resourceName, item.homeValue, item.awayValue))
 
-            const query = new ResultSettingQuery(matchId, settingType, isEnabled, resourceIds, resourceItems);
+            const query = new ResultSettingQuery(matchId, settingType, isEnabled, resourceIds, resourceItems,this.match.matchDetail.sportType);
             const result = await this.aioService.changeResultSetting(query);
             return result;
         }
@@ -355,7 +357,12 @@ export class EarlySettlementComponent implements Soccer {
         this.confirmationDialogMessage.message = Language.RefundConfirmMessageEarly;
         this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
             const query = new SettleQuery(this.matchId,
-                CalculateAction.refund, selectedResultDetails, this.isReSettledTickets);
+                CalculateAction.refund, 
+                selectedResultDetails, 
+                this.isReSettledTickets, 
+                this.match.matchDetail.childMatchType,
+                this.match.matchDetail.sportType);
+
             this.push(query);
         });
     }
@@ -431,7 +438,11 @@ export class EarlySettlementComponent implements Soccer {
         this.confirmationDialogMessage.message = Language.CalculationConfirmMessageEarly;
         this.messageBoxService.confirm(this.confirmationDialogMessage, async () => {
             const query = new SettleQuery(this.matchId,
-                CalculateAction.calculate, selectedResultDetails, this.isReSettledTickets);
+                CalculateAction.calculate, 
+                selectedResultDetails, 
+                this.isReSettledTickets,
+                this.match.matchDetail.childMatchType,
+                this.match.matchDetail.sportType);
             await this.push(query);
         });
     }
@@ -573,8 +584,12 @@ export class EarlySettlementComponent implements Soccer {
     }
 
     public isChangeSetting(resultDetail: ResultDetail, groupMap: GroupMap) {
-        const query = new ResultSettingQuery(this.match.matchDetail.matchId, ResultSettingType.holdResult,
-            !resultDetail.resultSettingData.isHoldResult, resultDetail.resourceId);
+        const query = new ResultSettingQuery(this.match.matchDetail.matchId, 
+            ResultSettingType.holdResult,
+            !resultDetail.resultSettingData.isHoldResult, 
+            resultDetail.resourceId,
+            null,
+            this.match.matchDetail.sportType);
         this.confirmationDialogMessage.message = Language.holdResultConfirmMessage;
 
         this.messageBoxService.confirm(this.confirmationDialogMessage, async () => {
@@ -585,8 +600,13 @@ export class EarlySettlementComponent implements Soccer {
 
     public changeSettingGroup(groupMap: GroupMap) {
         const resourceIds = _.join(groupMap.resultDetail.map(item => item.resourceId), ',');
-        const query = new ResultSettingQuery(this.match.matchDetail.matchId, ResultSettingType.holdResult,
-            !groupMap.isHoldResult, resourceIds);
+        const query = new ResultSettingQuery(this.match.matchDetail.matchId, 
+            ResultSettingType.holdResult,
+            !groupMap.isHoldResult, 
+            resourceIds, 
+            null, 
+            this.match.matchDetail.sportType);
+            
         this.confirmationDialogMessage.message = Language.holdResultGroupConfirmMessage;
 
         this.messageBoxService.confirm(this.confirmationDialogMessage, async () => {

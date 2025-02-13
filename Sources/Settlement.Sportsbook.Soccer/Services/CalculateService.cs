@@ -74,22 +74,25 @@ public class CalculateServiceImp(
             await ExecuteAsync(criteria);
         }
 
+        await PublishEvent(request);
+
+        return matchChecking;
+    }
+
+    private async Task PublishEvent(SettleRequest request)
+    {
         if (request is { ActionName: "CAL" } or { ActionName: "CAL-FT" })
         {
             await publishEndpoint.Publish(new MatchCalculated(
                 request.MatchId,
-                (short)SportType.Soccer,
+                request.SportType,
                 request.ChildMatchType,
-                request.ActionName,
                 request.HalfTimeHomeScore,
                 request.HalfTimeAwayScore,
                 request.FinalHomeScore,
-                request.FinalAwayScore));
+                request.FinalAwayScore),
+                new CancellationTokenSource(TimeSpan.FromSeconds(3)).Token);
         }
-
-        //return new Result();
-
-        return matchChecking;
     }
 
     private async Task SaveOutsideScores(SettleRequest request)

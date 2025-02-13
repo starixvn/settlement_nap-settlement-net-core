@@ -1,6 +1,5 @@
 ﻿using AutoEarlyRefund.Contracts;
 using MassTransit;
-using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Soccer.Criteria;
@@ -37,17 +36,20 @@ public class SettleEarlyServiceImp(
 
         var result = await Execute(criteria);
 
-        //TODO
-        await publishEndpoint.Publish(new ResultsRefunded(
-            request.MatchId
-            , 0
-            , SportType.Soccer
-            , 202
-            , request.ActionName
-            , request.SelectedResources));
-
+        await PublishResultEvent(request);
 
         return result;
+    }
+
+    private async Task PublishResultEvent(SettleEarlyRequest request)
+    {
+        if (request is { ActionName: "CAL" } or { ActionName: "REFUND" })
+        {
+            await publishEndpoint.Publish(request.ActionName == "CAL"
+                ? new ResultsRefunded(request.MatchId, request.SportType, request.ChildMatchType, request.SelectedResources)
+                : new ResultsCalculated(request.MatchId, request.SportType, request.ChildMatchType, request.SelectedResources),
+                new CancellationTokenSource(TimeSpan.FromSeconds(3)).Token);
+        }
     }
 
     private async Task WriteDirectlyLog(SettleEarlyRequest request)

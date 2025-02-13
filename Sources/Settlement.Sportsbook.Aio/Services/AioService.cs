@@ -366,14 +366,21 @@ public class AioServiceImp(
         if (confirmRefund.Contains(request.Type))
         {
             SetConfirmRefundKeyCache(request);
+            await PushResultEvent(request);
         }
 
-        //TODO
-        await publishEndpoint.Publish(request.Type == ResultSettingType.ConfirmRefund
-            ? new ResultsRefundConfirmed(request.MatchId, 0, SportType.Soccer, 202, "CfnRefund", request.SelectedResources.ToList())
-            : new ResultsRefundConfirmedSdt(request.MatchId, 0, SportType.Soccer, 202, "CfnRefundSDT", request.SelectedResources.ToList()));
-
         return criteria.IsEnabled;
+    }
+
+    private async Task PushResultEvent(ResultSettingRequest request)
+    {
+        if (request.SportType == SportType.Soccer)
+        {
+            await publishEndpoint.Publish(request.Type == ResultSettingType.ConfirmRefund
+                ? new ResultsRefundConfirmed(request.MatchId, request.SportType, request.ChildMatchType, request.SelectedResources.ToList())
+                : new ResultsRefundConfirmedSdt(request.MatchId, request.SportType, request.ChildMatchType, request.SelectedResources.ToList()),
+                new CancellationTokenSource(TimeSpan.FromSeconds(3)).Token);
+        }
     }
 
     private void SetConfirmRefundKeyCache(ResultSettingRequest request)

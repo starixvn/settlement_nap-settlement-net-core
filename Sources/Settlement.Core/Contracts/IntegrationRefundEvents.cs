@@ -6,36 +6,35 @@ public record ResultsRefunded(
     int MatchId,
     short ShortType,
     short ChildMatchType,
-    string Action,
-    List<ResourceItem> Resources,
-    string EventId = "Refund"
+    List<ResourceItem> Resources
     );
 
 public record ResultsRefundConfirmed(
     int MatchId,
     short ShortType,
     short ChildMatchType,
-    string Action,
-    List<ResourceItem> Resources,
-    string EventId = "CfnRefund"
+    List<ResourceItem> Resources
     );
 
 public record ResultsRefundConfirmedSdt(
     int MatchId,
     short ShortType,
     short ChildMatchType,
-    string Action,
-    List<ResourceItem> Resources,
-    string EventId = "CfnRefundSDT"
+    List<ResourceItem> Resources
     );
 
 public record MatchCalculated(
     int MatchId,
     short ShortType,
     short ChildMatchType,
-    string Action,
     int? HalfTimeHomeScore,
     int? HalfTimeAwayScore,
     int? FinalHomeScore,
     int? FinalAwayScore
     );
+
+public record ResultsCalculated(
+    int MatchId,
+    short ShortType,
+    short ChildMatchType,
+    List<ResourceItem> Resources);

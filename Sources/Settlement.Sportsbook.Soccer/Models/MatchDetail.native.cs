@@ -1,7 +1,7 @@
-﻿using Settlement.Core.Constants;
+﻿using System.Text.Json.Serialization;
+using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
-using System.Text.Json.Serialization;
 
 namespace Settlement.Sportsbook.Soccer.Models;
 

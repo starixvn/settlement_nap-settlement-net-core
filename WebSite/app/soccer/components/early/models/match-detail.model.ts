@@ -12,6 +12,7 @@ export interface MatchDetail {
     goalRecord: string,
     goalIcon: GoalIcon,
     childMatchType: number,
+    sportType: number,
     halfTimeAwayScore: string,
     halfTimeHomeScore: string,
     finalAwayScore: string,
