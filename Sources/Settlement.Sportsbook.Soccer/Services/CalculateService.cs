@@ -1,7 +1,10 @@
-﻿using Fanex.Settlement.ScaleOut.Criteria.Update;
+using AutoEarlyRefund.Contracts;
+using MassTransit;
+using Fanex.Settlement.ScaleOut.Criteria.Update;
 using Mapster;
 using Settlement.Core.Configurations;
 using Settlement.Core.Constants;
+using Settlement.Core.Criteria;
 using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
@@ -33,6 +36,7 @@ public class CalculateServiceImp(
     ScaleOutSettleService scaleOutSettleService,
     LogService logService,
     IMatchService matchService,
+    IPublishEndpoint publishEndpoint,
     INapSession napSession,
     IHttpContextAccessor accessor,
     XmlConvertService xmlConvertService) : ICalculateService
@@ -69,6 +73,21 @@ public class CalculateServiceImp(
             criteria.MatchId = request.HedgeMatchId;
             await ExecuteAsync(criteria);
         }
+
+        if (request is { ActionName: "CAL" } or { ActionName: "CAL-FT" })
+        {
+            await publishEndpoint.Publish(new MatchCalculated(
+                request.MatchId,
+                (short)SportType.Soccer,
+                request.ChildMatchType,
+                request.ActionName,
+                request.HalfTimeHomeScore,
+                request.HalfTimeAwayScore,
+                request.FinalHomeScore,
+                request.FinalAwayScore));
+        }
+
+        //return new Result();
 
         return matchChecking;
     }

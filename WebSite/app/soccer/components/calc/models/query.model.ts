@@ -22,6 +22,7 @@ export class SettleQuery {
     public childMatchIds: string;
     public leagueGroupId: number;
     public isFantasyMatch: boolean;
+    public childMatchType: number;
     public resultDetails: ResultDetail[];
     public selectedResultDetails: ResultDetail[];
 
@@ -43,6 +44,7 @@ export class SettleQuery {
         this.childMatchIds = childMatchIds;
         this.leagueGroupId = matchDetail.leagueGroupId;
         this.isFantasyMatch = matchDetail.isFantasyMatch;
+        this.childMatchType = matchDetail.childMatchType;
         this.resultDetails = resultDetails;
         this.selectedResultDetails = resultDetails.filter(x => x.checked);
         

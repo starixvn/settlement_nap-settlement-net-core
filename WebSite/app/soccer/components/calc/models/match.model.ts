@@ -47,7 +47,8 @@ export interface MatchDetail extends MatchDetailBase {
     confirmHT: number,
     confirmFT: number,
     isLive: boolean,
-    offerLive: boolean
+    offerLive: boolean,
+    childMatchType: number,
 }
 
 export interface FantasyMatch {

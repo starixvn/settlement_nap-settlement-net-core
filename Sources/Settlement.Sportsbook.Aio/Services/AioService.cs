@@ -369,17 +369,9 @@ public class AioServiceImp(
         }
 
         //TODO
-        await publishEndpoint.Publish(new ResultsRefundConfirmed(
-            request.MatchId
-            ,
-            0,
-            1,
-            0,
-            "ConfirmRefund",
-            request.Type,
-            request.SelectedResources.ToList()
-            )
-            );
+        await publishEndpoint.Publish(request.Type == ResultSettingType.ConfirmRefund
+            ? new ResultsRefundConfirmed(request.MatchId, 0, SportType.Soccer, 202, "CfnRefund", request.SelectedResources.ToList())
+            : new ResultsRefundConfirmedSdt(request.MatchId, 0, SportType.Soccer, 202, "CfnRefundSDT", request.SelectedResources.ToList()));
 
         return criteria.IsEnabled;
     }
