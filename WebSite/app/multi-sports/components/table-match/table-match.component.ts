@@ -20,7 +20,7 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
 })
 export class TableMatchComponent implements OnInit {
   public sports: SportMatch[];
-  private readonly period = 6000;
+  private readonly period = 4000;
   ngUnsubscribe = new Subject();
   refreshMatchesService = inject(RefreshMatchService);
   changeDetectorRef = inject(ChangeDetectorRef);
