@@ -1,7 +1,7 @@
 ﻿using Settlement.Core.Models;
 using Settlement.Sportsbook.Aio.Models;
 
-namespace ResultAmendment.Contracts; // context for publish and subscribe
+namespace Settlement.Sportsbook.Aio.Contracts;
 
 public record class ResultAmended(
     int MatchId,
@@ -10,4 +10,3 @@ public record class ResultAmended(
     string Action,
     List<ResourceItem> SelectedResources,
     List<ResultChanged> ResultsChanged);
-

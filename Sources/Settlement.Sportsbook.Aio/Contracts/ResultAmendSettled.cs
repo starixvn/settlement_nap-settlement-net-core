@@ -1,2 +1,2 @@
-﻿namespace ResultAmendment.Contracts; // context for publish and subscribe
+﻿namespace Settlement.Sportsbook.Aio.Contracts;
 public record ResultAmendSettled(int MatchId, string SessionIds, bool IsOrg);
