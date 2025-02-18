@@ -35,7 +35,7 @@ public class MultiSportController(
         request.IsLeader = permissionService.Permission.IsLeader;
         var matches = await httpService.HttpPost<List<MultiSportMatchWaiting>>("multi-sports/auto-refresh", request);
 
-        return Ok(matches);
+        return Ok(matches ?? []);
     }
 
     [HttpPost]

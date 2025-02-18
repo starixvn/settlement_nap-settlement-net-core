@@ -30,8 +30,6 @@ public class HttpService(HttpClient httpClient, IOptions<AppSettingsKey> appSett
         var result = await httpClient.PostAsync($"{apiUrl}{uri}", content);
         if (!result.IsSuccessStatusCode)
         {
-            var message = await result.Content.ReadAsStringAsync();
-            await Fanex.Logging.LogService.ErrorAsync(message);
             return null;
         }
 
@@ -51,8 +49,9 @@ public class HttpService(HttpClient httpClient, IOptions<AppSettingsKey> appSett
         };
     }
 
-    private static async Task<T> FromHttpResponseMessage<T>(HttpResponseMessage result)
+    private static async Task<T> FromHttpResponseMessage<T>(HttpResponseMessage response)
     {
-        return JsonSerializer.Deserialize<T>(await result.Content.ReadAsStringAsync(), GetOptions());
+        var json = await response.Content.ReadAsStringAsync();
+        return string.IsNullOrEmpty(json) ? default : JsonSerializer.Deserialize<T>(json, GetOptions());
     }
 }
