@@ -89,6 +89,8 @@ public class MatchDetail
 
     public bool IsLive { get; set; }
 
+    public bool OfferLive { get; set; }
+
     public bool IsSettleAbandonedMatchIBC { get; set; }
 
     public int SettleAbandonedMatchIbcParlay { get; set; }

@@ -46,7 +46,8 @@ export interface MatchDetail extends MatchDetailBase {
     hasInstantCompleted: boolean,
     confirmHT: number,
     confirmFT: number,
-    isLive: boolean
+    isLive: boolean,
+    offerLive: boolean
 }
 
 export interface FantasyMatch {

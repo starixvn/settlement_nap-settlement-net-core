@@ -106,7 +106,8 @@
           [disabled]="!matchDetail.hasInstantCompleted" (click)="unCalcInstant()">
           Uncalculate Ins.Settle
         </button>
-        <button class="new-refund-button save-score" [disabled]="!enableAction" (click)="saveScore()">Save
+        <button class="new-refund-button save-score" [disabled]="matchDetail.offerLive || !enableAction"
+          (click)="saveScore()">Save
           Trader Score</button>
       </td>
     </tr>
