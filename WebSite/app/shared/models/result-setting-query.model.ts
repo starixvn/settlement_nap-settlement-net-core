@@ -9,6 +9,7 @@ export class ResultSettingQuery {
   is3x3: boolean;
   confirmRefundResources: ResourceItem[];
   sportType: number;
+  childMatchType: number;
 
   constructor(
     matchId: number,
@@ -16,7 +17,8 @@ export class ResultSettingQuery {
     isEnabled: boolean,
     resourceIds?: string,
     selectedResources?: ResourceItem[],
-    sportType?: number
+    sportType?: number,
+    chidMatchType?: number
   ) {
     this.matchId = matchId;
     this.type = type;
@@ -24,5 +26,6 @@ export class ResultSettingQuery {
     this.resourceIds = resourceIds;
     this.selectedResources = selectedResources;
     this.sportType = sportType;
+    this.childMatchType = chidMatchType;
   }
 }

@@ -25,6 +25,7 @@ public record ResultsRefundConfirmedSdt(
 
 public record MatchCalculated(
     int MatchId,
+    int ParentId,
     short ShortType,
     short ChildMatchType,
     int? HalfTimeHomeScore,

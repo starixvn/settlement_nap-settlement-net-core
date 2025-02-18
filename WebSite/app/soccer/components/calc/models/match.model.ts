@@ -49,6 +49,8 @@ export interface MatchDetail extends MatchDetailBase {
     isLive: boolean,
     offerLive: boolean,
     childMatchType: number,
+    sportType: number,
+    parentId: number,
 }
 
 export interface FantasyMatch {

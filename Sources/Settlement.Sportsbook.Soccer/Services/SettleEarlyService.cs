@@ -45,7 +45,7 @@ public class SettleEarlyServiceImp(
     {
         if (request is { ActionName: "CAL" } or { ActionName: "REFUND" })
         {
-            await publishEndpoint.Publish(request.ActionName == "CAL"
+            await publishEndpoint.Publish(request.ActionName == "REFUND"
                 ? new ResultsRefunded(request.MatchId, request.SportType, request.ChildMatchType, request.SelectedResources)
                 : new ResultsCalculated(request.MatchId, request.SportType, request.ChildMatchType, request.SelectedResources),
                 new CancellationTokenSource(TimeSpan.FromSeconds(3)).Token);

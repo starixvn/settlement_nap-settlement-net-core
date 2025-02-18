@@ -302,7 +302,14 @@ export class EarlySettlementComponent implements Soccer {
             const resourceIds = _.join(selectedResources.map(item => item.resourceId), ',');
             const resourceItems = selectedResources.map(item => new ResourceItem(item.resourceId, item.resourceName, item.homeValue, item.awayValue))
 
-            const query = new ResultSettingQuery(matchId, settingType, isEnabled, resourceIds, resourceItems,this.match.matchDetail.sportType);
+            const query = new ResultSettingQuery(
+                matchId, 
+                settingType, 
+                isEnabled, 
+                resourceIds,
+                resourceItems,
+                this.match.matchDetail.sportType,
+                this.match.matchDetail.childMatchType);
             const result = await this.aioService.changeResultSetting(query);
             return result;
         }
@@ -589,7 +596,8 @@ export class EarlySettlementComponent implements Soccer {
             !resultDetail.resultSettingData.isHoldResult, 
             resultDetail.resourceId,
             null,
-            this.match.matchDetail.sportType);
+            this.match.matchDetail.sportType,
+            this.match.matchDetail.childMatchType);
         this.confirmationDialogMessage.message = Language.holdResultConfirmMessage;
 
         this.messageBoxService.confirm(this.confirmationDialogMessage, async () => {

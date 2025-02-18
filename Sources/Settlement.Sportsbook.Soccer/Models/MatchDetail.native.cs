@@ -142,4 +142,5 @@ public class MatchDetail
     public List<SiteMatch> SiteMatch { get; set; } = [];
 
     public int ChildMatchType { get; set; }
+    public int ParentId { get; set; }
 }

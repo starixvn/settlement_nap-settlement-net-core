@@ -85,6 +85,7 @@ public class CalculateServiceImp(
         {
             await publishEndpoint.Publish(new MatchCalculated(
                 request.MatchId,
+                request.ParentId,
                 request.SportType,
                 request.ChildMatchType,
                 request.HalfTimeHomeScore,

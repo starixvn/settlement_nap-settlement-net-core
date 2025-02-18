@@ -370,11 +370,12 @@ public class AioServiceImp(
         }
 
         return criteria.IsEnabled;
+
     }
 
     private async Task PushResultEvent(ResultSettingRequest request)
     {
-        if (request.SportType == SportType.Soccer)
+        if (request.SportType == SportType.Soccer && request.IsEnabled)
         {
             await publishEndpoint.Publish(request.Type == ResultSettingType.ConfirmRefund
                 ? new ResultsRefundConfirmed(request.MatchId, request.SportType, request.ChildMatchType, request.SelectedResources.ToList())
