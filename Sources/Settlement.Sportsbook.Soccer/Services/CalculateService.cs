@@ -294,7 +294,8 @@ public class CalculateServiceImp(
         {
             MatchId = saveScoreCriteria.MatchId,
             Action = SettlementFunctionKeys.SaveScore,
-            AdminId = saveScoreCriteria.UserId
+            AdminId = saveScoreCriteria.UserId,
+            GoalRecord = request.GoalRecord
         };
 
         foreach (var result in request.ResultDetails)

@@ -364,12 +364,36 @@ public class CreateCriteriaServiceImp(
                 AwayValue = requestResultDetail.AwayValue
             }).ToList();
 
+        AddGoalRecordResourceItems(request, resourceItems);
+
         return new SaveScoreCriteria
         {
             MatchId = request.MatchId,
             UserId = session.UserId,
             SelectedResources = CreateResources(resourceItems)
         };
+    }
+
+    private void AddGoalRecordResourceItems(SaveScoreRequest request, List<ResourceItem> resourceItems)
+    {
+        if (request.IsEnabledGoalRecordFt && !string.IsNullOrEmpty(request.GoalRecord) && request.ResultDetails.Any(r => r.ResourceId == ResourceType.Final))
+        {
+            resourceItems.Add(new ResourceItem
+            {
+                ResourceId = ResourceType.FullTimeGoalRecord,
+                HomeValue = request.GoalRecord
+            });
+        }
+
+        if (request.IsEnabledGoalRecordHt && !string.IsNullOrEmpty(request.GoalRecord) && request.ResultDetails.Any(r => r.ResourceId == ResourceType.Halftime))
+        {
+            var semicolonIndex = request.GoalRecord.IndexOf(';');
+            resourceItems.Add(new ResourceItem
+            {
+                ResourceId = ResourceType.HalftimeGoalRecord,
+                HomeValue = semicolonIndex < 0 ? request.GoalRecord : request.GoalRecord[..(semicolonIndex + 1)].ToUpperInvariant()
+            });
+        }
     }
 
     public EventTicketRequest CreateEventTicketRequest(CalculateCriteria criteria)

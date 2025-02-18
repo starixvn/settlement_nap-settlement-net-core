@@ -12,9 +12,10 @@ export class SaveScoreHandler extends AbstractHandler {
   handle(storage: Storage) {
     const { matchDetail, resultDetails } = storage.getMatch();
     const selectedResult = resultDetails.filter((result) => result.checked);
+    const goalRecord = matchDetail.applyGoalRecord ? matchDetail.goalRecord : "";
     storage.setConfirmMessage(Language.SaveTraderScore);
     this.#messageBoxService.confirm(storage.getConfirmMessage(), () => {
-      this.#requestService.saveScore(matchDetail.matchId, selectedResult).then((result: Result) => {
+      this.#requestService.saveScore(matchDetail, goalRecord, selectedResult).then((result: Result) => {
         if (!result.isSuccessful) {
           storage.error(result.errMsg);
         }

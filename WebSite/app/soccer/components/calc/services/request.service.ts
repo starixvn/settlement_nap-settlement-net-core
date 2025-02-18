@@ -78,10 +78,13 @@ export class RequestService {
         return firstValueFrom(request);
     }
 
-    saveScore(matchId: number, resultDetails: ResultDetail[]): Promise<Result> {
+    saveScore(match: MatchDetail, goalRecord: string,resultDetails: ResultDetail[]): Promise<Result> {
         const query = {
-            matchId: matchId,
-            resultDetails
+            matchId: match.matchId,
+            isEnabledGoalRecordHt: match.isEnabledGoalRecordHt,
+            isEnabledGoalRecordFt: match.isEnabledGoalRecordFt,
+            resultDetails,
+            goalRecord
         };
         const request =  this.httpRequestService.postJson<Result>(query,`${this.soccerApi}/save-score`);
         return firstValueFrom(request);
