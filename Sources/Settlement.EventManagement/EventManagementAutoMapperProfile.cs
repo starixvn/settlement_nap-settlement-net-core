@@ -17,7 +17,6 @@ public class EventManagementAutoMapperProfile : Profile
         CreateMap<LeagueRequest, LeagueCriteria>();
         CreateMap<Match, MultiSportMatchWaiting>();
         CreateMap<CalculateMatch, CalculateMatchWaiting>();
-        CreateMap<RefreshMultiSportRequest, GetWaitingMultiSportCriteria>();
         CreateMap<FilterCalculationRequest, GetMatchesCriteria>();
         CreateMap<LeagueCalculationRequest, LeagueCalculationCriteria>();
         CreateMap<RefreshCalculationRequest, GetWaitingCalculationCriteria>();

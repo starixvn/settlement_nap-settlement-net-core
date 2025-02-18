@@ -1,37 +1,28 @@
-﻿using System.Security.Cryptography;
+﻿namespace Settlement.EventManagement.Services.MultiSports;
 
-namespace Settlement.EventManagement.Services.MultiSports;
-
-using System.Text;
-using System.Text.Json;
 using Criteria;
 using Fanex.Data.Repository;
-using Microsoft.Extensions.Caching.Memory;
 using Requests;
 using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.EventManagement.Models.MultiSports;
+using System.Text.Json;
 using Match = Models.MultiSports.Match;
 using MatchFilterTuple = (List<Models.MultiSports.Match> Matches, List<MatchOverStatus> MatchOverStatuses, List<ParentChildMatchFilter> ParentChildMatchFilters);
 
 public interface IMultiSportService
 {
     Task<List<SportModel>> GetSportBook(FilterMultiSportRequest request, bool isLeader);
-
-    Task<List<MultiSportMatchWaiting>> GetWaitingMatches(RefreshMultiSportRequest request, bool isLeader);
 }
 
 public class MultiSportServiceImp(
     IDynamicRepository repository,
     IMatchService matchService,
     IMapper mapper,
-    IMemoryCache cacheService,
     SiteMatchService siteMatchService,
     IOptions<AppSettingsKey> appSettingsKey)
     : IMultiSportService
 {
-    private static int _isProcessing;
-
     public async Task<List<SportModel>> GetSportBook(FilterMultiSportRequest request, bool isLeader)
     {
         var data = await FetchMatchesAndResultDetails(request);
@@ -41,84 +32,6 @@ public class MultiSportServiceImp(
 
         var sportBooks = GroupSport(matchesSorted);
         return sportBooks;
-    }
-
-    public async Task<List<MultiSportMatchWaiting>> GetWaitingMatches(RefreshMultiSportRequest request, bool isLeader)
-    {
-        var hashLeagueIds = ConvertKeyToHash(request.LeagueIds);
-        var matches = MatchesOnShortCaching(hashLeagueIds);
-
-        if (matches is { Count: > 0 })
-        {
-            return matches;
-        }
-
-        if (0 == Interlocked.Exchange(ref _isProcessing, 1))
-        {
-            try
-            {
-                return await GetAndCachingMatches(request, hashLeagueIds, isLeader);
-            }
-            finally
-            {
-                Interlocked.Exchange(ref _isProcessing, 0);
-            }
-        }
-
-        return MatchesOnLongCaching(hashLeagueIds);
-    }
-
-    private static string ConvertKeyToHash(string input)
-    {
-        var data = SHA1.HashData(Encoding.Unicode.GetBytes(input));
-        return Convert.ToHexString(data).ToLowerInvariant();
-    }
-
-    private List<MultiSportMatchWaiting> MatchesOnShortCaching(string hashLeagueIds)
-    {
-        var shortCachingKey = ShortCachingKey(hashLeagueIds);
-        return cacheService.Get<List<MultiSportMatchWaiting>>(shortCachingKey);
-    }
-
-    private List<MultiSportMatchWaiting> MatchesOnLongCaching(string hashLeagueIds)
-    {
-        var longCachingKey = LongCachingKey(hashLeagueIds);
-        return cacheService.Get<List<MultiSportMatchWaiting>>(longCachingKey);
-    }
-
-    private static string ShortCachingKey(string hashLeagueIds) => $"{CacheSettings.Keys.MemoryCacheMultiSportCacheKey}-{hashLeagueIds}";
-
-    private static string LongCachingKey(string hashLeagueIds) => $"{ShortCachingKey(hashLeagueIds)}-long";
-
-    private async Task<List<MultiSportMatchWaiting>> GetAndCachingMatches(RefreshMultiSportRequest request, string hashLeagueIds, bool isLeader)
-    {
-        var criteria = mapper.Map<RefreshMultiSportRequest, GetWaitingMultiSportCriteria>(request);
-        var waitingMatches = await GetMatchesAllSites(criteria);
-        var listResultDetail = await ResultDetailByMatchIds(waitingMatches);
-
-        waitingMatches = await matchService.SetNewMatchInfo(waitingMatches, listResultDetail);
-
-        var matches = GetMoreScore(new MultiSportResult { Matches = waitingMatches, ResultDetails = listResultDetail }, isLeader);
-
-        return SetToCache(hashLeagueIds, matches);
-    }
-
-    private async Task<List<Match>> GetMatchesAllSites(MultipleSiteCriteria criteria)
-    {
-        var siteDbServer = appSettingsKey.Value.SiteDbServer;
-        var fetchMatchTasks = siteDbServer.Select(s => FetchMatches(s, criteria)).ToList();
-        var listMatch = await Task.WhenAll(fetchMatchTasks.ToArray());
-
-        var matchesInAllServers = listMatch.Select(m => m.ToList()).ToList();
-
-        var baseMatches = matchesInAllServers.SelectMany(m => m).Distinct().ToList();
-
-        for (var i = 1; i < siteDbServer.Count; i++)
-        {
-            matchService.AddSiteInfo(baseMatches, matchesInAllServers[i]);
-        }
-
-        return baseMatches;
     }
 
     private async Task<IEnumerable<SiteMatch>> GetOSTicketInfo(MatchFilterTuple matchTuple, SportsbookCriteria filterCriteria)
@@ -209,24 +122,6 @@ public class MultiSportServiceImp(
         SetMatchTicketInfo(filteredMatches, siteMatches);
 
         return filteredMatches;
-    }
-
-    private async Task<IEnumerable<Match>> FetchMatches(string server, MultipleSiteCriteria criteria)
-    {
-        criteria.DbServer = server;
-        return await repository.FetchAsync<Match>(criteria);
-    }
-
-    private List<MultiSportMatchWaiting> SetToCache(string hashLeagueIds, List<Match> matches)
-    {
-        var shortCachingKey = ShortCachingKey(hashLeagueIds);
-        var longCachingKey = LongCachingKey(hashLeagueIds);
-        var waitingMatches = mapper.Map<List<MultiSportMatchWaiting>>(matches);
-
-        cacheService.Set(shortCachingKey, waitingMatches, new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(CacheSettings.Expiration.ShortCallRefreshTimerSeconds)));
-        cacheService.Set(longCachingKey, waitingMatches, new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(CacheSettings.Expiration.LongCallRefreshTimerMinutes)));
-
-        return waitingMatches;
     }
 
     private List<Match> GetMoreScore(MultiSportResult data, bool isLeader)

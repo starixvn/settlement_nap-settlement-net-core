@@ -1,15 +1,15 @@
-﻿using System.Text.Json;
-using Fanex.Logging;
+﻿using Fanex.Logging;
 using MassTransit;
 using Microsoft.Extensions.Options;
-using ResultAmendment.Contracts;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Sportsbook.Aio.Constants.Cricket;
+using Settlement.Sportsbook.Aio.Contracts;
 using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.Criteria.Cricket;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Services.Cricket;
+using System.Text.Json;
 
 namespace Settlement.Sportsbook.Aio.Services;
 
@@ -59,7 +59,7 @@ public class ResultAmendmentServiceImp(
         };
 
         var results = await repository.FetchAsync<ResultChanged>(criteria);
-        var resultsChanged = await CheckReSettleTicket(results, settleCriteria.Action);
+        var resultsChanged = CheckReSettleTicket(results, settleCriteria.Action);
 
         if (resultsChanged.Count == 0)
         {
@@ -89,9 +89,8 @@ public class ResultAmendmentServiceImp(
         return true;
     }
 
-    private async Task<List<IGrouping<short, ResultChanged>>> CheckReSettleTicket(IEnumerable<ResultChanged> results, string currentAction)
+    private static List<IGrouping<short, ResultChanged>> CheckReSettleTicket(IEnumerable<ResultChanged> results, string currentAction)
     {
-
         var resultsSetActionType = results.Select(x =>
         {
             x.ReSettleType = GetReSettleActionType(x.Action, currentAction);

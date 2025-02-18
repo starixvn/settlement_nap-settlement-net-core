@@ -1,5 +1,5 @@
 <td colspan="13" class="name" (click)="collapseLeague()">
-  <span class="collapse-icon" [ngClass]="league.collapse ? 'collapsed' : ''"></span>
+  <span [ngClass]="league.collapse ? 'collapse-icon collapsed' : 'collapse-icon'"></span>
   &nbsp;{{ league.name }}
 </td>
 <td class="auto-setting" (click)="!sportSupportInstant.includes(league.sportType) && collapseLeague()">
@@ -11,21 +11,17 @@
   <ng-container *ngIf="league.matches[0].applyDirect && !sportSupportNewAutoPayout.includes(league.sportType)">
     <div *ngIf="permission.canAutoPayout" class="act-direct-time" [matTooltip]="language.payout.titleDirectTime"
       matTooltipPosition="above" (click)="openUpdateTime()"></div>
-    <div style="background: none">Waiting time: {{ league.autoWaitingTime }}sec</div>
+    <div>Waiting time: {{ league.autoWaitingTime }}sec</div>
   </ng-container>
   <ng-container *ngIf="sportSupportNewAutoPayout.includes(league.sportType)">
-    <div class="auto-info">
-      <span>Main: {{ league.autoMainWaitingTime | timeConverter }}</span> <br />
-      <span>Early: {{ league.autoEarlyWaitingTime | timeConverter }}</span>
-    </div>
+      Main: {{ league.autoMainWaitingTime | timeConverter }} - Early: {{ league.autoEarlyWaitingTime | timeConverter }}
   </ng-container>
 </td>
 
 <td [ngClass]="{ 'code-link enable': permission.canAutoPayout, 'auto-setting auto-setting-text': true }">
-<!--  <div style="background: none;" class="cursor-pointer" (click)="changeAutoLeague()">{{sportSupportNewAutoPayout.includes(league.sportType) ? getAutoNewSettingLeague(): getAutoSettingLeague() }}</div>-->
     @if(sportSupportNewAutoPayout.includes(league.sportType)) {
-        <div style="background: none;" class="cursor-pointer new-status-setting"  [innerHTML]="getAutoNewSettingLeague()" (click)="changeAutoLeague()"></div>
+        <div class="cursor-pointer new-status-setting"  [innerHTML]="getAutoNewSettingLeague()" (click)="changeAutoLeague()"></div>
     } @else {
-          <div style="background: none;" class="cursor-pointer" (click)="changeAutoLeague()">{{getAutoSettingLeague() }}</div>
+          <div class="cursor-pointer" (click)="changeAutoLeague()">{{getAutoSettingLeague() }}</div>
     }
 </td>

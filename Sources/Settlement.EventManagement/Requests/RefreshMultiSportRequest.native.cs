@@ -1,10 +1,10 @@
-﻿using Settlement.EventManagement.Models.MultiSports;
+﻿namespace Settlement.EventManagement.Requests;
 
-namespace Settlement.EventManagement.Requests;
-
-public class RefreshMultiSportRequest : IRequest<IList<MultiSportMatchWaiting>>
+public class RefreshMultiSportRequest
 {
     public string LeagueIds { get; set; }
 
     public string MatchIds { get; set; }
+
+    public bool IsLeader { get; set; }
 }

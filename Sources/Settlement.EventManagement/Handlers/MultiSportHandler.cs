@@ -12,8 +12,7 @@ public class MultiSportHandler(
     GetDataFilterService getDataFilterService)
     : IRequestHandler<FilterMultiSportRequest, MultiSportModel>,
         IRequestHandler<LeagueRequest, List<LeagueTypeModel>>,
-        IRequestHandler<SportRequest, List<Sport>>,
-        IRequestHandler<RefreshMultiSportRequest, IList<MultiSportMatchWaiting>>
+        IRequestHandler<SportRequest, List<Sport>>
 {
     public async Task<MultiSportModel> Handle(FilterMultiSportRequest request, CancellationToken cancellationToken)
     {
@@ -28,11 +27,4 @@ public class MultiSportHandler(
     public async Task<List<LeagueTypeModel>> Handle(LeagueRequest request, CancellationToken cancellationToken) => await getDataFilterService.GetLeagues(request);
 
     public async Task<List<Sport>> Handle(SportRequest request, CancellationToken cancellationToken) => await getDataFilterService.GetSports(request);
-
-    public async Task<IList<MultiSportMatchWaiting>> Handle(RefreshMultiSportRequest request, CancellationToken cancellationToken)
-    {
-        var permission = permissionService.Permission;
-        var isLeader = permission.IsLeader;
-        return await multiSportService.GetWaitingMatches(request, isLeader);
-    }
 }

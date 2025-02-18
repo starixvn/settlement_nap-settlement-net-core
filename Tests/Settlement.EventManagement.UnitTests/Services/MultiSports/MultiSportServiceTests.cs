@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Fanex.Data.Repository;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
@@ -14,7 +13,7 @@ namespace Settlement.EventManagement.UnitTests.Services.MultiSports;
 
 public class MultiSportServiceTests
 {
-    private readonly IMultiSportService service;
+    private readonly MultiSportServiceImp service;
 
     private readonly IDynamicRepository repository;
 
@@ -28,7 +27,6 @@ public class MultiSportServiceTests
         matchService = Substitute.For<IMatchService>();
 
         var siteMatchService = Substitute.For<SiteMatchService>();
-        var cacheService = Substitute.For<IMemoryCache>();
 
         var mapperConfig = new MapperConfigurationExpression();
         mapperConfig.AddProfile<EventManagementAutoMapperProfile>();
@@ -38,41 +36,7 @@ public class MultiSportServiceTests
         var appSetting = new AppSettingsKey { SiteDbServer = ["DB01", "DB02"] };
         var option = Options.Create(appSetting);
         refDataService = Substitute.For<IRefDataService>();
-        service = new MultiSportServiceImp(repository, matchService, mapper, cacheService, siteMatchService, option);
-    }
-
-    [Fact]
-    public async Task GetWaitingMatches_NotExistMatchesOnCache_ReturnQueriedMatches()
-    {
-        // Arrange
-        var match = new Match
-        {
-            MatchId = 700000,
-            SportType = 2,
-            LeagueId = 1
-        };
-        var resultDetail = new ResultDetail
-        {
-            MatchId = 700000,
-            ResourceId = "01"
-        };
-        var request = new RefreshMultiSportRequest
-        {
-            LeagueIds = "1,2"
-        };
-        var listMatch = new List<Match> { match };
-        repository.FetchMultipleAsync<Match, MatchOverStatus, ParentChildMatchFilter>(Arg.Any<SportsbookCriteria>()).Returns((listMatch, [], []));
-        repository.FetchAsync<ResultDetail>(Arg.Any<ICriteria>()).Returns(new List<ResultDetail> { resultDetail });
-        refDataService.GetLeagueName(Arg.Any<string>()).Returns(string.Empty);
-        matchService.GetScoreForMatchBySportType(Arg.Any<List<Match>>(), Arg.Any<List<ResultDetail>>(), Arg.Any<int>()).Returns(
-            [match]);
-        matchService.SetNewMatchInfo(Arg.Any<List<Match>>(), Arg.Any<List<ResultDetail>>()).Returns(listMatch);
-
-        // Act
-        var waitingMatches = await service.GetWaitingMatches(request, false);
-
-        // Assert
-        Assert.NotNull(waitingMatches);
+        service = new MultiSportServiceImp(repository, matchService, mapper, siteMatchService, option);
     }
 
     [Fact]
