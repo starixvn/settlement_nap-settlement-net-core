@@ -86,7 +86,9 @@ export class CalculationActionComponent implements OnInit {
       resultDetail.resultSettingData.isHoldResult = result;
       resultDetail.resultSettingData.iconHoldResult = this.getResultSettingIcon(resultDetail);
       if (result) {
-        resultDetail.checked = false;
+        this.halfTimeResult.checked = false;
+        this.fullTimeResult.checked = false;
+        this.enableAction = false;
       }
     });
   }
