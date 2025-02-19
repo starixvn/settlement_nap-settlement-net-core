@@ -294,7 +294,6 @@ public class SettingServiceImp(
         {
             (int)AutoSettleType.AutoDirect => "Direct Payout",
             (int)AutoSettleType.AutoPayoutSoccer => "Auto Payout",
-            (int)AutoSettleType.AutoInstant => "Auto Instant",
             _ => ""
         };
         return autoTypeInfo;

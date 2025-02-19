@@ -2,7 +2,7 @@
 
 public enum AutoSettleType
 {
-    AutoPayoutSoccer = 1,
+    AutoPayout1 = 1,
     AutoInstant = 2,
     AutoDirect = 5,
     AutoPayout = 6, // for service ap2
