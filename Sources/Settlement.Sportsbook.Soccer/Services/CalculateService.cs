@@ -83,16 +83,47 @@ public class CalculateServiceImp(
     {
         if (request is { ActionName: "CAL" } or { ActionName: "CAL-FT" })
         {
-            await publishEndpoint.Publish(new MatchCalculated(
-                request.MatchId,
-                request.ParentId,
-                request.SportType,
-                request.ChildMatchType,
-                request.HalfTimeHomeScore,
-                request.HalfTimeAwayScore,
-                request.FinalHomeScore,
-                request.FinalAwayScore),
-                new CancellationTokenSource(TimeSpan.FromSeconds(3)).Token);
+            if (request.ParentId == 0)
+            {
+                await publishEndpoint.Publish(new MainMatchCalculated(request.MatchId,
+                    request.ParentId,
+                    request.SportType,
+                    request.ChildMatchType, request.HalfTimeHomeScore,
+                    request.HalfTimeAwayScore,
+                    request.FinalHomeScore,
+                    request.FinalAwayScore));
+
+                return;
+            }
+
+            if (request.ChildMatchType == 202)
+            {
+                await publishEndpoint.Publish(new MatchCalculated(
+                    request.MatchId,
+                    request.ParentId,
+                    request.SportType,
+                    request.ChildMatchType,
+                    request.HalfTimeHomeScore,
+                    request.HalfTimeAwayScore,
+                    request.FinalHomeScore,
+                    request.FinalAwayScore));
+                return;
+            }
+
+            if (request.ChildMatchType == 201)
+            {
+                await publishEndpoint.Publish(new ExtraMatchCalculated(
+                    request.MatchId,
+                    request.ParentId,
+                    request.SportType,
+                    request.ChildMatchType,
+                    request.HalfTimeHomeScore,
+                    request.HalfTimeAwayScore,
+                    request.FinalHomeScore,
+                    request.FinalAwayScore));
+                return;
+            }
+
         }
     }
 

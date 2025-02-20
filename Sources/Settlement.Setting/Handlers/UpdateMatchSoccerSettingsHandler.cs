@@ -1,6 +1,9 @@
-﻿using Settlement.Core.Models;
+﻿using Settlement.Core.Criteria;
+using Settlement.Core.Models;
+using Settlement.Core.Services;
 using Settlement.Setting.Constants;
 using Settlement.Setting.Criteria;
+using Settlement.Setting.Helpers;
 using Settlement.Setting.Requests;
 using Settlement.Setting.Services;
 
@@ -10,11 +13,19 @@ public class UpdateMatchSoccerSettingsHandler
 {
     private readonly SettingService settingService;
     private readonly IDynamicRepository dynamicRepository;
+    private readonly LogService logService;
+    private readonly INapSession napSession;
 
-    public UpdateMatchSoccerSettingsHandler(SettingService settingService, IDynamicRepository dynamicRepository)
+    public UpdateMatchSoccerSettingsHandler(
+        SettingService settingService,
+        IDynamicRepository dynamicRepository,
+        LogService logService,
+        INapSession napSession)
     {
         this.settingService = settingService;
         this.dynamicRepository = dynamicRepository;
+        this.logService = logService;
+        this.napSession = napSession;
     }
 
     public async Task<Result> HandleAsync(UpdateAutoSettingsCommand command)
@@ -24,37 +35,42 @@ public class UpdateMatchSoccerSettingsHandler
         if (payoutSetting.Enabled)
         {
             await UpdateResultSetting(command, AutoSettleType.AutoPayout1);
+            await WriteLog(command, AutoSettleType.AutoPayout1);
         }
         else if (directSetting.Enabled)
         {
             await UpdateResultSetting(command, AutoSettleType.AutoDirect);
             await UpdateSettleSource(command, AutoSettleType.AutoDirect);
-
+            await WriteLog(command, AutoSettleType.AutoDirect);
         }
         else
         {
             await UpdateResultSetting(command, AutoSettleType.AutoPayout1);
+            await WriteLog(command, AutoSettleType.AutoPayout1);
         }
 
         await UpdateSettleSource(command, AutoSettleType.AutoRefund);
+        await WriteLog(command, AutoSettleType.AutoRefund);
 
         return new Result();
     }
 
-    private async Task UpdateResultSetting(UpdateAutoSettingsCommand command, AutoSettleType settleType)
+    private async Task<Result> UpdateResultSetting(UpdateAutoSettingsCommand command, AutoSettleType settleType)
     {
         var settings = command.ResultSettings.Find(x => x.SettleType == settleType);
         if (settings == null)
         {
-            return;
+            return new Result();
         }
 
-        await settingService.UpdateSettingMatch(new SettingMatchRequest
+        var result = await settingService.UpdateSettingMatch(new SettingMatchRequest
         {
             MatchId = command.MatchId,
             AutoType = (int)settleType,
             IsEnabled = settings.Enabled,
         });
+
+        return result;
     }
 
     private async Task UpdateSettleSource(UpdateAutoSettingsCommand command, AutoSettleType settleType)
@@ -74,5 +90,19 @@ public class UpdateMatchSoccerSettingsHandler
         };
 
         await dynamicRepository.ExecuteAsync(criteria);
+    }
+
+    private async Task WriteLog(UpdateAutoSettingsCommand command, AutoSettleType settleType)
+    {
+        var item = command.ResultSettings.Find(x => x.SettleType == settleType);
+        var typePayout = LeagueSettingsHelper.AutoPayoutToText(item.SettleType);
+
+        var title = $"Update Auto Payout setting on {command.TypeObject}: {command.MatchId}";
+        var msg = $"{title} {typePayout}({item.Enabled}) WaitingTime({item.WaitingTime})";
+        var actionLogId = LeagueSettingsHelper.GetActionLogId(command.TypeObject);
+
+        var logCriteria = new LogCriteria(command.MatchId, msg, actionLogId, napSession.UserId);
+
+        await logService.WriteLog(logCriteria);
     }
 }

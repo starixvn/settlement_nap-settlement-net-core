@@ -1,4 +1,6 @@
-﻿using Settlement.Setting.Criteria;
+﻿using Settlement.Core.Constants;
+using Settlement.Setting.Constants;
+using Settlement.Setting.Criteria;
 using Settlement.Setting.Criteria.LeagueSettings;
 using Settlement.Setting.Requests;
 
@@ -92,5 +94,26 @@ public static class LeagueSettingsHelper
         }
 
         return result.ToString();
+    }
+
+    public static string AutoPayoutToText(AutoSettleType autoSettle)
+    {
+        return autoSettle switch
+        {
+            AutoSettleType.AutoPayout1 => "AutoPayout",
+            AutoSettleType.AutoDirect => "DirectPayout",
+            AutoSettleType.AutoRefund => "AutoRefund",
+            _ => string.Empty
+        };
+    }
+
+    public static int GetActionLogId(string typeObject)
+    {
+        return (typeObject) switch
+        {
+            ("League") => ActionId.AutoPayoutSettingLeague,
+            ("Match") => ActionId.AutoPayoutSettingMatch,
+            _ => 0
+        };
     }
 }
