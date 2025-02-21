@@ -1,8 +1,9 @@
-﻿using Settlement.Core.Constants;
-using Settlement.Core.Models;
+﻿using Fanex.Settlement.MessageBridge.ResultAmendment;
+using Settlement.Core.Constants;
 using Settlement.ResourceInfos.Constants;
 using Settlement.Sportsbook.Aio.Constants.Cricket;
 using Settlement.Sportsbook.Aio.Models;
+using ResourceItem = Settlement.Core.Models.ResourceItem;
 
 namespace Settlement.Sportsbook.Aio.Services.Cricket;
 

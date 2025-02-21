@@ -1,15 +1,16 @@
-﻿using Fanex.Logging;
+﻿using System.Text.Json;
+using Fanex.Logging;
+using Fanex.Settlement.MessageBridge.ResultAmendment;
 using MassTransit;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Sportsbook.Aio.Constants.Cricket;
-using Settlement.Sportsbook.Aio.Contracts;
 using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.Criteria.Cricket;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Services.Cricket;
-using System.Text.Json;
+using ResourceItem = Settlement.Core.Models.ResourceItem;
 
 namespace Settlement.Sportsbook.Aio.Services;
 
@@ -73,7 +74,17 @@ public class ResultAmendmentServiceImp(
                 settleCriteria.BroadcastSessionId,
                 settleCriteria.SportType,
                 settleCriteria.Action,
-                selectedResources,
+                selectedResources.Select(x => new Fanex.Settlement.MessageBridge.ResultAmendment.ResourceItem
+                {
+                    ResourceId = x.ResourceId,
+                    HomeValue = x.HomeValue,
+                    AwayValue = x.AwayValue,
+                    AwayId = x.AwayId,
+                    HomeId = x.HomeId,
+                    OtherInfo = x.OtherInfo,
+                    GroupBetType = x.GroupBetType,
+
+                }).ToList(),
                 results.ToList()),
                 new CancellationTokenSource(TimeSpan.FromSeconds(3)).Token);
             return true;
