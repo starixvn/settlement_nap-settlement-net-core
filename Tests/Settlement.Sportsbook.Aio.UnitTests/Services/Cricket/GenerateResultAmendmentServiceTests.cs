@@ -1,7 +1,8 @@
 ﻿using Fanex.Settlement.Converter.Services;
-using Settlement.Core.Models;
+using Fanex.Settlement.MessageBridge.ResultAmendment;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Services.Cricket;
+using ResourceItem = Settlement.Core.Models.ResourceItem;
 
 namespace Settlement.Sportsbook.Aio.UnitTests.Services.Cricket;
 

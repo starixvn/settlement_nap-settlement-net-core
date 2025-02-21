@@ -2,14 +2,15 @@
 using Microsoft.Extensions.Options;
 using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.Criteria.Cricket;
-using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Services.Cricket;
 
 namespace Settlement.Sportsbook.Aio.UnitTests.Services.Cricket;
 
+using Fanex.Settlement.MessageBridge.ResultAmendment;
 using MassTransit;
 using Settlement.Core.Models;
 using Settlement.Sportsbook.Aio.Services;
+using ResourceItem = Core.Models.ResourceItem;
 
 public class ResultAmendmentServiceTests
 {
