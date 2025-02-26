@@ -48,18 +48,11 @@ export class TableMatchComponent implements OnInit {
   }
 
   private async refreshMatches() {
-    let isChecking = false;
     while (true) {
-      if (!isChecking) {
-        isChecking = true;
         if (this.store.enableRefresh) {
           await this.refreshMatchesService.refreshMatches(this.sports, this.store.request);
           this.changeDetectorRef.markForCheck();
         }
-
-        isChecking = false;
-      }
-
       await new Promise((resolve) => setTimeout(resolve, this.period));
     }
   }

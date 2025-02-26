@@ -268,7 +268,7 @@ public class MultipleServerAioServiceImp(
 
         var results = await Task.WhenAll(tasks);
 
-        return results.First();
+        return results[0];
     }
 
     private async Task<Result> PushResultSettleOneSite(SettleCriteria criteria, string server)
