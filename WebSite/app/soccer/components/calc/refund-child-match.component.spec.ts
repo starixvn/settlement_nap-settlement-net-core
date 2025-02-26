@@ -28,10 +28,8 @@ describe('GoalHistoryComponent', () => {
         TestBed.configureTestingModule({
             imports: [
                 NgbModule,
-                FormsModule],
-            declarations: [
-                RefundChildMatchComponent
-            ]
+                FormsModule,
+                RefundChildMatchComponent]
         }).compileComponents();
     });
 

@@ -439,7 +439,7 @@ export class CalculationActionsComponent implements SportTemplate {
 
     public async saveTraderScore() {
         this.toastrService.clear();
-        this.confirmationDialogMessage.message = Language.eSports.traderScore;
+        this.confirmationDialogMessage.message = Language.SaveTraderScore;
         this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
             this.doSaveTraderScore();
         });

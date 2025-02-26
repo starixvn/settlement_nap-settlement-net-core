@@ -1,6 +1,7 @@
 import { ResultSettingModel, GeneralResultDetail } from '../../shared/models';
 export class ResultDetail extends GeneralResultDetail{
     public map: number;
+    public sourceId : number;
     public ticketStatus: string;
     public betType: string;
     public betTypeName: string;
@@ -14,5 +15,13 @@ export class ResultDetail extends GeneralResultDetail{
     public isSettleDeterminedOriginal: boolean;
     public isInvalidSelectedProceed: boolean;
     public isNotExistedValue: boolean;
-    public resultSettingData: ResultSettingModel;
+    public resultSettingData: ResultSettingModel = {
+        isHoldResult: false,
+        isConfirmedRefund: false,
+        isConfirmedRefundSdt: false,
+        isConfirmedRefundMercy: false,
+        iconHoldResult: ''
+    };
+    public isMismatch: boolean;
+    public resultState: string;
 }

@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { RefundType } from './model/constant.native';
+import { RefundType } from './model/constant.model';
 import { Match, MatchDetail } from './model/match.model';
 import { SpecificBettypeComponent } from './specific-bettype.component';
 import * as _ from 'lodash';

@@ -58,5 +58,7 @@ public static class SettlementFunctionKeys
 
     public const string TraderSaveScore = "TraderSaveScore";
 
+    public const string SaveScore = "SaveScore";
+
     public const string ViewLogSettlement = "ViewLogSettlement";
 }

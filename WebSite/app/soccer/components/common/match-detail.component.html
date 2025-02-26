@@ -1,7 +1,7 @@
 <div class="league">
     <div class="icon">
     </div>
-    {{matchDetail.leagueName}}
+    SOCCER - {{matchDetail.leagueName}}
 </div>
 <table class="table-calculation">
     <thead>
@@ -15,8 +15,10 @@
             <th class="team">
                 Team
             </th>
+            @if(pageType !== pageTypeEnum.ReCalculate){
             <th class="score">HT Score</th>
             <th class="score">Final Score</th>
+            }
         </tr>
     </thead>
     <tbody>
@@ -36,8 +38,10 @@
                 <span class="{{matchDetail.goalIcon.homeGoal}}"></span>
                 <span class="{{matchDetail.goalIcon.halfTimeHomeGoal}}"></span>
             </td>
+            @if(pageType !== pageTypeEnum.ReCalculate){
             <td class="ht-score">{{matchDetail.halfTimeHomeScore | scoreBySettlement:0}}</td>
             <td class="final-score">{{matchDetail.finalHomeScore | scoreBySettlement:0}}</td>
+            }
         </tr>
         <tr>
             <td>
@@ -50,10 +54,13 @@
                 <span class="{{matchDetail.goalIcon.awayGoal}}"></span>
                 <span class="{{matchDetail.goalIcon.halfTimeAwayGoal}}"></span>
             </td>
+            @if(pageType !== pageTypeEnum.ReCalculate){
             <td class="ht-score">{{matchDetail.halfTimeAwayScore | scoreBySettlement:0}}</td>
             <td class="final-score">{{matchDetail.finalAwayScore | scoreBySettlement:0}}</td>
+            }
         </tr>
     </tbody>
+    @if(pageType === pageTypeEnum.EarlySettlement){
     <tfoot>
         <tr>
             <td class="align-right" colspan="5">Goal Record:
@@ -61,6 +68,9 @@
             </td>
         </tr>
     </tfoot>
+    }
 </table>
+@if(pageType !== pageTypeEnum.Refund){
 <div (click)="refresh()" class="icon-refresh">
 </div>
+}

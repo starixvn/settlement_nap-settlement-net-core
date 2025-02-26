@@ -68,15 +68,15 @@ describe('Soccer refund - VerifyActionService', () => {
 
     describe('verifyFulltime', () => {
         it('should return error message about input score when score empty', () => {
-            matchDetail.finalAwayScore = 1;
+            matchDetail.finalAwayScore = '1';
             matchDetail.finalHomeScore = null;
 
             expect(service.verifyFulltime(matchDetail)).toEqual(Language.warningInputScore);
         });
 
         it('should return message about semicolon when bet status equal refund ht', () => {
-            matchDetail.finalAwayScore = 1;
-            matchDetail.finalHomeScore = 1;
+            matchDetail.finalAwayScore = '1';
+            matchDetail.finalHomeScore = '1';
             matchDetail.applyGoalRecord = true;
             matchDetail.betStatus = "Refund HT;";
             matchDetail.goalRecord = "HA;";
@@ -85,8 +85,8 @@ describe('Soccer refund - VerifyActionService', () => {
         });
 
         it('should return message about semicolon when match not refund ht', () => {
-            matchDetail.finalAwayScore = 1;
-            matchDetail.finalHomeScore = 1;
+            matchDetail.finalAwayScore = '1';
+            matchDetail.finalHomeScore = '1';
             matchDetail.applyGoalRecord = true;
             matchDetail.betStatus = "running";
             matchDetail.goalRecord = "HA";
@@ -95,8 +95,8 @@ describe('Soccer refund - VerifyActionService', () => {
         });
 
         it('should return message about goal record when goal record not match with final score', () => {
-            matchDetail.finalAwayScore = 1;
-            matchDetail.finalHomeScore = 1;
+            matchDetail.finalAwayScore = '1';
+            matchDetail.finalHomeScore = '1';
             matchDetail.applyGoalRecord = true;
             matchDetail.betStatus = "running";
             matchDetail.goalRecord = ";AA";
@@ -105,10 +105,10 @@ describe('Soccer refund - VerifyActionService', () => {
         });
 
         it('should return message about goal record when goal record not match with halfTime score', () => {
-            matchDetail.finalAwayScore = 1;
-            matchDetail.finalHomeScore = 1;
-            matchDetail.halfTimeAwayScore = 1;
-            matchDetail.halfTimeHomeScore = 1;
+            matchDetail.finalAwayScore = '1';
+            matchDetail.finalHomeScore = '1';
+            matchDetail.halfTimeAwayScore = '1';
+            matchDetail.halfTimeHomeScore = '1';
             matchDetail.applyGoalRecord = true;
             matchDetail.betStatus = "running";
             matchDetail.goalRecord = "A;H";
@@ -117,8 +117,8 @@ describe('Soccer refund - VerifyActionService', () => {
         });
 
         it('should return message about score Inconsistent when HT score > FT Score', () => {
-            matchDetail.finalAwayScore = 1;
-            matchDetail.finalHomeScore = 1;
+            matchDetail.finalAwayScore = '1';
+            matchDetail.finalHomeScore = '1';
             matchDetail.isScoreInconsistent = true;
             matchDetail.applyGoalRecord = false;
             matchDetail.betStatus = "running";
@@ -127,8 +127,8 @@ describe('Soccer refund - VerifyActionService', () => {
         });
 
         it('should return empty when pass all validation', () => {
-            matchDetail.finalAwayScore = 1;
-            matchDetail.finalHomeScore = 1;
+            matchDetail.finalAwayScore = '1';
+            matchDetail.finalHomeScore = '1';
             matchDetail.isScoreInconsistent = false;
             matchDetail.applyGoalRecord = false;
             matchDetail.betStatus = "running";
@@ -139,15 +139,15 @@ describe('Soccer refund - VerifyActionService', () => {
 
     describe('verifyAll', () => {
         it('should return error message about input score when score empty', () => {
-            matchDetail.halfTimeAwayScore = 1;
+            matchDetail.halfTimeAwayScore = '1';
             matchDetail.halfTimeHomeScore = null;
 
             expect(service.verifyAll(matchDetail)).toEqual(Language.warningInputScore);
         });
 
         it('should return message about semicolon when goal record  exist semicolon', () => {
-            matchDetail.halfTimeAwayScore = 1;
-            matchDetail.halfTimeHomeScore = 1;
+            matchDetail.halfTimeAwayScore = '1';
+            matchDetail.halfTimeHomeScore = '1';
             matchDetail.applyGoalRecord = true;
             matchDetail.goalRecord = "HA;";
 
@@ -156,8 +156,8 @@ describe('Soccer refund - VerifyActionService', () => {
 
 
         it('should return message about goal record when goal record not match with halfTime score', () => {
-            matchDetail.halfTimeAwayScore = 1;
-            matchDetail.halfTimeHomeScore = 1;
+            matchDetail.halfTimeAwayScore = '1';
+            matchDetail.halfTimeHomeScore = '1';
             matchDetail.applyGoalRecord = true;
             matchDetail.goalRecord = "A";
 
@@ -165,8 +165,8 @@ describe('Soccer refund - VerifyActionService', () => {
         });
 
         it('should return message about score Inconsistent when HT score > FT Score', () => {
-            matchDetail.halfTimeAwayScore = 1;
-            matchDetail.halfTimeHomeScore = 1;
+            matchDetail.halfTimeAwayScore = '1';
+            matchDetail.halfTimeHomeScore = '1';
             matchDetail.isScoreInconsistent = true;
             matchDetail.applyGoalRecord = false;
 
@@ -174,8 +174,8 @@ describe('Soccer refund - VerifyActionService', () => {
         });
 
         it('should return empty when pass all validation', () => {
-            matchDetail.halfTimeAwayScore = 1;
-            matchDetail.halfTimeHomeScore = 1;
+            matchDetail.halfTimeAwayScore = '1';
+            matchDetail.halfTimeHomeScore = '1';
             matchDetail.isScoreInconsistent = false;
             matchDetail.applyGoalRecord = false;
 

@@ -15,6 +15,7 @@
     + 'You will not be able to cancel the CALCULATION and REUSE this match!',
   CalculationAdditionalConfirmation: 'Are you sure you want to proceed with the results below?',
   UncalculationConfirmMessage: 'WARNING! Please double check and confirm this match really needs to be UNSETTLED!',
+  CannotUncalculateHalfTime: 'Failed: This function has not supported. Select all results instead.',
   UncalculateFTConfirmMessage: 'WARNING! Please double check and confirm this match really needs to be UNSETTLED FULL TIME!',
   CannotUncalculateFTMessage: 'WARNING! cannot proceed due to match has been Refunded All. Please recheck or use Uncalculate All instead.',
   RefundConfirmationBox: 'Refund confirmation box',
@@ -24,6 +25,7 @@
   RefundFullMessage: "Are you sure you want to REFUND FULLTIME? This function is only in use when the match cancel?",
   RefundParlayConfirmMessage: 'Are you sure you want to REFUND PARLAY this match?',
   RefundParlayFullTime: "Are you sure you want to REFUND PARLAY FULL TIME this match?",
+  SaveTraderScore: "Are you sure you want to save changes made to selected Trader Scores/Results?",
   RefundSymbol: {
     All: 'R',
     FullTime: 'R.FT',
@@ -53,6 +55,7 @@
     MissingPrimarySource: 'Pattern: Please assign Primary source(s).',
   },
   MarkedTicket: "ERROR! Cannot proceed due to marked tickets. Please unmark them and try again.",
+  ResultHeld: "	Cannot proceed due to following result(s) is on-hold: {0}.",
   SettlementLog: "Settlement Log",
   CalcPopupTitle: "Calculation",
   RefundPopupTitle: "Refund",
@@ -93,8 +96,7 @@
       mismatchedScore: 'WARNING! There are inconsistent scores! Please check inputted values.',
       mismatchedResult: 'WARNING! There are inconsistent results! Please check inputted values.'
     },
-    saveScore: 'Are you sure you want to save changes made to selected Outside Scores?',
-    traderScore: 'Are you sure you want to save changes made to selected Trader Scores/Results?',
+    saveScore: 'Are you sure you want to save changes made to selected Outside Scores?'
   },
   LeagueOutsideSource: {
     IsExistSource: "WARNING! Selected source is on the list! Please select a different source and try again.",
@@ -155,7 +157,8 @@
   },
   saveScore: {
     confirmSave: "WARNING! Are you sure you want to save changes made to selected results?",
-    resultSettled: "WARNING! Cannot continue due to selected results are settled."
+    resultSettled: "WARNING! Cannot continue due to selected results are settled.",
+    specificSettledResult: "Cannot proceed due to following result(s) has been settled: {0}."
   },
   sop: {
     inning: {
@@ -208,9 +211,9 @@
     subsequenceIntervalsErrorMessage: 'Please select all subsequence intervals.'
   },
 
-  mercy:{
-    invalidIntervals : 'Invalid intervals selected. Please contact Leader or Admin.',
-    invalidIntervalsConfirm : 'WARNING! Invalild intervals calculated or selected. Are you sure you want to continue?',
+  mercy: {
+    invalidIntervals: 'Invalid intervals selected. Please contact Leader or Admin.',
+    invalidIntervalsConfirm: 'WARNING! Invalild intervals calculated or selected. Are you sure you want to continue?',
     multipleMercy: 'Multiple Mercy Innings exist. Please contact Leader or Admin.',
     multipleMercyConfirm: 'WARNING!	Multiple Mercy Innings exist. Are you sure you want to continue?',
   },
@@ -229,7 +232,7 @@
   consistentRelatedMatch: 'WARNING! Cannot continue due main match and related matches have inconsistent results.',
   confirmChildMatch: 'WARNING! You select to calculate FT for selected related match. Are you sure you want to proceed?',
   confirmRelatedChildMatch: 'Are you sure you want to process all related child-matches?',
-    cannotSettleChildMatch: 'Failed: selected child-matches are on-hold, have been settled or confirmed refund.',
+  cannotSettleChildMatch: 'Failed: selected child-matches are on-hold, have been settled or confirmed refund.',
   directlyWithChildMAtch: 'WARNING! Cannot proceed due to "input result directly" is selected along side child-matches! Please check and try again.',
   otherSports: {
     confirmCalculateInconsistent: "WARNING! Insufficient or inconsistent score sources! Are you sure you want to proceed?",
@@ -243,6 +246,9 @@
     relatedMatchesNotCalc: "Cannot continue due to some Parent-match scores have not been calculated."
   },
   soccer: {
+    CannotUncalculateFullTime: 'Failed: HT has not been settled. Select all results instead.',
+    halfTimeNotSettleYet: "Failed: result (HT) has not been settled.",
+    scoreNotConfirmed: "Failed: result(s) ({0}) has not been confirmed or {0} play-time not ended.",
     noNeedSemicolonOnGoalRecord: "Goal Record must not contain \";\" character, please correct Goal Record and then try again.",
     needSemicolonOnGoalRecord: "Goal Record must contain \";\" character, please correct Goal Record and then try again.",
     halfTimeGoalRecordNotConsistent: "Goal Record is not consistent with the HALFTIME Score, please correct Goal Record before calculating.",

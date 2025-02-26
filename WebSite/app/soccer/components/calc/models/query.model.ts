@@ -33,10 +33,10 @@ export class SettleQuery {
         this.isExistFgLg = matchDetail.isExistFgLg;
         this.isExistHtFgLg = matchDetail.isExistHtFgLg;
         this.isExistFgNg = matchDetail.isExistFgNg;
-        this.halfTimeHomeScore = matchDetail.halfTimeHomeScore;
-        this.halfTimeAwayScore = matchDetail.halfTimeAwayScore;
-        this.finalHomeScore = matchDetail.finalHomeScore;
-        this.finalAwayScore = matchDetail.finalAwayScore;
+        this.halfTimeHomeScore = Number(matchDetail.halfTimeHomeScore);
+        this.halfTimeAwayScore = Number(matchDetail.halfTimeAwayScore);
+        this.finalHomeScore = Number(matchDetail.finalHomeScore);
+        this.finalAwayScore = Number(matchDetail.finalAwayScore);
         this.isResettledTickets = isResettledTickets;
         this.childMatchIds = childMatchIds;
         this.leagueGroupId = matchDetail.leagueGroupId;
@@ -92,8 +92,8 @@ export class UncalculateFullTimeQuery {
     public resultDetails: ResultDetail[];
     public hedgeMatchId: number;
     public isApplyHedging: boolean;
-    public halfTimeHome: number;
-    public halfTimeAway: number;
+    public halfTimeHome: string;
+    public halfTimeAway: string;
 
     constructor(matchDetail: MatchDetail, resultDetails: ResultDetail[], hedgeMatchId: number) {
         this.isExistFgLg = matchDetail.isExistFgLg;

@@ -154,8 +154,8 @@ public class MatchServiceTests
         var actualMatch = await service.GetMatch(new GetMatchRequest { MatchId = 1 });
 
         // Assert
-        Assert.Equal(1, actualMatch.MatchDetail.ExHTAwayScore);
-        Assert.Equal(2, actualMatch.MatchDetail.ExHTHomeScore);
+        Assert.Equal("1", actualMatch.MatchDetail.ExHTAwayScore);
+        Assert.Equal("2", actualMatch.MatchDetail.ExHTHomeScore);
     }
 
     [Fact]

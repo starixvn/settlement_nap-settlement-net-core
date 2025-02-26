@@ -44,8 +44,6 @@ public class MatchDetail
 
     public string EventStatus { get; set; }
 
-    public bool IsHtOnly { get; set; }
-
     public bool IsExistFgLg { get; set; }
 
     public bool IsExistHtFgLg { get; set; }
@@ -91,6 +89,8 @@ public class MatchDetail
 
     public bool IsLive { get; set; }
 
+    public bool OfferLive { get; set; }
+
     public bool IsSettleAbandonedMatchIBC { get; set; }
 
     public int SettleAbandonedMatchIbcParlay { get; set; }
@@ -103,13 +103,13 @@ public class MatchDetail
 
     public int? SourceId { get; set; }
 
-    public int? ExHTHomeScore { get; set; }
+    public string ExHTHomeScore { get; set; }
 
-    public int? ExHTAwayScore { get; set; }
+    public string ExHTAwayScore { get; set; }
 
-    public int? ExFTHomeScore { get; set; }
+    public string ExFTHomeScore { get; set; }
 
-    public int? ExFTAwayScore { get; set; }
+    public string ExFTAwayScore { get; set; }
 
     public string ExternalSourceName { get; set; }
 

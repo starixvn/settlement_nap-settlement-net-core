@@ -23,18 +23,20 @@
     <td class="final-result">
       <ng-container [ngSwitch]="item.inputType">
         <ng-container *ngSwitchCase="1">
-         <div class="final-result__row">
-          <span class="final-result__team" [matTooltip]="getTextTooltip(match().matchDetail.homeName,20)" matTooltipPosition="above">{{match().matchDetail.homeName}}</span>
-          <input type="text" maxlength="3" myOnlyInteger (change)="checkResultIsMatched(item)"
-            [disabled]="!item.checked || !permission.isLeader" [(ngModel)]="item.homeValue"
-            [ngClass]="{'warning':item.isResultWarning }" />
-         </div>
-         <div class="final-result__row">
-          <span class="final-result__team" [matTooltip]="getTextTooltip(match().matchDetail.awayName,20)" matTooltipPosition="above">{{match().matchDetail.awayName}}</span>
-          <input type="text" maxlength="3" myOnlyInteger (change)="checkResultIsMatched(item)"
-            [disabled]="!item.checked || !permission.isLeader" [(ngModel)]="item.awayValue"
-            [ngClass]="{'warning':item.isResultWarning}" />
-         </div>
+          <div class="final-result__row">
+            <span class="final-result__team" [matTooltip]="getTextTooltip(match().matchDetail.homeName,20)"
+              matTooltipPosition="above">{{match().matchDetail.homeName}}</span>
+            <input type="text" maxlength="3" myOnlyInteger (change)="checkResultIsMatched(item)"
+              [disabled]="!item.checked || !permission.isLeader" [(ngModel)]="item.homeValue"
+              [ngClass]="{'warning':item.isResultWarning }" />
+          </div>
+          <div class="final-result__row">
+            <span class="final-result__team" [matTooltip]="getTextTooltip(match().matchDetail.awayName,20)"
+              matTooltipPosition="above">{{match().matchDetail.awayName}}</span>
+            <input type="text" maxlength="3" myOnlyInteger (change)="checkResultIsMatched(item)"
+              [disabled]="!item.checked || !permission.isLeader" [(ngModel)]="item.awayValue"
+              [ngClass]="{'warning':item.isResultWarning}" />
+          </div>
         </ng-container>
         <ng-container *ngSwitchCase="2">
           <select [(ngModel)]="item.homeValue" [ngClass]="{'warning':item.isResultWarning}"
@@ -69,7 +71,7 @@
             </div>
           </ng-container>
           <ng-container *ngSwitchCase="3">
-            <div class="outside-source-text" >
+            <div class="outside-source-text">
               {{result.homeValue | resultByTeamName: null: 3}}
             </div>
           </ng-container>

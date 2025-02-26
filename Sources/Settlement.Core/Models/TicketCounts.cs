@@ -35,5 +35,7 @@ public class TicketCounts
 
     public int BetMarkedCount { get; set; }
 
+    public int BetRefundedCount { get; set; }
+
     public int BetWaitingCount { get; set; }
 }

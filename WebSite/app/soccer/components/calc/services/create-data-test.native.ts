@@ -35,7 +35,6 @@ export class CreateDataTest {
             leagueGroupId: null,
             htStatus: null,
             ftStatus: null,
-            isHtOnly: false,
             betStatus: null,
             isCalculated: false,
             isHalfTimeCal: false,

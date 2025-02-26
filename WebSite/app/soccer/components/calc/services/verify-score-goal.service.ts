@@ -3,6 +3,8 @@ import * as _ from "lodash";
 import { EventStatus, TicketStatusText } from "../../../../shared/constants";
 import { ChildMatch, FantasyRelatedMatch, MatchDetail, Score } from '../models/match.model';
 import { VerificationBaseService } from "../../../services/verification-base.service";
+import { ResultDetail } from "../../../models";
+import { ResourceIds } from '../../../constants';
 
 @Injectable()
 export class VerifyScoreGoalService extends VerificationBaseService{
@@ -11,12 +13,12 @@ export class VerifyScoreGoalService extends VerificationBaseService{
             || betStatus.includes(`${EventStatus.refund};`) || betStatus.includes(EventStatus.abandonedFirstHalf);
     }
 
-    public isResultChangedFirstHalf(matchDetail: MatchDetail, lastestMatchDetail: MatchDetail) {
-        const isExistHalftime = !this.isEmptyScore(lastestMatchDetail.halfTimeHomeScore)
-            && !this.isEmptyScore(lastestMatchDetail.halfTimeAwayScore);
+    public isResultChangedFirstHalf(halfTimeResult: ResultDetail, lastestMatchDetail: MatchDetail) {
+        const isExistHalftime = !this.isEmptyScore(lastestMatchDetail.halfTimeHomeScore?.toString())
+            && !this.isEmptyScore(lastestMatchDetail.halfTimeAwayScore?.toString());
 
-        return isExistHalftime && (!_.isEqual(matchDetail.halfTimeHomeScore.toString(), lastestMatchDetail.halfTimeHomeScore.toString())
-            || !_.isEqual(matchDetail.halfTimeAwayScore.toString(), lastestMatchDetail.halfTimeAwayScore.toString()));
+        return isExistHalftime && (!_.isEqual(halfTimeResult.homeValue, lastestMatchDetail.halfTimeHomeScore?.toString())
+            || !_.isEqual(halfTimeResult.awayValue, lastestMatchDetail.halfTimeAwayScore?.toString()));
 
     }
 
@@ -36,12 +38,12 @@ export class VerifyScoreGoalService extends VerificationBaseService{
             || betStatus.includes(`${EventStatus.refund};`) || betStatus.includes(EventStatus.abandoned);
     }
 
-    public isResultChangedFullTime(matchDetail: MatchDetail, lastestMatchDetail: MatchDetail) {
-        const isExistFinalScore = !this.isEmptyScore(lastestMatchDetail.finalHomeScore)
-            && !this.isEmptyScore(lastestMatchDetail.finalAwayScore);
+    public isResultChangedFullTime(fullTimeResult: ResultDetail, lastestMatchDetail: MatchDetail) {
+        const isExistFinalScore = !this.isEmptyScore(lastestMatchDetail.finalHomeScore?.toString())
+            && !this.isEmptyScore(lastestMatchDetail.finalAwayScore?.toString());
 
-        return isExistFinalScore && (!_.isEqual(matchDetail.finalHomeScore.toString(), lastestMatchDetail.finalHomeScore.toString())
-            || !_.isEqual(matchDetail.finalAwayScore.toString(), lastestMatchDetail.finalAwayScore.toString()));
+        return isExistFinalScore && (!_.isEqual(fullTimeResult.homeValue, lastestMatchDetail.finalHomeScore?.toString())
+            || !_.isEqual(fullTimeResult.awayValue, lastestMatchDetail.finalAwayScore?.toString()));
     }
 
     public isGoalRecordChangedFullTime(matchDetail: MatchDetail, lastestMatchDetail: MatchDetail) {
@@ -71,27 +73,23 @@ export class VerifyScoreGoalService extends VerificationBaseService{
         return false;
     }
 
-    public verifyScoreHalfTime(matchDetail: MatchDetail) {
-        if (this.isEmptyScore(matchDetail.halfTimeHomeScore) || this.isEmptyScore(matchDetail.halfTimeAwayScore)) {
-            matchDetail.isWarningHalfTimeHomeScore = this.isEmptyScore(matchDetail.halfTimeHomeScore);
-            matchDetail.isWarningHalfTimeAwayScore = this.isEmptyScore(matchDetail.halfTimeAwayScore);
+    public verifyScore(resultDetail: ResultDetail, matchDetail: MatchDetail, isHalfTime = true) {
+        if (this.isEmptyScore(resultDetail.homeValue) || this.isEmptyScore(resultDetail.awayValue)) {
+            if (isHalfTime) {
+                matchDetail.isWarningHalfTimeHomeScore = this.isEmptyScore(resultDetail.homeValue);
+                matchDetail.isWarningHalfTimeAwayScore = this.isEmptyScore(resultDetail.awayValue);
+            } else {
+                matchDetail.isWarningFinalHomeScore = this.isEmptyScore(resultDetail.homeValue);
+                matchDetail.isWarningFinalAwayScore = this.isEmptyScore(resultDetail.awayValue);
+            }
             return true;
         }
         return false;
     }
 
-    public verifyScoreFullTime(matchDetail: MatchDetail) {
-        if (this.isEmptyScore(matchDetail.finalHomeScore) || this.isEmptyScore(matchDetail.finalAwayScore)) {
-            matchDetail.isWarningFinalHomeScore = this.isEmptyScore(matchDetail.finalHomeScore);
-            matchDetail.isWarningFinalAwayScore = this.isEmptyScore(matchDetail.finalAwayScore);
-            return true;
-        }
-        return false;
-    }
-
-    public verifyScoreAll(matchDetail: MatchDetail) {
-        const isHTEmpty = this.verifyScoreHalfTime(matchDetail);
-        const isFTEmpty = this.verifyScoreFullTime(matchDetail);
+    public verifyScoreAll(resultDetails: ResultDetail[], matchDetail: MatchDetail) {
+        const isHTEmpty = this.verifyScore(resultDetails.find(r => r.resourceId === ResourceIds.halfTime), matchDetail, true);
+        const isFTEmpty = this.verifyScore(resultDetails.find(r => r.resourceId === ResourceIds.fullTime), matchDetail, false);
         return isFTEmpty || isHTEmpty;
     }
 
@@ -145,11 +143,11 @@ export class VerifyScoreGoalService extends VerificationBaseService{
         return new Score(halfTimeHomeScore, halfTimeAwayScore, finalHomeScore, finalAwayScore);
     }
 
-    public isScoresValid(home: number, away: number) {
+    public isScoresValid(home: string, away: string) {
         return !this.isEmptyScore(home) && !this.isEmptyScore(away);
     }
 
-    public verifyScoreForChildMatch(matchDetail: MatchDetail, selectedChildMatches: ChildMatch[]) {
-        return selectedChildMatches.length > 0 && _.isEqual(matchDetail.finalAwayScore.toString(), matchDetail.finalHomeScore.toString());
+    public verifyScoreForChildMatch(fulltimeResult: ResultDetail, selectedChildMatches: ChildMatch[]) {
+        return selectedChildMatches.length > 0 && _.isEqual(fulltimeResult.homeValue?.toString(), fulltimeResult.awayValue?.toString());
     }
 }

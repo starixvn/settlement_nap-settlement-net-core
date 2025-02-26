@@ -201,4 +201,52 @@ public class CalculateServiceTests
         await scaleOutSettleService.Received(2).UpdateMatchInfo(Arg.Any<UpdateMatchInfoRequest>());
         await repository.Received(6).ExecuteAsync(Arg.Any<CalculateCriteria>());
     }
+    [Theory]
+    [InlineData(0, "", true)]
+    [InlineData(1, "Error", false)]
+    public async Task SaveScore_Always_ReturnCorrectResult(int errorCode, string errorMsg, bool result)
+    {
+        var query = new SaveScoreRequest
+        {
+            MatchId = 12345,
+            ResultDetails = new List<ResultDetail>
+            {
+                new ResultDetail { ResourceId = ResourceType.Final, HomeValue = "2", AwayValue = "1" }
+            }
+        };
+        var criteria = new SaveScoreCriteria
+        {
+            ErrCode = errorCode,
+            ErrMsg = errorMsg
+        };
+        createCriteriaService.CreateSaveScoreCriteria(Arg.Any<SaveScoreRequest>()).Returns(criteria);
+        await repository.ExecuteAsync(Arg.Any<SaveScoreCriteria>());
+
+        var actual = await service.SaveScore(query);
+
+        Assert.Equal(result, actual.IsSuccessful);
+    }
+
+    [Fact]
+    public async Task SaveScore_ValidRequest_LogsAction()
+    {
+        var query = new SaveScoreRequest
+        {
+            MatchId = 12345,
+            ResultDetails = new List<ResultDetail>
+            {
+                new ResultDetail { ResourceId = ResourceType.Final, HomeValue = "2", AwayValue = "1" }
+            }
+        };
+        var criteria = new SaveScoreCriteria
+        {
+            ErrCode = 0
+        };
+        createCriteriaService.CreateSaveScoreCriteria(Arg.Any<SaveScoreRequest>()).Returns(criteria);
+        await repository.ExecuteAsync(Arg.Any<SaveScoreCriteria>());
+
+        await service.SaveScore(query);
+
+        await logService.Received().ActionLog(Arg.Any<int>(), Arg.Is<string>(r => r == "FT(2-1)"), Arg.Any<int>());
+    }
 }

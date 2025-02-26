@@ -1,79 +1,91 @@
 <span toastContainer></span>
 @if (match) {
-  <div class="refund-popup">
-    <refund-match-detail [(matchDetail)]="matchDetail"></refund-match-detail>
-    <div class="refund-action">
+<div class="refund-popup">
+  <match-detail [(match)]="match" pageType="Refund"></match-detail>
+  <div class="refund-action">
+    <div class="icon-refund"></div>
+    <div class="normal-tickets">Normal Tickets</div>
+    @if (hedgeMatchDetail) {
+    <div class="hedge-match">
+      <input type="checkbox" id="ApplyHedgeMatch" [(ngModel)]="matchDetail.applyHedgeMatch"
+        [disabled]="hedgeMatchDetail.isUndecided" (ngModelChange)="changeApplyHedgeMatch()" />
+      <label [matTooltip]="hedgeMatchDetail.isUndecided ? 'Disabled due to undecided hedge match.' : null"
+        for="ApplyHedgeMatch">Apply for hedge match '<strong>{{hedgeMatchDetail.matchCode}}</strong>' also.</label>
+    </div>
+    @if (hedgeMatchDetail.isDeterminedHedgeMatch) {
+    <div class="hedge-match">
+      <input type="checkbox" [(ngModel)]="isDeterminedHedgeMatch" id="isDeterminedHedgeMatch"
+        [disabled]="disableSettleDeterminedHedgeMatch">
+      <label for="isDeterminedHedgeMatch">Settle determined FT/1H Over/Under tickets for hedge match.</label>
+    </div>
+    }
+    }
+    <div class="action-button">
+      <button
+        [ngClass]="{ 'refund-button': true, 'button-disabled': buttonRefundStatus.isDisableRefundHT || !match.permission.isLeader}"
+        [disabled]="buttonRefundStatus.isDisableRefundHT || !match.permission.isLeader"
+        (click)="refundHalftime()">Refund HT</button>
+      <button
+        [ngClass]="{ 'refund-button': true, 'button-disabled': buttonRefundStatus.isDisableRefundFT || !match.permission.isLeader}"
+        [disabled]="buttonRefundStatus.isDisableRefundFT || !match.permission.isLeader"
+        (click)="refundFullTime()">Refund FT</button>
+      <button [ngClass]="{ 'refund-button': true, 'button-disabled': buttonRefundStatus.isDisableRefundAll}"
+        [disabled]="buttonRefundStatus.isDisableRefundAll" (click)="refundAll()">Refund All</button>
+    </div>
+    @if (betDaq.isMoveBetDaq) {
+    <div>
+      <div class="clear-both"></div>
+      <hr class="thick-line" />
       <div class="icon-refund"></div>
-      <div class="normal-tickets">Normal Tickets</div>
-      @if (hedgeMatchDetail) {
-        <div class="hedge-match">
-          <input type="checkbox" id="ApplyHedgeMatch" [(ngModel)]="matchDetail.applyHedgeMatch" [disabled]="hedgeMatchDetail.isUndecided" (ngModelChange)="changeApplyHedgeMatch()"/>
-          <label [matTooltip]="hedgeMatchDetail.isUndecided ? 'Disabled due to undecided hedge match.' : null" for="ApplyHedgeMatch">Apply for hedge match '<strong>{{hedgeMatchDetail.matchCode}}</strong>' also.</label>
-        </div>
-        @if (hedgeMatchDetail.isDeterminedHedgeMatch) {
-          <div class="hedge-match">
-            <input type="checkbox" [(ngModel)]="isDeterminedHedgeMatch" id="isDeterminedHedgeMatch" [disabled]="disableSettleDeterminedHedgeMatch">
-            <label  for="isDeterminedHedgeMatch">Settle determined FT/1H Over/Under tickets for hedge match.</label>
-          </div>
-        }
-      }
-      <div class="action-button">
-        <button [ngClass]="{ 'refund-button': true, 'button-disabled': buttonRefundStatus.isDisableRefundHT || !match.permission.isLeader}" 
-        [disabled]="buttonRefundStatus.isDisableRefundHT || !match.permission.isLeader" (click)="refundHalftime()">Refund HT</button>
-        <button [ngClass]="{ 'refund-button': true, 'button-disabled': buttonRefundStatus.isDisableRefundFT || !match.permission.isLeader}" 
-        [disabled]="buttonRefundStatus.isDisableRefundFT || !match.permission.isLeader" (click)="refundFullTime()">Refund FT</button>
-        <button [ngClass]="{ 'refund-button': true, 'button-disabled': buttonRefundStatus.isDisableRefundAll}" [disabled]="buttonRefundStatus.isDisableRefundAll" (click)="refundAll()">Refund All</button>
+      <div class="normal-tickets">Betdaq Tickets</div>
+      @if (betDaq.isExcludeBetDaq) {
+      <div class="check-box">
+        <input type="checkbox" [(ngModel)]="betDaq.excludeTicketsInRefund" id="isExcludeBetDaq" />&nbsp;<label
+          for="isExcludeBetDaq">Exclude Betdaq Tickets in Refund</label>
       </div>
-      @if (betDaq.isMoveBetDaq) {
-        <div>
-          <div class="clear-both"></div>
-          <hr class="thick-line" />
-          <div class="icon-refund"></div>
-          <div class="normal-tickets">Betdaq Tickets</div>
-          @if (betDaq.isExcludeBetDaq) {
-            <div class="check-box">
-              <input type="checkbox" [(ngModel)]="betDaq.excludeTicketsInRefund"
-                id="isExcludeBetDaq" />&nbsp;<label for="isExcludeBetDaq">Exclude Betdaq Tickets in Refund</label>
-              </div>
-            }
-            @if (betDaq.isSettleAbandonedMatchBetDaq) {
-              <div class="check-box">
-                <input type="checkbox" [(ngModel)]="betDaq.settleDeterminedBetDaq"
-                  id="isSettleAbandonedMatchBetDaq" />&nbsp;<label for="isSettleAbandonedMatchBetDaq">Settle determined Betdaq tickets for</label>
-                  <a class="specific-link" (click)="openPopupSpecificBetTypes('BetFair', 'ALL')"> specific bet types.</a>
-                </div>
-              }
-              <button class="betdaq-button" (click)="openPopupMoveBet(true)">Move Betdaq Tickets</button>
-              @if (betDaq.isRefundRunningBetDaq) {
-                <button class="betdaq-button refund-betdaq" (click)="refundRunningThirdPartyTickets(true)">Refund Running Betdaq Tickets</button>
-              }
-            </div>
-          }
-          @if (betFair.isMoveBetFair) {
-            <div>
-              <div class="clear-both"></div>
-              <hr class="thick-line" />
-              <div class="icon-refund"></div>
-              <div class="normal-tickets">BetFair Tickets</div>
-              @if (betFair.isExcludeBetFair) {
-                <div class="check-box">
-                  <input type="checkbox" [(ngModel)]="betFair.excludeTicketsInRefund"
-                    id="isExcludeBetFair" />&nbsp;<label for="isExcludeBetFair">Exclude BetFair Tickets in Refund</label>
-                  </div>
-                }
-                @if (betFair.isSettleAbandonedMatchBetFair) {
-                  <div class="check-box">
-                    <input type="checkbox" [(ngModel)]="betFair.settleDeterminedBetFair"
-                      id="isSettleAbandonedMatchBetFair" />&nbsp;<label for="isSettleAbandonedMatchBetFair">Settle determined BetFair tickets for</label>
-                      <a class="specific-link" (click)="openPopupSpecificBetTypes('BetFair', 'ALL')"> specific bet types.</a>
-                    </div>
-                  }
-                  <button class="betdaq-button" (click)="openPopupMoveBet(false)">Move BetFair Tickets</button>
-                  @if (betFair.isRefundRunningBetFair) {
-                    <button class="betdaq-button refund-betdaq" (click)="refundRunningThirdPartyTickets(false)">Refund Running BetFair Tickets</button>
-                  }
-                </div>
-              }
-            </div>
-          </div>
-        }
+      }
+      @if (betDaq.isSettleAbandonedMatchBetDaq) {
+      <div class="check-box">
+        <input type="checkbox" [(ngModel)]="betDaq.settleDeterminedBetDaq"
+          id="isSettleAbandonedMatchBetDaq" />&nbsp;<label for="isSettleAbandonedMatchBetDaq">Settle determined Betdaq
+          tickets for</label>
+        <a class="specific-link" (click)="openPopupSpecificBetTypes('BetFair', 'ALL')"> specific bet types.</a>
+      </div>
+      }
+      <button class="betdaq-button" (click)="openPopupMoveBet(true)">Move Betdaq Tickets</button>
+      @if (betDaq.isRefundRunningBetDaq) {
+      <button class="betdaq-button refund-betdaq" (click)="refundRunningThirdPartyTickets(true)">Refund Running Betdaq
+        Tickets</button>
+      }
+    </div>
+    }
+    @if (betFair.isMoveBetFair) {
+    <div>
+      <div class="clear-both"></div>
+      <hr class="thick-line" />
+      <div class="icon-refund"></div>
+      <div class="normal-tickets">BetFair Tickets</div>
+      @if (betFair.isExcludeBetFair) {
+      <div class="check-box">
+        <input type="checkbox" [(ngModel)]="betFair.excludeTicketsInRefund" id="isExcludeBetFair" />&nbsp;<label
+          for="isExcludeBetFair">Exclude BetFair Tickets in Refund</label>
+      </div>
+      }
+      @if (betFair.isSettleAbandonedMatchBetFair) {
+      <div class="check-box">
+        <input type="checkbox" [(ngModel)]="betFair.settleDeterminedBetFair"
+          id="isSettleAbandonedMatchBetFair" />&nbsp;<label for="isSettleAbandonedMatchBetFair">Settle determined
+          BetFair tickets for</label>
+        <a class="specific-link" (click)="openPopupSpecificBetTypes('BetFair', 'ALL')"> specific bet types.</a>
+      </div>
+      }
+      <button class="betdaq-button" (click)="openPopupMoveBet(false)">Move BetFair Tickets</button>
+      @if (betFair.isRefundRunningBetFair) {
+      <button class="betdaq-button refund-betdaq" (click)="refundRunningThirdPartyTickets(false)">Refund Running BetFair
+        Tickets</button>
+      }
+    </div>
+    }
+  </div>
+</div>
+}

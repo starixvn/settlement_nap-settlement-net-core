@@ -1,3 +1,4 @@
+
 import { ComponentFixture, fakeAsync, TestBed, tick } from "@angular/core/testing";
 import { FormsModule } from "@angular/forms";
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
@@ -11,12 +12,15 @@ import { Remark } from "../../../shared/models";
 import { Language } from "../../../shared/language.native";
 import { ModalDialogComponent } from '../../../shared/components/modal-dialog/modal-dialog.component';
 import { ModalContentDialogComponent } from '../../../shared/components/modal-dialog/modal-content-dialog.component';
+import { CalculateStorage } from '../../storage/calculate.storage';
+import { ToastrModule, ToastrService } from "ngx-toastr";
 
 describe('GoalHistoryComponent', () => {
     let component: FantasyComponent;
     let fixture: ComponentFixture<FantasyComponent>;
     let verifyMatchService: VerifyMatchService;
     let verifyScoreGoalService: VerifyScoreGoalService;
+    let storage: CalculateStorage;
     const buttonName = "btn-danger";
 
     const fantasyMatchDetail: FantasyMatchDetail = {
@@ -54,10 +58,9 @@ describe('GoalHistoryComponent', () => {
             imports: [
                 NgbModule,
                 FormsModule,
+                ToastrModule.forRoot(),
                 ModalDialogComponent,
-                ModalContentDialogComponent
-            ],
-            declarations: [
+                ModalContentDialogComponent,
                 FantasyComponent,
                 ScorePipe
             ],
@@ -65,6 +68,8 @@ describe('GoalHistoryComponent', () => {
                 MessageBoxService,
                 VerifyMatchService,
                 VerifyScoreGoalService,
+                CalculateStorage,
+                ToastrService
             ]
         }).compileComponents();
     });
@@ -73,6 +78,7 @@ describe('GoalHistoryComponent', () => {
         fixture = TestBed.createComponent(FantasyComponent);
         verifyMatchService = fixture.debugElement.injector.get(VerifyMatchService);
         verifyScoreGoalService = fixture.debugElement.injector.get(VerifyScoreGoalService);
+        storage = fixture.debugElement.injector.get(CalculateStorage);
         component = fixture.componentInstance;
         component.fantasyMatch = fantasyMatch;
         fixture.detectChanges();
@@ -102,12 +108,12 @@ describe('GoalHistoryComponent', () => {
     describe('verifyAndFillFantasyMatch', () => {
         it('should emit error message when related matches insufficient', () => {
             jest.spyOn(verifyMatchService, 'isRelatedMatchesInsufficient').mockReturnValue(true);
-            jest.spyOn(component.errorMsgEmitter, 'emit');
+            jest.spyOn(storage, 'error');
 
             component.verifyAndFillFantasyMatch();
 
-            expect(component.errorMsgEmitter.emit).toHaveBeenCalledTimes(2);
-            expect(component.errorMsgEmitter.emit).toHaveBeenCalledWith(Language.fantasyMatch.insufficientRelatedMatches);
+            expect(storage.error).toHaveBeenCalledTimes(2);
+            expect(storage.error).toHaveBeenCalledWith(Language.fantasyMatch.insufficientRelatedMatches);
         });
 
         it('should emit error message when exist match not calculated', () => {
@@ -115,12 +121,12 @@ describe('GoalHistoryComponent', () => {
             component.relatedMatches = [fantasyRelatedMatch];
             jest.spyOn(verifyMatchService, 'isRelatedMatchesInsufficient').mockReturnValue(false);
             jest.spyOn(verifyMatchService, 'isExistHoldMatch').mockReturnValue(false);
-            jest.spyOn(component.errorMsgEmitter, 'emit');
+            jest.spyOn(storage, 'error');
 
             component.verifyAndFillFantasyMatch();
 
-            expect(component.errorMsgEmitter.emit).toHaveBeenCalledTimes(2);
-            expect(component.errorMsgEmitter.emit).toHaveBeenCalledWith(Language.fantasyMatch.warningMatchNotCalculated);
+            expect(storage.error).toHaveBeenCalledTimes(2);
+            expect(storage.error).toHaveBeenCalledWith(Language.fantasyMatch.warningMatchNotCalculated);
         });
 
         it('should call sum score function and emit score after confirm', fakeAsync(() => {

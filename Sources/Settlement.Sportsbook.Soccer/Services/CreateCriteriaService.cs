@@ -1,6 +1,7 @@
 ﻿using Settlement.Core.Constants;
 using Settlement.Core.Criteria;
 using Settlement.Core.Models;
+using Settlement.Sportsbook.Soccer.Constants;
 using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Requests;
@@ -29,6 +30,12 @@ public interface ICreateCriteriaService
     public InsertLogCriteria CreateUnCalculateFtLogCriteria(UncalculateFtRequest request);
 
     public InsertLogCriteria CreateRefundLogCriteria(RefundRequest request);
+
+    public SaveScoreCriteria CreateSaveScoreCriteria(SaveScoreRequest request);
+
+    public EventTicketRequest CreateEventTicketRequest(CalculateCriteria criteria);
+
+    public EventTicketRequest CreateEventTicketReturnRequest(RefundCriteria criteria);
 }
 
 public class CreateCriteriaServiceImp(
@@ -38,7 +45,8 @@ public class CreateCriteriaServiceImp(
     XmlConvertService xmlConvertService,
     IMapper mapper,
     IBetStatusAllService betStatusAllService,
-    IMatchService matchService)
+    IMatchService matchService,
+    INapSession session)
     : ICreateCriteriaService
 {
     public CalculateCriteria CreateCalculateCriteria(SettleRequest request)
@@ -285,7 +293,7 @@ public class CreateCriteriaServiceImp(
         var calResources = GetResourcesUnCalculate(request);
         var resourcesMapper = mapper.Map<List<ResourceItem>>(calResources);
 
-        var resourceItems = resourceService.UnCalculateLogResources();
+        var resourceItems = resourceService.AllEmptyResources();
         resourceItems.AddRange(resourcesMapper);
 
         var selectedResources = CreateResources(resourceItems);
@@ -343,6 +351,77 @@ public class CreateCriteriaServiceImp(
             Sporttype = SportType.Soccer,
             AdminId = request.AdminId,
             SelectedResources = selectedResources
+        };
+    }
+
+    public SaveScoreCriteria CreateSaveScoreCriteria(SaveScoreRequest request)
+    {
+        var resourceItems = request.ResultDetails.Select(requestResultDetail =>
+            new ResourceItem
+            {
+                ResourceId = requestResultDetail.ResourceId,
+                HomeValue = requestResultDetail.HomeValue,
+                AwayValue = requestResultDetail.AwayValue
+            }).ToList();
+
+        AddGoalRecordResourceItems(request, resourceItems);
+
+        return new SaveScoreCriteria
+        {
+            MatchId = request.MatchId,
+            UserId = session.UserId,
+            SelectedResources = CreateResources(resourceItems)
+        };
+    }
+
+    private void AddGoalRecordResourceItems(SaveScoreRequest request, List<ResourceItem> resourceItems)
+    {
+        if (request.IsEnabledGoalRecordFt && !string.IsNullOrEmpty(request.GoalRecord) && request.ResultDetails.Any(r => r.ResourceId == ResourceType.Final))
+        {
+            resourceItems.Add(new ResourceItem
+            {
+                ResourceId = ResourceType.FullTimeGoalRecord,
+                HomeValue = request.GoalRecord
+            });
+        }
+
+        if (request.IsEnabledGoalRecordHt && !string.IsNullOrEmpty(request.GoalRecord) && request.ResultDetails.Any(r => r.ResourceId == ResourceType.Halftime))
+        {
+            var semicolonIndex = request.GoalRecord.IndexOf(';');
+            resourceItems.Add(new ResourceItem
+            {
+                ResourceId = ResourceType.HalftimeGoalRecord,
+                HomeValue = semicolonIndex < 0 ? request.GoalRecord : request.GoalRecord[..(semicolonIndex + 1)].ToUpperInvariant()
+            });
+        }
+    }
+
+    public EventTicketRequest CreateEventTicketRequest(CalculateCriteria criteria)
+    {
+        var request = new EventTicketRequest
+        {
+            MatchId = criteria.MatchId,
+            Action = criteria.Action,
+            SpName = criteria.SpName,
+            Mode = ActionKey.ActionDictionary[criteria.Action],
+            ResourceResult = criteria.ResourceResult,
+            SelectedResources = CreateResources(resourceService.CreateResourceByAction(criteria.Action))
+        };
+
+        return request;
+    }
+
+    public EventTicketRequest CreateEventTicketReturnRequest(RefundCriteria criteria)
+    {
+        return new EventTicketRequest
+        {
+            MatchId = criteria.MatchId,
+            Action = criteria.Action,
+            SpName = criteria.SpName,
+            Mode = ActionKey.ActionDictionary[criteria.Action],
+            SDTRecord = criteria.SdtRecord,
+            ResourceResult = criteria.ResourceResult,
+            SelectedResources = CreateResources(resourceService.CreateResourceByAction(criteria.Action))
         };
     }
 }

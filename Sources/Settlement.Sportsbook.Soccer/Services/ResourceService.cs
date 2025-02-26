@@ -29,7 +29,9 @@ public interface IResourceService
 
     ResourceItem RefundAbandonedMatchLogResources(RefundRequest request);
 
-    List<ResourceItem> UnCalculateLogResources();
+    List<ResourceItem> AllEmptyResources();
+
+    List<ResourceItem> CreateResourceByAction(string action);
 }
 
 public class ResourceServiceImp(IActionResourceService actionResourceService, IGoalRecordService goalRecordService)
@@ -292,13 +294,23 @@ public class ResourceServiceImp(IActionResourceService actionResourceService, IG
         };
     }
 
-    public List<ResourceItem> UnCalculateLogResources()
+    public List<ResourceItem> AllEmptyResources()
     {
         return
         [
             new ResourceItem { ResourceId = ResourceType.Halftime, AwayValue = string.Empty, HomeValue = string.Empty },
             new ResourceItem { ResourceId = ResourceType.Final, AwayValue = string.Empty, HomeValue = string.Empty }
         ];
+    }
+
+    public List<ResourceItem> CreateResourceByAction(string action)
+    {
+        var halfTimeAction = new List<string>
+        {
+            ActionType.RefundHalfTime, ActionType.CalculateHalfTime
+        };
+
+        return halfTimeAction.Contains(action) ? [new() { ResourceId = ResourceType.Halftime, AwayValue = string.Empty, HomeValue = string.Empty }] : AllEmptyResources();
     }
 
     private static XmlResource InitialResource(string resourceId)

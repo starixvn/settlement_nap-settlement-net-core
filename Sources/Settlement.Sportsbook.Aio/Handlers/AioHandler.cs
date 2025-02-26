@@ -41,7 +41,6 @@ public class AioHandler(
 
         if (result.HasResultAmendment && (request.SportType is SportType.BasketBall or SportType.ESports))
         {
-            Console.WriteLine($"Push ResultAmend at {DateTime.Now} with {request.MatchId} {result.SettledSessionId} {result.IsOrg}");
             await publishEndpoint.Publish(
                 new ResultAmendSettled(request.MatchId, result.SettledSessionId, result.IsOrg),
                 new CancellationTokenSource(TimeSpan.FromSeconds(3)).Token);

@@ -1,8 +1,9 @@
-﻿using Settlement.Core.Criteria;
+﻿using Fanex.Settlement.ScaleOut.Criteria.Update;
+using Settlement.Core.Configurations;
 using Settlement.Core.Constants;
+using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
-using Settlement.Sportsbook.Soccer.Constants;
 using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Requests;
 using Settlement.Sportsbook.Soccer.Services.GetMatch;
@@ -19,6 +20,8 @@ public interface ICalculateService
     Task<Result> UncalculateFt(UncalculateFtRequest request);
 
     Task<Result> CheckStatus(CheckStatusRequest request);
+
+    Task<Result> SaveScore(SaveScoreRequest request);
 }
 
 public class CalculateServiceImp(
@@ -28,8 +31,7 @@ public class CalculateServiceImp(
     ICreateCriteriaService createCriteriaService,
     ScaleOutSettleService scaleOutSettleService,
     LogService logService,
-    IMatchService matchService)
-    : ICalculateService
+    IMatchService matchService) : ICalculateService
 {
     public async Task<Result> Calculate(SettleRequest request)
     {
@@ -218,14 +220,8 @@ public class CalculateServiceImp(
 
     private async Task<Result> ValidateBeforeExecute(CalculateCriteria criteria)
     {
-        var request = new EventTicketRequest
-        {
-            MatchId = criteria.MatchId,
-            Action = criteria.Action,
-            SpName = criteria.SpName,
-            Mode = ActionKey.ActionDictionary[criteria.Action],
-            ResourceResult = criteria.ResourceResult
-        };
+
+        var request = createCriteriaService.CreateEventTicketRequest(criteria);
         var resultMessage = await scaleOutSettleService.ValidateEventAndTicket(request);
 
         return new Result
@@ -268,5 +264,63 @@ public class CalculateServiceImp(
         };
 
         await scaleOutSettleService.UpdateAutoRefundChildMatch(requestRefundChildMatch);
+    }
+
+    public async Task<Result> SaveScore(SaveScoreRequest request)
+    {
+        var criteria = createCriteriaService.CreateSaveScoreCriteria(request);
+
+        await repository.ExecuteAsync(criteria);
+
+        if (criteria.ErrCode == 0)
+        {
+            const int actionLog = 81059;
+            var message = createMessageSaveScore(request);
+            await logService.ActionLog(request.MatchId, message, actionLog);
+            await updateResult(criteria, request);
+            return new Result();
+        }
+
+        return new Result
+        {
+            ErrCode = criteria.ErrCode,
+            ErrMsg = criteria.ErrMsg
+        };
+    }
+
+    private async Task updateResult(SaveScoreCriteria saveScoreCriteria, SaveScoreRequest request)
+    {
+        var criteria = new UpdateMatchInfoCriteria
+        {
+            MatchId = saveScoreCriteria.MatchId,
+            Action = SettlementFunctionKeys.SaveScore,
+            AdminId = saveScoreCriteria.UserId,
+            GoalRecord = request.GoalRecord
+        };
+
+        foreach (var result in request.ResultDetails)
+        {
+            switch (result.ResourceId)
+            {
+                case ResourceType.Final:
+                    criteria.FullTimeHome = int.Parse(result.HomeValue);
+                    criteria.FullTimeAway = int.Parse(result.AwayValue);
+                    break;
+                case ResourceType.Halftime:
+                    criteria.HalfTimeHome = int.Parse(result.HomeValue);
+                    criteria.HalfTimeAway = int.Parse(result.AwayValue);
+                    break;
+                default: continue;
+            }
+        }
+
+        await repository.ExecuteAsync(criteria);
+    }
+
+    private string createMessageSaveScore(SaveScoreRequest request)
+    {
+        var strings = request.ResultDetails.Select(r => $"{(r.ResourceId == ResourceType.Final ? "FT" : "HT")}({r.HomeValue}-{r.AwayValue})").ToList();
+
+        return string.Join(",<br/>", strings);
     }
 }

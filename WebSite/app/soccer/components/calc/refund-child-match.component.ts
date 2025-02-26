@@ -1,10 +1,14 @@
+import { FormsModule } from '@angular/forms';
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import * as _ from "lodash";
 import { BackgroundColor, EventStatus } from "../../../shared/constants";
 import { ChildMatch, Match, MatchDetail } from "./models/match.model";
+import { CommonModule } from "@angular/common";
 
 @Component({
     selector: 'refund-child-match',
+    standalone: true,
+    imports: [CommonModule, FormsModule],
     templateUrl: './refund-child-match.component.html',
 })
 

@@ -2,8 +2,9 @@ import { TestBed } from '@angular/core/testing';
 import { CreateDataTest } from './create-data-test.native';
 import { VerifyScoreGoalService } from './verify-score-goal.service';
 import * as _ from "lodash";
-import { GoalIcon } from '../../../models';
+import { GoalIcon, ResultDetail } from '../../../models';
 import { ChildMatch, FantasyRelatedMatch, MatchDetail } from '../models/match.model';
+import { ResourceIds } from '../../../constants';
 
 describe('Soccer - verify score goal', () => {
     let service: VerifyScoreGoalService;
@@ -24,6 +25,9 @@ describe('Soccer - verify score goal', () => {
         homeName: 'home',
         awayName: 'away',
     }
+
+    const fulltime = { resourceId: ResourceIds.fullTime} as ResultDetail;
+    const halftime = { resourceId: ResourceIds.halfTime} as ResultDetail;
     beforeEach(() => TestBed.configureTestingModule({
         providers: [
             VerifyScoreGoalService,
@@ -66,18 +70,19 @@ describe('Soccer - verify score goal', () => {
 
     describe('isResultChangedFirstHalf', () => {
         it('should return false when first half score is empty', () => {
-            const actual = service.isResultChangedFirstHalf(matchDetail, lastestMatchDetail);
+            const actual = service.isResultChangedFirstHalf(halftime, lastestMatchDetail);
 
             expect(actual).toBeFalsy();
         });
 
         it('should return true when first half score is different from lastest score', () => {
-            matchDetail.halfTimeAwayScore = 1;
-            matchDetail.halfTimeHomeScore = 1;
+            halftime.homeValue = '1';
+            halftime.awayValue = '1';
             lastestMatchDetail = _.cloneDeep(matchDetail);
-            lastestMatchDetail.halfTimeAwayScore = 2;
+            lastestMatchDetail.halfTimeHomeScore = '1';
+            lastestMatchDetail.halfTimeAwayScore = '2';
 
-            const actual = service.isResultChangedFirstHalf(matchDetail, lastestMatchDetail);
+            const actual = service.isResultChangedFirstHalf(halftime, lastestMatchDetail);
 
             expect(actual).toBeTruthy();
         });
@@ -135,22 +140,22 @@ describe('Soccer - verify score goal', () => {
 
     describe('isResultChangedFullTime', () => {
         it('should return false when final value is not changed', () => {
-            lastestMatchDetail.finalHomeScore = 1;
-            lastestMatchDetail.finalAwayScore = 2;
-            matchDetail.finalHomeScore = 1;
-            matchDetail.finalAwayScore = 2;
+            fulltime.homeValue = '1';
+            fulltime.awayValue = '2';
+            matchDetail.finalHomeScore = '1';
+            matchDetail.finalAwayScore = '2';
 
-            const actual = service.isResultChangedFullTime(matchDetail, lastestMatchDetail);
+            const actual = service.isResultChangedFullTime(fulltime, lastestMatchDetail);
             expect(actual).toBe(false);
         });
 
         it('should return true when final value is changed', () => {
-            lastestMatchDetail.finalHomeScore = 1;
-            lastestMatchDetail.finalAwayScore = 2;
-            matchDetail.finalHomeScore = 2;
-            matchDetail.finalAwayScore = 1;
+            lastestMatchDetail.finalHomeScore = '1';
+            lastestMatchDetail.finalAwayScore = '2';
+            fulltime.homeValue = '2';
+            fulltime.awayValue = '1';
 
-            const actual = service.isResultChangedFullTime(matchDetail, lastestMatchDetail);
+            const actual = service.isResultChangedFullTime(fulltime, lastestMatchDetail);
             expect(actual).toBe(true);
         });
     });
@@ -235,46 +240,6 @@ describe('Soccer - verify score goal', () => {
             matchDetail.applyGoalRecord = false;
 
             const actual = service.isGoalRecordChangedAll(matchDetail, lastestMatchDetail);
-
-            expect(actual).toBeFalsy();
-        });
-    });
-
-    describe('verifyScoreHalfTime', () => {
-        it('should return true when score is null', () => {
-            matchDetail.halfTimeAwayScore = null;
-            matchDetail.halfTimeHomeScore = 1;
-
-            const actual = service.verifyScoreHalfTime(matchDetail);
-
-            expect(actual).toBeTruthy();
-        });
-
-        it('should return false  when all score is valid', () => {
-            matchDetail.halfTimeAwayScore = 2;
-            matchDetail.halfTimeHomeScore = 1;
-
-            const actual = service.verifyScoreHalfTime(matchDetail);
-
-            expect(actual).toBeFalsy();
-        });
-    });
-
-    describe('verifyScoreFullTime', () => {
-        it('should return true when score is null', () => {
-            matchDetail.finalHomeScore = null;
-            matchDetail.finalAwayScore = 1;
-
-            const actual = service.verifyScoreFullTime(matchDetail);
-
-            expect(actual).toBeTruthy();
-        });
-
-        it('should return false  when all score is valid', () => {
-            matchDetail.finalHomeScore = 2;
-            matchDetail.finalAwayScore = 1;
-
-            const actual = service.verifyScoreFullTime(matchDetail);
 
             expect(actual).toBeFalsy();
         });
@@ -398,8 +363,8 @@ describe('Soccer - verify score goal', () => {
     });
 
     it('isScoresValid - should return true when scores are valid', () => {
-        expect(service.isScoresValid(1, 2)).toBeTruthy();
-        expect(service.isScoresValid(null, 2)).toBeFalsy();
+        expect(service.isScoresValid('1', '2')).toBeTruthy();
+        expect(service.isScoresValid(null, '2')).toBeFalsy();
     });
 
     describe('verifyScoreForChildMatch', () => {
@@ -408,10 +373,62 @@ describe('Soccer - verify score goal', () => {
         });
 
         it('should return true when home score equal away score', () => {
-            matchDetail.finalAwayScore = 1;
-            matchDetail.finalHomeScore = 1;
+            matchDetail.finalAwayScore = '1';
+            matchDetail.finalHomeScore = '1';
 
             expect(service.verifyScoreForChildMatch(matchDetail, [childMatch])).toBeTruthy();
         });
+
     });
+
+    describe('verifyScore', () => {
+        it('should return true and set warnings for half time when home score is empty', () => {
+            const resultDetail = { homeValue: '', awayValue: '1' } as ResultDetail;
+
+            const actual = service.verifyScore(resultDetail, matchDetail, true);
+
+            expect(actual).toBeTruthy();
+            expect(matchDetail.isWarningHalfTimeHomeScore).toBeTruthy();
+            expect(matchDetail.isWarningHalfTimeAwayScore).toBeFalsy();
+        });
+
+        it('should return true and set warnings for half time when away score is empty', () => {
+            const resultDetail = { homeValue: '1', awayValue: '' } as ResultDetail;
+
+            const actual = service.verifyScore(resultDetail, matchDetail, true);
+
+            expect(actual).toBeTruthy();
+            expect(matchDetail.isWarningHalfTimeHomeScore).toBeFalsy();
+            expect(matchDetail.isWarningHalfTimeAwayScore).toBeTruthy();
+        });
+
+        it('should return true and set warnings for full time when home score is empty', () => {
+            const resultDetail = { homeValue: '', awayValue: '1' } as ResultDetail;
+
+            const actual = service.verifyScore(resultDetail, matchDetail, false);
+
+            expect(actual).toBeTruthy();
+            expect(matchDetail.isWarningFinalHomeScore).toBeTruthy();
+            expect(matchDetail.isWarningFinalAwayScore).toBeFalsy();
+        });
+
+        it('should return true and set warnings for full time when away score is empty', () => {
+            const resultDetail = { homeValue: '1', awayValue: '' } as ResultDetail;
+
+            const actual = service.verifyScore(resultDetail, matchDetail, false);
+
+            expect(actual).toBeTruthy();
+            expect(matchDetail.isWarningFinalHomeScore).toBeFalsy();
+            expect(matchDetail.isWarningFinalAwayScore).toBeTruthy();
+        });
+
+        it('should return false when both scores are not empty', () => {
+            const resultDetail = { homeValue: '1', awayValue: '1' } as ResultDetail;
+
+            const actual = service.verifyScore(resultDetail, matchDetail);
+
+            expect(actual).toBeFalsy();
+        });
+    });
+
 });

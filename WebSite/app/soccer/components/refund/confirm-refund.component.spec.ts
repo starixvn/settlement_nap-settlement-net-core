@@ -7,7 +7,7 @@ import { CalculateAction } from '../../../shared/constants';
 import { MaterialModule } from '../../../shared/material-module';
 import { BlockUIService, HttpRequestService, MessageBoxService } from '../../../shared/services';
 import { ConfirmRefundComponent } from './confirm-refund.component';
-import { RefundType } from './model/constant.native';
+import { RefundType } from './model/constant.model';
 import { BetDaq, BetFair, Match, MatchDetail } from './model/match.model';
 import { RequestService } from './services/request.service';
 import { VerifyMatchService } from './services/verify-match.service';

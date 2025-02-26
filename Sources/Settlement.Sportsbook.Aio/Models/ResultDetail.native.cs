@@ -3,7 +3,7 @@ using Settlement.Core.Models;
 
 namespace Settlement.Sportsbook.Aio.Models;
 
-public class ResultDetail
+public sealed class ResultDetail
 {
     private const int ToBase = 2;
 
@@ -37,9 +37,9 @@ public class ResultDetail
 
     public int IntervalNo { get; set; }
 
-    public virtual string ResultStatus => ResultStatusId.ResultName(SettlementStatusId);
+    public string ResultStatus => ResultStatusId.ResultName(SettlementStatusId);
 
-    public virtual bool IsNotExistedValue => SettlementStatusId == SettlementStatus.Running && string.IsNullOrWhiteSpace(HomeValue) && string.IsNullOrWhiteSpace(AwayValue);
+    public bool IsNotExistedValue => SettlementStatusId == SettlementStatus.Running && string.IsNullOrWhiteSpace(HomeValue) && string.IsNullOrWhiteSpace(AwayValue);
 
     public byte ResultSetting { get; set; }
 

@@ -55,8 +55,8 @@ describe('Soccer refund - VerificationBaseService', () => {
 
     describe('isHtGoalRecordInvalid', () => {
         it('should return true when goal record length not equal sum of score', () => {
-            matchDetail.halfTimeAwayScore = 1;
-            matchDetail.halfTimeHomeScore = 1;
+            matchDetail.halfTimeAwayScore = '1';
+            matchDetail.halfTimeHomeScore = '1';
             matchDetail.goalRecord = "HAH;";
 
             const actual = service.isHtGoalRecordInvalid(matchDetail);
@@ -65,8 +65,8 @@ describe('Soccer refund - VerificationBaseService', () => {
         });
 
         it('should return true when goal record home value not equal home score', () => {
-            matchDetail.halfTimeAwayScore = 1;
-            matchDetail.halfTimeHomeScore = 1;
+            matchDetail.halfTimeAwayScore = '1';
+            matchDetail.halfTimeHomeScore = '1';
             matchDetail.goalRecord = "AA;";
 
             const actual = service.isHtGoalRecordInvalid(matchDetail);
@@ -75,8 +75,8 @@ describe('Soccer refund - VerificationBaseService', () => {
         });
 
         it('should return true when goal record away value not equal away score', () => {
-            matchDetail.halfTimeAwayScore = 1;
-            matchDetail.halfTimeHomeScore = 1;
+            matchDetail.halfTimeAwayScore = '1';
+            matchDetail.halfTimeHomeScore = '1';
             matchDetail.goalRecord = "HH;";
 
             const actual = service.isHtGoalRecordInvalid(matchDetail);
@@ -87,7 +87,7 @@ describe('Soccer refund - VerificationBaseService', () => {
 
     describe('isHTGoalRecordConsistent', () => {
         it('should return true when halftime score has value', () => {
-            matchDetail.halfTimeAwayScore = 1;
+            matchDetail.halfTimeAwayScore = '1';
             matchDetail.goalRecord = "A;";
             matchDetail.applyGoalRecord = true;
 
@@ -142,8 +142,8 @@ describe('Soccer refund - VerificationBaseService', () => {
 
     describe('isFullTimeGoalRecordInvalid', () => {
         it('should return true when score length not equal goal record length', () => {
-            matchDetail.finalAwayScore = 1;
-            matchDetail.finalHomeScore = 1;
+            matchDetail.finalAwayScore = '1';
+            matchDetail.finalHomeScore = '1';
             matchDetail.goalRecord = ';H';
             matchDetail.applyGoalRecord = true;
 
@@ -153,8 +153,8 @@ describe('Soccer refund - VerificationBaseService', () => {
         });
 
         it('should return true when Home score length not equal goal record Home length', () => {
-            matchDetail.finalAwayScore = 1;
-            matchDetail.finalHomeScore = 1;
+            matchDetail.finalAwayScore = '1';
+            matchDetail.finalHomeScore = '1';
             matchDetail.goalRecord = ';HH';
             matchDetail.applyGoalRecord = true;
 
@@ -164,8 +164,8 @@ describe('Soccer refund - VerificationBaseService', () => {
         });
 
         it('should return true when away score length not equal goal record away length', () => {
-            matchDetail.finalAwayScore = 1;
-            matchDetail.finalHomeScore = 1;
+            matchDetail.finalAwayScore = '1';
+            matchDetail.finalHomeScore = '1';
             matchDetail.goalRecord = ';AA';
             matchDetail.applyGoalRecord = true;
 
@@ -175,8 +175,8 @@ describe('Soccer refund - VerificationBaseService', () => {
         });
 
         it('should return false when score  equal goal record ', () => {
-            matchDetail.finalAwayScore = 1;
-            matchDetail.finalHomeScore = 1;
+            matchDetail.finalAwayScore = '1';
+            matchDetail.finalHomeScore = '1';
             matchDetail.goalRecord = ';HA';
             matchDetail.applyGoalRecord = true;
 
@@ -186,8 +186,8 @@ describe('Soccer refund - VerificationBaseService', () => {
         });
 
         it('should return false when match no apply goal record ', () => {
-            matchDetail.finalAwayScore = 1;
-            matchDetail.finalHomeScore = 2;
+            matchDetail.finalAwayScore = '1';
+            matchDetail.finalHomeScore = '2';
             matchDetail.goalRecord = ';HA';
             matchDetail.applyGoalRecord = false;
 

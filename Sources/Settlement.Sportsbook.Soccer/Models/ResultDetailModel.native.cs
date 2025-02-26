@@ -3,7 +3,7 @@ using Settlement.Core.Models;
 
 namespace Settlement.Sportsbook.Soccer.Models;
 
-public class ResultDetailModel
+public sealed class ResultDetailModel
 {
     private const int ToBase = 2;
 
@@ -25,7 +25,7 @@ public class ResultDetailModel
 
     public byte SettlementStatusId { get; set; }
 
-    public virtual string ResultStatus => ResultStatusId.ResultName(SettlementStatusId);
+    public string ResultStatus => ResultStatusId.ResultName(SettlementStatusId);
 
     public byte ResultSetting { get; set; }
 
@@ -44,7 +44,7 @@ public class ResultDetailModel
 
     public int BetCount { get; set; }
 
-    public virtual bool IsNotExistedValue => SettlementStatusId == SettlementStatus.Running && string.IsNullOrWhiteSpace(HomeValue) && string.IsNullOrWhiteSpace(AwayValue);
+    public bool IsNotExistedValue => SettlementStatusId == SettlementStatus.Running && string.IsNullOrWhiteSpace(HomeValue) && string.IsNullOrWhiteSpace(AwayValue);
 
     public bool IsSpecialBettype { get; set; }
 

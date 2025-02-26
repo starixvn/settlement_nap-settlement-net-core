@@ -7,10 +7,10 @@ export class RefundQuery {
     public isApplyHedging: boolean;
     public actionName: string;
     public goalRecord: string;
-    public halfTimeHomeScore: number;
-    public halfTimeAwayScore: number;
-    public finalHomeScore: number;
-    public finalAwayScore: number;
+    public halfTimeHomeScore: string;
+    public halfTimeAwayScore: string;
+    public finalHomeScore: string;
+    public finalAwayScore: string;
     public isSettleAbandonedMatchBetDaq: boolean;
     public isSettleAbandonedMatchBetFair: boolean;
     public isSettleAbandonedMatchIBC: boolean;
