@@ -1,10 +1,9 @@
 using AutoEarlyRefund.Contracts;
-using MassTransit;
 using Fanex.Settlement.ScaleOut.Criteria.Update;
+using MassTransit;
 using Mapster;
 using Settlement.Core.Configurations;
 using Settlement.Core.Constants;
-using Settlement.Core.Criteria;
 using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Core.Services;

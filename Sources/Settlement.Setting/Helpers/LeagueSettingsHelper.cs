@@ -100,7 +100,7 @@ public static class LeagueSettingsHelper
     {
         return autoSettle switch
         {
-            AutoSettleType.AutoPayout1 => "AutoPayout",
+            AutoSettleType.AutoPayoutSoccer => "AutoPayout",
             AutoSettleType.AutoDirect => "DirectPayout",
             AutoSettleType.AutoRefund => "AutoRefund",
             _ => string.Empty

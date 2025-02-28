@@ -26,14 +26,14 @@ public class UpdateSoccerSettingHandler
 
     public async Task<Result> HandleAsync(UpdateAutoSettingsCommand command)
     {
-        var payoutSetting = command.ResultSettings.Find(x => x.SettleType == AutoSettleType.AutoPayout1);
+        var payoutSetting = command.ResultSettings.Find(x => x.SettleType == AutoSettleType.AutoPayoutSoccer);
         var directSetting = command.ResultSettings.Find(x => x.SettleType == AutoSettleType.AutoDirect);
         var refundSetting = command.ResultSettings.Find(x => x.SettleType == AutoSettleType.AutoRefund);
 
         if (payoutSetting.Enabled)
         {
-            var result = await UpdateResultSetting(command, AutoSettleType.AutoPayout1);
-            await WriteLog(command, AutoSettleType.AutoPayout1, result);
+            var result = await UpdateResultSetting(command, AutoSettleType.AutoPayoutSoccer);
+            await WriteLog(command, AutoSettleType.AutoPayoutSoccer, result);
         }
         else if (directSetting.Enabled)
         {
@@ -43,8 +43,8 @@ public class UpdateSoccerSettingHandler
         }
         else
         {
-            var result = await UpdateResultSetting(command, AutoSettleType.AutoPayout1);
-            await WriteLog(command, AutoSettleType.AutoPayout1, result);
+            var result = await UpdateResultSetting(command, AutoSettleType.AutoPayoutSoccer);
+            await WriteLog(command, AutoSettleType.AutoPayoutSoccer, result);
         }
 
         return await UpdateRefundSetting(command);
