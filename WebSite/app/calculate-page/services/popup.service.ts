@@ -107,8 +107,8 @@ export class PopupService {
 
     openSoccerAutoSettings(league: League, match: CalculationMatch | null = null) : Observable<string> {
         const uriParams = this.getParams(league, match);
-        console.log('openSoccerAutoSettings',uriParams.toString());
-        const src = `/apps/soccer-auto-setting-league?${uriParams.toString()}`;
+        const titleContent = match ? `${match.homeName} -VS - ${match.awayName}` : league.name;
+        const src = `/apps/soccer-auto-setting-league?${uriParams.toString()}&title=${titleContent}`;
         const frameSrc = encodeURI(src);
         const title = match ? Language.payout.titlePopup : Language.payout.titlePopupForLeague;
         const dialogData = new DialogDataIframe(title, frameSrc);
@@ -124,6 +124,7 @@ export class PopupService {
             uriParams = uriParams
                 .set('matchId', match.matchId)
                 .set('leagueId', league.leagueId)
+                .set('matchCode', match.matchCode)
                 .set('isAutoPayoutForMatch', match.autoCalcSetting.isAutoPayoutForMatch)
                 .set('isDirectPayoutForMatch', match.autoCalcSetting.isDirectPayoutForMatch)
                 .set('enabledAutoRefundMatch', match.enabledAutoRefundMatch || false)

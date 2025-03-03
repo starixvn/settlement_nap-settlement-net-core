@@ -51,6 +51,7 @@ export class SoccerAutoSettingsComponent implements OnInit {
   public leagueId: number;
   public matchId: number;
   public typeObject = "";
+  public title = "";
 
   ngOnInit(): void {
     this.toastrService.overlayContainer = this.toastContainer;
@@ -138,6 +139,8 @@ export class SoccerAutoSettingsComponent implements OnInit {
     const isAutoRefundEnabled = Boolean(
       JSON.parse(UrlHelper.getUrlParameter(this.isMatchType ? "enabledAutoRefundMatch" : "enabledAutoRefund")));
 
+    const title =  decodeURIComponent(UrlHelper.getUrlParameter("title"));
+
     this.settings = [
       {
         settleType: AutoSettleType.AutoPayoutSoccer,
@@ -163,5 +166,6 @@ export class SoccerAutoSettingsComponent implements OnInit {
     ];
 
     this.originalSettings = _.cloneDeep(this.settings);
+    this.title = title;
   }
 }
