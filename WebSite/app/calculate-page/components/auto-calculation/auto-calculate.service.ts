@@ -12,7 +12,7 @@ export class AutoCalculateService {
     }
 
     private  getFormattedStatus(label: string): string {
-        return label === 'OFF' ? 'OFF' : `<div>AUTO <div class='auto-type'>(${label})</div></div>`;
+        return label === 'OFF' ? 'OFF' : `<div>ON <div class='auto-type'>(${label})</div></div>`;
     }
 
     public  getStatusAutoPayoutMatch(match: CalculationMatch): string {
