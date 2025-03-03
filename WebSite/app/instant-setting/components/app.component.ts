@@ -61,7 +61,7 @@ export class AppComponent implements OnInit, AfterContentChecked {
 
     private getComponentFactory(): ComponentFactory<OnInit> {
         const pageType = this.elementRef.nativeElement.getAttribute('page-type');
-        return this.componentFactoryResolver.resolveComponentFactory(SoccerAutoSettingsComponent);
+        // return this.componentFactoryResolver.resolveComponentFactory(SoccerAutoSettingsComponent);
         switch (pageType) {
             case "DirectTime":
             case "InstantTime":
