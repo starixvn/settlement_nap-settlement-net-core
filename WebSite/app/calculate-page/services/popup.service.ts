@@ -107,8 +107,8 @@ export class PopupService {
 
     openSoccerAutoSettings(league: League, match: CalculationMatch | null = null) : Observable<string> {
         const uriParams = this.getParams(league, match);
-        console.log(uriParams.toString());
-        const src = `/apps/auto-setting-league?${uriParams.toString()}`;
+        console.log('openSoccerAutoSettings',uriParams.toString());
+        const src = `/apps/soccer-auto-setting-league?${uriParams.toString()}`;
         const frameSrc = encodeURI(src);
         const title = match ? Language.payout.titlePopup : Language.payout.titlePopupForLeague;
         const dialogData = new DialogDataIframe(title, frameSrc);
@@ -118,8 +118,7 @@ export class PopupService {
 
 
     private getParams(league: League, match: CalculationMatch | null = null) {
-        let uriParams = new HttpParams()
-            .set('pageType', 'SoccerAutoSettings');
+        let uriParams = new HttpParams();
 
         if (match) {
             uriParams = uriParams
@@ -130,7 +129,7 @@ export class PopupService {
                 .set('enabledAutoRefundMatch', match.enabledAutoRefundMatch || false)
                 .set('refundWaitingTimeMatch', match.refundWaitingTimeMatch)
                 .set('directWaitingTimeMatch', match.directWaitingTimeMatch)
-                .set('typeObject', 'Match');
+                .set('typeObject', 'Match').set('pageType', 'SoccerAutoSettings');
         } else {
             uriParams = uriParams
                 .set('leagueId', league.leagueId)
@@ -139,8 +138,12 @@ export class PopupService {
                 .set('enabledAutoRefund', league.enabledAutoRefund || false)
                 .set('refundWaitingTime', league.refundWaitingTime)
                 .set('directWaitingTime', league.directWaitingTime)
-                .set('typeObject', 'League');
+                .set('typeObject', 'League')
+                .set('pageType', 'SoccerAutoSettings');
         }
+
+        // uriParams.set('pageType', 'SoccerAutoSettings');
+
         return uriParams;
     }
 
