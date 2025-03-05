@@ -53,6 +53,7 @@
     ConfirmMessageForAutoSetting: "This will update current League's Auto Payout Setting. Do you want to apply the setting to Un-Calculated matches?",
     MinimumSource: 'Pattern: Minimum 2 sources needed to start Auto Payout.',
     MissingPrimarySource: 'Pattern: Please assign Primary source(s).',
+    SoccerLeagueConfirm: "System shall apply selected settings. Are you sure you want to proceed?",
   },
   MarkedTicket: "ERROR! Cannot proceed due to marked tickets. Please unmark them and try again.",
   ResultHeld: "	Cannot proceed due to following result(s) is on-hold: {0}.",

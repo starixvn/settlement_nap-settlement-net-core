@@ -81,7 +81,6 @@ export class CalculationComponent implements Soccer {
         this.match = await this.requestService.getMatch(matchId);
         this.#storage.setMatch(this.match);
         this.matchDetail = this.match.matchDetail;
-    console.log('matchDetail', this.matchDetail);
         this.isMatchReady = this.isReadyToSettle(this.matchDetail);
         this.childMatches = this.match.childMatches;
         this.hedgeMatchDetail = this.match.hedgeMatchDetail;

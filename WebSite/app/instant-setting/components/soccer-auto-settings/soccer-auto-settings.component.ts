@@ -85,7 +85,7 @@ export class SoccerAutoSettingsComponent implements OnInit {
 
   submit() {
     const confirmBox = new ModalDialogMessage(Language.confirmationBox);
-    confirmBox.message = Language.AutoPayoutSetting.ConfirmMessageForAutoSetting;
+    confirmBox.message = this.typeObject == "Match" ? Language.AutoPayoutSetting.ConfirmMessageForMatch : Language.AutoPayoutSetting.SoccerLeagueConfirm;
     confirmBox.hasActionOnNoBtn = true;
 
     this.messageBoxService.confirm(
