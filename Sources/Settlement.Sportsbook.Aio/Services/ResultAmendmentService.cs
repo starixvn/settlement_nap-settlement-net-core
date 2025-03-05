@@ -67,7 +67,7 @@ public class ResultAmendmentServiceImp(
             return false;
         }
 
-        if (settleCriteria.SportType is SportType.BasketBall or SportType.ESports)
+        if (settleCriteria.SportType is SportType.BasketBall or SportType.ESports or SportType.VolleyBall)
         {
             await publishEndpoint.Publish(new ResultAmended(
                 settleCriteria.MatchId,
