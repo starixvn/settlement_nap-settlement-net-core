@@ -377,9 +377,7 @@ public class AioServiceImp(
     {
         if (request.SportType == SportType.Soccer && request.IsEnabled)
         {
-            await publishEndpoint.Publish(request.Type == ResultSettingType.ConfirmRefund
-                ? new ResultsRefundConfirmed(request.MatchId, request.SportType, request.ChildMatchType, request.SelectedResources.ToList())
-                : new ResultsRefundConfirmedSdt(request.MatchId, request.SportType, request.ChildMatchType, request.SelectedResources.ToList()),
+            await publishEndpoint.Publish(new ResultsRefundConfirmedSdt(request.MatchId, request.SportType, request.ChildMatchType, request.SelectedResources.ToList()),
                 new CancellationTokenSource(TimeSpan.FromSeconds(3)).Token);
         }
     }

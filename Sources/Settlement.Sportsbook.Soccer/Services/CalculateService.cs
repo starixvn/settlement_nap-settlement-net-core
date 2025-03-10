@@ -80,7 +80,7 @@ public class CalculateServiceImp(
 
     private async Task PublishEvent(SettleRequest request)
     {
-        if (request is { ActionName: "CAL" } or { ActionName: "CAL-FT" })
+        if ((request.ActionName == "CAL" || request.ActionName == "CAL-FT") && request.ChildMatchType != 0)
         {
             await publishEndpoint.Publish(new MatchCalculated(
                 request.MatchId,
@@ -91,7 +91,6 @@ public class CalculateServiceImp(
                 request.HalfTimeAwayScore,
                 request.FinalHomeScore,
                 request.FinalAwayScore), new CancellationTokenSource(TimeSpan.FromSeconds(3)).Token);
-            return;
         }
     }
 
