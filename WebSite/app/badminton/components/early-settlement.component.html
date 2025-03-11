@@ -155,7 +155,7 @@
                     <option value="N">None</option>
                   </select>
                 </ng-container>
-                <ng-container *ngSwitchCase="1">
+                <ng-container *ngSwitchCase="4">
                   <div>
                     <div class="team-name"
                         [matTooltip]="getTextTooltip(match.matchDetail.homeName, 15)"
@@ -220,7 +220,7 @@
                         {{result.homeName}}
                     </div>
                   </ng-container>
-                  <ng-container *ngSwitchCase="1">
+                  <ng-container *ngSwitchCase="4">
                     <div>{{result.homeValue | resultByTeamName: null: 3}}</div>
                     <div>{{result.awayValue | resultByTeamName: null: 3}}</div>
                   </ng-container>
@@ -261,7 +261,7 @@
                           <option value="N">None</option>
                         </select>
                       </ng-container>
-                      <ng-container *ngSwitchCase="1">
+                      <ng-container *ngSwitchCase="4">
                         <div class="score">
                           <input type="text" maxlength="getCoupleScoreMaxLength(item)"
                               integerAndNone (change)="verifyResultByBetType(result); verifyAndAutoFillResult(item)"

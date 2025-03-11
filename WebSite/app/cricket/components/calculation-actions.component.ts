@@ -12,9 +12,7 @@ import {
     SettleQuery,
     MatchDetail,
     HedgeMatchDetail,
-    Match,
-    UpdateSettlementResultHistoryStatus
-} from '../models';
+    Match} from '../models';
 import { VerificationService } from '../services';
 import { ApiKeys, KickOffTime, Resources, ResourcesIds } from '../constants';
 import { ResultDetail, SaveScoreQuery, SportTemplate } from '../../shared/models/sportsbook-sop';
@@ -23,6 +21,7 @@ import { CalculateCommonModule } from '../../shared/modules/calculate-common.mod
 import { ResultByPlayerNamePipe, ResultNameByIdPipe, ResultValuePipe } from '../pipes';
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
 import { SettleChildMatchQuery } from '../../shared/models/settle-childmatch.model';
+import { UpdateSettlementResultHistoryStatus } from '../../shared/models/update-settle-result-history-status';
 
 @Component({
     selector: 'calculation-actions',
@@ -354,7 +353,8 @@ export class CalculationActionsComponent implements SportTemplate {
     }
 
     private async handleUpdateSettlementResultHistoryStatus(settleQuery: SettleQuery, sessionId: string) {
-        const query = new UpdateSettlementResultHistoryStatus(settleQuery.matchId, sessionId)
+        const query = new UpdateSettlementResultHistoryStatus(settleQuery.matchId, sessionId, settleQuery.sportType, false);
+        
         await this.aioService.updateSettlementResultHistoryStatus(query);
     }
 

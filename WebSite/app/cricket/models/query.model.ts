@@ -36,17 +36,3 @@ export class MatchQuery {
         this.sportType = sportType;
     }
 }
-
-
-
-export class UpdateSettlementResultHistoryStatus {
-    matchId: number;
-    sessionIds: string;
-
-    constructor(
-        matchId: number,
-        sessionIds: string) {
-        this.matchId = matchId;
-        this.sessionIds = sessionIds;
-    }
-}

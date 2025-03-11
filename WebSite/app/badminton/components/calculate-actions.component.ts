@@ -17,6 +17,7 @@ import { UrlHelper } from '../../helper';
 import { ResultPipe } from '../../shared/pipes/result.pipe';
 import { SourceIds } from '../../basketball/constants/source-ids';
 import { ChildMatchComponent } from './child-match/child-match.component';
+import { UpdateSettlementResultHistoryStatus } from '../../shared/models/update-settle-result-history-status';
 
 @Component({
   selector: 'calculation-actions',
@@ -479,6 +480,8 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
       if (pushResult.isSuccessful) {
         await this.handleChildMatch(query, type);
         this.settleHedgeMatch(query);
+        //TODO: Update settlement result history status
+        await this.aioService.updateSettlementResultHistoryStatus(new UpdateSettlementResultHistoryStatus(this.match.matchDetail.matchId, pushResult.settledSessionId, this.match.matchDetail.sportType, pushResult.isOrg));
       } else {
         this.toastrService.error(pushResult.errMsg);
       }

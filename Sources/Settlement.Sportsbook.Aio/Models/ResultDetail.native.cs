@@ -29,6 +29,8 @@ public sealed class ResultDetail
 
     public int InputType { get; set; }
 
+    public int GroupBetType { get; set; }
+
     public byte IsSpecialBettype { get; set; }
 
     public int Map { get; set; }

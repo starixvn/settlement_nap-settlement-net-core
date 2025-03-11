@@ -16,6 +16,7 @@ import { EarlyBaseService } from '../../core/services/early-base.service';
 import { UrlHelper } from '../../helper';
 import { MatchDetailComponent } from './match-detail.component';
 import { EarlyCommonModule } from '../../shared/modules/early-common.module';
+import { UpdateSettlementResultHistoryStatus } from '../../shared/models/update-settle-result-history-status';
 
 @Component({
   selector: 'early-settlement',
@@ -211,7 +212,15 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
       query.betStatus = this.matchDetail.betStatus;
     }
     const result = await this.aioService.push(query);
+    //TODO: Update Settle History Result Status
+    console.log('83738814',result);
     if (result.errCode === 0) {
+      result.hasResultAmendment && await this.aioService.updateSettlementResultHistoryStatus(new UpdateSettlementResultHistoryStatus(
+        this.matchId, 
+        result.settledSessionId,
+        this.matchDetail.sportType, 
+        result.isOrg));
+        
       this.messageBoxService.closePopup();
     } else {
       this.toastrService.error(result.errMsg);

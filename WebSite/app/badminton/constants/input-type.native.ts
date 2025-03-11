@@ -1,3 +1,3 @@
 export const InputType = {
-    coupleScore: 1
+    coupleScore: 4
 };
