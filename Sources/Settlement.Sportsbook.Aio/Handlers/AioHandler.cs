@@ -84,28 +84,12 @@ public class AioHandler(
 
     public async Task<bool> Handle(UpdateSettlementResultHistoryStatusRequest request, CancellationToken cancellationToken)
     {
-        await Fanex.Logging.LogService.InfoAsync("UpdateSettlementResultHistoryStatusRequest", JsonSerializer.Serialize(request));
-        if (request.SportType == SportType.VolleyBall || request.SportType == SportType.TableTennis)
-        {
-            return true;
-        }
-
-        if (request.SportType is SportType.Tennis)
-        {
-            await publishEndpoint.Publish(
-                new ResultAmendSettled(request.MatchId, request.SessionIds, request.IsOrg),
-                new CancellationTokenSource(TimeSpan.FromSeconds(3)).Token);
-
-            return true;
-        }
-
         var criteria = new ResultHistoryUpdateCriteria
         {
             MatchId = request.MatchId,
             SessionIds = request.SessionIds,
             StatusId = -1
         };
-
         await resultAmendmentService.UpdateResultHistory(criteria);
 
         return true;
