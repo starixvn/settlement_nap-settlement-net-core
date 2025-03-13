@@ -1,4 +1,6 @@
-﻿using Settlement.Core.Constants;
+﻿using AutoEarlyRefund.Contracts;
+using MassTransit;
+using Settlement.Core.Constants;
 using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
@@ -24,7 +26,8 @@ public class RefundServiceImp(
     IOptions<AppSettingsKey> appSettingsKey,
     ICreateCriteriaService createCriteriaService,
     ScaleOutSettleService scaleOutSettleService,
-    LogService logService)
+    LogService logService,
+    IPublishEndpoint publishEndpoint)
     : IRefundService
 {
     public async Task<MarkedTickets> CheckMarkedTickets(CheckingMarkedTicketsCriteria criteria)
@@ -59,6 +62,11 @@ public class RefundServiceImp(
         await WriteLog(criteria, insertLogCriteria);
 
         await ExecuteRefund(criteria);
+
+        //TODO
+        await publishEndpoint.Publish(
+            new MatchRefunded(request.MatchId, request.ParentId, request.SportType, request.ChildMatchType, request.ActionName),
+            new CancellationTokenSource(TimeSpan.FromSeconds(2)).Token);
 
         await RefundHedgeMatch(request, criteria);
 

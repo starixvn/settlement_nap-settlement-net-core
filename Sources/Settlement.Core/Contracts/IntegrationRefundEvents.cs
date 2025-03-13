@@ -9,6 +9,14 @@ public record ResultsRefunded(
     List<ResourceItem> Resources
     );
 
+public record ResultsRefundConfirmed(
+    int MatchId,
+    short ShortType,
+    short ChildMatchType,
+    List<ResourceItem> Resources,
+    string Action = "CfmRefund"
+    );
+
 public record ResultsRefundConfirmedSdt(
     int MatchId,
     short ShortType,
@@ -24,7 +32,16 @@ public record MatchCalculated(
     int? HalfTimeHomeScore,
     int? HalfTimeAwayScore,
     int? FinalHomeScore,
-    int? FinalAwayScore
+    int? FinalAwayScore,
+    string ActionName
+    );
+
+public record MatchRefunded(
+    int MatchId,
+    int ParentId,
+    short ShortType,
+    short ChildMatchType,
+    string ActionName
     );
 
 public record ResultsCalculated(

@@ -80,18 +80,16 @@ public class CalculateServiceImp(
 
     private async Task PublishEvent(SettleRequest request)
     {
-        if ((request.ActionName == "CAL" || request.ActionName == "CAL-FT") && request.ChildMatchType != 0)
-        {
-            await publishEndpoint.Publish(new MatchCalculated(
-                request.MatchId,
-                request.ParentId,
-                request.SportType,
-                request.ChildMatchType,
-                request.HalfTimeHomeScore,
-                request.HalfTimeAwayScore,
-                request.FinalHomeScore,
-                request.FinalAwayScore), new CancellationTokenSource(TimeSpan.FromSeconds(3)).Token);
-        }
+        await publishEndpoint.Publish(new MatchCalculated(
+            request.MatchId,
+            request.ParentId,
+            request.SportType,
+            request.ChildMatchType,
+            request.HalfTimeHomeScore,
+            request.HalfTimeAwayScore,
+            request.FinalHomeScore,
+            request.FinalAwayScore,
+            request.ActionName), new CancellationTokenSource(TimeSpan.FromSeconds(2)).Token);
     }
 
     private async Task SaveOutsideScores(SettleRequest request)

@@ -43,12 +43,18 @@ public class SettleEarlyServiceImp(
 
     private async Task PublishResultEvent(SettleEarlyRequest request)
     {
-        if (request is { ActionName: "CAL" } or { ActionName: "REFUND" })
+        if (request.ActionName.Equals(ActionName.RefundAll, StringComparison.OrdinalIgnoreCase))
         {
-            await publishEndpoint.Publish(request.ActionName == "REFUND"
-                ? new ResultsRefunded(request.MatchId, request.SportType, request.ChildMatchType, request.SelectedResources)
-                : new ResultsCalculated(request.MatchId, request.SportType, request.ChildMatchType, request.SelectedResources),
-                new CancellationTokenSource(TimeSpan.FromSeconds(3)).Token);
+            await publishEndpoint.Publish(
+                new ResultsRefunded(request.MatchId, request.SportType, request.ChildMatchType, request.SelectedResources),
+                new CancellationTokenSource(TimeSpan.FromSeconds(2)).Token);
+        }
+
+        if (request.ActionName.Equals(ActionName.CalculateAll, StringComparison.OrdinalIgnoreCase))
+        {
+            await publishEndpoint.Publish(
+                new ResultsCalculated(request.MatchId, request.SportType, request.ChildMatchType, request.SelectedResources),
+                new CancellationTokenSource(TimeSpan.FromSeconds(2)).Token);
         }
     }
 

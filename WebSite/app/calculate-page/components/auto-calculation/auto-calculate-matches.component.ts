@@ -188,7 +188,6 @@ export class AutoCalculateMatchesComponent extends MatchesBaseComponent implemen
         this.popupService.openSoccerAutoSettings(league, match)
             .subscribe(result => {
                 const setting = Object.assign(new AutoSettleSetting(), JSON.parse(result));
-                console.log(setting);
                 if (match) {
                     this.updateSettingsService.setAutoCalcSettingMatch(match, setting);
                 } else {
