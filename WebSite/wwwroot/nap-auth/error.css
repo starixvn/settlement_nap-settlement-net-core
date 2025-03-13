@@ -1,0 +1,48 @@
+﻿html, body
+{
+    padding: 0;
+    margin: 0;
+    font: 1em/1.4 Cambria, Georgia, sans-serif;
+    background: #fff;
+}
+.note a
+{
+    color: Yellow;
+}
+.note a:hover
+{
+    color: Black;
+}
+.note
+{
+    position: relative;
+    width: 360px;
+    padding: 1em 1.5em;
+    margin: 2em auto;
+    color: #fff;
+    background: #C93213;
+    overflow: hidden;
+}
+
+.note:before
+{
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    border-width: 0 16px 16px 0; /* This trick side-steps a webkit bug */
+    border-style: solid;
+    border-color: #fff #fff #97010A #97010A; /* A bit more verbose to work with .rounded too */
+    background: #97010A; /* For when also applying a border-radius */
+    display: block;
+    width: 0; /* Only for Firefox 3.0 damage limitation */ /* Optional: shadow */
+    -webkit-box-shadow: 0 1px 1px rgba(0,0,0,0.3), -1px 1px 1px rgba(0,0,0,0.2);
+    -moz-box-shadow: 0 1px 1px rgba(0,0,0,0.3), -1px 1px 1px rgba(0,0,0,0.2);
+    box-shadow: 0 1px 1px rgba(0,0,0,0.3), -1px 1px 1px rgba(0,0,0,0.2);
+}
+.note.rounded
+{
+    -webkit-border-radius: 5px 0 5px 5px;
+    -moz-border-radius: 5px 0 5px 5px;
+    border-radius: 5px 0 5px 5px;
+}

@@ -1,0 +1,143 @@
+﻿@{
+    Layout = null;
+}
+@model Fanex.NAP.SignIn.Models.UpdatePasswordModel
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <base href="/">
+    <meta charset="utf-8" />
+    <title>Change Password</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/nap-auth/changepassword.css" rel="stylesheet" type="text/css" />
+    <link href="/nap-auth/validationEngine.jquery.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+
+    <section id="headline">
+        <div class="title">
+            <div>
+                <span>@Model.Username / </span><span class="curr">Change Password</span>
+            </div>
+        </div>
+    </section>
+    <section id="body">
+
+        <div class="filter-bar">
+            <form id="login-form" method="post">
+                <div class="filter-section summary">
+                    <div class="validation-summary-valid" data-valmsg-summary="true">
+                        <ul>
+                            <li style="display:none"></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="filter-section">
+                    <div class="row">
+                        <div class="validation-summary-errors error display-none">
+                            <ul>
+                                <li><span class="error-message"></span></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="span4">
+                            <label for="OldUserPwd" class="margin-top-15">Old Password</label>
+                        </div>
+                        <div class="span6">
+                            <input class="margin-top-10" data-val="true" data-val-length="The Old Password field must be at least 2 and maximum 50 characters long." data-val-length-max="50" data-val-length-min="2" data-val-required="The Old Password field is required." id="OldUserPwd" name="OldUserPwd" type="password" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="span4">
+                            <label for="UserPwd" class="margin-top-15">New Password</label>
+                        </div>
+                        <div class="span6">
+                            <input class="margin-top-10" data-val="true" data-val-length="The New Password field must be at least 2 and maximum 50 characters long." data-val-length-max="50" data-val-length-min="2" data-val-required="The New Password field is required." id="UserPwd" name="UserPwd" type="password" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="span4">
+                            <label for="ConfirmUserPwd" class="margin-top-15">Confirm Password</label>
+                        </div>
+                        <div class="edit-field span6">
+                            <input class="margin-top-10" data-val="true" data-val-equalto="&#39;Confirm Password&#39; and &#39;New Password&#39; do not match" data-val-equalto-other="*.UserPwd" data-val-length="The Confirm Password field must be at least 2 and maximum 50" data-val-length-max="50" data-val-length-min="2" data-val-required="The Confirm Password field is required." id="ConfirmUserPwd" name="ConfirmUserPwd" type="password" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="span4">
+                            &nbsp;
+                        </div>
+                        <div class="edit-field span6">
+                            <input id="SavePassword" class="submit button-save" value="Save" type="button" />
+                            <input id="cancel" class="submit button-cancel" value="Cancel" type="button" onclick="location.href='/'; return false;" />
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <script src="/nap-auth/jquery-1.8.0.min.js" type="text/javascript"></script>
+        <script src="/nap-auth/jquery.validate.min.js" type="text/javascript"></script>
+        <script src="/nap-auth/jquery.validate.unobtrusive.min.js" type="text/javascript"></script>
+        <script src="/nap-auth/jquery.validationEngine-en.js" type="text/javascript"></script>
+        <script src="/nap-auth/jquery.validationEngine.js" type="text/javascript"></script>
+        <script src="/nap-auth/cryptojs.js" type="text/javascript"></script>
+        <script type="text/javascript">
+            window.onload = function () {
+
+                $('#SavePassword').click(function () {
+                    $('.error').hide();
+                    $('.summary').show();
+
+                    var previewForm = $("#login-form");
+                    $.validator.unobtrusive.parse(previewForm);
+                    var isValid = previewForm.valid();
+
+                    if (isValid) {
+                        var password = CryptoJS.CfsEnCode($("#OldUserPwd").val());
+                        var newPassword = CryptoJS.CfsEnCode($("#UserPwd").val());
+
+                        var params = {
+                            OldUserPwd: password,
+                            UserPwd: newPassword
+                        };
+
+                        $.ajax({
+                            url: "/Auth/FirstLoginFlow",
+                            type: 'POST',
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                            data: JSON.stringify(params),
+                            success: function (data) {
+                                if (data.errorMsg) {
+                                    $('.error-message').html(data.errorMsg);
+                                    $('.error').show();
+                                    $('.summary').hide();
+                                }
+                                else {
+                                    alert("Your password is changed successfully");
+                                    location.href = '@Url.Content("~")';
+                                }
+                            }
+                        });
+                    }
+
+                    return false;
+                });
+            };
+        </script>
+    </section>
+    <div class="alert alert-success" id="msg-box" style="z-index: 9999;display:none;">
+        <button type="button" class="close" data-dismiss="alert">
+            &times;
+        </button>
+        <div class="alert-content">
+        </div>
+    </div>
+    <div id="msg">
+    </div>
+    <div class="loader">
+        <img src="~/content/img/loader.gif" alt="loading..." />
+    </div>
+</body>
+</html>

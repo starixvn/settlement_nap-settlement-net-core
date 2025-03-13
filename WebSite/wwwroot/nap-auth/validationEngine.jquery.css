@@ -1,0 +1,165 @@
+/* Z-INDEX */
+ .formError { z-index: 990; }
+
+ .formError .formErrorContent { z-index: 991; }
+
+ .formError .formErrorArrow { z-index: 996; }
+
+ .ui-dialog .formError { z-index: 5000; }
+
+ .ui-dialog .formError .formErrorContent { z-index: 5001; }
+
+ .ui-dialog .formError .formErrorArrow { z-index: 5006; }
+
+ .inputContainer {
+     float: left;
+     position: relative;
+ }
+
+ .formError {
+     cursor: pointer;
+     display: block;
+     left: 300px;
+     position: absolute;
+     text-align: left;
+     top: 300px;
+ }
+
+ .formError.inline {
+     display: inline-block;
+     left: 0;
+     position: relative;
+     top: 0;
+ }
+
+ .ajaxSubmit {
+     background: #55ea55;
+     border: 1px solid #999;
+     display: none;
+     padding: 20px;
+ }
+
+ .formError .formErrorContent {
+     -moz-border-radius: 6px;
+     -moz-box-shadow: 0 0 6px #000;
+     -o-border-radius: 6px;
+     -o-box-shadow: 0 0 6px #000;
+     -webkit-border-radius: 6px;
+     -webkit-box-shadow: 0 0 6px #000;
+     background: #ee0101;
+     border: 2px solid #ddd;
+     border-radius: 6px;
+     box-shadow: 0 0 6px #000;
+     color: #fff;
+     font-size: 11px;
+     min-width: 120px;
+     padding: 4px 10px 4px 10px;
+     position: relative;
+     width: 100%;
+ }
+
+ .formError.inline .formErrorContent {
+     -moz-border-radius: 0;
+     -moz-box-shadow: none;
+     -o-border-radius: 0;
+     -o-box-shadow: none;
+     -webkit-border-radius: 0;
+     -webkit-box-shadow: none;
+     border: none;
+     border-radius: 0;
+     box-shadow: none;
+ }
+
+ .greenPopup .formErrorContent { background: #33be40; }
+
+ .blackPopup .formErrorContent {
+     background: #393939;
+     color: #FFF;
+ }
+
+ .formError .formErrorArrow {
+     margin: -2px 0 0 13px;
+     position: relative;
+     width: 15px;
+ }
+
+ body[dir='rtl'] .formError .formErrorArrow,
+ body.rtl .formError .formErrorArrow { margin: -2px 13px 0 0; }
+
+ .formError .formErrorArrowBottom {
+     -moz-box-shadow: none;
+     -o-box-shadow: none;
+     -webkit-box-shadow: none;
+     box-shadow: none;
+     margin: 0px 0 0 12px;
+     top: 2px;
+ }
+
+ .formError .formErrorArrow div {
+     -moz-box-shadow: 0 2px 3px #444;
+     -o-box-shadow: 0 2px 3px #444;
+     -webkit-box-shadow: 0 2px 3px #444;
+     background: #ee0101;
+     border-left: 2px solid #ddd;
+     border-right: 2px solid #ddd;
+     box-shadow: 0 2px 3px #444;
+     display: block;
+     font-size: 0px;
+     font-size: 0;
+     height: 1px;
+     line-height: 0;
+     margin: 0 auto;
+ }
+
+ .formError .formErrorArrowBottom div {
+     -moz-box-shadow: none;
+     -o-box-shadow: none;
+     -webkit-box-shadow: none;
+     box-shadow: none;
+ }
+
+ .greenPopup .formErrorArrow div { background: #33be40; }
+
+ .blackPopup .formErrorArrow div {
+     background: #393939;
+     color: #FFF;
+ }
+
+ .formError .formErrorArrow .line10 {
+     border: none;
+     width: 15px;
+ }
+
+ .formError .formErrorArrow .line9 {
+     border: none;
+     width: 13px;
+ }
+
+ .formError .formErrorArrow .line8 { width: 11px; }
+
+ .formError .formErrorArrow .line7 { width: 9px; }
+
+ .formError .formErrorArrow .line6 { width: 7px; }
+
+ .formError .formErrorArrow .line5 { width: 5px; }
+
+ .formError .formErrorArrow .line4 { width: 3px; }
+
+ .formError .formErrorArrow .line3 {
+     border-bottom: 0 solid #ddd;
+     border-left: 2px solid #ddd;
+     border-right: 2px solid #ddd;
+     width: 1px;
+ }
+
+ .formError .formErrorArrow .line2 {
+     background: #ddd;
+     border: none;
+     width: 3px;
+ }
+
+ .formError .formErrorArrow .line1 {
+     background: #ddd;
+     border: none;
+     width: 1px;
+ }

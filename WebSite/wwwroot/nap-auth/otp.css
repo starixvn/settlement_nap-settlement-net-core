@@ -1,0 +1,78 @@
+
+.otp,
+.submit {
+    font-family: 'Lucida Sans', Tahoma, Arial, Helvetica, sans-serif;
+}
+
+.otp {
+    -moz-transition: all .2s ease-in-out;
+    -o-transition: all .2s ease-in-out;
+    -webkit-transition: all .2s ease-in-out;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    color: #666;
+    display: block;
+    font-size: 14px;
+    height: 40px;
+    margin-bottom: 16px;
+    position: relative;
+    text-indent: 60px;
+    transition: all .2s ease-in-out;
+    width: 100%;
+}
+
+
+.ie9 .otp,
+.ie8 .otp {
+    line-height: 40px;
+    text-transform: lowercase;
+}
+
+.otp:active,
+.otp:focus {
+    border: 1px solid #ccc;
+    box-shadow: 0 0 1px #ccc;
+}
+
+.otp.err {
+    border: 1px solid #CF4742;
+}
+
+.otp {
+    width: 356px;
+    background: #fff url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC4AAAA1CAIAAACxyk44AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAUBJREFUeNrs2DGLgzAUAOB6OOhsBXUWHFzs4l8RnCz0fwnuLo4OKoiLo4KL4ORqi1iqouhlKoe32PZsevAyhOSp8BnjCzzifD7vPqBdLpev3cc0oAAFKEABClCAAhSgvI1yu93+ikI+/WRRFLZtV1Wlqqosy5Ik4VmVaZosy0IONI7j2DTNYRjwUJqm6bruZ6TvezyUJEkWkSiK8FA8z1tEfN9frNObKIIgLCKHw4GiKAyU4/G43+/vU57nNU3D84FIkjydTveprus4UxxN0wRBoAHqGYbBRinLEuWVeZ7RGPWO49R1/SKFeKiSkOd5mqZZll2v199XOY5DaVdRFJZln6gkPEBBP7Drumu2kWEYoihuWNQIw3DNbeM4BkGw4V5Bh07btutfcfO9sl2DqhNQgAIUoAAFKEAByj+lfAswADzYfjAK2LGZAAAAAElFTkSuQmCC) no-repeat left center;
+}
+
+.submit {
+    background-color: #E7EAEB;
+    border: 1px solid #B5B6B3;
+    border-radius: 3px 3px 3px 3px;
+    box-shadow: 0 1px 0 #FFFFFF inset;
+    color: #5C5C5C;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: bold;
+    height: 40px;
+    letter-spacing: 0.1px;
+    padding: 6px 11px;
+    text-shadow: 1px 1px 0 #FFFFFF;
+    text-transform: uppercase;
+    display: inline;
+    width: 179px;
+}
+
+    .submit:hover {
+        background-color: #E7EAEB;
+    }
+
+    .submit:active,
+    .submit:focus {
+        background-color: #E7EAEB;
+    }
+
+    .submit:disabled {
+        background: #aaa;
+        background: -moz-linear-gradient(#bbb, #aaa) #aaa;
+        border: solid 1px #999;
+        cursor: default;
+    }
