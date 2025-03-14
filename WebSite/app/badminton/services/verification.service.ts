@@ -2,12 +2,13 @@ import { Injectable } from "@angular/core";
 import { InputType, ResourcesIds, VolleyballBetTypes } from "../constants";
 import * as _ from 'lodash';
 import { ResultDetail } from "../../shared/models/sportsbook-sop";
-import { EventStatus, ScoreSourceType, TicketStatusText } from "../../shared/constants";
+import { EventStatus, ResultStatusId, ScoreSourceType, SportType, TicketStatusText } from "../../shared/constants";
 import { VerificationBaseService } from '../../core/services/verification-base.service';
 import { IntervalCalculationService } from "../../shared/services";
 import { ResultByTeamNamePipe } from '../../shared/pipes/result-by-team-name.pipe';
 import { Language } from "../../shared/language.native";
 import { ChildMatch } from "../models";
+import { Result } from "../../shared/models";
 
 @Injectable()
 export class VerificationService extends VerificationBaseService  {
@@ -72,14 +73,18 @@ export class VerificationService extends VerificationBaseService  {
         return false;
     }    
 
-    public verifyCannotSettleChildMatch(childMatch: ChildMatch[]) {
+    public verifyCannotSettleChildMatch(childMatch: ChildMatch[], sportType: number) {
         const isExistsSettled = childMatch.some(item => item.eventStatus.toLowerCase() === EventStatus.completed.toLowerCase());
         const isExistsHold = childMatch.some(item => item.isHold);
         const isExistsConfirmRefund = childMatch.some(item => item.resultSettingData.isConfirmedRefund);
         
-        return isExistsSettled || isExistsHold || isExistsConfirmRefund;
+        if(sportType == SportType.volleyBall) {
+            return isExistsSettled || isExistsHold || isExistsConfirmRefund;
+        } else {
+            return isExistsSettled || isExistsHold;
+        }
     }
-    
+
     isFTDrawWithInputNormal(totalGames: ResultDetail, inputDirectly: boolean) {
         return totalGames.checked && !inputDirectly && totalGames.homeValue.trim() === totalGames.awayValue.trim();
     }

@@ -187,8 +187,9 @@ public class MultipleServerAioServiceImp(
 
     private async Task InsIAutoRefundOSChildrenMatch(SettleRequest request)
     {
+        var sportApplied = request.SportType is SportType.TableTennis or SportType.BeachVolleyball;
         var isHasRefundChildMatch = request.IsSettleRelated
-            && request.SportType == SportType.TableTennis
+            && sportApplied
             && request.ParentId == 0
             && request.ActionName == ActionType.RefundAll;
 

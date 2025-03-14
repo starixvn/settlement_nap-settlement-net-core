@@ -50,7 +50,7 @@ export class RefundActionsComponent
   private readonly resourceNameByIdPipe = inject(ResourceNameByIdPipe);
 
   public get isSupportSettleRelated() {
-    return [SportType.tableTennis].includes(this.matchDetail.sportType) 
+    return [SportType.tableTennis, SportType.beachVolleyball].includes(this.matchDetail.sportType) 
       && this.matchDetail.parentId === 0;
   }
 

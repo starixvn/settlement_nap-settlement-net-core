@@ -20,7 +20,12 @@ public static class ChildMatchConstant
             { (SportType.TableTennis, 17), "0105" },
             { (SportType.TableTennis, 18), "0106" },
             { (SportType.TableTennis, 19), "0107" },
-            { (SportType.TableTennis, 11), "01" }
+            { (SportType.TableTennis, 11), "01" },
+
+            { (SportType.BeachVolleyball,11), "01" },
+            { (SportType.BeachVolleyball, 12), "0101" },
+            { (SportType.BeachVolleyball, 14), "0102" },
+            { (SportType.BeachVolleyball, 15), "0103" },
         };
 
     public static Dictionary<(int, int), string> LeagueName => new()
@@ -39,7 +44,12 @@ public static class ChildMatchConstant
             { (SportType.TableTennis, 16), "4th Set" },
             { (SportType.TableTennis, 17), "5th Set" },
             { (SportType.TableTennis, 18), "6th Set" },
-            { (SportType.TableTennis, 19), "7th Set" }
+            { (SportType.TableTennis, 19), "7th Set" },
+
+            { (SportType.BeachVolleyball,11), "Points Handicap" },
+            { (SportType.BeachVolleyball, 12), "First Set Winner" },
+            { (SportType.BeachVolleyball, 14), "Second Set Winner" },
+            { (SportType.BeachVolleyball, 15), "Third Set Winner" },
         };
 
     public static Dictionary<int, string> ChildMatchValid => new()

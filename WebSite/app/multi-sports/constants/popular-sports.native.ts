@@ -9,5 +9,6 @@ export const PopularSports = new Map([
   [SportType.cricket, 'cricket'],
   [SportType.volleyBall, 'badminton'],
   [SportType.tableTennis, 'badminton'],
+  [SportType.beachVolleyball, 'badminton'],
   [SportType.baseBall, 'baseball'],
 ]);

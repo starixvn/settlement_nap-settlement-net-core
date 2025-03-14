@@ -482,7 +482,7 @@ public class AioServiceImp(
     {
         var resourceIds = mainResources.Select(x => x.ResourceId).ToList();
 
-        return resultDetails.Where((Func<ResultDetail, bool>)Predicate).ToList();
+        return resultDetails.Where(Predicate).ToList();
 
         bool Predicate(ResultDetail result) => result.ResourceId != ResourceType.Final && resourceIds.Contains(result.ResourceId);
     }

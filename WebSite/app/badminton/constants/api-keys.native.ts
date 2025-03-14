@@ -13,3 +13,11 @@ export const TableTennisApiKeys = {
     NormalMatch: "tableTennis",
     CheckingMarkedTicketsParlay: "MP-REFUND",
 };
+
+export const BeachVolleyballApiKeys = {
+    RefundParlay: "beach-volleyball-refund-parlay",
+    Settle: "beach-volleyball-settle",
+    EarlyMatch: "beach-volleyball-early",
+    NormalMatch: "beach-volleyball",
+    CheckingMarkedTicketsParlay: "MP-REFUND",
+};

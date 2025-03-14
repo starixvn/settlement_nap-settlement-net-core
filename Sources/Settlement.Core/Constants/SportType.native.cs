@@ -160,6 +160,7 @@ public static class SportGroup
         SportType.Cricket,
         SportType.Tennis,
         SportType.TableTennis,
+        SportType.BeachVolleyball,
         SportType.BaseBall
     ];
 }

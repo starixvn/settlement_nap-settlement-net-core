@@ -231,8 +231,10 @@
   },
   consistentRelatedMatch: 'WARNING! Cannot continue due main match and related matches have inconsistent results.',
   confirmChildMatch: 'WARNING! You select to calculate FT for selected related match. Are you sure you want to proceed?',
+  confirmReCalcChildMatch: 'Some selected child-matches have been settled, do you want to re-calculate them with Main-match scores?',
   confirmRelatedChildMatch: 'Are you sure you want to process all related child-matches?',
-  cannotSettleChildMatch: 'Failed: selected child-matches are on-hold, have been settled or confirmed refund.',
+  confirmRunningChildMatchOnly: 'Are you sure you want to process Running child-matches only?',
+  cannotSettleChildMatch: 'Failed: selected child-matches are on-hold or confirmed refund.',
   directlyWithChildMAtch: 'WARNING! Cannot proceed due to "input result directly" is selected along side child-matches! Please check and try again.',
   otherSports: {
     confirmCalculateInconsistent: "WARNING! Insufficient or inconsistent score sources! Are you sure you want to proceed?",

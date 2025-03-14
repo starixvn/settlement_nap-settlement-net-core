@@ -16,7 +16,9 @@
 			<resettle-checker (proceedEvent)="onResettleCheckboxChange($event)"
 				[checked]="isReSettledTickets"></resettle-checker>
 		</div>
-		@if(match.matchDetail.sportType !== sportTypes.tableTennis && match.childMatches.length > 0 && permission.canRefund) {
+		@if(!sportWithPassiveChildMatch.includes(match.matchDetail.sportType) && match.childMatches.length > 0 &&
+		permission.canRefund)
+		{
 		<div>
 			<div class="child-match">
 				<span class="collapse-icon" [ngClass]="collapse ? 'collapsed' : ''" (click)="collapseChildMatch()">&emsp;Related
@@ -27,8 +29,9 @@
 			</div>
 		</div>
 		}
-		@if(match.matchDetail.sportType === sportTypes.tableTennis && match.childMatches.length > 0 && permission.canRefund) {
-		<tb-child-match [matchDetail]="match.matchDetail" [matches]="match.childMatches" [isLeader]="permission.isLeader"/>
+		@if(sportWithPassiveChildMatch.includes(match.matchDetail.sportType) && match.childMatches.length > 0 &&
+		permission.canRefund) {
+		<tb-child-match [matchDetail]="match.matchDetail" [matches]="match.childMatches" [isLeader]="permission.isLeader" />
 		}
 
 	</div>
@@ -124,15 +127,16 @@
 							id="isScoreDirect" [disabled]="disableScoreDirect" />
 						<label for="isScoreDirect">Input Match score directly</label>
 					</span>
-					
+
 					@if(isSupportSettleRelated) {
-						<span class="settle-related">
-							<input type="checkbox" [(ngModel)]="isSettleRelated" id="settleRelated" (ngModelChange)="changeIsSettleRelated($event)"/>
-							<label for="settleRelated">Also calculated</label><span class="link" (click)="openInfo()">
-								child-match.</span>
-						</span>
+					<span class="settle-related">
+						<input type="checkbox" [(ngModel)]="isSettleRelated" id="settleRelated"
+							(ngModelChange)="changeIsSettleRelated($event)" />
+						<label for="settleRelated">Also calculated</label><span class="link" (click)="openInfo()">
+							child-match.</span>
+					</span>
 					}
-					
+
 				</div>
 			</td>
 		</tr>
@@ -169,7 +173,7 @@
 				<ng-container *ngFor="let childMatch of match.childMatches">
 					<tr>
 						<td>{{ childMatch.matchCode }}</td>
-						
+
 						<td class="home-team-name">{{ match.matchDetail.homeName }} ({{ childMatch.leagueName }})</td>
 						<td [ngClass]="getChildMatchesClass(childMatch)">{{ childMatch.homeValue | result }}</td>
 						<td rowspan="2">{{ childMatch.eventStatus }}</td>

@@ -16,6 +16,7 @@ export const sportSupport = {
                     new Sport(SportType.tennis, 'Tennis'), 
                     new Sport(SportType.volleyBall, 'Volleyball'),
                     new Sport(SportType.tableTennis, 'Table Tennis'),
-                    new Sport(SportType.baseBall, 'Baseball')],
+                    new Sport(SportType.baseBall, 'Baseball'),
+                    new Sport(SportType.beachVolleyball, 'Beach Volleyball')],
     gameTypes: [SportType.eSports]
 };
