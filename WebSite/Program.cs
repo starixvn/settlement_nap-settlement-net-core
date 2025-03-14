@@ -1,6 +1,7 @@
 using Fanex.Caching.Redis;
 using Fanex.Data;
 using Fanex.Logging.Sentry.RavenClient;
+using Fanex.NAP.Client;
 using Fanex.NAP.Client.Attributes;
 using MassTransit;
 using Microsoft.AspNetCore.DataProtection;
