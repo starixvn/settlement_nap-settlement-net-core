@@ -6,4 +6,6 @@ export class ResultCheckerService {
   public isResultsConfirmRefund(resultDetails: ResultDetail[]): boolean  {
     return resultDetails.every((item: ResultDetail) => item.resultSettingData.isConfirmedRefund);
   };
+
+
 }

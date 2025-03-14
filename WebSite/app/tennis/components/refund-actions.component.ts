@@ -2,16 +2,17 @@ import { RefundCommonModule } from './../../shared/modules/refund-common.module'
 import { ExcludeTotalPointPipe, ResourceNameByIdPipe } from '../pipes';
 import { Component, Injector, Input, ViewChild, inject } from '@angular/core';
 import * as _ from 'lodash';
-import { ModalDialogMessage } from '../../shared/models';
+import { ModalDialogMessage, Result } from '../../shared/models';
 import { CalculateAction, EventStatus } from '../../shared/constants';
 import { Language } from '../../shared/language.native';
 import { Match } from '../models';
 import { ResourcesIds, TennisApiKeys } from '../constants';
-import { ResultDetail, SettleQuery, SportTemplate } from '../../shared/models/sportsbook-sop';
+import { MatchDetail, ResultDetail, SettleQuery, SportTemplate } from '../../shared/models/sportsbook-sop';
 import { RefundActionBaseComponent } from '../../shared/components/sportsbook-sop/refund-action-base.component';
 import { ToastContainerDirective } from 'ngx-toastr';
 import { MatchDetailComponent } from './match-detail.component';
 import { TennisService } from '../services';
+import { UpdateSettlementResultHistoryStatus } from '../../shared/models/update-settle-result-history-status';
 
 @Component({
   selector: 'refund-actions',
@@ -107,12 +108,25 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
     query.isSettleRelated = this.isSettleRelated;
     const result = await this.aioService.push(query);
     if (result.errCode === 0) {
+      await this.updateStatusResultAmendment(this.matchDetail, result);
       this.refundHedgeMatch(query);
       this.messageBoxService.closePopup();
     } else {
       this.toastrService.error(result.errMsg);
     }
   }
+
+    private async updateStatusResultAmendment(matchDetail:MatchDetail, settleResult : Result) {
+      const query = new UpdateSettlementResultHistoryStatus(
+        matchDetail.matchId,
+        settleResult.settledSessionId,
+        matchDetail.sportType,
+        settleResult.isOrg);
+  
+      if(settleResult.hasResultAmendment) {
+        await this.aioService.updateSettlementResultHistoryStatus(query);
+      }
+    }
 
   protected generateRefundQuery(apikey: string) {
     this.selectedResources.forEach((item) => {

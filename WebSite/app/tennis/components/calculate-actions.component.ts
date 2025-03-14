@@ -3,15 +3,16 @@ import { CalculateMatchDetailComponent } from './calculate-match-detail.componen
 import { Component, Injector, Input, ViewChild } from '@angular/core';
 import * as _ from 'lodash';
 import { MessageBoxService, AioService, IntervalCalculationService, BlockUIService } from '../../shared/services';
-import { ModalDialogMessage} from '../../shared/models';
+import { ModalDialogMessage, Result} from '../../shared/models';
 import { Language } from '../../shared/language.native';
 import { SettlementStatusId, CalculateAction, SportType, ResultStatusId, ScoreSourceType, TicketStatusText, ResultStatus } from '../../shared/constants';
 import { KickOffTime, Resources, ResourcesIds, TennisApiKeys } from '../constants';
 import { Match, SettleQuery } from '../models';
 import { TennisService, VerificationService } from '../services';
-import { ExternalResultDetail, HedgeMatchDetail, ResultDetail, SaveScoreQuery, SportTemplate } from '../../shared/models/sportsbook-sop';
+import { ExternalResultDetail, HedgeMatchDetail, MatchDetail, ResultDetail, SaveScoreQuery, SportTemplate } from '../../shared/models/sportsbook-sop';
 import { ResourceNameByIdPipe } from '../pipes';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
+import { UpdateSettlementResultHistoryStatus } from '../../shared/models/update-settle-result-history-status';
 
 @Component({
   selector: 'calculate-actions',
@@ -332,9 +333,22 @@ export class CalculateActionsComponent implements SportTemplate {
   private async push(query: SettleQuery): Promise<void> {
     const result = await this.aioService.push(query);
     if (result.errCode === 0) {
+      this.updateStatusResultAmendment(this.match.matchDetail, result);    
       this.hedgeMatch(query);
     } else {
       this.toastrService.error(result.errMsg);
+    }
+  }
+
+  private async updateStatusResultAmendment(matchDetail:MatchDetail, settleResult : Result) {
+    const query = new UpdateSettlementResultHistoryStatus(
+      matchDetail.matchId,
+      settleResult.settledSessionId,
+      matchDetail.sportType,
+      settleResult.isOrg);
+
+    if(settleResult.hasResultAmendment) {
+      await this.aioService.updateSettlementResultHistoryStatus(query);
     }
   }
 
@@ -563,7 +577,7 @@ export class CalculateActionsComponent implements SportTemplate {
     return text?.length > maxLength ? text : null;
   }
   
-  OpenInfo(){
+  openInfo(){
     this.infoDialog.title = Language.information;
     this.infoDialog.message = Language.childMatchTennisInfo;
     this.messageBoxService.alert(this.infoDialog);

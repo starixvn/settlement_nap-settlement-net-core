@@ -67,14 +67,40 @@ public class ResultAmendmentServiceImp(
             return false;
         }
 
-        if (settleCriteria.SportType is SportType.BasketBall or SportType.ESports or SportType.VolleyBall)
+        var hasPublish = await PublishResultAmendment(settleCriteria, selectedResources, results);
+
+        if (hasPublish)
         {
-            await publishEndpoint.Publish(new ResultAmended(
+            return true;
+        }
+
+        var resultHistoryItems = resultsChanged
+            .Select((item, index) => CreateResultHistoryItem(item.ToList(), selectedResources, item.Key, index + 1));
+
+        var resultHistoryInsCriteria = CreateResultHistoryInsCriteria(settleCriteria, [.. resultHistoryItems]);
+
+        InsResultHistory(resultHistoryInsCriteria);
+
+        return true;
+    }
+
+
+
+    private async Task<bool> PublishResultAmendment(SettleCriteria settleCriteria, List<ResourceItem> selectedResources, IEnumerable<ResultChanged> results)
+    {
+        var specialSportTypes = new List<int> { SportType.BasketBall, SportType.ESports, SportType.VolleyBall, SportType.Tennis, SportType.TableTennis };
+
+        if (!specialSportTypes.Contains(settleCriteria.SportType))
+        {
+            return false;
+        }
+
+        await publishEndpoint.Publish(new ResultAmended(
                 settleCriteria.MatchId,
                 settleCriteria.BroadcastSessionId,
                 settleCriteria.SportType,
                 settleCriteria.Action,
-                selectedResources.Select(x => new Fanex.Settlement.MessageBridge.ResultAmendment.ResourceItem
+                [.. selectedResources.Select(x => new Fanex.Settlement.MessageBridge.ResultAmendment.ResourceItem
                 {
                     ResourceId = x.ResourceId,
                     HomeValue = x.HomeValue,
@@ -84,18 +110,9 @@ public class ResultAmendmentServiceImp(
                     OtherInfo = x.OtherInfo,
                     GroupBetType = x.GroupBetType,
 
-                }).ToList(),
-                results.ToList()),
+                })],
+                [.. results]),
                 new CancellationTokenSource(TimeSpan.FromSeconds(3)).Token);
-            return true;
-        }
-
-        var resultHistoryItems = resultsChanged
-            .Select((item, index) => CreateResultHistoryItem(item.ToList(), selectedResources, item.Key, index + 1));
-
-        var resultHistoryInsCriteria = CreateResultHistoryInsCriteria(settleCriteria, resultHistoryItems.ToList());
-
-        InsResultHistory(resultHistoryInsCriteria);
 
         return true;
     }
