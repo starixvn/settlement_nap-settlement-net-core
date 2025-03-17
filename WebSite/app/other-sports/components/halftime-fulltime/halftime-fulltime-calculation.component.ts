@@ -405,7 +405,10 @@ export class HalfTimeFullTimeCalculationComponent implements SportTemplate {
       this.messageBoxService.confirm(this.confirmDialogMessage, () => {
         this.confirmScoreSource(CalculateAction.calculate);
       });
+      return;
     }
+
+    this.confirmScoreSource(CalculateAction.calculate);
   }
 
   private clearStatus() {
