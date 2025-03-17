@@ -1,5 +1,5 @@
-﻿using Settlement.Core.Services;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
+using Settlement.Core.Services;
 
 namespace Settlement.Core.Models;
 
@@ -102,4 +102,6 @@ public class MatchDetail
     public string ExternalSourceName { get; set; }
 
     public bool IsHtOnly { get; set; }
+
+    public int ChildMatchType { get; set; }
 }

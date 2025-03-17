@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 import { VerificationService } from './verification.service';
 import { MessageBoxService } from '../../../shared/services';
 import { Language } from '../../../shared/language.native';
-import { ModalDialogMessage } from '../../../shared/models';
+import { League, ModalDialogMessage } from '../../../shared/models';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import { HalfTimeFullTimeService } from './halftime-fulltime.service';
 import { BackgroundColor, CalculateAction, TicketStatusText } from '../../../shared/constants';
@@ -384,15 +384,28 @@ export class HalfTimeFullTimeCalculationComponent implements SportTemplate {
     this.clearStatus();
     this.clickCalcHalfTime = true;
     this.clickCalcFullTime = true;
+   
     if (this.verificationService.verifyAllScore(this.halfTime, this.fullTime, this.results, this.isScoreDirect, true)) {
       this.toastrService.error(Language.warningInputScore);
       return;
     }
+
     if (this.isScoreFTInconsistent || this.isScoreHTInconsistent) {
       this.toastrService.error(Language.inconsistentValues);
       return;
     }
-    this.confirmScoreSource(CalculateAction.calculate);
+  
+    if(this.verificationService.verifyFinalHasDrawScore(this.matchDetail,this.fullTime)) {
+      if(!this.permission.isLeader) {
+        this.toastrService.error(Language.otherSports.errorDrawScore);
+        return;
+      }
+
+      this.confirmDialogMessage.message = Language.otherSports.confirmDrawScore;
+      this.messageBoxService.confirm(this.confirmDialogMessage, () => {
+        this.confirmScoreSource(CalculateAction.calculate);
+      });
+    }
   }
 
   private clearStatus() {
