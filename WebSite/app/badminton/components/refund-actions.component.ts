@@ -11,6 +11,7 @@ import { Language } from "../../shared/language.native";
 import { Match } from "../models";
 import {
   BadmintonApiKeys,
+  BeachVolleyballApiKeys,
   ResourcesIds,
   TableTennisApiKeys,
   VolleyballApiKeys,
@@ -81,6 +82,11 @@ export class RefundActionsComponent
 
     if(sportType === SportType.volleyBall) {
       this.apiKeys =  VolleyballApiKeys
+      return;
+    }
+
+    if(sportType === SportType.beachVolleyball) {
+      this.apiKeys =  BeachVolleyballApiKeys;
       return;
     }
 

@@ -7,7 +7,7 @@ import * as _ from 'lodash';
 import { MessageBoxService, AioService, IntervalCalculationService } from '../../shared/services';
 import { MatchResource, ModalDialogMessage } from '../../shared/models';
 import { Language } from '../../shared/language.native';
-import { SettlementStatusId, CalculateAction, SportType, ResultStatusId, ScoreSourceType, TicketStatusText, ResultStatus } from '../../shared/constants';
+import { SettlementStatusId, CalculateAction, SportType, ResultStatusId, ScoreSourceType, TicketStatusText, ResultStatus, EventStatus } from '../../shared/constants';
 import { Match, HedgeMatchDetail, SettleQuery, ChildMatch, SettleChildMatchQuery } from '../models';
 import { ResourceNameByIdPipe } from '../pipes';
 import { BadmintonService, VerificationService } from '../services';
@@ -36,6 +36,7 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
   private readonly toastrService = inject(ToastrService);
   private readonly blockUIService = inject(BlockUIService);
   public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
+  readonly confirmDialogWithActionOnNoBtn: ModalDialogMessage = new ModalDialogMessage();
   readonly totalPointsId = ResourcesIds.totalPoints;
   match: Match;
   hedgeMatchDetail: HedgeMatchDetail;
@@ -61,6 +62,8 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
 
   ngOnInit(): void {
     this.confirmationDialogMessage.title = Language.confirmationBox;
+    this.confirmDialogWithActionOnNoBtn.title = Language.confirmationBox;
+    this.confirmDialogWithActionOnNoBtn.hasActionOnNoBtn = true;
     this.toastrService.overlayContainer = this.toastContainer;
   }
 
@@ -269,7 +272,6 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
       return;
     }
     
-
     this.confirmationDialogMessage.message = Language.confirmChildMatch;
     this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
       this.verifyRunningOdds();
@@ -277,13 +279,14 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
   }
 
   private async VerifyChildMatchSecondSection() {
-    if (this.childMatchSelected.some(item => item.resultSettingData.isConfirmedRefund);) {
-      this.confirmationDialogMessage.message = Language.confirmReCalcChildMatch;
-      this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
-        this.settleRunningChildMatchOnly = true;
+      if (this.childMatchSelected.some(item => item.eventStatus.toLowerCase() === EventStatus.completed.toLowerCase())) {
+      this.confirmDialogWithActionOnNoBtn.message = Language.confirmReCalcChildMatch;
+      this.confirmDialogWithActionOnNoBtn.hasActionOnNoBtn = true;
+      this.messageBoxService.confirm(this.confirmDialogWithActionOnNoBtn, () => {
+        this.settleRunningChildMatchOnly = false;
         this.verifyRunningOdds();
       }, () => {
-        this.settleRunningChildMatchOnly = false;
+        this.settleRunningChildMatchOnly = true;
         this.verifyRunningOdds()
       });
     }
@@ -434,7 +437,8 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
     });
 
     const betStatus = this.badmintonService.getBetStatus(false, this.match);
-    const childMatchIds = this.childMatchSelected.map(item => item.matchId).join(',');
+    const childMatchIds = this.childMatchSelected.filter(item => this.settleRunningChildMatchOnly ? item.eventStatus.toLowerCase() !== EventStatus.completed.toLowerCase() : true)
+    .map(item => item.matchId).join(',');
     this.doSaveScoreAndCalculate(CalculateAction.calculate, selectedResources, betStatus, childMatchIds);
   }
 
@@ -752,8 +756,9 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
 
   private async handleChildMatch(settleQuery: SettleQuery, type: string) {
     if (this.childMatchSelected.length > 0 && type === CalculateAction.calculate) {
+      const reSettleChildMatch = this.settleRunningChildMatchOnly ? settleQuery.isReSettledTickets : true;
       const settleChildMatchQuery = new SettleChildMatchQuery(this.childMatchSelected,
-        settleQuery.actionName, settleQuery.isReSettledTickets, settleQuery.selectedResources);
+        settleQuery.actionName, reSettleChildMatch, settleQuery.selectedResources);
       settleChildMatchQuery.parentMatchId = settleQuery.matchId;
       settleChildMatchQuery.sportType = settleQuery.sportType;
       await this.aioService.pushChildMatch(settleChildMatchQuery);
@@ -785,7 +790,7 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
 
   public openInfo() {
     this.confirmationDialogMessage.title = Language.information;
-    this.confirmationDialogMessage.message = Language.childMatchTabbleTennisInfo;
+    this.confirmationDialogMessage.message = Language.childMatchTableTennisInfo;
     this.messageBoxService.alert(this.confirmationDialogMessage);
   }
 

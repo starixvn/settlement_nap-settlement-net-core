@@ -81,7 +81,7 @@ export class VerificationService extends VerificationBaseService  {
         if(sportType == SportType.volleyBall) {
             return isExistsSettled || isExistsHold || isExistsConfirmRefund;
         } else {
-            return isExistsSettled || isExistsHold;
+            return isExistsConfirmRefund || isExistsHold;
         }
     }
 
