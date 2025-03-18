@@ -5,7 +5,7 @@ import { firstValueFrom } from 'rxjs';
 import { RequestService } from '../../services/request.service';
 import { HalfTimeFullTimeService } from './halftime-fulltime.service';
 import { ResultDetail } from '../../../shared/models/sportsbook-sop';
-import { CalculateAction } from '../../../shared/constants';
+import { CalculateAction, SportType } from '../../../shared/constants';
 import { map } from 'rxjs/operators';
 import { ResourcesIds } from '../../constants/resource-ids.native';
 
@@ -76,6 +76,15 @@ export class VerificationService {
             }
             return _.isEmpty(item.homeValue) || _.isEmpty(item.awayValue);
         });
+    }
+
+    public verifyFinalHasDrawScore(matchDetail: MatchDetail, fullTime: ResultDetail) {
+        const otPenShootout = 23;
+
+       return matchDetail.childMatchType === otPenShootout 
+            && matchDetail.sportType === SportType.iceHockey
+            && fullTime
+            && _.isEqual(fullTime.homeValue,fullTime.awayValue);
     }
 
     public VerifyChangedSettledTickets(matchId: number, resultDetails: ResultDetail[],

@@ -9,8 +9,6 @@ import {
 import { CustomHttpRequestInterceptor } from '../shared/custom-httprequest-interceptor.native';
 import { ToastContainerModule, ToastrModule } from 'ngx-toastr';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { ModalDialogComponent } from '../shared/components/modal-dialog/modal-dialog.component';
-import { ModalContentDialogComponent } from '../shared/components/modal-dialog/modal-content-dialog.component';
 import { SportTemplateModule } from './components/sport-template.module';
 @NgModule({
     imports: [
@@ -33,8 +31,6 @@ import { SportTemplateModule } from './components/sport-template.module';
     ],
     declarations: [
         AppComponent,
-        ModalDialogComponent,
-        ModalContentDialogComponent,
     ],
     bootstrap: [AppComponent],
     providers: [
