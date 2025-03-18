@@ -755,10 +755,10 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
   }
 
   private async handleChildMatch(settleQuery: SettleQuery, type: string) {
-    if (this.childMatchSelected.length > 0 && type === CalculateAction.calculate) {
-      const reSettleChildMatch = this.settleRunningChildMatchOnly ? settleQuery.isReSettledTickets : true;
-      const settleChildMatchQuery = new SettleChildMatchQuery(this.childMatchSelected,
-        settleQuery.actionName, reSettleChildMatch, settleQuery.selectedResources);
+    const validatedChildMatches = this.settleRunningChildMatchOnly ? this.childMatchSelected.filter(x => x.newEventStatus.toLowerCase() !== EventStatus.completed.toLowerCase()) : this.childMatchSelected;
+    if (validatedChildMatches.length > 0 && type === CalculateAction.calculate) {
+      const settleChildMatchQuery = new SettleChildMatchQuery(validatedChildMatches,
+        settleQuery.actionName, settleQuery.isReSettledTickets, settleQuery.selectedResources);
       settleChildMatchQuery.parentMatchId = settleQuery.matchId;
       settleChildMatchQuery.sportType = settleQuery.sportType;
       await this.aioService.pushChildMatch(settleChildMatchQuery);
@@ -784,10 +784,7 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
       childMatch.checked = result.checked;
     }
   }
-
-
-
-
+  
   public openInfo() {
     this.confirmationDialogMessage.title = Language.information;
     this.confirmationDialogMessage.message = Language.childMatchTableTennisInfo;
