@@ -212,8 +212,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
       query.betStatus = this.matchDetail.betStatus;
     }
     const result = await this.aioService.push(query);
-    //TODO: Update Settle History Result Status
-    console.log('83738814',result);
+    
     if (result.errCode === 0) {
       result.hasResultAmendment && await this.aioService.updateSettlementResultHistoryStatus(new UpdateSettlementResultHistoryStatus(
         this.matchId, 
