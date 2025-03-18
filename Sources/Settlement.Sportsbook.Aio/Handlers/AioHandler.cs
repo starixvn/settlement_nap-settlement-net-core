@@ -84,7 +84,12 @@ public class AioHandler(
 
     public async Task<bool> Handle(UpdateSettlementResultHistoryStatusRequest request, CancellationToken cancellationToken)
     {
-        if (request.SportType is SportType.VolleyBall or SportType.Tennis or SportType.TableTennis)
+        if (request.SportType is not SportType.Tennis or SportType.TableTennis)
+        {
+            return true;
+        }
+
+        if (request.SportType is SportType.VolleyBall)
         {
             await publishEndpoint.Publish(
                 new ResultAmendSettled(request.MatchId, request.SessionIds, request.IsOrg),
