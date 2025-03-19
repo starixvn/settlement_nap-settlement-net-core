@@ -53,7 +53,7 @@ public class BetBuilderGenerateServiceImp(
             MatchId = request.MatchId,
             Action = request.ActionName,
             SelectedSelection = selectedSelection,
-            ResultStatusId = request.ActionName.Equals(ActionType.UnCalculate) ? ResultStatus.Running : ResultStatus.ManuallySettled
+            ResultStatusId = request.ActionName.Equals(ActionType.UnCalculate) ? ResultStatus.Confirmed : ResultStatus.ManuallySettled
         };
 
         var listMarketIds = (await repository.FetchAsync<string>(getMarketIdCriteria)).ToList();

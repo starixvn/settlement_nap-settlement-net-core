@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, inject, Injectable, signal } from "@angular/core";
-import { ModalDialogMessage } from "../../shared/models";
+import { ModalDialogMessage, Result } from "../../shared/models";
 import { Match, MatchDetail, UndoChecking } from "../components/calc/models/match.model";
 import { VerifyScoreGoalService } from "../components/calc/services/verify-score-goal.service";
 import { ToastContainerDirective, ToastrService } from "ngx-toastr";
@@ -23,6 +23,9 @@ export class CalculateStorage implements Storage {
   #instantScore: UndoChecking;
   #halfTimeResult: ResultDetail;
   #fullTimeResult: ResultDetail;
+
+  #outsideHtResult: ResultDetail;
+  #outsideFtResult: ResultDetail;
 
   match = this.#match.asReadonly();
   readonly dialogMessage = new ModalDialogMessage(Language.confirmationBox);
@@ -75,6 +78,26 @@ export class CalculateStorage implements Storage {
     return this.#instantScore;
   }
 
+  get outsideFtResult() {
+    return this.#outsideFtResult;
+  }
+
+  get outsideHtResult() {
+    return this.#outsideHtResult;
+  }
+
+  get traderHtResult() {
+    return this.getHalfTimeResult().resultStatusId === 3 
+      ? this.getHalfTimeResult()
+      : new ResultDetail()
+  }
+
+  get traderFtResult() {
+    return this.getFullTimeResult().resultStatusId === 3 
+    ? this.getFullTimeResult()
+    : new ResultDetail()
+  }
+
   // Setters
   setToastrOverlay(toastContainer: ToastContainerDirective) {
     this.toastrService.overlayContainer = toastContainer;
@@ -98,12 +121,17 @@ export class CalculateStorage implements Storage {
 
   setMatch(match: Match) {
     this.#match.set(match);
+    const { resultDetails } = this.#match();
     this.#matchDetail = this.#match().matchDetail;
-    this.#halfTimeResult = this.#match().resultDetails.find((result) => result.resourceId === ResourceIds.halfTime);
-    this.#fullTimeResult = this.#match().resultDetails.find((result) => result.resourceId === ResourceIds.fullTime);
+    this.#halfTimeResult = this.#match().resultDetails.find((result) => result.resourceId === ResourceIds.halfTime && result.sourceId === 0);
+    this.#fullTimeResult = this.#match().resultDetails.find((result) => result.resourceId === ResourceIds.fullTime && result.sourceId === 0);
     this.#isApplyHedgeMatch = this.#match().hedgeMatchDetail != null && !this.#match().hedgeMatchDetail.isUndecided;
-    this.#halfTimeResult.resourceName = "HT";
+    this.#halfTimeResult.resourceName = "HT"; 
     this.#fullTimeResult.resourceName = "FT";
+
+    this.#outsideHtResult = resultDetails.find(x => x.sourceId === 1001 && x.resourceId === ResourceIds.halfTime);
+    this.#outsideFtResult = resultDetails.find(x => x.sourceId === 1001 && x.resourceId === ResourceIds.fullTime);
+
   }
   
 

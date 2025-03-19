@@ -70,6 +70,13 @@ public class MatchServiceImp(
     {
         var match = await fetchDataService.GetMatchInfo(request);
         var resultDetails = await GetResultDetail(request.MatchId);
+
+        resultDetails
+            .Add(new ResultDetail { ResourceId = ResourceType.Halftime, SourceId = SourceType.Screenshot });
+
+        resultDetails
+            .Add(new ResultDetail { ResourceId = ResourceType.Final, SourceId = SourceType.Screenshot });
+
         var matchDetail = match.MatchDetail;
         matchDetail.RefDataService = refDataService;
         HandleExternalResultDetailSoccer(matchDetail, resultDetails);
@@ -97,7 +104,7 @@ public class MatchServiceImp(
         return new Match
         {
             MatchDetail = matchDetail,
-            ResultDetails = resultDetails.Where(result => result.SourceId == SourceType.Normal),
+            ResultDetails = resultDetails,
             TicketCounts = match.TicketCounts,
             ChildMatches = childMatches,
             FantasyMatch = fantasyMatch,
@@ -114,6 +121,7 @@ public class MatchServiceImp(
 
         matchDetail.RefDataService = refDataService;
         HandleExternalResultDetailSoccer(matchDetail, resultDetails);
+        AddTraderResults(resultDetails);
         var goalIconQuery = GoalIconQuery(matchDetail);
         matchDetail.GoalIcon = goalIconService.GetGoalIcon(goalIconQuery);
 
@@ -140,6 +148,7 @@ public class MatchServiceImp(
             Permission = permissionService.Permission
         };
     }
+
 
     private static GoalIconQueryModel GoalIconQuery(MatchDetail match)
     {
@@ -190,6 +199,7 @@ public class MatchServiceImp(
 
     private static void HandleExternalResultDetailSoccer(MatchDetail match, List<ResultDetail> resultDetails)
     {
+        //TODO
         var externalResultDetail = resultDetails.Where(result => result.SourceId == SourceType.Sbo).ToList();
         var halfTimeResult = externalResultDetail.Find(result => result.ResourceId == ResourceType.Halftime);
         var fullTimeResult = externalResultDetail.Find(result => result.ResourceId == ResourceType.Final);
@@ -212,6 +222,7 @@ public class MatchServiceImp(
     private static void HandleResultDetailSoccer(MatchDetail match, List<ResultDetail> resultDetails)
     {
         var internalResultDetail = resultDetails.Where(result => result.SourceId == SourceType.Normal).ToList();
+
         var halfTimeResult = internalResultDetail.Find(result => result.ResourceId == ResourceType.Halftime);
         var fullTimeResult = internalResultDetail.Find(result => result.ResourceId == ResourceType.Final);
 
@@ -233,6 +244,40 @@ public class MatchServiceImp(
             resultDetails.Add(new ResultDetail { ResourceId = ResourceType.Final, SourceId = SourceType.Normal, });
         }
     }
+
+    private static void AddTraderResults(List<ResultDetail> resultDetails)
+    {
+        var internalResultDetail = resultDetails.Where(result => result.SourceId == SourceType.Normal).ToList();
+
+        var halfTimeResult = internalResultDetail.Find(result => result.ResourceId == ResourceType.Halftime
+            && result.ResultStatusId == ResultStatus.Confirmed);
+
+        var fullTimeResult = internalResultDetail.Find(result => result.ResourceId == ResourceType.Final
+            && result.ResultStatusId == ResultStatus.Confirmed);
+
+        if (halfTimeResult is not null)
+        {
+            resultDetails.Add(new ResultDetail
+            {
+                ResourceId = ResourceType.Halftime,
+                SourceId = SourceType.Trader,
+                HomeValue = halfTimeResult.HomeValue,
+                AwayValue = halfTimeResult.AwayValue,
+            });
+        }
+
+        if (fullTimeResult is not null)
+        {
+            resultDetails.Add(new ResultDetail
+            {
+                ResourceId = ResourceType.Final,
+                SourceId = SourceType.Trader,
+                HomeValue = fullTimeResult.HomeValue,
+                AwayValue = fullTimeResult.AwayValue,
+            });
+        }
+    }
+
 
     public async Task<MatchDetail> GetLatestMatchDetail(GetLatestMatchDetailRequest request)
     {

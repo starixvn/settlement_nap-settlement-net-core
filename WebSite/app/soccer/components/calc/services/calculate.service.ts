@@ -22,6 +22,7 @@ import { SaveScoreHandler } from "../../../handlers/calculate/save-score/save-sc
 import { VerifyScoreInstantHandler } from "../../../handlers/calculate/uncalc-instant/verify-score-instant.handler";
 import { PushInstantScoreHandler } from "../../../handlers/calculate/uncalc-instant/push-instant-score.handler";
 import { VerifyScoreConfirmHandler } from "../../../handlers/calculate/all/verify-score-confirm.handler";
+import { ConfirmFtNoTicketHandler } from "../../../handlers/calculate/full-time/confirm-ft-noTicket.handler";
 
 @Injectable()
 
@@ -38,6 +39,7 @@ export class CalculateService {
   //calc-FT
   #verifyFullTimeHandler = new VerifyFulltimeHandler();
   #confirmFullTimeHandler = new ConfirmFullTimeHandler();
+  #confirmFtNoTicketHandler = new ConfirmFtNoTicketHandler();
   #verifyScoreConfirmFullTimeHandler = new VerifyScoreConfirmHandler();
 
   //calc-ALL
@@ -77,7 +79,8 @@ export class CalculateService {
 
     //calc-FT
     this.#verifyFullTimeHandler.setNextHandler(this.#verifyScoreConfirmFullTimeHandler)
-    .setNextHandler(this.#confirmFullTimeHandler)
+    .setNextHandler(this.#confirmFullTimeHandler) 
+    .setNextHandler(this.#confirmFtNoTicketHandler)
     .setNextHandler(this.#calculateHandler);
 
     //calc-ALL
