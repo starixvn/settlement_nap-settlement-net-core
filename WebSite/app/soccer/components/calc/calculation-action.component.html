@@ -25,7 +25,6 @@
     <tr>
       @if(permission.isLeader) {
       <th scope="col"> SBO <span class="icon-copy" (click)="copyScore()"></span></th>
-
       }
       <th scope="col" colspan="2"> Screenshot </th>
     </tr>
@@ -55,13 +54,13 @@
       <td>
         <input type="text" myOnlyInteger tabindex="1" [ngClass]="{'warning':matchDetail.isWarningHalfTimeHomeScore}"
           [disabled]="!permission.isLeader || (!halfTimeResult.checked  || halfTimeResult.resultSettingData.isHoldResult)"
-          [(ngModel)]="traderHtResult.homeValue" (ngModelChange)="scoreChanged(traderHtResult)" />
+          [(ngModel)]="traderHtResult.homeValue" (ngModelChange)="changeTraderScore(traderHtResult)" />
       </td>
 
       <td>
         <input type="text" myOnlyInteger tabindex="2" [ngClass]="{'warning':matchDetail.isWarningHalfTimeAwayScore}"
           [disabled]="!permission.isLeader || (!halfTimeResult.checked  || halfTimeResult.resultSettingData.isHoldResult)"
-          [(ngModel)]="traderHtResult.awayValue" (ngModelChange)="scoreChanged(traderHtResult)" />
+          [(ngModel)]="traderHtResult.awayValue" (ngModelChange)="changeTraderScore(traderHtResult)" />
       </td>
       <!-- SBO -->
       <td [ngClass]="{ mismatched: halfTimeResult.isMismatch}">
@@ -128,12 +127,12 @@
       <!-- Outside -->
       <td>
         <input type="text" myOnlyInteger tabindex="2"
-          [disabled]="!halfTimeResult.checked  || halfTimeResult.resultSettingData.isHoldResult"
+          [disabled]="!fullTimeResult.checked  || fullTimeResult.resultSettingData.isHoldResult"
           [(ngModel)]="outsideFtResult.homeValue" (ngModelChange)="changeOutsideScore(outsideFtResult)" />
       </td>
       <td>
         <input type="text" myOnlyInteger tabindex="2"
-          [disabled]="!halfTimeResult.checked  || halfTimeResult.resultSettingData.isHoldResult"
+          [disabled]="!fullTimeResult.checked  || fullTimeResult.resultSettingData.isHoldResult"
           [(ngModel)]="outsideFtResult.awayValue" (ngModelChange)="changeOutsideScore(outsideFtResult)" />
       </td>
 

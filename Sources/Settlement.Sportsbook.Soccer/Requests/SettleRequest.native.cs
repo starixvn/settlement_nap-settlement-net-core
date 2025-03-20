@@ -8,4 +8,6 @@ public class SettleRequest : SettleBaseRequest, IRequest<Result>
 
     public string ChildMatchIds { get; set; }
     public bool isFantasyMatch { get; set; }
+
+    public List<ResultDetail> ResultDetails { get; set; }
 }

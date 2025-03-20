@@ -8,7 +8,7 @@ import * as _ from "lodash";
 import { Language } from "../../shared/language.native";
 import { ResourceIds } from "../constants";
 import { ResultDetail } from "../models";
-import {  SettlementStatusId } from "../../shared/constants";
+import {  ScoreSourceType, SettlementStatusId } from "../../shared/constants";
 
 @Injectable()
 export class CalculateStorage implements Storage {
@@ -26,6 +26,8 @@ export class CalculateStorage implements Storage {
 
   #outsideHtResult: ResultDetail;
   #outsideFtResult: ResultDetail;
+  #traderHtResult: ResultDetail;
+  #traderFtResult: ResultDetail;
 
   match = this.#match.asReadonly();
   readonly dialogMessage = new ModalDialogMessage(Language.confirmationBox);
@@ -87,15 +89,11 @@ export class CalculateStorage implements Storage {
   }
 
   get traderHtResult() {
-    return this.getHalfTimeResult().resultStatusId === 3 
-      ? this.getHalfTimeResult()
-      : new ResultDetail()
+    return this.#traderHtResult
   }
 
   get traderFtResult() {
-    return this.getFullTimeResult().resultStatusId === 3 
-    ? this.getFullTimeResult()
-    : new ResultDetail()
+    return this.#traderFtResult
   }
 
   // Setters
@@ -123,14 +121,21 @@ export class CalculateStorage implements Storage {
     this.#match.set(match);
     const { resultDetails } = this.#match();
     this.#matchDetail = this.#match().matchDetail;
-    this.#halfTimeResult = this.#match().resultDetails.find((result) => result.resourceId === ResourceIds.halfTime && result.sourceId === 0);
-    this.#fullTimeResult = this.#match().resultDetails.find((result) => result.resourceId === ResourceIds.fullTime && result.sourceId === 0);
+    this.#halfTimeResult = this.#match().resultDetails
+      .find((result) => result.resourceId === ResourceIds.halfTime && result.sourceId === ScoreSourceType.emptySource);
+    this.#fullTimeResult = this.#match().resultDetails
+      .find((result) => result.resourceId === ResourceIds.fullTime && result.sourceId === ScoreSourceType.emptySource);
     this.#isApplyHedgeMatch = this.#match().hedgeMatchDetail != null && !this.#match().hedgeMatchDetail.isUndecided;
     this.#halfTimeResult.resourceName = "HT"; 
     this.#fullTimeResult.resourceName = "FT";
 
-    this.#outsideHtResult = resultDetails.find(x => x.sourceId === 1001 && x.resourceId === ResourceIds.halfTime);
-    this.#outsideFtResult = resultDetails.find(x => x.sourceId === 1001 && x.resourceId === ResourceIds.fullTime);
+    console.log(resultDetails)
+
+    this.#outsideHtResult = resultDetails.find(x => x.sourceId === ScoreSourceType.screenshot && x.resourceId === ResourceIds.halfTime);
+    this.#outsideFtResult = resultDetails.find(x => x.sourceId === ScoreSourceType.screenshot && x.resourceId === ResourceIds.fullTime);
+
+    this.#traderHtResult = resultDetails.find(x => x.sourceId === ScoreSourceType.trader && x.resourceId === ResourceIds.halfTime);
+    this.#traderFtResult = resultDetails.find(x => x.sourceId === ScoreSourceType.trader && x.resourceId === ResourceIds.fullTime);
 
   }
   

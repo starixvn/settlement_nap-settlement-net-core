@@ -13,14 +13,16 @@ export class ConfirmFtNoTicketHandler extends AbstractHandler {
     const halfTimeResult = storage.getHalfTimeResult();
     const confirmMessage = `${Language.soccer.confirmAutoSelectFtNoTicket}`;
     
-    if(!halfTimeResult.checked && matchDetail.ftStatus === TicketStatusText.noTicket) {
-      storage.setConfirmMessage(confirmMessage);
-      this.#messageBoxService.confirm(storage.getConfirmMessage(), () => {
-        halfTimeResult.homeValue = '0';
-        halfTimeResult.awayValue = '0';
-        halfTimeResult.checked = true;
-        super.handle(storage);
-      });
-    }
+    // if(!halfTimeResult.checked && matchDetail.ftStatus === TicketStatusText.noTicket) {
+    //   storage.setConfirmMessage(confirmMessage);
+    //   this.#messageBoxService.confirm(storage.getConfirmMessage(), () => {
+    //     halfTimeResult.homeValue = '0';
+    //     halfTimeResult.awayValue = '0';
+    //     halfTimeResult.checked = true;
+    //     super.handle(storage);
+    //   });
+    // }
+    super.handle(storage);
+    console.log('ConfirmFtNoTicketHandler')
   }
 }

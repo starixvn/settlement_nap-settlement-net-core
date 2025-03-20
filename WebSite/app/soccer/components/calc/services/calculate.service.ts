@@ -66,6 +66,8 @@ export class CalculateService {
   #calculateHandler = new CalculateHandler();
   #storage = inject(CalculateStorage);
 
+  
+
   constructor(){
   
     this.#matchSettledHandler
@@ -79,9 +81,9 @@ export class CalculateService {
 
     //calc-FT
     this.#verifyFullTimeHandler.setNextHandler(this.#verifyScoreConfirmFullTimeHandler)
-    .setNextHandler(this.#confirmFullTimeHandler) 
-    .setNextHandler(this.#confirmFtNoTicketHandler)
-    .setNextHandler(this.#calculateHandler);
+      .setNextHandler(this.#confirmFullTimeHandler) 
+      .setNextHandler(this.#confirmFtNoTicketHandler)
+      .setNextHandler(this.#calculateHandler);
 
     //calc-ALL
     this.#verifyAllHandler.setNextHandler(this.#verifyScoreConfirmHandler)

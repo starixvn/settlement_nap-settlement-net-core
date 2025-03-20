@@ -31,40 +31,55 @@ public class CalculateServiceImp(
     ICreateCriteriaService createCriteriaService,
     ScaleOutSettleService scaleOutSettleService,
     LogService logService,
-    IMatchService matchService) : ICalculateService
+    IMatchService matchService,
+    INapSession napSession,
+     IHttpContextAccessor accessor) : ICalculateService
 {
     public async Task<Result> Calculate(SettleRequest request)
     {
         var criteria = createCriteriaService.CreateCalculateCriteria(request);
         var matchChecking = await ValidateBeforeExecute(criteria);
 
-        if (matchChecking.ErrCode > 0)
-        {
-            return matchChecking;
-        }
+        //if (matchChecking.ErrCode > 0)
+        //{
+        //    return matchChecking;
+        //}
 
-        var validateFantasyMatchResult = await ValidateFantasyMatch(request);
-        if (validateFantasyMatchResult.ErrCode > 0)
-        {
-            return validateFantasyMatchResult;
-        }
+        //var validateFantasyMatchResult = await ValidateFantasyMatch(request);
+        //if (validateFantasyMatchResult.ErrCode > 0)
+        //{
+        //    return validateFantasyMatchResult;
+        //}
 
-        var match = CreatedMatch(criteria);
-        var insertLogCriteria = createCriteriaService.CreateCalculateLogCriteria(request);
+        //var match = CreatedMatch(criteria);
+        //var insertLogCriteria = createCriteriaService.CreateCalculateLogCriteria(request);
 
-        await WriteLog(match, insertLogCriteria);
+        //await WriteLog(match, insertLogCriteria);
 
-        await ExecuteAsync(criteria);
+        //await ExecuteAsync(criteria);
 
-        await RefundChildMatch(criteria);
+        //await RefundChildMatch(criteria);
 
-        if (request.IsApplyHedging)
-        {
-            criteria.MatchId = request.HedgeMatchId;
-            await ExecuteAsync(criteria);
-        }
+        //if (request.IsApplyHedging)
+        //{
+        //    criteria.MatchId = request.HedgeMatchId;
+        //    await ExecuteAsync(criteria);
+        //}
 
         return matchChecking;
+    }
+
+    private async Task SaveOutsideScores(SaveOutsideScoreRequest request)
+    {
+        var criteria = new SaveOutsideScoreCriteria
+        {
+            MatchId = request.MatchId,
+            UserId = napSession.UserId,
+            Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString(),
+
+        };
+
+        await repository.ExecuteAsync(criteria);
     }
 
     public async Task<Result> UncalculateFt(UncalculateFtRequest request)

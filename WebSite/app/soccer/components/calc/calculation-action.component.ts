@@ -38,6 +38,7 @@ export class CalculationActionComponent implements OnInit {
 
   matchDetail: MatchDetail;
   permission: Permission;
+  
   halfTimeResult: ResultDetail;
   fullTimeResult: ResultDetail;
 
@@ -59,6 +60,7 @@ export class CalculationActionComponent implements OnInit {
 
     this.outsideHtResult = this.#storage.outsideHtResult;
     this.outsideFtResult = this.#storage.outsideFtResult;
+    
     this.traderHtResult = this.#storage.traderHtResult;
     this.traderFtResult = this.#storage.traderFtResult;
 
@@ -68,7 +70,6 @@ export class CalculationActionComponent implements OnInit {
     this.scoreChanged(this.fullTimeResult);
 
     this.matchDetail.applyGoalRecord = this.disableGoalRecordCheckbox = this.calculateGoalRecordState(matchDetail);
-    // this.matchDetail.isWarningGoalRecord = true;
   }
 
   private disabledInputScore() {
@@ -144,6 +145,10 @@ export class CalculationActionComponent implements OnInit {
     ) {
       this.#storage.setFullTimeScore(resultDetail.homeValue, resultDetail.awayValue);
     }
+  }
+
+  changeTraderScore(resultDetail: ResultDetail) {
+    
   }
 
   isValidScore(resultDetail: ResultDetail) {
