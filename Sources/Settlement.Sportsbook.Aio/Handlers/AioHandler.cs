@@ -84,7 +84,7 @@ public class AioHandler(
 
     public async Task<bool> Handle(UpdateSettlementResultHistoryStatusRequest request, CancellationToken cancellationToken)
     {
-        if (request.SportType is not SportType.Tennis or SportType.TableTennis)
+        if (request.SportType == SportType.Tennis || request.SportType == SportType.TableTennis)
         {
             return true;
         }
