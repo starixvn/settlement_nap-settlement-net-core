@@ -434,7 +434,7 @@ describe('HalfTimeFullTimeCalculationComponent', () => {
       jest.spyOn(verificationService, 'isScoreFTInconsistent');
       jest.spyOn(verificationService, 'isScoreMismatched');
 
-      component.changeScore();
+      component.changeScore(fullTime);
 
       expect(halfTimeFullTimeService.sumScore).toHaveBeenCalled();
       expect(verificationService.isScoreFTInconsistent).toHaveBeenCalled();
@@ -453,7 +453,7 @@ describe('HalfTimeFullTimeCalculationComponent', () => {
       jest.spyOn(halfTimeFullTimeService, 'sumScore').mockReturnValue(resultDetail);
       jest.spyOn(verificationService, 'isScoreMismatched');
    
-      component.changeScore();
+      component.changeScore(fullTime);
 
       expect(component.isScoreFTInconsistent).toBeFalsy();
       expect(fullTime.homeValue).toEqual("1");
