@@ -1,6 +1,6 @@
 ﻿using System.Xml.Serialization;
 
-namespace Settlement.Sportsbook.Aio.Models;
+namespace Settlement.Core.Models;
 
 [XmlRoot("Sources")]
 public class SaveScoreResources<T>
