@@ -55,6 +55,18 @@ export class CalculationActionComponent implements OnInit {
     const { matchDetail } = this.#storage.match();
     this.matchDetail = matchDetail;
 
+    this.setState();
+    
+    this.autoSetHtFinalResult();
+    this.autoSetFtFinalResult();
+
+    this.scoreChanged(this.halfTimeResult);
+    this.scoreChanged(this.fullTimeResult);
+
+    this.matchDetail.applyGoalRecord = this.disableGoalRecordCheckbox = this.calculateGoalRecordState(matchDetail);
+  }
+
+  private setState() {
     this.halfTimeResult = this.#storage.getHalfTimeResult();
     this.fullTimeResult = this.#storage.getFullTimeResult();
 
@@ -66,14 +78,31 @@ export class CalculationActionComponent implements OnInit {
 
     this.halfTimeResult.resultSettingData.iconHoldResult = this.getResultSettingIcon(this.halfTimeResult);
     this.fullTimeResult.resultSettingData.iconHoldResult = this.getResultSettingIcon(this.fullTimeResult);
-    this.scoreChanged(this.halfTimeResult);
-    this.scoreChanged(this.fullTimeResult);
-
-    this.matchDetail.applyGoalRecord = this.disableGoalRecordCheckbox = this.calculateGoalRecordState(matchDetail);
   }
+
 
   private disabledInputScore() {
     return !this.permission.isLeader
+  }
+
+  private autoSetHtFinalResult() {
+    const [valid, validResult] = this.#verifyScoreGoalService.tryGetValidResult(this.outsideHtResult,[this.traderHtResult,this.#storage.providerHtResult]);
+    if(valid && !this.#verifyScoreGoalService.isHalfTimeSettled(this.matchDetail)) {
+      this.#storage.setHaftTimeScore(validResult.homeValue,validResult.awayValue);
+    } 
+
+    if(!valid && !this.#verifyScoreGoalService.isHalfTimeSettled(this.matchDetail)) {
+      this.#storage.setHaftTimeScore("","");
+    }
+  }
+
+  private autoSetFtFinalResult() {
+    const [valid, validResult] = this.#verifyScoreGoalService.tryGetValidResult(this.outsideFtResult,[this.traderFtResult,this.#storage.providerFtResult]);
+    if(valid && !this.#verifyScoreGoalService.isFullTimeSettled(this.matchDetail)) {
+      this.#storage.setFullTimeScore(validResult.homeValue,validResult.awayValue);
+    } else {
+      this.#storage.setFullTimeScore("","");
+    }
   }
 
   private calculateGoalRecordState(matchDetail: MatchDetail): boolean {
@@ -121,38 +150,30 @@ export class CalculationActionComponent implements OnInit {
 
     resultDetail.isMismatch = this.checkMismatch(homeExScore, awayExScore, homeValue, awayValue);
 
+    if(isHalfTime) {
+      this.halfTimeResult.isMismatch = this.isMismatched(resultDetail);
+    }  else {
+      this.fullTimeResult.isMismatch = this.isMismatched(resultDetail); 
+    }
+
     this.#scoreService.changeResultState();
   }
 
-  changeOutsideScore(resultDetail: ResultDetail) {
-    const settledResultStatus = [ResultStatusId.AutoCompleted, ResultStatusId.ManualCompleted];
-    if(!this.isValidScore(resultDetail)) {
-      return;
-    }
-
-    if(resultDetail.resourceId === ResourceIds.halfTime
-      && !settledResultStatus.includes(this.halfTimeResult.resultStatusId)
-      && ((resultDetail.homeValue === this.traderHtResult.homeValue && resultDetail.awayValue === this.traderHtResult.awayValue)
-      || (resultDetail.homeValue === this.matchDetail.exHTHomeScore && resultDetail.awayValue === this.matchDetail.exHTAwayScore))
-    ) {
-      this.#storage.setHaftTimeScore(resultDetail.homeValue, resultDetail.awayValue);
-    }
-
-    if(resultDetail.resourceId === ResourceIds.fullTime
-      && !settledResultStatus.includes(this.fullTimeResult.resultStatusId)
-      && ((resultDetail.homeValue === this.traderFtResult.homeValue && resultDetail.awayValue === this.traderFtResult.awayValue)
-      || (resultDetail.homeValue === this.matchDetail.exFTHomeScore && resultDetail.awayValue === this.matchDetail.exFTAwayScore))
-    ) {
-      this.#storage.setFullTimeScore(resultDetail.homeValue, resultDetail.awayValue);
+  changeConfirmScore(resultDetail: ResultDetail) {
+    if(resultDetail.resourceId === ResourceIds.halfTime) {
+      this.autoSetHtFinalResult();
+      this.halfTimeResult.isMismatch = this.isMismatched(resultDetail);
+    } else {
+      this.autoSetFtFinalResult();
+      this.fullTimeResult.isMismatch = this.isMismatched(resultDetail);
     }
   }
-
-  changeTraderScore(resultDetail: ResultDetail) {
-    
-  }
-
-  isValidScore(resultDetail: ResultDetail) {
-    return !_.isEmpty(resultDetail.homeValue) && !_.isEmpty(resultDetail.awayValue);
+  private isMismatched(resultDetail: ResultDetail) {
+    const isHalfTime = resultDetail.resourceId === ResourceIds.halfTime;
+    const results =  isHalfTime 
+      ? [this.halfTimeResult,this.outsideHtResult,this.traderFtResult,this.#storage.providerHtResult] 
+      : [this.fullTimeResult,this.outsideFtResult,this.traderFtResult,this.#storage.providerFtResult];
+    return this.#verifyScoreGoalService.isMismatched(results);
   }
 
   calculate() {

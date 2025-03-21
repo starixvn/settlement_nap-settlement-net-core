@@ -33,10 +33,14 @@ export class ScoreService {
               resultDetails.forEach(resultDetail => {
                      if (resultDetail.settlementStatusId === SettlementStatusId.Calculated) {
                             resultDetail.resultState = 'calculated';
-                     } else if (resultDetail.settlementStatusId === SettlementStatusId.Running || isNull(resultDetail.settlementStatusId)) {
+                            return;
+                     }  
+                     
+                     if (resultDetail.settlementStatusId === SettlementStatusId.Running || isNull(resultDetail.settlementStatusId)) {
                             resultDetail.resultState = '';
                      } else {
                             resultDetail.resultState = 'refunded';
+                            return;
                      }
        
                      if (resultDetail.isMismatch || matchDetail.isScoreInconsistent) {

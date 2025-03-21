@@ -1,11 +1,13 @@
 ﻿namespace Settlement.Sportsbook.Soccer.Services.GetMatch;
 
+using System.Threading.Tasks;
 using AutoMapper;
 using Criteria;
 using Fanex.Data.Repository;
 using Models;
 using Requests;
 using Settlement.Core.Constants;
+using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Core.Services.SpecificService;
@@ -77,7 +79,7 @@ public class MatchServiceImp(
         SetNormalResults(matchDetail, resultDetails);
 
         SetTraderResults(resultDetails);
-        SetOutsideResults(resultDetails);
+        await SetOutsideResults(matchDetail.MatchId, resultDetails);
 
         var goalIconQuery = GoalIconQuery(matchDetail);
         matchDetail.GoalIcon = goalIconService.GetGoalIcon(goalIconQuery);
@@ -108,6 +110,21 @@ public class MatchServiceImp(
             HedgeMatchDetail = hedgeMatchDetail,
             Permission = permissionService.Permission
         };
+    }
+
+    private async Task<List<ResultDetail>> GetOutsideSources(int matchId)
+    {
+        var criteria = new GetExternalResultDetailsCriteria
+        {
+            MatchId = matchId
+        };
+
+        var results = await repository.FetchAsync<ResultDetail>(criteria);
+
+        return results
+            .Where(x => x.SourceId == SourceType.Screenshot)
+            .ToList();
+
     }
 
     public async Task<Match> GetMatchRefund(GetMatchRequest request)
@@ -305,16 +322,28 @@ public class MatchServiceImp(
         return listMatch.ToList();
     }
 
-    private void SetOutsideResults(List<ResultDetail> resultDetails)
+    private async Task SetOutsideResults(int matchId, List<ResultDetail> resultDetails)
     {
-        if (!resultDetails.Exists(x => x.ResourceId == ResourceType.Halftime && x.SourceId == SourceType.Screenshot))
-        {
-            resultDetails.Add(new ResultDetail { ResourceId = ResourceType.Halftime, SourceId = SourceType.Screenshot, SourceName = "Screenshot" });
-        }
+        var outsideResults = await GetOutsideSources(matchId);
+        var htResult = outsideResults.Find(result => result.ResourceId == ResourceType.Halftime);
+        var ftResult = outsideResults.Find(result => result.ResourceId == ResourceType.Final);
 
-        if (!resultDetails.Exists(x => x.ResourceId == ResourceType.Final && x.SourceId == SourceType.Screenshot))
+        resultDetails.Add(new ResultDetail
         {
-            resultDetails.Add(new ResultDetail { ResourceId = ResourceType.Final, SourceId = SourceType.Screenshot, SourceName = "Screenshot" });
-        }
+            ResourceId = ResourceType.Halftime,
+            SourceId = SourceType.Screenshot,
+            SourceName = "Screenshot",
+            HomeValue = htResult?.HomeValue ?? "",
+            AwayValue = htResult?.AwayValue ?? ""
+        });
+
+        resultDetails.Add(new ResultDetail
+        {
+            ResourceId = ResourceType.Final,
+            SourceId = SourceType.Screenshot,
+            SourceName = "Screenshot",
+            HomeValue = ftResult?.HomeValue ?? "",
+            AwayValue = ftResult?.AwayValue ?? "",
+        });
     }
 }

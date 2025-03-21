@@ -28,6 +28,8 @@ export class CalculateStorage implements Storage {
   #outsideFtResult: ResultDetail;
   #traderHtResult: ResultDetail;
   #traderFtResult: ResultDetail;
+  #providerHtResult: ResultDetail;
+  #providerFtResult: ResultDetail;
 
   match = this.#match.asReadonly();
   readonly dialogMessage = new ModalDialogMessage(Language.confirmationBox);
@@ -96,6 +98,14 @@ export class CalculateStorage implements Storage {
     return this.#traderFtResult
   }
 
+  get providerHtResult() {
+    return this.#providerHtResult
+  }
+
+  get providerFtResult() {
+    return this.#providerFtResult;
+  }
+
   // Setters
   setToastrOverlay(toastContainer: ToastContainerDirective) {
     this.toastrService.overlayContainer = toastContainer;
@@ -129,7 +139,6 @@ export class CalculateStorage implements Storage {
     this.#halfTimeResult.resourceName = "HT"; 
     this.#fullTimeResult.resourceName = "FT";
 
-    console.log(resultDetails)
 
     this.#outsideHtResult = resultDetails.find(x => x.sourceId === ScoreSourceType.screenshot && x.resourceId === ResourceIds.halfTime);
     this.#outsideFtResult = resultDetails.find(x => x.sourceId === ScoreSourceType.screenshot && x.resourceId === ResourceIds.fullTime);
@@ -137,6 +146,8 @@ export class CalculateStorage implements Storage {
     this.#traderHtResult = resultDetails.find(x => x.sourceId === ScoreSourceType.trader && x.resourceId === ResourceIds.halfTime);
     this.#traderFtResult = resultDetails.find(x => x.sourceId === ScoreSourceType.trader && x.resourceId === ResourceIds.fullTime);
 
+    this.#providerHtResult = resultDetails.find(x => x.sourceId === ScoreSourceType.Sbo && x.resourceId === ResourceIds.halfTime);
+    this.#providerFtResult = resultDetails.find(x => x.sourceId === ScoreSourceType.Sbo && x.resourceId === ResourceIds.fullTime);
   }
   
 
@@ -148,6 +159,14 @@ export class CalculateStorage implements Storage {
   setFullTimeScore(homeScore: string, awayScore: string) {
     this.#fullTimeResult.homeValue = homeScore;
     this.#fullTimeResult.awayValue = awayScore;
+  }
+
+  setFinalScore(resourceId: string, homeScore: string, awayScore: string) {
+    if(resourceId === ResourceIds.halfTime) {
+      this.setHaftTimeScore(homeScore,awayScore);
+    } else {
+      this.setFullTimeScore(homeScore,awayScore);
+    }
   }
 
   setInstantScore(score: UndoChecking) {

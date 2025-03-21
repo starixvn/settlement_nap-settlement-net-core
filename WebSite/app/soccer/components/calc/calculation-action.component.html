@@ -51,16 +51,16 @@
       </td>
       <!-- trader -->
       @if(permission.isLeader) {
-      <td>
+      <td [ngClass]="{ mismatched: halfTimeResult.isMismatch}">
         <input type="text" myOnlyInteger tabindex="1" [ngClass]="{'warning':matchDetail.isWarningHalfTimeHomeScore}"
           [disabled]="!permission.isLeader || (!halfTimeResult.checked  || halfTimeResult.resultSettingData.isHoldResult)"
-          [(ngModel)]="traderHtResult.homeValue" (ngModelChange)="changeTraderScore(traderHtResult)" />
+          [(ngModel)]="traderHtResult.homeValue" (ngModelChange)="changeConfirmScore(traderHtResult)" />
       </td>
 
-      <td>
+      <td [ngClass]="{ mismatched: halfTimeResult.isMismatch}">
         <input type="text" myOnlyInteger tabindex="2" [ngClass]="{'warning':matchDetail.isWarningHalfTimeAwayScore}"
           [disabled]="!permission.isLeader || (!halfTimeResult.checked  || halfTimeResult.resultSettingData.isHoldResult)"
-          [(ngModel)]="traderHtResult.awayValue" (ngModelChange)="changeTraderScore(traderHtResult)" />
+          [(ngModel)]="traderHtResult.awayValue" (ngModelChange)="changeConfirmScore(traderHtResult)" />
       </td>
       <!-- SBO -->
       <td [ngClass]="{ mismatched: halfTimeResult.isMismatch}">
@@ -68,22 +68,22 @@
       </td>
       }
       <!-- Outside -->
-      <td>
+      <td [ngClass]="{ mismatched: halfTimeResult.isMismatch}">
         <input type="text" myOnlyInteger tabindex="2"
           [disabled]="!halfTimeResult.checked  || halfTimeResult.resultSettingData.isHoldResult"
-          [(ngModel)]="outsideHtResult.homeValue" (ngModelChange)="changeOutsideScore(outsideHtResult)" />
+          [(ngModel)]="outsideHtResult.homeValue" (ngModelChange)="changeConfirmScore(outsideHtResult)" />
       </td>
-      <td>
+      <td [ngClass]="{ mismatched: halfTimeResult.isMismatch}">
         <input type="text" myOnlyInteger tabindex="2"
           [disabled]="!halfTimeResult.checked  || halfTimeResult.resultSettingData.isHoldResult"
-          [(ngModel)]="outsideHtResult.awayValue" (ngModelChange)="changeOutsideScore(outsideHtResult)" />
+          [(ngModel)]="outsideHtResult.awayValue" (ngModelChange)="changeConfirmScore(outsideHtResult)" />
       </td>
 
-      <td>
+      <td [ngClass]="{ mismatched: halfTimeResult.isMismatch}">
         <input id="final-checkbox" type="checkbox" [(ngModel)]="halfTimeResult.checked"
           [disabled]="halfTimeResult.resultSettingData.isHoldResult" (ngModelChange)="selectResult()" />
       </td>
-      <td>
+      <td [ngClass]="{ mismatched: halfTimeResult.isMismatch}">
         <div [ngClass]="halfTimeResult.resultSettingData.iconHoldResult" (click)="isChangeSetting(halfTimeResult)">
         </div>
       </td>
@@ -106,16 +106,16 @@
       </td>
       <!-- trader -->
       @if(permission.isLeader) {
-      <td>
+      <td [ngClass]="{ mismatched: fullTimeResult.isMismatch}">
         <input type="text" myOnlyInteger tabindex="1" [ngClass]="{'warning':matchDetail.isWarningHalfTimeHomeScore}"
           [disabled]="!permission.isLeader || (!fullTimeResult.checked  || fullTimeResult.resultSettingData.isHoldResult)"
-          [(ngModel)]="traderFtResult.homeValue" (ngModelChange)="scoreChanged(traderFtResult)" />
+          [(ngModel)]="traderFtResult.homeValue" (ngModelChange)="changeConfirmScore(traderFtResult)" />
       </td>
 
-      <td>
+      <td [ngClass]="{ mismatched: fullTimeResult.isMismatch}">
         <input type="text" myOnlyInteger tabindex="2" [ngClass]="{'warning':matchDetail.isWarningHalfTimeAwayScore}"
           [disabled]="!permission.isLeader || (!fullTimeResult.checked  || fullTimeResult.resultSettingData.isHoldResult)"
-          [(ngModel)]="traderFtResult.awayValue" (ngModelChange)="scoreChanged(traderFtResult)" />
+          [(ngModel)]="traderFtResult.awayValue" (ngModelChange)="changeConfirmScore(traderFtResult)" />
       </td>
 
 
@@ -125,23 +125,23 @@
       }
 
       <!-- Outside -->
-      <td>
+      <td [ngClass]="{ mismatched: fullTimeResult.isMismatch}">
         <input type="text" myOnlyInteger tabindex="2"
           [disabled]="!fullTimeResult.checked  || fullTimeResult.resultSettingData.isHoldResult"
-          [(ngModel)]="outsideFtResult.homeValue" (ngModelChange)="changeOutsideScore(outsideFtResult)" />
+          [(ngModel)]="outsideFtResult.homeValue" (ngModelChange)="changeConfirmScore(outsideFtResult)" />
       </td>
-      <td>
+      <td [ngClass]="{ mismatched: fullTimeResult.isMismatch}">
         <input type="text" myOnlyInteger tabindex="2"
           [disabled]="!fullTimeResult.checked  || fullTimeResult.resultSettingData.isHoldResult"
-          [(ngModel)]="outsideFtResult.awayValue" (ngModelChange)="changeOutsideScore(outsideFtResult)" />
+          [(ngModel)]="outsideFtResult.awayValue" (ngModelChange)="changeConfirmScore(outsideFtResult)" />
       </td>
 
-      <td>
+      <td [ngClass]="{ mismatched: fullTimeResult.isMismatch}">
         <input id="final-checkbox" type="checkbox" [(ngModel)]="fullTimeResult.checked"
           [disabled]="halfTimeResult.resultSettingData.isHoldResult || fullTimeResult.resultSettingData.isHoldResult"
           (ngModelChange)="selectResult()" />
       </td>
-      <td>
+      <td [ngClass]="{ mismatched: fullTimeResult.isMismatch}">
         <div [ngClass]="fullTimeResult.resultSettingData.iconHoldResult" (click)="isChangeSetting(fullTimeResult)">
         </div>
       </td>

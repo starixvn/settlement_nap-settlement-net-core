@@ -7,7 +7,7 @@ import { ResultDetail } from "../../../models";
 import { ResourceIds } from '../../../constants';
 
 @Injectable()
-export class VerifyScoreGoalService extends VerificationBaseService{
+export class VerifyScoreGoalService extends VerificationBaseService {
     public isSettledFirstHalf(betStatus: string) {
         return betStatus.includes(EventStatus.refundHalftime)
             || betStatus.includes(`${EventStatus.refund};`) || betStatus.includes(EventStatus.abandonedFirstHalf);
@@ -147,7 +147,32 @@ export class VerifyScoreGoalService extends VerificationBaseService{
         return !this.isEmptyScore(home) && !this.isEmptyScore(away);
     }
 
+    public isValidResult(resultDetail: ResultDetail) {
+        return !this.isEmptyScore(resultDetail.homeValue) && !this.isEmptyScore(resultDetail.awayValue);
+    }
+
     public verifyScoreForChildMatch(fulltimeResult: ResultDetail, selectedChildMatches: ChildMatch[]) {
         return selectedChildMatches.length > 0 && _.isEqual(fulltimeResult.homeValue?.toString(), fulltimeResult.awayValue?.toString());
+    }
+
+    public tryGetValidResult(primaryResult: ResultDetail, resultDetails: ResultDetail[]): [boolean, ResultDetail | undefined] {
+        if (!this.isValidResult(primaryResult)) {
+            return [false, undefined];
+        }
+
+        const filteredResults = [primaryResult, ...resultDetails]
+            .filter(result => result && result.resourceId === primaryResult.resourceId)
+            .filter(result => !_.isEmpty(result.homeValue) && !_.isEmpty(result.awayValue));
+        const uniqueResults = _.uniqWith(filteredResults, (a, b) =>
+            a.homeValue === b.homeValue && a.awayValue === b.awayValue
+        );
+
+        return [uniqueResults.length < filteredResults.length, uniqueResults[0]];
+    }
+
+    public isMismatched(resultDetails: ResultDetail[]) {
+        const filteredResults = resultDetails.filter(result => result && !_.isEmpty(result.homeValue) && !_.isEmpty(result.awayValue));
+        const isDifferent = _.uniqWith(filteredResults, (a, b) => a.homeValue === b.homeValue && a.awayValue === b.awayValue).length > 1;
+        return isDifferent;
     }
 }
