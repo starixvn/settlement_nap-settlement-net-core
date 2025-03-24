@@ -206,6 +206,15 @@ export class CalculateStorage implements Storage {
     this.#matchDetail.isWarningFinalAwayScore = false;
     this.#matchDetail.isWarningFinalHomeScore = false;
     this.#matchDetail.isWarningGoalRecord = false;
+
+    this.traderFtResult.isHomeValueWarning = false;
+    this.traderFtResult.isAwayValueWarning = false;
+    this.traderHtResult.isHomeValueWarning = false;
+    this.traderFtResult.isAwayValueWarning = false;
+
+    this.traderFtResult.isInvalidValue = false;
+    this.traderHtResult.isInvalidValue = false;
+    
   }
 
   changeScore() {

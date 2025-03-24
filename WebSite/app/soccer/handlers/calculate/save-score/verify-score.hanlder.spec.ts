@@ -1,4 +1,4 @@
-import { VerifyScoreHandler } from './verify-score.hanlder';
+import { VerifyTraderScoreHandler } from './verify-score.hanlder';
 import { VerifyScoreGoalService } from '../../../components/calc/services/verify-score-goal.service';
 import { Language } from '../../../../shared/language.native';
 import { ResultDetail } from '../../../models';
@@ -13,7 +13,7 @@ import { AbstractHandler } from '../../abstract.handler.native';
 import { HttpClientModule } from '@angular/common/http';
 
 describe('VerifyScoreHandler', () => {
-  let verifyScoreHandler: VerifyScoreHandler;
+  let verifyScoreHandler: VerifyTraderScoreHandler;
   let verifyScoreGoalService: VerifyScoreGoalService;
   let storage: CalculateStorage;
 
@@ -31,7 +31,7 @@ describe('VerifyScoreHandler', () => {
     TestBed.configureTestingModule({
        imports: [HttpClientModule, ToastrModule.forRoot()],
       providers: [
-        VerifyScoreHandler,
+        VerifyTraderScoreHandler,
         VerifyScoreGoalService,
         VerifyActionService,
         CalculateStorage,
@@ -40,7 +40,7 @@ describe('VerifyScoreHandler', () => {
       ]
     });
 
-    verifyScoreHandler = TestBed.inject(VerifyScoreHandler);
+    verifyScoreHandler = TestBed.inject(VerifyTraderScoreHandler);
     verifyScoreGoalService = TestBed.inject(VerifyScoreGoalService);
     storage = TestBed.inject(CalculateStorage);
   });

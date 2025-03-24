@@ -6,7 +6,7 @@ import { ResultDetail } from '../../models';
 import { CommonModule } from '@angular/common';
 import { ResultSettingQuery } from '../../../shared/models';
 import { Language } from '../../../shared/language.native';
-import { ResultSettingType, ResultStatusId, SettlementStatusId } from '../../../shared/constants';
+import { ResultSettingType, ScoreSourceType } from '../../../shared/constants';
 import { AioService, MessageBoxService } from '../../../shared/services';
 import * as _ from 'lodash';
 import { CalculateStorage } from '../../storage/calculate.storage';
@@ -160,6 +160,8 @@ export class CalculationActionComponent implements OnInit {
   }
 
   changeConfirmScore(resultDetail: ResultDetail) {
+    this.#storage.clear();
+
     if(resultDetail.resourceId === ResourceIds.halfTime) {
       this.autoSetHtFinalResult();
       this.halfTimeResult.isMismatch = this.isMismatched(resultDetail);
@@ -167,11 +169,31 @@ export class CalculationActionComponent implements OnInit {
       this.autoSetFtFinalResult();
       this.fullTimeResult.isMismatch = this.isMismatched(resultDetail);
     }
+
+    if(resultDetail.sourceId === ScoreSourceType.trader) {
+      this.traderFtResult.isInvalidValue = this.#verifyScoreGoalService
+        .isHtFtNotConsistent(this.traderHtResult,this.traderFtResult);
+      this.traderHtResult.isInvalidValue = this.#verifyScoreGoalService
+        .isHtFtNotConsistent(this.traderHtResult,this.traderFtResult);
+    }
+
+    if(resultDetail.sourceId === ScoreSourceType.screenshot) {
+      this.outsideFtResult.isInvalidValue = this.#verifyScoreGoalService
+        .isHtFtNotConsistent(this.outsideHtResult,this.outsideFtResult);
+      this.outsideHtResult.isInvalidValue = this.#verifyScoreGoalService
+        .isHtFtNotConsistent(this.outsideHtResult,this.outsideFtResult);
+    }
+
+    this.#storage.changeScore();
+    this.#scoreService.changeResultState();
   }
+
+
+
   private isMismatched(resultDetail: ResultDetail) {
     const isHalfTime = resultDetail.resourceId === ResourceIds.halfTime;
     const results =  isHalfTime 
-      ? [this.halfTimeResult,this.outsideHtResult,this.traderFtResult,this.#storage.providerHtResult] 
+      ? [this.halfTimeResult,this.outsideHtResult,this.traderHtResult,this.#storage.providerHtResult] 
       : [this.fullTimeResult,this.outsideFtResult,this.traderFtResult,this.#storage.providerFtResult];
     return this.#verifyScoreGoalService.isMismatched(results);
   }

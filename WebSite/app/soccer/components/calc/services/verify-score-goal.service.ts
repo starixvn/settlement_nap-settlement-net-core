@@ -151,6 +151,13 @@ export class VerifyScoreGoalService extends VerificationBaseService {
         return !this.isEmptyScore(resultDetail.homeValue) && !this.isEmptyScore(resultDetail.awayValue);
     }
 
+    public isHtFtNotConsistent(halfTimeResult: ResultDetail, fullTimeResult: ResultDetail) {
+        return this.isValidResult(halfTimeResult) 
+            && this.isValidResult(fullTimeResult) 
+            && (+halfTimeResult.homeValue > +fullTimeResult.homeValue
+            || +halfTimeResult.awayValue > +fullTimeResult.awayValue);
+    }
+
     public verifyScoreForChildMatch(fulltimeResult: ResultDetail, selectedChildMatches: ChildMatch[]) {
         return selectedChildMatches.length > 0 && _.isEqual(fulltimeResult.homeValue?.toString(), fulltimeResult.awayValue?.toString());
     }

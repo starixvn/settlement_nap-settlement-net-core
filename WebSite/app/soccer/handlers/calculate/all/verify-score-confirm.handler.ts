@@ -18,7 +18,7 @@ export class VerifyScoreConfirmHandler extends AbstractHandler {
     const isCalculate = calculateAction === CalculateAction.calculate;
     const halfTimeResult = storage.getHalfTimeResult();
 
-    if (this.halfTimeCompleted(halfTimeResult, isFullTime)) {
+    if (this.halfTimeCompleted(halfTimeResult, isFullTime && !halfTimeResult.checked)) {
       storage.error(Language.soccer.halfTimeNotSettleYet);
       return;
     }

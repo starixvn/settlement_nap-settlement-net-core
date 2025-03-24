@@ -17,7 +17,7 @@ import { ConfirmUncalcFTHandler } from "../../../handlers/calculate/full-time/co
 import { UncalculateFTHandler } from "../../../handlers/calculate/full-time/uncalculate-ft.handler";
 import { CalculateAction } from "../../../../shared/constants";
 import { VerifySettledResultHandler } from "../../../handlers/calculate/save-score/verify-settled-result.handler";
-import { VerifyScoreHandler } from "../../../handlers/calculate/save-score/verify-score.hanlder";
+import { VerifyTraderScoreHandler } from "../../../handlers/calculate/save-score/verify-score.hanlder";
 import { SaveScoreHandler } from "../../../handlers/calculate/save-score/save-score.handler";
 import { VerifyScoreInstantHandler } from "../../../handlers/calculate/uncalc-instant/verify-score-instant.handler";
 import { PushInstantScoreHandler } from "../../../handlers/calculate/uncalc-instant/push-instant-score.handler";
@@ -57,7 +57,7 @@ export class CalculateService {
 
   //Save-Score
   #verifySettledResultHandler = new VerifySettledResultHandler();
-  #verifyScoreHandler = new VerifyScoreHandler();
+  #verifyTraderScoreHandler = new VerifyTraderScoreHandler();
   #saveScoreHandler = new SaveScoreHandler();
 
   #verifyScoreInstant = new VerifyScoreInstantHandler();
@@ -80,9 +80,10 @@ export class CalculateService {
     .setNextHandler(this.#calculateHandler);
 
     //calc-FT
-    this.#verifyFullTimeHandler.setNextHandler(this.#verifyScoreConfirmFullTimeHandler)
-      .setNextHandler(this.#confirmFullTimeHandler) 
+    this.#verifyFullTimeHandler
       .setNextHandler(this.#confirmFtNoTicketHandler)
+      .setNextHandler(this.#verifyScoreConfirmFullTimeHandler)
+      .setNextHandler(this.#confirmFullTimeHandler) 
       .setNextHandler(this.#calculateHandler);
 
     //calc-ALL
@@ -100,7 +101,7 @@ export class CalculateService {
 
      //Save-Score
     this.#verifySettledResultHandler
-    .setNextHandler(this.#verifyScoreHandler)
+    .setNextHandler(this.#verifyTraderScoreHandler)
     .setNextHandler(this.#saveScoreHandler);
 
     this.#verifyScoreInstant.setNextHandler(this.#pushInstantScore);
@@ -125,6 +126,7 @@ export class CalculateService {
   }
 
   calculateFullTime(){
+    console.log("calculateFullTime");
     this.#storage.setCalculateAction(CalculateAction.calculateFullTime);
     this.#verifyFullTimeHandler.handle(this.#storage);
   }

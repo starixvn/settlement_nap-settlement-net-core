@@ -10,7 +10,7 @@ public class CountTicketsRequest : IRequest<CountTicketResponse>
 
 public class TicketGroupCount
 {
-    public int GroupResult { get; set; }
+    public string GroupResult { get; set; }
     public int TotalTicket { get; set; }
 }
 

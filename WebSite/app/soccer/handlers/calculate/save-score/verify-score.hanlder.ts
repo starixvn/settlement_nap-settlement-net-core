@@ -4,13 +4,16 @@ import { AbstractHandler } from '../../abstract.handler.native';
 import { Storage } from '../../../storage/storage.service.native';
 import { inject } from '@angular/core';
 import { ResultDetail } from '../../../models';
-export class VerifyScoreHandler extends AbstractHandler {
+import { ScoreSourceType } from '../../../../shared/constants';
+export class VerifyTraderScoreHandler extends AbstractHandler {
   #verifyScoreGoalService = inject(VerifyScoreGoalService);
   handle(storage: Storage) {
     const { resultDetails } = storage.getMatch();
-    const resultSelected = resultDetails.filter((resultDetail) => resultDetail.checked);  
+    const resultSelected = resultDetails.filter((resultDetail) => resultDetail.checked);
+    const traderResults = resultDetails.filter((resultDetail) => resultDetail.sourceId === ScoreSourceType.trader && resultSelected.some((result) => result.resourceId === resultDetail.resourceId));
+
   
-    if(this.verifyScore(resultSelected)) {
+    if(this.verifyScore(traderResults)) {
       storage.error(Language.warningInputScore);
     } else{
       super.handle(storage);
@@ -26,6 +29,7 @@ export class VerifyScoreHandler extends AbstractHandler {
         resultDetail.isAwayValueWarning = this.#verifyScoreGoalService.isEmptyScore(resultDetail.awayValue);
       }
     });
+    console.log(resultSelected);
 
     return existScoreInvalid;
   }
