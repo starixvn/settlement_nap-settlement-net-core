@@ -333,7 +333,7 @@ export class CalculateActionsComponent implements SportTemplate {
   private async push(query: SettleQuery): Promise<void> {
     const result = await this.aioService.push(query);
     if (result.errCode === 0) {
-      this.updateStatusResultAmendment(this.match.matchDetail, result);    
+      await this.updateStatusResultAmendment(this.match.matchDetail, result);    
       this.hedgeMatch(query);
     } else {
       this.toastrService.error(result.errMsg);
