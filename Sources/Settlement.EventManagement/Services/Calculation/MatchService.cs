@@ -1,13 +1,13 @@
 ﻿namespace Settlement.EventManagement.Services.Calculation;
 
+using System.Security.Cryptography;
+using System.Text;
 using Criteria;
 using Requests;
 using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.EventManagement.Models.Calculation;
-using System.Security.Cryptography;
-using System.Text;
 using Match = Models.Calculation.Match;
 
 public interface MatchService
@@ -47,6 +47,8 @@ public class MatchServiceImp(
             var sourceResultDetail = listResultDetail.Where(m => m.MatchId == match.MatchId && m.SourceId != SourceType.Normal).ToList();
             var currentResultDetail = listResultDetail.Where(m => m.MatchId == match.MatchId && m.SourceId == SourceType.Normal).ToList();
 
+            //TODO
+
             newInfoMatchService.TicketInfo(match);
             match.NewEventStatus = newInfoMatchService.NewEventStatus(match);
             match.EventStatusColor = newInfoMatchService.EventStatusColor(match);
@@ -58,6 +60,8 @@ public class MatchServiceImp(
             match.IsNotConsistentExFtScore = newInfoMatchService.IsInconsistentScore(match.SuspenderFullTime, currentResultDetail, sourceResultDetail, ResourceType.Final);
             match.GoalIcon = newInfoMatchService.GoalIcon(match);
             match.RefDataService = refDataService;
+            match.IsTraderConfirmFt = currentResultDetail.Exists(r => r.ResourceId == ResourceType.Final && r.ResultStatusId == ResultStatus.Confirmed);
+            match.IsTraderConfirmHt = currentResultDetail.Exists(r => r.ResourceId == ResourceType.Halftime && r.ResultStatusId == ResultStatus.Confirmed);
         }
 
         return isAutoPage ? matches : await newInfoMatchService.GetAutoSetting(matches);

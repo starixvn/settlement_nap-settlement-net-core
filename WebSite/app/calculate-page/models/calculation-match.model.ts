@@ -16,4 +16,6 @@ export class CalculationMatch extends Match {
     instantWaitingTime: number;
     goalIcon: GoalIcon;
     childMatchType: number;
+    isTraderConfirmFt: boolean;
+    isTraderConfirmHt: boolean;
 }

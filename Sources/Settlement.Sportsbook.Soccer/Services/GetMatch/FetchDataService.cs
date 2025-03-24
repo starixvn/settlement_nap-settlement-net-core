@@ -21,6 +21,8 @@ public interface IFetchDataService
     public Task<(List<ResultDetailModel>, TicketCounts)> GetEarlyTicketDetails(GetResultDetailEarlyCriteria criteria);
 
     public Task<bool> IsDeterminedHedgeMatch(int matchId);
+
+    Task<CountTicketResponse> CountTickets(int matchId);
 }
 
 public class FetchDateServiceImp(IDynamicRepository repository,
@@ -154,5 +156,37 @@ public class FetchDateServiceImp(IDynamicRepository repository,
         }
 
         return determinedHedgeMatch.IsDeterminedHedgeMatch;
+    }
+
+    public async Task<CountTicketResponse> CountTickets(int matchId)
+    {
+        //TODO
+        var tasks = appSettingsKey.SiteDbServer
+            .Select(server => FetchTicketGroupCounts(matchId, server));
+
+
+        var results = await Task.WhenAll(tasks.ToArray());
+
+        var groupedResults = results
+            .SelectMany(result => result)
+            .GroupBy(ticket => ticket.GroupResult)
+            .Select(group => new TicketGroupCount
+            {
+                GroupResult = group.Key,
+                TotalTicket = group.Sum(y => y.TotalTicket)
+            }).ToList();
+
+        return new CountTicketResponse(groupedResults);
+    }
+
+    private async Task<IEnumerable<TicketGroupCount>> FetchTicketGroupCounts(int matchId, string server)
+    {
+        var criteria = new GetTicketGroupCountCriteria
+        {
+            MatchId = matchId,
+            DbServer = server
+        };
+
+        return await repository.FetchAsync<TicketGroupCount>(criteria);
     }
 }

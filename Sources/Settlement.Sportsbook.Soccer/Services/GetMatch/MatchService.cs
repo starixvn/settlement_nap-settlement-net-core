@@ -33,6 +33,8 @@ public interface IMatchService
     Task<FantasyMatch> GetRelatedMatches(int matchId);
 
     Task<List<ResultDetail>> GetResultDetail(int matchId);
+
+
 }
 
 public class MatchServiceImp(
@@ -346,4 +348,6 @@ public class MatchServiceImp(
             AwayValue = ftResult?.AwayValue ?? "",
         });
     }
+
+
 }

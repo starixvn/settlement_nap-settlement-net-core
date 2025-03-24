@@ -167,6 +167,13 @@ public class Match : BaseMatch
 
     #endregion InstantCalculate
 
+
+    [Key("isTraderConfirmHt")]
+    public bool IsTraderConfirmHt { get; set; }
+
+    [Key("isTraderConfirmFt")]
+    public bool IsTraderConfirmFt { get; set; }
+
     public override bool Equals(object obj)
     {
         return obj is Match match && match.MatchId == MatchId;

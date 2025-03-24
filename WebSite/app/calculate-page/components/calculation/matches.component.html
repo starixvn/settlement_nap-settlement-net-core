@@ -70,8 +70,8 @@
 							<span class="red">&nbsp;(LIVE)</span>
 							}
 						</td>
-						<td class="score">{{match.halfTimeHomeScore ?? '-'}}</td>
-						<td class="final-score score">{{match.finalHomeScore ?? '-'}}</td>
+						<td class="score" [ngClass]="{'trader-confirm': match.isTraderConfirmHt}">{{match.halfTimeHomeScore ?? '-'}}</td>
+						<td class="final-score score" [ngClass]="{'trader-confirm': match.isTraderConfirmHt}">{{match.finalHomeScore ?? '-'}}</td>
 						<td rowspan="2" class="auto-status"
 							[ngClass]="getStatusBackground(match.earlySettleStatus, match.eventStatus)">
 							@if (match.earlySettleStatus.toLowerCase() === 'n/a') {

@@ -3,7 +3,7 @@ import { firstValueFrom } from 'rxjs';
 import { HttpRequestService } from "../../../../shared/services";
 import { InstantCalculationQuery, SettleQuery, UncalculateFullTimeQuery } from "../models/query.model";
 import { Result } from "../../../../shared/models";
-import { Match, MatchDetail, UndoChecking } from "../models/match.model";
+import { Match, MatchDetail, TicketGroupCount, UndoChecking } from "../models/match.model";
 import { ResultDetail } from "../../../models";
 
 @Injectable()
@@ -87,6 +87,14 @@ export class RequestService {
             goalRecord
         };
         const request =  this.httpRequestService.postJson<Result>(query,`${this.soccerApi}/save-score`);
+        return firstValueFrom(request);
+    }
+
+    countTickets(matchId: number) {
+        const query = {
+            matchId
+        };
+        const request = this.httpRequestService.postJson<TicketGroupCount[]>(query, `${this.soccerApi}/count-group-tickets`);
         return firstValueFrom(request);
     }
 }
