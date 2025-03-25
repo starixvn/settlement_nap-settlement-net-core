@@ -238,8 +238,8 @@
     confirmCalculateInconsistent: "WARNING! Insufficient or inconsistent score sources! Are you sure you want to proceed?",
     warningCalculateInconsistent: "WARNING! Insufficient or inconsistent score sources. Please check and try again",
     confirmDrawScore : "WARNING! Are you sure you want to calculate Penalty Match with Draw/Tie outcome?",
-    errorDrawScore: "FT must not be Draw/Tie"
-
+    errorDrawScore: "FT must not be Draw/Tie",
+    errorOTScore: "Failed: Regular Time match should not have OT value. Do you want to clear the value?"
   },
   fantasyMatch: {
     insufficientRelatedMatches: 'WARNING! Cannot continue due to insufficient data from related-matches. Please check fantasy and related matches then try again.',

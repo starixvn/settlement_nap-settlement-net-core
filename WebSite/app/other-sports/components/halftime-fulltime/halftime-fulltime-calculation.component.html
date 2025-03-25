@@ -11,7 +11,7 @@
         <ng-template *ngTemplateOutlet="header"></ng-template>
         <ng-template *ngTemplateOutlet="body"></ng-template>
       </table>
-      
+
       <div *ngIf="permission.isLeader" class='result'>
         <ng-template *ngTemplateOutlet="externalSource"></ng-template>
       </div>
@@ -30,7 +30,8 @@
               {{matchDetail.htStatus}}
             </div>
             <div class="action-button">
-              <button *ngIf="permission.canCalculate" class="button float-left" (click)="calculateHalfTime()">Calculate HT</button>
+              <button *ngIf="permission.canCalculate" class="button float-left" (click)="calculateHalfTime()">Calculate
+                HT</button>
             </div>
           </div>
           <div class="row-1">
@@ -39,16 +40,15 @@
               {{matchDetail.ftStatus}}
             </div>
             <div class="action-button">
-              <button *ngIf="permission.canCalculate" class="button float-left" (click)="calculateFullTime()">Calculate FT</button>
+              <button *ngIf="permission.canCalculate" class="button float-left" (click)="calculateFullTime()">Calculate
+                FT</button>
             </div>
           </div>
         </div>
-       
+
         <div class="row-2">
           <div class="action-button">
-            <button *ngIf="permission.canCalculate"
-              class="button"
-              (click)="calculateAll()">
+            <button *ngIf="permission.canCalculate" class="button" (click)="calculateAll()">
               Calculate All
             </button>
 
@@ -95,7 +95,7 @@
       <td class="home-team-name">{{matchDetail.homeName}}</td>
       <td [ngClass]="[getClass(item)]" *ngFor="let item of resultDetails; let i=index;let last=last">
         <input type="text" myOnlyInteger tabindex="{{i*2 + 1}}" [disabled]="isFinalScoreDisabled(item.resourceId)"
-          [(ngModel)]="item.homeValue" (ngModelChange)="changeScore()" [ngClass]="{
+          [(ngModel)]="item.homeValue" (ngModelChange)="changeScore(item)" [ngClass]="{
             'final-score' : last ,
             'warning' : isErrorOnVerification(item, item.homeValue)}" />
       </td>
@@ -105,7 +105,7 @@
       <td class="away-team-name">{{matchDetail.awayName}}</td>
       <td [ngClass]="[getClass(item)]" *ngFor="let item of resultDetails; let i=index;let last=last">
         <input type="text" myOnlyInteger tabindex="{{i*2 + 2}}" [disabled]="isFinalScoreDisabled(item.resourceId)"
-          [(ngModel)]="item.awayValue" (ngModelChange)="changeScore()" [ngClass]="{
+          [(ngModel)]="item.awayValue" (ngModelChange)="changeScore(item)" [ngClass]="{
           'final-score' : last ,
           'warning' : isErrorOnVerification(item, item.awayValue)}" />
       </td>
@@ -134,7 +134,7 @@
     </thead>
     <tbody>
       <tr>
-        <td class="score" *ngIf="hasHalfTime"> 
+        <td class="score" *ngIf="hasHalfTime">
           {{matchDetail.exHTHomeScore | score}}
         </td>
         <td class="final-score">
