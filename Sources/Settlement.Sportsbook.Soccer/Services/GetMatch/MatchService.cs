@@ -262,37 +262,27 @@ public class MatchServiceImp(
 
     private static void SetTraderResults(List<ResultDetail> resultDetails)
     {
-        List<byte> validStatus = [ResultStatus.Confirmed, ResultStatus.AutoSettled, ResultStatus.ManuallySettled];
-        var internalResultDetail = resultDetails.Where(result => result.SourceId == SourceType.Normal).ToList();
+        var validStatus = new List<byte> { ResultStatus.Confirmed, ResultStatus.AutoSettled, ResultStatus.ManuallySettled };
+        var internalResultDetails = resultDetails.Where(result => result.SourceId == SourceType.Normal).ToList();
 
-        var halfTimeResult = internalResultDetail
-            .Find(result => result.ResourceId == ResourceType.Halftime
-                && validStatus.Contains(result.ResultStatusId ?? 0));
+        AddTraderResult(resultDetails, internalResultDetails, ResourceType.Halftime, validStatus);
+        AddTraderResult(resultDetails, internalResultDetails, ResourceType.Final, validStatus);
+    }
 
-        var fullTimeResult = internalResultDetail
-            .Find(result => result.ResourceId == ResourceType.Final
-            && validStatus.Contains(result.ResultStatusId ?? 0));
-
-        resultDetails.Add(new ResultDetail
-        {
-            ResourceId = ResourceType.Halftime,
-            SourceId = SourceType.Trader,
-            HomeValue = halfTimeResult?.HomeValue ?? "",
-            AwayValue = halfTimeResult?.AwayValue ?? "",
-            SettlementStatusId = halfTimeResult?.SettlementStatusId,
-            ResultStatusId = halfTimeResult?.ResultStatusId
-        });
+    private static void AddTraderResult(List<ResultDetail> resultDetails, List<ResultDetail> internalResultDetails, string resourceType, List<byte> validStatus)
+    {
+        var result = internalResultDetails
+            .Find(detail => detail.ResourceId == resourceType && validStatus.Contains(detail.ResultStatusId ?? 0));
 
         resultDetails.Add(new ResultDetail
         {
-            ResourceId = ResourceType.Final,
+            ResourceId = resourceType,
             SourceId = SourceType.Trader,
-            HomeValue = fullTimeResult?.HomeValue ?? "",
-            AwayValue = fullTimeResult?.AwayValue ?? "",
-            SettlementStatusId = fullTimeResult?.SettlementStatusId,
-            ResultStatusId = fullTimeResult?.ResultStatusId
+            HomeValue = result?.HomeValue ?? string.Empty,
+            AwayValue = result?.AwayValue ?? string.Empty,
+            SettlementStatusId = result?.SettlementStatusId,
+            ResultStatusId = result?.ResultStatusId
         });
-
     }
 
 

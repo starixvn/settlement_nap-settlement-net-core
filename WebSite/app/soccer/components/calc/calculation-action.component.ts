@@ -6,7 +6,7 @@ import { ResultDetail } from '../../models';
 import { CommonModule } from '@angular/common';
 import { ResultSettingQuery } from '../../../shared/models';
 import { Language } from '../../../shared/language.native';
-import { ResultSettingType, ScoreSourceType } from '../../../shared/constants';
+import { ResultSettingType, ResultStatusId, ScoreSourceType } from '../../../shared/constants';
 import { AioService, MessageBoxService } from '../../../shared/services';
 import * as _ from 'lodash';
 import { CalculateStorage } from '../../storage/calculate.storage';
@@ -64,6 +64,16 @@ export class CalculationActionComponent implements OnInit {
     this.scoreChanged(this.fullTimeResult);
 
     this.matchDetail.applyGoalRecord = this.disableGoalRecordCheckbox = this.calculateGoalRecordState(matchDetail);
+  }
+
+  get isTraderHtConfirmed() {
+    return this.traderHtResult.resultStatusId === ResultStatusId.TraderConfirm 
+      && !_.isEmpty(this.traderHtResult.homeValue) && !_.isEmpty(this.traderHtResult.awayValue);
+  }
+
+  get isTraderFtConfirmed() {
+    return this.traderFtResult.resultStatusId === ResultStatusId.TraderConfirm 
+      && !_.isEmpty(this.traderFtResult.homeValue) && !_.isEmpty(this.traderFtResult.awayValue);
   }
 
   private setState() {

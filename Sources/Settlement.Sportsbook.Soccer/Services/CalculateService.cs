@@ -42,33 +42,33 @@ public class CalculateServiceImp(
         var criteria = createCriteriaService.CreateCalculateCriteria(request);
         var matchChecking = await ValidateBeforeExecute(criteria);
 
-        //if (matchChecking.ErrCode > 0)
-        //{
-        //    return matchChecking;
-        //}
+        if (matchChecking.ErrCode > 0)
+        {
+            return matchChecking;
+        }
 
         await SaveOutsideScores(request);
 
-        //var validateFantasyMatchResult = await ValidateFantasyMatch(request);
-        //if (validateFantasyMatchResult.ErrCode > 0)
-        //{
-        //    return validateFantasyMatchResult;
-        //}
+        var validateFantasyMatchResult = await ValidateFantasyMatch(request);
+        if (validateFantasyMatchResult.ErrCode > 0)
+        {
+            return validateFantasyMatchResult;
+        }
 
-        //var match = CreatedMatch(criteria);
-        //var insertLogCriteria = createCriteriaService.CreateCalculateLogCriteria(request);
+        var match = CreatedMatch(criteria);
+        var insertLogCriteria = createCriteriaService.CreateCalculateLogCriteria(request);
 
-        //await WriteLog(match, insertLogCriteria);
+        await WriteLog(match, insertLogCriteria);
 
-        //await ExecuteAsync(criteria);
+        await ExecuteAsync(criteria);
 
-        //await RefundChildMatch(criteria);
+        await RefundChildMatch(criteria);
 
-        //if (request.IsApplyHedging)
-        //{
-        //    criteria.MatchId = request.HedgeMatchId;
-        //    await ExecuteAsync(criteria);
-        //}
+        if (request.IsApplyHedging)
+        {
+            criteria.MatchId = request.HedgeMatchId;
+            await ExecuteAsync(criteria);
+        }
 
         return matchChecking;
     }
