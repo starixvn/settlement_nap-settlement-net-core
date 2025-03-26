@@ -11,6 +11,7 @@ export const SportNewAutoPayout = [
   SportType.baseBall,
   SportType.badminton,
   SportType.tableTennis,
+  SportType.beachVolleyball
 ];
 
 export const SportSingleAutoType = [

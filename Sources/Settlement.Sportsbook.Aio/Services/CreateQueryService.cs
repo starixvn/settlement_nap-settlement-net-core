@@ -56,6 +56,8 @@ public class CreateQueryServiceImp(
             (SportType.Tennis, SettleType.Refund, 0) => "RefundRelated",
             (SportType.TableTennis, SettleType.Calculate, 0) => "calcRelated",
             (SportType.TableTennis, SettleType.Refund, 0) => "RefundRelated",
+            (SportType.BeachVolleyball, SettleType.Calculate, 0) => "calcRelated",
+            (SportType.BeachVolleyball, SettleType.Refund, 0) => "RefundRelated",
             _ => string.Empty
         };
 
@@ -81,7 +83,8 @@ public class CreateQueryServiceImp(
 
     private static string CreateChildMatchRemarkInfo(SettleChildMatchRequest request)
     {
-        if (request.SportType == SportType.TableTennis && request.ParentMatchId != 0)
+        var sportApplied = request.SportType is SportType.TableTennis or SportType.BeachVolleyball;
+        if (sportApplied && request.ParentMatchId != 0)
         {
             return $"""<r n="parentID" v="{request.ParentMatchId}"/>""";
         }

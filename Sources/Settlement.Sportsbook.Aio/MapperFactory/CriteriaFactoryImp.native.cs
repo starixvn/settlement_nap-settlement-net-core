@@ -14,6 +14,7 @@ public class CriteriaFactoryImp : CriteriaFactoryBase
         Basketball();
         Bandy();
         TableTennis();
+        BeachVolleybal();
         StandardAIO();
     }
 
@@ -117,6 +118,19 @@ public class CriteriaFactoryImp : CriteriaFactoryBase
         CriteriaTypes.Add("tableTennis-settle", typeof(Criteria.SettleCriteria));
     }
 
+    private static void BeachVolleybal()
+    {
+        CriteriaTypes.Add($"beach-volleyball-{ApiKeyConstant.MatchInfoKey}", typeof(Criteria.GetMatchDetailCriteria));
+        CriteriaTypes.Add($"beach-volleyball-{ApiKeyConstant.HedgeMatchInfoKey}", typeof(Criteria.GetHedgeMatchCriteria));
+        CriteriaTypes.Add($"beach-volleyball-{ApiKeyConstant.ResultDetailKey}", typeof(Criteria.GetResultDetailCriteria));
+        CriteriaTypes.Add($"beach-volleyball-{ApiKeyConstant.LatestResultKey}", typeof(Criteria.GetRecalResultCriteria));
+        CriteriaTypes.Add($"beach-volleyball-{ApiKeyConstant.ProviderKey}", typeof(Criteria.GetProviderCriteria));
+        CriteriaTypes.Add($"beach-volleyball-{ApiKeyConstant.ChildMatchKey}", typeof(Criteria.Volleyball.GetChildMatchCriteria));
+        CriteriaTypes.Add($"beach-volleyball-{ApiKeyConstant.SaveScore}", typeof(Criteria.SaveScoreCriteria));
+
+        CriteriaTypes.Add("beach-volleybal-settle", typeof(Criteria.SettleCriteria));
+    }
+
     private static void StandardAIO()
     {
         CriteriaTypes.Add($"standard-{ApiKeyConstant.MatchInfoKey}", typeof(Criteria.GetMatchDetailCriteria));
@@ -128,6 +142,4 @@ public class CriteriaFactoryImp : CriteriaFactoryBase
         CriteriaTypes.Add("standard-settle", typeof(Criteria.SettleCriteria));
         CriteriaTypes.Add($"standard-refund-{ApiKeyConstant.ProviderKey}", typeof(Criteria.GetResultConfirmRefundCriteria));
     }
-
-
 }

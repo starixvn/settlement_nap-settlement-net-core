@@ -231,9 +231,14 @@
   },
   consistentRelatedMatch: 'WARNING! Cannot continue due main match and related matches have inconsistent results.',
   confirmChildMatch: 'WARNING! You select to calculate FT for selected related match. Are you sure you want to proceed?',
+  confirmReCalcChildMatch: 'Some selected child-matches have been settled.<br>' +
+    '- select "Yes" will re-calculate settled child-matches.<br>' +
+    '- select "No" will not re-calculate settled child-matches.<br>' +
+    '- close the message to cancel the action.',
   confirmRelatedChildMatch: 'Are you sure you want to process all related child-matches?',
-  cannotSettleChildMatch: 'Failed: selected child-matches are on-hold, have been settled or confirmed refund.',
-  directlyWithChildMAtch: 'WARNING! Cannot proceed due to "input result directly" is selected along side child-matches! Please check and try again.',
+  cannotSettleChildMatch: 'Failed: selected child-matches are on-hold or confirmed refund.',
+  confirmOverwriteChildMatch: 'WARNING! Main and child-match scores are inconsistent. Continue will overwrite child-match scores with Main-match scores. Are you sure you want to proceed?',
+  directlyWithChildMAtch: 'Failed: "Input result directly" is selected along side "Also calculate child-matches"! Please select 1 only.',
   otherSports: {
     confirmCalculateInconsistent: "WARNING! Insufficient or inconsistent score sources! Are you sure you want to proceed?",
     warningCalculateInconsistent: "WARNING! Insufficient or inconsistent score sources. Please check and try again",
@@ -344,6 +349,6 @@
   },
   TieBreakInconsistency: "Cannot proceed due to Set 3 score is not consistent with match type (Tie-Break)",
   childMatchTennisInfo: '- Xth Set Game Winner: refund not played matches.',
-  childMatchTabbleTennisInfo: 'Matches List: <br/> - Xth Set Winner. <br/> - Points Handicap.<br/> Actions on corresponding matches: <br/> - Calculate played matches.',
+  childMatchTableTennisInfo: 'Matches List: <br/> - Xth Set Winner. <br/> - Points Handicap.<br/> Actions on corresponding matches: <br/> - Calculate played matches.',
   chidMatchRefundTabbleTennisInfo: 'Refund related child-match: <br/> - Xth Set Winner.<br/> - Points Handicap.'
 };

@@ -11,6 +11,7 @@ import { Language } from "../../shared/language.native";
 import { Match } from "../models";
 import {
   BadmintonApiKeys,
+  BeachVolleyballApiKeys,
   ResourcesIds,
   TableTennisApiKeys,
   VolleyballApiKeys,
@@ -50,7 +51,7 @@ export class RefundActionsComponent
   private readonly resourceNameByIdPipe = inject(ResourceNameByIdPipe);
 
   public get isSupportSettleRelated() {
-    return [SportType.tableTennis].includes(this.matchDetail.sportType) 
+    return [SportType.tableTennis, SportType.beachVolleyball].includes(this.matchDetail.sportType) 
       && this.matchDetail.parentId === 0;
   }
 
@@ -81,6 +82,11 @@ export class RefundActionsComponent
 
     if(sportType === SportType.volleyBall) {
       this.apiKeys =  VolleyballApiKeys
+      return;
+    }
+
+    if(sportType === SportType.beachVolleyball) {
+      this.apiKeys =  BeachVolleyballApiKeys;
       return;
     }
 

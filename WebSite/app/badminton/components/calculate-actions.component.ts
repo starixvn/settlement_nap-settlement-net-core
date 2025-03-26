@@ -5,13 +5,13 @@ import { Component, ViewChild, OnInit, inject } from '@angular/core';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import * as _ from 'lodash';
 import { MessageBoxService, AioService, IntervalCalculationService } from '../../shared/services';
-import { MatchResource, ModalDialogMessage } from '../../shared/models';
+import { MatchResource, ModalDialogMessage, Sport } from '../../shared/models';
 import { Language } from '../../shared/language.native';
-import { SettlementStatusId, CalculateAction, SportType, ResultStatusId, ScoreSourceType, TicketStatusText, ResultStatus } from '../../shared/constants';
+import { SettlementStatusId, CalculateAction, SportType, ResultStatusId, ScoreSourceType, TicketStatusText, ResultStatus, EventStatus } from '../../shared/constants';
 import { Match, HedgeMatchDetail, SettleQuery, ChildMatch, SettleChildMatchQuery } from '../models';
 import { ResourceNameByIdPipe } from '../pipes';
 import { BadmintonService, VerificationService } from '../services';
-import { BadmintonApiKeys, KickOffTime, ResourcesIds, Resources, VolleyballApiKeys, TableTennisApiKeys } from '../constants';
+import { BadmintonApiKeys, KickOffTime, ResourcesIds, Resources, VolleyballApiKeys, TableTennisApiKeys, BeachVolleyballApiKeys } from '../constants';
 import { ExternalResultDetail, Permission, ResultDetail, SaveScoreQuery, SportTemplate } from '../../shared/models/sportsbook-sop';
 import { UrlHelper } from '../../helper';
 import { ResultPipe } from '../../shared/pipes/result.pipe';
@@ -36,6 +36,7 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
   private readonly toastrService = inject(ToastrService);
   private readonly blockUIService = inject(BlockUIService);
   public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
+  readonly confirmDialogWithActionOnNoBtn: ModalDialogMessage = new ModalDialogMessage();
   readonly totalPointsId = ResourcesIds.totalPoints;
   match: Match;
   hedgeMatchDetail: HedgeMatchDetail;
@@ -52,6 +53,8 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
   SOURCE_ID = SourceIds;
   public isSettleRelated = true;
   public sportTypes = SportType;
+  sportWithPassiveChildMatch = [SportType.tableTennis, SportType.beachVolleyball];
+  private settleRunningChildMatchOnly = false;
 
   constructor() {
     this.blockUIService.blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
@@ -59,6 +62,8 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
 
   ngOnInit(): void {
     this.confirmationDialogMessage.title = Language.confirmationBox;
+    this.confirmDialogWithActionOnNoBtn.title = Language.confirmationBox;
+    this.confirmDialogWithActionOnNoBtn.hasActionOnNoBtn = true;
     this.toastrService.overlayContainer = this.toastContainer;
   }
 
@@ -80,20 +85,20 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
     this.init();
   }
 
-  private getApiKeys(sportType) {
-
-    if (sportType === SportType.tableTennis) {
-      this.apiKeys = TableTennisApiKeys
-      return;
+  private getApiKeys(sportType: number) {
+    switch (sportType) {
+      case SportType.tableTennis:
+        this.apiKeys = TableTennisApiKeys;
+        break;
+      case SportType.volleyBall:
+        this.apiKeys = VolleyballApiKeys;
+        break;
+      case SportType.beachVolleyball:
+        this.apiKeys = BeachVolleyballApiKeys;
+        break;
+      default:
+        this.apiKeys = BadmintonApiKeys;
     }
-
-    if (sportType === SportType.volleyBall) {
-      this.apiKeys = VolleyballApiKeys
-      return;
-    }
-
-
-    this.apiKeys = BadmintonApiKeys;
   }
 
 
@@ -127,6 +132,7 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
     this.generateOutsideTotalPoints();
     this.checkChildrenMatchesConsistent();
     this.autoInputDirectly();
+    this.match.childMatches.forEach(item => item.resourceId = ResourcesIds.totalGames);
   }
 
   get noTotalPoints(): ResultDetail[] {
@@ -159,12 +165,12 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
   }
 
   private autoInputDirectly() {
-    if(this.disableScoreDirect) {
+    if (this.disableScoreDirect) {
       return;
     }
-    const {parentId, sportType} = this.match.matchDetail;
-   
-    if(parentId !== 0 && sportType === SportType.tableTennis) {
+    const { parentId, sportType } = this.match.matchDetail;
+
+    if (parentId !== 0 && this.sportWithPassiveChildMatch.includes(sportType)) {
       this.match.isScoreDirect = true;
       this.changeInputDirectly();
     }
@@ -213,7 +219,7 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
       return;
     }
 
-    if (this.verificationService.invalidInputScore(this.selectedResources, this.match.isScoreDirect, ResourcesIds.totalGames)) {  
+    if (this.verificationService.invalidInputScore(this.selectedResources, this.match.isScoreDirect, ResourcesIds.totalGames)) {
       this.toastrService.error(this.isLeader ? Language.sop.leader.blankScore : Language.sop.nonLeader.blankScore);
       return;
     }
@@ -252,25 +258,26 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
       return;
     }
 
-    if (this.verificationService.verifyConsistentChildMatch(this.match.resultDetails, this.childMatchSelected)) {
+    const existConsistentChildMatch = this.verificationService.verifyConsistentChildMatch(this.match.resultDetails, this.childMatchSelected);
+
+    if (existConsistentChildMatch && this.sportType == SportType.volleyBall) {
       this.toastrService.error(Language.consistentRelatedMatch);
       return;
     }
 
-    if (this.verificationService.verifyCannotSettleChildMatch(this.childMatchSelected)) {
+    if (this.verificationService.verifyCannotSettleChildMatch(this.childMatchSelected, this.sportType)) {
       this.toastrService.error(Language.cannotSettleChildMatch);
       return;
     }
 
-    if(this.match.matchDetail.sportType === SportType.tableTennis) {
-      this.verifyRunningOdds();
-      return;
+    if (this.sportType == SportType.volleyBall) {
+      this.confirmationDialogMessage.message = Language.confirmChildMatch;
+      this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
+        this.verifyRunningOdds();
+      });
     }
 
-    this.confirmationDialogMessage.message = Language.confirmChildMatch;
-    this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
-      this.verifyRunningOdds();
-    });
+    this.verifyRunningOdds();
   }
 
   private async verifyRunningOdds() {
@@ -367,7 +374,7 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
   private async confirmChangedResults() {
     const badmintonResultDetails = _.filter(this.match.resultDetails, { checked: true });
     if (this.isReSettledTickets) {
-      this.confirmCalculation(badmintonResultDetails);
+      this.confirmChildMatchCalculation(badmintonResultDetails);
       return;
     }
 
@@ -391,16 +398,41 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
 
   private confirmChildMatchCalculation(resultDetails: ResultDetail[]) {
     const { sportType } = this.match.matchDetail;
-
-    if (sportType === SportType.tableTennis && this.isSettleRelated && this.childMatchSelected.length) {
-      this.confirmationDialogMessage.message = Language.confirmRelatedChildMatch;
-      this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
-        this.confirmCalculation(resultDetails);
-      });
+    const sportApplied = this.sportWithPassiveChildMatch.includes(sportType);
+    if (!sportApplied || this.childMatchSelected.length == 0 || !this.isSettleRelated) {
+      this.confirmCalculation(resultDetails);
       return;
     }
 
-    this.confirmCalculation(resultDetails);
+    const existConsistentChildMatch = this.verificationService.verifyConsistentChildMatch(this.match.resultDetails, this.childMatchSelected);
+    const existCalculatedChildMatch = this.childMatchSelected.some(item => item.eventStatus.toLowerCase() == EventStatus.completed.toLowerCase());
+    if (existConsistentChildMatch) {
+      this.confirmationDialogMessage.message = Language.confirmOverwriteChildMatch;
+      this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
+        existCalculatedChildMatch ? this.confirmSettleAndRunningChildMatch(resultDetails) : this.confirmSettleOnlyRunningChildMatch(resultDetails);
+      });
+    } else {
+      existCalculatedChildMatch ? this.confirmSettleAndRunningChildMatch(resultDetails) : this.confirmSettleOnlyRunningChildMatch(resultDetails);
+    }
+  }
+
+  private confirmSettleAndRunningChildMatch(resultDetails: ResultDetail[]) {
+      this.confirmDialogWithActionOnNoBtn.message = Language.confirmReCalcChildMatch;
+      this.confirmDialogWithActionOnNoBtn.hasActionOnNoBtn = true;
+      this.messageBoxService.confirm(this.confirmDialogWithActionOnNoBtn, () => {
+        this.confirmCalculation(resultDetails);
+        this.settleRunningChildMatchOnly = false;
+      }, () => {
+        this.confirmCalculation(resultDetails);
+        this.settleRunningChildMatchOnly = true;
+      });
+  }
+
+  private confirmSettleOnlyRunningChildMatch(resultDetails: ResultDetail[]) {
+    this.confirmationDialogMessage.message = Language.confirmRelatedChildMatch;
+    this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
+      this.confirmCalculation(resultDetails);
+    });
   }
 
   private confirmCalculation(resultDetails: ResultDetail[]) {
@@ -418,7 +450,8 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
     });
 
     const betStatus = this.badmintonService.getBetStatus(false, this.match);
-    const childMatchIds = this.childMatchSelected.map(item => item.matchId).join(',');
+    const childMatchIds = this.childMatchSelected.filter(item => this.settleRunningChildMatchOnly ? item.eventStatus.toLowerCase() !== EventStatus.completed.toLowerCase() : true)
+      .map(item => item.matchId).join(',');
     this.doSaveScoreAndCalculate(CalculateAction.calculate, selectedResources, betStatus, childMatchIds);
   }
 
@@ -664,7 +697,7 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
       map.checked = this.match.isScoreDirect && _.isEqual(map.resourceId, ResourcesIds.totalGames);
     });
     this.match.childMatches.forEach(item => {
-      item.checked = this.match.isScoreDirect 
+      item.checked = this.match.isScoreDirect
         && _.isEqual(item.relatedResourceId, ResourcesIds.totalPoints)
         && this.isSettleRelated
         && this.isSupportSettleRelated;
@@ -700,7 +733,7 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
   }
 
   public get isSupportSettleRelated() {
-    return [SportType.tableTennis].includes(this.match.matchDetail.sportType)
+    return this.sportWithPassiveChildMatch.includes(this.match.matchDetail.sportType)
       && this.match.matchDetail.parentId === 0;
   }
 
@@ -720,7 +753,7 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
 
   private createMatchResource() {
     const { sportType } = this.match.matchDetail;
-    const sportHasChildMatch = [SportType.tableTennis, SportType.volleyBall];
+    const sportHasChildMatch = [SportType.tableTennis, SportType.volleyBall, SportType.beachVolleyball];
     if (sportHasChildMatch.includes(sportType)) {
       const list = [];
       this.childMatchSelected.forEach(item => {
@@ -735,8 +768,10 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
   }
 
   private async handleChildMatch(settleQuery: SettleQuery, type: string) {
-    if (this.childMatchSelected.length > 0 && type === CalculateAction.calculate) {
-      const settleChildMatchQuery = new SettleChildMatchQuery(this.childMatchSelected,
+    const validatedChildMatches = this.settleRunningChildMatchOnly ? this.childMatchSelected.filter(x => x.newEventStatus.toLowerCase() !== EventStatus.completed.toLowerCase()) : this.childMatchSelected;
+    if (validatedChildMatches.length > 0 && type === CalculateAction.calculate) {
+      this.mapScoreChildMatch(validatedChildMatches);
+      const settleChildMatchQuery = new SettleChildMatchQuery(validatedChildMatches,
         settleQuery.actionName, settleQuery.isReSettledTickets, settleQuery.selectedResources);
       settleChildMatchQuery.parentMatchId = settleQuery.matchId;
       settleChildMatchQuery.sportType = settleQuery.sportType;
@@ -744,14 +779,22 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
     }
   }
 
+  private mapScoreChildMatch(validatedChildMatches: ChildMatch[]){
+    validatedChildMatches.forEach(item => {
+      const relatedResource = this.match.resultDetails.filter(i => item.relatedResourceId == i.resourceId);
+      item.homeValue = relatedResource[0].homeValue;
+      item.awayValue = relatedResource[0].awayValue;
+    })
+  }
+
   public canSettleResult(result: ResultDetail) {
     const isRunning = _.isEqual(result.ticketStatus, TicketStatusText.running)
-      || _.isEqual(result.resultStatus, ResultStatus.noResult) 
+      || _.isEqual(result.resultStatus, ResultStatus.noResult)
       || _.isEqual(result.resultStatus, ResultStatus.running);
 
-    return isRunning 
-        && !result.isScoreMismatched 
-        && this.verificationService.isValidTraderConfirmScore(result);
+    return isRunning
+      && !result.isScoreMismatched
+      && this.verificationService.isValidTraderConfirmScore(result);
   }
   private autoSelectChildMatch(result: ResultDetail) {
     if (!this.isSupportSettleRelated || !this.isSettleRelated) {
@@ -764,12 +807,9 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
     }
   }
 
-
-
-
   public openInfo() {
     this.confirmationDialogMessage.title = Language.information;
-    this.confirmationDialogMessage.message = Language.childMatchTabbleTennisInfo;
+    this.confirmationDialogMessage.message = Language.childMatchTableTennisInfo;
     this.messageBoxService.alert(this.confirmationDialogMessage);
   }
 

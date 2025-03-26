@@ -40,5 +40,8 @@
   },
   "editor.suggest.showSnippets": false,
   "editor.suggest.snippetsPreventQuickSuggestions": false,
-  "editor.snippetSuggestions": "none"
+  "editor.snippetSuggestions": "none",
+  "jest.autoRun": {
+    "onStartup": []
+}
 }

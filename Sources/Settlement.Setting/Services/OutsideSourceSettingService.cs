@@ -51,6 +51,7 @@ public class OutsideSourceSettingServiceImp(
         return games.Select(game => new GameModel { GameType = game.GameType, IsActive = game.IsActive }).ToList();
     }
 
+
     public async Task<LeagueOutsideSourceModel> GetLeagueOutsideSource(GetLeagueOutsideSourceRequest query)
     {
         var criteria = mapper.Map<GetLeagueOutsideSourceRequest, GetLeagueOutsideSourceCriteria>(query);
