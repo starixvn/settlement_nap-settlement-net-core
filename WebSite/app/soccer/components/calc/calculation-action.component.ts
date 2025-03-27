@@ -108,10 +108,11 @@ export class CalculationActionComponent implements OnInit {
 
   private autoSetFtFinalResult() {
     const [valid, validResult] = this.#verifyScoreGoalService.tryGetValidResult(this.outsideFtResult,[this.traderFtResult,this.#storage.providerFtResult]);
-    console.log(valid, validResult);
     if(valid && !this.#verifyScoreGoalService.isFullTimeSettled(this.matchDetail)) {
       this.#storage.setFullTimeScore(validResult.homeValue,validResult.awayValue);
-    } else {
+    }
+    
+    if(!valid && !this.#verifyScoreGoalService.isFullTimeSettled(this.matchDetail)) {
       this.#storage.setFullTimeScore("","");
     }
   }
