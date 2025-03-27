@@ -1,10 +1,10 @@
 ﻿namespace Settlement.EventManagement.Services;
 
+using System.Threading.Tasks;
 using Criteria;
 using Models;
 using Settlement.Core.Services;
 using Settlement.Core.Services.SpecificService;
-using System.Threading.Tasks;
 using Match = Models.Calculation.Match;
 using MultiSportMatch = Models.MultiSports.Match;
 
@@ -116,6 +116,7 @@ public class NewInfoMatchServiceImp(
 
     public string ConfirmScore(List<ResultDetail> listResultDetail, string resource)
     {
+        //TODO
         var resultDetail = listResultDetail.Find(result => result.ResourceId == resource
                                                            && !string.IsNullOrWhiteSpace(result.AwayValue)
                                                            && !string.IsNullOrWhiteSpace(result.HomeValue));

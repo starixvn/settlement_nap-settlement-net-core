@@ -9,11 +9,14 @@ import { ResultStatusId, ScoreSourceType } from '../../../../shared/constants';
 import { ResultDetail } from '../../../models';
 
 import * as _ from 'lodash';
+import { inject } from '@angular/core';
+import { VerifyScoreGoalService } from '../../../components/calc/services/verify-score-goal.service';
 
 
 export class VerifyScoreConfirmHandler extends AbstractHandler {
+  private readonly verifyScoreGoalService = inject(VerifyScoreGoalService);
   async handle(storage: Storage) {
-    const { matchDetail, resultDetails } = storage.getMatch();
+    const { matchDetail, resultDetails, permission } = storage.getMatch();
     const calculateAction = storage.getCalculateAction();
     const isHalfTime = calculateAction === CalculateAction.calculateHalfTime;
     const isFullTime = calculateAction === CalculateAction.calculateFullTime;
@@ -27,6 +30,18 @@ export class VerifyScoreConfirmHandler extends AbstractHandler {
 
     if(!this.isExistsOutsideResults(resultDetails)) {
       storage.error(Language.sop.notScreenshot);
+      return;
+    }
+    
+    if(this.isExistsInsufficientResult(resultDetails)) {
+      if(!permission.isLeader) {
+        // storage.error(Language.);
+        return;
+      }
+    }
+
+    if(this.isExistsInconsistentResult(resultDetails)) {
+      // storage.error(Language.sop.inconsistentResult);
       return;
     }
 
@@ -82,5 +97,43 @@ export class VerifyScoreConfirmHandler extends AbstractHandler {
       const outsideResult = resultDetails.find(y => y.sourceId === ScoreSourceType.screenshot && y.resourceId === x.resourceId);
       return outsideResult && (outsideResult.homeValue !== x.homeValue || outsideResult.awayValue !== x.awayValue);
     });
+  }
+
+  private isExistsInsufficientResult(resultDetails: ResultDetail[]) {
+    const validSourceTypes = [ScoreSourceType.Sbo, ScoreSourceType.trader];
+    const checkedResults = resultDetails.filter(x => x.checked);
+   
+    for(const result of checkedResults) {
+      const sourceResults = resultDetails
+        .filter(x => x.resourceId === result.resourceId 
+          && validSourceTypes.includes(x.sourceId) 
+          && this.verifyScoreGoalService.isValidResult(x));
+
+      if(sourceResults.length < validSourceTypes.length) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  private isExistsInconsistentResult(resultDetails: ResultDetail[]) {
+    const checkedResults = resultDetails.filter(x => x.checked);
+    const validSourceTypes = [ScoreSourceType.Sbo, ScoreSourceType.trader];
+
+    for(const result of checkedResults) {
+      const outsideResult = resultDetails.find(y => y.sourceId === ScoreSourceType.screenshot && y.resourceId === result.resourceId);
+      const sourceResults = resultDetails
+        .filter(x => x.resourceId === result.resourceId 
+          && validSourceTypes.includes(x.sourceId) 
+          && !_.isEmpty(x.homeValue) && !_.isEmpty(x.awayValue));
+
+      const [valid] = this.verifyScoreGoalService.tryGetValidResult(outsideResult, sourceResults);
+      if(!valid) {
+        return true;
+      }
+    }
+
+    return false;
   }
 }

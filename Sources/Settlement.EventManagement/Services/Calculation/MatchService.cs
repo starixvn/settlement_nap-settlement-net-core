@@ -26,7 +26,8 @@ public class MatchServiceImp(
     MergeDataService mergeDataService,
     NewInfoMatchService newInfoMatchService,
     IOptions<AppSettingsKey> appSettingsKey,
-    IMapper mapper)
+    IMapper mapper,
+    PermissionService permissionService)
     : MatchService
 {
     private static int _isProcessing;
@@ -42,12 +43,12 @@ public class MatchServiceImp(
 
     private async Task<List<Match>> SetNewMatchInfo(List<Match> matches, List<ResultDetail> listResultDetail, bool isAutoPage = false)
     {
+        var x = permissionService.Permission.IsLeader;
+
         foreach (var match in matches)
         {
             var sourceResultDetail = listResultDetail.Where(m => m.MatchId == match.MatchId && m.SourceId != SourceType.Normal).ToList();
             var currentResultDetail = listResultDetail.Where(m => m.MatchId == match.MatchId && m.SourceId == SourceType.Normal).ToList();
-
-            //TODO
 
             newInfoMatchService.TicketInfo(match);
             match.NewEventStatus = newInfoMatchService.NewEventStatus(match);
