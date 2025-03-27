@@ -1,5 +1,5 @@
 <div class="calculate-action">
-  <table>
+  <table style="width: unset;">
     <ng-template *ngTemplateOutlet="header"></ng-template>
     <ng-template *ngTemplateOutlet="body"></ng-template>
   </table>
@@ -9,18 +9,18 @@
 <ng-template #header>
   <thead>
     <tr>
-      <th scope="col" rowspan="2">Result</th>
-      <th scope="col" rowspan="2">Ticket Status</th>
-      <th scope="col" rowspan="2" colspan="2">Final Score</th>
+      <th scope="col" rowspan="2" style="width: 80px;">Result</th>
+      <th scope="col" rowspan="2" style="width: 90px;">Ticket Status</th>
+      <th scope="col" rowspan="2" colspan="2" style="width: 80px;">Final Score</th>
       @if(permission.isLeader) {
-      <th scope="col" rowspan="2" colspan="2">Trader Score</th>
-      <th scope="col">Provider Score</th>
+      <th scope="col" rowspan="2" colspan="2" style="width: 80px;">Trader Score</th>
+      <th scope="col" style="width: 80px;">Provider Score</th>
       }
-      <th scope="col" colspan="2">Outside Score</th>
-      <th scope="col" rowspan="2">
+      <th scope="col" colspan="2" style="width: 80px;">Outside Score</th>
+      <th scope="col" rowspan="2" style="width: 70px;">
         Select to Proceed
       </th>
-      <th scope="col" rowspan="2">Hold Result</th>
+      <th scope="col" rowspan="2" style="width: 80px;">Hold Result</th>
     </tr>
     <tr>
       @if(permission.isLeader) {
@@ -68,12 +68,14 @@
       </td>
       }
       <!-- Outside -->
-      <td [ngClass]="{ mismatched: halfTimeResult.isMismatch || outsideHtResult.isInvalidValue ,'trader-confirm': isTraderHtConfirmed}">
+      <td
+        [ngClass]="{ mismatched: halfTimeResult.isMismatch || outsideHtResult.isInvalidValue ,'trader-confirm': isTraderHtConfirmed}">
         <input type="text" myOnlyInteger tabindex="5"
           [disabled]="!halfTimeResult.checked  || halfTimeResult.resultSettingData.isHoldResult"
           [(ngModel)]="outsideHtResult.homeValue" (ngModelChange)="changeConfirmScore(outsideHtResult)" />
       </td>
-      <td [ngClass]="{ mismatched: halfTimeResult.isMismatch || outsideHtResult.isInvalidValue, 'trader-confirm': isTraderHtConfirmed}">
+      <td
+        [ngClass]="{ mismatched: halfTimeResult.isMismatch || outsideHtResult.isInvalidValue, 'trader-confirm': isTraderHtConfirmed}">
         <input type="text" myOnlyInteger tabindex="6"
           [disabled]="!halfTimeResult.checked  || halfTimeResult.resultSettingData.isHoldResult"
           [(ngModel)]="outsideHtResult.awayValue" (ngModelChange)="changeConfirmScore(outsideHtResult)" />
@@ -125,12 +127,14 @@
       }
 
       <!-- Outside -->
-      <td [ngClass]="{ mismatched: fullTimeResult.isMismatch || outsideFtResult.isInvalidValue,  'trader-confirm': isTraderFtConfirmed }">
+      <td
+        [ngClass]="{ mismatched: fullTimeResult.isMismatch || outsideFtResult.isInvalidValue,  'trader-confirm': isTraderFtConfirmed }">
         <input type="text" myOnlyInteger tabindex="11"
           [disabled]="!fullTimeResult.checked  || fullTimeResult.resultSettingData.isHoldResult"
           [(ngModel)]="outsideFtResult.homeValue" (ngModelChange)="changeConfirmScore(outsideFtResult)" />
       </td>
-      <td [ngClass]="{ mismatched: fullTimeResult.isMismatch || outsideFtResult.isInvalidValue,  'trader-confirm': isTraderFtConfirmed }">
+      <td
+        [ngClass]="{ mismatched: fullTimeResult.isMismatch || outsideFtResult.isInvalidValue,  'trader-confirm': isTraderFtConfirmed }">
         <input type="text" myOnlyInteger tabindex="12"
           [disabled]="!fullTimeResult.checked  || fullTimeResult.resultSettingData.isHoldResult"
           [(ngModel)]="outsideFtResult.awayValue" (ngModelChange)="changeConfirmScore(outsideFtResult)" />

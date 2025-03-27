@@ -170,11 +170,12 @@ export class VerifyScoreGoalService extends VerificationBaseService {
         const filteredResults = [primaryResult, ...resultDetails]
             .filter(result => result && result.resourceId === primaryResult.resourceId)
             .filter(result => !_.isEmpty(result.homeValue) && !_.isEmpty(result.awayValue));
+
         const uniqueResults = _.uniqWith(filteredResults, (a, b) =>
             a.homeValue === b.homeValue && a.awayValue === b.awayValue
         );
 
-        return [uniqueResults.length < filteredResults.length, uniqueResults[0]];
+        return [uniqueResults.length === 1, uniqueResults[0]];
     }
 
     public isMismatched(resultDetails: ResultDetail[]) {
