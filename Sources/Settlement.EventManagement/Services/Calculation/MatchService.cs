@@ -122,6 +122,7 @@ public class MatchServiceImp(
     {
         var hashLeagueIds = ConvertKeyToHash(leagueIds);
         var matches = cachingMatchesService.GetShortCache(hashLeagueIds, isAutoPage);
+        Console.WriteLine("GetWaitingMatches" + matches?.Count);
 
         if (matches != null)
         {

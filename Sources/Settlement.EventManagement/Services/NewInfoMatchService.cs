@@ -131,6 +131,7 @@ public class NewInfoMatchServiceImp(
     {
         var sourceResult = sourceResults.Find(result => result.ResourceId == resource && IsValidResult(result));
         var resultDetail = resultDetails.Find(result => result.ResourceId == resource && IsValidResult(result));
+        Fanex.Logging.LogService.InfoAsync(sourceResult?.ToString());
 
         var isSettled = resultDetail?.ResultStatusId == ResultStatus.ManuallySettled
             || resultDetail?.ResultStatusId == ResultStatus.AutoSettled;
