@@ -55,17 +55,34 @@ public class MatchServiceImp(
             match.EventStatusColor = newInfoMatchService.EventStatusColor(match);
             match.EarlySettleStatus = newInfoMatchService.EarlySettlementStatus(match);
             match.FastMarketStatus = newInfoMatchService.FastMarketStatus(match);
-            match.ConfirmHalfTimeScore = newInfoMatchService.ConfirmScore(sourceResultDetail, ResourceType.Halftime);
-            match.ConfirmFullTimeScore = newInfoMatchService.ConfirmScore(sourceResultDetail, ResourceType.Final);
+            match.ConfirmHalfTimeScore = newInfoMatchService.ConfirmSoccerScore(sourceResultDetail, currentResultDetail, ResourceType.Halftime);
+            match.ConfirmFullTimeScore = newInfoMatchService.ConfirmSoccerScore(sourceResultDetail, currentResultDetail, ResourceType.Final);
             match.IsNotConsistentExHtScore = newInfoMatchService.IsInconsistentScore(match.SuspenderHalfTime, currentResultDetail, sourceResultDetail, ResourceType.Halftime);
             match.IsNotConsistentExFtScore = newInfoMatchService.IsInconsistentScore(match.SuspenderFullTime, currentResultDetail, sourceResultDetail, ResourceType.Final);
             match.GoalIcon = newInfoMatchService.GoalIcon(match);
             match.RefDataService = refDataService;
             match.IsTraderConfirmFt = currentResultDetail.Exists(r => r.ResourceId == ResourceType.Final && r.ResultStatusId == ResultStatus.Confirmed);
             match.IsTraderConfirmHt = currentResultDetail.Exists(r => r.ResourceId == ResourceType.Halftime && r.ResultStatusId == ResultStatus.Confirmed);
+
+            match.HalfTimeAwayScore = GetScoreByPermission(match.HalfTimeAwayScore, ResourceType.Halftime, currentResultDetail);
+            match.HalfTimeHomeScore = GetScoreByPermission(match.HalfTimeHomeScore, ResourceType.Halftime, currentResultDetail);
         }
 
         return isAutoPage ? matches : await newInfoMatchService.GetAutoSetting(matches);
+    }
+
+    private int? GetScoreByPermission(int? score, string resourceId, List<ResultDetail> resultDetails)
+    {
+        var resultDetail = resultDetails.Find(r => r.ResourceId == resourceId);
+        var isSettled = resultDetail?.ResultStatusId == ResultStatus.ManuallySettled
+            || resultDetail?.ResultStatusId == ResultStatus.AutoSettled;
+
+        if (isSettled)
+        {
+            return score;
+        }
+
+        return !permissionService.Permission.IsLeader ? null : score;
     }
 
     private async Task<List<Match>> GetMatchesAllSites(MultipleSiteCriteria criteria)
