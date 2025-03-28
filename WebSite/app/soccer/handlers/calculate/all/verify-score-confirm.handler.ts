@@ -7,14 +7,18 @@ import { AbstractHandler } from "../../abstract.handler.native";
 import { Language } from '../../../../shared/language.native';
 import { ResultStatusId, ScoreSourceType } from '../../../../shared/constants';
 import { ResultDetail } from '../../../models';
-
+import { Permission } from "../../../../shared/models/sportsbook-sop";
 import * as _ from 'lodash';
 import { inject } from '@angular/core';
 import { VerifyScoreGoalService } from '../../../components/calc/services/verify-score-goal.service';
+import { MessageBoxService } from '../../../../shared/services';
 
 
 export class VerifyScoreConfirmHandler extends AbstractHandler {
   private readonly verifyScoreGoalService = inject(VerifyScoreGoalService);
+  private readonly validSourceTypes = [ScoreSourceType.Sbo, ScoreSourceType.trader];
+  private readonly messageBoxService = inject(MessageBoxService);
+
   async handle(storage: Storage) {
     const { matchDetail, resultDetails, permission } = storage.getMatch();
     const calculateAction = storage.getCalculateAction();
@@ -28,20 +32,15 @@ export class VerifyScoreConfirmHandler extends AbstractHandler {
       return;
     }
 
+    if ((isHalfTime && this.isDisableCalculateHalfTime(matchDetail)) ||
+    (isFullTime && this.isDisableFulltimeCalculate(matchDetail)) ||
+    (isCalculate && this.isDisableFulltimeCalculate(matchDetail))) {
+      storage.error(Language.soccer.scoreNotConfirmed.replaceAll('{0}', isHalfTime ? "HT" : "FT"));
+      return;
+  }
+
     if(!this.isExistsOutsideResults(resultDetails)) {
       storage.error(Language.sop.notScreenshot);
-      return;
-    }
-    
-    if(this.isExistsInsufficientResult(resultDetails)) {
-      if(!permission.isLeader) {
-        // storage.error(Language.);
-        return;
-      }
-    }
-
-    if(this.isExistsInconsistentResult(resultDetails)) {
-      // storage.error(Language.sop.inconsistentResult);
       return;
     }
 
@@ -50,14 +49,38 @@ export class VerifyScoreConfirmHandler extends AbstractHandler {
       return;
     }
 
-    if ((isHalfTime && this.isDisableCalculateHalfTime(matchDetail)) ||
-      (isFullTime && this.isDisableFulltimeCalculate(matchDetail)) ||
-      (isCalculate && this.isDisableFulltimeCalculate(matchDetail))) {
-      storage.error(Language.soccer.scoreNotConfirmed.replaceAll('{0}', isHalfTime ? "HT" : "FT"));
-      return;
+    if(this.isExistsInsufficientResult(resultDetails)) {
+      if(!permission.isLeader) {
+        storage.error(Language.eSports.nonLeader.insufficientSources);
+        return;
+      }
+     return this.confirmInsufficientResult(storage, permission);
     }
 
+    if(this.isExistsInconsistentResult(resultDetails)) {
+      if(!permission.isLeader) {
+        storage.error(Language.eSports.nonLeader.mismatchedResult);
+        return;
+      }
+      return this.confirmInconsistentResult(storage, permission);
+    }
+    
     super.handle(storage);
+  }
+
+  private confirmInsufficientResult(storage: Storage, permission: Permission) {
+    storage.setConfirmMessage(Language.eSports.leader.insufficientSources);
+    this.messageBoxService.confirm(storage.getConfirmMessage(), () => {
+      this.confirmInconsistentResult(storage, permission);
+    });
+  }
+  
+
+  private confirmInconsistentResult(storage: Storage, permission: Permission) {
+    storage.setConfirmMessage(Language.eSports.leader.mismatchedResult);
+    this.messageBoxService.confirm(storage.getConfirmMessage(), () => {
+         super.handle(storage);
+    });
   }
 
   private halfTimeCompleted(halfTimeResult: ResultDetail, isFullTime: boolean) {
@@ -91,7 +114,7 @@ export class VerifyScoreConfirmHandler extends AbstractHandler {
   }
 
   private isExistsMismatchOutsideResults(resultDetails: ResultDetail[]) {
-    const checkedResults = resultDetails.filter(x => x.checked);
+    const checkedResults = this.getCheckedResults(resultDetails);
 
     return checkedResults.some(x => {
       const outsideResult = resultDetails.find(y => y.sourceId === ScoreSourceType.screenshot && y.resourceId === x.resourceId);
@@ -100,16 +123,12 @@ export class VerifyScoreConfirmHandler extends AbstractHandler {
   }
 
   private isExistsInsufficientResult(resultDetails: ResultDetail[]) {
-    const validSourceTypes = [ScoreSourceType.Sbo, ScoreSourceType.trader];
-    const checkedResults = resultDetails.filter(x => x.checked);
+    const checkedResults = this.getCheckedResults(resultDetails);
    
     for(const result of checkedResults) {
-      const sourceResults = resultDetails
-        .filter(x => x.resourceId === result.resourceId 
-          && validSourceTypes.includes(x.sourceId) 
-          && this.verifyScoreGoalService.isValidResult(x));
+      const sourceResults = this.getValidSourceResults(resultDetails, result.resourceId);
 
-      if(sourceResults.length < validSourceTypes.length) {
+      if(sourceResults.length === 0) {
         return true;
       }
     }
@@ -118,22 +137,29 @@ export class VerifyScoreConfirmHandler extends AbstractHandler {
   }
 
   private isExistsInconsistentResult(resultDetails: ResultDetail[]) {
-    const checkedResults = resultDetails.filter(x => x.checked);
-    const validSourceTypes = [ScoreSourceType.Sbo, ScoreSourceType.trader];
+    const checkedResults = this.getCheckedResults(resultDetails);
 
     for(const result of checkedResults) {
-      const outsideResult = resultDetails.find(y => y.sourceId === ScoreSourceType.screenshot && y.resourceId === result.resourceId);
-      const sourceResults = resultDetails
-        .filter(x => x.resourceId === result.resourceId 
-          && validSourceTypes.includes(x.sourceId) 
-          && !_.isEmpty(x.homeValue) && !_.isEmpty(x.awayValue));
-
+      const outsideResult = resultDetails
+        .find(y => y.sourceId === ScoreSourceType.screenshot && y.resourceId === result.resourceId);
+      const sourceResults = this.getValidSourceResults(resultDetails, result.resourceId);
       const [valid] = this.verifyScoreGoalService.tryGetValidResult(outsideResult, sourceResults);
+
       if(!valid) {
         return true;
       }
     }
 
     return false;
+  }
+  
+  private getCheckedResults(resultDetails: ResultDetail[]) {
+    return resultDetails.filter(x => x.checked);
+  }
+
+  private getValidSourceResults(resultDetails: ResultDetail[], resourceId: string ) {
+    return resultDetails.filter(x => x.resourceId === resourceId 
+      && this.validSourceTypes.includes(x.sourceId) 
+      && this.verifyScoreGoalService.isValidResult(x));
   }
 }
