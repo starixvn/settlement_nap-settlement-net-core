@@ -1,5 +1,4 @@
-﻿using Fanex.Settlement.ScaleOut.Request;
-using Fanex.Settlement.ScaleOut.Services;
+﻿using Fanex.Settlement.ScaleOut.Services;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
@@ -13,21 +12,16 @@ public class MatchServiceTests
 {
     private readonly IMatchResultDetailService matchResultDetailService;
 
-    private readonly IMatchService service;
-
-    private readonly ScaleOutSettleService scaleOutSettleService;
-
-    private readonly NewInfoMatchService newInfoMatchService;
+    private readonly MatchServiceImp service;
 
     public MatchServiceTests()
     {
         matchResultDetailService = Substitute.For<IMatchResultDetailService>();
         var refDataService = Substitute.For<IRefDataService>();
-        scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
-        newInfoMatchService = Substitute.For<NewInfoMatchService>();
-        var compareMatchService = Substitute.For<CompareMatchService>();
+        var scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
+        var newInfoMatchService = Substitute.For<NewInfoMatchService>();
 
-        service = new MatchServiceImp(refDataService, matchResultDetailService, compareMatchService, newInfoMatchService, scaleOutSettleService);
+        service = new MatchServiceImp(refDataService, matchResultDetailService, newInfoMatchService, scaleOutSettleService);
     }
 
     [Fact]
@@ -121,36 +115,5 @@ public class MatchServiceTests
 
         // Assert
         Assert.True(matches.Count == newMatches.Count);
-    }
-
-    [Fact]
-    public void UpdateMatchInfo_Always_CallServiceScaleOut()
-    {
-        service.UpdateMatchInfo(new UpdateMatchInfoRequest());
-
-        scaleOutSettleService.Received().UpdateMatchInfo(Arg.Any<UpdateMatchInfoRequest>());
-    }
-
-    [Fact]
-    public async Task SetNewMatchInfo_Always_returnMatchMerged()
-    {
-        newInfoMatchService.NewEventStatus(Arg.Any<Match>(), Arg.Any<List<ResultDetail>>()).Returns("EventStatus");
-        newInfoMatchService.EventStatusColor(Arg.Any<Match>()).Returns("EventStatusColor");
-        newInfoMatchService.EarlySettlementStatus(Arg.Any<Match>()).Returns("Early");
-        newInfoMatchService.ConfirmScore(Arg.Any<List<ResultDetail>>(), ResourceType.Halftime).Returns("1");
-        newInfoMatchService.ConfirmScore(Arg.Any<List<ResultDetail>>(), ResourceType.Final).Returns("2");
-        newInfoMatchService.IsExistsConfirmedEarly(Arg.Any<Match>()).Returns(true);
-
-        newInfoMatchService.GetAutoSetting(Arg.Any<List<Match>>()).Returns(x => x[0] as List<Match>);
-
-        var matches = await service.SetNewMatchInfo([new Match()], []);
-        var match = matches.ToList()[0];
-
-        Assert.True(match.IsExistsConfirmedEarly);
-        Assert.Equal("EventStatus", match.NewEventStatus);
-        Assert.Equal("EventStatusColor", match.EventStatusColor);
-        Assert.Equal("Early", match.EarlySettleStatus);
-        Assert.Equal("1", match.ConfirmHalfTimeScore);
-        Assert.Equal("2", match.ConfirmFullTimeScore);
     }
 }

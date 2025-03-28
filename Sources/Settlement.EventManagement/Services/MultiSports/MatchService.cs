@@ -1,6 +1,4 @@
-﻿using Fanex.Settlement.ScaleOut.Request;
-
-namespace Settlement.EventManagement.Services.MultiSports;
+﻿namespace Settlement.EventManagement.Services.MultiSports;
 
 using Constants;
 using Fanex.Settlement.ScaleOut.Services;
@@ -12,13 +10,7 @@ public interface IMatchService
 {
     List<Match> GetScoreForMatchBySportType(List<Match> matches, List<ResultDetail> resultDetails, int sportType, bool isLeader = false);
 
-    void AddSiteInfo(List<Match> baseMatches, List<Match> siteMatches);
-
-    Task<List<Match>> SetNewOsMatchInfo(List<Match> matches, List<ResultDetail> listResultDetail);
-
-    Task<List<Match>> SetNewMatchInfo(List<Match> matches, List<ResultDetail> listResultDetail);
-
-    Task UpdateMatchInfo(UpdateMatchInfoRequest request);
+    Task<List<Match>> SetNewOsMatchInfo(List<Match> matches, List<ResultDetail> resultDetails);
 
     List<Match> SortingMatches(List<Match> matches);
 }
@@ -26,46 +18,41 @@ public interface IMatchService
 public class MatchServiceImp(
     IRefDataService refDataService,
     IMatchResultDetailService matchResultDetailService,
-    CompareMatchService compareMatchService,
     NewInfoMatchService newInfoMatchService,
     ScaleOutSettleService scaleOutSettleService)
     : IMatchService
 {
-    public async Task<List<Match>> SetNewOsMatchInfo(List<Match> matches, List<ResultDetail> listResultDetail)
+    public async Task<List<Match>> SetNewOsMatchInfo(List<Match> matches, List<ResultDetail> resultDetails)
     {
         foreach (var match in matches)
         {
-            var listSourceByMatchId = listResultDetail.Where(m => m.MatchId == match.MatchId && m.SourceId != SourceType.Normal).ToList();
-            var currentResultDetail = listResultDetail.Where(m => m.MatchId == match.MatchId && m.SourceId == SourceType.Normal).ToList();
-
-            match.NewEventStatus = newInfoMatchService.NewEventStatus(match, currentResultDetail);
-            match.EventStatusColor = newInfoMatchService.OSEventStatusColor(match);
-            match.EarlySettleStatus = newInfoMatchService.EarlyOSSettlementStatus(match);
-            match.ConfirmHalfTimeScore = newInfoMatchService.ConfirmScore(listSourceByMatchId, ResourceType.Halftime);
-            match.ConfirmFullTimeScore = newInfoMatchService.ConfirmScore(listSourceByMatchId, ResourceType.Final);
-            match.RefDataService = refDataService;
+            var sourceResults = GetResultsBySource(resultDetails, match.MatchId);
+            UpdateMatchOsInfo(match, sourceResults.normalResults, sourceResults.otherResults);
         }
 
         return await newInfoMatchService.GetAutoSetting(matches);
     }
 
-    public async Task<List<Match>> SetNewMatchInfo(List<Match> matches, List<ResultDetail> listResultDetail)
+    private static (List<ResultDetail> normalResults, List<ResultDetail> otherResults) GetResultsBySource(List<ResultDetail> resultDetails, long matchId)
     {
-        foreach (var match in matches)
-        {
-            var listSourceByMatchId = listResultDetail.Where(m => m.MatchId == match.MatchId && m.SourceId != SourceType.Normal).ToList();
-            var currentResultDetail = listResultDetail.Where(m => m.MatchId == match.MatchId && m.SourceId == SourceType.Normal).ToList();
+        var matchResults = resultDetails.Where(m => m.MatchId == matchId);
+        return (
+            matchResults.Where(m => m.SourceId == SourceType.Normal).ToList(),
+            matchResults.Where(m => m.SourceId != SourceType.Normal).ToList()
+        );
+    }
 
-            match.NewEventStatus = newInfoMatchService.NewEventStatus(match, currentResultDetail);
-            match.EventStatusColor = newInfoMatchService.EventStatusColor(match);
-            match.EarlySettleStatus = newInfoMatchService.EarlySettlementStatus(match);
-            match.ConfirmHalfTimeScore = newInfoMatchService.ConfirmScore(listSourceByMatchId, ResourceType.Halftime);
-            match.ConfirmFullTimeScore = newInfoMatchService.ConfirmScore(listSourceByMatchId, ResourceType.Final);
-            match.IsExistsConfirmedEarly = newInfoMatchService.IsExistsConfirmedEarly(match);
-            match.RefDataService = refDataService;
-        }
-
-        return await newInfoMatchService.GetAutoSetting(matches);
+    private void UpdateMatchOsInfo(
+        Match match,
+        List<ResultDetail> currentResults,
+        List<ResultDetail> otherSourceResults)
+    {
+        match.NewEventStatus = newInfoMatchService.NewEventStatus(match, currentResults);
+        match.EventStatusColor = newInfoMatchService.OSEventStatusColor(match);
+        match.EarlySettleStatus = newInfoMatchService.EarlyOSSettlementStatus(match);
+        match.ConfirmHalfTimeScore = newInfoMatchService.ConfirmScore(otherSourceResults, ResourceType.Halftime);
+        match.ConfirmFullTimeScore = newInfoMatchService.ConfirmScore(otherSourceResults, ResourceType.Final);
+        match.RefDataService = refDataService;
     }
 
     public List<Match> GetScoreForMatchBySportType(List<Match> matches, List<ResultDetail> resultDetails, int sportType, bool isLeader = false)
@@ -109,27 +96,11 @@ public class MatchServiceImp(
         return matches;
     }
 
-    public void AddSiteInfo(List<Match> baseMatches, List<Match> siteMatches)
-    {
-        foreach (var match in baseMatches)
-        {
-            var matchSiteInfo = compareMatchService.GetDifferentMatchSiteInfo(match, siteMatches);
-            if (matchSiteInfo != null)
-            {
-                match.SiteMatch.Add(matchSiteInfo);
-            }
-        }
-    }
-
-    public async Task UpdateMatchInfo(UpdateMatchInfoRequest request)
-    {
-        await scaleOutSettleService.UpdateMatchInfo(request);
-    }
-
     public List<Match> SortingMatches(List<Match> matches)
     {
-        var sportBook = matches.OrderBy(match => !(match.OriginalEventStatus.ToLowerInvariant() == EventStatus.Completed && match.IsExistRunningTicket))
-            .ThenBy(match => match.OriginalEventStatus.ToLowerInvariant() == EventStatus.Completed && !match.IsExistRunningTicket)
+        var sportBook = matches
+            .OrderBy(match => !IsCompletedWithRunningTicket(match))
+            .ThenBy(IsCompletedWithoutRunningTicket)
             .ThenBy(match => match.KickOffTime)
             .ThenBy(match => match.LeagueId)
             .ThenBy(match => match.SettlementStatus != 0)
@@ -138,4 +109,12 @@ public class MatchServiceImp(
 
         return sportBook;
     }
+
+    private static bool IsCompletedWithRunningTicket(Match match) =>
+        string.Equals(match.OriginalEventStatus.ToLowerInvariant(), EventStatus.Completed) &&
+        match.IsExistRunningTicket;
+
+    private static bool IsCompletedWithoutRunningTicket(Match match) =>
+        string.Equals(match.OriginalEventStatus.ToLowerInvariant(), EventStatus.Completed) &&
+                      !match.IsExistRunningTicket;
 }
