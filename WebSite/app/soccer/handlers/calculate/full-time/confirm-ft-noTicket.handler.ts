@@ -14,6 +14,7 @@ export class ConfirmFtNoTicketHandler extends AbstractHandler {
   async handle(storage: Storage) {
     const { matchDetail } = storage.getMatch();
     const halfTimeResult = storage.getHalfTimeResult();
+    const outsideHtResult = storage.getOutsideHtResult();
     const confirmMessage = `${Language.soccer.confirmAutoSelectFtNoTicket}`;
     const ticketCounts = await this.#requestService.countTickets(matchDetail.matchId);
     const isExistsTicket = ticketCounts.some(x => ["1H","2H","BothHalf"].includes(x.groupResult) && x.totalTicket > 0);
@@ -24,6 +25,9 @@ export class ConfirmFtNoTicketHandler extends AbstractHandler {
         halfTimeResult.homeValue = '0';
         halfTimeResult.awayValue = '0';
         halfTimeResult.checked = true;
+
+        outsideHtResult.homeValue = '0';
+        outsideHtResult.awayValue = '0';
         super.handle(storage);
       });
       return;

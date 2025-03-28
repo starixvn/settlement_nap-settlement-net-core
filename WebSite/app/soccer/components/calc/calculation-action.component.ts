@@ -64,6 +64,7 @@ export class CalculationActionComponent implements OnInit {
     this.scoreChanged(this.fullTimeResult);
 
     this.matchDetail.applyGoalRecord = this.disableGoalRecordCheckbox = this.calculateGoalRecordState(matchDetail);
+    this.warningGoalRecord();
   }
 
   get isTraderHtConfirmed() {
@@ -90,10 +91,6 @@ export class CalculationActionComponent implements OnInit {
     this.fullTimeResult.resultSettingData.iconHoldResult = this.getResultSettingIcon(this.fullTimeResult);
   }
 
-
-  private disabledInputScore() {
-    return !this.permission.isLeader
-  }
 
   private autoSetHtFinalResult() {
     const [valid, validResult] = this.#verifyScoreGoalService.tryGetValidResult(this.outsideHtResult,[this.traderHtResult,this.#storage.providerHtResult]);
@@ -169,6 +166,7 @@ export class CalculationActionComponent implements OnInit {
     }
 
     this.#scoreService.changeResultState();
+    this.warningGoalRecord();  
   }
 
   changeConfirmScore(resultDetail: ResultDetail) {
@@ -198,6 +196,13 @@ export class CalculationActionComponent implements OnInit {
 
     this.#storage.changeScore();
     this.#scoreService.changeResultState();
+    this.warningGoalRecord();
+  }
+
+  private warningGoalRecord() {
+    const isValidResult = this.#verifyScoreGoalService.isValidResult(this.halfTimeResult) || this.#verifyScoreGoalService.isValidResult(this.fullTimeResult);
+    const isWarning = isValidResult && !_.isEmpty(this.matchDetail.goalRecord)  && this.verifyGoalRecord(this.matchDetail);
+    this.matchDetail.isWarningGoalRecord = isWarning;
   }
 
 

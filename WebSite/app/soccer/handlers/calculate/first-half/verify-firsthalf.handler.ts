@@ -14,8 +14,8 @@ export class VerifyFirstHalfHandler extends AbstractHandler {
   #verifyActionService = inject(VerifyActionService);
 
   public async handle(storage: Storage) {
-    const { matchDetail, resultDetails } = storage.getMatch();
-    const halftimeResult = resultDetails.find(x => x.resourceId === ResourceIds.halfTime);
+    const { matchDetail } = storage.getMatch();
+    const halftimeResult = storage.getHalfTimeResult();
     const errorMessage = await this.verifyFirstHalf(halftimeResult, matchDetail, storage.getRelatedMatches());
     if (errorMessage) {
       storage.error(errorMessage);

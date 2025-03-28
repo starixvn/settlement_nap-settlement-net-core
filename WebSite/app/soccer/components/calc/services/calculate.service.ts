@@ -75,9 +75,10 @@ export class CalculateService {
     .setNextHandler(this.#scoreValidationHandler);
 
      //calc-HT
-    this.#verifyHalfTimeHandler.setNextHandler(this.#verifyScoreConfirmHalfTimeHandler)
-    .setNextHandler(this.#confirmHalfTimeHandler)
-    .setNextHandler(this.#calculateHandler);
+    this.#verifyHalfTimeHandler
+      .setNextHandler(this.#verifyScoreConfirmHalfTimeHandler)
+      .setNextHandler(this.#confirmHalfTimeHandler)
+      .setNextHandler(this.#calculateHandler);
 
     //calc-FT
     this.#verifyFullTimeHandler
@@ -126,7 +127,6 @@ export class CalculateService {
   }
 
   calculateFullTime(){
-    console.log("calculateFullTime");
     this.#storage.setCalculateAction(CalculateAction.calculateFullTime);
     this.#verifyFullTimeHandler.handle(this.#storage);
   }

@@ -18,12 +18,13 @@ export class CalculateHandler extends AbstractHandler {
   public async handle(storage: Storage): Promise<void> {
     const actionName = storage.getCalculateAction();
     const { matchDetail, hedgeMatchDetail, childMatches, resultDetails } = storage.getMatch();
+    const checkedResultDetails = resultDetails.filter(x => x.checked);
     const selectedChildMatchIds = childMatches.filter(x => x.checked).map(x => x.matchId).join(',');
     const childMatchIds = isEmpty(childMatches) || isEqual(actionName, CalculateAction.calculateHalfTime)
       ? null : (isEmpty(selectedChildMatchIds) ? '0' : selectedChildMatchIds);
     const hedgeMatchId = storage.isApplyHedgeMatch() ? hedgeMatchDetail.matchId : 0;
     this.parseScoreToMatchDetail(matchDetail, resultDetails);
-    const query = new SettleQuery(matchDetail, hedgeMatchId, actionName, storage.getIsResettleTicket(), childMatchIds,resultDetails);
+    const query = new SettleQuery(matchDetail, hedgeMatchId, actionName, storage.getIsResettleTicket(), childMatchIds,checkedResultDetails);
     const result = await this.#requestService.calculate(query);
     if (result.isSuccessful) {
       await this.alertMessageToLetsTalkForFastMarket(matchDetail.matchId, actionName);

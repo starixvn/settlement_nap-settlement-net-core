@@ -12,6 +12,7 @@ import {  ScoreSourceType, SettlementStatusId } from "../../shared/constants";
 
 @Injectable()
 export class CalculateStorage implements Storage {
+
   private readonly verifyScoreGoalService = inject(VerifyScoreGoalService);
   private readonly toastrService = inject(ToastrService);
   #match = signal<Match>(null);
@@ -80,6 +81,10 @@ export class CalculateStorage implements Storage {
 
   getInstantScore(){
     return this.#instantScore;
+  }
+
+  getOutsideHtResult(): ResultDetail {
+    return this.#outsideHtResult;
   }
 
   get outsideFtResult() {

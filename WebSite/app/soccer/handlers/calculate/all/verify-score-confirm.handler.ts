@@ -54,7 +54,7 @@ export class VerifyScoreConfirmHandler extends AbstractHandler {
         storage.error(Language.eSports.nonLeader.insufficientSources);
         return;
       }
-     return this.confirmInsufficientResult(storage, permission);
+     return this.confirmInsufficientResult(storage);
     }
 
     if(this.isExistsInconsistentResult(resultDetails)) {
@@ -62,21 +62,20 @@ export class VerifyScoreConfirmHandler extends AbstractHandler {
         storage.error(Language.eSports.nonLeader.mismatchedResult);
         return;
       }
-      return this.confirmInconsistentResult(storage, permission);
+      return this.confirmInconsistentResult(storage);
     }
     
     super.handle(storage);
   }
 
-  private confirmInsufficientResult(storage: Storage, permission: Permission) {
+  private confirmInsufficientResult(storage: Storage) {
     storage.setConfirmMessage(Language.eSports.leader.insufficientSources);
     this.messageBoxService.confirm(storage.getConfirmMessage(), () => {
-      this.confirmInconsistentResult(storage, permission);
+      this.confirmInconsistentResult(storage);
     });
   }
   
-
-  private confirmInconsistentResult(storage: Storage, permission: Permission) {
+  private confirmInconsistentResult(storage: Storage) {
     storage.setConfirmMessage(Language.eSports.leader.mismatchedResult);
     this.messageBoxService.confirm(storage.getConfirmMessage(), () => {
          super.handle(storage);

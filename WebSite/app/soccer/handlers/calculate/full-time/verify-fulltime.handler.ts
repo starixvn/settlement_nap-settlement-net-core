@@ -15,8 +15,8 @@ export class VerifyFulltimeHandler extends AbstractHandler {
   #verifyActionService = inject(VerifyActionService);
 
    async handle(storage: Storage) {
-    const {matchDetail, childMatches, fantasyMatch, resultDetails} = storage.getMatch();
-    const fulltimeResult = resultDetails.find(x => x.resourceId === ResourceIds.fullTime);
+    const {matchDetail, childMatches, fantasyMatch} = storage.getMatch();
+    const fulltimeResult = storage.getFullTimeResult();
     const relatedMatches = fantasyMatch?.relatedMatches;
     const selectedChildMatches = childMatches.filter(x => x.checked);
 

@@ -12,7 +12,6 @@ export class VerifyTraderScoreHandler extends AbstractHandler {
     const resultSelected = resultDetails.filter((resultDetail) => resultDetail.checked);
     const traderResults = resultDetails.filter((resultDetail) => resultDetail.sourceId === ScoreSourceType.trader && resultSelected.some((result) => result.resourceId === resultDetail.resourceId));
 
-  
     if(this.verifyScore(traderResults)) {
       storage.error(Language.warningInputScore);
     } else{
@@ -29,7 +28,6 @@ export class VerifyTraderScoreHandler extends AbstractHandler {
         resultDetail.isAwayValueWarning = this.#verifyScoreGoalService.isEmptyScore(resultDetail.awayValue);
       }
     });
-    console.log(resultSelected);
 
     return existScoreInvalid;
   }

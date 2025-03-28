@@ -66,6 +66,9 @@ public class MatchServiceImp(
 
             match.HalfTimeAwayScore = GetScoreByPermission(match.HalfTimeAwayScore, ResourceType.Halftime, currentResultDetail);
             match.HalfTimeHomeScore = GetScoreByPermission(match.HalfTimeHomeScore, ResourceType.Halftime, currentResultDetail);
+
+            match.FinalAwayScore = GetScoreByPermission(match.FinalAwayScore, ResourceType.Final, currentResultDetail);
+            match.FinalHomeScore = GetScoreByPermission(match.FinalHomeScore, ResourceType.Final, currentResultDetail);
         }
 
         return isAutoPage ? matches : await newInfoMatchService.GetAutoSetting(matches);
