@@ -64,7 +64,6 @@ export class CalculationActionComponent implements OnInit {
     this.scoreChanged(this.fullTimeResult);
 
     this.matchDetail.applyGoalRecord = this.disableGoalRecordCheckbox = this.calculateGoalRecordState(matchDetail);
-    this.warningGoalRecord();
   }
 
   get isTraderHtConfirmed() {
@@ -165,8 +164,7 @@ export class CalculationActionComponent implements OnInit {
       this.fullTimeResult.isMismatch = this.isMismatched(resultDetail); 
     }
 
-    this.#scoreService.changeResultState();
-    this.warningGoalRecord();  
+    this.#scoreService.changeResultState();  
   }
 
   changeConfirmScore(resultDetail: ResultDetail) {
@@ -196,15 +194,7 @@ export class CalculationActionComponent implements OnInit {
 
     this.#storage.changeScore();
     this.#scoreService.changeResultState();
-    this.warningGoalRecord();
   }
-
-  private warningGoalRecord() {
-    const isValidResult = this.#verifyScoreGoalService.isValidResult(this.halfTimeResult) || this.#verifyScoreGoalService.isValidResult(this.fullTimeResult);
-    const isWarning = isValidResult && !_.isEmpty(this.matchDetail.goalRecord)  && this.verifyGoalRecord(this.matchDetail);
-    this.matchDetail.isWarningGoalRecord = isWarning;
-  }
-
 
 
   private isMismatched(resultDetail: ResultDetail) {
@@ -259,20 +249,8 @@ export class CalculationActionComponent implements OnInit {
     this.#storage.clear();
     this.matchDetail.goalRecord = value;
     this.matchDetail.goalIcon = this.#goalIconService.generateGoalIcon(this.matchDetail, this.halfTimeResult, this.fullTimeResult);
-    this.matchDetail.isWarningGoalRecord =  !_.isEmpty(value) && this.verifyGoalRecord(this.matchDetail);
   }
-  
-  private verifyGoalRecord(matchDetail: MatchDetail) {
-    if(this.halfTimeResult.checked) {
-      return this.#verifyScoreGoalService.isFullTimeGoalRecordInvalidWithResultDetail(matchDetail, this.halfTimeResult);
-    }
 
-    if(this.fullTimeResult.checked) {
-      return this.#verifyScoreGoalService.isFullTimeGoalRecordInvalidWithResultDetail(matchDetail, this.fullTimeResult);
-    }
-
-    return false;
-  }
 
   private getResultSettingIcon(result: ResultDetail) {
     return result.resultSettingData?.isHoldResult ? 'icon-yes' : 'icon-no';
