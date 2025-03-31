@@ -11,6 +11,7 @@ import { HalfTimeFullTimeService } from './halftime-fulltime.service';
 import { BackgroundColor, CalculateAction, SportType, TicketStatusText } from '../../../shared/constants';
 import { HedgeMatchDetail, ResultDetail, SportTemplate } from '../../../shared/models/sportsbook-sop';
 import { ResourcesIds } from '../../constants/resource-ids.native';
+import { ChildMatchType, LeagueType } from '../../constants';
 @Component({
   selector: 'halftime-fulltime-calculation',
   templateUrl: './halftime-fulltime-calculation.component.html',
@@ -464,7 +465,8 @@ export class HalfTimeFullTimeCalculationComponent implements SportTemplate {
   }
 
   private verifyOTValue() {
-    return this.matchDetail.childMatchType === 24 && this.matchDetail.sportType === SportType.iceHockey
+    const regularMatch = this.matchDetail.childMatchType === ChildMatchType.Regular || this.matchDetail.leagueType === LeagueType.Regular;
+    return regularMatch && this.matchDetail.sportType === SportType.iceHockey
       && (!_.isEmpty(this.otResult.homeValue) || !_.isEmpty(this.otResult.awayValue));
   }
 }

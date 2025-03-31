@@ -10,11 +10,12 @@ import { MatchInfoCompoment } from "./match-info.compoment";
 import { BandyResourceNamePipe } from "./bandy-resource.pipe";
 import { CalculateCommonModule } from "../../../shared/modules/calculate-common.module";
 import { ResultDetailsService } from "./resultdetails.service";
-import { LeagueType, ResourceID } from "./constant";
+import {  ResourceID } from "./constant";
 import { BandyService } from "./bandy.service";
 import { IntervalBackgroundPipe } from "../../../shared/pipes/interval-background.pipe";
 import * as _ from "lodash";
 import { BetStatusService } from "./betstatus.service";
+import { LeagueType } from "../../constants";
 
 @Component({
   templateUrl: './refund.component.html',

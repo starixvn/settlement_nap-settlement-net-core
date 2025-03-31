@@ -1,5 +1,5 @@
-﻿using System.Text.Json.Serialization;
-using Settlement.Core.Services;
+﻿using Settlement.Core.Services;
+using System.Text.Json.Serialization;
 
 namespace Settlement.Core.Models;
 
@@ -104,4 +104,6 @@ public class MatchDetail
     public bool IsHtOnly { get; set; }
 
     public int ChildMatchType { get; set; }
+
+    public int LeagueType { get; set; }
 }
