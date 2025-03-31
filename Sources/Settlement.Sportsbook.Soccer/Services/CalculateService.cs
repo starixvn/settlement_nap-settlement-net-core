@@ -320,7 +320,7 @@ public class CalculateServiceImp(
             const int actionLog = 81059;
             var message = createMessageSaveScore(request);
             await logService.ActionLog(request.MatchId, message, actionLog);
-            await updateResult(criteria, request);
+            await UpdateResult(criteria, request);
             return new Result();
         }
 
@@ -331,7 +331,7 @@ public class CalculateServiceImp(
         };
     }
 
-    private async Task updateResult(SaveScoreCriteria saveScoreCriteria, SaveScoreRequest request)
+    private async Task UpdateResult(SaveScoreCriteria saveScoreCriteria, SaveScoreRequest request)
     {
         var criteria = new UpdateMatchInfoCriteria
         {

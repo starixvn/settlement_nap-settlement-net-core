@@ -13,10 +13,10 @@ import { DynamicHeightDirective } from '../../../shared/directives/dynamic-heigh
 import { NgTemplateOutlet, NgClass, DatePipe } from '@angular/common';
 
 @Component({
-    selector: 'matches',
-    templateUrl: './matches.component.html',
-    standalone: true,
-    imports: [NgTemplateOutlet, DynamicHeightDirective, NgClass, NgbTooltip, DatePipe]
+  selector: 'matches',
+  templateUrl: './matches.component.html',
+  standalone: true,
+  imports: [NgTemplateOutlet, DynamicHeightDirective, NgClass, NgbTooltip, DatePipe]
 })
 export class MatchesComponent extends MatchesBaseComponent implements OnChanges, OnInit, OnDestroy {
   @Input() public disableRefund: boolean;
@@ -44,7 +44,7 @@ export class MatchesComponent extends MatchesBaseComponent implements OnChanges,
   }
 
   public isShowRefundLink(match: CalculationMatch) {
-    return this.backGroundService.isShowLink(match) && this.permission.canRefund && !this.disableRefund  ? BackgroundColor.codeLink : '';
+    return this.backGroundService.isShowLink(match) && this.permission.canRefund && !this.disableRefund ? BackgroundColor.codeLink : '';
   }
 
   private refreshMatches() {
@@ -100,5 +100,43 @@ export class MatchesComponent extends MatchesBaseComponent implements OnChanges,
     const colorStatus = _.isEqual(match.autoPayoutStatus, this.autoSettingFailed) ? 'auto-setting-failed' : '';
 
     return colorStatus;
+  }
+
+
+  public getFinalScore(match: Match, isHalfTime: boolean, isConfirm: boolean, score: number) {
+    const isSettled = isHalfTime ? this.isHalfTimeSettled(match) : this.isFullTimeSettled(match);
+    
+    if(isSettled) {
+      return score;
+    }
+
+    if(isConfirm && this.permission.isLeader) {
+      return score;
+    }
+
+    return '-';
+  }
+  
+  public getConfirmScore(match: Match, isHalfTime: boolean, isConfirm: boolean, score: string) {
+    const isSettled = isHalfTime ? this.isHalfTimeSettled(match) : this.isFullTimeSettled(match);
+    
+    if(isSettled || this.permission.isLeader) {
+      return score;
+    }
+
+    return '';
+  }
+
+  private isHalfTimeSettled(matchDetail: Match) {
+    return matchDetail.isHalfTimeCal || (!_.isEmpty(matchDetail.betStatus) &&
+      _.includes(matchDetail.betStatus.toLowerCase(), EventStatus.refundHalftime.toLowerCase()));
+  }
+
+  private isFullTimeSettled(matchDetail: Match) {
+    return matchDetail.isCalculated ||
+      (!_.isEmpty(matchDetail.betStatus)
+        && (_.includes(matchDetail.betStatus.toLowerCase(), EventStatus.abandoned.toLowerCase()) ||
+          (_.includes(matchDetail.betStatus.toLowerCase(), EventStatus.refund.toLowerCase())
+            && !_.includes(matchDetail.betStatus.toLowerCase(), EventStatus.refundHalftime.toLowerCase()))));
   }
 }

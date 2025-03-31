@@ -62,7 +62,9 @@ export class DetectChangesService {
             || !_.isEqual(oldMatch.directWaitingTime, newMatch.directWaitingTime)
             || !_.isEqual(oldMatch.instantWaitingTime, newMatch.instantWaitingTime)
             || !_.isEqual(oldMatch.confirmHalfTimeScore, newMatch.confirmHalfTimeScore)
-            ||!_.isEqual(oldMatch.confirmFullTimeScore, newMatch.confirmFullTimeScore);
+            ||!_.isEqual(oldMatch.confirmFullTimeScore, newMatch.confirmFullTimeScore)
+            || !_.isEqual(oldMatch.isTraderConfirmHt, newMatch.isTraderConfirmHt)
+            || !_.isEqual(oldMatch.isTraderConfirmFt, newMatch.isTraderConfirmFt);
     }
 
     private isStatusAutoCalculationDifferent(oldMatch: CalculationMatch, newMatch: CalculationMatch) {

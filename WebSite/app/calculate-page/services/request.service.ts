@@ -69,7 +69,6 @@ export class RequestService {
     public async refreshMatches(leagueIds: string, currentLeagues: League[], isAutoCalculatePage = false) {
         const matchesWaiting = isAutoCalculatePage ? await this.getNewestAutoMatches(leagueIds) :
             await this.getNewestMatches(leagueIds);
-        console.log("matchesWaiting", matchesWaiting);
         this.changeInfoAfterRefreshMatches(currentLeagues, matchesWaiting, isAutoCalculatePage);
     }
 
@@ -135,6 +134,8 @@ export class RequestService {
                     match.isExistRunningTicket = newMatch.isExistRunningTicket;
                     match.confirmFullTimeScore = newMatch.confirmFullTimeScore;
                     match.confirmHalfTimeScore = newMatch.confirmHalfTimeScore;
+                    match.isTraderConfirmHt = newMatch.isTraderConfirmHt;
+                    match.isTraderConfirmFt = newMatch.isTraderConfirmFt;
                     match.goalIcon = newMatch.goalIcon;
                     match.isNotConsistentExHtScore = newMatch.isNotConsistentExHtScore;
                     match.isNotConsistentExFtScore = newMatch.isNotConsistentExFtScore;
