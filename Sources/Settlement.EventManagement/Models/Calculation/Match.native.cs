@@ -174,6 +174,9 @@ public class Match : BaseMatch
     [Key("isTraderConfirmFt")]
     public bool IsTraderConfirmFt { get; set; }
 
+    [Key("moreScores")]
+    public MoreScores MoreScores { get; set; }
+
     public override bool Equals(object obj)
     {
         return obj is Match match && match.MatchId == MatchId;

@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
 import { BackGroundService, RequestService, PopupService } from '../../services';
-import { Match } from '../../../shared/models';
+import { Match, MoreScore, Score } from '../../../shared/models';
 import { BackgroundColor, CalculationStatus, EventStatus } from '../../../shared/constants';
 import * as _ from 'lodash';
 import { Language } from '../../../shared/language.native';
@@ -35,6 +35,7 @@ export class MatchesComponent extends MatchesBaseComponent implements OnChanges,
 
   ngOnInit() {
     this.refreshMatches();
+    console.log(this.leagues);
   }
 
   ngOnDestroy() {
@@ -103,40 +104,50 @@ export class MatchesComponent extends MatchesBaseComponent implements OnChanges,
   }
 
 
-  public getFinalScore(match: Match, isHalfTime: boolean, isConfirm: boolean, score: number) {
-    const isSettled = isHalfTime ? this.isHalfTimeSettled(match) : this.isFullTimeSettled(match);
-    
-    if(isSettled) {
-      return score;
+  public getFinalScore(score: MoreScore, isHalfTime: boolean, isHome: boolean) {
+    if(isHalfTime) {
+      return this.getHtScore(score, isHome);
+    }
+    return this.getFtScore(score, isHome);
+  }
+
+  private getHtScore(score: MoreScore, isHome: boolean) {
+    const {halfTimeScore} = score;
+    if(!halfTimeScore.isNotSettled) {
+      return isHome ? halfTimeScore.home : halfTimeScore.away;
     }
 
-    if(isConfirm && this.permission.isLeader) {
-      return score;
+    if(halfTimeScore.isConfirmed && this.permission.isLeader) {
+      return isHome ? halfTimeScore.home : halfTimeScore.away;
+    }
+
+    return '-';
+  }   
+
+  private getFtScore(score: MoreScore, isHome: boolean) {
+    const {finalScore} = score;
+    if(!finalScore.isNotSettled) {
+      return isHome ? finalScore.home : finalScore.away;
+    } 
+
+    if(finalScore.isConfirmed && this.permission.isLeader) {
+      return isHome ? finalScore.home : finalScore.away;
     }
 
     return '-';
   }
   
-  public getConfirmScore(match: Match, isHalfTime: boolean, isConfirm: boolean, score: string) {
-    const isSettled = isHalfTime ? this.isHalfTimeSettled(match) : this.isFullTimeSettled(match);
+  public getConfirmScore(match: CalculationMatch, isHalfTime: boolean) {
+    const {halfTimeScore, finalScore} = match.moreScores;
     
-    if(isSettled || this.permission.isLeader) {
-      return score;
+    if(isHalfTime && (!halfTimeScore.isNotSettled || this.permission.isLeader)) {
+      return match.confirmHalfTimeScore;
+    }
+    
+    if(!finalScore.isNotSettled || this.permission.isLeader) {
+      return match.confirmFullTimeScore;
     }
 
     return '';
-  }
-
-  private isHalfTimeSettled(matchDetail: Match) {
-    return matchDetail.isHalfTimeCal || (!_.isEmpty(matchDetail.betStatus) &&
-      _.includes(matchDetail.betStatus.toLowerCase(), EventStatus.refundHalftime.toLowerCase()));
-  }
-
-  private isFullTimeSettled(matchDetail: Match) {
-    return matchDetail.isCalculated ||
-      (!_.isEmpty(matchDetail.betStatus)
-        && (_.includes(matchDetail.betStatus.toLowerCase(), EventStatus.abandoned.toLowerCase()) ||
-          (_.includes(matchDetail.betStatus.toLowerCase(), EventStatus.refund.toLowerCase())
-            && !_.includes(matchDetail.betStatus.toLowerCase(), EventStatus.refundHalftime.toLowerCase()))));
   }
 }

@@ -1,4 +1,4 @@
-import { AutoSetting, GoalIcon, Match } from "../../shared/models";
+import { AutoSetting, GoalIcon, Match, MoreScore } from "../../shared/models";
 
 export class CalculationMatch extends Match {
     autoCalcSetting: AutoSetting;
@@ -18,4 +18,5 @@ export class CalculationMatch extends Match {
     childMatchType: number;
     isTraderConfirmFt: boolean;
     isTraderConfirmHt: boolean;
+    moreScores: MoreScore;
 }

@@ -12,6 +12,7 @@ public interface IScoreSetService
 
 public class ScoreSetServiceImp : IScoreSetService
 {
+    // TODO
     public Score GetScore(ResultDetail item, bool isLeader)
     {
         if (item.SettlementStatusId == SettlementStatus.Refund)

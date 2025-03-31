@@ -63,9 +63,37 @@ public class MatchServiceImp(
             match.RefDataService = refDataService;
             match.IsTraderConfirmFt = currentResultDetail.Exists(r => r.ResourceId == ResourceType.Final && r.ResultStatusId == ResultStatus.Confirmed);
             match.IsTraderConfirmHt = currentResultDetail.Exists(r => r.ResourceId == ResourceType.Halftime && r.ResultStatusId == ResultStatus.Confirmed);
+            match.MoreScores = GetMoreScores(currentResultDetail);
         }
 
         return isAutoPage ? matches : await newInfoMatchService.GetAutoSetting(matches);
+    }
+
+
+    private MoreScores GetMoreScores(List<ResultDetail> resultDetails)
+    {
+        var htResultDetail = resultDetails.Find(r => r.ResourceId == ResourceType.Halftime);
+        var htScore = FromResultDetail(htResultDetail);
+
+        var ftResultDetail = resultDetails.Find(r => r.ResourceId == ResourceType.Final);
+        var ftScore = FromResultDetail(ftResultDetail);
+
+        return new MoreScores
+        {
+            HalfTimeScore = htScore,
+            FinalScore = ftScore,
+        };
+    }
+
+    private Score FromResultDetail(ResultDetail resultDetail)
+    {
+        var score = new Score(home: resultDetail?.HomeValue, away: resultDetail?.AwayValue)
+        {
+            IsConfirmed = resultDetail?.ResultStatusId == ResultStatus.Confirmed,
+            IsNotSettled = resultDetail?.ResultStatusId != ResultStatus.AutoSettled && resultDetail?.ResultStatusId != ResultStatus.ManuallySettled,
+        };
+
+        return score;
     }
 
     private async Task<List<Match>> GetMatchesAllSites(MultipleSiteCriteria criteria)
@@ -102,7 +130,6 @@ public class MatchServiceImp(
     {
         var hashLeagueIds = ConvertKeyToHash(leagueIds);
         var matches = cachingMatchesService.GetShortCache(hashLeagueIds, isAutoPage);
-        Console.WriteLine("GetWaitingMatches" + matches?.Count);
 
         if (matches != null)
         {
