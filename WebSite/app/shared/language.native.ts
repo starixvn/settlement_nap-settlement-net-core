@@ -187,7 +187,8 @@
     saveScore: 'Are you sure you want to save changes made to selected Outside Scores?',
     invalidResultByBetType: 'Cannot continue due to invalid value inputted. Please check and try again.',
     mismatchedScreenshot: 'WARNING! Cannot continue due to values from Final Score inconsistent with Screenshot',
-    notScreenshot: 'WARNING! Cannot continue due to missing Screenshot value.'
+    notScreenshot: 'WARNING! Cannot continue due to missing Screenshot value.',
+    relatedResultsNotSelected: 'Cannot continue due to related results have been calculated and not selected.'
   },
   intervalsAndMatch: {
     matchNotSelected: "WARNING! Changed values may affect other results. Do you want to select Match/Full Time score also?",
