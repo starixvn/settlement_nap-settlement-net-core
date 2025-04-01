@@ -70,14 +70,12 @@
       <!-- Outside -->
       <td
         [ngClass]="{ mismatched: halfTimeResult.isMismatch || outsideHtResult.isInvalidValue ,'trader-confirm': isTraderHtConfirmed}">
-        <input type="text" myOnlyInteger tabindex="5"
-          [disabled]="!halfTimeResult.checked  || halfTimeResult.resultSettingData.isHoldResult"
+        <input type="text" myOnlyInteger tabindex="5" [disabled]="halfTimeResult.resultSettingData.isHoldResult"
           [(ngModel)]="outsideHtResult.homeValue" (ngModelChange)="changeConfirmScore(outsideHtResult)" />
       </td>
       <td
         [ngClass]="{ mismatched: halfTimeResult.isMismatch || outsideHtResult.isInvalidValue, 'trader-confirm': isTraderHtConfirmed}">
-        <input type="text" myOnlyInteger tabindex="6"
-          [disabled]="!halfTimeResult.checked  || halfTimeResult.resultSettingData.isHoldResult"
+        <input type="text" myOnlyInteger tabindex="6" [disabled]="halfTimeResult.resultSettingData.isHoldResult"
           [(ngModel)]="outsideHtResult.awayValue" (ngModelChange)="changeConfirmScore(outsideHtResult)" />
       </td>
 
@@ -129,14 +127,12 @@
       <!-- Outside -->
       <td
         [ngClass]="{ mismatched: fullTimeResult.isMismatch || outsideFtResult.isInvalidValue,  'trader-confirm': isTraderFtConfirmed }">
-        <input type="text" myOnlyInteger tabindex="11"
-          [disabled]="!fullTimeResult.checked  || fullTimeResult.resultSettingData.isHoldResult"
+        <input type="text" myOnlyInteger tabindex="11" [disabled]="fullTimeResult.resultSettingData.isHoldResult"
           [(ngModel)]="outsideFtResult.homeValue" (ngModelChange)="changeConfirmScore(outsideFtResult)" />
       </td>
       <td
         [ngClass]="{ mismatched: fullTimeResult.isMismatch || outsideFtResult.isInvalidValue,  'trader-confirm': isTraderFtConfirmed }">
-        <input type="text" myOnlyInteger tabindex="12"
-          [disabled]="!fullTimeResult.checked  || fullTimeResult.resultSettingData.isHoldResult"
+        <input type="text" myOnlyInteger tabindex="12" [disabled]="fullTimeResult.resultSettingData.isHoldResult"
           [(ngModel)]="outsideFtResult.awayValue" (ngModelChange)="changeConfirmScore(outsideFtResult)" />
       </td>
 

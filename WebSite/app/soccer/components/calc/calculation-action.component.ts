@@ -50,12 +50,15 @@ export class CalculationActionComponent implements OnInit {
   enableAction = false;
   disableGoalRecordCheckbox = false;
 
+  readonly resultSettledStatusIds = [ResultStatusId.AutoCompleted,ResultStatusId.ManualCompleted];
+
   ngOnInit() {
     this.permission = this.#storage.getPermission();
     const { matchDetail } = this.#storage.match();
     this.matchDetail = matchDetail;
 
     this.setState();
+
     
     this.autoSetHtFinalResult();
     this.autoSetFtFinalResult();
@@ -93,22 +96,24 @@ export class CalculationActionComponent implements OnInit {
 
   private autoSetHtFinalResult() {
     const [valid, validResult] = this.#verifyScoreGoalService.tryGetValidResult(this.outsideHtResult,[this.traderHtResult,this.#storage.providerHtResult]);
-    if(valid && !this.#verifyScoreGoalService.isHalfTimeSettled(this.matchDetail)) {
+    const isHalfTimeSettled = this.resultSettledStatusIds.includes(this.halfTimeResult.resultStatusId);
+    if(valid && !isHalfTimeSettled) {
       this.#storage.setHaftTimeScore(validResult.homeValue,validResult.awayValue);
     } 
 
-    if(!valid && !this.#verifyScoreGoalService.isHalfTimeSettled(this.matchDetail)) {
+    if(!valid && !isHalfTimeSettled) {
       this.#storage.setHaftTimeScore("","");
     }
   }
 
   private autoSetFtFinalResult() {
     const [valid, validResult] = this.#verifyScoreGoalService.tryGetValidResult(this.outsideFtResult,[this.traderFtResult,this.#storage.providerFtResult]);
-    if(valid && !this.#verifyScoreGoalService.isFullTimeSettled(this.matchDetail)) {
+    const isFullTimeSettled = this.resultSettledStatusIds.includes(this.fullTimeResult.resultStatusId);
+    if(valid && !isFullTimeSettled) {
       this.#storage.setFullTimeScore(validResult.homeValue,validResult.awayValue);
     }
     
-    if(!valid && !this.#verifyScoreGoalService.isFullTimeSettled(this.matchDetail)) {
+    if(!valid && !isFullTimeSettled) {
       this.#storage.setFullTimeScore("","");
     }
   }

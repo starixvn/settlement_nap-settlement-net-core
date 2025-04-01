@@ -17,5 +17,7 @@ export interface Storage {
   getInstantScore(): UndoChecking
   setInstantScore(score: UndoChecking): void
   error(message: string)
-  getOutsideHtResult(): ResultDetail
+  getOutsideHtResult(): ResultDetail;
+  getIsIgnoreCheckFt(): boolean;
+  setIsIgnoreCheckFt(value: boolean): void;
 }

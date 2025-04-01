@@ -3,7 +3,7 @@ import { Storage } from "../../../storage/storage.service.native";
 import { ResultDetail } from "../../../models";
 import { inject } from "@angular/core";
 import { MessageBoxService } from "../../../../shared/services";
-import { ScoreSourceType } from "../../../../shared/constants";
+import { ResourceIds, ScoreSourceType } from "../../../../shared/constants";
 import { VerifyScoreGoalService } from "../../../components/calc/services/verify-score-goal.service";
 import { Language } from "../../../../shared/language.native";
 
@@ -14,8 +14,9 @@ export class VerifyInsufficientScoreHandler extends AbstractHandler {
   
   async handle(storage: Storage) {
     const { permission, resultDetails } = storage.getMatch();
+    const isIgnoreCheckFt = storage.getIsIgnoreCheckFt();
 
-    if (this.isExistsInsufficientResult(resultDetails)) {
+    if (this.isExistsInsufficientResult(resultDetails, isIgnoreCheckFt)) {
       if (!permission.isLeader) {
         storage.error(Language.eSports.nonLeader.insufficientSources);
         return;
@@ -33,10 +34,12 @@ export class VerifyInsufficientScoreHandler extends AbstractHandler {
     })
   }
 
-  private isExistsInsufficientResult(resultDetails: ResultDetail[]) {
+  private isExistsInsufficientResult(resultDetails: ResultDetail[], isIgnoreCheckFt: boolean) {
     const checkedResults = this.getCheckedResults(resultDetails);
+    const newCheckedResults = isIgnoreCheckFt ? checkedResults.filter(x => x.resourceId !== ResourceIds.halfTime) : checkedResults;
+    console.log(newCheckedResults);
 
-    for (const result of checkedResults) {
+    for (const result of newCheckedResults) {
       const sourceResults = this.getValidSourceResults(resultDetails, result.resourceId);
 
       if (sourceResults.length === 0) {

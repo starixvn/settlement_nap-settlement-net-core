@@ -2,7 +2,7 @@
 import { Storage } from "../../../storage/storage.service.native";
 import { AbstractHandler } from "../../abstract.handler.native";
 import { Language } from '../../../../shared/language.native';
-import { ScoreSourceType } from '../../../../shared/constants';
+import { ResourceIds, ScoreSourceType } from '../../../../shared/constants';
 import { ResultDetail } from '../../../models';
 import * as _ from 'lodash';
 import { inject } from '@angular/core';
@@ -16,7 +16,8 @@ export class VerifyInconsistentScoreHandler extends AbstractHandler {
 
   async handle(storage: Storage) {
     const { permission, resultDetails } = storage.getMatch();
-    if (this.isExistsInconsistentResult(resultDetails)) {
+    const isIgnoreCheckFt = storage.getIsIgnoreCheckFt();
+    if (this.isExistsInconsistentResult(resultDetails, isIgnoreCheckFt)) {
       if (!permission.isLeader) {
         storage.error(Language.eSports.nonLeader.mismatchedResult);
         return;
@@ -35,10 +36,12 @@ export class VerifyInconsistentScoreHandler extends AbstractHandler {
     })
   }
 
-  private isExistsInconsistentResult(resultDetails: ResultDetail[]) {
+  private isExistsInconsistentResult(resultDetails: ResultDetail[], isIgnoreCheckFt: boolean) {
     const checkedResults = this.getCheckedResults(resultDetails);
+    const newCheckedResults = isIgnoreCheckFt ? checkedResults.filter(x => x.resourceId !== ResourceIds.halfTime) : checkedResults;
+    console.log(newCheckedResults);
 
-    for (const result of checkedResults) {
+    for (const result of newCheckedResults) {
       const outsideResult = resultDetails
         .find(y => y.sourceId === ScoreSourceType.screenshot && y.resourceId === result.resourceId);
       const sourceResults = this.getValidSourceResults(resultDetails, result.resourceId);
