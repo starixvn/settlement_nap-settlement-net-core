@@ -35,7 +35,6 @@ export class MatchesComponent extends MatchesBaseComponent implements OnChanges,
 
   ngOnInit() {
     this.refreshMatches();
-    console.log(this.leagues);
   }
 
   ngOnDestroy() {

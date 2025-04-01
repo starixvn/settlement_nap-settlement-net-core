@@ -141,4 +141,7 @@ public class CalculateMatchWaiting
     [Key("directWaitingTime")]
     public int DirectWaitingTime { get; set; }
 
+    [Key("moreScores")]
+    public MoreScores MoreScores { get; set; }
+
 }

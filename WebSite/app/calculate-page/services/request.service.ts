@@ -139,6 +139,7 @@ export class RequestService {
                     match.goalIcon = newMatch.goalIcon;
                     match.isNotConsistentExHtScore = newMatch.isNotConsistentExHtScore;
                     match.isNotConsistentExFtScore = newMatch.isNotConsistentExFtScore;
+                    match.moreScores = {...newMatch.moreScores};
                     if (isAutoCalculatePage) {
                         this.mapNewestAutoCalculationMatch(match, newMatch);
                     }
