@@ -32,6 +32,8 @@ export class CalculateStorage implements Storage {
   #providerHtResult: ResultDetail;
   #providerFtResult: ResultDetail;
 
+  #isIgnoreCheckHt = false;     
+
   match = this.#match.asReadonly();
   readonly dialogMessage = new ModalDialogMessage(Language.confirmationBox);
 
@@ -111,7 +113,13 @@ export class CalculateStorage implements Storage {
     return this.#providerFtResult;
   }
 
+  getIsIgnoreCheckHt() {
+    return this.#isIgnoreCheckHt;
+  }
 
+  setIsIgnoreCheckHt(value: boolean) {
+    this.#isIgnoreCheckHt = value;
+  }
 
   // Setters
   setToastrOverlay(toastContainer: ToastContainerDirective) {

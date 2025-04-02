@@ -37,6 +37,8 @@ export class ConfirmFtNoTicketHandler extends AbstractHandler {
 
         outsideHtResult.homeValue = '0';
         outsideHtResult.awayValue = '0';
+
+        storage.setIsIgnoreCheckHt(true);
         storage.setCalculateAction(CalculateAction.calculate);
         super.handle(storage);
       });
