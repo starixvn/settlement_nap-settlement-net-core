@@ -1,9 +1,10 @@
 import { Inject, Injectable } from "@angular/core";
 import { ExternalResult, ExternalResultDetail, MatchDetail, ResultDetail } from "../../../shared/models/sportsbook-sop";
-import { LeagueType, ResourceID, ResourceIDs } from "./constant";
+import { ResourceID, ResourceIDs } from "./constant";
 import * as _ from "lodash";
 import { ResultSettingModel } from "../../../shared/models/result-setting.model";
 import {ResultStatusId, SettlementStatusId } from "../../../shared/constants";
+import { LeagueType } from "../../constants";
 
 @Injectable()
 export class ResultDetailsService {
