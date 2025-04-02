@@ -19,7 +19,7 @@ import { UpdateSettlementResultHistoryStatus } from '../../shared/models/update-
   templateUrl: './refund-actions.component.html',
   standalone: true,
   imports: [ExcludeTotalPointPipe, MatchDetailComponent, RefundCommonModule, ResourceNameByIdPipe],
-  providers: [TennisService,ResourceNameByIdPipe]
+  providers: [TennisService, ResourceNameByIdPipe]
 
 })
 export class RefundActionsComponent extends RefundActionBaseComponent implements SportTemplate {
@@ -71,13 +71,13 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
       this.toastrService.error(Language.MarkedTicket);
     } else {
       if (this.verifySelectedOnMap()) {
-       this.confirmBeforeRefund();
+        this.confirmBeforeRefund();
       }
     }
   }
 
   private confirmBeforeRefund() {
-    if(this.isSettleRelated) {
+    if (this.isSettleRelated) {
       this.confirmationDialogMessage.message = Language.confirmRelatedChildMatch;
       this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
         this.confirmationDialogMessage.message = Language.RefundConfirmMessage;
@@ -116,17 +116,17 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
     }
   }
 
-    private async updateStatusResultAmendment(matchDetail:MatchDetail, settleResult : Result) {
-      const query = new UpdateSettlementResultHistoryStatus(
-        matchDetail.matchId,
-        settleResult.settledSessionId,
-        matchDetail.sportType,
-        settleResult.isOrg);
-  
-      if(settleResult.hasResultAmendment) {
-        await this.aioService.updateSettlementResultHistoryStatus(query);
-      }
+  private async updateStatusResultAmendment(matchDetail: MatchDetail, settleResult: Result) {
+    const query = new UpdateSettlementResultHistoryStatus(
+      matchDetail.matchId,
+      settleResult.settledSessionId,
+      matchDetail.sportType,
+      settleResult.isOrg);
+
+    if (settleResult.hasResultAmendment) {
+      await this.aioService.updateSettlementResultHistoryStatus(query);
     }
+  }
 
   protected generateRefundQuery(apikey: string) {
     this.selectedResources.forEach((item) => {
@@ -159,13 +159,13 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
     return refund + betStatus.join(',');
   }
 
-  openInfo(){
+  openInfo() {
     this.infoDialog.title = Language.information;
     this.infoDialog.message = Language.childMatchTennisInfo;
     this.messageBoxService.alert(this.infoDialog);
   }
 
   public get confirmRefundResources() {
-    return this.selectedResources.map((x) => ({...x,resourceName: this.resourceNameByIdPipe.transform(x.resourceId)}))
+    return this.selectedResources.map((x) => ({ ...x, resourceName: this.resourceNameByIdPipe.transform(x.resourceId) }))
   }
 }
