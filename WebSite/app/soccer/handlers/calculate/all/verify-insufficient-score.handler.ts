@@ -14,9 +14,8 @@ export class VerifyInsufficientScoreHandler extends AbstractHandler {
   
   async handle(storage: Storage) {
     const { permission, resultDetails } = storage.getMatch();
-    const isIgnoreCheckFt = storage.getIsIgnoreCheckFt();
 
-    if (this.isExistsInsufficientResult(resultDetails, isIgnoreCheckFt)) {
+    if (this.isExistsInsufficientResult(resultDetails)) {
       if (!permission.isLeader) {
         storage.error(Language.eSports.nonLeader.insufficientSources);
         return;
@@ -34,12 +33,10 @@ export class VerifyInsufficientScoreHandler extends AbstractHandler {
     })
   }
 
-  private isExistsInsufficientResult(resultDetails: ResultDetail[], isIgnoreCheckFt: boolean) {
+  private isExistsInsufficientResult(resultDetails: ResultDetail[]) {
     const checkedResults = this.getCheckedResults(resultDetails);
-    const newCheckedResults = isIgnoreCheckFt ? checkedResults.filter(x => x.resourceId !== ResourceIds.halfTime) : checkedResults;
-    console.log(newCheckedResults);
 
-    for (const result of newCheckedResults) {
+    for (const result of checkedResults) {
       const sourceResults = this.getValidSourceResults(resultDetails, result.resourceId);
 
       if (sourceResults.length === 0) {

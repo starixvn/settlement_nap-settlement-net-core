@@ -16,8 +16,7 @@ export class VerifyInconsistentScoreHandler extends AbstractHandler {
 
   async handle(storage: Storage) {
     const { permission, resultDetails } = storage.getMatch();
-    const isIgnoreCheckFt = storage.getIsIgnoreCheckFt();
-    if (this.isExistsInconsistentResult(resultDetails, isIgnoreCheckFt)) {
+    if (this.isExistsInconsistentResult(resultDetails)) {
       if (!permission.isLeader) {
         storage.error(Language.eSports.nonLeader.mismatchedResult);
         return;
@@ -36,12 +35,10 @@ export class VerifyInconsistentScoreHandler extends AbstractHandler {
     })
   }
 
-  private isExistsInconsistentResult(resultDetails: ResultDetail[], isIgnoreCheckFt: boolean) {
+  private isExistsInconsistentResult(resultDetails: ResultDetail[]) {
     const checkedResults = this.getCheckedResults(resultDetails);
-    const newCheckedResults = isIgnoreCheckFt ? checkedResults.filter(x => x.resourceId !== ResourceIds.halfTime) : checkedResults;
-    console.log(newCheckedResults);
 
-    for (const result of newCheckedResults) {
+    for (const result of checkedResults) {
       const outsideResult = resultDetails
         .find(y => y.sourceId === ScoreSourceType.screenshot && y.resourceId === result.resourceId);
       const sourceResults = this.getValidSourceResults(resultDetails, result.resourceId);

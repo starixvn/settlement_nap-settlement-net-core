@@ -31,7 +31,6 @@ export class CalculateStorage implements Storage {
   #traderFtResult: ResultDetail;
   #providerHtResult: ResultDetail;
   #providerFtResult: ResultDetail;
-  #isIgnoreCheckFt = false;
 
   match = this.#match.asReadonly();
   readonly dialogMessage = new ModalDialogMessage(Language.confirmationBox);
@@ -112,9 +111,7 @@ export class CalculateStorage implements Storage {
     return this.#providerFtResult;
   }
 
-  getIsIgnoreCheckFt() {
-    return this.#isIgnoreCheckFt;
-  }
+
 
   // Setters
   setToastrOverlay(toastContainer: ToastContainerDirective) {
@@ -181,10 +178,6 @@ export class CalculateStorage implements Storage {
 
   setInstantScore(score: UndoChecking) {
     this.#instantScore = score;
-  }
-
-  setIsIgnoreCheckFt(isIgnoreCheckFt: boolean) {
-    this.#isIgnoreCheckFt = isIgnoreCheckFt;
   }
 
   updateMatchDetailScore() {
