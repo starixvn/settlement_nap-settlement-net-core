@@ -5,7 +5,7 @@ import { Component, ViewChild, OnInit, inject } from '@angular/core';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import * as _ from 'lodash';
 import { MessageBoxService, AioService, IntervalCalculationService } from '../../shared/services';
-import { MatchResource, ModalDialogMessage, Sport } from '../../shared/models';
+import { MatchResource, ModalDialogMessage, Result, Sport } from '../../shared/models';
 import { Language } from '../../shared/language.native';
 import { SettlementStatusId, CalculateAction, SportType, ResultStatusId, ScoreSourceType, TicketStatusText, ResultStatus, EventStatus } from '../../shared/constants';
 import { Match, HedgeMatchDetail, SettleQuery, ChildMatch, SettleChildMatchQuery } from '../models';
@@ -479,9 +479,8 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
       const pushResult = await this.aioService.push(query);
       if (pushResult.isSuccessful) {
         await this.handleChildMatch(query, type);
+        await this.updateStatusResultAmendments(this.match, pushResult);
         this.settleHedgeMatch(query);
-        //TODO: Update settlement result history status
-        await this.aioService.updateSettlementResultHistoryStatus(new UpdateSettlementResultHistoryStatus(this.match.matchDetail.matchId, pushResult.settledSessionId, this.match.matchDetail.sportType, pushResult.isOrg));
       } else {
         this.toastrService.error(pushResult.errMsg);
       }
@@ -489,6 +488,19 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
       this.toastrService.error(result.errMsg);
     }
   }
+
+  private async updateStatusResultAmendments(match: Match, settledResult: Result) {
+    const request = new UpdateSettlementResultHistoryStatus(
+      match.matchDetail.matchId, 
+      settledResult.settledSessionId, 
+      match.matchDetail.sportType, 
+      settledResult.isOrg);    
+
+      if(settledResult.hasResultAmendment) {
+        await this.aioService.updateSettlementResultHistoryStatus(request);
+      }
+  }
+
 
   saveScore() {
     this.toastrService.clear();

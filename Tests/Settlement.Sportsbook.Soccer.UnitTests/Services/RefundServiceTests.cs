@@ -34,7 +34,6 @@ public class RefundServiceTests
         createCriteriaService = Substitute.For<ICreateCriteriaService>();
         scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
         logService = Substitute.For<LogService>();
-        var publishEndPoint = Substitute.For<IPublishEndpoint>();
         var context = new DefaultHttpContext
         {
             Connection =
@@ -45,7 +44,7 @@ public class RefundServiceTests
         accessor.HttpContext = context;
 
         var option = Options.Create(appSettings);
-        service = new RefundServiceImp(repository, accessor, option, createCriteriaService, scaleOutSettleService, logService, publishEndPoint);
+        service = new RefundServiceImp(repository, accessor, option, createCriteriaService, scaleOutSettleService, logService);
     }
 
     [Theory]

@@ -215,14 +215,14 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     const result = await this.aioService.push(query);
     
     if (result.errCode === 0) {
-      await this.updateStatusResultAmendments(this.match, result);
+      await this.updateStatusResultAmendments(result);
       this.messageBoxService.closePopup();
     } else {
       this.toastrService.error(result.errMsg);
     }
   }
 
-    private async updateStatusResultAmendments(match: Match, settledResult: Result) {
+    private async updateStatusResultAmendments(settledResult: Result) {
       const request = new UpdateSettlementResultHistoryStatus(
         this.matchId, 
             settledResult.settledSessionId,

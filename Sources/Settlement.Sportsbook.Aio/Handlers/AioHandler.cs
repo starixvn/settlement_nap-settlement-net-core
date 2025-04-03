@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using Fanex.Settlement.MessageBridge.ResultAmendment;
+﻿using Fanex.Settlement.MessageBridge.ResultAmendment;
 using MassTransit;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Constants;
@@ -84,12 +83,12 @@ public class AioHandler(
 
     public async Task<bool> Handle(UpdateSettlementResultHistoryStatusRequest request, CancellationToken cancellationToken)
     {
-        if (request.SportType == SportType.Tennis || request.SportType == SportType.TableTennis)
+        if (request.SportType == SportType.TableTennis)
         {
             return true;
         }
 
-        if (request.SportType is SportType.VolleyBall)
+        if (request.SportType is SportType.VolleyBall or SportType.Tennis)
         {
             await publishEndpoint.Publish(
                 new ResultAmendSettled(request.MatchId, request.SessionIds, request.IsOrg),
