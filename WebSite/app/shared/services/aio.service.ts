@@ -8,6 +8,7 @@ import { Language } from '../language.native';
 import { GeneralMatch, HedgeMatchDetail, ResultDetail, SaveScoreQuery } from '../models/sportsbook-sop';
 import { ResultSettingType, ResultStatus, ResourceIds } from '../../shared/constants';
 import { AutoSettings } from '../models/league-settings.model';
+import { IUpdateSettlementResultHistoryStatus } from '../models/update-settle-result-history-status';
 
 @Injectable(
     {
@@ -82,7 +83,7 @@ export class AioService {
         return firstValueFrom(request);
     }
 
-    public updateSettlementResultHistoryStatus(query: object) {
+    public updateSettlementResultHistoryStatus(query: IUpdateSettlementResultHistoryStatus) {
         const request = this.httpRequestService.postJson(query, `${this.aioApi}/update-settlement-result-history-status`);
         return firstValueFrom(request);
     }

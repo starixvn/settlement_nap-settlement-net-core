@@ -35,4 +35,9 @@ export interface MatchDetailBase {
     isExistFgNg: boolean,
     originalGoalRecord: string,
     isScoreInconsistent: boolean
+    sportType: number;
+    childMatchType: number;
+    parentId: number;
+
+
 }

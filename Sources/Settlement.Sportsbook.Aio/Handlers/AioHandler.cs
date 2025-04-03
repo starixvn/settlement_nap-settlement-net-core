@@ -1,4 +1,5 @@
-﻿using Fanex.Settlement.MessageBridge.ResultAmendment;
+﻿using System.Text.Json;
+using Fanex.Settlement.MessageBridge.ResultAmendment;
 using MassTransit;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Constants;
@@ -8,6 +9,7 @@ using Settlement.Sportsbook.Aio.Criteria.Cricket;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Requests;
 using Settlement.Sportsbook.Aio.Services;
+using Result = Settlement.Core.Models.Result;
 
 namespace Settlement.Sportsbook.Aio.Handlers;
 
@@ -69,20 +71,41 @@ public class AioHandler(
     public async Task<Result> Handle(SaveScoreRequest request, CancellationToken cancellationToken) =>
         await aioService.SaveScore(request);
 
-    public async Task<Result> Handle(SettleChildMatchRequest request, CancellationToken cancellationToken) =>
-        await aioService.SettleChildMatch(request);
+    public async Task<Result> Handle(SettleChildMatchRequest request, CancellationToken cancellationToken)
+    {
+        var result = await aioService.SettleChildMatch(request);
+
+        return result;
+    }
+
 
     public async Task<bool> Handle(ResultSettingRequest request, CancellationToken cancellationToken) =>
         await aioService.ResultSetting(request);
 
     public async Task<bool> Handle(UpdateSettlementResultHistoryStatusRequest request, CancellationToken cancellationToken)
     {
+        await Fanex.Logging.LogService.InfoAsync("UpdateSettlementResultHistoryStatusRequest", JsonSerializer.Serialize(request));
+        if (request.SportType == SportType.VolleyBall || request.SportType == SportType.TableTennis)
+        {
+            return true;
+        }
+
+        if (request.SportType is SportType.Tennis)
+        {
+            await publishEndpoint.Publish(
+                new ResultAmendSettled(request.MatchId, request.SessionIds, request.IsOrg),
+                new CancellationTokenSource(TimeSpan.FromSeconds(3)).Token);
+
+            return true;
+        }
+
         var criteria = new ResultHistoryUpdateCriteria
         {
             MatchId = request.MatchId,
             SessionIds = request.SessionIds,
             StatusId = -1
         };
+
         await resultAmendmentService.UpdateResultHistory(criteria);
 
         return true;

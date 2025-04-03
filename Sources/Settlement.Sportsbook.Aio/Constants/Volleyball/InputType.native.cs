@@ -3,7 +3,7 @@
 public static class InputType
 {
     public const int HomeAwayNoneId = 0;
-    public const int CoupleScoreId = 1;
+    public const int CoupleScoreId = 4;
     public const int HomeAwayId = 2;
     public const int YesNoId = 3;
 

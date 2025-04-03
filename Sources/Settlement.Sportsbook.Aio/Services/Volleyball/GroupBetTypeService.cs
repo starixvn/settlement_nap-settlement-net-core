@@ -14,6 +14,7 @@ public class GroupBetTypeServiceImp : IGroupBetTypeService
     {
         resultDetail.GroupName = GetGroupName(resultDetail, betTypeId);
         resultDetail.InputType = GetInputType(betTypeId);
+        resultDetail.GroupBetType = resultDetail.InputType;
     }
 
     private static string GetGroupName(ResultDetail resultDetail, int betTypeId)

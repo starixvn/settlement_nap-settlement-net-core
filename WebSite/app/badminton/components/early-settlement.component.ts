@@ -16,6 +16,7 @@ import { EarlyBaseService } from '../../core/services/early-base.service';
 import { UrlHelper } from '../../helper';
 import { MatchDetailComponent } from './match-detail.component';
 import { EarlyCommonModule } from '../../shared/modules/early-common.module';
+import { UpdateSettlementResultHistoryStatus } from '../../shared/models/update-settle-result-history-status';
 
 @Component({
   selector: 'early-settlement',
@@ -154,6 +155,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
   private confirmCalculation(resultDetails: ResultDetail[], isLeader: boolean) {
     this.confirmationDialogMessage.message = this.earlyConstraintService.getConfirmMessage(resultDetails, this.matchDetail);
     this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
+      this.setTeamResultSettle(this.selectedResources);
       const query = new SettleQuery(this.matchId,
         this.selectedResources,
         CalculateAction.earlyCalculate,
@@ -195,6 +197,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
   }
 
   private createQueryRefundAndPush() {
+    this.setTeamResultSettle(this.selectedResources);
     const query = new SettleQuery(this.matchId,
       this.selectedResources,
       CalculateAction.earlyRefund,
@@ -209,7 +212,14 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
       query.betStatus = this.matchDetail.betStatus;
     }
     const result = await this.aioService.push(query);
+    
     if (result.errCode === 0) {
+      result.hasResultAmendment && await this.aioService.updateSettlementResultHistoryStatus(new UpdateSettlementResultHistoryStatus(
+        this.matchId, 
+        result.settledSessionId,
+        this.matchDetail.sportType, 
+        result.isOrg));
+        
       this.messageBoxService.closePopup();
     } else {
       this.toastrService.error(result.errMsg);
@@ -261,4 +271,11 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
   public verifyResultByBetType(resultDetail: ResultDetail) {
     resultDetail.isResultWarningByBetType = this.earlyConstraintService.isBetTypesResultInvalid(resultDetail);
   }
+
+  private setTeamResultSettle(resultDetails: ResultDetail[]) {
+    resultDetails.forEach(result => {
+        result.homeId = `${this.matchDetail.homeId}`;
+        result.awayId = `${this.matchDetail.awayId}`;
+    });
+}
 }
