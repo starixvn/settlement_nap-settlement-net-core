@@ -18,6 +18,7 @@ public class SoccerHandlerTests
 
     private readonly IMatchService matchService;
     private readonly ICalculateService calculateService;
+    private readonly IFetchDataService fetchDataService;
 
     public SoccerHandlerTests()
     {
@@ -25,8 +26,10 @@ public class SoccerHandlerTests
         currentSession.UserId = 8;
         matchService = Substitute.For<IMatchService>();
         calculateService = Substitute.For<ICalculateService>();
+        fetchDataService = Substitute.For<IFetchDataService>();
+
         var instantCalculateService = Substitute.For<InstantCalculateService>();
-        handler = new CalculateHandler(currentSession, matchService, calculateService, instantCalculateService);
+        handler = new CalculateHandler(currentSession, matchService, calculateService, instantCalculateService, fetchDataService);
     }
 
     [Fact]
