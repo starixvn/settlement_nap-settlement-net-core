@@ -17,11 +17,14 @@ import { ConfirmUncalcFTHandler } from "../../../handlers/calculate/full-time/co
 import { UncalculateFTHandler } from "../../../handlers/calculate/full-time/uncalculate-ft.handler";
 import { CalculateAction } from "../../../../shared/constants";
 import { VerifySettledResultHandler } from "../../../handlers/calculate/save-score/verify-settled-result.handler";
-import { VerifyScoreHandler } from "../../../handlers/calculate/save-score/verify-score.hanlder";
+import { VerifyTraderScoreHandler } from "../../../handlers/calculate/save-score/verify-score.hanlder";
 import { SaveScoreHandler } from "../../../handlers/calculate/save-score/save-score.handler";
 import { VerifyScoreInstantHandler } from "../../../handlers/calculate/uncalc-instant/verify-score-instant.handler";
 import { PushInstantScoreHandler } from "../../../handlers/calculate/uncalc-instant/push-instant-score.handler";
 import { VerifyScoreConfirmHandler } from "../../../handlers/calculate/all/verify-score-confirm.handler";
+import { ConfirmFtNoTicketHandler } from "../../../handlers/calculate/full-time/confirm-ft-noTicket.handler";
+import { VerifyInconsistentScoreHandler } from "../../../handlers/calculate/all/verify-inconsistent-score.handler";
+import { VerifyInsufficientScoreHandler } from "../../../handlers/calculate/all/verify-insufficient-score.handler";
 
 @Injectable()
 
@@ -34,16 +37,25 @@ export class CalculateService {
   #verifyHalfTimeHandler = new VerifyFirstHalfHandler();
   #confirmHalfTimeHandler = new ConfirmHalfTimeHandler ();
   #verifyScoreConfirmHalfTimeHandler = new VerifyScoreConfirmHandler();
+  #verifyHalfTimeInconsistentScoreHandler = new VerifyInconsistentScoreHandler();
+  #verifyHalfTimeInsufficientScoreHandler = new VerifyInsufficientScoreHandler();
 
   //calc-FT
   #verifyFullTimeHandler = new VerifyFulltimeHandler();
   #confirmFullTimeHandler = new ConfirmFullTimeHandler();
+  #confirmFtNoTicketHandler = new ConfirmFtNoTicketHandler();
   #verifyScoreConfirmFullTimeHandler = new VerifyScoreConfirmHandler();
+  #verifyFullTimeInconsistentScoreHandler = new VerifyInconsistentScoreHandler();
+  #verifyFullTimeInsufficientScoreHandler = new VerifyInsufficientScoreHandler();
+
 
   //calc-ALL
   #verifyAllHandler = new VerifyAllHandler();
   #confirmAllHandler = new ConfirmAllHandler();
   #verifyScoreConfirmHandler = new VerifyScoreConfirmHandler();
+  #verifyInconsistentScoreHandler = new VerifyInconsistentScoreHandler();
+  #verifyInsufficientScoreHandler = new VerifyInsufficientScoreHandler();
+
 
   //uncalc-ALL
   #uncalculateHandler = new UncalculateHandler();
@@ -55,7 +67,7 @@ export class CalculateService {
 
   //Save-Score
   #verifySettledResultHandler = new VerifySettledResultHandler();
-  #verifyScoreHandler = new VerifyScoreHandler();
+  #verifyTraderScoreHandler = new VerifyTraderScoreHandler();
   #saveScoreHandler = new SaveScoreHandler();
 
   #verifyScoreInstant = new VerifyScoreInstantHandler();
@@ -64,6 +76,8 @@ export class CalculateService {
   #calculateHandler = new CalculateHandler();
   #storage = inject(CalculateStorage);
 
+  
+
   constructor(){
   
     this.#matchSettledHandler
@@ -71,19 +85,29 @@ export class CalculateService {
     .setNextHandler(this.#scoreValidationHandler);
 
      //calc-HT
-    this.#verifyHalfTimeHandler.setNextHandler(this.#verifyScoreConfirmHalfTimeHandler)
-    .setNextHandler(this.#confirmHalfTimeHandler)
-    .setNextHandler(this.#calculateHandler);
+    this.#verifyHalfTimeHandler
+      .setNextHandler(this.#verifyScoreConfirmHalfTimeHandler)
+      .setNextHandler(this.#verifyHalfTimeInsufficientScoreHandler)
+      .setNextHandler(this.#verifyHalfTimeInconsistentScoreHandler)
+      .setNextHandler(this.#confirmHalfTimeHandler)
+      .setNextHandler(this.#calculateHandler);
 
     //calc-FT
-    this.#verifyFullTimeHandler.setNextHandler(this.#verifyScoreConfirmFullTimeHandler)
-    .setNextHandler(this.#confirmFullTimeHandler)
-    .setNextHandler(this.#calculateHandler);
+    this.#verifyFullTimeHandler
+      .setNextHandler(this.#confirmFtNoTicketHandler)
+      .setNextHandler(this.#verifyScoreConfirmFullTimeHandler)
+      .setNextHandler(this.#verifyFullTimeInsufficientScoreHandler) 
+      .setNextHandler(this.#verifyFullTimeInconsistentScoreHandler)
+      .setNextHandler(this.#confirmFullTimeHandler) 
+      .setNextHandler(this.#calculateHandler);
 
     //calc-ALL
-    this.#verifyAllHandler.setNextHandler(this.#verifyScoreConfirmHandler)
-    .setNextHandler(this.#confirmAllHandler)
-    .setNextHandler(this.#calculateHandler);
+    this.#verifyAllHandler
+      .setNextHandler(this.#verifyScoreConfirmHandler)
+      .setNextHandler(this.#verifyInsufficientScoreHandler)
+      .setNextHandler(this.#verifyInconsistentScoreHandler)
+      .setNextHandler(this.#confirmAllHandler)
+      .setNextHandler(this.#calculateHandler);
 
     //uncalc-ALL
     this.#uncalculateHandler.setNextHandler(this.#calculateHandler);
@@ -95,7 +119,7 @@ export class CalculateService {
 
      //Save-Score
     this.#verifySettledResultHandler
-    .setNextHandler(this.#verifyScoreHandler)
+    .setNextHandler(this.#verifyTraderScoreHandler)
     .setNextHandler(this.#saveScoreHandler);
 
     this.#verifyScoreInstant.setNextHandler(this.#pushInstantScore);

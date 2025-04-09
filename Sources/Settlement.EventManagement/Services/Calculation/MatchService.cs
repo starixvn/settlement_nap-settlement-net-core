@@ -1,13 +1,13 @@
 ﻿namespace Settlement.EventManagement.Services.Calculation;
 
+using System.Security.Cryptography;
+using System.Text;
 using Criteria;
 using Requests;
 using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.EventManagement.Models.Calculation;
-using System.Security.Cryptography;
-using System.Text;
 using Match = Models.Calculation.Match;
 
 public interface MatchService
@@ -26,7 +26,8 @@ public class MatchServiceImp(
     MergeDataService mergeDataService,
     NewInfoMatchService newInfoMatchService,
     IOptions<AppSettingsKey> appSettingsKey,
-    IMapper mapper)
+    IMapper mapper,
+    PermissionService permissionService)
     : MatchService
 {
     private static int _isProcessing;
@@ -42,6 +43,8 @@ public class MatchServiceImp(
 
     private async Task<List<Match>> SetNewMatchInfo(List<Match> matches, List<ResultDetail> listResultDetail, bool isAutoPage = false)
     {
+        var x = permissionService.Permission.IsLeader;
+
         foreach (var match in matches)
         {
             var sourceResultDetail = listResultDetail.Where(m => m.MatchId == match.MatchId && m.SourceId != SourceType.Normal).ToList();
@@ -58,9 +61,39 @@ public class MatchServiceImp(
             match.IsNotConsistentExFtScore = newInfoMatchService.IsInconsistentScore(match.SuspenderFullTime, currentResultDetail, sourceResultDetail, ResourceType.Final);
             match.GoalIcon = newInfoMatchService.GoalIcon(match);
             match.RefDataService = refDataService;
+            match.IsTraderConfirmFt = currentResultDetail.Exists(r => r.ResourceId == ResourceType.Final && r.ResultStatusId == ResultStatus.Confirmed);
+            match.IsTraderConfirmHt = currentResultDetail.Exists(r => r.ResourceId == ResourceType.Halftime && r.ResultStatusId == ResultStatus.Confirmed);
+            match.MoreScores = GetMoreScores(currentResultDetail);
         }
 
         return isAutoPage ? matches : await newInfoMatchService.GetAutoSetting(matches);
+    }
+
+
+    private MoreScores GetMoreScores(List<ResultDetail> resultDetails)
+    {
+        var htResultDetail = resultDetails.Find(r => r.ResourceId == ResourceType.Halftime);
+        var htScore = FromResultDetail(htResultDetail);
+
+        var ftResultDetail = resultDetails.Find(r => r.ResourceId == ResourceType.Final);
+        var ftScore = FromResultDetail(ftResultDetail);
+
+        return new MoreScores
+        {
+            HalfTimeScore = htScore,
+            FinalScore = ftScore,
+        };
+    }
+
+    private Score FromResultDetail(ResultDetail resultDetail)
+    {
+        var score = new Score(home: resultDetail?.HomeValue, away: resultDetail?.AwayValue)
+        {
+            IsConfirmed = resultDetail?.ResultStatusId == ResultStatus.Confirmed,
+            IsNotSettled = resultDetail?.ResultStatusId != ResultStatus.AutoSettled && resultDetail?.ResultStatusId != ResultStatus.ManuallySettled,
+        };
+
+        return score;
     }
 
     private async Task<List<Match>> GetMatchesAllSites(MultipleSiteCriteria criteria)

@@ -78,8 +78,7 @@ export class CalculateActionsComponent implements SportTemplate {
     this.verificationService.generateExternalScores(this.match, this.match.resultDetails, SportType.tennis, this.maxProviderCol);
     this.resetHomeAway(this.noTotalGames);
     this.enableUncalculate = this.enableUncalculateButton();
-    this.disableScoreDirect = this.verificationService.isTicketOnGame(this.match.resultDetails,
-      ResourcesIds.totalGames, ResourcesIds.totalSets);
+    this.disableScoreDirect = this.verificationService.isTicketOnGame(this.match.resultDetails, ResourcesIds.totalGames, ResourcesIds.totalSets);
     this.isLeader = this.match.permission.isLeader;
     this.match.originalResultDetail = _.cloneDeep(this.match.resultDetails);
     this.autoFillScoreOnLoad(this.match.resultDetails);

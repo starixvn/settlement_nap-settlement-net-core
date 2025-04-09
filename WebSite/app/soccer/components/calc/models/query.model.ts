@@ -22,9 +22,11 @@ export class SettleQuery {
     public childMatchIds: string;
     public leagueGroupId: number;
     public isFantasyMatch: boolean;
+    public resultDetails: ResultDetail[];
+    public selectedResultDetails: ResultDetail[];
 
 
-    constructor(matchDetail: MatchDetail, hedgeMatchId: number, actionName: string, isResettledTickets: boolean, childMatchIds: string) {
+    constructor(matchDetail: MatchDetail, hedgeMatchId: number, actionName: string, isResettledTickets: boolean, childMatchIds: string, resultDetails: ResultDetail[]) {
         this.matchId = matchDetail.matchId;
         this.hedgeMatchId = hedgeMatchId;
         this.isApplyHedging = hedgeMatchId > 0;
@@ -41,6 +43,8 @@ export class SettleQuery {
         this.childMatchIds = childMatchIds;
         this.leagueGroupId = matchDetail.leagueGroupId;
         this.isFantasyMatch = matchDetail.isFantasyMatch;
+        this.resultDetails = resultDetails;
+        this.selectedResultDetails = resultDetails.filter(x => x.checked);
         
         if (matchDetail.applyGoalRecord) {
             this.isEnabledGoalRecordFt = true;

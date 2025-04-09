@@ -13,13 +13,13 @@
           <th scope="col" rowspan="2" class="code">Match Code/ID</th>
           <th scope="col" rowspan="2" class="kick-off-time">Kick-off Time</th>
           <th scope="col" rowspan="2" class="event">Event</th>
-          <th scope="col" rowspan="2" class="score">HT Score</th>
-          <th scope="col" rowspan="2" class="score">Final score</th>
+          <!-- <th scope="col" rowspan="2" class="score">HT Score</th> -->
+          <!-- <th scope="col" rowspan="2" class="score">Final score</th> -->
           <th scope="col" rowspan="2" class="event-status">Event Status</th>
           <th scope="col" rowspan="2" class="score">Live Score</th>
           <th scope="col" colspan="2" class="instant-calc">Instant Calculation</th>
           <th scope="col" rowspan="2" class="header-action">Action</th>
-          <th scope="col" colspan="2" class="confirm">Confirm</th>
+          <!-- <th scope="col" class="confirm">Confirm</th> -->
           <th scope="col" rowspan="2" class="auto-setting">Auto Payout Setting</th>
           <th scope="col" rowspan="2" class="remark">Hold Status</th>
           <th scope="col" rowspan="2" class="reference-action">Reference Actions</th>
@@ -27,8 +27,8 @@
         <tr>
           <th class="auto-setting">Setting</th>
           <th class="instant-status">Status</th>
-          <th class="confirm-score">Half Time</th>
-          <th class="confirm-score">Full Time</th>
+          <!-- <th class="confirm-score">Half Time</th> -->
+          <!-- <th class="confirm-score">Full Time</th> -->
         </tr>
       </thead>
     </table>
@@ -41,7 +41,7 @@
     <table class="table-calculation">
       <tbody class="auto-calculation">
         <tr class="league">
-          <td colspan="7" class="name">&nbsp;{{ league.name }}</td>
+          <td colspan="5" class="name">&nbsp;{{ league.name }}</td>
           <td class="auto-setting">
             <div [class]="getClassInstant(league.autoCalcSetting.isInstantForLeague)"
               [matTooltip]="getTittleInstant(league.autoCalcSetting.isInstantForLeague)"
@@ -54,7 +54,7 @@
               (click)="openUpdateTime(league, true)"></div>
             }
           </td>
-          <td colspan="3"></td>
+          <td colspan="1"></td>
           <td class="auto-setting">
             <div
               [class]="getClassPayOut(league.autoCalcSetting.isAutoPayoutForLeague, league.autoCalcSetting.isDirectPayoutForLeague)"
@@ -96,8 +96,8 @@
             <span [class]="match.goalIcon.homeGoal ?? ''"></span>
             <span [class]="match.goalIcon.halfTimeHomeGoal ?? ''"></span>
           </td>
-          <td class="score">{{match.halfTimeHomeScore ?? '-'}}</td>
-          <td class="final-score score">{{match.finalHomeScore ?? '-'}}</td>
+          <!-- <td class="score">{{match.halfTimeHomeScore ?? '-'}}</td> -->
+          <!-- <td class="final-score score">{{match.finalHomeScore ?? '-'}}</td> -->
 
           <td rowspan="2" class="event-status" [ngClass]="getEventStatusColor(match)">
             {{ match.newEventStatus }}
@@ -137,20 +137,20 @@
               Refund
             </div>
           </td>
-          <td rowspan="2" class="confirm-score" [ngClass]="{
+          <!-- <td rowspan="2" class="confirm-score" [ngClass]="{
 							'bg-calculated': match.isHalfTimeCal,
 							'bg-white-blinking': match.isNotConsistentExHtScore
 						}">
             <div>{{ match.suspenderHalfTime }}</div>
             <div>{{ match.confirmHalfTimeScore }}</div>
-          </td>
-          <td rowspan="2" class="confirm-score" [ngClass]="{
+          </td> -->
+          <!-- <td rowspan="2" class="confirm-score" [ngClass]="{
 							'bg-calculated': match.isCalculated,
 							'bg-white-blinking': match.isNotConsistentExFtScore
 						}">
             <div>{{ match.suspenderFullTime }}</div>
             <div>{{ match.confirmFullTimeScore }}</div>
-          </td>
+          </td> -->
           <td rowspan="2" class="auto-setting">
             <div
               [class]="getClassPayOut(match.autoCalcSetting.isAutoPayoutForMatch, match.autoCalcSetting.isDirectPayoutForMatch)"
@@ -186,8 +186,8 @@
             <span [class]="match.goalIcon.awayGoal ?? ''"></span>
             <span [class]="match.goalIcon.halfTimeAwayGoal ?? ''"></span>
           </td>
-          <td class="score">{{match.halfTimeAwayScore ?? '-'}}</td>
-          <td class="final-score score">{{match.finalAwayScore ?? '-'}}</td>
+          <!-- <td class="score">{{match.halfTimeAwayScore ?? '-'}}</td> -->
+          <!-- <td class="final-score score">{{match.finalAwayScore ?? '-'}}</td> -->
           <td class="score final-score">{{match.liveAwayScore ?? '-'}}</td>
         </tr>
         }

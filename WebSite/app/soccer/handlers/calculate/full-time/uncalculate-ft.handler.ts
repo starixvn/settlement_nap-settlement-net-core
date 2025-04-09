@@ -13,8 +13,9 @@ export class UncalculateFTHandler extends AbstractHandler {
 
   async handle(storage: Storage): Promise<void> {
     const { matchDetail, resultDetails, hedgeMatchDetail } = storage.getMatch();
+    const checkedResultDetails = resultDetails.filter(x => x.checked);
     const hedgeMatchId = storage.isApplyHedgeMatch() ? hedgeMatchDetail.matchId : 0;
-    const query = new UncalculateFullTimeQuery(matchDetail, resultDetails, hedgeMatchId);
+    const query = new UncalculateFullTimeQuery(matchDetail, checkedResultDetails, hedgeMatchId);
     const result = await this.#requestService.unCalculateFt(query);
     if (result.isSuccessful) {
       this.#closePopupService.closePopup();

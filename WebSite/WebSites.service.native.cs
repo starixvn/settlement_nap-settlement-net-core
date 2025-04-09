@@ -1,3 +1,4 @@
+using System.IO.Compression;
 using AutoMapper;
 using Fanex.Caching;
 using Fanex.Data.Repository;
@@ -7,6 +8,7 @@ using Fanex.RemotingRef;
 using Fanex.Settlement.Converter.Services;
 using Fanex.Settlement.ScaleOut;
 using Fanex.Settlement.ScaleOut.Services;
+using Mapster;
 using MessagePack.AspNetCoreMvcFormatter;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -28,7 +30,6 @@ using Settlement.Sportsbook.Soccer;
 using Settlement.ThirdPartyProducts;
 using Settlement.WebSites.Configurations;
 using StackExchange.Redis;
-using System.IO.Compression;
 using ILogger = Fanex.Logging.ILogger;
 using LogService = Settlement.Core.Services.LogService;
 using LogServiceImp = Settlement.Core.Services.LogServiceImp;
@@ -179,6 +180,7 @@ public static class WebSites
 
         var mapper = mapperConfig.CreateMapper();
         services.AddSingleton(mapper);
+        services.AddMapster();
     }
 
     public static void AddMessagePack(this IServiceCollection services)

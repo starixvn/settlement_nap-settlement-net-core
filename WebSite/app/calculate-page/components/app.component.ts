@@ -53,6 +53,7 @@ export class AppComponent implements OnInit {
 
     private getComponentFactory(): ComponentFactory<PageBaseComponent> {
         const pageType = this.elementRef.nativeElement.getAttribute('page-type');
+        // return this.componentFactoryResolver.resolveComponentFactory(PageComponent)
         return _.isEqual(pageType, 'Calculation')
             ? this.componentFactoryResolver.resolveComponentFactory(PageComponent)
             : this.componentFactoryResolver.resolveComponentFactory(AutoCalculatePageComponent);

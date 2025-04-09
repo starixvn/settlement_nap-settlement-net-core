@@ -14,7 +14,8 @@ public class CalculateHandler(
     INapSession currentSession,
     IMatchService matchService,
     ICalculateService calculateService,
-    InstantCalculateService instantCalculateService)
+    InstantCalculateService instantCalculateService,
+    IFetchDataService fetchDataService)
     : IRequestHandler<GetMatchRequest, Match>,
         IRequestHandler<GetLatestMatchDetailRequest, MatchDetail>,
         IRequestHandler<SettleRequest, Result>,
@@ -23,7 +24,8 @@ public class CalculateHandler(
         IRequestHandler<InstantCalculationRequest, Result>,
         IRequestHandler<UncalculateFtRequest, Result>,
         IRequestHandler<GetResultDetailRequest, IEnumerable<ResultDetail>>,
-        IRequestHandler<SaveScoreRequest, Result>
+        IRequestHandler<SaveScoreRequest, Result>,
+        IRequestHandler<CountTicketsRequest, CountTicketResponse>
 
 {
     public async Task<Match> Handle(GetMatchRequest request, CancellationToken cancellationToken)
@@ -71,4 +73,7 @@ public class CalculateHandler(
     {
         return await calculateService.SaveScore(request);
     }
+
+    public async Task<CountTicketResponse> Handle(CountTicketsRequest request, CancellationToken cancellationToken)
+        => await fetchDataService.CountTickets(request.MatchId);
 }

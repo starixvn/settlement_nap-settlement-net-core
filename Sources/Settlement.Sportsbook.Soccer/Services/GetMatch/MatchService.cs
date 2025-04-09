@@ -1,11 +1,13 @@
 ﻿namespace Settlement.Sportsbook.Soccer.Services.GetMatch;
 
+using System.Threading.Tasks;
 using AutoMapper;
 using Criteria;
 using Fanex.Data.Repository;
 using Models;
 using Requests;
 using Settlement.Core.Constants;
+using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Core.Services.SpecificService;
@@ -31,6 +33,8 @@ public interface IMatchService
     Task<FantasyMatch> GetRelatedMatches(int matchId);
 
     Task<List<ResultDetail>> GetResultDetail(int matchId);
+
+
 }
 
 public class MatchServiceImp(
@@ -70,10 +74,14 @@ public class MatchServiceImp(
     {
         var match = await fetchDataService.GetMatchInfo(request);
         var resultDetails = await GetResultDetail(request.MatchId);
+
         var matchDetail = match.MatchDetail;
         matchDetail.RefDataService = refDataService;
-        HandleExternalResultDetailSoccer(matchDetail, resultDetails);
-        HandleResultDetailSoccer(matchDetail, resultDetails);
+        SetExMatchScore(matchDetail, resultDetails);
+        SetNormalResults(matchDetail, resultDetails);
+
+        SetTraderResults(resultDetails);
+        await SetOutsideResults(matchDetail.MatchId, resultDetails);
 
         var goalIconQuery = GoalIconQuery(matchDetail);
         matchDetail.GoalIcon = goalIconService.GetGoalIcon(goalIconQuery);
@@ -97,13 +105,28 @@ public class MatchServiceImp(
         return new Match
         {
             MatchDetail = matchDetail,
-            ResultDetails = resultDetails.Where(result => result.SourceId == SourceType.Normal),
+            ResultDetails = resultDetails,
             TicketCounts = match.TicketCounts,
             ChildMatches = childMatches,
             FantasyMatch = fantasyMatch,
             HedgeMatchDetail = hedgeMatchDetail,
             Permission = permissionService.Permission
         };
+    }
+
+    private async Task<List<ResultDetail>> GetOutsideSources(int matchId)
+    {
+        var criteria = new GetExternalResultDetailsCriteria
+        {
+            MatchId = matchId
+        };
+
+        var results = await repository.FetchAsync<ResultDetail>(criteria);
+
+        return results
+            .Where(x => x.SourceId == SourceType.Screenshot)
+            .ToList();
+
     }
 
     public async Task<Match> GetMatchRefund(GetMatchRequest request)
@@ -113,7 +136,7 @@ public class MatchServiceImp(
         var resultDetails = await GetResultDetail(request.MatchId);
 
         matchDetail.RefDataService = refDataService;
-        HandleExternalResultDetailSoccer(matchDetail, resultDetails);
+        SetExMatchScore(matchDetail, resultDetails);
         var goalIconQuery = GoalIconQuery(matchDetail);
         matchDetail.GoalIcon = goalIconService.GetGoalIcon(goalIconQuery);
 
@@ -140,6 +163,7 @@ public class MatchServiceImp(
             Permission = permissionService.Permission
         };
     }
+
 
     private static GoalIconQueryModel GoalIconQuery(MatchDetail match)
     {
@@ -188,8 +212,9 @@ public class MatchServiceImp(
         };
     }
 
-    private static void HandleExternalResultDetailSoccer(MatchDetail match, List<ResultDetail> resultDetails)
+    private static void SetExMatchScore(MatchDetail match, List<ResultDetail> resultDetails)
     {
+        //TODO
         var externalResultDetail = resultDetails.Where(result => result.SourceId == SourceType.Sbo).ToList();
         var halfTimeResult = externalResultDetail.Find(result => result.ResourceId == ResourceType.Halftime);
         var fullTimeResult = externalResultDetail.Find(result => result.ResourceId == ResourceType.Final);
@@ -209,9 +234,10 @@ public class MatchServiceImp(
         }
     }
 
-    private static void HandleResultDetailSoccer(MatchDetail match, List<ResultDetail> resultDetails)
+    private static void SetNormalResults(MatchDetail match, List<ResultDetail> resultDetails)
     {
         var internalResultDetail = resultDetails.Where(result => result.SourceId == SourceType.Normal).ToList();
+
         var halfTimeResult = internalResultDetail.Find(result => result.ResourceId == ResourceType.Halftime);
         var fullTimeResult = internalResultDetail.Find(result => result.ResourceId == ResourceType.Final);
 
@@ -221,7 +247,7 @@ public class MatchServiceImp(
         }
         else
         {
-            resultDetails.Add(new ResultDetail { ResourceId = ResourceType.Halftime, SourceId = SourceType.Normal, });
+            resultDetails.Add(new ResultDetail { ResourceId = ResourceType.Halftime, SourceId = SourceType.Normal, HomeValue = "", AwayValue = "" });
         }
 
         if (fullTimeResult != null)
@@ -230,9 +256,35 @@ public class MatchServiceImp(
         }
         else
         {
-            resultDetails.Add(new ResultDetail { ResourceId = ResourceType.Final, SourceId = SourceType.Normal, });
+            resultDetails.Add(new ResultDetail { ResourceId = ResourceType.Final, SourceId = SourceType.Normal, HomeValue = "", AwayValue = "" });
         }
     }
+
+    private static void SetTraderResults(List<ResultDetail> resultDetails)
+    {
+        var validStatus = new List<byte> { ResultStatus.Confirmed, ResultStatus.AutoSettled, ResultStatus.ManuallySettled };
+        var internalResultDetails = resultDetails.Where(result => result.SourceId == SourceType.Normal).ToList();
+
+        AddTraderResult(resultDetails, internalResultDetails, ResourceType.Halftime, validStatus);
+        AddTraderResult(resultDetails, internalResultDetails, ResourceType.Final, validStatus);
+    }
+
+    private static void AddTraderResult(List<ResultDetail> resultDetails, List<ResultDetail> internalResultDetails, string resourceType, List<byte> validStatus)
+    {
+        var result = internalResultDetails
+            .Find(detail => detail.ResourceId == resourceType && validStatus.Contains(detail.ResultStatusId ?? 0));
+
+        resultDetails.Add(new ResultDetail
+        {
+            ResourceId = resourceType,
+            SourceId = SourceType.Trader,
+            HomeValue = result?.HomeValue ?? string.Empty,
+            AwayValue = result?.AwayValue ?? string.Empty,
+            SettlementStatusId = result?.SettlementStatusId,
+            ResultStatusId = result?.ResultStatusId
+        });
+    }
+
 
     public async Task<MatchDetail> GetLatestMatchDetail(GetLatestMatchDetailRequest request)
     {
@@ -261,4 +313,31 @@ public class MatchServiceImp(
         var listMatch = await repository.FetchAsync<MatchMoveBetTicket>(criteria);
         return listMatch.ToList();
     }
+
+    private async Task SetOutsideResults(int matchId, List<ResultDetail> resultDetails)
+    {
+        var outsideResults = await GetOutsideSources(matchId);
+        var htResult = outsideResults.Find(result => result.ResourceId == ResourceType.Halftime);
+        var ftResult = outsideResults.Find(result => result.ResourceId == ResourceType.Final);
+
+        resultDetails.Add(new ResultDetail
+        {
+            ResourceId = ResourceType.Halftime,
+            SourceId = SourceType.Screenshot,
+            SourceName = "Screenshot",
+            HomeValue = htResult?.HomeValue ?? "",
+            AwayValue = htResult?.AwayValue ?? ""
+        });
+
+        resultDetails.Add(new ResultDetail
+        {
+            ResourceId = ResourceType.Final,
+            SourceId = SourceType.Screenshot,
+            SourceName = "Screenshot",
+            HomeValue = ftResult?.HomeValue ?? "",
+            AwayValue = ftResult?.AwayValue ?? "",
+        });
+    }
+
+
 }

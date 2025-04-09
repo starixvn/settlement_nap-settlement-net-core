@@ -3,6 +3,7 @@
 namespace Settlement.Sportsbook.Aio.Services.Cricket;
 
 using Constants.Cricket;
+using Settlement.Core.Models;
 
 public interface InputTypeService
 {

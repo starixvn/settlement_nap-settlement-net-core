@@ -1,4 +1,5 @@
 ﻿using Fanex.Settlement.ScaleOut.Criteria.Update;
+using Mapster;
 using Settlement.Core.Configurations;
 using Settlement.Core.Constants;
 using Settlement.Core.Criteria;
@@ -31,7 +32,10 @@ public class CalculateServiceImp(
     ICreateCriteriaService createCriteriaService,
     ScaleOutSettleService scaleOutSettleService,
     LogService logService,
-    IMatchService matchService) : ICalculateService
+    IMatchService matchService,
+    INapSession napSession,
+    IHttpContextAccessor accessor,
+    XmlConvertService xmlConvertService) : ICalculateService
 {
     public async Task<Result> Calculate(SettleRequest request)
     {
@@ -42,6 +46,8 @@ public class CalculateServiceImp(
         {
             return matchChecking;
         }
+
+        await SaveOutsideScores(request);
 
         var validateFantasyMatchResult = await ValidateFantasyMatch(request);
         if (validateFantasyMatchResult.ErrCode > 0)
@@ -66,6 +72,43 @@ public class CalculateServiceImp(
 
         return matchChecking;
     }
+
+    private async Task SaveOutsideScores(SettleRequest request)
+    {
+        var selectedResourceIds = request.SelectedResultDetails.Select(x => x.ResourceId);
+
+        var outsideScores = request.ResultDetails
+            .Where(x => selectedResourceIds.Contains(x.ResourceId) && x.SourceId == SourceType.Screenshot);
+
+        var checkedScores = request.ResultDetails
+            .Where(x => selectedResourceIds.Contains(x.ResourceId));
+
+        var criteria = new SaveOutsideScoreCriteria
+        {
+            MatchId = request.MatchId,
+            UserId = napSession.UserId,
+            Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString(),
+            OutsideSources = CreateScoreResources(outsideScores.Adapt<List<SaveScoreModel>>()),
+            Sources = CreateScoreResources(request.SelectedResultDetails.Adapt<List<SaveScoreModel>>()),
+
+        };
+
+        await repository.ExecuteAsync(criteria);
+
+        var errorMessage = criteria.ErrCode > 0 ? criteria.ErrMsg : string.Empty;
+    }
+
+    private string CreateScoreResources(List<SaveScoreModel> selectedResources)
+    {
+        var resources = new SaveScoreResources<SaveScoreModel>
+        {
+            SourceItems = selectedResources
+        };
+
+        return xmlConvertService.Serialize(resources);
+    }
+
+
 
     public async Task<Result> UncalculateFt(UncalculateFtRequest request)
     {
@@ -277,7 +320,7 @@ public class CalculateServiceImp(
             const int actionLog = 81059;
             var message = createMessageSaveScore(request);
             await logService.ActionLog(request.MatchId, message, actionLog);
-            await updateResult(criteria, request);
+            await UpdateResult(criteria, request);
             return new Result();
         }
 
@@ -288,7 +331,7 @@ public class CalculateServiceImp(
         };
     }
 
-    private async Task updateResult(SaveScoreCriteria saveScoreCriteria, SaveScoreRequest request)
+    private async Task UpdateResult(SaveScoreCriteria saveScoreCriteria, SaveScoreRequest request)
     {
         var criteria = new UpdateMatchInfoCriteria
         {

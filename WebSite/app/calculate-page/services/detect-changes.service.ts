@@ -9,7 +9,8 @@ export class DetectChangesService {
             && (this.isInfoDifferent(oldMatch, newMatch)
                 || this.isScoreDifferent(oldMatch, newMatch)
                 || this.isStatusDifferent(oldMatch, newMatch)
-                || this.isSuspenderDifferent(oldMatch, newMatch));
+                || this.isSuspenderDifferent(oldMatch, newMatch)
+                || this.isMoreScoreDifferent(oldMatch, newMatch));
     }
 
     private isInfoDifferent(oldMatch: CalculationMatch, newMatch: CalculationMatch) {
@@ -54,6 +55,20 @@ export class DetectChangesService {
             || this.isScoreAndTimeDifferent(oldMatch, newMatch));
     }
 
+    private isMoreScoreDifferent(oldMatch: CalculationMatch, newMatch: CalculationMatch) {
+        const { finalScore: oldFinalScore, halfTimeScore: oldHalfTimeScore } = oldMatch.moreScores;
+        const { finalScore: newFinalScore, halfTimeScore: newHalfTimeScore } = newMatch.moreScores;
+
+        return !_.isEqual(oldFinalScore.home, newFinalScore.home)
+            || !_.isEqual(oldFinalScore.away, newFinalScore.away)
+            || !_.isEqual(oldFinalScore.isNotSettled, newFinalScore.isNotSettled)
+            || !_.isEqual(oldFinalScore.isConfirmed, newFinalScore.isConfirmed) 
+            || !_.isEqual(oldHalfTimeScore.home, newHalfTimeScore.home)
+            || !_.isEqual(oldHalfTimeScore.away, newHalfTimeScore.away)
+            || !_.isEqual(oldHalfTimeScore.isNotSettled, newHalfTimeScore.isNotSettled)
+            || !_.isEqual(oldHalfTimeScore.isConfirmed, newHalfTimeScore.isConfirmed);
+    }
+
     private isScoreAndTimeDifferent(oldMatch: CalculationMatch, newMatch: CalculationMatch) {
         return !_.isEqual(oldMatch.instantHomeScore, newMatch.instantHomeScore)
             || !_.isEqual(oldMatch.instantAwayScore, newMatch.instantAwayScore)
@@ -62,7 +77,9 @@ export class DetectChangesService {
             || !_.isEqual(oldMatch.directWaitingTime, newMatch.directWaitingTime)
             || !_.isEqual(oldMatch.instantWaitingTime, newMatch.instantWaitingTime)
             || !_.isEqual(oldMatch.confirmHalfTimeScore, newMatch.confirmHalfTimeScore)
-            ||!_.isEqual(oldMatch.confirmFullTimeScore, newMatch.confirmFullTimeScore);
+            ||!_.isEqual(oldMatch.confirmFullTimeScore, newMatch.confirmFullTimeScore)
+            || !_.isEqual(oldMatch.isTraderConfirmHt, newMatch.isTraderConfirmHt)
+            || !_.isEqual(oldMatch.isTraderConfirmFt, newMatch.isTraderConfirmFt);
     }
 
     private isStatusAutoCalculationDifferent(oldMatch: CalculationMatch, newMatch: CalculationMatch) {

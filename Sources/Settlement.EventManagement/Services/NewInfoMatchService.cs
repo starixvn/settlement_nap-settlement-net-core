@@ -1,10 +1,11 @@
 ﻿namespace Settlement.EventManagement.Services;
 
+using System.Threading.Tasks;
 using Criteria;
 using Models;
+using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Core.Services.SpecificService;
-using System.Threading.Tasks;
 using Match = Models.Calculation.Match;
 using MultiSportMatch = Models.MultiSports.Match;
 
@@ -22,7 +23,8 @@ public interface NewInfoMatchService
 
     string FastMarketStatus(Match match);
 
-    string ConfirmScore(List<ResultDetail> listResultDetail, string resource);
+    string ConfirmScore(List<ResultDetail> sourceResults, string resource);
+    string ConfirmSoccerScore(List<ResultDetail> sourceResults, List<ResultDetail> resultDetails, string resource);
 
     bool IsInconsistentScore(string suspenderConfirm, List<ResultDetail> currentResultDetailList, List<ResultDetail> sourceResultDetailList, string resource);
 
@@ -40,7 +42,8 @@ public class NewInfoMatchServiceImp(
     GoalIconService goalIconService,
     EventStatusService eventStatusService,
     AdjustEventStatusService adjustEventStatusService,
-    IDynamicRepository repository)
+    IDynamicRepository repository,
+    PermissionService permission)
     : NewInfoMatchService
 {
     public string EventStatusColor(BaseMatch match)
@@ -114,16 +117,45 @@ public class NewInfoMatchServiceImp(
         return siteMatchService.FastMarketStatus(match);
     }
 
-    public string ConfirmScore(List<ResultDetail> listResultDetail, string resource)
+    public string ConfirmScore(List<ResultDetail> sourceResults, string resource)
     {
-        var resultDetail = listResultDetail.Find(result => result.ResourceId == resource
-                                                           && !string.IsNullOrWhiteSpace(result.AwayValue)
-                                                           && !string.IsNullOrWhiteSpace(result.HomeValue));
+        var sourceResult = sourceResults.Find(result => result.ResourceId == resource && IsValidResult(result));
 
-        return resultDetail != null
-            ? $"({resultDetail.SourceName}: {resultDetail.HomeValue}-{resultDetail.AwayValue})"
+        return sourceResult != null
+            ? $"({sourceResult.SourceName}: {sourceResult.HomeValue}-{sourceResult.AwayValue})"
             : string.Empty;
+
     }
+
+    public string ConfirmSoccerScore(List<ResultDetail> sourceResults, List<ResultDetail> resultDetails, string resource)
+    {
+        var sourceResult = sourceResults.Find(result => result.ResourceId == resource && IsValidResult(result));
+        var resultDetail = resultDetails.Find(result => result.ResourceId == resource && IsValidResult(result));
+        Fanex.Logging.LogService.InfoAsync(sourceResult?.ToString());
+
+        var isSettled = resultDetail?.ResultStatusId == ResultStatus.ManuallySettled
+            || resultDetail?.ResultStatusId == ResultStatus.AutoSettled;
+
+        var score = sourceResult != null
+            ? $"({sourceResult.SourceName}: {sourceResult.HomeValue}-{sourceResult.AwayValue})"
+            : string.Empty;
+
+        if (isSettled)
+        {
+            return score;
+        }
+
+        if (!permission.Permission.IsLeader)
+        {
+            return string.Empty;
+        }
+
+        return score;
+    }
+
+    private bool IsValidResult(ResultDetail resultDetail)
+        => !string.IsNullOrWhiteSpace(resultDetail.AwayValue)
+                && !string.IsNullOrWhiteSpace(resultDetail.HomeValue);
 
     public bool IsInconsistentScore(string suspenderConfirm, List<ResultDetail> currentResultDetailList, List<ResultDetail> sourceResultDetailList, string resource)
     {

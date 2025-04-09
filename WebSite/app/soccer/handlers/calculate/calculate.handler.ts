@@ -23,7 +23,7 @@ export class CalculateHandler extends AbstractHandler {
       ? null : (isEmpty(selectedChildMatchIds) ? '0' : selectedChildMatchIds);
     const hedgeMatchId = storage.isApplyHedgeMatch() ? hedgeMatchDetail.matchId : 0;
     this.parseScoreToMatchDetail(matchDetail, resultDetails);
-    const query = new SettleQuery(matchDetail, hedgeMatchId, actionName, storage.getIsResettleTicket(), childMatchIds);
+    const query = new SettleQuery(matchDetail, hedgeMatchId, actionName, storage.getIsResettleTicket(), childMatchIds,resultDetails);
     const result = await this.#requestService.calculate(query);
     if (result.isSuccessful) {
       await this.alertMessageToLetsTalkForFastMarket(matchDetail.matchId, actionName);

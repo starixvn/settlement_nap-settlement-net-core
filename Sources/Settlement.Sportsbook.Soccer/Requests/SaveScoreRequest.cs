@@ -12,5 +12,4 @@ public class SaveScoreRequest : IRequest<Result>
     public bool IsEnabledGoalRecordFt { get; set; }
 
     public IList<ResultDetail> ResultDetails { get; set; }
-
 }

@@ -4,6 +4,7 @@ import { AbstractHandler } from "../../abstract.handler.native";
 import { Storage } from "../../../storage/storage.service.native";
 import { Language } from "../../../../shared/language.native";
 import { MessageBoxService } from "../../../../shared/services";
+import { ResultStatusId } from "../../../../shared/constants";
 
 export class ConfirmFullTimeHandler extends AbstractHandler {
   #verifyActionService = inject(VerifyActionService);
@@ -15,9 +16,11 @@ export class ConfirmFullTimeHandler extends AbstractHandler {
     const needConfirm = await this.#verifyActionService.isScoreChangedFullTime(matchDetail, storage.getIsResettleTicket(), storage.getFullTimeResult());
     if (needConfirm) {
       this.autoCheckedReSettledTickets(storage);
-    } else {
-      const confirmRefundMessage = selectedChildMatches.length > 0
-        ? Language.soccer.confirmAutoRefundChildMatch : "";
+      return;
+    }
+    
+    const confirmRefundMessage = selectedChildMatches.length > 0
+      ? Language.soccer.confirmAutoRefundChildMatch : "";
 
       storage.setConfirmMessage(`${Language.doubleCheckCalculateFullTime}${confirmRefundMessage}`);
       this.#messageBoxService.confirm(storage.getConfirmMessage(), () => {
@@ -26,7 +29,6 @@ export class ConfirmFullTimeHandler extends AbstractHandler {
           super.handle(storage);
         });
       });
-    }
   }
 
   private autoCheckedReSettledTickets(storage: Storage) {

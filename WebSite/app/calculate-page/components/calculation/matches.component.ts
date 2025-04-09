@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
 import { BackGroundService, RequestService, PopupService } from '../../services';
-import { Match } from '../../../shared/models';
+import { Match, MoreScore, Score } from '../../../shared/models';
 import { BackgroundColor, CalculationStatus, EventStatus } from '../../../shared/constants';
 import * as _ from 'lodash';
 import { Language } from '../../../shared/language.native';
@@ -13,10 +13,10 @@ import { DynamicHeightDirective } from '../../../shared/directives/dynamic-heigh
 import { NgTemplateOutlet, NgClass, DatePipe } from '@angular/common';
 
 @Component({
-    selector: 'matches',
-    templateUrl: './matches.component.html',
-    standalone: true,
-    imports: [NgTemplateOutlet, DynamicHeightDirective, NgClass, NgbTooltip, DatePipe]
+  selector: 'matches',
+  templateUrl: './matches.component.html',
+  standalone: true,
+  imports: [NgTemplateOutlet, DynamicHeightDirective, NgClass, NgbTooltip, DatePipe]
 })
 export class MatchesComponent extends MatchesBaseComponent implements OnChanges, OnInit, OnDestroy {
   @Input() public disableRefund: boolean;
@@ -44,7 +44,7 @@ export class MatchesComponent extends MatchesBaseComponent implements OnChanges,
   }
 
   public isShowRefundLink(match: CalculationMatch) {
-    return this.backGroundService.isShowLink(match) && this.permission.canRefund && !this.disableRefund  ? BackgroundColor.codeLink : '';
+    return this.backGroundService.isShowLink(match) && this.permission.canRefund && !this.disableRefund ? BackgroundColor.codeLink : '';
   }
 
   private refreshMatches() {
@@ -100,5 +100,53 @@ export class MatchesComponent extends MatchesBaseComponent implements OnChanges,
     const colorStatus = _.isEqual(match.autoPayoutStatus, this.autoSettingFailed) ? 'auto-setting-failed' : '';
 
     return colorStatus;
+  }
+
+
+  public getFinalScore(score: MoreScore, isHalfTime: boolean, isHome: boolean) {
+    if(isHalfTime) {
+      return this.getHtScore(score, isHome);
+    }
+    return this.getFtScore(score, isHome);
+  }
+
+  private getHtScore(score: MoreScore, isHome: boolean) {
+    const {halfTimeScore} = score;
+    if(!halfTimeScore.isNotSettled) {
+      return isHome ? halfTimeScore.home : halfTimeScore.away;
+    }
+
+    if(halfTimeScore.isConfirmed && this.permission.isLeader) {
+      return isHome ? halfTimeScore.home : halfTimeScore.away;
+    }
+
+    return '-';
+  }   
+
+  private getFtScore(score: MoreScore, isHome: boolean) {
+    const {finalScore} = score;
+    if(!finalScore.isNotSettled) {
+      return isHome ? finalScore.home : finalScore.away;
+    } 
+
+    if(finalScore.isConfirmed && this.permission.isLeader) {
+      return isHome ? finalScore.home : finalScore.away;
+    }
+
+    return '-';
+  }
+  
+  public getConfirmScore(match: CalculationMatch, isHalfTime: boolean) {
+    const {halfTimeScore, finalScore} = match.moreScores;
+    
+    if(isHalfTime && (!halfTimeScore.isNotSettled || this.permission.isLeader)) {
+      return match.confirmHalfTimeScore;
+    }
+    
+    if(!finalScore.isNotSettled || this.permission.isLeader) {
+      return match.confirmFullTimeScore;
+    }
+
+    return '';
   }
 }

@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, inject, Injectable, signal } from "@angular/core";
-import { ModalDialogMessage } from "../../shared/models";
+import { ModalDialogMessage, Result } from "../../shared/models";
 import { Match, MatchDetail, UndoChecking } from "../components/calc/models/match.model";
 import { VerifyScoreGoalService } from "../components/calc/services/verify-score-goal.service";
 import { ToastContainerDirective, ToastrService } from "ngx-toastr";
@@ -8,10 +8,11 @@ import * as _ from "lodash";
 import { Language } from "../../shared/language.native";
 import { ResourceIds } from "../constants";
 import { ResultDetail } from "../models";
-import {  SettlementStatusId } from "../../shared/constants";
+import {  ScoreSourceType, SettlementStatusId } from "../../shared/constants";
 
 @Injectable()
 export class CalculateStorage implements Storage {
+
   private readonly verifyScoreGoalService = inject(VerifyScoreGoalService);
   private readonly toastrService = inject(ToastrService);
   #match = signal<Match>(null);
@@ -23,6 +24,15 @@ export class CalculateStorage implements Storage {
   #instantScore: UndoChecking;
   #halfTimeResult: ResultDetail;
   #fullTimeResult: ResultDetail;
+
+  #outsideHtResult: ResultDetail;
+  #outsideFtResult: ResultDetail;
+  #traderHtResult: ResultDetail;
+  #traderFtResult: ResultDetail;
+  #providerHtResult: ResultDetail;
+  #providerFtResult: ResultDetail;
+
+  #isIgnoreCheckHt = false;     
 
   match = this.#match.asReadonly();
   readonly dialogMessage = new ModalDialogMessage(Language.confirmationBox);
@@ -75,6 +85,42 @@ export class CalculateStorage implements Storage {
     return this.#instantScore;
   }
 
+  getOutsideHtResult(): ResultDetail {
+    return this.#outsideHtResult;
+  }
+
+  get outsideFtResult() {
+    return this.#outsideFtResult;
+  }
+
+  get outsideHtResult() {
+    return this.#outsideHtResult;
+  }
+
+  get traderHtResult() {
+    return this.#traderHtResult
+  }
+
+  get traderFtResult() {
+    return this.#traderFtResult
+  }
+
+  get providerHtResult() {
+    return this.#providerHtResult
+  }
+
+  get providerFtResult() {
+    return this.#providerFtResult;
+  }
+
+  getIsIgnoreCheckHt() {
+    return this.#isIgnoreCheckHt;
+  }
+
+  setIsIgnoreCheckHt(value: boolean) {
+    this.#isIgnoreCheckHt = value;
+  }
+
   // Setters
   setToastrOverlay(toastContainer: ToastContainerDirective) {
     this.toastrService.overlayContainer = toastContainer;
@@ -98,12 +144,25 @@ export class CalculateStorage implements Storage {
 
   setMatch(match: Match) {
     this.#match.set(match);
+    const { resultDetails } = this.#match();
     this.#matchDetail = this.#match().matchDetail;
-    this.#halfTimeResult = this.#match().resultDetails.find((result) => result.resourceId === ResourceIds.halfTime);
-    this.#fullTimeResult = this.#match().resultDetails.find((result) => result.resourceId === ResourceIds.fullTime);
+    this.#halfTimeResult = this.#match().resultDetails
+      .find((result) => result.resourceId === ResourceIds.halfTime && result.sourceId === ScoreSourceType.emptySource);
+    this.#fullTimeResult = this.#match().resultDetails
+      .find((result) => result.resourceId === ResourceIds.fullTime && result.sourceId === ScoreSourceType.emptySource);
     this.#isApplyHedgeMatch = this.#match().hedgeMatchDetail != null && !this.#match().hedgeMatchDetail.isUndecided;
-    this.#halfTimeResult.resourceName = "HT";
+    this.#halfTimeResult.resourceName = "HT"; 
     this.#fullTimeResult.resourceName = "FT";
+
+
+    this.#outsideHtResult = resultDetails.find(x => x.sourceId === ScoreSourceType.screenshot && x.resourceId === ResourceIds.halfTime);
+    this.#outsideFtResult = resultDetails.find(x => x.sourceId === ScoreSourceType.screenshot && x.resourceId === ResourceIds.fullTime);
+
+    this.#traderHtResult = resultDetails.find(x => x.sourceId === ScoreSourceType.trader && x.resourceId === ResourceIds.halfTime);
+    this.#traderFtResult = resultDetails.find(x => x.sourceId === ScoreSourceType.trader && x.resourceId === ResourceIds.fullTime);
+
+    this.#providerHtResult = resultDetails.find(x => x.sourceId === ScoreSourceType.Sbo && x.resourceId === ResourceIds.halfTime);
+    this.#providerFtResult = resultDetails.find(x => x.sourceId === ScoreSourceType.Sbo && x.resourceId === ResourceIds.fullTime);
   }
   
 
@@ -115,6 +174,14 @@ export class CalculateStorage implements Storage {
   setFullTimeScore(homeScore: string, awayScore: string) {
     this.#fullTimeResult.homeValue = homeScore;
     this.#fullTimeResult.awayValue = awayScore;
+  }
+
+  setFinalScore(resourceId: string, homeScore: string, awayScore: string) {
+    if(resourceId === ResourceIds.halfTime) {
+      this.setHaftTimeScore(homeScore,awayScore);
+    } else {
+      this.setFullTimeScore(homeScore,awayScore);
+    }
   }
 
   setInstantScore(score: UndoChecking) {
@@ -154,6 +221,15 @@ export class CalculateStorage implements Storage {
     this.#matchDetail.isWarningFinalAwayScore = false;
     this.#matchDetail.isWarningFinalHomeScore = false;
     this.#matchDetail.isWarningGoalRecord = false;
+
+    this.traderFtResult.isHomeValueWarning = false;
+    this.traderFtResult.isAwayValueWarning = false;
+    this.traderHtResult.isHomeValueWarning = false;
+    this.traderFtResult.isAwayValueWarning = false;
+
+    this.traderFtResult.isInvalidValue = false;
+    this.traderHtResult.isInvalidValue = false;
+    
   }
 
   changeScore() {

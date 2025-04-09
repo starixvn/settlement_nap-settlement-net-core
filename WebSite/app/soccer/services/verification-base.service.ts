@@ -47,19 +47,17 @@ export class VerificationBaseService {
         return (homeScore + awayScore) !== htGoalRecord.length || (goalRecordHomeScore !== homeScore || goalRecordAwayScore !== awayScore);
     }
 
-    public isHTGoalRecordConsistentWithResultDetail(matchDetail: MatchDetailBase, halfTimeResult: ResultDetail) 
-        {
-            let isSuspendHalfTime = true;
-            if ((!this.isEmptyScore(halfTimeResult.homeValue)
+    public isHTGoalRecordConsistentWithResultDetail(matchDetail: MatchDetailBase, halfTimeResult: ResultDetail) {
+        let isSuspendHalfTime = true;
+        if ((!this.isEmptyScore(halfTimeResult.homeValue)
                 || !this.isEmptyScore(halfTimeResult.awayValue)
                 || matchDetail.goalRecord.indexOf(';') >= 0)
                 && !this.isAlreadyRefundHT(matchDetail.betStatus)) {
                 isSuspendHalfTime = false;
             }
-    
-            return matchDetail.applyGoalRecord && !isSuspendHalfTime && this.isHtGoalRecordInvalidWithResultDetail(matchDetail, halfTimeResult);
-     
-        }
+            
+        return matchDetail.applyGoalRecord && !isSuspendHalfTime && this.isHtGoalRecordInvalidWithResultDetail(matchDetail, halfTimeResult);
+     }
 
     public isHTGoalRecordConsistent(matchDetail: MatchDetailBase) {
         let isSuspendHalfTime = true;

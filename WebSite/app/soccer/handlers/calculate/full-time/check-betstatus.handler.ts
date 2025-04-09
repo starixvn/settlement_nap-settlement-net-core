@@ -8,9 +8,9 @@ import { find, includes, isEqual } from "lodash";
 
 export class CheckBetStatusHandler extends AbstractHandler {
   handle(storage: Storage): void {
-    const { matchDetail, resultDetails } = storage.getMatch();
+    const { matchDetail } = storage.getMatch();
     const lowerBetStatus = matchDetail.betStatus?.toLocaleLowerCase();
-    const resultHalfTime = find(resultDetails, item => item.resourceId === ResourceIds.halfTime) ?? new ResultDetail();
+    const resultHalfTime = storage.getHalfTimeResult();
 
     if (
       includes(lowerBetStatus, BetStatus.abandoned1H) || (includes(lowerBetStatus, `${BetStatus.refunded};`) &&

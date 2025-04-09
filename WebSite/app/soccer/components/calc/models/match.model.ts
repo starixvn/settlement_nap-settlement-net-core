@@ -120,3 +120,8 @@ export class Score {
         this.finalAwayScore = finalAwayScore;
     }
 }
+
+export type TicketGroupCount = {
+    groupResult: string;
+    totalTicket: number;
+}

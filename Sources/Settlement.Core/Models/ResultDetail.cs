@@ -1,4 +1,7 @@
-﻿namespace Settlement.Core.Models;
+﻿
+using System.Text.Json;
+
+namespace Settlement.Core.Models;
 
 public interface ResultDetailBase
 {
@@ -50,4 +53,6 @@ public class ResultDetail : ResultDetailBase
     {
         return string.IsNullOrEmpty(value) ? null : char.ToUpper(value[0]) + value[1..];
     }
+
+    public override string ToString() => JsonSerializer.Serialize(this);
 }

@@ -70,8 +70,10 @@
 							<span class="red">&nbsp;(LIVE)</span>
 							}
 						</td>
-						<td class="score">{{match.halfTimeHomeScore ?? '-'}}</td>
-						<td class="final-score score">{{match.finalHomeScore ?? '-'}}</td>
+						<td class="score" [ngClass]="{'trader-confirm': match.isTraderConfirmHt}">
+							{{getFinalScore(match.moreScores,true,true)}}</td>
+						<td class="final-score score" [ngClass]="{'trader-confirm': match.isTraderConfirmFt}">
+							{{getFinalScore(match.moreScores,false,true)}}</td>
 						<td rowspan="2" class="auto-status"
 							[ngClass]="getStatusBackground(match.earlySettleStatus, match.eventStatus)">
 							@if (match.earlySettleStatus.toLowerCase() === 'n/a') {
@@ -107,11 +109,11 @@
 						</td>
 						<td rowspan="2" class="confirm-score" [ngClass]="match.isNotConsistentExHtScore ? 'bg-white-blinking' : ''">
 							<div>{{ match.suspenderHalfTime }}</div>
-							<div>{{ match.confirmHalfTimeScore }}</div>
+							<div>{{ getConfirmScore(match,true) }}</div>
 						</td>
 						<td rowspan="2" class="confirm-score" [ngClass]="match.isNotConsistentExFtScore ? 'bg-white-blinking' : ''">
 							<div>{{ match.suspenderFullTime }}</div>
-							<div>{{ match.confirmFullTimeScore }}</div>
+							<div>{{ getConfirmScore(match,false) }}</div>
 						</td>
 						<td rowspan="2" class="remark-status">
 							<div placement="top" [ngClass]="{ 'act-change-setting title': isChangeSetting(match) }"
@@ -144,8 +146,10 @@
 							<span class="red">&nbsp;(LIVE)</span>
 							}
 						</td>
-						<td class="score">{{match.halfTimeAwayScore ?? '-'}}</td>
-						<td class="final-score score">{{match.finalAwayScore ?? '-'}}</td>
+						<td class="score" [ngClass]="{'trader-confirm': match.isTraderConfirmHt}">
+							{{getFinalScore(match.moreScores,true,false)}}</td>
+						<td class="final-score score" [ngClass]="{'trader-confirm': match.isTraderConfirmFt}">
+							{{getFinalScore(match.moreScores,false,false)}}</td>
 					</tr>
 					}
 				</tbody>

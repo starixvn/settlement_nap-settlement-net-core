@@ -134,9 +134,12 @@ export class RequestService {
                     match.isExistRunningTicket = newMatch.isExistRunningTicket;
                     match.confirmFullTimeScore = newMatch.confirmFullTimeScore;
                     match.confirmHalfTimeScore = newMatch.confirmHalfTimeScore;
+                    match.isTraderConfirmHt = newMatch.isTraderConfirmHt;
+                    match.isTraderConfirmFt = newMatch.isTraderConfirmFt;
                     match.goalIcon = newMatch.goalIcon;
                     match.isNotConsistentExHtScore = newMatch.isNotConsistentExHtScore;
                     match.isNotConsistentExFtScore = newMatch.isNotConsistentExFtScore;
+                    match.moreScores = {...newMatch.moreScores};
                     if (isAutoCalculatePage) {
                         this.mapNewestAutoCalculationMatch(match, newMatch);
                     }
