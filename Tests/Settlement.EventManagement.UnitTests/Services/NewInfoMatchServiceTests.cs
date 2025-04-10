@@ -24,6 +24,7 @@ public class NewInfoMatchServiceTests
     private readonly AdjustEventStatusService adjustEventStatusService;
 
     private readonly IDynamicRepository repository;
+    private readonly PermissionService permissionService;
 
     public NewInfoMatchServiceTests()
     {
@@ -32,8 +33,9 @@ public class NewInfoMatchServiceTests
         eventStatusService = Substitute.For<EventStatusService>();
         adjustEventStatusService = Substitute.For<AdjustEventStatusService>();
         repository = Substitute.For<IDynamicRepository>();
+        permissionService = Substitute.For<PermissionService>();
 
-        service = new NewInfoMatchServiceImp(siteMatchService, goalIconService, eventStatusService, adjustEventStatusService, repository);
+        service = new NewInfoMatchServiceImp(siteMatchService, goalIconService, eventStatusService, adjustEventStatusService, repository, permissionService);
     }
 
     [Theory]

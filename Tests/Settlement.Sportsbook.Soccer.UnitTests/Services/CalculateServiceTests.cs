@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using Fanex.Data.Repository;
+using Fanex.NAP.Client;
 using Fanex.Settlement.ScaleOut.Models;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Constants;
 using Settlement.Core.Criteria;
@@ -26,12 +28,19 @@ public class CalculateServiceTests
     private readonly CalculateServiceImp service;
 
     private readonly LogService logService;
+    private readonly XmlConvertService xmlConvertService;
+    private readonly INapSession currentSession;
+    private readonly IHttpContextAccessor httpContext;
 
     public CalculateServiceTests()
     {
         repository = Substitute.For<IDynamicRepository>();
         createCriteriaService = Substitute.For<ICreateCriteriaService>();
         scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
+        xmlConvertService = Substitute.For<XmlConvertService>();
+        currentSession = Substitute.For<INapSession>();
+        httpContext = Substitute.For<IHttpContextAccessor>();
+
         logService = Substitute.For<LogService>();
         var matchService = Substitute.For<IMatchService>();
         var mapperConfig = new MapperConfigurationExpression();
@@ -40,7 +49,8 @@ public class CalculateServiceTests
         var mapper = new Mapper(config);
         var appSettings = new AppSettingsKey { SiteDbServer = ["DB01", "DB02", "DB03"] };
         var appSettingsOptions = Options.Create(appSettings);
-        service = new CalculateServiceImp(mapper, repository, appSettingsOptions, createCriteriaService, scaleOutSettleService, logService, matchService);
+        service = new CalculateServiceImp(
+            mapper, repository, appSettingsOptions, createCriteriaService, scaleOutSettleService, logService, matchService, currentSession, httpContext, xmlConvertService);
     }
 
     [Theory]

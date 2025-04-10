@@ -6,7 +6,7 @@ import {
   EventStatus,
   SportType,
 } from "../../shared/constants";
-import { ModalDialogMessage } from "../../shared/models";
+import { ModalDialogMessage, Result } from "../../shared/models";
 import { Language } from "../../shared/language.native";
 import { Match } from "../models";
 import {
@@ -23,6 +23,7 @@ import { ExcludeTotalPointPipe, ResourceNameByIdPipe } from "../pipes";
 import { MatchDetailComponent } from "./match-detail.component";
 import { RefundCommonModule } from "../../shared/modules/refund-common.module";
 import { BadmintonService } from "../services";
+import { UpdateSettlementResultHistoryStatus } from "../../shared/models/update-settle-result-history-status";
 
 @Component({
   selector: "refund-actions",
@@ -156,10 +157,22 @@ export class RefundActionsComponent
       this.toastrService.error(result.errMsg);
       return;
     }
-
+    await this.updateStatusResultAmendments(this.match, result);
     this.refundHedgeMatch(query);
     this.messageBoxService.closePopup();
   }
+
+    private async updateStatusResultAmendments(match: Match, settledResult: Result) {
+      const request = new UpdateSettlementResultHistoryStatus(
+        match.matchDetail.matchId, 
+        settledResult.settledSessionId, 
+        match.matchDetail.sportType, 
+        settledResult.isOrg);    
+  
+        if(settledResult.hasResultAmendment) {
+          await this.aioService.updateSettlementResultHistoryStatus(request);
+        }
+    }
 
   protected generateRefundQuery(apikey: string) {
     this.selectedResources.forEach((item) => {

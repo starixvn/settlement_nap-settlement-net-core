@@ -23,15 +23,22 @@ public class MultiSportServiceImp(
     IOptions<AppSettingsKey> appSettingsKey)
     : IMultiSportService
 {
+    private const int PARALLEL_BATCH_SIZE = 100;
+
+    private static readonly List<int> SportSortingOrder =
+    [
+        SportType.Tennis,
+        SportType.ESports,
+        SportType.BasketBall,
+        SportType.Badminton
+    ];
+
     public async Task<List<SportModel>> GetSportBook(FilterMultiSportRequest request, bool isLeader)
     {
         var data = await FetchMatchesAndResultDetails(request);
-        var matches = GetMoreScore(data, isLeader);
-
+        var matches = await GetMoreScore(data, isLeader);
         var matchesSorted = matchService.SortingMatches(matches);
-
-        var sportBooks = GroupSport(matchesSorted);
-        return sportBooks;
+        return GroupSport(matchesSorted);
     }
 
     private async Task<IEnumerable<SiteMatch>> GetOSTicketInfo(MatchFilterTuple matchTuple, SportsbookCriteria filterCriteria)
@@ -59,42 +66,40 @@ public class MultiSportServiceImp(
             MatchCode = filterCriteria.MatchCode
         };
 
-        var result = await GetTicketInfoAllDbSites(criteria);
-
-        return result;
+        return await GetTicketInfoAllDbSites(criteria);
     }
 
     private void SetMatchTicketInfo(List<Match> matches, List<SiteMatch> siteMatches)
     {
-        foreach (var item in matches)
+        foreach (var match in matches)
         {
-            var ticketInfo = siteMatches.Where(x => x.MatchId == item.MatchId).ToList();
-
-            item.SuspenderFullTime = ticketInfo.Find(x => !string.IsNullOrEmpty(x.SuspenderFullTime))?.SuspenderFullTime;
-            item.SuspenderHalfTime = ticketInfo.Find(x => !string.IsNullOrEmpty(x.SuspenderHalfTime))?.SuspenderHalfTime;
-
-            item.IsExistEarlyBetTypes = ticketInfo.Exists(x => x.IsExistEarlyBetTypes);
-            item.IsRunningEarlyBetTypes = ticketInfo.Exists(x => x.IsRunningEarlyBetTypes);
-            item.IsWaitingEarlyBetTypes = ticketInfo.Exists(x => x.IsWaitingEarlyBetTypes);
-            item.IsExistRunningTicket = ticketInfo.Exists(x => x.IsExistRunningTicket);
-            item.IsExistMarkedTicket = ticketInfo.Exists(x => x.IsExistMarkedTicket);
-            item.IsExistsConfirmedEarly = ticketInfo.Exists(x => x.IsExistsConfirmedEarly);
-
-            item.IsCalculatingSingle = siteMatchService.IsCalculating(ticketInfo.Select(x => x.IsCalculatingSingle).ToList());
-            item.IsCalculatingMP = siteMatchService.IsCalculating(ticketInfo.Select(x => x.IsCalculatingMP).ToList());
+            var ticketInfo = siteMatches.Where(x => x.MatchId == match.MatchId).ToList();
+            UpdateMatchTicketInfo(match, ticketInfo);
         }
+    }
+
+    private void UpdateMatchTicketInfo(Match match, List<SiteMatch> ticketInfo)
+    {
+        match.SuspenderFullTime = ticketInfo.Find(x => !string.IsNullOrEmpty(x.SuspenderFullTime))?.SuspenderFullTime;
+        match.SuspenderHalfTime = ticketInfo.Find(x => !string.IsNullOrEmpty(x.SuspenderHalfTime))?.SuspenderHalfTime;
+
+        match.IsExistEarlyBetTypes = ticketInfo.Exists(x => x.IsExistEarlyBetTypes);
+        match.IsRunningEarlyBetTypes = ticketInfo.Exists(x => x.IsRunningEarlyBetTypes);
+        match.IsWaitingEarlyBetTypes = ticketInfo.Exists(x => x.IsWaitingEarlyBetTypes);
+        match.IsExistRunningTicket = ticketInfo.Exists(x => x.IsExistRunningTicket);
+        match.IsExistMarkedTicket = ticketInfo.Exists(x => x.IsExistMarkedTicket);
+        match.IsExistsConfirmedEarly = ticketInfo.Exists(x => x.IsExistsConfirmedEarly);
+
+        match.IsCalculatingSingle = siteMatchService.IsCalculating(ticketInfo.Select(x => x.IsCalculatingSingle).ToList());
+        match.IsCalculatingMP = siteMatchService.IsCalculating(ticketInfo.Select(x => x.IsCalculatingMP).ToList());
     }
 
     private async Task<IEnumerable<SiteMatch>> GetTicketInfoAllDbSites(OSTicketInfoSelCriteria criteria)
     {
         var siteDbServer = appSettingsKey.Value.SiteDbServer;
         var getTicketInfoTasks = siteDbServer.Select(s => GetTicketInfo(s, criteria));
-
-        var result = await Task.WhenAll(getTicketInfoTasks.ToArray());
-
-        var newResult = result.SelectMany(x => x);
-
-        return newResult;
+        var result = await Task.WhenAll(getTicketInfoTasks);
+        return result.SelectMany(x => x);
     }
 
     private async Task<IEnumerable<SiteMatch>> GetTicketInfo(string server, OSTicketInfoSelCriteria criteria)
@@ -124,34 +129,37 @@ public class MultiSportServiceImp(
         return filteredMatches;
     }
 
-    private List<Match> GetMoreScore(MultiSportResult data, bool isLeader)
+    private async Task<List<Match>> GetMoreScore(MultiSportResult data, bool isLeader)
     {
-        var matchesByEachSport = data.Matches.GroupBy(match => match.SportType)
-            .Select(sports => new MatchesBySportTypeModel { SportType = sports.Key, Matches = sports.ToList() })
+        var matchesByEachSport = data.Matches
+            .GroupBy(match => match.SportType)
+            .Select(sports => new MatchesBySportTypeModel
+            {
+                SportType = sports.Key,
+                Matches = sports.ToList()
+            })
             .ToList();
 
-        var listMatch = new List<Match>();
-        foreach (var item in matchesByEachSport)
+        var tasks = matchesByEachSport.Select(sportGroup =>
         {
-            item.Matches = matchService.GetScoreForMatchBySportType(item.Matches, data.ResultDetails, item.SportType, isLeader);
-            listMatch.AddRange(item.Matches);
-        }
+            sportGroup.Matches = matchService.GetScoreForMatchBySportType(
+                sportGroup.Matches,
+                data.ResultDetails,
+                sportGroup.SportType,
+                isLeader);
 
-        return listMatch;
+            return Task.FromResult(sportGroup.Matches);
+        });
+
+        var results = await Task.WhenAll(tasks);
+        return results.SelectMany(matches => matches).ToList();
+
     }
 
     private static List<SportModel> GroupSport(List<Match> matches)
     {
-        var sportSorting = new List<int>
-            {
-                SportType.Tennis,
-                SportType.ESports,
-                SportType.BasketBall,
-                SportType.Badminton
-            };
-
-        var sportBook = matches.GroupBy(match => new { match.SportName, match.SportType })
-                                .OrderByDescending(sport => sportSorting.IndexOf(sport.Key.SportType))
+        return matches.GroupBy(match => new { match.SportName, match.SportType })
+                                .OrderByDescending(sport => SportSortingOrder.IndexOf(sport.Key.SportType))
                                 .ThenBy(sport => sport.Key.SportType == SportType.OtherSports)
                                 .ThenBy(sport => sport.Key.SportName)
                                 .Select(sports => new SportModel
@@ -160,7 +168,6 @@ public class MultiSportServiceImp(
                                     Name = sports.Key.SportName,
                                     Leagues = GroupLeague(sports)
                                 }).ToList();
-        return sportBook;
     }
 
     private static List<LeagueModel> GroupLeague(IEnumerable<Match> matches)
@@ -170,33 +177,37 @@ public class MultiSportServiceImp(
         var league = new LeagueModel();
         foreach (var match in matches)
         {
-            if (currentLeague.Equals(match.LeagueId))
+            if (currentLeague == match.LeagueId)
             {
                 league.Matches.Add(match);
             }
             else
             {
-                league = new LeagueModel
-                {
-                    Name = match.LeagueName,
-                    LeagueId = match.LeagueId,
-                    AutoWaitingTime = match.AutoWaitingTime,
-                    AutoMainWaitingTime = match.AutoMainWaitingTime,
-                    AutoEarlyWaitingTime = match.AutoEarlyWaitingTime,
-                    AutoRetryTime = match.AutoRetryTime,
-                    AutoCalcSetting = match.AutoCalcSetting,
-                    Matches = [],
-                    RefundWaitingTime = match.RefundWaitingTime,
-                    SportType = match.SportType
-                };
-
+                league = CreateNewLeague(match);
                 currentLeague = match.LeagueId;
                 league.Matches.Add(match);
                 leagues.Add(league);
             }
         }
 
-        return leagues.ToList();
+        return leagues;
+    }
+
+    private static LeagueModel CreateNewLeague(Match match)
+    {
+        return new LeagueModel
+        {
+            Name = match.LeagueName,
+            LeagueId = match.LeagueId,
+            AutoWaitingTime = match.AutoWaitingTime,
+            AutoMainWaitingTime = match.AutoMainWaitingTime,
+            AutoEarlyWaitingTime = match.AutoEarlyWaitingTime,
+            AutoRetryTime = match.AutoRetryTime,
+            AutoCalcSetting = match.AutoCalcSetting,
+            Matches = [],
+            RefundWaitingTime = match.RefundWaitingTime,
+            SportType = match.SportType
+        };
     }
 
     private async Task<MultiSportResult> FetchMatchesAndResultDetails(FilterMultiSportRequest request)
@@ -218,8 +229,21 @@ public class MultiSportServiceImp(
 
     private async Task<List<ResultDetail>> ResultDetailByMatchIds(List<Match> matches)
     {
-        var listMatchId = string.Join(",", matches.DistinctBy(m => m.MatchId).Select(match => match.MatchId.ToString()).ToArray());
-        var resultDetailCriteria = new GetResultDetailCriteria { MatchIdList = listMatchId };
-        return (await repository.FetchAsync<ResultDetail>(resultDetailCriteria)).ToList();
+        var matchIdBatches = matches
+            .DistinctBy(m => m.MatchId)
+            .Select(match => match.MatchId.ToString())
+            .Chunk(PARALLEL_BATCH_SIZE);
+
+        var tasks = matchIdBatches.Select(batch =>
+        {
+            var criteria = new GetResultDetailCriteria
+            {
+                MatchIdList = string.Join(",", batch)
+            };
+            return repository.FetchAsync<ResultDetail>(criteria);
+        });
+
+        var results = await Task.WhenAll(tasks);
+        return results.SelectMany(x => x).ToList();
     }
 }
