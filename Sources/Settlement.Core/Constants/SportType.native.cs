@@ -163,4 +163,16 @@ public static class SportGroup
         SportType.BeachVolleyball,
         SportType.BaseBall
     ];
+
+    public static readonly int[] SupportResultAmend =
+    [
+        SportType.Cricket,
+        SportType.BasketBall,
+        SportType.ESports,
+        SportType.VolleyBall,
+        SportType.Tennis,
+        SportType.TableTennis,
+        SportType.Badminton,
+        SportType.BeachVolleyball,
+    ];
 }

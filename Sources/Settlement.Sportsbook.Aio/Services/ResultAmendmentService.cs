@@ -89,6 +89,7 @@ public class ResultAmendmentServiceImp(
     private async Task<bool> PublishResultAmendment(SettleCriteria settleCriteria, List<ResourceItem> selectedResources, IEnumerable<ResultChanged> results)
     {
         var specialSportTypes = new List<int> { SportType.BasketBall, SportType.ESports, SportType.VolleyBall, SportType.TableTennis, SportType.Tennis };
+        specialSportTypes.AddRange([SportType.Badminton, SportType.BeachVolleyball]);
 
         if (!specialSportTypes.Contains(settleCriteria.SportType))
         {
