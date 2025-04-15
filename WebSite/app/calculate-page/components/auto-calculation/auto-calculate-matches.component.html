@@ -60,7 +60,7 @@
               [class]="getClassPayOut(league.autoCalcSetting.isAutoPayoutForLeague, league.autoCalcSetting.isDirectPayoutForLeague)"
               matTooltipPosition="above" [matTooltip]="language.payout.title" (click)="openSoccerAutoSettings(league)">
             </div> -->
-            <div style="cursor: pointer; line-height: 12px;" (click)="openSoccerAutoSettings(league)"
+            <div style="cursor: pointer; line-height: 12px;color:#4196ff" (click)="openSoccerAutoSettings(league)"
               [innerHTML]="getStatusAutoPayout(league)"></div>
 
           </td>
@@ -158,7 +158,7 @@
               [class]="getClassPayOut(match.autoCalcSetting.isAutoPayoutForMatch, match.autoCalcSetting.isDirectPayoutForMatch)"
               matTooltipPosition="above" [matTooltip]="language.payout.title"
               (click)="openSoccerAutoSettings(league,match)"></div> -->
-            <div style="cursor: pointer;line-height: 12px; color: #212529;"
+            <div style="cursor: pointer;line-height: 12px; color: #4196ff;"
               (click)="openSoccerAutoSettings(league,match)" [innerHTML]="getStatusAutoPayout(league,match)"></div>
 
           </td>

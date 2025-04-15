@@ -20,14 +20,18 @@
   <tr>
     <td>{{ row.settleTypeName }}</td>
     <td>
-      <span>
+      <div style="margin-top: 5px;">
         <app-switch [(ngModel)]="row.enabled" labelOff="OFF" labelOn="ON" size="mini"
           (ngModelChange)="onChangeEnabled(row)" />
-      </span>
+      </div>
     </td>
     <td>
       @if(row.settleType !== 1) {
-      <app-number-input [(ngModel)]="row.waitingTime"/>
+      <div style="display: flex;justify-content: center;padding: 5px;">
+        <div style="width: 100px;">
+          <app-number-input [(ngModel)]="row.waitingTime" />
+        </div>
+      </div>
       }
     </td>
     @if(!isMatchType) {
