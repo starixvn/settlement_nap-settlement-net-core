@@ -180,6 +180,9 @@ public class Match : BaseMatch
     [Key("enabledAutoRefund")]
     public bool? EnabledAutoRefund { get; set; }
 
+    [Key("enabledAutoRefundMatch")]
+    public bool? EnabledAutoRefundMatch { get; set; }
+
     [Key("refundWaitingTimeMatch")]
     public int RefundWaitingTimeMatch { get; set; }
 

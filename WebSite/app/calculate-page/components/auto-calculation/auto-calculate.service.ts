@@ -18,6 +18,7 @@ export class AutoCalculateService {
     public  getStatusAutoPayoutMatch(match: CalculationMatch): string {
         const { isAutoPayoutForMatch, isDirectPayoutForMatch } = match.autoCalcSetting;
         const { enabledAutoRefundMatch } = match;
+        console.log(enabledAutoRefundMatch);
         const label = this.getStatusLabel(isAutoPayoutForMatch, isDirectPayoutForMatch, enabledAutoRefundMatch);
         return this.getFormattedStatus(label);
     }
