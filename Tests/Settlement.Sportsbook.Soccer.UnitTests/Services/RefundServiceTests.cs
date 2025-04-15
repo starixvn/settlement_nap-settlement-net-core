@@ -2,6 +2,7 @@
 using Fanex.Settlement.ScaleOut.Models;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
+using MassTransit;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Constants;
@@ -25,6 +26,8 @@ public class RefundServiceTests
 
     private readonly LogService logService;
 
+    private readonly IPublishEndpoint publishEndpoint;
+
     private readonly AppSettingsKey appSettings = new() { SiteDbServer = ["DB01", "DB02", "DB03"] };
 
     public RefundServiceTests()
@@ -34,6 +37,8 @@ public class RefundServiceTests
         createCriteriaService = Substitute.For<ICreateCriteriaService>();
         scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
         logService = Substitute.For<LogService>();
+        publishEndpoint = Substitute.For<IPublishEndpoint>();
+
         var context = new DefaultHttpContext
         {
             Connection =
@@ -44,7 +49,7 @@ public class RefundServiceTests
         accessor.HttpContext = context;
 
         var option = Options.Create(appSettings);
-        service = new RefundServiceImp(repository, accessor, option, createCriteriaService, scaleOutSettleService, logService);
+        service = new RefundServiceImp(repository, accessor, option, createCriteriaService, scaleOutSettleService, logService, publishEndpoint);
     }
 
     [Theory]

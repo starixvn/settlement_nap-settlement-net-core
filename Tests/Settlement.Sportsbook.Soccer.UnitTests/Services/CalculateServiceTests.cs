@@ -4,6 +4,7 @@ using Fanex.NAP.Client;
 using Fanex.Settlement.ScaleOut.Models;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
+using MassTransit;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Constants;
@@ -31,6 +32,7 @@ public class CalculateServiceTests
     private readonly XmlConvertService xmlConvertService;
     private readonly INapSession currentSession;
     private readonly IHttpContextAccessor httpContext;
+    private readonly IPublishEndpoint publishEndpoint;
 
     public CalculateServiceTests()
     {
@@ -40,6 +42,7 @@ public class CalculateServiceTests
         xmlConvertService = Substitute.For<XmlConvertService>();
         currentSession = Substitute.For<INapSession>();
         httpContext = Substitute.For<IHttpContextAccessor>();
+        publishEndpoint = Substitute.For<IPublishEndpoint>();
 
         logService = Substitute.For<LogService>();
         var matchService = Substitute.For<IMatchService>();
@@ -50,7 +53,7 @@ public class CalculateServiceTests
         var appSettings = new AppSettingsKey { SiteDbServer = ["DB01", "DB02", "DB03"] };
         var appSettingsOptions = Options.Create(appSettings);
         service = new CalculateServiceImp(
-            mapper, repository, appSettingsOptions, createCriteriaService, scaleOutSettleService, logService, matchService, currentSession, httpContext, xmlConvertService);
+            mapper, repository, appSettingsOptions, createCriteriaService, scaleOutSettleService, logService, matchService, publishEndpoint, currentSession, httpContext, xmlConvertService);
     }
 
     [Theory]

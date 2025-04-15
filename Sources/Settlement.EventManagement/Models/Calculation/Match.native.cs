@@ -177,6 +177,15 @@ public class Match : BaseMatch
     [Key("moreScores")]
     public MoreScores MoreScores { get; set; }
 
+    [Key("enabledAutoRefund")]
+    public bool? EnabledAutoRefund { get; set; }
+
+    [Key("refundWaitingTimeMatch")]
+    public int RefundWaitingTimeMatch { get; set; }
+
+    [Key("directWaitingTimeMatch")]
+    public int DirectWaitingTimeMatch { get; set; }
+
     public override bool Equals(object obj)
     {
         return obj is Match match && match.MatchId == MatchId;
