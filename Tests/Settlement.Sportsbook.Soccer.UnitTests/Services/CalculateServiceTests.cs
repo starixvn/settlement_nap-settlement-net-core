@@ -26,23 +26,19 @@ public class CalculateServiceTests
 
     private readonly ICreateCriteriaService createCriteriaService;
 
-    private readonly CalculateServiceImp service;
-
     private readonly LogService logService;
-    private readonly XmlConvertService xmlConvertService;
-    private readonly INapSession currentSession;
-    private readonly IHttpContextAccessor httpContext;
-    private readonly IPublishEndpoint publishEndpoint;
+
+    private readonly CalculateServiceImp service;
 
     public CalculateServiceTests()
     {
         repository = Substitute.For<IDynamicRepository>();
         createCriteriaService = Substitute.For<ICreateCriteriaService>();
         scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
-        xmlConvertService = Substitute.For<XmlConvertService>();
-        currentSession = Substitute.For<INapSession>();
-        httpContext = Substitute.For<IHttpContextAccessor>();
-        publishEndpoint = Substitute.For<IPublishEndpoint>();
+        var xmlConvertService = Substitute.For<XmlConvertService>();
+        var currentSession = Substitute.For<INapSession>();
+        var httpContext = Substitute.For<IHttpContextAccessor>();
+        var publishEndpoint = Substitute.For<IPublishEndpoint>();
 
         logService = Substitute.For<LogService>();
         var matchService = Substitute.For<IMatchService>();
@@ -214,6 +210,7 @@ public class CalculateServiceTests
         await scaleOutSettleService.Received(2).UpdateMatchInfo(Arg.Any<UpdateMatchInfoRequest>());
         await repository.Received(6).ExecuteAsync(Arg.Any<CalculateCriteria>());
     }
+
     [Theory]
     [InlineData(0, "", true)]
     [InlineData(1, "Error", false)]

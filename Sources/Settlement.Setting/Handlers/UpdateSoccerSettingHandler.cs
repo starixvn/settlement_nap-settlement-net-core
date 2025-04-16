@@ -9,26 +9,16 @@ using Settlement.Setting.Services;
 
 namespace Settlement.Setting.Handlers;
 
-public class UpdateSoccerSettingHandler
+public class UpdateSoccerSettingHandler(
+    SettingService settingService,
+    IDynamicRepository dynamicRepository,
+    LogService logService,
+    INapSession napSession)
 {
-    private readonly SettingService settingService;
-    private readonly IDynamicRepository dynamicRepository;
-    private readonly LogService logService;
-    private readonly INapSession napSession;
-
-    public UpdateSoccerSettingHandler(SettingService settingService, IDynamicRepository dynamicRepository, LogService logService, INapSession napSession)
-    {
-        this.settingService = settingService;
-        this.dynamicRepository = dynamicRepository;
-        this.logService = logService;
-        this.napSession = napSession;
-    }
-
     public async Task<Result> HandleAsync(UpdateAutoSettingsCommand command)
     {
         var payoutSetting = command.ResultSettings.Find(x => x.SettleType == AutoSettleType.AutoPayoutSoccer);
         var directSetting = command.ResultSettings.Find(x => x.SettleType == AutoSettleType.AutoDirect);
-        var refundSetting = command.ResultSettings.Find(x => x.SettleType == AutoSettleType.AutoRefund);
 
         if (payoutSetting.Enabled)
         {
@@ -135,6 +125,4 @@ public class UpdateSoccerSettingHandler
             ChildMatchIds = criteria.UpdatedMatchIds
         };
     }
-
-
 }

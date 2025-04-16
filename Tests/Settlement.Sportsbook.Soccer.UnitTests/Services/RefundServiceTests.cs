@@ -26,8 +26,6 @@ public class RefundServiceTests
 
     private readonly LogService logService;
 
-    private readonly IPublishEndpoint publishEndpoint;
-
     private readonly AppSettingsKey appSettings = new() { SiteDbServer = ["DB01", "DB02", "DB03"] };
 
     public RefundServiceTests()
@@ -37,7 +35,7 @@ public class RefundServiceTests
         createCriteriaService = Substitute.For<ICreateCriteriaService>();
         scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
         logService = Substitute.For<LogService>();
-        publishEndpoint = Substitute.For<IPublishEndpoint>();
+        var publishEndpoint = Substitute.For<IPublishEndpoint>();
 
         var context = new DefaultHttpContext
         {

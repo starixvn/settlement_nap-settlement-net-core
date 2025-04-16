@@ -55,22 +55,18 @@ public class UpdateMatchSoccerSettingsHandler
         return new Result();
     }
 
-    private async Task<Result> UpdateResultSetting(UpdateAutoSettingsCommand command, AutoSettleType settleType)
+    private async Task UpdateResultSetting(UpdateAutoSettingsCommand command, AutoSettleType settleType)
     {
         var settings = command.ResultSettings.Find(x => x.SettleType == settleType);
-        if (settings == null)
+        if (settings != null)
         {
-            return new Result();
+            await settingService.UpdateSettingMatch(new SettingMatchRequest
+            {
+                MatchId = command.MatchId,
+                AutoType = (int)settleType,
+                IsEnabled = settings.Enabled,
+            });
         }
-
-        var result = await settingService.UpdateSettingMatch(new SettingMatchRequest
-        {
-            MatchId = command.MatchId,
-            AutoType = (int)settleType,
-            IsEnabled = settings.Enabled,
-        });
-
-        return result;
     }
 
     private async Task UpdateSettleSource(UpdateAutoSettingsCommand command, AutoSettleType settleType)
