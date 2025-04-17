@@ -1,15 +1,16 @@
-﻿using System.Text.Json;
-using Fanex.Logging;
-using Fanex.Settlement.MessageBridge.ResultAmendment;
+﻿using Fanex.Settlement.MessageBridge.ResultAmendment;
 using MassTransit;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Constants;
+using Settlement.Core.Criteria;
 using Settlement.Core.Models;
-using Settlement.Sportsbook.Aio.Constants.Cricket;
+using Settlement.Core.Services;
 using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.Criteria.Cricket;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Services.Cricket;
+using System.Text.Json;
+using LogService = Fanex.Logging.LogService;
 using ResourceItem = Settlement.Core.Models.ResourceItem;
 
 namespace Settlement.Sportsbook.Aio.Services;
@@ -60,7 +61,7 @@ public class ResultAmendmentServiceImp(
         };
 
         var results = await repository.FetchAsync<ResultChanged>(criteria);
-        var resultsChanged = CheckReSettleTicket(results, settleCriteria.Action);
+        var resultsChanged = ResultAmendmentCoreService.CheckReSettleTicket(results, settleCriteria.Action);
 
         if (resultsChanged.Count == 0)
         {
@@ -118,21 +119,6 @@ public class ResultAmendmentServiceImp(
         return true;
     }
 
-    private static List<IGrouping<short, ResultChanged>> CheckReSettleTicket(IEnumerable<ResultChanged> results, string currentAction)
-    {
-        var resultsSetActionType = results.Select(x =>
-        {
-            x.ReSettleType = GetReSettleActionType(x.Action, currentAction);
-            return x;
-        });
-
-        var resultsChangedGroupBy = resultsSetActionType
-            .Where(x => x.ReSettleType != ReSettleType.UnKnow)
-            .GroupBy(x => x.ReSettleType).ToList();
-
-        return resultsChangedGroupBy;
-    }
-
     private void InsResultHistory(ResultHistoryInsCriteria resultHistoryInsCriteria)
     {
         foreach (var server in appSettingsKey.Value.SiteDbServer.Where(x => x != "DBTXN"))
@@ -171,29 +157,6 @@ public class ResultAmendmentServiceImp(
         };
 
         return resultHistoryItem;
-    }
-
-    private static short GetReSettleActionType(string beforeAction, string currentAction)
-    {
-        var before = beforeAction.ToUpperInvariant();
-        var current = currentAction.ToUpperInvariant();
-
-        if (before.Contains(ActionType.RefundAll) && current.Contains(ActionType.CalculateAll))
-        {
-            return ReSettleType.RefundToCalc;
-        }
-
-        if (before.Contains(ActionType.CalculateAll) && current.Contains(ActionType.RefundAll))
-        {
-            return ReSettleType.CalcToRefund;
-        }
-
-        if (before.Contains(ActionType.CalculateAll) && current.Contains(ActionType.CalculateAll))
-        {
-            return ReSettleType.ReCalc;
-        }
-
-        return ReSettleType.UnKnow;
     }
 
     private static string CreateResourceInfo(List<ResultHistoryItem> resultHistoryItems) => JsonSerializer.Serialize(resultHistoryItems);

@@ -2,7 +2,7 @@ import { Component, OnInit, DoCheck, Input } from "@angular/core";
 import * as _ from "lodash";
 import { RequestService, TimeMachineService, VerificationService, } from "../services";
 import { MessageBoxService } from "../../shared/services";
-import { ModalDialogMessage } from "../../shared/models";
+import { ModalDialogMessage, Result } from "../../shared/models";
 import { UrlHelper } from "../../helper";
 import { Language as SharedLanguage } from "../../shared/language.native";
 import {
@@ -10,7 +10,6 @@ import {
   BetType,
   FastMarketResult,
   ResultItem,
-  Result,
   EventResultItem,
   EventCounter,
   ValidationItem,
@@ -35,6 +34,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { InputScoreFormComponent } from "./input-score-form.component";
 import { ToastContainerDirective, ToastrService } from "ngx-toastr";
 import { InputOuScoreComponent } from "./input-ou-score/input-ou-score.component";
+import { UpdateSettlementResultHistoryStatus } from "shared/models/update-settle-result-history-status";
 
 @Component({
   selector: "bet-types",
@@ -524,11 +524,24 @@ export class BetTypesComponent implements OnInit, DoCheck {
 
     this.requestService.doSubmitByAction(query).subscribe((result: Result) => {
       if (result.isSuccessful) {
+        this.updateStatusResultAmendments(result);
         this.messageBoxService.closePopup();
       } else {
         this.errorMessage = result.errMsg;
       }
     });
+  }
+
+  private async updateStatusResultAmendments(settledResult: Result) {
+    const request = new UpdateSettlementResultHistoryStatus(
+      this.fastMarkets.matchId,
+      settledResult.settledSessionId,
+      1,
+      settledResult.isOrg);
+
+    if (settledResult.hasResultAmendment) {
+      await this.requestService.updateSettlementResultHistoryStatus(request);
+    }
   }
 
   private showOrHideButton(item: FastMarketResult) {

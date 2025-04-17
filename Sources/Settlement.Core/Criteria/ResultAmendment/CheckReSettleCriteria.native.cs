@@ -1,4 +1,6 @@
-﻿namespace Settlement.Sportsbook.Aio.Criteria.Cricket;
+﻿using Fanex.Data.Repository;
+
+namespace Settlement.Core.Criteria;
 
 public class CheckReSettleCriteria : CriteriaBase
 {

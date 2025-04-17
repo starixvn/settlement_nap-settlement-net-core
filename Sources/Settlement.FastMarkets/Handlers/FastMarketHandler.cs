@@ -1,4 +1,6 @@
-﻿using Settlement.Core.Models;
+﻿using Fanex.Settlement.MessageBridge.ResultAmendment;
+using MassTransit;
+using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.FastMarkets.Models;
 using Settlement.FastMarkets.Requests;
@@ -12,7 +14,8 @@ public class FastMarketHandler(
     PermissionService permissionService,
     IFastMarketService fastMarketService,
     ISettingService settingService,
-    INapSession session)
+    INapSession session,
+    IPublishEndpoint publishEndpoint)
     : IRequestHandler<MatchDetailRequest, MatchDetail>,
         IRequestHandler<BetTypeIntervalRequest, FastMarketModel>,
         IRequestHandler<GetLatestResultRequest, List<FastMarketResult>>,
@@ -49,8 +52,15 @@ public class FastMarketHandler(
         => await settingService.UpdateWaterBreakSetting(request);
 
     public async Task<Result> Handle(SettleRequest request, CancellationToken cancellationToken)
-        => await fastMarketService.Calculate(request);
+    {
+        var result = await fastMarketService.Calculate(request);
 
+        await publishEndpoint.Publish(
+            new ResultAmendSettled(request.MatchId, result.SettledSessionId, result.IsOrg),
+            new CancellationTokenSource(TimeSpan.FromSeconds(3)).Token);
+
+        return result;
+    }
     public async Task<MarkedTickets> Handle(CheckingMarkedTicketsRequest request, CancellationToken cancellationToken)
         => await matchDetailService.CheckingMarkedTickets(request);
 

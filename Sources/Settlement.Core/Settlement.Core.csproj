@@ -25,6 +25,7 @@
     <PackageReference Include="Fanex.Settlement.Converter" Version="1.0.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Polly" Version="8.5.2" />
+    <PackageReference Include="Fanex.Settlement.MessageBridge" Version="1.0.4-alpha06" />
   </ItemGroup>
   <ItemGroup>
     <None Update="Configurations\SettlementFunctionKeys.tt">

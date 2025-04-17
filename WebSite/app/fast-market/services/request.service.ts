@@ -15,11 +15,13 @@ import {
   AutoSettingMatchQuery,
 } from "../../shared/models";
 import { TimeMachineResult } from "../models/interval.model";
+import { IUpdateSettlementResultHistoryStatus } from "shared/models/update-settle-result-history-status";
 
 @Injectable()
 export class RequestService {
   private readonly fastMarketApi = "/api/fast-market";
-  constructor(private readonly httpRequestService: HttpRequestService) {}
+  private readonly aioApi = "/api/aio";
+  constructor(private readonly httpRequestService: HttpRequestService) { }
 
   public checkingMarkedTickets(
     query: CheckingMarkedTicketsQuery
@@ -38,7 +40,7 @@ export class RequestService {
     const url = `${this.fastMarketApi}/get-bettype-interval`;
     const query = { matchId };
     return this.httpRequestService.postJson<FastMarkets>(query, url)
-   
+
   }
 
   public doSubmitByAction(query: SettleQuery) {
@@ -101,5 +103,10 @@ export class RequestService {
       isEarly: true,
     };
     return this.httpRequestService.postJson(query, url);
+  }
+
+  public updateSettlementResultHistoryStatus(query: IUpdateSettlementResultHistoryStatus) {
+    const request = this.httpRequestService.postJson(query, `${this.aioApi}/update-settlement-result-history-status`);
+    return firstValueFrom(request);
   }
 }

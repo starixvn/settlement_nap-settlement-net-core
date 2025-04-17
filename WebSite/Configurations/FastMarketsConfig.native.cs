@@ -19,6 +19,7 @@ public static class FastMarketsConfig
         services.AddTransient<MergeDataService, MergeDataServiceImp>();
         services.AddTransient<MultipleServerFetcherService, MultipleServerFetcherServiceImp>();
         services.AddTransient<GenerationService, GenerationServiceImp>();
+        services.AddTransient<IFastMarketResultAmendmentService, FastMarketResultAmendmentService>();
     }
 
     public static void ConfigFastMarketsMediator(this IServiceCollection services)

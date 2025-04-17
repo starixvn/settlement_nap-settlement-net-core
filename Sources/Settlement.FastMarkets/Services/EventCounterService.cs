@@ -1,4 +1,5 @@
 ﻿using Settlement.Core.Constants;
+using Settlement.FastMarkets.Models;
 using Settlement.FastMarkets.Models.EventCounterModels;
 using Settlement.FastMarkets.Requests;
 
@@ -6,7 +7,7 @@ namespace Settlement.FastMarkets.Services;
 
 public interface IEventCounterService
 {
-    string Result(SettleRequest request);
+    XMLResult<EventCounterElement> Result(SettleRequest request);
 }
 
 public class EventCounterServiceImp(
@@ -14,7 +15,7 @@ public class EventCounterServiceImp(
     XmlConvertService xmlConvertService)
     : IEventCounterService
 {
-    public string Result(SettleRequest request)
+    public XMLResult<EventCounterElement> Result(SettleRequest request)
     {
         if (request.Action.Equals(ActionType.CalculateAll) || request.IsSettleDetermined)
         {
@@ -25,9 +26,17 @@ public class EventCounterServiceImp(
                 EventCounter = eventCounter
             };
 
-            return xmlConvertService.Serialize(eventCountersRoot);
+            return new XMLResult<EventCounterElement>
+            {
+                OriginalItems = eventCounter,
+                Result = xmlConvertService.Serialize(eventCountersRoot)
+            };
         }
 
-        return string.Empty;
+        return new XMLResult<EventCounterElement>
+        {
+            OriginalItems = new List<EventCounterElement>(),
+            Result = string.Empty
+        };
     }
 }
