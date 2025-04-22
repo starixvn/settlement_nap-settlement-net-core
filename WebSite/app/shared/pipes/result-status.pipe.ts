@@ -7,11 +7,13 @@ import * as _ from 'lodash';
 
 export class ResultStatusPipe implements PipeTransform {
     public transform(resultDetails: ResultDetail[], args: string) {
+        console.log(args);
         return resultDetails.filter((item) => {
             const hasResultStatus = _.isNil(args)
                 || args.length === 0
                 || _.includes(args, item.resultStatus)
-                || this.filterConfirmRefundMatch(args, item);
+                || this.filterConfirmRefundMatch(args, item)
+                || this.filterConfirmedTraderMatch(args, item);
 
             return this.isExistedItem(hasResultStatus, item);
         });
@@ -20,6 +22,13 @@ export class ResultStatusPipe implements PipeTransform {
     private filterConfirmRefundMatch(args: string, resultDetail: ResultDetail) {
         if(_.includes(args, 'Confirmed')){
             return resultDetail.resultSettingData.isConfirmedRefund;
+        }
+        return false;
+    }
+
+    private filterConfirmedTraderMatch(args: string, resultDetail: ResultDetail) {
+        if(_.includes(args, 'Confirmed by Trader')){
+            return resultDetail.resultStatusId === 3;
         }
         return false;
     }

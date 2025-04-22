@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 import { CalculateAction } from '../../shared/constants';
 import { ModalDialogMessage } from '../../shared/models';
 import { Language } from '../../shared/language.native';
-import { SettleQuery, Match, UpdateSettlementResultHistoryStatus
+import { SettleQuery, Match
 } from '../models';
 import { ApiKeys } from '../constants';
 import { RefundActionBaseComponent } from '../../shared/components/sportsbook-sop/refund-action-base.component';
@@ -15,6 +15,7 @@ import { ResultNameByIdPipe } from '../pipes';
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
 import { MatchDetailComponent } from './match-detail.component';
 import { SettleChildMatchQuery } from '../../shared/models/settle-childmatch.model';
+import { UpdateSettlementResultHistoryStatus } from '../../shared/models/update-settle-result-history-status';
 
 @Component({
     selector: 'refund-actions',
@@ -138,7 +139,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
     }
 
     private async handleUpdateSettlementResultHistoryStatus(settleQuery: SettleQuery,sessionId: string) {
-        const query = new UpdateSettlementResultHistoryStatus(settleQuery.matchId,sessionId)
+        const query = new UpdateSettlementResultHistoryStatus(settleQuery.matchId,sessionId,settleQuery.sportType, true)
         await this.aioService.updateSettlementResultHistoryStatus(query);
       }
 
