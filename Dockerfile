@@ -26,7 +26,8 @@ COPY ./Sources/Fanex.Settlement.ScaleOut/*.csproj ./Sources/Fanex.Settlement.Sca
 COPY ./WebSite/Settlement.WebSites.csproj  ./WebSite/
 
 RUN dotnet nuget add source https://nuget.nexdev.net/api/v2
-RUN dotnet restore -v n -r linux-x64  WebSite/Settlement.WebSites.csproj 
+RUN --mount=type=cache,target=/root/.nuget/packages \
+	dotnet restore -v n -r linux-x64  WebSite/Settlement.WebSites.csproj 
 
 COPY ./Sources/. ./Sources
 COPY ./WebSite/. ./WebSite
