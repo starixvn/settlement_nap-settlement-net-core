@@ -38,7 +38,7 @@ export class EarlyBaseService {
       { id: 4, value: "Refund", text: "Refund", checked: true },
       { id: 5, value: "No Result", text: "No Result", checked: true },
       { id: 6, value: "Confirmed", text: "Confirmed Refund", checked: false, hasPermission: permission.isLeader },
-      { id: 7, value: "Confirmed by Trader", text: "Confirmed by Trader", checked: true }];
+      { id: 7, value: "3", text: "Confirmed by Trader", checked: true }];
 
     
 

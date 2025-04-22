@@ -7,7 +7,44 @@
   <button class="button set-results" (click)="setAllResults()">Set All Results to Refund</button>
   }
   <div class="table-wrapper">
-    <ng-template *ngTemplateOutlet="header"></ng-template>
+    <table>
+      <thead>
+        <tr>
+          <th class="bettype-name">
+            <div>
+              Result Type
+            </div>
+            <div class="early-filter" style="margin-top: 2px;">
+              <new-multiple-select (formValue)="onSelectResultType($event)"
+                [multipleSelect]="resultTypeSelect"></new-multiple-select>
+            </div>
+          </th>
+          <th class="result-status">
+            Ticket Status
+            <div class="early-filter" style="margin-top: 2px;">
+              <new-multiple-select (formValue)="onSelectResultType($event)"
+                [multipleSelect]="resultStatusSelect"></new-multiple-select>
+            </div>
+          </th>
+          <th class="result-value">
+            Result Value
+          </th>
+          <th class="result-status">
+            Result Status
+            <div class="early-filter" style="margin-top: 2px;">
+              <new-multiple-select (formValue)="onSelectResultType($event)"
+                [multipleSelect]="resultStatusSelect"></new-multiple-select>
+            </div>
+          </th>
+          <th class="select-proceed height-select">
+            <div>Select to Proceed</div>
+          </th>
+          <th class="hold-result">
+            Hold Result
+          </th>
+        </tr>
+      </thead>
+    </table>
     <div class="table-scroll">
       <table>
         <colgroup>
@@ -203,28 +240,5 @@
 </div>
 }
 <ng-template #header>
-  <table>
-    <thead>
-      <tr>
-        <th class="bettype-name">
-          Result Type
-        </th>
-        <th class="result-status">
-          Ticket Status
-        </th>
-        <th class="result-value">
-          Result Value
-        </th>
-        <th class="result-status">
-          Result Status
-        </th>
-        <th class="select-proceed height-select">
-          <div>Select to Proceed</div>
-        </th>
-        <th class="hold-result">
-          Hold Result
-        </th>
-      </tr>
-    </thead>
-  </table>
+
 </ng-template>

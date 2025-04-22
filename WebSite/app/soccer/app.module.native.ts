@@ -22,6 +22,8 @@ import { TicketCountComponent } from '../shared/components/ticket-count/ticket-c
 import { ResettleCheckerComponent } from '../shared/components/resettle-checker/resettle-checker.component';
 import { NotReadyMatchComponent } from '../shared/components/not-ready-match/not-ready-match.component';
 import { CalculateActionsComponent } from "../tennis/components/calculate-actions.component";
+import { NewMultipleSelectComponent } from '../shared/components/multiple-select/multiple-select.component';
+import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-browser/animations';
 
 @NgModule({
     imports: [
@@ -46,7 +48,9 @@ import { CalculateActionsComponent } from "../tennis/components/calculate-action
     OnlyIntegerDirective,
     CalculateActionsComponent,
     MatchDetailComponent,
-    OnlyGoalRecordDirective
+    OnlyGoalRecordDirective,
+    NewMultipleSelectComponent,
+    BrowserAnimationsModule
 ],
     declarations: [
         AppComponent,
