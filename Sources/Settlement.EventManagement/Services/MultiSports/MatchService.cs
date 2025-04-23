@@ -1,7 +1,6 @@
 ﻿namespace Settlement.EventManagement.Services.MultiSports;
 
 using Constants;
-using Fanex.Settlement.ScaleOut.Services;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Match = Models.MultiSports.Match;
@@ -18,8 +17,7 @@ public interface IMatchService
 public class MatchServiceImp(
     IRefDataService refDataService,
     IMatchResultDetailService matchResultDetailService,
-    NewInfoMatchService newInfoMatchService,
-    ScaleOutSettleService scaleOutSettleService)
+    NewInfoMatchService newInfoMatchService)
     : IMatchService
 {
     public async Task<List<Match>> SetNewOsMatchInfo(List<Match> matches, List<ResultDetail> resultDetails)
