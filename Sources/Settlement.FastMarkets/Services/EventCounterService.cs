@@ -17,9 +17,9 @@ public class EventCounterServiceImp(
 {
     public XMLResult<EventCounterElement> Result(SettleRequest request)
     {
-        var eventCounter = eventCounterElementService.GetEventCounters(request.EventCounters);
         if (request.Action.Equals(ActionType.CalculateAll) || request.IsSettleDetermined)
         {
+            var eventCounter = eventCounterElementService.GetEventCounters(request.EventCounters);
             var eventCountersRoot = new EventCountersRoot
             {
                 EventCounter = eventCounter
@@ -27,14 +27,14 @@ public class EventCounterServiceImp(
 
             return new XMLResult<EventCounterElement>
             {
-                OriginalItems = eventCounter,
+                OriginalItems = [],
                 Result = xmlConvertService.Serialize(eventCountersRoot)
             };
         }
 
         return new XMLResult<EventCounterElement>
         {
-            OriginalItems = eventCounter,
+            OriginalItems = [],
             Result = string.Empty
         };
     }

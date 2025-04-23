@@ -3,7 +3,6 @@ using Settlement.FastMarkets.Constants;
 using Settlement.FastMarkets.Criteria;
 using Settlement.FastMarkets.Models;
 using Settlement.FastMarkets.Models.BetTypeModels;
-using Settlement.FastMarkets.Models.EventCounterModels;
 using Settlement.FastMarkets.Models.TimeMachineOldResult;
 using ResourceItem = Fanex.Settlement.MessageBridge.ResultAmendment.ResourceItem;
 
@@ -15,7 +14,7 @@ public interface IFastMarketResultService
 
     Task<string> OldResults(List<BetType> betTypes, int matchId);
 
-    IEnumerable<ResourceItem> GetSelectedResources(IEnumerable<BetTypeElement> betTypes, IEnumerable<EventCounterElement> eventCounters);
+    IEnumerable<ResourceItem> CreateResourcesFromBetType(BetTypeElement betType);
 }
 
 public class FastMarketResultServiceImp(
@@ -72,29 +71,8 @@ public class FastMarketResultServiceImp(
         return oldResults.Any() ? GenerateOldResultsResource(oldResults) : string.Empty;
     }
 
-    public IEnumerable<ResourceItem> GetSelectedResources(IEnumerable<BetTypeElement> betTypes, IEnumerable<EventCounterElement> eventCounters)
-    {
-        var selectedResources = new List<ResourceItem>();
 
-        selectedResources.AddRange(
-            betTypes.SelectMany(CreateResourcesFromBetType)
-        );
-
-        selectedResources.AddRange(
-            eventCounters.SelectMany(eventCounter =>
-                eventCounter.Items.Select(item => new ResourceItem
-                {
-                    ResourceId = eventCounter.Id.ToString(),
-                    OtherInfo = item.Position.ToString(),
-                    HomeValue = item.Result
-                })
-            )
-        );
-
-        return selectedResources;
-    }
-
-    private IEnumerable<ResourceItem> CreateResourcesFromBetType(BetTypeElement betType)
+    public IEnumerable<ResourceItem> CreateResourcesFromBetType(BetTypeElement betType)
     {
         if (betType.Id == FastMarketBetType.TimeMachineHdp)
         {
