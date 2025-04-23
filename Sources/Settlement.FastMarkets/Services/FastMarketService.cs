@@ -163,9 +163,9 @@ public class FastMarketServiceImp(
         insertLogCriteria.SelectedResources = selectedResources;
         insertLogCriteria.Sporttype = SportType.Soccer;
         insertLogCriteria.Mode = ResultAmendmentType.FastMarket;
-        await logService.WriteLog(insertLogCriteria);
-
         var message = $"NAP: Fast Market {criteria.Action} for matchId: {criteria.MatchId}";
+
+        await logService.WriteLog(insertLogCriteria);
         await logService.WriteLog(criteria.MatchId, message);
 
         await UpdateResultAmendment(criteria, selectedResources);
