@@ -286,8 +286,8 @@ public class MultipleServerAioServiceImp(
 
     private async Task<bool> HandleResultAmendment(SettleCriteria settleCriteria, List<ResourceItem> selectedResources)
     {
-        List<int> sports = [SportType.Cricket, SportType.BasketBall, SportType.ESports, SportType.Tennis, SportType.VolleyBall, SportType.TableTennis];
-        if (sports.Contains(settleCriteria.SportType)
+
+        if (SportGroup.SupportResultAmend.Contains(settleCriteria.SportType)
             && !settleCriteria.IsChildMatch
             && settleCriteria.Action != ActionType.UnCalculate)
         {
