@@ -24,6 +24,7 @@ import { NotReadyMatchComponent } from '../shared/components/not-ready-match/not
 import { CalculateActionsComponent } from "../tennis/components/calculate-actions.component";
 import { NewMultipleSelectComponent } from '../shared/components/multiple-select/multiple-select.component';
 import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-browser/animations';
+import { FilterResultTypePipe } from './pipes/filter-result-type.pipe';
 
 @NgModule({
     imports: [
@@ -61,7 +62,8 @@ import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-br
         SpecificBettypeComponent,
         ConfirmRefundComponent,
         ConfirmScoreComponent,
-        MoveBetComponent
+        MoveBetComponent,
+        FilterResultTypePipe
     ],
     providers: [{ provide: HTTP_INTERCEPTORS, useClass: CustomHttpRequestInterceptor, multi: true }],
     bootstrap: [AppComponent],

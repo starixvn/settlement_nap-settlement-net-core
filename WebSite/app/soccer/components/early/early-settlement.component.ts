@@ -49,6 +49,8 @@ import {
 import { Soccer } from '../soccer.model';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import { GroupNameByIdPipe } from '../../pipes/group-name-by-id.pipe';
+import { FilterResultTypePipe } from '../../pipes/filter-result-type.pipe';
+import { EarlyBaseService } from '../../../core/services/early-base.service';
 
 @Component({
     selector: 'early-settlement',
@@ -65,6 +67,7 @@ import { GroupNameByIdPipe } from '../../pipes/group-name-by-id.pipe';
         PenaltyWoodWorkService,
         HelperService,
         GroupNameByIdPipe,
+        FilterResultTypePipe
     ],
 })
 export class EarlySettlementComponent implements Soccer {
@@ -80,6 +83,7 @@ export class EarlySettlementComponent implements Soccer {
     private readonly toastrService = inject(ToastrService);
     private readonly aioService = inject(AioService);
     private readonly groupNameById = inject(GroupNameByIdPipe);
+    private readonly earlyBaseService = inject(EarlyBaseService);
 
     public match: Match;
     public isReSettledTickets: boolean;
@@ -109,10 +113,17 @@ export class EarlySettlementComponent implements Soccer {
             true,
             []));
         this.resultTypeSelect.maxWidth = '200px';
+
+        this.resultStatusSelect.items = this.earlyBaseService.renderResultStatus(this.permission);
+        this.resultStatusSelect.maxWidth = '150px';
+
     }
 
-    onSelectResultType($event: any) {
-        }
+    onSelectResultType(values: ItemsSelect[]) {
+        this.resultTypeSelected = values.length > 0 ? values.map(item => item.value).join() : "";
+        console.log(this.resultTypeSelected);
+    }
+    
     async getMatch(matchId: number) {
         this.toastrService.overlayContainer = this.toastContainer;
         this.confirmationDialogMessage.title = Language.confirmationBox;
