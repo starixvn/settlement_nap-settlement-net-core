@@ -28,6 +28,7 @@ public class FastMarketResultServiceImp(
         };
 
         return xmlConvertService.Serialize(betTypesRoot);
+
     }
 
     public async Task<string> OldResults(List<BetType> betTypes, int matchId)

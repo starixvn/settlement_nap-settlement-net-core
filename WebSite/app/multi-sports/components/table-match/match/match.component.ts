@@ -18,14 +18,21 @@ import { MatchState } from '../../../models/match-state.model';
 import { IntervalScorePipe } from '../../../../shared/pipes/interval-score.pipe';
 import { MatchStateService } from '../../../services/match-state.service';
 import { BehaviorSubject } from 'rxjs';
-
-
-// add style display : contents
+import { CircleBadgeComponent } from '../../../../shared/components/circle-badge/circle-badge.component';
+import { PositionValuePipe } from '../../../pipes/position-value.pipe';
 @Component({
   selector: 'match',
   templateUrl: './match.component.html',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatTooltipModule, PipesModule, NgbTooltip],
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatTooltipModule,
+    PipesModule,
+    NgbTooltip,
+    CircleBadgeComponent,
+    PositionValuePipe
+],
   providers: [IntervalScorePipe, MatchStateService],
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: [' :host { display: contents; } ']

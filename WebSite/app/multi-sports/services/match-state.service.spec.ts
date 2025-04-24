@@ -71,7 +71,9 @@ describe('MatchStateService', () => {
     confirmHalfTimeScore: "",
     offerLive: false,
     applyDirect: false,
-    autoCalcSetting: new AutoSetting
+    autoCalcSetting: new AutoSetting,
+    refundWaitingTime: 0,
+    mercyAbandonedInfo: ""
   }
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -964,6 +966,68 @@ describe('MatchStateService', () => {
 
       expect(actual).toEqual(expected);
     });
+
+  describe('getMercyAbandonedInfo', () => {
+    it('should return default object when mercyAbandonedInfo is null', () => {
+      const match = { mercyAbandonedInfo: null } as Match;
+      const result = service.getMercyAbandonedInfo(match);
+      
+      expect(result).toEqual({
+        isMercy: false,
+        isAbandoned: false,
+        otherInfo: "",
+        position: ""
+      });
+    });
+
+    it('should return default object when mercyAbandonedInfo is empty', () => {
+      const match = { mercyAbandonedInfo: "" } as Match;
+      const result = service.getMercyAbandonedInfo(match);
+      
+      expect(result).toEqual({
+        isMercy: false,
+        isAbandoned: false,
+        otherInfo: "",
+        position: ""
+      });
+    });
+
+    it('should return mercy info when mercyAbandonedInfo contains mercy', () => {
+      const match = { mercyAbandonedInfo: "1:Mercy" } as Match;
+      const result = service.getMercyAbandonedInfo(match);
+      
+      expect(result).toEqual({
+        isMercy: true,
+        isAbandoned: false,
+        otherInfo: "M",
+        position: "1"
+      });
+    });
+
+    it('should return abandoned info when mercyAbandonedInfo contains abandoned', () => {
+      const match = { mercyAbandonedInfo: "2:A" } as Match;
+      const result = service.getMercyAbandonedInfo(match);
+      
+      expect(result).toEqual({
+        isMercy: false,
+        isAbandoned: true,
+        otherInfo: "A",
+        position: "2"
+      });
+    });
+
+    it('should handle other types of mercyAbandonedInfo', () => {
+      const match = { mercyAbandonedInfo: "3:X" } as Match;
+      const result = service.getMercyAbandonedInfo(match);
+      
+      expect(result).toEqual({
+        isMercy: false,
+        isAbandoned: false,
+        otherInfo: "X",
+        position: "3"
+      });
+    });
+  });
 
 });
 

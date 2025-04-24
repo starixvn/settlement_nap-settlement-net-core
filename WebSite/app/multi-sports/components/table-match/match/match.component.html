@@ -76,14 +76,22 @@
 		<td rowspan="2" class="event-status" [ngClass]="matchState.eventStatusColor">{{ match.newEventStatus }}
 		</td>
 		<td rowspan="2" class="calc-column" [ngClass]="matchState.calcColumnColor">
-			<div [ngClass]="matchState.isShowCalcLink" (click)="matchState.isShowCalcLink ? popupCalc() : ''">
+			<span [ngClass]="matchState.isShowCalcLink" (click)="matchState.isShowCalcLink ? popupCalc() : ''">
 				Calc
-			</div>
+			</span>
+			@if(matchState.mercyAbandonedInfo.isMercy) {
+			<circle-badge [value]="matchState.mercyAbandonedInfo.position | positionValue" color="#ffa500"></circle-badge>
+			}
 		</td>
 		<td rowspan="2" class="refund-column">
-			<div [ngClass]="matchState.isShowRefundLink" (click)="matchState.isShowRefundLink ? popupRefund() : ''">
+			<span [ngClass]="matchState.isShowRefundLink" (click)="matchState.isShowRefundLink ? popupRefund() : ''">
 				Refund
-			</div>
+			</span>
+			@if(matchState.mercyAbandonedInfo.isAbandoned) {
+			<circle-badge
+				[value]="matchState.mercyAbandonedInfo.position | positionValue:matchState.mercyAbandonedInfo.otherInfo"
+				color="#b3e5fc"></circle-badge>
+			}
 		</td>
 		<td rowspan="2" class="confirm-score" [ngClass]="{ 'bg-white-blinking': match.isNotConsistentExHtScore }">
 			<div>{{ match.suspenderHalfTime }}</div>

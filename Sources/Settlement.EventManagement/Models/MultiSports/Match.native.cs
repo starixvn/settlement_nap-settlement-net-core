@@ -61,7 +61,7 @@ public class Match : BaseMatch
     [Key("refundWaitingTime")]
     public int RefundWaitingTime { get; set; }
 
-    [Key("autoSetting")]
+    [Key("mercyAbandonedInfo")]
     public string MercyAbandonedInfo { get; set; }
 
     [IgnoreMember]

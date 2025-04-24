@@ -25,7 +25,7 @@ import { ModalDialogComponent } from '../../../../shared/components/modal-dialog
 import { ModalContentDialogComponent } from '../../../../shared/components/modal-dialog/modal-content-dialog.component';
 import { MultiSportsStore } from '../../../services/multi-sports.store';
 import { MatchStateService } from '../../../services/match-state.service';
-
+import { PositionValuePipe } from '../../../pipes/position-value.pipe';
 describe('matchComponent', () => {
   let component: MatchComponent;
   let fixture: ComponentFixture<MatchComponent>;
@@ -45,7 +45,10 @@ describe('matchComponent', () => {
     autoWaitingTime: 0,
     autoCalcSetting: new AutoSetting(),
     sportType: 0,
-    autoRetryTime: 0
+    autoRetryTime: 0,
+    autoMainWaitingTime: 0,
+    autoEarlyWaitingTime: 0,
+    refundWaitingTime: 0
   };
 
   const sport: SportMatch = {
@@ -102,6 +105,7 @@ describe('matchComponent', () => {
         ModalDialogComponent,
         ModalContentDialogComponent,
         IntervalScorePipe,
+        PositionValuePipe
       ],
     })
       .compileComponents();
@@ -251,6 +255,7 @@ describe('matchComponent', () => {
     it('should update popup change setting when has permission', () => {
       permission.canAutoPayout = true;
       store.state.permission = permission;
+      component.match = match;
       popupService.openUpdatePayoutForMatch = jest.fn();
 
       component.changeAutoSetting();
@@ -314,7 +319,7 @@ describe('matchComponent', () => {
       match.autoCalcSetting = new AutoSetting();
       match.autoCalcSetting.isInstantForMatch = false;
       component.match = match;
-      jest.spyOn(multiSportService, 'updateSettingMatch').mockReturnValue(Promise.resolve(mockResultFailed));
+      jest.spyOn(multiSportService, 'updateSettingMatch').mockReturnValue(Promise.resolve(mockResultFailed as any));
       jest.spyOn(messageBoxService, 'alert');
 
       component.updateInstant();
