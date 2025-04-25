@@ -22,8 +22,8 @@
           <th class="result-status">
             Ticket Status
             <div class="early-filter" style="margin-top: 2px;">
-              <new-multiple-select (formValue)="onSelectResultType($event)"
-                [multipleSelect]="resultStatusSelect"></new-multiple-select>
+              <new-multiple-select (formValue)="onSelectTicketsStatus($event)"
+                [multipleSelect]="ticketsStatusSelect"></new-multiple-select>
             </div>
           </th>
           <th class="result-value">
@@ -32,7 +32,7 @@
           <th class="result-status">
             Result Status
             <div class="early-filter" style="margin-top: 2px;">
-              <new-multiple-select (formValue)="onSelectResultType($event)"
+              <new-multiple-select (formValue)="onSelectResultStatus($event)"
                 [multipleSelect]="resultStatusSelect"></new-multiple-select>
             </div>
           </th>
@@ -70,7 +70,8 @@
               <div [ngClass]="getResultSettingIcon(map.isHoldResult)" (click)="changeSettingGroup(map)"></div>
             </td>
           </tr>
-          @for (item of map.resultDetail | filterResultType: resultTypeSelected; track item) {
+          @for (item of map.resultDetail | filterResultType: resultTypeSelected
+          | filterTicketStatus: ticketStatusSelected | filterResultStatus: resultStatusSelected; track item) {
           <tr [hidden]="map.collapsed"
             [ngClass]="{'bg-invalid':item.isInvalidValue, 'bg-not-taken':item.isNotTaken, 'confirmed-refund': permission.isLeader && (item.resultSettingData.isConfirmedRefund || item.resultSettingData.isConfirmedRefundSdt)}">
             <td class="align-left">{{item.betTypeName}}</td>

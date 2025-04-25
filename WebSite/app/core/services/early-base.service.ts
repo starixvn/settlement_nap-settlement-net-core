@@ -30,7 +30,7 @@ export class EarlyBaseService {
     return this.createListOption(selection);
   }
 
-  public renderResultStatus(permission: Permission) {
+  public renderResultStatus(permission: Permission, bonnusSelections  = []) {
     const selection = [
       { id: 1, value: "Running", text: "Running", checked: true },
       { id: 2, value: "Completed (Auto)", text: "Completed (Auto)", checked: true },
@@ -38,7 +38,9 @@ export class EarlyBaseService {
       { id: 4, value: "Refund", text: "Refund", checked: true },
       { id: 5, value: "No Result", text: "No Result", checked: true },
       { id: 6, value: "Confirmed", text: "Confirmed Refund", checked: false, hasPermission: permission.isLeader },
-      { id: 7, value: "3", text: "Confirmed by Trader", checked: true }];
+      { id: 7, value: "3", text: "Confirmed by Trader", checked: true },
+      ...bonnusSelections
+    ];
 
     
 

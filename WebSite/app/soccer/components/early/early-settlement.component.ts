@@ -67,10 +67,12 @@ import { EarlyBaseService } from '../../../core/services/early-base.service';
         PenaltyWoodWorkService,
         HelperService,
         GroupNameByIdPipe,
-        FilterResultTypePipe
+        FilterResultTypePipe,
+        EarlyBaseService
     ],
 })
 export class EarlySettlementComponent implements Soccer {
+
 
 
     @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
@@ -114,15 +116,41 @@ export class EarlySettlementComponent implements Soccer {
             []));
         this.resultTypeSelect.maxWidth = '200px';
 
-        this.resultStatusSelect.items = this.earlyBaseService.renderResultStatus(this.permission);
+        this.resultStatusSelect.items = this.earlyBaseService.renderResultStatus(this.permission,[{ id: 8, value: "Refund SDT", text: "Refund SDT", checked: true }]);
         this.resultStatusSelect.maxWidth = '150px';
+
+        this.ticketsStatusSelect.items = this.earlyBaseService.renderTicketStatus();
+        this.ticketsStatusSelect.maxWidth = '150px';
 
     }
 
     onSelectResultType(values: ItemsSelect[]) {
         this.resultTypeSelected = values.length > 0 ? values.map(item => item.value).join() : "";
-        console.log(this.resultTypeSelected);
+        this.autoUncheckAfterFilter();
     }
+
+    onSelectResultStatus(values: ItemsSelect[]) {
+        this.resultStatusSelected = values.length > 0 ? values.map(item => item.value).join() : "";
+        console.log(this.resultStatusSelected);
+        this.autoUncheckAfterFilter();
+    }
+    onSelectTicketsStatus(values: ItemsSelect[]) {
+        this.ticketStatusSelected = values.length > 0 ? values.map(item => item.value).join() : "";
+        console.log(this.ticketStatusSelected);
+        this.autoUncheckAfterFilter();
+    }
+
+    public autoUncheckAfterFilter() {
+        this.resultDetails.forEach((map) => {
+            map.checked = false;
+        });
+        this.groupMap.forEach(map => {
+            map.checked = false;
+        });
+
+        this.disableCalculateAndUnCalculate();
+    }
+
     
     async getMatch(matchId: number) {
         this.toastrService.overlayContainer = this.toastContainer;

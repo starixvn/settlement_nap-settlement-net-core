@@ -23,8 +23,11 @@ import { ResettleCheckerComponent } from '../shared/components/resettle-checker/
 import { NotReadyMatchComponent } from '../shared/components/not-ready-match/not-ready-match.component';
 import { CalculateActionsComponent } from "../tennis/components/calculate-actions.component";
 import { NewMultipleSelectComponent } from '../shared/components/multiple-select/multiple-select.component';
-import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-browser/animations';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FilterResultTypePipe } from './pipes/filter-result-type.pipe';
+import { FilterTicketStatusPipe } from './pipes/filter-ticket-status.pipe';
+import { FilterResultStatusPipe } from './pipes/filter-result-status/filter-result-status.pipe';
+
 
 @NgModule({
     imports: [
@@ -63,7 +66,9 @@ import { FilterResultTypePipe } from './pipes/filter-result-type.pipe';
         ConfirmRefundComponent,
         ConfirmScoreComponent,
         MoveBetComponent,
-        FilterResultTypePipe
+        FilterResultTypePipe,
+        FilterTicketStatusPipe,
+        FilterResultStatusPipe
     ],
     providers: [{ provide: HTTP_INTERCEPTORS, useClass: CustomHttpRequestInterceptor, multi: true }],
     bootstrap: [AppComponent],
