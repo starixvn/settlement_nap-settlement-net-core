@@ -73,23 +73,18 @@ public class CalculateServiceImp(
             await ExecuteAsync(criteria);
         }
 
-        await PublishEvent(request);
+        await publishEndpoint.Publish(new MatchCalculated(
+                request.MatchId,
+                request.ParentId,
+                request.SportType,
+                request.ChildMatchType,
+                request.HalfTimeHomeScore,
+                request.HalfTimeAwayScore,
+                request.FinalHomeScore,
+                request.FinalAwayScore,
+                request.ActionName), new CancellationTokenSource(TimeSpan.FromSeconds(2)).Token);
 
         return matchChecking;
-    }
-
-    private async Task PublishEvent(SettleRequest request)
-    {
-        await publishEndpoint.Publish(new MatchCalculated(
-            request.MatchId,
-            request.ParentId,
-            request.SportType,
-            request.ChildMatchType,
-            request.HalfTimeHomeScore,
-            request.HalfTimeAwayScore,
-            request.FinalHomeScore,
-            request.FinalAwayScore,
-            request.ActionName), new CancellationTokenSource(TimeSpan.FromSeconds(2)).Token);
     }
 
     private async Task SaveOutsideScores(SettleRequest request)
