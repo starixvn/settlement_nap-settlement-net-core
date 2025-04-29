@@ -27,7 +27,7 @@ export class ResultStatusPipe implements PipeTransform {
     }
 
     private filterConfirmedTraderMatch(args: string, resultDetail: ResultDetail) {
-        if(_.includes(args, 'Confirmed by Trader')){
+        if(_.includes(args, '3')){
             return resultDetail.resultStatusId === 3;
         }
         return false;

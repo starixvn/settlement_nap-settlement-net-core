@@ -9,6 +9,8 @@ export class FilterTicketStatusPipe implements PipeTransform {
     if(!args?.length) {
       return resultDetails;
     }
+
+    
     return resultDetails.filter(item => args.includes(item.ticketStatus));
   }
 }
