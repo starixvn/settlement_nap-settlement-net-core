@@ -114,29 +114,29 @@ export class EarlySettlementComponent implements Soccer {
             true,
             true,
             []));
-        this.resultTypeSelect.maxWidth = '200px';
 
         this.resultStatusSelect.items = this.earlyBaseService.renderResultStatus(this.permission,[{ id: 8, value: "Refund SDT", text: "Refund SDT", checked: true }]);
-        this.resultStatusSelect.maxWidth = '150px';
 
         this.ticketsStatusSelect.items = this.earlyBaseService.renderTicketStatus();
-        this.ticketsStatusSelect.maxWidth = '150px';
+
+        this.resultTypeSelect.maxWidth = '250px';
+        this.ticketsStatusSelect.maxWidth = '125px';
+        this.resultStatusSelect.maxWidth = '125px';
 
     }
 
     onSelectResultType(values: ItemsSelect[]) {
         this.resultTypeSelected = values.length > 0 ? values.map(item => item.value).join() : "";
+        console.log(this.resultTypeSelected);
         this.autoUncheckAfterFilter();
     }
 
     onSelectResultStatus(values: ItemsSelect[]) {
         this.resultStatusSelected = values.length > 0 ? values.map(item => item.value).join() : "";
-        console.log(this.resultStatusSelected);
         this.autoUncheckAfterFilter();
     }
     onSelectTicketsStatus(values: ItemsSelect[]) {
         this.ticketStatusSelected = values.length > 0 ? values.map(item => item.value).join() : "";
-        console.log(this.ticketStatusSelected);
         this.autoUncheckAfterFilter();
     }
 

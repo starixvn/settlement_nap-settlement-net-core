@@ -9,8 +9,8 @@ export class FilterResultTypePipe implements PipeTransform {
         if(!args?.length) {
           return resultDetails;
         }
-        
-        return resultDetails.filter(item => `${item.map}` === args);
+    
+        return resultDetails.filter(item => args.includes(`${item.map}`));
     }
 }
 
