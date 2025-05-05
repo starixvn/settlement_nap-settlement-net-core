@@ -8,16 +8,17 @@ import * as _ from "lodash";
 })
 export class FilterResultStatusPipe implements PipeTransform {
   transform(resultDetails: ResultDetail[], args: string): ResultDetail[] {
-    if (!args?.length) {
-      return resultDetails;
-    }
-
+ 
     const argsArray = args.split(",");
     return resultDetails.filter(
-      (item) =>
-        argsArray.includes(item.resultStatus) ||
+      (item) => {
+        const hasResultStatus = !args?.length || argsArray.includes(item.resultStatus) ||
         this.filterConfirmTrader(argsArray, item) ||
         this.filterConfirmRefundMatch(argsArray, item)
+
+        return this.isExistedItem(hasResultStatus, item);
+      }
+        
     );
   }
 
@@ -35,5 +36,15 @@ export class FilterResultStatusPipe implements PipeTransform {
       return resultDetail.resultStatusId === 3;
     }
     return false;
+  }
+
+  private isExistedItem(hasResultStatus: boolean, item: ResultDetail) {
+    if (hasResultStatus) {
+      item.isShow = true;
+      return true;
+    } else {
+      item.isShow = false;
+      return false;
+    }
   }
 }

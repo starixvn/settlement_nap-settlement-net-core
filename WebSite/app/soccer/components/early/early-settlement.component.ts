@@ -216,8 +216,10 @@ export class EarlySettlementComponent implements Soccer {
 
     public onChangeGroupMap(map: GroupMap) {
         map.resultDetail.forEach((item) => {
-            item.checked = item.resultSettingData.isHoldResult ? false : map.checked;
-            item.isResultWarning = false;
+            if(item.isShow) {
+                item.checked = item.resultSettingData.isHoldResult ? false : map.checked;
+                item.isResultWarning = false;
+            }
         });
 
         this.disableCalculateAndUnCalculate();

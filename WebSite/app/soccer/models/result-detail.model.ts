@@ -24,4 +24,5 @@ export class ResultDetail extends GeneralResultDetail{
     };
     public isMismatch: boolean;
     public resultState: string;
+    public isShow = true;
 }

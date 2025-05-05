@@ -6,12 +6,20 @@ import { ResultDetail } from '../models/result-detail.model';
 })
 export class FilterTicketStatusPipe implements PipeTransform {
   transform(resultDetails: ResultDetail[], args: string): ResultDetail[] {
-    if(!args?.length) {
-      return resultDetails;
-    }
-
     
-    return resultDetails.filter(item => args.includes(item.ticketStatus));
+      return resultDetails.filter(item => {
+        const hasTicketStatus = !args?.length || args.includes(item.ticketStatus);
+        return this.isExistedItem(hasTicketStatus, item);
+      });
+  }
+
+  private isExistedItem(hasTicketStatus: boolean, item: ResultDetail) {
+    if (hasTicketStatus) {
+      item.isShow = true;
+      return true;
+    } else {
+      item.isShow = false;
+      return false;
+    }
   }
 }
-
