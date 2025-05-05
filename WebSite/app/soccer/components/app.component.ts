@@ -40,7 +40,8 @@ export class AppComponent implements OnInit {
         const factory = this.getComponentFactory();
         this.component = this.container.createComponent(factory);
         const matchId = Number(UrlHelper.getUrlParameter('matchId'));
-        this.component.instance.getMatch(matchId);
+        const filterOver = UrlHelper.getUrlParameter('filterOver');
+        this.component.instance.getMatch(matchId, filterOver);
         return this.component;
     }
 

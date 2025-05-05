@@ -1,3 +1,3 @@
 export interface Soccer {
-    getMatch(matchId: number): void;
+    getMatch(matchId: number, filterOver?: string): void;
 }

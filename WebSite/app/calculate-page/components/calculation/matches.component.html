@@ -98,7 +98,7 @@
 						<td rowspan="2" class="event-status" [ngClass]="getEventStatusColor(match)">{{ match.newEventStatus }}</td>
 						<td rowspan="2" class="calc-column" [ngClass]="getCalcColumnColor(match)">
 							<div [ngClass]="isShowCalculationLink(match)"
-								(click)="isShowCalculationLink(match) ? popupCalc(match) : ''">
+								(click)="isShowCalculationLink(match) ? popupCalc(match,filterQuery) : ''">
 								Calc
 							</div>
 						</td>

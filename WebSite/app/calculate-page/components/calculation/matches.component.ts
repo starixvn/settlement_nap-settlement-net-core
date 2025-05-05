@@ -142,9 +142,17 @@ export class MatchesComponent extends MatchesBaseComponent implements OnChanges,
     if(isHalfTime && (!halfTimeScore.isNotSettled || this.permission.isLeader)) {
       return match.confirmHalfTimeScore;
     }
+
+    if(isHalfTime && !finalScore.isNotSettled && !this.permission.isLeader) {
+      return '(provider ready)';
+    }
     
     if(!finalScore.isNotSettled || this.permission.isLeader) {
       return match.confirmFullTimeScore;
+    }
+
+    if(!finalScore.isNotSettled && !this.permission.isLeader) {
+      return '(provider ready)';
     }
 
     return '';

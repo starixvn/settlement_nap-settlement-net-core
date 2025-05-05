@@ -8,7 +8,8 @@ import * as _ from "lodash";
 import { Language } from "../../shared/language.native";
 import { ResourceIds } from "../constants";
 import { ResultDetail } from "../models";
-import {  ScoreSourceType, SettlementStatusId } from "../../shared/constants";
+import { ResultStatusId, ScoreSourceType, SettlementStatusId, TicketStatus, TicketStatusText } from "../../shared/constants";
+import { OverStatus } from "../../shared/constants/over-status.native";
 
 @Injectable()
 export class CalculateStorage implements Storage {
@@ -32,7 +33,7 @@ export class CalculateStorage implements Storage {
   #providerHtResult: ResultDetail;
   #providerFtResult: ResultDetail;
 
-  #isIgnoreCheckHt = false;     
+  #isIgnoreCheckHt = false;
 
   match = this.#match.asReadonly();
   readonly dialogMessage = new ModalDialogMessage(Language.confirmationBox);
@@ -42,11 +43,11 @@ export class CalculateStorage implements Storage {
     return this.#match();
   }
 
-  getHalfTimeResult(){
+  getHalfTimeResult() {
     return this.#halfTimeResult;
   }
 
-  getFullTimeResult(){
+  getFullTimeResult() {
     return this.#fullTimeResult;
   }
 
@@ -81,7 +82,7 @@ export class CalculateStorage implements Storage {
     return this.#match().hedgeMatchDetail;
   }
 
-  getInstantScore(){
+  getInstantScore() {
     return this.#instantScore;
   }
 
@@ -142,16 +143,22 @@ export class CalculateStorage implements Storage {
     this.#calculateAction = action;
   }
 
-  setMatch(match: Match) {
+  setMatch(match: Match, filterOver?: string) {
     this.#match.set(match);
     const { resultDetails } = this.#match();
     this.#matchDetail = this.#match().matchDetail;
+
     this.#halfTimeResult = this.#match().resultDetails
       .find((result) => result.resourceId === ResourceIds.halfTime && result.sourceId === ScoreSourceType.emptySource);
+
     this.#fullTimeResult = this.#match().resultDetails
       .find((result) => result.resourceId === ResourceIds.fullTime && result.sourceId === ScoreSourceType.emptySource);
+
+
+    this.autoSelectResultByFilterOver(filterOver);
+
     this.#isApplyHedgeMatch = this.#match().hedgeMatchDetail != null && !this.#match().hedgeMatchDetail.isUndecided;
-    this.#halfTimeResult.resourceName = "HT"; 
+    this.#halfTimeResult.resourceName = "HT";
     this.#fullTimeResult.resourceName = "FT";
 
 
@@ -164,7 +171,7 @@ export class CalculateStorage implements Storage {
     this.#providerHtResult = resultDetails.find(x => x.sourceId === ScoreSourceType.Sbo && x.resourceId === ResourceIds.halfTime);
     this.#providerFtResult = resultDetails.find(x => x.sourceId === ScoreSourceType.Sbo && x.resourceId === ResourceIds.fullTime);
   }
-  
+
 
   setHaftTimeScore(homeScore: string, awayScore: string) {
     this.#halfTimeResult.homeValue = homeScore;
@@ -177,10 +184,10 @@ export class CalculateStorage implements Storage {
   }
 
   setFinalScore(resourceId: string, homeScore: string, awayScore: string) {
-    if(resourceId === ResourceIds.halfTime) {
-      this.setHaftTimeScore(homeScore,awayScore);
+    if (resourceId === ResourceIds.halfTime) {
+      this.setHaftTimeScore(homeScore, awayScore);
     } else {
-      this.setFullTimeScore(homeScore,awayScore);
+      this.setFullTimeScore(homeScore, awayScore);
     }
   }
 
@@ -199,13 +206,13 @@ export class CalculateStorage implements Storage {
 
   resetHomeAway() {
     const statusNeedReset = [SettlementStatusId.Refund, SettlementStatusId.RefundFullTime, SettlementStatusId.RefundHalfTime];
-      this.#match().resultDetails.forEach((map) => {
-        const hideScore = statusNeedReset.some(status => map.settlementStatusId === status);
-        map.homeValue = hideScore ? "" : map.homeValue;
-        map.awayValue = hideScore ? "" : map.awayValue;
-      });
-    }
-    
+    this.#match().resultDetails.forEach((map) => {
+      const hideScore = statusNeedReset.some(status => map.settlementStatusId === status);
+      map.homeValue = hideScore ? "" : map.homeValue;
+      map.awayValue = hideScore ? "" : map.awayValue;
+    });
+  }
+
   error(message: string) {
     if (!_.isEmpty(message)) {
       this.toastrService.error(message);
@@ -229,7 +236,7 @@ export class CalculateStorage implements Storage {
 
     this.traderFtResult.isInvalidValue = false;
     this.traderHtResult.isInvalidValue = false;
-    
+
   }
 
   changeScore() {
@@ -237,5 +244,28 @@ export class CalculateStorage implements Storage {
     const ftExists = !this.verifyScoreGoalService.isEmptyScore(this.#fullTimeResult.homeValue) && !this.verifyScoreGoalService.isEmptyScore(this.#fullTimeResult.awayValue);
     const isInconsistent = Number(this.#halfTimeResult.homeValue) > Number(this.#fullTimeResult.homeValue) || Number(this.#halfTimeResult.awayValue) > Number(this.#fullTimeResult.awayValue);
     this.#matchDetail.isScoreInconsistent = htExists && ftExists && isInconsistent;
+  }
+
+  private autoSelectResultByFilterOver(filterOver?: string) {
+    const settledResultStatusIds = [ResultStatusId.AutoCompleted, ResultStatusId.ManualCompleted];
+    if (filterOver === OverStatus.SettledWithRunningTicket) {
+      this.#halfTimeResult.checked = this.#halfTimeResult.settlementStatusId === SettlementStatusId.Calculated 
+      && this.#halfTimeResult.ticketStatus === TicketStatusText.running;
+
+      this.#fullTimeResult.checked = this.#fullTimeResult.settlementStatusId === SettlementStatusId.Calculated 
+        && this.#fullTimeResult.ticketStatus === TicketStatusText.running;
+      return;
+    }
+
+    if (filterOver === OverStatus.HTOver) {
+      this.#halfTimeResult.checked = !settledResultStatusIds.includes(this.#halfTimeResult.resultStatusId);
+      return;
+    }
+
+    if (filterOver === OverStatus.FTOver) {
+      this.#halfTimeResult.checked = !settledResultStatusIds.includes(this.#halfTimeResult.resultStatusId);
+      this.#fullTimeResult.checked = !settledResultStatusIds.includes(this.#fullTimeResult.resultStatusId);
+      return;
+    }
   }
 }
