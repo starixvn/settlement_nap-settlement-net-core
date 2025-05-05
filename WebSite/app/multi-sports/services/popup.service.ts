@@ -4,6 +4,7 @@ import {
   PopupProperties,
   Match,
   LeagueMatch,
+  MatchRequest,
 } from "./../models";
 import { DialogBoxService } from "./../../shared/services";
 import { AutoSetting, DialogDataIframe } from "./../../shared/models";
@@ -54,13 +55,13 @@ export class PopupService {
     this.dialogBoxService.popup(dialogData, "1011px", "800px");
   }
 
-  public popupCalc(match: Match, state$: BehaviorSubject<MatchState>) {
+  public popupCalc(match: Match, state$: BehaviorSubject<MatchState>, request?: MatchRequest) {
     this.properties.title = Language.CalcPopupTitle;
     this.setPopupSize(match.sportType);
 
     if (this.listNewSport.includes(match.sportType)) {
       const sportName = PopularSports.get(match.sportType);
-      this.properties.src = `/apps/${sportName}-recalculate?matchId=${match.matchId}&sportType=${match.sportType}`;
+      this.properties.src = `/apps/${sportName}-recalculate?matchId=${match.matchId}&sportType=${match.sportType}&overStatus=${request?.overStatus}`;
     } else {
       this.properties.src = `/apps/other-sports-recalculate?matchId=${match.matchId}&sportType=${match.sportType}`;
     }

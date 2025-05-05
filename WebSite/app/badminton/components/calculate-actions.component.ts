@@ -71,6 +71,9 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
   async getMatch(matchId: number) {
 
     const sportType = Number(UrlHelper.getUrlParameter('sportType'));
+    const overStatus = UrlHelper.getUrlParameter('overStatus');
+    console.log('overStatus', overStatus);
+
     this.getApiKeys(sportType);
 
     const matchQuery = {

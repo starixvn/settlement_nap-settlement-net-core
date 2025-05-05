@@ -83,7 +83,7 @@ export class MatchComponent implements OnChanges, OnInit {
   }
 
   popupCalc() {
-    this.popupService.popupCalc(this.match, this.state$);
+    this.popupService.popupCalc(this.match, this.state$,this.store.request);
   }
 
   popupRefund() {
