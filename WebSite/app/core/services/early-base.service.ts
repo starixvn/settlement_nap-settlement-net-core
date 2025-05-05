@@ -21,11 +21,12 @@ export class EarlyBaseService {
     return item.homeValue === null || _.isEmpty(item.homeValue);
   }
 
-  public renderTicketStatus() {
+  public renderTicketStatus(bonnusSelections  = []) {
     const selection = [
       { id: 1, value: "Running;", text: "Running", checked: true },
-      { id: 2, value: "Marked", text: "Marked" },
+      { id: 2, value: "Marked", text: "Marked" },       
       { id: 3, value: "Calculated", text: "Calculated" },
+      ...bonnusSelections
     ];
     return this.createListOption(selection);
   }

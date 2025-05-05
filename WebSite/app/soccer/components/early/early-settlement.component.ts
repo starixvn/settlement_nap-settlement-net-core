@@ -117,7 +117,7 @@ export class EarlySettlementComponent implements Soccer {
 
         this.resultStatusSelect.items = this.earlyBaseService.renderResultStatus(this.permission,[{ id: 8, value: "Refund SDT", text: "Refund SDT", checked: true }]);
 
-        this.ticketsStatusSelect.items = this.earlyBaseService.renderTicketStatus();
+        this.ticketsStatusSelect.items = this.earlyBaseService.renderTicketStatus([{ id: 4, value: "No Ticket", text: "No Ticket"}]);
 
         this.resultTypeSelect.maxWidth = '250px';
         this.ticketsStatusSelect.maxWidth = '125px';

@@ -23,7 +23,8 @@ export class FilterResultStatusPipe implements PipeTransform {
 
   private filterConfirmRefundMatch(args: string[], resultDetail: ResultDetail) {
     if (args.includes("Confirmed")) {
-      return resultDetail.resultSettingData.isConfirmedRefund;
+      return resultDetail.resultSettingData.isConfirmedRefund 
+      || resultDetail.resultSettingData.isConfirmedRefundSdt;
     }
     return false;
   }
