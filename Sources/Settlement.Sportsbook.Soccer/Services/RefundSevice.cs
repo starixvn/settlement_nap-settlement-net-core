@@ -1,4 +1,4 @@
-﻿using AutoEarlyRefund.Contracts;
+﻿using Fanex.Settlement.MessageBridge.RefundEvents;
 using MassTransit;
 using Settlement.Core.Constants;
 using Settlement.Core.Criteria;
@@ -63,7 +63,6 @@ public class RefundServiceImp(
 
         await ExecuteRefund(criteria);
 
-        //TODO
         await publishEndpoint.Publish(
             new MatchRefunded(request.MatchId, request.ParentId, request.SportType, request.ChildMatchType, request.ActionName),
             new CancellationTokenSource(TimeSpan.FromSeconds(2)).Token);

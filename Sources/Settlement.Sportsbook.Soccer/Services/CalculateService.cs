@@ -1,4 +1,4 @@
-using AutoEarlyRefund.Contracts;
+using Fanex.Settlement.MessageBridge.RefundEvents;
 using Fanex.Settlement.ScaleOut.Criteria.Update;
 using Mapster;
 using MassTransit;
