@@ -18,6 +18,8 @@ import { ResultPipe } from '../../shared/pipes/result.pipe';
 import { SourceIds } from '../../basketball/constants/source-ids';
 import { ChildMatchComponent } from './child-match/child-match.component';
 import { UpdateSettlementResultHistoryStatus } from '../../shared/models/update-settle-result-history-status';
+import { OverStatus } from '../../shared/constants/over-status.native';
+import { AutoSelectResultsService } from '../../shared/services/auto-select-results.service.native';
 
 @Component({
   selector: 'calculation-actions',
@@ -36,6 +38,8 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
   private readonly verificationService = inject(VerificationService);
   private readonly toastrService = inject(ToastrService);
   private readonly blockUIService = inject(BlockUIService);
+  private readonly autoSelectResultsService = inject(AutoSelectResultsService);
+
   public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
   readonly confirmDialogWithActionOnNoBtn: ModalDialogMessage = new ModalDialogMessage();
   readonly totalPointsId = ResourcesIds.totalPoints;
@@ -56,6 +60,7 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
   public sportTypes = SportType;
   sportWithPassiveChildMatch = [SportType.tableTennis, SportType.beachVolleyball];
   private settleRunningChildMatchOnly = false;
+  filterOverStatus = '';
 
   constructor() {
     this.blockUIService.blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
@@ -69,10 +74,8 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
   }
 
   async getMatch(matchId: number) {
-
     const sportType = Number(UrlHelper.getUrlParameter('sportType'));
-    const overStatus = UrlHelper.getUrlParameter('overStatus');
-    console.log('overStatus', overStatus);
+    this.filterOverStatus = UrlHelper.getUrlParameter('overStatus');
 
     this.getApiKeys(sportType);
 
@@ -137,6 +140,39 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
     this.checkChildrenMatchesConsistent();
     this.autoInputDirectly();
     this.match.childMatches.forEach(item => item.resourceId = ResourcesIds.totalGames);
+
+    this.autoSelectResultsService.selectByOverStatus(this.match.resultDetails, this.totalGames, this.filterOverStatus);
+
+    // this.autoSelectResultsByOverStatus();
+  }
+  
+  private autoSelectResultsByOverStatus() {
+    const finalResult = this.match.resultDetails.find(item => item.resourceId === ResourcesIds.totalGames);
+    const settledResultStatusIds = [ResultStatusId.ManualCompleted, ResultStatusId.AutoCompleted];
+    const isFinalSettledResult = finalResult && !settledResultStatusIds.includes(finalResult.resultStatusId);
+
+    const overStatusArray = this.filterOverStatus.split(',');
+
+    if (overStatusArray.includes(OverStatus.MainOver)) {
+      this.match.resultDetails.forEach(item => {
+        item.checked = item.checked 
+          || isFinalSettledResult
+          || item.resultStatusId === ResultStatusId.TraderConfirm;
+      });
+    }
+
+    if (overStatusArray.includes(OverStatus.Over)) {
+      this.match.resultDetails.forEach(item => {
+        item.checked = item.checked || !settledResultStatusIds.includes(item.resultStatusId);
+      });
+    }
+
+    if (overStatusArray.includes(OverStatus.SettledWithRunningTicket)) {
+      this.match.resultDetails.forEach(item => {
+        item.checked = item.checked 
+          || item.settlementStatusId === SettlementStatusId.Calculated && item.ticketStatus === TicketStatusText.running;
+      });
+    }
   }
 
   get noTotalPoints(): ResultDetail[] {
