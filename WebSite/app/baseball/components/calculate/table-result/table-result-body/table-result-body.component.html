@@ -1,12 +1,13 @@
 @if(tableIsReady) {
-<tr *ngFor="let inning of innings; let i = index; let last = last"
-  [ngClass]="{ 
+<tr *ngFor="let inning of innings; let i = index; let last = last" [ngClass]="{ 
     mismatched: inning.isScoreMismatched,
     'confirmed-refund': inning.resultState.isConfirmed, 
     'striped': isMatchSeries && i % 2 !== 0 || !isMatchSeries && (inning.resourceId === '00' || inning.resourceId === 'EI' || (!last && innings.length % 2 !== 0 && i % 2 === 0) || ( !last && innings.length % 2 === 0 && i % 2 !== 0)),
   }">
-  <td [ngClass]="{'mercy': inning.otherInfo === 'Mercy' && isLeader }">{{ inning.resourceId| resourceName:false:matchDetail.sessionTime}}</td>
-  <td [ngClass]="inning.ticketStatus.toLowerCase()" class="set-status" *ngIf="inning.resultState.isInningRow || (isMatchSeries && inning.resultState.isFullTimeRow)">
+  <td [ngClass]="{'mercy': inning.otherInfo === 'Mercy' && isLeader }">{{ inning.resourceId|
+    resourceName:false:matchDetail.sessionTime}}</td>
+  <td [ngClass]="inning.ticketStatus.toLowerCase()" class="set-status"
+    *ngIf="inning.resultState.isInningRow || (isMatchSeries && inning.resultState.isFullTimeRow)">
     {{ inning.ticketStatus }}</td>
   <td [ngClass]="inning.ticketStatus.toLowerCase()" class="match-status" *ngIf="inning.resultState.isExtraInningRow"
     rowspan="2">
@@ -14,7 +15,8 @@
   </td>
   <td [ngClass]="inning.resultState.finalScoreClass">
     <div class="score score-row">
-      <span class="score-row__team" [matTooltip]="getTextTooltip(homeName,20)" matTooltipPosition="above">{{homeName}}</span>
+      <span class="score-row__team" [matTooltip]="getTextTooltip(homeName,20)"
+        matTooltipPosition="above">{{homeName}}</span>
       <input type="text" myOnlyInteger [disabled]="inning.resultState.isFinalScoreDisabled"
         [(ngModel)]="inning.homeValue" (ngModelChange)="checkInningIsMatched(inning)" [ngClass]="{
           'final-score': inning.resultState.isFullTimeRow,
@@ -22,7 +24,8 @@
         }" />
     </div>
     <div class="score score-row">
-      <span class="score-row__team" [matTooltip]="getTextTooltip(awayName,20)" matTooltipPosition="above">{{awayName}}</span>
+      <span class="score-row__team" [matTooltip]="getTextTooltip(awayName,20)"
+        matTooltipPosition="above">{{awayName}}</span>
       <input type="text" myOnlyInteger [disabled]="inning.resultState.isFinalScoreDisabled"
         [(ngModel)]="inning.awayValue" (ngModelChange)="checkInningIsMatched(inning)" [ngClass]="{
           'final-score': inning.resultState.isFullTimeRow,
@@ -58,8 +61,7 @@
       (ngModelChange)="selectedOnMap(inning)" />
   </td>
   <td *ngIf="isMatchSeries && inning.resultState.isFullTimeRow" class="status">
-    <input type="checkbox" [(ngModel)]="inning.checked"
-      (ngModelChange)="selectedOnLastMap(inning,$event)" />
+    <input type="checkbox" [(ngModel)]="inning.checked" (ngModelChange)="selectedOnLastMap(inning,$event)" />
   </td>
 </tr>
 }

@@ -11,6 +11,7 @@ import { Storage } from "../storage.service";
 import { ResultRowStateService } from "../result-row-state.service";
 import { ResultState } from "../../models/result-state.model";
 import { ResultSettingModel } from "../../../shared/models";
+import { AutoSelectResultsService } from "../../../shared/services/auto-select-results.service.native";
 
 
 export interface ICalculateStorage extends Storage  {
@@ -19,6 +20,7 @@ export interface ICalculateStorage extends Storage  {
   getInningsExcludeExtraAndTotalHits(): ResultDetailBaseBall[];
   getFullTime(): ResultDetailBaseBall;
   getExtraInning(): ResultDetailBaseBall;
+  unSelectResults?: () => void;
 }
 
 @Injectable(
@@ -30,6 +32,7 @@ export class CalculateStorage implements ICalculateStorage {
 
   #aioService = inject(AioService);
   #verificationBaseService = inject(VerificationBaseService);
+  #autoSelectResultsService = inject(AutoSelectResultsService);
 
   #match = signal<Match>(null);
   #isScoreDirect = signal<boolean>(false);
@@ -51,6 +54,7 @@ export class CalculateStorage implements ICalculateStorage {
 
   async fetchMatch(matchId: number) {
     const sportType = Number(UrlHelper.getUrlParameter('sportType'));
+    const overStatus = UrlHelper.getUrlParameter('overStatus');
     const matchQuery = {
       matchId,
       apikey: BaseballApiKeys.NormalMatch,
@@ -74,6 +78,9 @@ export class CalculateStorage implements ICalculateStorage {
     this.#originalResultDetails = cloneDeep(matchFetched.resultDetails);
     this.setIsApplyHedgeMatch(!!matchFetched.hedgeMatchDetail);
     this.#isMatchSeries.set(matchFetched.matchDetail.sessionTime === 1);
+
+    this.#autoSelectResultsService.selectByOverStatus(this.getInningsExcludeExtraAndTotalHits(), this.fulltimeResult, overStatus);
+
   }
 
   mapTicketStatusExtraInning() {
@@ -176,6 +183,12 @@ export class CalculateStorage implements ICalculateStorage {
     this.getAllInnings().forEach((inning) => {
       this.setResultState(service,inning);
     })
+  }
+
+  unSelectResults = () => {
+    this.getResultChecked().forEach((item) => {
+      item.checked = false;
+    });
   }
 }
 

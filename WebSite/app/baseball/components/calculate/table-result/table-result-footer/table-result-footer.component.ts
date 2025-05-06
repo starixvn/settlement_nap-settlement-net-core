@@ -40,6 +40,13 @@ export class TableResultFooterComponent implements OnInit {
 
   changeInputDirectly() {
     this.#storage.updateInputScoreDirect(this.isInputScoreDirect);
+
+    if(this.isInputScoreDirect) {
+      this.#storage.selectFinalResult();
+    } else {
+      this.#storage.unSelectResults();
+    }
+
   }
 
   calculate() {

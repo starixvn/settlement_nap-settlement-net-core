@@ -10,7 +10,6 @@ export class AutoSelectResultsService {
   private readonly settledResultStatusIds = [ResultStatusId.ManualCompleted, ResultStatusId.AutoCompleted];   
   
   public selectByOverStatus(resultDetails: ResultDetail[], finalResult: ResultDetail, overStatus: string) { 
-    console.log('overStatus', resultDetails, finalResult, overStatus);
     const overStatuses = overStatus.split(',');
 
     if (!finalResult || !overStatuses.length) {
@@ -40,7 +39,6 @@ export class AutoSelectResultsService {
   }
 
   private isMainOverMet(resultDetail: ResultDetail, finalResult: ResultDetail): boolean {
-    console.log('isMainOverMet', resultDetail, finalResult);
     const isFinalSettledResult = this.settledResultStatusIds.includes(finalResult.resultStatusId);
     
     return isFinalSettledResult || resultDetail.resultStatusId === ResultStatusId.TraderConfirm;
