@@ -115,9 +115,9 @@ export class EarlySettlementComponent implements Soccer {
             true,
             []));
 
-        this.resultStatusSelect.items = this.earlyBaseService.renderResultStatus(this.permission,[{ id: 8, value: "Refund SDT", text: "Refund SDT", checked: true }]);
+        this.resultStatusSelect.items = this.earlyBaseService.renderResultStatus(this.permission, [{ id: 8, value: "Refund SDT", text: "Refund SDT", checked: true }]);
 
-        this.ticketsStatusSelect.items = this.earlyBaseService.renderTicketStatus([{ id: 4, value: "No Ticket", text: "No Ticket"}]);
+        this.ticketsStatusSelect.items = this.earlyBaseService.renderTicketStatus([{ id: 4, value: "No Ticket", text: "No Ticket", checked: true }]);
 
         this.resultTypeSelect.maxWidth = '250px';
         this.ticketsStatusSelect.maxWidth = '125px';
@@ -127,7 +127,6 @@ export class EarlySettlementComponent implements Soccer {
 
     onSelectResultType(values: ItemsSelect[]) {
         this.resultTypeSelected = values.length > 0 ? values.map(item => item.value).join() : "";
-        console.log(this.resultTypeSelected);
         this.autoUncheckAfterFilter();
     }
 
@@ -151,7 +150,7 @@ export class EarlySettlementComponent implements Soccer {
         this.disableCalculateAndUnCalculate();
     }
 
-    
+
     async getMatch(matchId: number) {
         this.toastrService.overlayContainer = this.toastContainer;
         this.confirmationDialogMessage.title = Language.confirmationBox;
@@ -216,7 +215,7 @@ export class EarlySettlementComponent implements Soccer {
 
     public onChangeGroupMap(map: GroupMap) {
         map.resultDetail.forEach((item) => {
-            if(item.isShow) {
+            if (item.isShow) {
                 item.checked = item.resultSettingData.isHoldResult ? false : map.checked;
                 item.isResultWarning = false;
             }

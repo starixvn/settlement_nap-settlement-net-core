@@ -32,7 +32,6 @@ export class FilterResultStatusPipe implements PipeTransform {
 
   private filterConfirmTrader(args: string[], resultDetail: ResultDetail) {
     if (args.includes("3")) {
-      console.log(resultDetail);
       return resultDetail.resultStatusId === 3;
     }
     return false;

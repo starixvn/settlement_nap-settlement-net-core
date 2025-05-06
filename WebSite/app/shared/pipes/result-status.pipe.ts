@@ -7,7 +7,6 @@ import * as _ from 'lodash';
 
 export class ResultStatusPipe implements PipeTransform {
     public transform(resultDetails: ResultDetail[], args: string) {
-        console.log(args);
         return resultDetails.filter((item) => {
             const hasResultStatus = _.isNil(args)
                 || args.length === 0
