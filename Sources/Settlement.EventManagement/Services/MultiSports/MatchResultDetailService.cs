@@ -176,6 +176,7 @@ public class MatchResultDetailServiceImp(
             var resultDetailByMatchId = resultDetails.Where(m => m.MatchId == match.MatchId && m.SourceId == SourceType.Normal).ToList();
             match.MoreScores = ScoreLoader(match.SportType, resultDetailByMatchId, resources, isLeader);
             match.IsHavingIntervalScore = scoreService.IsIntervalScore(match.SportType, resultDetailByMatchId);
+            match.MercyAbandonedInfo = scoreService.VerifyScoreMercy(match.SportType, resultDetailByMatchId);
         }
 
         return matches;

@@ -9,6 +9,8 @@ public interface ScoreService
     Score HalftimeScore(int sportType, List<ResultDetail> resultDetails, bool isLeader);
 
     Score FinalScore(int sportType, List<ResultDetail> resultDetails, bool isLeader);
+
+    string VerifyScoreMercy(int sportType, List<ResultDetail> resultDetails);
 }
 
 public class ScoreServiceImp(IScoreSetService scoreSetService) : ScoreService
@@ -103,5 +105,17 @@ public class ScoreServiceImp(IScoreSetService scoreSetService) : ScoreService
     private static bool IsRefundMatch(IEnumerable<ResultDetail> resultDetails)
     {
         return resultDetails.Count(m => m.ResourceId.Equals(ResourceType.Final) && m.SettlementStatusId == SettlementStatus.Refund) == 1;
+    }
+
+    public string VerifyScoreMercy(int sportType, List<ResultDetail> resultDetails)
+    {
+        if (sportType != SportType.BaseBall)
+        {
+            return string.Empty;
+        }
+
+        var resultImpacted = resultDetails.Find(r => !string.IsNullOrEmpty(r.OtherInfo));
+
+        return resultImpacted != null ? $"{resultImpacted.ResourceId}:{resultImpacted.OtherInfo}" : string.Empty;
     }
 }

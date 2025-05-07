@@ -54,4 +54,5 @@ export class Match {
      public applyDirect: boolean;
      public autoCalcSetting : AutoSetting;
      public refundWaitingTime: number;
+     public mercyAbandonedInfo: string;
 }

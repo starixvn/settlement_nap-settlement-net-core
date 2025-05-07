@@ -50,5 +50,9 @@ module.exports = {
   "/instant-setting": {
     target: "http://localhost:55201/",
     secure: false,
+  },
+  "/baseball": {
+    target: "http://localhost:55201/",
+    secure: false,
   }
 };

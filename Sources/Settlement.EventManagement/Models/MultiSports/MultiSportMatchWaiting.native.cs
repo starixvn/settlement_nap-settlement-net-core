@@ -110,4 +110,7 @@ public class MultiSportMatchWaiting
 
     [Key("autoCalcSetting")]
     public AutoCalculationSetting AutoCalcSetting { get; set; }
+
+    [Key("mercyAbandonedInfo")]
+    public string MercyAbandonedInfo { get; set; }
 }

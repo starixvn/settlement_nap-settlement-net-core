@@ -34,6 +34,12 @@ export class MatchState {
   remarkClass: string;
   remarkState: string;
   autoSetting: string;
+  mercyAbandonedInfo: {
+    isMercy: boolean;
+    isAbandoned: boolean;
+    position: string;
+    otherInfo: string;
+  };
 
   constructor(service: MatchStateService, match: Match, store: MultiSportsStore) {
     this.hasValue = true;
@@ -64,6 +70,7 @@ export class MatchState {
     this.remarkClass = service.isChangeSetting(match) ? 'act-change-setting title' : '';
     this.remarkState = service.getRemarkState(match.remark);
     this.autoSetting = SportNewAutoPayout.includes(match.sportType) ? service.getAutoNewSetting(match.autoCalcSetting) : service.getAutoSetting(match.autoCalcSetting);
+    this.mercyAbandonedInfo = service.getMercyAbandonedInfo(match);
   }
 }
 

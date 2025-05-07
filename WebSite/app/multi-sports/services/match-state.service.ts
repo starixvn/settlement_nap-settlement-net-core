@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { AutoSetting, Remark } from "../../shared/models";
 import { Permission } from "../models/permission.model";
 import { Match } from "../models";
-import { BackgroundColor, CalculationStatus, EventStatus, ResultType, SportType } from "../../shared/constants";
+import { BackgroundColor, CalculationStatus, EventStatus, ResourceIds, ResultType, SportType } from "../../shared/constants";
 import { IntervalScorePipe } from "../../shared/pipes/interval-score.pipe";
 import * as _ from 'lodash';
 import { Language } from "../../shared/language.native";
@@ -16,7 +16,10 @@ export class MatchStateService {
   private readonly autoSettingFailed = 3;
   private readonly earlyOverOnlyValue = "1";
 
-  constructor(private readonly intervalPipe: IntervalScorePipe, private readonly backGroundService: BackGroundService) {
+  constructor(
+    private readonly intervalPipe: IntervalScorePipe,
+    private readonly backGroundService: BackGroundService,
+  ) {
 
   }
   getUndecidedColor(remark: Remark) {
@@ -39,7 +42,7 @@ export class MatchStateService {
     return _.some(this.intervalPipe.transform(match.intervalScore, teamName), score => score.isConfirmed && score.isNotSettled) ? BackgroundColor.resultConfirmed : '';
   }
 
-  
+
   getTotalHomeGames(match: Match) {
     const homeTotalGames = _.includes(ResultType.havingTotalGames, match.sportType)
       ? _.includes(ResultType.scoreInResultDetail, match.sportType)
@@ -70,7 +73,7 @@ export class MatchStateService {
     return false;
   }
 
-   isFinalConfirmed(match: Match) {
+  isFinalConfirmed(match: Match) {
     if (ResultType.havingConfirmedStatus.includes(match.sportType) || ResultType.havingHalfTimeConfirmedStatus.includes(match.sportType)) {
       if (ResultType.intervalScoreByResultDetail.includes(match.sportType)) {
         return match.moreScores.finalScore.isConfirmed && match.moreScores.finalScore.isNotSettled;
@@ -111,7 +114,7 @@ export class MatchStateService {
 
   isHideHtScore(match: Match, permission: Permission) {
     return ResultType.havingHalfTimeConfirmedStatus.includes(match.sportType)
-      && !permission.isLeader 
+      && !permission.isLeader
       && !match.isHalfTimeCal
       && (!this.isRefundHt(match) && !match.isCalRefund);
   }
@@ -241,12 +244,12 @@ export class MatchStateService {
       && match.isCalculatingMP !== CalculationStatus.waiting && match.isCalculatingMP !== CalculationStatus.calculating;
   }
 
-  getRemarkState (remark: Remark){
+  getRemarkState(remark: Remark) {
     return remark.isKeyHold || remark.isMtdHold || remark.isPending ||
-				remark.isUndecided || remark.isUnderSettle ? "YES" : "NO"
+      remark.isUndecided || remark.isUnderSettle ? "YES" : "NO"
   }
 
-   getAutoSetting(autoSetting: AutoSetting) {
+  getAutoSetting(autoSetting: AutoSetting) {
     if (autoSetting.isAutoPayoutForMatch && autoSetting.isDirectPayoutForMatch) {
       return "BOTH";
     }
@@ -275,5 +278,39 @@ export class MatchStateService {
     }
 
     return "OFF";
+  }
+
+  getMercyAbandonedInfo(match: Match): {
+    isMercy: boolean;
+    isAbandoned: boolean;
+    otherInfo: string;
+    position: string;
+  } {
+    const defaultInfo = {
+      isMercy: false,
+      isAbandoned: false,
+      otherInfo: "",
+      position: ""
+    };
+
+    if (match.eventStatus.toLowerCase() == EventStatus.completed.toLowerCase()
+      || match.eventStatus.toLowerCase() == EventStatus.refund.toLowerCase()
+      || _.isNull(match.mercyAbandonedInfo)
+      || _.isEmpty(match.mercyAbandonedInfo)) {
+      return defaultInfo;
+    }
+
+    const [position, status] = match.mercyAbandonedInfo.split(":");
+
+    if (!status) {
+      return defaultInfo;
+    }
+
+    return {
+      isMercy: status === ResourceIds.mercy,
+      isAbandoned: status === "A" || status === "H",
+      otherInfo: status,
+      position
+    };
   }
 }
