@@ -55,4 +55,6 @@ export class Match {
      public autoCalcSetting : AutoSetting;
      public refundWaitingTime: number;
      public mercyAbandonedInfo: string;
+     public hasProviderHT: boolean;
+     public hasProviderFT: boolean;
 }

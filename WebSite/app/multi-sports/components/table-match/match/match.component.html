@@ -98,12 +98,19 @@
 			@if (!matchState.isHideHtScore) {
 			<div>{{ match.confirmHalfTimeScore }}</div>
 			}
+			@if (matchState.hasProviderHT) {
+			<div>(provider ready)</div>
+			}
 		</td>
 		<td rowspan="2" class="confirm-score" [ngClass]="{ 'bg-white-blinking': match.isNotConsistentExFtScore }">
 			<div>{{ match.suspenderFullTime }}</div>
 			@if (!matchState.isHideFinalScore) {
 			<div>{{ match.confirmFullTimeScore }}</div>
 			}
+			@if (matchState.hasProviderFT) {
+			<div>(provider ready)</div>
+			}
+
 		</td>
 		<td rowspan="2" class="auto-instant" [ngClass]="matchState.instantSettingBackgroundColor">
 			@if (sportSupportInstant.includes(match.sportType)) {

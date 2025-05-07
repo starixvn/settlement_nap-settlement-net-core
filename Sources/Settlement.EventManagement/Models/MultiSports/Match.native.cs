@@ -79,6 +79,12 @@ public class Match : BaseMatch
     [IgnoreMember]
     public int ParentId { get; set; }
 
+    [Key("hasProviderHT")]
+    public bool HasProviderHT { get; set; }
+
+    [Key("hasProviderFT")]
+    public bool HasProviderFT { get; set; }
+
     public override bool Equals(object obj)
     {
         return obj is Match match && match.MatchId == MatchId;

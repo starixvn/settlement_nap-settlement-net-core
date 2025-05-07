@@ -40,6 +40,8 @@ export class MatchState {
     position: string;
     otherInfo: string;
   };
+  hasProviderHT: boolean;
+  hasProviderFT: boolean;
 
   constructor(service: MatchStateService, match: Match, store: MultiSportsStore) {
     this.hasValue = true;
@@ -71,6 +73,8 @@ export class MatchState {
     this.remarkState = service.getRemarkState(match.remark);
     this.autoSetting = SportNewAutoPayout.includes(match.sportType) ? service.getAutoNewSetting(match.autoCalcSetting) : service.getAutoSetting(match.autoCalcSetting);
     this.mercyAbandonedInfo = service.getMercyAbandonedInfo(match);
+    this.hasProviderHT = match.hasProviderHT;
+    this.hasProviderFT = match.hasProviderFT;
   }
 }
 
