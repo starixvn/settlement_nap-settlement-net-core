@@ -22,6 +22,8 @@ export class MessageBoxService {
         modal.componentInstance.title = dialogModel.title;
         modal.componentInstance.message = dialogModel.message;
         modal.componentInstance.hideNo = dialogModel.hideNo;
+        modal.componentInstance.requireCheckbox = dialogModel.requireCheckbox;
+        modal.componentInstance.checkboxLabel = dialogModel.checkboxLabel;
         modal.result.then((response) => {
             return;
         }, (reason: string) => {

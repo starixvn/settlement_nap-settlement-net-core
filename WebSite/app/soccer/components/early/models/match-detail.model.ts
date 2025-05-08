@@ -16,5 +16,6 @@ export interface MatchDetail {
     halfTimeAwayScore: string,
     halfTimeHomeScore: string,
     finalAwayScore: string,
-    finalHomeScore: string
+    finalHomeScore: string,
+    offerLive: boolean
 }

@@ -26,6 +26,8 @@
   RefundParlayConfirmMessage: 'Are you sure you want to REFUND PARLAY this match?',
   RefundParlayFullTime: "Are you sure you want to REFUND PARLAY FULL TIME this match?",
   SaveTraderScore: "Are you sure you want to save changes made to selected Trader Scores/Results?",
+  SaveTraderScoreLive: "The current match is Live. Are you sure you want to Save Trader Score?",
+  SaveTraderScoreLiveCheckboxLabel: "Confirm Save Trader Score on Live match.",
   RefundSymbol: {
     All: 'R',
     FullTime: 'R.FT',

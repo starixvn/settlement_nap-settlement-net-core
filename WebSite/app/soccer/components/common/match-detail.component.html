@@ -34,6 +34,9 @@
             <td>
                 <div class="match-home">
                     {{matchDetail.homeName}}
+                    @if(matchDetail.offerLive) {
+                    <span class="live-icon">LIVE</span>
+                    }
                 </div>
                 <span class="{{matchDetail.goalIcon.homeGoal}}"></span>
                 <span class="{{matchDetail.goalIcon.halfTimeHomeGoal}}"></span>
@@ -50,6 +53,9 @@
             <td>
                 <div class="match-away">
                     {{matchDetail.awayName}}
+                    @if(matchDetail.offerLive) {
+                    <span class="live-icon">LIVE</span>
+                    }
                 </div>
                 <span class="{{matchDetail.goalIcon.awayGoal}}"></span>
                 <span class="{{matchDetail.goalIcon.halfTimeAwayGoal}}"></span>

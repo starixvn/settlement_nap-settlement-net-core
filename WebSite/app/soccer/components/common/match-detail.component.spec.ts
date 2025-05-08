@@ -44,7 +44,8 @@ describe('Soccer - MatchDetailComponent', () => {
                     halfTimeAwayScore: null,
                     halfTimeHomeScore: null,
                     finalAwayScore: null,
-                    finalHomeScore: null
+                    finalHomeScore: null,
+                    offerLive: false
                 };
                 fixture = TestBed.createComponent(MatchDetailComponent);
                 component = fixture.componentInstance;

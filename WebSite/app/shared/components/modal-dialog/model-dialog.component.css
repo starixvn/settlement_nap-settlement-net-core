@@ -1,0 +1,10 @@
+.btn-danger:disabled {
+  width: 35px;
+  border-radius: 0;
+  border-color: darkturquoise;
+}
+
+.check-box input[type="checkbox"] {
+  vertical-align: middle;
+  margin: 0;
+}
