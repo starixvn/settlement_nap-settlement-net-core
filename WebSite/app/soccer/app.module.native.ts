@@ -22,6 +22,12 @@ import { TicketCountComponent } from '../shared/components/ticket-count/ticket-c
 import { ResettleCheckerComponent } from '../shared/components/resettle-checker/resettle-checker.component';
 import { NotReadyMatchComponent } from '../shared/components/not-ready-match/not-ready-match.component';
 import { CalculateActionsComponent } from "../tennis/components/calculate-actions.component";
+import { NewMultipleSelectComponent } from '../shared/components/multiple-select/multiple-select.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { FilterResultTypePipe } from './pipes/filter-result-type.pipe';
+import { FilterTicketStatusPipe } from './pipes/filter-ticket-status.pipe';
+import { FilterResultStatusPipe } from './pipes/filter-result-status/filter-result-status.pipe';
+
 
 @NgModule({
     imports: [
@@ -46,7 +52,9 @@ import { CalculateActionsComponent } from "../tennis/components/calculate-action
     OnlyIntegerDirective,
     CalculateActionsComponent,
     MatchDetailComponent,
-    OnlyGoalRecordDirective
+    OnlyGoalRecordDirective,
+    NewMultipleSelectComponent,
+    BrowserAnimationsModule
 ],
     declarations: [
         AppComponent,
@@ -57,7 +65,10 @@ import { CalculateActionsComponent } from "../tennis/components/calculate-action
         SpecificBettypeComponent,
         ConfirmRefundComponent,
         ConfirmScoreComponent,
-        MoveBetComponent
+        MoveBetComponent,
+        FilterResultTypePipe,
+        FilterTicketStatusPipe,
+        FilterResultStatusPipe
     ],
     providers: [{ provide: HTTP_INTERCEPTORS, useClass: CustomHttpRequestInterceptor, multi: true }],
     bootstrap: [AppComponent],

@@ -8,13 +8,21 @@ export class TicketStatusPipe implements PipeTransform {
         return resultDetails.filter((item) => {
             let hasResultStatus = _.isNil(args)
                 || args.length === 0
-                || _.includes(args, item.ticketStatus);
+                || _.includes(args, item.ticketStatus)
+                || this.filterConfirmedTrader(args, item);
             if(!_.includes(args, "Running;") && _.isEqual(item.ticketStatus, "Running") && args.length > 0) {
                 hasResultStatus = false;
             }
 
             return this.isExistedItem(hasResultStatus, item);
         });
+    }
+
+    private filterConfirmedTrader(args: string, resultDetail: ResultDetail) {
+        if (_.includes(args, 'Confirmed by Trader')) {
+            return resultDetail.resultStatusId === 3;       
+        }
+        return false;
     }
 
     private isExistedItem(hasResultStatus: boolean, item: ResultDetail) {

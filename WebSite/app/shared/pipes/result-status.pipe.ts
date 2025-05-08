@@ -11,7 +11,8 @@ export class ResultStatusPipe implements PipeTransform {
             const hasResultStatus = _.isNil(args)
                 || args.length === 0
                 || _.includes(args, item.resultStatus)
-                || this.filterConfirmRefundMatch(args, item);
+                || this.filterConfirmRefundMatch(args, item)
+                || this.filterConfirmedTraderMatch(args, item);
 
             return this.isExistedItem(hasResultStatus, item);
         });
@@ -20,6 +21,13 @@ export class ResultStatusPipe implements PipeTransform {
     private filterConfirmRefundMatch(args: string, resultDetail: ResultDetail) {
         if(_.includes(args, 'Confirmed')){
             return resultDetail.resultSettingData.isConfirmedRefund;
+        }
+        return false;
+    }
+
+    private filterConfirmedTraderMatch(args: string, resultDetail: ResultDetail) {
+        if(_.includes(args, '3')){
+            return resultDetail.resultStatusId === 3;
         }
         return false;
     }

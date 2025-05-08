@@ -1,4 +1,4 @@
-import { Component, ViewChild, Injector } from '@angular/core';
+import { Component, ViewChild, Injector, inject, OnInit } from '@angular/core';
 import * as _ from 'lodash';
 import { UrlHelper } from '../../../helper';
 import {
@@ -16,7 +16,7 @@ import {
     ScoreSourceType
 } from '../../../shared/constants';
 import { Language } from '../../../shared/language.native';
-import { ModalDialogMessage, ResourceItem, ResultSettingQuery } from '../../../shared/models';
+import { ItemsSelect, ModalDialogMessage, MultipleSelect, ResourceItem, ResultSettingQuery } from '../../../shared/models';
 import { MessageBoxService, AioService } from '../../../shared/services';
 import { Permission } from '../../../shared/models/sportsbook-sop';
 import {
@@ -48,6 +48,9 @@ import {
 } from './services';
 import { Soccer } from '../soccer.model';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
+import { GroupNameByIdPipe } from '../../pipes/group-name-by-id.pipe';
+import { FilterResultTypePipe } from '../../pipes/filter-result-type.pipe';
+import { EarlyBaseService } from '../../../core/services/early-base.service';
 
 @Component({
     selector: 'early-settlement',
@@ -62,19 +65,28 @@ import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
         PenaltyShootoutBothOneNeitherService,
         PenaltyShootoutService,
         PenaltyWoodWorkService,
-        HelperService
-    ]
+        HelperService,
+        GroupNameByIdPipe,
+        FilterResultTypePipe,
+        EarlyBaseService
+    ],
 })
 export class EarlySettlementComponent implements Soccer {
+
+
+
     @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
-    private readonly verifyCalculateService: VerifyCalculateService;
-    private readonly messageBoxService: MessageBoxService;
-    private readonly autoFillService: AutoFillService;
-    private readonly penaltyShootoutService: PenaltyShootoutService;
-    private readonly penaltyWoodWorkService: PenaltyWoodWorkService;
-    private readonly helperService: HelperService;
-    private readonly toastrService: ToastrService;
-    private readonly aioService: AioService;
+    private readonly verifyCalculateService = inject(VerifyCalculateService);
+    private readonly messageBoxService = inject(MessageBoxService);
+    private readonly autoFillService = inject(AutoFillService);
+    private readonly penaltyShootoutService = inject(PenaltyShootoutService);
+    private readonly penaltyWoodWorkService = inject(PenaltyWoodWorkService);
+    private readonly helperService = inject(HelperService);
+    private readonly toastrService = inject(ToastrService);
+    private readonly aioService = inject(AioService);
+    private readonly groupNameById = inject(GroupNameByIdPipe);
+    private readonly earlyBaseService = inject(EarlyBaseService);
+
     public match: Match;
     public isReSettledTickets: boolean;
     public isDisabledCalculate = true;
@@ -84,23 +96,69 @@ export class EarlySettlementComponent implements Soccer {
     public matchId = Number(UrlHelper.getUrlParameter('matchId'));
     public groupMap: GroupMap[];
     public isShowRefundButton = false;
-    constructor(protected injector: Injector) {
-        this.confirmationDialogMessage.title = Language.confirmationBox;
-        this.verifyCalculateService = this.injector.get(VerifyCalculateService);
-        this.messageBoxService = this.injector.get(MessageBoxService);
-        this.autoFillService = this.injector.get(AutoFillService);
-        this.penaltyShootoutService = this.injector.get(PenaltyShootoutService);
-        this.penaltyWoodWorkService = this.injector.get(PenaltyWoodWorkService);
-        this.helperService = this.injector.get(HelperService);
-        this.aioService = this.injector.get(AioService);
-        this.toastrService = this.injector.get(ToastrService);
+
+    public ticketsStatusSelect = new MultipleSelect();
+    public resultStatusSelect = new MultipleSelect();
+    public resultTypeSelect = new MultipleSelect();
+    public ticketStatusSelected: string;
+    public resultStatusSelected: string;
+    public resultTypeSelected: string;
+
+
+    private renderFilterSelect() {
+        this.resultTypeSelect.items = this.groupMap.map((item) => new ItemsSelect(
+            item.id,
+            item.id.toString(),
+            this.groupNameById.transform(item.id),
+            true,
+            true,
+            true,
+            []));
+
+        this.resultStatusSelect.items = this.earlyBaseService.renderResultStatus(this.permission, [{ id: 8, value: "Refund SDT", text: "Refund SDT", checked: true }]);
+
+        this.ticketsStatusSelect.items = this.earlyBaseService.renderTicketStatus([{ id: 4, value: "No Ticket", text: "No Ticket", checked: true }]);
+
+        this.resultTypeSelect.maxWidth = '250px';
+        this.ticketsStatusSelect.maxWidth = '125px';
+        this.resultStatusSelect.maxWidth = '125px';
+
     }
+
+    onSelectResultType(values: ItemsSelect[]) {
+        this.resultTypeSelected = values.length > 0 ? values.map(item => item.value).join() : "";
+        this.autoUncheckAfterFilter();
+    }
+
+    onSelectResultStatus(values: ItemsSelect[]) {
+        this.resultStatusSelected = values.length > 0 ? values.map(item => item.value).join() : "";
+        this.autoUncheckAfterFilter();
+    }
+    onSelectTicketsStatus(values: ItemsSelect[]) {
+        this.ticketStatusSelected = values.length > 0 ? values.map(item => item.value).join() : "";
+        this.autoUncheckAfterFilter();
+    }
+
+    public autoUncheckAfterFilter() {
+        this.resultDetails.forEach((map) => {
+            map.checked = false;
+        });
+        this.groupMap.forEach(map => {
+            map.checked = false;
+        });
+
+        this.disableCalculateAndUnCalculate();
+    }
+
 
     async getMatch(matchId: number) {
         this.toastrService.overlayContainer = this.toastContainer;
+        this.confirmationDialogMessage.title = Language.confirmationBox;
         this.match = await this.helperService.getMatch(matchId) as Match;
         this.groupMap = this.helperService.getGroupBetType(this.resultDetails);
         this.generateConfirmRefundSettleDetermined();
+        this.renderFilterSelect();
+
     }
 
     private generateConfirmRefundSettleDetermined() {
@@ -157,8 +215,10 @@ export class EarlySettlementComponent implements Soccer {
 
     public onChangeGroupMap(map: GroupMap) {
         map.resultDetail.forEach((item) => {
-            item.checked = item.resultSettingData.isHoldResult ? false : map.checked;
-            item.isResultWarning = false;
+            if (item.isShow) {
+                item.checked = item.resultSettingData.isHoldResult ? false : map.checked;
+                item.isResultWarning = false;
+            }
         });
 
         this.disableCalculateAndUnCalculate();
@@ -286,7 +346,7 @@ export class EarlySettlementComponent implements Soccer {
         const selectedResultDetails = this.selectedResources;
         this.correctSettleDeterminedForRefund(selectedResultDetails);
         const errorMessage = await this.verifyBeforeRefund(selectedResultDetails);
-        
+
         if (!_.isEmpty(errorMessage)) {
             this.toastrService.error(errorMessage);
             return;

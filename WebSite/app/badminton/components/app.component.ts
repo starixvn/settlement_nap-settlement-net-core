@@ -23,7 +23,7 @@ export class AppComponent extends AppBaseComponent implements OnInit {
 
   private getComponentFactory(): Type<SportTemplate> {
     const pageType = this.elementRef.nativeElement.getAttribute('page-type');
-    // return EarlySettlementComponent;
+   
     switch (pageType) {
       case PageType.ReCalculate:
         return CalculateActionsComponent;

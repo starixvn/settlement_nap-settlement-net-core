@@ -47,6 +47,7 @@ export class AppComponent implements OnInit {
 
     private getComponentFactory(): ComponentFactory<Soccer> {
         const pageType = this.elementRef.nativeElement.getAttribute('page-type');
+
         switch (pageType) {
             case PageType.ReCalculate:
                 return this.componentFactoryResolver.resolveComponentFactory(CalculationComponent);

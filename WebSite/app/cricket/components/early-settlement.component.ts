@@ -1,6 +1,6 @@
 ﻿import { Component, ViewChild ,Injector } from '@angular/core';
 import { ToastContainerDirective } from 'ngx-toastr';
-import { Match, SettleQuery, UpdateSettlementResultHistoryStatus } from '../models';
+import { Match, SettleQuery } from '../models';
 import * as _ from 'lodash';
 import { Language } from '../../shared/language.native';
 import { ItemsSelect } from '../../shared/models';
@@ -15,6 +15,7 @@ import { MatchDetailComponent } from './match-detail.component';
 import { ResultValuePipe, ResultByPlayerNamePipe } from '../pipes';
 import { BlockUIService } from '../../shared/services/block-ui.service';
 import { SettleChildMatchQuery } from '../../shared/models/settle-childmatch.model';
+import { UpdateSettlementResultHistoryStatus } from '../../shared/models/update-settle-result-history-status';
 
 @Component({
   selector: 'early-settlement',
@@ -291,7 +292,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
   }
 
   private async handleUpdateSettlementResultHistoryStatus(settleQuery: SettleQuery, sessionId: string) {
-    const query = new UpdateSettlementResultHistoryStatus(settleQuery.matchId, sessionId)
+    const query = new UpdateSettlementResultHistoryStatus(settleQuery.matchId, sessionId,settleQuery.sportType, true);
     await this.aioService.updateSettlementResultHistoryStatus(query);
   }
 
