@@ -75,16 +75,19 @@ public class CalculateServiceImp(
             await ExecuteAsync(criteria);
         }
 
+
         await publishEndpoint.Publish(new MatchCalculated(
-                request.MatchId,
-                request.ParentId,
-                request.SportType,
-                request.ChildMatchType,
-                request.HalfTimeHomeScore,
-                request.HalfTimeAwayScore,
-                request.FinalHomeScore,
-                request.FinalAwayScore,
-                request.ActionName), new CancellationTokenSource(TimeSpan.FromSeconds(2)).Token);
+            request.MatchId,
+            request.ParentId,
+            request.SportType,
+            request.ChildMatchType,
+            request.HalfTimeHomeScore,
+            request.HalfTimeAwayScore,
+            request.FinalHomeScore,
+            request.FinalAwayScore,
+            request.ActionName), new CancellationTokenSource(TimeSpan.FromSeconds(2)).Token);
+
+
 
         return matchChecking;
     }
