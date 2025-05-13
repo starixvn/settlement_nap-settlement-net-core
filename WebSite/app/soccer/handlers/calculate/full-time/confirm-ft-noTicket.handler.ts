@@ -16,7 +16,6 @@ export class ConfirmFtNoTicketHandler extends AbstractHandler {
   async handle(storage: Storage) {
     const { matchDetail, resultDetails } = storage.getMatch();
     const halfTimeResult = storage.getHalfTimeResult();
-    const outsideHtResult = storage.getOutsideHtResult();
 
     const isHalfTimeSettled = this.resultSettledStatusIds.includes(halfTimeResult.resultStatusId);
 
@@ -34,9 +33,6 @@ export class ConfirmFtNoTicketHandler extends AbstractHandler {
         halfTimeResult.homeValue = '0';
         halfTimeResult.awayValue = '0';
         halfTimeResult.checked = true;
-
-        outsideHtResult.homeValue = '0';
-        outsideHtResult.awayValue = '0';
 
         storage.setIsIgnoreCheckHt(true);
         storage.setCalculateAction(CalculateAction.calculate);

@@ -19,13 +19,13 @@ export class ScoreService {
               this.#messageBoxService.confirm(this.#storage.dialogMessage, () => {
                      if (isEqual(type, CalculateAction.copyHTScore) || isEqual(type, CalculateAction.copyAllScore)) {
                             this.#storage.setHaftTimeScore(matchDetail.exHTHomeScore, matchDetail.exHTAwayScore);
-                            const halfTimeResults = [this.#storage.getHalfTimeResult(),this.#storage.outsideHtResult,this.#storage.traderHtResult,this.#storage.providerHtResult] 
+                            const halfTimeResults = [this.#storage.getHalfTimeResult(),this.#storage.traderHtResult, ...this.#storage.getOutsideHtResult()] 
                            
                             this.#storage.getHalfTimeResult().isMismatch =  this.#verifyScoreGoalService.isMismatched(halfTimeResults);;
                      }
                      if (isEqual(type, CalculateAction.copyFTScore) || isEqual(type, CalculateAction.copyAllScore)) {
                             this.#storage.setFullTimeScore(matchDetail.exFTHomeScore, matchDetail.exFTAwayScore);      
-                            const fullTimeResults = [this.#storage.getFullTimeResult(),this.#storage.outsideFtResult,this.#storage.traderFtResult,this.#storage.providerFtResult] 
+                            const fullTimeResults = [this.#storage.getFullTimeResult(),this.#storage.traderFtResult, ...this.#storage.getOutsideFtResult()] 
                             this.#storage.getFullTimeResult().isMismatch =  this.#verifyScoreGoalService.isMismatched(fullTimeResults);;
                      }
                      this.#storage.changeScore();

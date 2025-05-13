@@ -1,4 +1,5 @@
 import { ModalDialogMessage } from "../../shared/models";
+import { ExternalResultDetail } from "../../shared/models/sportsbook-sop";
 import { FantasyRelatedMatch, Match, UndoChecking } from "../components/calc/models/match.model";
 import { ResultDetail } from "../models";
 
@@ -17,9 +18,8 @@ export interface Storage {
   getInstantScore(): UndoChecking
   setInstantScore(score: UndoChecking): void
   error(message: string)
-  getOutsideHtResult(): ResultDetail
   getIsIgnoreCheckHt(): boolean
   setIsIgnoreCheckHt(value: boolean): void
-  getIsReadyMatch(): boolean
+  getExternalResultDetails(): ExternalResultDetail[]
   setIsReadyMatch(value: boolean): void
 }

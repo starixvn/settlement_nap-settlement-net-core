@@ -1,6 +1,5 @@
 ﻿namespace Settlement.Sportsbook.Soccer.Services.GetMatch;
 
-using System.Threading.Tasks;
 using AutoMapper;
 using Criteria;
 using Fanex.Data.Repository;
@@ -11,6 +10,7 @@ using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Core.Services.SpecificService;
+using System.Threading.Tasks;
 using Match = Models.Match;
 using MatchDetail = Models.MatchDetail;
 
@@ -81,10 +81,11 @@ public class MatchServiceImp(
         SetNormalResults(matchDetail, resultDetails);
 
         SetTraderResults(resultDetails);
-        await SetOutsideResults(matchDetail.MatchId, resultDetails);
 
         var goalIconQuery = GoalIconQuery(matchDetail);
         matchDetail.GoalIcon = goalIconService.GetGoalIcon(goalIconQuery);
+
+        var externalResults = await GetOutsideSources(matchDetail.MatchId);
 
         var hedgeMatchDetail = await GetHedgeMatch(request.MatchId);
 
@@ -110,22 +111,34 @@ public class MatchServiceImp(
             ChildMatches = childMatches,
             FantasyMatch = fantasyMatch,
             HedgeMatchDetail = hedgeMatchDetail,
-            Permission = permissionService.Permission
+            Permission = permissionService.Permission,
+            ExternalResults = externalResults
         };
     }
 
-    private async Task<List<ResultDetail>> GetOutsideSources(int matchId)
+    private async Task<List<ExternalResultModel>> GetOutsideSources(int matchId)
     {
         var criteria = new GetExternalResultDetailsCriteria
         {
             MatchId = matchId
         };
 
-        var results = await repository.FetchAsync<ResultDetail>(criteria);
+        var results = await repository.FetchAsync<ExternalResultDetailModel>(criteria);
 
-        return results
-            .Where(x => x.SourceId == SourceType.Screenshot)
+        var externalResult = results.GroupBy(resultDetail => new { resultDetail.SourceId, resultDetail.SourceName, resultDetail.OrderNo, resultDetail.Remark })
+            .Select(resultDetail => new ExternalResultModel
+            {
+                SourceId = resultDetail.Key.SourceId,
+                SourceName = resultDetail.Key.SourceName,
+                OrderNo = resultDetail.Key.OrderNo,
+                Remark = resultDetail.Key.Remark,
+                ResultDetails = resultDetail.ToList()
+            })
+            .OrderBy(result => result.OrderNo)
+            .ThenBy(result => result.SourceName)
             .ToList();
+
+        return externalResult;
 
     }
 
@@ -313,31 +326,5 @@ public class MatchServiceImp(
         var listMatch = await repository.FetchAsync<MatchMoveBetTicket>(criteria);
         return listMatch.ToList();
     }
-
-    private async Task SetOutsideResults(int matchId, List<ResultDetail> resultDetails)
-    {
-        var outsideResults = await GetOutsideSources(matchId);
-        var htResult = outsideResults.Find(result => result.ResourceId == ResourceType.Halftime);
-        var ftResult = outsideResults.Find(result => result.ResourceId == ResourceType.Final);
-
-        resultDetails.Add(new ResultDetail
-        {
-            ResourceId = ResourceType.Halftime,
-            SourceId = SourceType.Screenshot,
-            SourceName = "Screenshot",
-            HomeValue = htResult?.HomeValue ?? "",
-            AwayValue = htResult?.AwayValue ?? ""
-        });
-
-        resultDetails.Add(new ResultDetail
-        {
-            ResourceId = ResourceType.Final,
-            SourceId = SourceType.Screenshot,
-            SourceName = "Screenshot",
-            HomeValue = ftResult?.HomeValue ?? "",
-            AwayValue = ftResult?.AwayValue ?? "",
-        });
-    }
-
 
 }

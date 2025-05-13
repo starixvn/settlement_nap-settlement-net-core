@@ -10,6 +10,7 @@ import { ResourceIds } from "../constants";
 import { ResultDetail } from "../models";
 import { ResultStatusId, ScoreSourceType, SettlementStatusId, TicketStatus, TicketStatusText } from "../../shared/constants";
 import { OverStatus } from "../../shared/constants/over-status.native";
+import { ExternalResultDetail } from "../../shared/models/sportsbook-sop";
 
 @Injectable()
 export class CalculateStorage implements Storage {
@@ -27,12 +28,10 @@ export class CalculateStorage implements Storage {
   #halfTimeResult: ResultDetail;
   #fullTimeResult: ResultDetail;
 
-  #outsideHtResult: ResultDetail;
-  #outsideFtResult: ResultDetail;
+  #outsideHtResult: ExternalResultDetail[];
+  #outsideFtResult: ExternalResultDetail[];
   #traderHtResult: ResultDetail;
   #traderFtResult: ResultDetail;
-  #providerHtResult: ResultDetail;
-  #providerFtResult: ResultDetail;
 
   #isIgnoreCheckHt = false;
   #isReadyMatch = false;
@@ -65,6 +64,14 @@ export class CalculateStorage implements Storage {
     return this.#isResettleTicket;
   }
 
+  getOutsideHtResult() {
+    return this.#outsideHtResult;
+  }
+
+  getOutsideFtResult() {
+    return this.#outsideFtResult;
+  }
+
 
   getRelatedMatches() {
     return this.#matchDetail.isFantasyMatch
@@ -88,17 +95,10 @@ export class CalculateStorage implements Storage {
     return this.#instantScore;
   }
 
-  getOutsideHtResult(): ResultDetail {
-    return this.#outsideHtResult;
+  getExternalResultDetails() {
+    return this.#match().externalResults.flatMap(x => x.resultDetails);
   }
 
-  get outsideFtResult() {
-    return this.#outsideFtResult;
-  }
-
-  get outsideHtResult() {
-    return this.#outsideHtResult;
-  }
 
   get traderHtResult() {
     return this.#traderHtResult
@@ -106,14 +106,6 @@ export class CalculateStorage implements Storage {
 
   get traderFtResult() {
     return this.#traderFtResult
-  }
-
-  get providerHtResult() {
-    return this.#providerHtResult
-  }
-
-  get providerFtResult() {
-    return this.#providerFtResult;
   }
 
   getIsIgnoreCheckHt() {
@@ -155,7 +147,7 @@ export class CalculateStorage implements Storage {
 
   setMatch(match: Match, filterOver?: string) {
     this.#match.set(match);
-    const { resultDetails } = this.#match();
+    const { resultDetails, externalResults } = this.#match();
     this.#matchDetail = this.#match().matchDetail;
 
     this.#halfTimeResult = this.#match().resultDetails
@@ -172,14 +164,11 @@ export class CalculateStorage implements Storage {
     this.#fullTimeResult.resourceName = "FT";
 
 
-    this.#outsideHtResult = resultDetails.find(x => x.sourceId === ScoreSourceType.screenshot && x.resourceId === ResourceIds.halfTime);
-    this.#outsideFtResult = resultDetails.find(x => x.sourceId === ScoreSourceType.screenshot && x.resourceId === ResourceIds.fullTime);
+    this.#outsideHtResult = externalResults.map(x => x.resultDetails.find(y => y.resourceId === ResourceIds.halfTime));
+    this.#outsideFtResult = externalResults.map(x => x.resultDetails.find(y => y.resourceId === ResourceIds.fullTime));
 
     this.#traderHtResult = resultDetails.find(x => x.sourceId === ScoreSourceType.trader && x.resourceId === ResourceIds.halfTime);
     this.#traderFtResult = resultDetails.find(x => x.sourceId === ScoreSourceType.trader && x.resourceId === ResourceIds.fullTime);
-
-    this.#providerHtResult = resultDetails.find(x => x.sourceId === ScoreSourceType.Sbo && x.resourceId === ResourceIds.halfTime);
-    this.#providerFtResult = resultDetails.find(x => x.sourceId === ScoreSourceType.Sbo && x.resourceId === ResourceIds.fullTime);
   }
 
 

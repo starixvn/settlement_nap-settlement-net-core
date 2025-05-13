@@ -1,4 +1,6 @@
-﻿namespace Settlement.Sportsbook.Aio.Criteria;
+﻿using Fanex.Data.Repository;
+
+namespace Settlement.Core.Criteria;
 
 public class GetProviderCriteria : CriteriaBase
 {

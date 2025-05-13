@@ -21,4 +21,6 @@ public class Match
     public Permission Permission { get; set; }
 
     public HedgeMatchDetail HedgeMatchDetail { get; set; }
+
+    public List<ExternalResultModel> ExternalResults { get; set; }
 }

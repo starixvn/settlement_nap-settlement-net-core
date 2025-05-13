@@ -9,12 +9,12 @@ export class ResultDetail extends GeneralResultDetail{
     public isResultWarning: boolean;
     public isHomeValueWarning: boolean;
     public isAwayValueWarning: boolean;
-    public isInvalidValue: boolean;
     public isNotTaken: boolean;
     public isSettleDetermined: boolean;
     public isSettleDeterminedOriginal: boolean;
     public isInvalidSelectedProceed: boolean;
     public isNotExistedValue: boolean;
+    public traderScore: GeneralResultDetail;
     public resultSettingData: ResultSettingModel = {
         isHoldResult: false,
         isConfirmedRefund: false,

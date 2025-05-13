@@ -1,4 +1,5 @@
-﻿using Settlement.Sportsbook.Aio.Constants;
+﻿using Settlement.Core.Criteria;
+using Settlement.Sportsbook.Aio.Constants;
 
 namespace Settlement.Sportsbook.Aio.MapperFactory;
 
@@ -61,7 +62,7 @@ public class CriteriaFactoryImp : CriteriaFactoryBase
         CriteriaTypes.Add($"badminton-{ApiKeyConstant.HedgeMatchInfoKey}", typeof(Criteria.GetHedgeMatchCriteria));
         CriteriaTypes.Add($"badminton-{ApiKeyConstant.ResultDetailKey}", typeof(Criteria.GetResultDetailCriteria));
         CriteriaTypes.Add($"badminton-{ApiKeyConstant.LatestResultKey}", typeof(Criteria.GetRecalResultCriteria));
-        CriteriaTypes.Add($"badminton-{ApiKeyConstant.ProviderKey}", typeof(Criteria.GetProviderCriteria));
+        CriteriaTypes.Add($"badminton-{ApiKeyConstant.ProviderKey}", typeof(GetProviderCriteria));
         CriteriaTypes.Add($"badminton-{ApiKeyConstant.SaveScore}", typeof(Criteria.SaveScoreCriteria));
 
         CriteriaTypes.Add("badminton-settle", typeof(Criteria.SettleCriteria));
@@ -73,7 +74,7 @@ public class CriteriaFactoryImp : CriteriaFactoryBase
         CriteriaTypes.Add($"basketball-{ApiKeyConstant.HedgeMatchInfoKey}", typeof(Criteria.GetHedgeMatchCriteria));
         CriteriaTypes.Add($"basketball-{ApiKeyConstant.ResultDetailKey}", typeof(Criteria.GetResultDetailCriteria));
         CriteriaTypes.Add($"basketball-{ApiKeyConstant.LatestResultKey}", typeof(Criteria.GetRecalResultCriteria));
-        CriteriaTypes.Add($"basketball-{ApiKeyConstant.ProviderKey}", typeof(Criteria.GetProviderCriteria));
+        CriteriaTypes.Add($"basketball-{ApiKeyConstant.ProviderKey}", typeof(GetProviderCriteria));
         CriteriaTypes.Add($"basketball-refund-{ApiKeyConstant.ProviderKey}", typeof(Criteria.GetResultConfirmRefundCriteria));
         CriteriaTypes.Add($"basketball-{ApiKeyConstant.SaveScore}", typeof(Criteria.SaveScoreCriteria));
 
@@ -86,7 +87,7 @@ public class CriteriaFactoryImp : CriteriaFactoryBase
         CriteriaTypes.Add($"game-total-{ApiKeyConstant.HedgeMatchInfoKey}", typeof(Criteria.GetHedgeMatchCriteria));
         CriteriaTypes.Add($"game-total-{ApiKeyConstant.ResultDetailKey}", typeof(Criteria.GetResultDetailCriteria));
         CriteriaTypes.Add($"game-total-{ApiKeyConstant.LatestResultKey}", typeof(Criteria.GetRecalResultCriteria));
-        CriteriaTypes.Add($"game-total-{ApiKeyConstant.ProviderKey}", typeof(Criteria.GetProviderCriteria));
+        CriteriaTypes.Add($"game-total-{ApiKeyConstant.ProviderKey}", typeof(GetProviderCriteria));
         CriteriaTypes.Add($"game-total-{ApiKeyConstant.ChildMatchKey}", typeof(Criteria.Volleyball.GetChildMatchCriteria));
         CriteriaTypes.Add($"game-total-{ApiKeyConstant.SaveScore}", typeof(Criteria.SaveScoreCriteria));
 
@@ -99,7 +100,7 @@ public class CriteriaFactoryImp : CriteriaFactoryBase
         CriteriaTypes.Add($"bandy-{ApiKeyConstant.HedgeMatchInfoKey}", typeof(Criteria.GetHedgeMatchCriteria));
         CriteriaTypes.Add($"bandy-{ApiKeyConstant.ResultDetailKey}", typeof(Criteria.GetResultDetailCriteria));
         CriteriaTypes.Add($"bandy-{ApiKeyConstant.LatestResultKey}", typeof(Criteria.GetRecalResultCriteria));
-        CriteriaTypes.Add($"bandy-{ApiKeyConstant.ProviderKey}", typeof(Criteria.GetProviderCriteria));
+        CriteriaTypes.Add($"bandy-{ApiKeyConstant.ProviderKey}", typeof(GetProviderCriteria));
         CriteriaTypes.Add($"bandy-{ApiKeyConstant.ChildMatchKey}", typeof(Criteria.Volleyball.GetChildMatchCriteria));
         CriteriaTypes.Add($"bandy-{ApiKeyConstant.SaveScore}", typeof(Criteria.SaveScoreCriteria));
         CriteriaTypes.Add("bandy-settle", typeof(Criteria.SettleCriteria));
@@ -111,7 +112,7 @@ public class CriteriaFactoryImp : CriteriaFactoryBase
         CriteriaTypes.Add($"tableTennis-{ApiKeyConstant.HedgeMatchInfoKey}", typeof(Criteria.GetHedgeMatchCriteria));
         CriteriaTypes.Add($"tableTennis-{ApiKeyConstant.ResultDetailKey}", typeof(Criteria.GetResultDetailCriteria));
         CriteriaTypes.Add($"tableTennis-{ApiKeyConstant.LatestResultKey}", typeof(Criteria.GetRecalResultCriteria));
-        CriteriaTypes.Add($"tableTennis-{ApiKeyConstant.ProviderKey}", typeof(Criteria.GetProviderCriteria));
+        CriteriaTypes.Add($"tableTennis-{ApiKeyConstant.ProviderKey}", typeof(GetProviderCriteria));
         CriteriaTypes.Add($"tableTennis-{ApiKeyConstant.ChildMatchKey}", typeof(Criteria.Volleyball.GetChildMatchCriteria));
         CriteriaTypes.Add($"tableTennis-{ApiKeyConstant.SaveScore}", typeof(Criteria.SaveScoreCriteria));
 
@@ -124,7 +125,7 @@ public class CriteriaFactoryImp : CriteriaFactoryBase
         CriteriaTypes.Add($"beach-volleyball-{ApiKeyConstant.HedgeMatchInfoKey}", typeof(Criteria.GetHedgeMatchCriteria));
         CriteriaTypes.Add($"beach-volleyball-{ApiKeyConstant.ResultDetailKey}", typeof(Criteria.GetResultDetailCriteria));
         CriteriaTypes.Add($"beach-volleyball-{ApiKeyConstant.LatestResultKey}", typeof(Criteria.GetRecalResultCriteria));
-        CriteriaTypes.Add($"beach-volleyball-{ApiKeyConstant.ProviderKey}", typeof(Criteria.GetProviderCriteria));
+        CriteriaTypes.Add($"beach-volleyball-{ApiKeyConstant.ProviderKey}", typeof(GetProviderCriteria));
         CriteriaTypes.Add($"beach-volleyball-{ApiKeyConstant.ChildMatchKey}", typeof(Criteria.Volleyball.GetChildMatchCriteria));
         CriteriaTypes.Add($"beach-volleyball-{ApiKeyConstant.SaveScore}", typeof(Criteria.SaveScoreCriteria));
 
@@ -137,7 +138,7 @@ public class CriteriaFactoryImp : CriteriaFactoryBase
         CriteriaTypes.Add($"standard-{ApiKeyConstant.HedgeMatchInfoKey}", typeof(Criteria.GetHedgeMatchCriteria));
         CriteriaTypes.Add($"standard-{ApiKeyConstant.ResultDetailKey}", typeof(Criteria.GetResultDetailCriteria));
         CriteriaTypes.Add($"standard-{ApiKeyConstant.LatestResultKey}", typeof(Criteria.GetRecalResultCriteria));
-        CriteriaTypes.Add($"standard-{ApiKeyConstant.ProviderKey}", typeof(Criteria.GetProviderCriteria));
+        CriteriaTypes.Add($"standard-{ApiKeyConstant.ProviderKey}", typeof(GetProviderCriteria));
         CriteriaTypes.Add($"standard-{ApiKeyConstant.SaveScore}", typeof(Criteria.SaveScoreCriteria));
         CriteriaTypes.Add("standard-settle", typeof(Criteria.SettleCriteria));
         CriteriaTypes.Add($"standard-refund-{ApiKeyConstant.ProviderKey}", typeof(Criteria.GetResultConfirmRefundCriteria));

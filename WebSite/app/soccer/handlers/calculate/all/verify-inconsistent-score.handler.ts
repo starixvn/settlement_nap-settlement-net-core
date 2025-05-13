@@ -8,6 +8,7 @@ import * as _ from 'lodash';
 import { inject } from '@angular/core';
 import { VerifyScoreGoalService } from '../../../components/calc/services/verify-score-goal.service';
 import { MessageBoxService } from '../../../../shared/services';
+import { ExternalResultDetail } from "../../../../shared/models/sportsbook-sop";
 
 export class VerifyInconsistentScoreHandler extends AbstractHandler {
   private readonly verifyScoreGoalService = inject(VerifyScoreGoalService);
@@ -17,8 +18,9 @@ export class VerifyInconsistentScoreHandler extends AbstractHandler {
   async handle(storage: Storage) {
     const { permission, resultDetails } = storage.getMatch();
     const isIgnoreCheckHt = storage.getIsIgnoreCheckHt();
+    const externalResultDetails = storage.getExternalResultDetails();
 
-    if (this.isExistsInconsistentResult(resultDetails, isIgnoreCheckHt)) {
+    if (this.isExistsInconsistentResult(resultDetails, isIgnoreCheckHt, externalResultDetails)) {
       if (!permission.isLeader) {
         storage.error(Language.eSports.nonLeader.mismatchedResult);
         return;
@@ -37,16 +39,15 @@ export class VerifyInconsistentScoreHandler extends AbstractHandler {
     })
   }
 
-  private isExistsInconsistentResult(resultDetails: ResultDetail[], isIgnoreCheckHt: boolean) {
+  private isExistsInconsistentResult(resultDetails: ResultDetail[], isIgnoreCheckHt: boolean, externalResultDetails: ExternalResultDetail[]) {
     const checkedResults = isIgnoreCheckHt
       ? this.getCheckedResults(resultDetails).filter(x => x.resourceId !== ResourceIds.halfTime)
       : this.getCheckedResults(resultDetails);
 
     for (const result of checkedResults) {
-      const outsideResult = resultDetails
-        .find(y => y.sourceId === ScoreSourceType.screenshot && y.resourceId === result.resourceId);
+      const outsideResults = externalResultDetails.filter(y => y.resourceId === result.resourceId);
       const sourceResults = this.getValidSourceResults(resultDetails, result.resourceId);
-      const [valid] = this.verifyScoreGoalService.tryGetValidResult(outsideResult, [...sourceResults, ...checkedResults]);
+      const [valid] = this.verifyScoreGoalService.tryGetValidResult(outsideResults, [...sourceResults, ...checkedResults]);
 
       if (!valid) {
         return true;

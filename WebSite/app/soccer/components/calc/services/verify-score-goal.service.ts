@@ -5,6 +5,8 @@ import { ChildMatch, FantasyRelatedMatch, MatchDetail, Score } from '../models/m
 import { VerificationBaseService } from "../../../services/verification-base.service";
 import { ResultDetail } from "../../../models";
 import { ResourceIds } from '../../../constants';
+import { ExternalResultDetail } from "../../../../shared/models/sportsbook-sop";
+import { GeneralResultDetail } from "../../../../shared/models";
 
 @Injectable()
 export class VerifyScoreGoalService extends VerificationBaseService {
@@ -147,11 +149,11 @@ export class VerifyScoreGoalService extends VerificationBaseService {
         return !this.isEmptyScore(home) && !this.isEmptyScore(away);
     }
 
-    public isValidResult(resultDetail: ResultDetail) {
+    public isValidResult(resultDetail: GeneralResultDetail) {
         return !this.isEmptyScore(resultDetail.homeValue) && !this.isEmptyScore(resultDetail.awayValue);
     }
 
-    public isHtFtNotConsistent(halfTimeResult: ResultDetail, fullTimeResult: ResultDetail) {
+    public isHtFtNotConsistent(halfTimeResult: GeneralResultDetail, fullTimeResult: GeneralResultDetail) {
         return this.isValidResult(halfTimeResult) 
             && this.isValidResult(fullTimeResult) 
             && (+halfTimeResult.homeValue > +fullTimeResult.homeValue
@@ -162,13 +164,14 @@ export class VerifyScoreGoalService extends VerificationBaseService {
         return selectedChildMatches.length > 0 && _.isEqual(fulltimeResult.homeValue?.toString(), fulltimeResult.awayValue?.toString());
     }
 
-    public tryGetValidResult(primaryResult: ResultDetail, resultDetails: ResultDetail[]): [boolean, ResultDetail | undefined] {
-        if (!this.isValidResult(primaryResult)) {
-            return [false, undefined];
+    public tryGetValidResult(externalResultDetails: ExternalResultDetail[], resultDetails: ResultDetail[]): [boolean, GeneralResultDetail | undefined] {
+        for (const result of externalResultDetails) {
+            if (!this.isValidResult(result)) {
+                return [false, undefined];
+            }
         }
 
-        const filteredResults = [primaryResult, ...resultDetails]
-            .filter(result => result && result.resourceId === primaryResult.resourceId)
+        const filteredResults =([...externalResultDetails, ...resultDetails] as GeneralResultDetail[])
             .filter(result => !_.isEmpty(result.homeValue) && !_.isEmpty(result.awayValue));
         
         if(filteredResults.length === 1) {
@@ -182,7 +185,7 @@ export class VerifyScoreGoalService extends VerificationBaseService {
         return [uniqueResults.length  === 1, uniqueResults[0]];
     }
 
-    public isMismatched(resultDetails: ResultDetail[]) {
+    public isMismatched(resultDetails: GeneralResultDetail[]) {
         const filteredResults = resultDetails.filter(result => result && !_.isEmpty(result.homeValue) && !_.isEmpty(result.awayValue));
         const isDifferent = _.uniqWith(filteredResults, (a, b) => a.homeValue === b.homeValue && a.awayValue === b.awayValue).length > 1;
         return isDifferent;

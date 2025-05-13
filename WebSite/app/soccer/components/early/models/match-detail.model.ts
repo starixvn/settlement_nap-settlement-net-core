@@ -18,4 +18,6 @@ export interface MatchDetail {
     finalAwayScore: string,
     finalHomeScore: string,
     offerLive: boolean
+    leagueId: number,
+    sportName: string
 }

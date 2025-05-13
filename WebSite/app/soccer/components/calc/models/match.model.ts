@@ -1,5 +1,5 @@
 import { Remark } from "../../../../shared/models";
-import { Permission } from "../../../../shared/models/sportsbook-sop";
+import { ExternalResult, Permission } from "../../../../shared/models/sportsbook-sop";
 import { TicketCount, ResultDetail, MatchDetailBase } from '../../../models';
 import { Resource } from "./resouce.model";
 
@@ -11,6 +11,7 @@ export interface Match {
     hedgeMatchDetail: HedgeMatchDetail;
     fantasyMatch: FantasyMatch;
     childMatches: ChildMatch[];
+    externalResults: ExternalResult[];
 }
 
 export interface ChildMatch {
