@@ -24,6 +24,8 @@ public class PushFastMarketResultCriteria : NonQueryCommand
 
     public string OldResults { get; set; }
 
+    public bool IsOrg { get; set; } = true;
+
     public string BroadcastSessionId { get; } = Guid.NewGuid().ToString();
 
     [SpParam(Ignored = true)]

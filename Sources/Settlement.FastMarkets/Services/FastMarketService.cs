@@ -7,7 +7,6 @@ using Microsoft.Extensions.Options;
 using Settlement.Core.Constants;
 using Settlement.Core.Criteria;
 using Settlement.Core.Models;
-using Settlement.Core.Services;
 using Settlement.FastMarkets.Criteria;
 using Settlement.FastMarkets.Models;
 using Settlement.FastMarkets.Requests;
@@ -138,7 +137,7 @@ public class FastMarketServiceImp(
         return new Result
         {
             SettledSessionId = criteria.BroadcastSessionId,
-            IsOrg = true
+            IsOrg = criteria.IsOrg
         };
     }
 
@@ -181,11 +180,7 @@ public class FastMarketServiceImp(
             }
 
             var resettleResult = await fastMarketResultAmendmentService.GetResultChanged(request, selectedResources);
-            var verifyResettleResult = ResultAmendmentCoreService.CheckReSettleTicket(resettleResult, request.Action);
-            if (verifyResettleResult.Any())
-            {
-                await fastMarketResultAmendmentService.PublishResultAmendment(request, request.SelectedResources, resettleResult);
-            }
+            await fastMarketResultAmendmentService.PublishResultAmendment(request, request.SelectedResources, resettleResult);
         }
         catch (Exception ex)
         {
