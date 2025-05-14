@@ -25,6 +25,8 @@
           (ngModelChange)="onChangeEnabled(row)" />
       </div>
     </td>
+
+    @if(!isMatchType) {
     <td>
       @if(row.settleType !== 1) {
       <div style="display: flex;justify-content: center;padding: 5px;">
@@ -34,6 +36,7 @@
       </div>
       }
     </td>
+    }
     @if(!isMatchType) {
     <td>
       <input type="checkbox" [(ngModel)]="row.isApplyChildMatches" />
