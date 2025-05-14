@@ -9,6 +9,7 @@ import { DatePipe } from '@angular/common';
     standalone: true,
     imports: [ScoreBySettlementPipe, DatePipe],
     templateUrl: './match-detail.component.html',
+    styleUrls: ['./match-detail.component.less']
 })
 
 export class MatchDetailComponent implements OnInit {

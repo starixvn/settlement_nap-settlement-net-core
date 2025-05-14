@@ -6,10 +6,19 @@
 </div>
 <div class="modal-body content-fixed-height">
     <p [innerHTML]="message"></p>
+    @if(requireCheckbox) {
+    <div class="check-box">
+        <label for="checkbox" style="word-wrap:break-word">
+            <input id="checkbox" type="checkbox" [(ngModel)]="isChecked" />
+            {{checkboxLabel}}
+        </label>
+    </div>
+    }
 </div>
 <div class="modal-footer">
-    <button type="button" class="btn btn-danger" ngbAutofocus (click)="activeModal.dismiss(yes)">{{yes}}</button>
+    <button [disabled]="requireCheckbox && !isChecked" type="button" class="btn btn-danger" ngbAutofocus
+        (click)="activeModal.dismiss(yes)">{{yes}}</button>
     <span [hidden]="hideNo">
-        <button type="button" class="btn btn-default" (click)="activeModal.dismiss(no)">{{no}}</button>
+        <button type="button" class="btn btn-light" (click)="activeModal.dismiss(no)">{{no}}</button>
     </span>
 </div>
