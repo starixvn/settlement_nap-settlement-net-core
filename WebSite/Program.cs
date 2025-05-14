@@ -3,7 +3,6 @@ using Fanex.Data;
 using Fanex.Logging.Sentry.RavenClient;
 using Fanex.NAP.Client;
 using Fanex.NAP.Client.Attributes;
-using MassTransit;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
@@ -39,6 +38,8 @@ services.AddFanexData(configuration);
 
 services.AddFanexLogSentry(configuration);
 
+services.AddMassTransit(configuration);
+
 services.AddAutoMapper();
 
 services.AddCoreServices();
@@ -48,25 +49,6 @@ services.AddMediator();
 services.AddInternalService();
 
 services.AddMessagePack();
-
-services.AddMassTransit(x =>
-{
-    x.UsingRabbitMq((context, cfg) =>
-    {
-        cfg.Host(builder.Configuration["RabbitMQ:Host"], builder.Configuration["RabbitMQ:VirtualHost"], h =>
-        {
-            h.Username(builder.Configuration.GetValue("RabbitMQ:Username", "guest"));
-            h.Password(builder.Configuration.GetValue("RabbitMQ:Password", "guest"));
-        });
-
-        cfg.UseMessageRetry(retryConfig =>
-        {
-            retryConfig.Interval(1, TimeSpan.FromSeconds(1));
-        });
-
-        cfg.ConfigureEndpoints(context);
-    });
-});
 
 services.Configure<AppSettingsKey>(configuration);
 
@@ -85,7 +67,6 @@ services.AddDataProtection().UseCryptographicAlgorithms(
         EncryptionAlgorithm = EncryptionAlgorithm.AES_256_CBC,
         ValidationAlgorithm = ValidationAlgorithm.HMACSHA256
     });
-
 
 var app = builder.Build();
 

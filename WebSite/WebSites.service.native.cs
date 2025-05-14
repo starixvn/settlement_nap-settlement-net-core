@@ -1,4 +1,3 @@
-using System.IO.Compression;
 using AutoMapper;
 using Fanex.Caching;
 using Fanex.Data.Repository;
@@ -9,6 +8,7 @@ using Fanex.Settlement.Converter.Services;
 using Fanex.Settlement.ScaleOut;
 using Fanex.Settlement.ScaleOut.Services;
 using Mapster;
+using MassTransit;
 using MessagePack.AspNetCoreMvcFormatter;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -30,6 +30,7 @@ using Settlement.Sportsbook.Soccer;
 using Settlement.ThirdPartyProducts;
 using Settlement.WebSites.Configurations;
 using StackExchange.Redis;
+using System.IO.Compression;
 using ILogger = Fanex.Logging.ILogger;
 using LogService = Settlement.Core.Services.LogService;
 using LogServiceImp = Settlement.Core.Services.LogServiceImp;
@@ -38,6 +39,33 @@ namespace Settlement.WebSites;
 
 public static class WebSites
 {
+    public static void AddMassTransit(this IServiceCollection service, IConfiguration configuration)
+    {
+        var host = configuration.GetValue("RabbitMQ:Host", string.Empty);
+        var virtualHost = configuration.GetValue("RabbitMQ:VirtualHost", string.Empty);
+        var username = configuration.GetValue("RabbitMQ:Username", string.Empty);
+        var password = configuration.GetValue("RabbitMQ:Password", string.Empty);
+
+        service.AddMassTransit(x =>
+        {
+            x.UsingRabbitMq((context, cfg) =>
+            {
+                cfg.Host(host, virtualHost, h =>
+                {
+                    h.Username(username);
+                    h.Password(password);
+                });
+
+                cfg.UseMessageRetry(retryConfig =>
+                {
+                    retryConfig.Interval(1, TimeSpan.FromSeconds(1));
+                });
+
+                cfg.ConfigureEndpoints(context);
+            });
+        });
+    }
+
     public static void AddAuthentication(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
