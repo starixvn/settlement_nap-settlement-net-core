@@ -41,7 +41,8 @@ public class LeagueServiceImp(IDynamicRepository repository, IMapper mapper) : L
                     AutoCalcSetting = match.AutoCalcSetting,
                     InstantWaitingTime = match.InstantWaitingTime,
                     RefundWaitingTime = match.RefundWaitingTime,
-                    DirectWaitingTime = match.DirectWaitingTime
+                    DirectWaitingTime = match.DirectWaitingTime,
+                    EnabledAutoRefund = match.EnabledAutoRefund,
                 };
 
                 league.Matches.Add(match);

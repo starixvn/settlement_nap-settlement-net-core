@@ -30,6 +30,12 @@ public class AppsController(IConfiguration configuration) : Controller
         return SetView("League Auto Payout Setting", "AdvancedLeagueSettings", ViewPath.Setting);
     }
 
+    [HttpGet("soccer-auto-setting-league")]
+    public IActionResult SoccerAutoSettingLeague()
+    {
+        return SetView("League Auto Payout Setting", "SoccerAutoSettings", ViewPath.Setting);
+    }
+
     [HttpGet("remark-setting")]
     public IActionResult RemarkSetting()
     {

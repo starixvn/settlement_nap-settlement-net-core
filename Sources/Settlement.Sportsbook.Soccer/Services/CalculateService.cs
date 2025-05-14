@@ -1,5 +1,7 @@
-﻿using Fanex.Settlement.ScaleOut.Criteria.Update;
+using Fanex.Settlement.MessageBridge.RefundEvents;
+using Fanex.Settlement.ScaleOut.Criteria.Update;
 using Mapster;
+using MassTransit;
 using Settlement.Core.Configurations;
 using Settlement.Core.Constants;
 using Settlement.Core.Criteria;
@@ -33,6 +35,7 @@ public class CalculateServiceImp(
     ScaleOutSettleService scaleOutSettleService,
     LogService logService,
     IMatchService matchService,
+    IPublishEndpoint publishEndpoint,
     INapSession napSession,
     IHttpContextAccessor accessor,
     XmlConvertService xmlConvertService) : ICalculateService
@@ -70,6 +73,17 @@ public class CalculateServiceImp(
             await ExecuteAsync(criteria);
         }
 
+        await publishEndpoint.Publish(new MatchCalculated(
+                request.MatchId,
+                request.ParentId,
+                request.SportType,
+                request.ChildMatchType,
+                request.HalfTimeHomeScore,
+                request.HalfTimeAwayScore,
+                request.FinalHomeScore,
+                request.FinalAwayScore,
+                request.ActionName), new CancellationTokenSource(TimeSpan.FromSeconds(2)).Token);
+
         return matchChecking;
     }
 
@@ -80,9 +94,6 @@ public class CalculateServiceImp(
         var outsideScores = request.ResultDetails
             .Where(x => selectedResourceIds.Contains(x.ResourceId) && x.SourceId == SourceType.Screenshot);
 
-        var checkedScores = request.ResultDetails
-            .Where(x => selectedResourceIds.Contains(x.ResourceId));
-
         var criteria = new SaveOutsideScoreCriteria
         {
             MatchId = request.MatchId,
@@ -90,12 +101,9 @@ public class CalculateServiceImp(
             Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString(),
             OutsideSources = CreateScoreResources(outsideScores.Adapt<List<SaveScoreModel>>()),
             Sources = CreateScoreResources(request.SelectedResultDetails.Adapt<List<SaveScoreModel>>()),
-
         };
 
         await repository.ExecuteAsync(criteria);
-
-        var errorMessage = criteria.ErrCode > 0 ? criteria.ErrMsg : string.Empty;
     }
 
     private string CreateScoreResources(List<SaveScoreModel> selectedResources)
@@ -107,8 +115,6 @@ public class CalculateServiceImp(
 
         return xmlConvertService.Serialize(resources);
     }
-
-
 
     public async Task<Result> UncalculateFt(UncalculateFtRequest request)
     {
@@ -263,7 +269,6 @@ public class CalculateServiceImp(
 
     private async Task<Result> ValidateBeforeExecute(CalculateCriteria criteria)
     {
-
         var request = createCriteriaService.CreateEventTicketRequest(criteria);
         var resultMessage = await scaleOutSettleService.ValidateEventAndTicket(request);
 
@@ -349,10 +354,12 @@ public class CalculateServiceImp(
                     criteria.FullTimeHome = int.Parse(result.HomeValue);
                     criteria.FullTimeAway = int.Parse(result.AwayValue);
                     break;
+
                 case ResourceType.Halftime:
                     criteria.HalfTimeHome = int.Parse(result.HomeValue);
                     criteria.HalfTimeAway = int.Parse(result.AwayValue);
                     break;
+
                 default: continue;
             }
         }

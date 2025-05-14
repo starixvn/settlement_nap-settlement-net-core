@@ -1,4 +1,6 @@
-﻿using Settlement.Core.Constants;
+﻿using Fanex.Settlement.MessageBridge.RefundEvents;
+using MassTransit;
+using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Aio.Constants;
@@ -41,7 +43,8 @@ public class AioServiceImp(
     ICreateQueryService createQueryService,
     MultipleServerAioService multipleServerAioService,
     AdjustEventStatusService adjustEventStatusService,
-    IConnectionMultiplexer connectionMultiplexer)
+    IConnectionMultiplexer connectionMultiplexer,
+    IPublishEndpoint publishEndpoint)
     : IAioService
 {
     private const string KeyConfirmRefund = "SettlementConfirmRefund";
@@ -363,9 +366,36 @@ public class AioServiceImp(
         if (confirmRefund.Contains(request.Type))
         {
             SetConfirmRefundKeyCache(request);
+            await PushResultEvent(request);
         }
 
         return criteria.IsEnabled;
+    }
+
+    private async Task PushResultEvent(ResultSettingRequest request)
+    {
+        if (request.SportType == SportType.Soccer && request.IsEnabled)
+        {
+            var selectedResources = request.SelectedResources
+                .Select(resource => new Fanex.Settlement.MessageBridge.RefundEvents.ResourceItem
+                {
+                    ResourceId = resource.ResourceId,
+                    HomeValue = resource.HomeValue,
+                    AwayValue = resource.AwayValue,
+                    OtherInfo = resource.OtherInfo,
+                    Determined = resource.Determined,
+                    IsSettleDetermined = resource.IsSettleDetermined,
+                    AwayId = resource.AwayId,
+                    HomeId = resource.HomeId,
+                    ResourceName = resource.ResourceName,
+                    GroupBetType = resource.GroupBetType
+                }).ToList();
+
+            await publishEndpoint.Publish(request.Type == ResultSettingType.ConfirmRefundSDT
+                ? new ResultsRefundConfirmedSdt(request.MatchId, request.SportType, request.ChildMatchType, selectedResources)
+                : new ResultsRefundConfirmed(request.MatchId, request.SportType, request.ChildMatchType, selectedResources),
+                new CancellationTokenSource(TimeSpan.FromSeconds(3)).Token);
+        }
     }
 
     private void SetConfirmRefundKeyCache(ResultSettingRequest request)
@@ -399,7 +429,7 @@ public class AioServiceImp(
         }
     }
 
-    private string GetResourceName(IEnumerable<ResourceItem> resources, string resourceId)
+    private string GetResourceName(IEnumerable<Core.Models.ResourceItem> resources, string resourceId)
         => resources?.FirstOrDefault(z => z.ResourceId == resourceId)?.ResourceName;
 
     public async Task<Result> SettleChildMatch(SettleChildMatchRequest request)

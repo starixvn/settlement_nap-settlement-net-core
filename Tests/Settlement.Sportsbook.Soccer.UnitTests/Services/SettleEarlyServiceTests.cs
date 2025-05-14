@@ -35,7 +35,7 @@ public class SettleEarlyServiceTests
         var appSettingsOptions = Options.Create(appSettings);
         service = new SettleEarlyServiceImp(
             createCriteriaService, appSettingsOptions,
-            repository, scaleOutSettleService, logService);
+            repository, scaleOutSettleService, logService, null);
     }
 
     [Fact]

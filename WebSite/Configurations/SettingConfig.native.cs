@@ -15,6 +15,8 @@ public static class SettingConfig
         services.AddTransient<SendMailService, SendMailServiceImp>();
         services.AddScoped<GetAutoSettleSettingsHandler>();
         services.AddScoped<UpdateAutoSettingsHandler>();
+        services.AddScoped<UpdateMatchSoccerSettingsHandler>();
+        services.AddScoped<UpdateSoccerSettingHandler>();
 
     }
 

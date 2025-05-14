@@ -40,7 +40,7 @@
     @for (league of leagues; track $index) {
     <table class="table-calculation">
       <tbody class="auto-calculation">
-        <tr class="league">
+        <tr class="league" style="line-height: 13px;">
           <td colspan="5" class="name">&nbsp;{{ league.name }}</td>
           <td class="auto-setting">
             <div [class]="getClassInstant(league.autoCalcSetting.isInstantForLeague)"
@@ -56,17 +56,19 @@
           </td>
           <td colspan="1"></td>
           <td class="auto-setting">
-            <div
+            <!-- <div
               [class]="getClassPayOut(league.autoCalcSetting.isAutoPayoutForLeague, league.autoCalcSetting.isDirectPayoutForLeague)"
-              matTooltipPosition="above" [matTooltip]="language.payout.title"
-              (click)="openUpdatePayoutForLeague(league)"></div>
+              matTooltipPosition="above" [matTooltip]="language.payout.title" (click)="openSoccerAutoSettings(league)">
+            </div> -->
+            <div style="cursor: pointer; line-height: 12px;color:#4196ff" (click)="openSoccerAutoSettings(league)"
+              [innerHTML]="getStatusAutoPayout(league)"></div>
+
           </td>
           <td class="instant-time" colspan="2">
-            <div>Waiting time: {{ league.directWaitingTime }}sec</div>
-            @if(permission.canAutoPayout) {
-            <div class="instant-time-icon" [matTooltip]="language.payout.titleDirectTime" matTooltipPosition="above"
-              (click)="openUpdateTime(league, false)"></div>
-            }
+            <div style="display: flex;flex-direction: column; align-items: flex-start ;">
+              <span>Direct: {{ league.directWaitingTime }}sec</span>
+              <span>Refund: {{ league.refundWaitingTime}}sec</span>
+            </div>
           </td>
         </tr>
         @for (match of league.matches; track $index;) {
@@ -152,9 +154,13 @@
             <div>{{ match.confirmFullTimeScore }}</div>
           </td> -->
           <td rowspan="2" class="auto-setting">
-            <div
+            <!-- <div
               [class]="getClassPayOut(match.autoCalcSetting.isAutoPayoutForMatch, match.autoCalcSetting.isDirectPayoutForMatch)"
-              matTooltipPosition="above" [matTooltip]="language.payout.title" (click)="openUpdatePayout(match)"></div>
+              matTooltipPosition="above" [matTooltip]="language.payout.title"
+              (click)="openSoccerAutoSettings(league,match)"></div> -->
+            <div style="cursor: pointer;line-height: 12px; color: #4196ff;"
+              (click)="openSoccerAutoSettings(league,match)" [innerHTML]="getStatusAutoPayout(league,match)"></div>
+
           </td>
           <td rowspan="2" class="remark-status">
             <div placement="top" [ngClass]="{

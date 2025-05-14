@@ -17,14 +17,13 @@ public class NewInfoMatchServiceTests
 
     private readonly GoalIconService goalIconService;
 
-    private readonly NewInfoMatchService service;
-
     private readonly EventStatusService eventStatusService;
 
     private readonly AdjustEventStatusService adjustEventStatusService;
 
     private readonly IDynamicRepository repository;
-    private readonly PermissionService permissionService;
+
+    private readonly NewInfoMatchServiceImp service;
 
     public NewInfoMatchServiceTests()
     {
@@ -33,7 +32,7 @@ public class NewInfoMatchServiceTests
         eventStatusService = Substitute.For<EventStatusService>();
         adjustEventStatusService = Substitute.For<AdjustEventStatusService>();
         repository = Substitute.For<IDynamicRepository>();
-        permissionService = Substitute.For<PermissionService>();
+        var permissionService = Substitute.For<PermissionService>();
 
         service = new NewInfoMatchServiceImp(siteMatchService, goalIconService, eventStatusService, adjustEventStatusService, repository, permissionService);
     }
@@ -197,7 +196,7 @@ public class NewInfoMatchServiceTests
     }
 
     [Fact]
-    public void GetAutoSetting_Always_MapDataIntoList()
+    public async Task GetAutoSetting_Always_MapDataIntoList()
     {
         var matches = new List<Match>
         {
@@ -228,7 +227,7 @@ public class NewInfoMatchServiceTests
         };
 
         repository.FetchAsync<MatchStatusModel>(Arg.Any<GetAutoStatusCriteria>()).Returns(matchStatuses);
-        service.GetAutoSetting(matches);
+        await service.GetAutoSetting(matches);
 
         Assert.Equal(3, matches[0].AutoPayoutStatus);
         Assert.Equal(2, matches[1].AutoPayoutStatus);

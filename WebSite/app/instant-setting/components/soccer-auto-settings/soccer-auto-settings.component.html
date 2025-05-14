@@ -1,0 +1,43 @@
+<div style="padding: 0 10px;">
+  <div class="league" style="text-transform: unset;padding: 5px;">
+    <div class="icon"></div>
+    {{ title }}
+  </div>
+
+  <div class="soccer-auto-settings">
+    <app-table [tableHeaders]="tableHeaders" [tableData]="settings" [maxHeight]="'225px'" [rowTemplate]="customRow">
+    </app-table>
+
+
+    <div class="button-group">
+      <app-button (click)="submit()" variant="primary">Submit</app-button>
+      <app-button (click)="cancel()" variant="danger">Cancel</app-button>
+    </div>
+  </div>
+</div>
+
+<ng-template #customRow let-row>
+  <tr>
+    <td>{{ row.settleTypeName }}</td>
+    <td>
+      <div style="margin-top: 5px;">
+        <app-switch [(ngModel)]="row.enabled" labelOff="OFF" labelOn="ON" size="mini"
+          (ngModelChange)="onChangeEnabled(row)" />
+      </div>
+    </td>
+    <td>
+      @if(row.settleType !== 1) {
+      <div style="display: flex;justify-content: center;padding: 5px;">
+        <div style="width: 100px;">
+          <app-number-input [(ngModel)]="row.waitingTime" />
+        </div>
+      </div>
+      }
+    </td>
+    @if(!isMatchType) {
+    <td>
+      <input type="checkbox" [(ngModel)]="row.isApplyChildMatches" />
+    </td>
+    }
+  </tr>
+</ng-template>

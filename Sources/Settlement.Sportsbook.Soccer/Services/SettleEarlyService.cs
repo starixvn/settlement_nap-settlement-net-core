@@ -1,4 +1,6 @@
-﻿using Settlement.Core.Models;
+﻿using Fanex.Settlement.MessageBridge.RefundEvents;
+using MassTransit;
+using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Requests;
@@ -15,7 +17,8 @@ public class SettleEarlyServiceImp(
     IOptions<AppSettingsKey> appSettingsKey,
     IDynamicRepository repository,
     ScaleOutSettleService scaleOutSettleService,
-    LogService logService)
+    LogService logService,
+    IPublishEndpoint publishEndpoint)
     : SettleEarlyService
 {
     public async Task<Result> CalculateEarly(SettleEarlyRequest request)
@@ -33,7 +36,41 @@ public class SettleEarlyServiceImp(
 
         var result = await Execute(criteria);
 
+        await PublishResultEvent(request);
+
         return result;
+    }
+
+    private async Task PublishResultEvent(SettleEarlyRequest request)
+    {
+        var selectedResources = request.SelectedResources
+            .Select(resource => new Fanex.Settlement.MessageBridge.RefundEvents.ResourceItem
+            {
+                ResourceId = resource.ResourceId,
+                HomeValue = resource.HomeValue,
+                AwayValue = resource.AwayValue,
+                OtherInfo = resource.OtherInfo,
+                Determined = resource.Determined,
+                IsSettleDetermined = resource.IsSettleDetermined,
+                AwayId = resource.AwayId,
+                HomeId = resource.HomeId,
+                ResourceName = resource.ResourceName,
+                GroupBetType = resource.GroupBetType
+            }).ToList();
+
+        if (request.ActionName.Equals(ActionName.RefundAll, StringComparison.OrdinalIgnoreCase))
+        {
+            await publishEndpoint.Publish(
+                new ResultsRefunded(request.MatchId, request.SportType, request.ChildMatchType, selectedResources),
+                new CancellationTokenSource(TimeSpan.FromSeconds(2)).Token);
+        }
+
+        if (request.ActionName.Equals(ActionName.CalculateAll, StringComparison.OrdinalIgnoreCase))
+        {
+            await publishEndpoint.Publish(
+                new ResultsCalculated(request.MatchId, request.SportType, request.ChildMatchType, selectedResources),
+                new CancellationTokenSource(TimeSpan.FromSeconds(2)).Token);
+        }
     }
 
     private async Task WriteDirectlyLog(SettleEarlyRequest request)

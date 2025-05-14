@@ -8,5 +8,6 @@ export class League {
     public instantWaitingTime: number;
     public refundWaitingTime: number;
     public autoCalcSetting: AutoSetting;
+    public enabledAutoRefund: boolean;
     public matches: CalculationMatch[];
 }

@@ -15,4 +15,8 @@ public class RefundRequest : SettleBaseRequest, IRequest<Result>
     public bool ExcludeTicketBetFairInRefund { get; set; }
 
     public bool IsDeterminedHedgeMatch { get; set; }
+
+    public short SportType { get; set; }
+    public short ChildMatchType { get; set; }
+    public int ParentId { get; set; }
 }

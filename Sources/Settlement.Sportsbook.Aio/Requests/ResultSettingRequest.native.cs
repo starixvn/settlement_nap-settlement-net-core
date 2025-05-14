@@ -5,7 +5,8 @@ namespace Settlement.Sportsbook.Aio.Requests;
 public class ResultSettingRequest : IRequest<bool>
 {
     public int MatchId { get; set; }
-
+    public short SportType { get; set; }
+    public short ChildMatchType { get; set; }
     public int Type { get; set; }
 
     public bool IsEnabled { get; set; }

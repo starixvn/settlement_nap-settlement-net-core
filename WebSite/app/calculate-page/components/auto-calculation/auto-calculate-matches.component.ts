@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
 import { BackGroundService, RequestService, PopupService, HandleActionsService } from '../../services';
 import * as _ from 'lodash';
 import { MatchesBaseComponent } from '../base-component';
@@ -14,12 +14,15 @@ import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { DynamicHeightDirective } from '../../../shared/directives/dynamic-height.directive.native';
 import { CommonModule } from '@angular/common';
+import { AutoCalculateService } from './auto-calculate.service';
+import { AutoSettleSetting } from '../../models/auto-settle-settings';
+import { UpdateSettingsService } from '../../services/update-settings.service';
 
 @Component({
     selector: 'auto-calculate-matches',
     templateUrl: './auto-calculate-matches.component.html',
     standalone: true,
-    imports: [CommonModule, DynamicHeightDirective, MatTooltipModule, NgbTooltip]
+    imports: [CommonModule, DynamicHeightDirective, MatTooltipModule, NgbTooltip],
 })
 export class AutoCalculateMatchesComponent extends MatchesBaseComponent implements OnChanges, OnInit, OnDestroy {
     @Input() public filterQuery: FilterAutoQuery;
@@ -32,7 +35,10 @@ export class AutoCalculateMatchesComponent extends MatchesBaseComponent implemen
     private readonly autoSettingInstantType = 2;
     private subscriber: ISubscription;
     private readonly period = 6000;
-    private  readonly intervalTimer = interval(this.period);
+    private readonly intervalTimer = interval(this.period);
+    private readonly autoCalculateService = inject(AutoCalculateService);
+    private readonly updateSettingsService = inject(UpdateSettingsService);
+
     constructor(
         protected popupService: PopupService,
         protected requestService: RequestService,
@@ -79,6 +85,12 @@ export class AutoCalculateMatchesComponent extends MatchesBaseComponent implemen
             return isAutoPayout ? BackgroundColor.iconAutoDisabled :
                 isDirectPayout ? BackgroundColor.iconDirectDisabled : BackgroundColor.iconOffDisabled;
         }
+    }
+
+    public getStatusAutoPayout(league: League, match: CalculationMatch | null = null) {
+        return match
+            ? this.autoCalculateService.getStatusAutoPayoutMatch(match)
+            : this.autoCalculateService.getStatusAutoPayoutLeague(league);
     }
 
     public getTittleInstant(isInstant: boolean) {
@@ -166,6 +178,22 @@ export class AutoCalculateMatchesComponent extends MatchesBaseComponent implemen
         if (this.permission.canAutoPayout) {
             this.popupService.openUpdatePayoutForLeague(league);
         }
+    }
+
+    public openSoccerAutoSettings(league: League, match: CalculationMatch | null = null) {
+        const { canAutoPayout } = this.permission;
+        if (!canAutoPayout) {
+            return;
+        }
+        this.popupService.openSoccerAutoSettings(league, match)
+            .subscribe(result => {
+                const setting = Object.assign(new AutoSettleSetting(), JSON.parse(result));
+                if (match) {
+                    this.updateSettingsService.setAutoCalcSettingMatch(match, setting);
+                } else {
+                    this.updateSettingsService.setAutoCalcSettingLeague(league, setting);
+                }
+            });
     }
 
     public openUpdateTime(league: League, isInstant: boolean) {

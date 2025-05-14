@@ -31,7 +31,6 @@ export class ProviderSelectionComponent {
     this.resultSetting = cloneDeep(data);
   }
 
-
   close() {
     this.dialogRef.close();
   }

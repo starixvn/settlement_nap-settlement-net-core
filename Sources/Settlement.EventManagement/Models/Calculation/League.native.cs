@@ -18,10 +18,13 @@ public class League
     [Key("refundWaitingTime")]
     public int RefundWaitingTime { get; set; }
 
+    [Key("enabledAutoRefund")]
+    public bool? EnabledAutoRefund { get; set; }
 
     [Key("autoCalcSetting")]
     public AutoCalculationSetting AutoCalcSetting { get; set; } = new();
 
     [Key("matches")]
     public List<Match> Matches { get; set; } = [];
+
 }

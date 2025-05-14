@@ -86,6 +86,7 @@ services.AddDataProtection().UseCryptographicAlgorithms(
         ValidationAlgorithm = ValidationAlgorithm.HMACSHA256
     });
 
+
 var app = builder.Build();
 
 app.UseDeveloperExceptionPage();

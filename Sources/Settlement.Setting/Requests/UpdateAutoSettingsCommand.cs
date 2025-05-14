@@ -10,8 +10,8 @@ public class UpdateAutoSettingsCommand : IRequest<Result>
     public int MatchId { get; set; }
     public string TypeObject { get; set; }
     public bool IsApplyAll { get; set; }
-    public List<UpdateResultSettingItem> ResultSettings { get; set; }
-    public List<UpdateResultSettingItem> OldResultSettings { get; set; }
+    public List<UpdateResultSettingItem> ResultSettings { get; set; } = [];
+    public List<UpdateResultSettingItem> OldResultSettings { get; set; } = [];
 }
 
 
@@ -24,6 +24,7 @@ public class UpdateResultSettingItem
     public bool IsTraderRequired { get; set; }
     public byte MinProvider { get; set; }
     public List<Provider> Providers { get; set; } = [];
+    public bool IsApplyChildMatches { get; set; }
 
     public string PrimaryProvider
         => string.Join(",", Providers.Where(x => x.IsActive && x.Priority == ProviderPriority.Primary).Select(x => x.SourceId));

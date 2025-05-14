@@ -1,5 +1,4 @@
-﻿using Fanex.Settlement.ScaleOut.Services;
-using Settlement.Core.Constants;
+﻿using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.EventManagement.Services;
@@ -18,10 +17,9 @@ public class MatchServiceTests
     {
         matchResultDetailService = Substitute.For<IMatchResultDetailService>();
         var refDataService = Substitute.For<IRefDataService>();
-        var scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
         var newInfoMatchService = Substitute.For<NewInfoMatchService>();
 
-        service = new MatchServiceImp(refDataService, matchResultDetailService, newInfoMatchService, scaleOutSettleService);
+        service = new MatchServiceImp(refDataService, matchResultDetailService, newInfoMatchService);
     }
 
     [Fact]

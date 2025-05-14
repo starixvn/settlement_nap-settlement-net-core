@@ -4,6 +4,7 @@ using Fanex.NAP.Client;
 using Fanex.Settlement.ScaleOut.Models;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
+using MassTransit;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Constants;
@@ -25,21 +26,19 @@ public class CalculateServiceTests
 
     private readonly ICreateCriteriaService createCriteriaService;
 
-    private readonly CalculateServiceImp service;
-
     private readonly LogService logService;
-    private readonly XmlConvertService xmlConvertService;
-    private readonly INapSession currentSession;
-    private readonly IHttpContextAccessor httpContext;
+
+    private readonly CalculateServiceImp service;
 
     public CalculateServiceTests()
     {
         repository = Substitute.For<IDynamicRepository>();
         createCriteriaService = Substitute.For<ICreateCriteriaService>();
         scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
-        xmlConvertService = Substitute.For<XmlConvertService>();
-        currentSession = Substitute.For<INapSession>();
-        httpContext = Substitute.For<IHttpContextAccessor>();
+        var xmlConvertService = Substitute.For<XmlConvertService>();
+        var currentSession = Substitute.For<INapSession>();
+        var httpContext = Substitute.For<IHttpContextAccessor>();
+        var publishEndpoint = Substitute.For<IPublishEndpoint>();
 
         logService = Substitute.For<LogService>();
         var matchService = Substitute.For<IMatchService>();
@@ -50,7 +49,7 @@ public class CalculateServiceTests
         var appSettings = new AppSettingsKey { SiteDbServer = ["DB01", "DB02", "DB03"] };
         var appSettingsOptions = Options.Create(appSettings);
         service = new CalculateServiceImp(
-            mapper, repository, appSettingsOptions, createCriteriaService, scaleOutSettleService, logService, matchService, currentSession, httpContext, xmlConvertService);
+            mapper, repository, appSettingsOptions, createCriteriaService, scaleOutSettleService, logService, matchService, publishEndpoint, currentSession, httpContext, xmlConvertService);
     }
 
     [Theory]
@@ -211,6 +210,7 @@ public class CalculateServiceTests
         await scaleOutSettleService.Received(2).UpdateMatchInfo(Arg.Any<UpdateMatchInfoRequest>());
         await repository.Received(6).ExecuteAsync(Arg.Any<CalculateCriteria>());
     }
+
     [Theory]
     [InlineData(0, "", true)]
     [InlineData(1, "Error", false)]

@@ -1,0 +1,11 @@
+<div class="number-input-container">
+  <input
+  class="custom-number-input"
+    type="number"
+    [value]="currentValue"
+    [min]="min"
+    [max]="max"
+    [disabled]="disabled"
+    (input)="onInputChange($event)"
+  />
+</div>

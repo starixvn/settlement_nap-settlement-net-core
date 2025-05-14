@@ -9,12 +9,16 @@ import { RequestService } from './request.service';
 import { MatchDetail } from '../../fast-market/models';
 import { Icon } from '../../fast-market/constants';
 import { CalculationMatch, League } from '../models';
+import { HttpParams } from '@angular/common/http';
+import { AutoSettleSetting } from '../models/auto-settle-settings';
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class PopupService {
     constructor(private readonly dialogBoxService: DialogBoxService,
         private readonly handleActionService: HandleActionsService,
         private readonly requestService: RequestService) { }
+
     public popupLog(matchCode: string, fromDate: string, toDate: string) {
         const src = `/home/log?matchCode=${encodeURIComponent(matchCode)}&fromDate=${fromDate}&toDate=${toDate}&isShowMenu=false&productType=ALL`;
         const dialogData = new DialogDataIframe(Language.SettlementLog, src);
@@ -42,8 +46,8 @@ export class PopupService {
             }
 
             const matchDetail = await this.requestService.getMatchDetail(Number(match.matchId)) as MatchDetail;
-                match.enableFastMarket = _.includes(matchDetail.autoSettingIcon.match, Icon.yes)
-            });
+            match.enableFastMarket = _.includes(matchDetail.autoSettingIcon.match, Icon.yes)
+        });
     }
 
     public openAndHandlePopup(source: string, title: string, width: string, height: string, match: Match) {
@@ -99,6 +103,49 @@ export class PopupService {
                 this.handleActionService.updateAutoPayoutForMatch(league, _.isEqual(result.split(',')[1], 'true'));
             }
         });
+    }
+
+    openSoccerAutoSettings(league: League, match: CalculationMatch | null = null) : Observable<string> {
+        const uriParams = this.getParams(league, match);
+        const titleContent = match ? `${match.homeName} -VS - ${match.awayName}` : league.name;
+        const src = `/apps/soccer-auto-setting-league?${uriParams.toString()}&title=${titleContent}`;
+        const frameSrc = encodeURI(src);
+        const title = match ? Language.payout.titlePopup : Language.payout.titlePopupForLeague;
+        const dialogData = new DialogDataIframe(title, frameSrc);
+        
+        return this.dialogBoxService.popupHasResponse(dialogData, '500px', '270px');
+    }
+
+
+    private getParams(league: League, match: CalculationMatch | null = null) {
+        let uriParams = new HttpParams();
+
+        if (match) {
+            uriParams = uriParams
+                .set('matchId', match.matchId)
+                .set('leagueId', league.leagueId)
+                .set('matchCode', match.matchCode)
+                .set('isAutoPayoutForMatch', match.autoCalcSetting.isAutoPayoutForMatch)
+                .set('isDirectPayoutForMatch', match.autoCalcSetting.isDirectPayoutForMatch)
+                .set('enabledAutoRefundMatch', match.enabledAutoRefundMatch || false)
+                .set('refundWaitingTimeMatch', match.refundWaitingTimeMatch)
+                .set('directWaitingTimeMatch', match.directWaitingTimeMatch)
+                .set('typeObject', 'Match').set('pageType', 'SoccerAutoSettings');
+        } else {
+            uriParams = uriParams
+                .set('leagueId', league.leagueId)
+                .set('isAutoPayoutForLeague', league.autoCalcSetting.isAutoPayoutForLeague)
+                .set('isDirectPayoutForLeague', league.autoCalcSetting.isDirectPayoutForLeague)
+                .set('enabledAutoRefund', league.enabledAutoRefund || false)
+                .set('refundWaitingTime', league.refundWaitingTime)
+                .set('directWaitingTime', league.directWaitingTime)
+                .set('typeObject', 'League')
+                .set('pageType', 'SoccerAutoSettings');
+        }
+
+        // uriParams.set('pageType', 'SoccerAutoSettings');
+
+        return uriParams;
     }
 
     public openUpdateTime(league: League, isInstant: boolean) {
