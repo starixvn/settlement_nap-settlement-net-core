@@ -127,9 +127,9 @@ export class PopupService {
                 .set('matchCode', match.matchCode)
                 .set('isAutoPayoutForMatch', match.autoCalcSetting.isAutoPayoutForMatch)
                 .set('isDirectPayoutForMatch', match.autoCalcSetting.isDirectPayoutForMatch)
-                .set('enabledAutoRefundMatch', match.enabledAutoRefundMatch || false)
-                .set('refundWaitingTimeMatch', match.refundWaitingTimeMatch)
-                .set('directWaitingTimeMatch', match.directWaitingTimeMatch)
+                .set('enabledAutoRefundMatch', match.enabledAutoRefundMatch ?? league.enabledAutoRefund)
+                .set('refundWaitingTimeMatch', match.refundWaitingTimeMatch ?? league.refundWaitingTime)
+                .set('directWaitingTimeMatch', match.directWaitingTimeMatch ?? league.directWaitingTime)
                 .set('typeObject', 'Match').set('pageType', 'SoccerAutoSettings');
         } else {
             uriParams = uriParams

@@ -27,14 +27,18 @@ public class UpdateSoccerSettingHandler(
         }
         else if (directSetting.Enabled)
         {
+            // TODO
             var result = await UpdateResultSetting(command, AutoSettleType.AutoDirect);
             await UpdateLeagueTimeSetting(command, AutoSettleType.AutoDirect);
             await WriteLog(command, AutoSettleType.AutoDirect, result);
         }
         else
         {
-            var result = await UpdateResultSetting(command, AutoSettleType.AutoPayoutSoccer);
-            await WriteLog(command, AutoSettleType.AutoPayoutSoccer, result);
+            var resultAp = await UpdateResultSetting(command, AutoSettleType.AutoPayoutSoccer);
+            await WriteLog(command, AutoSettleType.AutoPayoutSoccer, resultAp);
+
+            var resultDir = await UpdateResultSetting(command, AutoSettleType.AutoDirect);
+            await WriteLog(command, AutoSettleType.AutoDirect, resultDir);
         }
 
         return await UpdateRefundSetting(command);
@@ -43,7 +47,7 @@ public class UpdateSoccerSettingHandler(
     private async Task<Result> UpdateRefundSetting(UpdateAutoSettingsCommand command)
     {
         var result = await UpdateLeagueAutoSettleSource(command, AutoSettleType.AutoRefund);
-        await WriteLog(command, AutoSettleType.AutoRefund, result);
+        await WriteLog(command, AutoSettleType.AutoRefund, result); //
 
         return result;
     }

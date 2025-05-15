@@ -15,11 +15,12 @@ export class AutoCalculateService {
         return label === 'OFF' ? 'OFF' : `<div>ON <div class='auto-type'>(${label})</div></div>`;
     }
 
-    public  getStatusAutoPayoutMatch(match: CalculationMatch): string {
+    public  getStatusAutoPayoutMatch(match: CalculationMatch, league: League): string {
         const { isAutoPayoutForMatch, isDirectPayoutForMatch } = match.autoCalcSetting;
         const { enabledAutoRefundMatch } = match;
-        console.log(enabledAutoRefundMatch);
-        const label = this.getStatusLabel(isAutoPayoutForMatch, isDirectPayoutForMatch, enabledAutoRefundMatch);
+        const { enabledAutoRefund } = league;
+        const isRefund = enabledAutoRefundMatch ?? enabledAutoRefund;
+        const label = this.getStatusLabel(isAutoPayoutForMatch, isDirectPayoutForMatch, isRefund);
         return this.getFormattedStatus(label);
     }
 

@@ -58,12 +58,12 @@ export class SoccerAutoSettingsComponent implements OnInit {
     this.typeObject = UrlHelper.getUrlParameter("typeObject") || "League";
 
     const tableHeadersConfig = {
-      Match: ["Auto Function", "Enabled", "Waiting Time"],
+      Match: ["Auto Function", "Enabled"],
       League: [
         "Auto Function",
         "Enabled",
         "Waiting Time",
-        "Apply to UnCal Match",
+        "Apply to Running Match",
       ],
     };
 

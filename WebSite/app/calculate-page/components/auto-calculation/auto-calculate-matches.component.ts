@@ -89,7 +89,7 @@ export class AutoCalculateMatchesComponent extends MatchesBaseComponent implemen
 
     public getStatusAutoPayout(league: League, match: CalculationMatch | null = null) {
         return match
-            ? this.autoCalculateService.getStatusAutoPayoutMatch(match)
+            ? this.autoCalculateService.getStatusAutoPayoutMatch(match, league)
             : this.autoCalculateService.getStatusAutoPayoutLeague(league);
     }
 
@@ -187,12 +187,14 @@ export class AutoCalculateMatchesComponent extends MatchesBaseComponent implemen
         }
         this.popupService.openSoccerAutoSettings(league, match)
             .subscribe(result => {
+               if(result) {
                 const setting = Object.assign(new AutoSettleSetting(), JSON.parse(result));
                 if (match) {
                     this.updateSettingsService.setAutoCalcSettingMatch(match, setting);
                 } else {
                     this.updateSettingsService.setAutoCalcSettingLeague(league, setting);
                 }
+               }
             });
     }
 

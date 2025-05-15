@@ -184,10 +184,10 @@ public class Match : BaseMatch
     public bool? EnabledAutoRefundMatch { get; set; }
 
     [Key("refundWaitingTimeMatch")]
-    public int RefundWaitingTimeMatch { get; set; }
+    public int? RefundWaitingTimeMatch { get; set; }
 
     [Key("directWaitingTimeMatch")]
-    public int DirectWaitingTimeMatch { get; set; }
+    public int? DirectWaitingTimeMatch { get; set; }
 
     public override bool Equals(object obj)
     {

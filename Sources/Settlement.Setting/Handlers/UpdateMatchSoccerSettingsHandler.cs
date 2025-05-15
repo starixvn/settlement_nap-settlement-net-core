@@ -40,7 +40,6 @@ public class UpdateMatchSoccerSettingsHandler
         else if (directSetting.Enabled)
         {
             await UpdateResultSetting(command, AutoSettleType.AutoDirect);
-            await UpdateSettleSource(command, AutoSettleType.AutoDirect);
             await WriteLog(command, AutoSettleType.AutoDirect);
         }
         else
@@ -81,8 +80,9 @@ public class UpdateMatchSoccerSettingsHandler
         {
             MatchId = command.MatchId,
             AutoType = (byte)settleType,
-            Main_WaitingTime = settings.WaitingTime,
-            Enable = settleType == AutoSettleType.AutoRefund ? settings.Enabled : null,
+            Main_WaitingTime = null,
+            //Enable = settleType == AutoSettleType.AutoRefund ? settings.Enabled : null,
+            Enable = settings.Enabled,
         };
 
         await dynamicRepository.ExecuteAsync(criteria);

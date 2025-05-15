@@ -19,8 +19,8 @@ export class CalculationMatch extends Match {
     isTraderConfirmFt: boolean;
     isTraderConfirmHt: boolean;
     moreScores: MoreScore;
-    enabledAutoRefundMatch: boolean;
-    refundWaitingTimeMatch: number;
+    enabledAutoRefundMatch: boolean | null;
+    refundWaitingTimeMatch: number | null;
     isAutoPayoutForMatch: boolean;
-    directWaitingTimeMatch: number;
+    directWaitingTimeMatch: number | null;
 }
