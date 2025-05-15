@@ -181,7 +181,6 @@ export class AutoCalculateMatchesComponent extends MatchesBaseComponent implemen
     }
 
     public openSoccerAutoSettings(league: League, match: CalculationMatch | null = null) {
-        console.log(league, match);
         const { canAutoPayout } = this.permission;
         if (!canAutoPayout) {
             return;

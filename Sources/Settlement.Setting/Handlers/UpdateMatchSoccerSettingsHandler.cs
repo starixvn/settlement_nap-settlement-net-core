@@ -40,7 +40,6 @@ public class UpdateMatchSoccerSettingsHandler
         else if (directSetting.Enabled)
         {
             await UpdateResultSetting(command, AutoSettleType.AutoDirect);
-            await UpdateSettleSource(command, AutoSettleType.AutoDirect);
             await WriteLog(command, AutoSettleType.AutoDirect);
         }
         else
