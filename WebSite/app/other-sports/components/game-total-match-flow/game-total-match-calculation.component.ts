@@ -18,7 +18,7 @@ import { GameTotalMatchVerificationService } from './game-total-match-verificati
 })
 export class GameTotalMatchCalculationComponent implements SportTemplate {
   @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
-  public isReadyMatch = true;
+  public isReadyMatch = false;
   public match: Match;
   public matchDetail: MatchDetail;
   public resultDetails: ResultDetail[];
@@ -52,6 +52,10 @@ export class GameTotalMatchCalculationComponent implements SportTemplate {
     this.originalTotalSet = _.cloneDeep(this.totalSets);
     this.gameTotalMatchService.resetHomeAway(this.matchDetail, this.resultDetails, this.permission.isLeader);
     this.mapValue();
+
+    if (!this.isReadyMatch) {
+      this.toastrService.error(Language.minimumPlayTimeNotReached);
+    }
   }
 
   public mapValue() {

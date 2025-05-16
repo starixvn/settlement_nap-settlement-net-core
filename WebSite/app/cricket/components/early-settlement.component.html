@@ -1,59 +1,54 @@
 ﻿<span toastContainer></span>
 <div class="padding" *ngIf="match">
-  <div *ngIf="isReadyMatch">
-    <match-detail [match]="matchClone" [isEarlySettlement]="true"></match-detail>
-    <ticket-count [ticketCounts]="match.ticketCounts"></ticket-count>
-    <div class="table-wrapper">
-      <div class="table-header">
-        <ng-template *ngTemplateOutlet="header"></ng-template>
-      </div>
+  <match-detail [match]="matchClone" [isEarlySettlement]="true"></match-detail>
+  <ticket-count [ticketCounts]="match.ticketCounts"></ticket-count>
+  <div class="table-wrapper">
+    <div class="table-header">
+      <ng-template *ngTemplateOutlet="header"></ng-template>
+    </div>
 
-      <div class="table-scroll">
-        <ng-template *ngTemplateOutlet="body"></ng-template>
-      </div>
-      <div class="footer">
-        <div>
-          <button *ngIf="permission.canCalculate" [ngClass]="{'button': true, 'button-disabled': isDisabledCalculate}"
-            (click)="calculate()" [disabled]="isDisabledCalculate">
-            Calculate
-          </button>
-          <button *ngIf="permission.canUncalculate"
-            [ngClass]="{'button': true, 'button-disabled': isDisabledUnCalculate}" (click)="unCalculate()"
-            [disabled]="isDisabledUnCalculate">
-            Uncalculate
-          </button>
-          <button *ngIf="permission.canUncalculate || permission.canCalculate" class="new-refund-button save-score"
-            [disabled]="isDisabledSaveScore" (click)="saveScore()">
-            Save Score</button>
-          <button class="new-refund-button save-trader-score" *ngIf="permission.isTrader"
-            [disabled]="isDisabledSaveScore" (click)="saveTraderScore()">Save Trader Score</button>
-        </div>
-      </div>
-      <div class="footer" *ngIf="permission.canRefund">
-        <div class="sub-footer">
-          <span>
-            <input type="checkbox" [(ngModel)]="isShowRefundButton" id="displayRefundButton" />&nbsp;<label
-              for="displayRefundButton">Show/Hide Refund button</label>
-          </span>
-          <button *ngIf="isShowRefundButton && permission.isLeader"
-            [ngClass]="{'btn btn-outline-primary button-confirmed': true}" [disabled]="isDisabledCalculate"
-            (click)="confirmRefund()">
-            Confirm/Undo-confirm Refund
-          </button>
-          <button *ngIf="isShowRefundButton"
-            [ngClass]="{'button new-refund-button': true, 'button-disabled': isDisabledCalculate, 'margin-left-button': permission.isLeader}" (click)="refund()"
-            [disabled]="isDisabledCalculate">
-            Refund
-          </button>
-        </div>
+    <div class="table-scroll">
+      <ng-template *ngTemplateOutlet="body"></ng-template>
+    </div>
+    <div class="footer">
+      <div>
+        <button *ngIf="permission.canCalculate" [ngClass]="{'button': true, 'button-disabled': isDisabledCalculate}"
+          (click)="calculate()" [disabled]="isDisabledCalculate">
+          Calculate
+        </button>
+        <button *ngIf="permission.canUncalculate" [ngClass]="{'button': true, 'button-disabled': isDisabledUnCalculate}"
+          (click)="unCalculate()" [disabled]="isDisabledUnCalculate">
+          Uncalculate
+        </button>
+        <button *ngIf="permission.canUncalculate || permission.canCalculate" class="new-refund-button save-score"
+          [disabled]="isDisabledSaveScore" (click)="saveScore()">
+          Save Score</button>
+        <button class="new-refund-button save-trader-score" *ngIf="permission.isTrader" [disabled]="isDisabledSaveScore"
+          (click)="saveTraderScore()">Save Trader Score</button>
       </div>
     </div>
-    <resettle-checker (proceedEvent)="onResettleCheckboxChange($event)" [checked]="isReSettledTickets">
-    </resettle-checker>
+    <div class="footer" *ngIf="permission.canRefund">
+      <div class="sub-footer">
+        <span>
+          <input type="checkbox" [(ngModel)]="isShowRefundButton" id="displayRefundButton" />&nbsp;<label
+            for="displayRefundButton">Show/Hide Refund button</label>
+        </span>
+        <button *ngIf="isShowRefundButton && permission.isLeader"
+          [ngClass]="{'btn btn-outline-primary button-confirmed': true}" [disabled]="isDisabledCalculate"
+          (click)="confirmRefund()">
+          Confirm/Undo-confirm Refund
+        </button>
+        <button *ngIf="isShowRefundButton"
+          [ngClass]="{'button new-refund-button': true, 'button-disabled': isDisabledCalculate, 'margin-left-button': permission.isLeader}"
+          (click)="refund()" [disabled]="isDisabledCalculate">
+          Refund
+        </button>
+      </div>
+    </div>
   </div>
-  <div *ngIf="!isReadyMatch">
-    <not-ready-match></not-ready-match>
-  </div>
+  <resettle-checker (proceedEvent)="onResettleCheckboxChange($event)" [checked]="isReSettledTickets">
+  </resettle-checker>
+
 </div>
 <ng-template #header>
   <table>
@@ -144,7 +139,7 @@
         </tr>
         <tr
           *ngFor="let item of map.resultDetail  | resultType: resultTypeSelected | ticketStatus: ticketStatusSelected | resultStatusPipe: resultStatusSelected"
-          [hidden]="map.collapsed" 
+          [hidden]="map.collapsed"
           [ngClass]="{'result-row': 1, 'mismatched': item.isScoreMismatched, 'confirmed-refund': permission.isLeader && item.resultSettingData.isConfirmedRefund}">
           <td class="align-left bettype-name">{{item.betTypeName}}</td>
           <td [ngClass]="item.ticketStatus.toLowerCase()" class="ticket-status">{{item.ticketStatus}}</td>
@@ -170,8 +165,8 @@
               </ng-container>
               <ng-container *ngSwitchCase="2">
                 <div [ngClass]="{'float-right': map.teamName !==''}">
-                  <div *ngIf="map.teamName !==''" class="team-name"
-                    [matTooltip]="getTextTooltip(map.teamName, 20)" matTooltipPosition="above">
+                  <div *ngIf="map.teamName !==''" class="team-name" [matTooltip]="getTextTooltip(map.teamName, 20)"
+                    matTooltipPosition="above">
                     {{map.teamName}}
                   </div>
                   <div class="team-result">
@@ -209,8 +204,7 @@
               </ng-container>
               <ng-container *ngSwitchCase="4">
                 <div [ngClass]="{'float-right': map.teamName !==''}">
-                  <div class="team-name" [matTooltip]="getTextTooltip(map.teamName, 20)"
-                    matTooltipPosition="above">
+                  <div class="team-name" [matTooltip]="getTextTooltip(map.teamName, 20)" matTooltipPosition="above">
                     {{map.teamName}}
                   </div>
                   <div class="team-result">
@@ -223,17 +217,19 @@
               <ng-container *ngSwitchCase="5">
                 <div [ngClass]="{'float-right': item.homeName!==''}">
                   <div *ngIf="item.homeName !=='' && item.awayName !== ''" class="team-name-dropdown">
-                    <span [matTooltip]="getTextTooltip(item.homeName, 10)"
-                      matTooltipPosition="above" class="home-away-name">{{item.homeName}}</span>
+                    <span [matTooltip]="getTextTooltip(item.homeName, 10)" matTooltipPosition="above"
+                      class="home-away-name">{{item.homeName}}</span>
                     <br>
-                    <span [matTooltip]="getTextTooltip(item.awayName, 7)"
-                      matTooltipPosition="above" class="home-away-name">vs. {{item.awayName}}</span>
+                    <span [matTooltip]="getTextTooltip(item.awayName, 7)" matTooltipPosition="above"
+                      class="home-away-name">vs. {{item.awayName}}</span>
                   </div>
                   <div class="team-result">
-                    <select [(ngModel)]="item.homeValue" [ngClass]="{'warning':item.isResultWarning, 'team-score-dropdown':item.homeName !== '' || item.awayName !== ''}"
+                    <select [(ngModel)]="item.homeValue"
+                      [ngClass]="{'warning':item.isResultWarning, 'team-score-dropdown':item.homeName !== '' || item.awayName !== ''}"
                       (ngModelChange)="checkResultIsMatched(item)" [disabled]="!item.checked || !permission.isLeader">
                       <option></option>
-                      <option *ngFor="let option of item.inputOptions" [value]="option.value">{{option.optionName}}</option>
+                      <option *ngFor="let option of item.inputOptions" [value]="option.value">{{option.optionName}}
+                      </option>
                       <option value="N">None</option>
                     </select>
                   </div>
@@ -241,8 +237,9 @@
               </ng-container>
               <ng-container *ngSwitchCase="6">
                 <div class="early-filter">
-                  <new-multiple-select (formValue)="onSelectPlayerResult($event, item)" [multipleSelect]="item.multipleResultSelect"
-                    [disabled]="!item.checked || !permission.isLeader" [ngClass]="{'multiple-select-warning':item.isResultWarning}">
+                  <new-multiple-select (formValue)="onSelectPlayerResult($event, item)"
+                    [multipleSelect]="item.multipleResultSelect" [disabled]="!item.checked || !permission.isLeader"
+                    [ngClass]="{'multiple-select-warning':item.isResultWarning}">
                   </new-multiple-select>
                 </div>
               </ng-container>
@@ -268,8 +265,8 @@
               </ng-container>
               <ng-container *ngSwitchCase="9">
                 <div [ngClass]="{'float-right': item.homeName !== ''}">
-                  <div *ngIf="item.homeName !==''" class="team-name"
-                    [matTooltip]="getTextTooltip(item.homeName, 20)" matTooltipPosition="above">
+                  <div *ngIf="item.homeName !==''" class="team-name" [matTooltip]="getTextTooltip(item.homeName, 20)"
+                    matTooltipPosition="above">
                     {{item.homeName}}
                   </div>
                   <div class="team-result">
@@ -330,8 +327,8 @@
                   </ng-container>
                   <ng-container *ngSwitchCase="6">
                     <div class="early-filter">
-                      <new-multiple-select (formValue)="onTraderSelectPlayerResult($event, item, result)" [multipleSelect]="result.multipleResultSelect"
-                        [disabled]="!item.checked">
+                      <new-multiple-select (formValue)="onTraderSelectPlayerResult($event, item, result)"
+                        [multipleSelect]="result.multipleResultSelect" [disabled]="!item.checked">
                       </new-multiple-select>
                     </div>
                   </ng-container>
@@ -445,17 +442,18 @@
                   </ng-container>
                   <ng-container *ngSwitchCase="5">
                     <select [(ngModel)]="result.homeValue" [disabled]="!item.checked"
-                      (ngModelChange)="verifyAndAutoFillResult(item)" [matTooltip]="getDropdownTooltip(result.homeValue, 6)"
-                      matTooltipPosition="above">
+                      (ngModelChange)="verifyAndAutoFillResult(item)"
+                      [matTooltip]="getDropdownTooltip(result.homeValue, 6)" matTooltipPosition="above">
                       <option></option>
-                      <option *ngFor="let option of item.inputOptions" [value]="option.value">{{option.optionName}}</option>
+                      <option *ngFor="let option of item.inputOptions" [value]="option.value">{{option.optionName}}
+                      </option>
                       <option value="N">None</option>
                     </select>
                   </ng-container>
                   <ng-container *ngSwitchCase="6">
                     <div class="early-filter">
-                      <new-multiple-select (formValue)="onOutsideSelectPlayerResult($event, item, result)" [multipleSelect]="result.multipleResultSelect"
-                        [disabled]="!item.checked">
+                      <new-multiple-select (formValue)="onOutsideSelectPlayerResult($event, item, result)"
+                        [multipleSelect]="result.multipleResultSelect" [disabled]="!item.checked">
                       </new-multiple-select>
                     </div>
                   </ng-container>

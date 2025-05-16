@@ -1,52 +1,50 @@
 <span toastContainer></span>
 <div *ngIf="match">
-  <div *ngIf="isReadyMatch">
-    <div class="padding">
-      <div class="league">
-        <div class="icon">
-        </div>
-        {{matchDetail.sportName.toUpperCase()}} - {{matchDetail.leagueName}}
+  <div class="padding">
+    <div class="league">
+      <div class="icon">
       </div>
-      <table>
-        <ng-template *ngTemplateOutlet="header"></ng-template>
-        <ng-template *ngTemplateOutlet="body"></ng-template>
-      </table>
-      <div *ngIf="permission.isLeader" class='result'>
-        <ng-template *ngTemplateOutlet="externalSource"></ng-template>
+      {{matchDetail.sportName.toUpperCase()}} - {{matchDetail.leagueName}}
+    </div>
+    <table>
+      <ng-template *ngTemplateOutlet="header"></ng-template>
+      <ng-template *ngTemplateOutlet="body"></ng-template>
+    </table>
+    <div *ngIf="permission.isLeader" class='result'>
+      <ng-template *ngTemplateOutlet="externalSource"></ng-template>
+    </div>
+    <!-- <div class="current-match">Current Match</div> -->
+    <div class="settle-current-match">
+      <ticket-count [ticketCounts]="match.ticketCounts"></ticket-count>
+      <div *ngIf="hedgeMatchDetail" class="hedge-match">
+        <input type="checkbox" [(ngModel)]="applyHedgeMatch" id="ApplyHedgeMatch" />
+        <label for="ApplyHedgeMatch">Apply for hedge match '<strong>{{hedgeMatchDetail.matchCode}}</strong>'
+          also.</label>
       </div>
-      <!-- <div class="current-match">Current Match</div> -->
-      <div class="settle-current-match">
-        <ticket-count [ticketCounts]="match.ticketCounts"></ticket-count>
-        <div *ngIf="hedgeMatchDetail" class="hedge-match">
-          <input type="checkbox" [(ngModel)]="applyHedgeMatch" id="ApplyHedgeMatch" />
-          <label for="ApplyHedgeMatch">Apply for hedge match '<strong>{{hedgeMatchDetail.matchCode}}</strong>'
-            also.</label>
-        </div>
-        <div class="calc-action">
-          <button class="button" *ngIf="permission.canCalculate" (click)="calculation()">Calculate
-            All</button>
-          <button class="button" *ngIf="permission.canUncalculate" (click)="uncalculation()">Uncalculate</button>
-        </div>
-        <div class="clear-both">
-          <resettle-checker (proceedEvent)="onResettleCheckboxChange($event)"
-            [checked]="isReSettledTickets"></resettle-checker>
-        </div>
+      <div class="calc-action">
+        <button class="button" *ngIf="permission.canCalculate" (click)="calculation()"
+          [disabled]="!isReadyMatch">Calculate
+          All</button>
+        <button class="button" *ngIf="permission.canUncalculate" (click)="uncalculation()"
+          [disabled]="!isReadyMatch">Uncalculate</button>
       </div>
-      <div *ngIf="match.childMatches.length > 0 && permission.canRefund">
-        <div class="child-match">
-          <span class="collapse-icon" [ngClass]="collapse ? 'collapsed' : ''"
-            (click)="collapseChildMatch()">&emsp;Related Matches</span>
-        </div>
-        <div *ngIf="!collapse">
-          <ng-template *ngTemplateOutlet="childMatch"></ng-template>
-        </div>
+      <div class="clear-both">
+        <resettle-checker (proceedEvent)="onResettleCheckboxChange($event)"
+          [checked]="isReSettledTickets"></resettle-checker>
+      </div>
+    </div>
+    <div *ngIf="match.childMatches.length > 0 && permission.canRefund">
+      <div class="child-match">
+        <span class="collapse-icon" [ngClass]="collapse ? 'collapsed' : ''" (click)="collapseChildMatch()">&emsp;Related
+          Matches</span>
+      </div>
+      <div *ngIf="!collapse">
+        <ng-template *ngTemplateOutlet="childMatch"></ng-template>
       </div>
     </div>
   </div>
-  <div *ngIf="!isReadyMatch">
-    <not-ready-match></not-ready-match>
-  </div>
 </div>
+
 <ng-template #header>
   <thead>
     <tr>
@@ -145,7 +143,7 @@
       <tr>
         <th colSpan="5">{{externalSourceName}}
           <span *ngIf="externalSourceName !== '-'" [ngClass]="{'icon-copy': true, 'disable-copy': !match.isScoreDirect}"
-              (click)="match.isScoreDirect ? copyScore() : ''"></span>
+            (click)="match.isScoreDirect ? copyScore() : ''"></span>
         </th>
       </tr>
       <tr>
@@ -158,9 +156,9 @@
       <tr>
         <td class="score" *ngFor="let game of providerResultDetailsView; let i= index; let last=last;"
           [ngClass]="[getConfirmedBackground(game, last)]">
-          <span [ngClass]="{'final-score' : last}"> {{game.homeValue  | result}} </span>
+          <span [ngClass]="{'final-score' : last}"> {{game.homeValue | result}} </span>
         </td>
-        
+
       </tr>
       <tr>
         <td class="score" *ngFor="let game of providerResultDetailsView; let i= index; let last=last;"

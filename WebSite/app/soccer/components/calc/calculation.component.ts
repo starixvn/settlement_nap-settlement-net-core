@@ -1,6 +1,6 @@
 import { FormsModule } from '@angular/forms';
 import { Component, inject, ViewChild } from '@angular/core';
-import { ToastContainerDirective, ToastContainerModule } from 'ngx-toastr';
+import { ToastContainerDirective, ToastContainerModule, ToastrService } from 'ngx-toastr';
 import { ChildMatch, FantasyRelatedMatch, HedgeMatchDetail, Match, MatchDetail, Score } from './models/match.model';
 import { Soccer } from '../soccer.model';
 import { RequestService } from './services/request.service';
@@ -65,7 +65,7 @@ export class CalculationComponent implements Soccer {
     childMatches: ChildMatch[];
     hedgeMatchDetail: HedgeMatchDetail;
     applyHedgeMatch: boolean;
-    isMatchReady: boolean;
+
     matchDetail: MatchDetail;
     dialogMessage = new ModalDialogMessage();
     constructor() {
@@ -75,13 +75,14 @@ export class CalculationComponent implements Soccer {
     private readonly requestService = inject(RequestService);
     private readonly verifyMatchService = inject(VerifyMatchService);
     #storage = inject(CalculateStorage);
+    #toastrService = inject(ToastrService);
 
     async getMatch(matchId: number, filterOver?: string) {
         this.#storage.setToastrOverlay(this.toastContainer);
         this.match = await this.requestService.getMatch(matchId);
         this.#storage.setMatch(this.match, filterOver);
         this.matchDetail = this.match.matchDetail;
-        this.isMatchReady = this.isReadyToSettle(this.matchDetail);
+        this.#storage.setIsReadyMatch(this.isReadyToSettle(this.matchDetail));
         this.childMatches = this.match.childMatches;
         this.hedgeMatchDetail = this.match.hedgeMatchDetail;
         this.applyHedgeMatch = this.#storage.isApplyHedgeMatch();
@@ -91,9 +92,14 @@ export class CalculationComponent implements Soccer {
             : []
         this.#storage.resetHomeAway();
 
+        if(!this.#storage.getIsReadyMatch()) {
+           this.#toastrService.error(Language.minimumPlayTimeNotReached);
+        }
+
     }
 
     private isReadyToSettle(matchDetail: MatchDetail) {
+
         return this.verifyMatchService.isCompletedMatch(matchDetail) || this.verifyMatchService.isInstantMatch(matchDetail)
             || this.verifyMatchService.isEndFirstHalf(matchDetail) || this.verifyMatchService.isPinGoalOrSaba(matchDetail);
     }

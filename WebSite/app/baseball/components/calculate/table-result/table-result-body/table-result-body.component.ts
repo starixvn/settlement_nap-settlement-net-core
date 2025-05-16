@@ -161,7 +161,7 @@ export class TableResultBodyComponent implements OnInit {
   }
 
   selectedOnMap(inning: ResultDetailBaseBall) {
-    this.#notifyService.clearError();
+    // this.#notifyService.clearError();
     this.#storage.onChange();
     inning.resultState = new ResultState(this.#resultRowState, inning);
 

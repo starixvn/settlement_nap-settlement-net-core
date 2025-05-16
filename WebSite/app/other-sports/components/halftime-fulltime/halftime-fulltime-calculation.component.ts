@@ -67,6 +67,10 @@ export class HalfTimeFullTimeCalculationComponent implements SportTemplate {
     this.verificationService.isScoreMismatched(this.halfTime, this.fullTime, this.matchDetail,
       this.halfTimeOriginal, this.fullTimeOriginal);
     this.isOTInvalid = this.verifyOTValue();
+
+    if (!this.isReadyMatch) {
+      this.toastrService.error(Language.minimumPlayTimeNotReached);
+    }
   }
 
   private setValue(otherSportsMatch: OtherSportsMatch) {

@@ -96,6 +96,7 @@ export class EarlySettlementComponent implements Soccer {
     public matchId = Number(UrlHelper.getUrlParameter('matchId'));
     public groupMap: GroupMap[];
     public isShowRefundButton = false;
+    public isReadyMatch = false;
 
     public ticketsStatusSelect = new MultipleSelect();
     public resultStatusSelect = new MultipleSelect();
@@ -155,9 +156,14 @@ export class EarlySettlementComponent implements Soccer {
         this.toastrService.overlayContainer = this.toastContainer;
         this.confirmationDialogMessage.title = Language.confirmationBox;
         this.match = await this.helperService.getMatch(matchId) as Match;
+        this.isReadyMatch = this.match.matchDetail.playTime >= 0;
         this.groupMap = this.helperService.getGroupBetType(this.resultDetails);
         this.generateConfirmRefundSettleDetermined();
         this.renderFilterSelect();
+
+        if (!this.isReadyMatch) {
+            this.toastrService.error(Language.minimumPlayTimeNotReached);
+        }
 
     }
 

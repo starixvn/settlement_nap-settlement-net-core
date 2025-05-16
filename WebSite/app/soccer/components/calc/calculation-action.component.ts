@@ -52,6 +52,8 @@ export class CalculationActionComponent implements OnInit {
 
   readonly resultSettledStatusIds = [ResultStatusId.AutoCompleted,ResultStatusId.ManualCompleted];
 
+  isReadyMatch = this.#storage.getIsReadyMatch();
+
   ngOnInit() {
     this.permission = this.#storage.getPermission();
     const { matchDetail } = this.#storage.match();
@@ -157,7 +159,7 @@ export class CalculationActionComponent implements OnInit {
   }
 
   scoreChanged(resultDetail: ResultDetail) {
-    this.#storage.clear();
+    this.isReadyMatch && this.#storage.clear();
     this.#storage.changeScore();
 
     const isHalfTime = resultDetail.resourceId === ResourceIds.halfTime;

@@ -31,7 +31,7 @@ import { BetStatusService } from "./betstatus.service";
 export class BandyCalculationComponent implements SportTemplate, OnInit {
   @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
   private readonly apiKey = 'bandy';
-  public isReadyMatch = true;
+  public isReadyMatch = false;
   public match: MatchAio;
   public matchDetail: MatchDetail;
 
@@ -97,6 +97,10 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
     this.isReadyMatch = this.isCompletedOrConfirmScore(this.matchDetail) || this.matchDetail.playTime >= KickOffTime.playTime;
 
     this.createProviderResource();
+
+    if(!this.isReadyMatch) {
+      this.toastrService.error(Language.minimumPlayTimeNotReached);
+    }
   }
 
   private createProviderResource() {

@@ -11,6 +11,7 @@ import { ItemsSelect, ResultSettingModel } from "../../../shared/models";
 import { BackgroundColor, SettlementStatusId, TicketStatusText } from '../../../shared/constants';
 import { Storage } from '../storage.service';
 import { IntervalBackgroundPipe } from "../../../shared/pipes/interval-background.pipe";
+import { KickOffTime } from "../../constants/kick-off-time.constant";
 
 @Injectable()
 export class EarlySettlementStorage implements Storage {
@@ -194,4 +195,8 @@ export class EarlySettlementStorage implements Storage {
   }
 
   getIsReSettledTickets = () => this.#isReSettledTickets;
+
+  isReadyMatch(): boolean {
+    return this.#match().matchDetail.playTime >= KickOffTime.playTime;
+  }
 }

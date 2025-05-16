@@ -1,603 +1,593 @@
 ﻿<span toastContainer></span>
 <div class="padding" *ngIf="match">
-    <div *ngIf="isReadyMatch">
-        <match-detail [match]="matchClone" [isEarlySettlement]="true"></match-detail>
-        <ticket-count [ticketCounts]="match.ticketCounts"></ticket-count>
+    <match-detail [match]="matchClone" [isEarlySettlement]="true"></match-detail>
+    <ticket-count [ticketCounts]="match.ticketCounts"></ticket-count>
 
-        <div class="table-wrapper">
-            <div class="table-header">
-                <table>
-                    <thead>
-                        <tr>
-                            <th rowspan="2" class="bettype-name">
-                                Result Type
-                            </th>
-                            <th rowspan="2" class="ticket-status">
-                                Ticket Status
-                                <div class="early-filter">
-                                    <new-multiple-select (formValue)="onSelectTicketsStatus($event)"
-                                        [multipleSelect]="ticketsStatusSelect"></new-multiple-select>
+    <div class="table-wrapper">
+        <div class="table-header">
+            <table>
+                <thead>
+                    <tr>
+                        <th rowspan="2" class="bettype-name">
+                            Result Type
+                        </th>
+                        <th rowspan="2" class="ticket-status">
+                            Ticket Status
+                            <div class="early-filter">
+                                <new-multiple-select (formValue)="onSelectTicketsStatus($event)"
+                                    [multipleSelect]="ticketsStatusSelect"></new-multiple-select>
+                            </div>
+                        </th>
+                        <th rowspan="2" class="final-result">
+                            Final Result
+                        </th>
+                        <th rowspan="2" class="map" *ngIf="permission.isLeader">
+                            Trader Result
+                        </th>
+                        <th [colSpan]="maxProviderCol" *ngIf="permission.isLeader">
+                            Provider Result
+                        </th>
+                        <th [colSpan]="outSideCount * 2">
+                            Outside Result
+                        </th>
+                        <th rowspan="2" class="result">
+                            Result Status
+                            <div class="early-filter">
+                                <new-multiple-select (formValue)="onSelectResultsStatus($event)"
+                                    [multipleSelect]="resultStatusSelect"></new-multiple-select>
+                            </div>
+                        </th>
+                        <th rowspan="2" class="select-proceed">
+                            Select to Proceed
+                        </th>
+                        <th rowspan="2" class="hold-result">
+                            Hold Result
+                        </th>
+                    </tr>
+                    <tr>
+                        <ng-container
+                            *ngFor=" let result of match.resultDetails[0].externalScores | slice:1; let i=index">
+                            <th class="map" *ngIf="i < maxProviderCol && permission.isLeader">
+                                <div class="outside-source-text" [matTooltip]="getTextTooltip(result.sourceName, 15)">
+                                    {{result.sourceName|externalSourceName}}
                                 </div>
                             </th>
-                            <th rowspan="2" class="final-result">
-                                Final Result
-                            </th>
-                            <th rowspan="2" class="map" *ngIf="permission.isLeader">
-                                Trader Result
-                            </th>
-                            <th [colSpan]="maxProviderCol" *ngIf="permission.isLeader">
-                                Provider Result
-                            </th>
-                            <th [colSpan]="outSideCount * 2">
-                                Outside Result
-                            </th>
-                            <th rowspan="2" class="result">
-                                Result Status
-                                <div class="early-filter">
-                                    <new-multiple-select (formValue)="onSelectResultsStatus($event)"
-                                        [multipleSelect]="resultStatusSelect"></new-multiple-select>
+                            <th class="map" *ngIf="i === maxProviderCol">
+                                <div class="outside-source-text">
+                                    {{result.sourceName}}
                                 </div>
                             </th>
-                            <th rowspan="2" class="select-proceed">
-                                Select to Proceed
+                            <th class="map" *ngIf="i > maxProviderCol">
+                                <div class="outside-source-text" [matTooltip]="getTextTooltip(result.sourceName, 15)">
+                                    <a href="{{result.remark|externalLink}}" target="_blank"
+                                        class="source-link">{{result.sourceName}}</a>
+                                </div>
                             </th>
-                            <th rowspan="2" class="hold-result">
-                                Hold Result
-                            </th>
-                        </tr>
-                        <tr>
-                            <ng-container
-                                *ngFor=" let result of match.resultDetails[0].externalScores | slice:1; let i=index">
-                                <th class="map" *ngIf="i < maxProviderCol && permission.isLeader">
-                                    <div class="outside-source-text"
-                                        [matTooltip]="getTextTooltip(result.sourceName, 15)">
-                                        {{result.sourceName|externalSourceName}}
-                                    </div>
-                                </th>
-                                <th class="map" *ngIf="i === maxProviderCol">
-                                    <div class="outside-source-text">
-                                        {{result.sourceName}}
-                                    </div>
-                                </th>
-                                <th class="map" *ngIf="i > maxProviderCol"  >
-                                    <div class="outside-source-text"
-                                        [matTooltip]="getTextTooltip(result.sourceName, 15)">
-                                        <a href="{{result.remark|externalLink}}" target="_blank"
-                                            class="source-link">{{result.sourceName}}</a>
-                                    </div>
-                                </th>
-                            </ng-container>
-                        </tr>
-                    </thead>
-                </table>
-            </div>
+                        </ng-container>
+                    </tr>
+                </thead>
+            </table>
+        </div>
 
-            <div class="table-scroll">
-                <table>
-                    <tbody>
-                        <ng-template ngFor let-map [ngForOf]="groupMap">
-                            <tr class="group-map">
-                                <td [colSpan]="permission.isLeader ? match.resultDetails[0].externalScores.length + 4 : match.resultDetails[0].externalScores.length"
-                                    (click)="onCollapsedClick(map)">
-                                    <span>{{map.collapsed?"+ ":"- "}}</span>
-                                    <span>{{map.groupName}}</span>
-                                </td>
-                                <td class="align-right">
-                                    <input type="checkbox" class="select-checkbox" [(ngModel)]="map.checked"
-                                        (ngModelChange)="onChangeGroupMap(map)"
-                                        [disabled]="map.collapsed || map.isHoldResult" />
-                                </td>
-                                <td class="hold-result">
-                                    <div [ngClass]="getResultSettingIcon(map.isHoldResult)"
-                                        (click)="changeSettingGroup(map)"></div>
-                                </td>
-                            </tr>
+        <div class="table-scroll">
+            <table>
+                <tbody>
+                    <ng-template ngFor let-map [ngForOf]="groupMap">
+                        <tr class="group-map">
+                            <td [colSpan]="permission.isLeader ? match.resultDetails[0].externalScores.length + 4 : match.resultDetails[0].externalScores.length"
+                                (click)="onCollapsedClick(map)">
+                                <span>{{map.collapsed?"+ ":"- "}}</span>
+                                <span>{{map.groupName}}</span>
+                            </td>
+                            <td class="align-right">
+                                <input type="checkbox" class="select-checkbox" [(ngModel)]="map.checked"
+                                    (ngModelChange)="onChangeGroupMap(map)"
+                                    [disabled]="map.collapsed || map.isHoldResult" />
+                            </td>
+                            <td class="hold-result">
+                                <div [ngClass]="getResultSettingIcon(map.isHoldResult)"
+                                    (click)="changeSettingGroup(map)"></div>
+                            </td>
+                        </tr>
 
-                            <tr *ngFor="let item of map.resultDetail | ticketStatus: ticketStatusSelected | resultStatusPipe: resultStatusSelected;"
-                                [hidden]="map.collapsed" class=""
-                                [ngClass]="{'result-row': 1, 'mismatched': item.isScoreMismatched, 'confirmed-refund': permission.isLeader && item.resultSettingData.isConfirmedRefund}">
-                                <td class="align-left bettype-name">{{item.betTypeName}}</td>
-                                <td class="ticket-status" [ngClass]="item.ticketStatus.toLowerCase()">
-                                    {{item.ticketStatus}}</td>
-                                <td class="final-result">
-                                    <ng-container [ngSwitch]="item.groupBetType">
-                                        <ng-container *ngSwitchCase="0">
-                                            <select [(ngModel)]="item.homeValue"
-                                                [ngClass]="{'warning':item.isResultWarning}"
-                                                [disabled]="!item.checked || !permission.isLeader"
-                                                (ngModelChange)="checkResultIsMatched(item)"
-                                                [matTooltip]="getDropdownTooltip(item.homeValue, 25)"
+                        <tr *ngFor="let item of map.resultDetail | ticketStatus: ticketStatusSelected | resultStatusPipe: resultStatusSelected;"
+                            [hidden]="map.collapsed" class=""
+                            [ngClass]="{'result-row': 1, 'mismatched': item.isScoreMismatched, 'confirmed-refund': permission.isLeader && item.resultSettingData.isConfirmedRefund}">
+                            <td class="align-left bettype-name">{{item.betTypeName}}</td>
+                            <td class="ticket-status" [ngClass]="item.ticketStatus.toLowerCase()">
+                                {{item.ticketStatus}}</td>
+                            <td class="final-result">
+                                <ng-container [ngSwitch]="item.groupBetType">
+                                    <ng-container *ngSwitchCase="0">
+                                        <select [(ngModel)]="item.homeValue"
+                                            [ngClass]="{'warning':item.isResultWarning}"
+                                            [disabled]="!item.checked || !permission.isLeader"
+                                            (ngModelChange)="checkResultIsMatched(item)"
+                                            [matTooltip]="getDropdownTooltip(item.homeValue, 25)"
+                                            matTooltipPosition="above">
+                                            <option></option>
+                                            <option value="H">{{match.matchDetail.homeName}}</option>
+                                            <option value="A">{{match.matchDetail.awayName}}</option>
+                                            <option value="N">None</option>
+                                        </select>
+                                    </ng-container>
+                                    <ng-container *ngSwitchCase="1">
+                                        <select [(ngModel)]="item.homeValue"
+                                            [ngClass]="{'warning':item.isResultWarning  }"
+                                            [disabled]="!item.checked || !permission.isLeader"
+                                            (ngModelChange)="checkResultIsMatched(item)"
+                                            [matTooltip]="getDropdownTooltip(item.homeValue, 25)"
+                                            matTooltipPosition="above">
+                                            <option></option>
+                                            <option value="H">{{match.matchDetail.homeName}}</option>
+                                            <option value="A">{{match.matchDetail.awayName}}</option>
+                                        </select>
+                                    </ng-container>
+                                    <ng-container *ngSwitchCase="2">
+                                        <select [(ngModel)]="item.homeValue"
+                                            [ngClass]="{'warning':item.isResultWarning}"
+                                            [disabled]="!item.checked || !permission.isLeader"
+                                            (ngModelChange)="checkResultIsMatched(item)"
+                                            [matTooltip]="getDropdownTooltip(item.homeValue, 25)"
+                                            matTooltipPosition="above">
+                                            <option></option>
+                                            <option value="H">{{match.matchDetail.homeName}}</option>
+                                            <option value="A">{{match.matchDetail.awayName}}</option>
+                                            <option value="D">Draw</option>
+                                        </select>
+                                    </ng-container>
+                                    <ng-container *ngSwitchCase="3">
+                                        <select [(ngModel)]="item.homeValue"
+                                            [ngClass]="{'warning':item.isResultWarning}"
+                                            [disabled]="!item.checked || !permission.isLeader"
+                                            (ngModelChange)="checkResultIsMatched(item)">
+                                            <option></option>
+                                            <option value="Y">Yes</option>
+                                            <option value="N">No</option>
+                                        </select>
+                                    </ng-container>
+                                    <ng-container *ngSwitchCase="4">
+                                        <div>
+                                            <div class="team-name"
+                                                [matTooltip]="getTextTooltip(match.matchDetail.homeName, 15)"
                                                 matTooltipPosition="above">
-                                                <option></option>
-                                                <option value="H">{{match.matchDetail.homeName}}</option>
-                                                <option value="A">{{match.matchDetail.awayName}}</option>
-                                                <option value="N">None</option>
-                                            </select>
-                                        </ng-container>
-                                        <ng-container *ngSwitchCase="1">
-                                            <select [(ngModel)]="item.homeValue"
-                                                [ngClass]="{'warning':item.isResultWarning  }"
-                                                [disabled]="!item.checked || !permission.isLeader"
-                                                (ngModelChange)="checkResultIsMatched(item)"
-                                                [matTooltip]="getDropdownTooltip(item.homeValue, 25)"
-                                                matTooltipPosition="above">
-                                                <option></option>
-                                                <option value="H">{{match.matchDetail.homeName}}</option>
-                                                <option value="A">{{match.matchDetail.awayName}}</option>
-                                            </select>
-                                        </ng-container>
-                                        <ng-container *ngSwitchCase="2">
-                                            <select [(ngModel)]="item.homeValue"
-                                                [ngClass]="{'warning':item.isResultWarning}"
-                                                [disabled]="!item.checked || !permission.isLeader"
-                                                (ngModelChange)="checkResultIsMatched(item)"
-                                                [matTooltip]="getDropdownTooltip(item.homeValue, 25)"
-                                                matTooltipPosition="above">
-                                                <option></option>
-                                                <option value="H">{{match.matchDetail.homeName}}</option>
-                                                <option value="A">{{match.matchDetail.awayName}}</option>
-                                                <option value="D">Draw</option>
-                                            </select>
-                                        </ng-container>
-                                        <ng-container *ngSwitchCase="3">
-                                            <select [(ngModel)]="item.homeValue"
-                                                [ngClass]="{'warning':item.isResultWarning}"
-                                                [disabled]="!item.checked || !permission.isLeader"
-                                                (ngModelChange)="checkResultIsMatched(item)">
-                                                <option></option>
-                                                <option value="Y">Yes</option>
-                                                <option value="N">No</option>
-                                            </select>
-                                        </ng-container>
-                                        <ng-container *ngSwitchCase="4">
-                                            <div>
-                                                <div class="team-name"
-                                                    [matTooltip]="getTextTooltip(match.matchDetail.homeName, 15)"
-                                                    matTooltipPosition="above">
-                                                    {{match.matchDetail.homeName}}
-                                                </div>
-                                                <div class="team-result">
-                                                    <input type="text" [maxlength]="getCoupleScoreMaxLength(item)"
-                                                        myOnlyInteger (change)="checkResultIsMatched(item)"
-                                                        [disabled]="!item.checked || !permission.isLeader"
-                                                        [(ngModel)]="item.homeValue" [ngClass]="{'warning':item.isResultWarning
+                                                {{match.matchDetail.homeName}}
+                                            </div>
+                                            <div class="team-result">
+                                                <input type="text" [maxlength]="getCoupleScoreMaxLength(item)"
+                                                    myOnlyInteger (change)="checkResultIsMatched(item)"
+                                                    [disabled]="!item.checked || !permission.isLeader"
+                                                    [(ngModel)]="item.homeValue" [ngClass]="{'warning':item.isResultWarning
                                                     && (item.homeValue===null || item.homeValue==='') }" />
-                                                </div>
                                             </div>
-                                            <div>
-                                                <div class="team-name"
-                                                    [matTooltip]="getTextTooltip(match.matchDetail.awayName, 15)"
-                                                    matTooltipPosition="above">
-                                                    {{match.matchDetail.awayName}}
-                                                </div>
-                                                <div class="team-result">
-                                                    <input type="text" [maxlength]="getCoupleScoreMaxLength(item)"
-                                                        myOnlyInteger (change)="checkResultIsMatched(item)"
-                                                        [disabled]="!item.checked || !permission.isLeader"
-                                                        [(ngModel)]="item.awayValue" [ngClass]="{'warning':item.isResultWarning
+                                        </div>
+                                        <div>
+                                            <div class="team-name"
+                                                [matTooltip]="getTextTooltip(match.matchDetail.awayName, 15)"
+                                                matTooltipPosition="above">
+                                                {{match.matchDetail.awayName}}
+                                            </div>
+                                            <div class="team-result">
+                                                <input type="text" [maxlength]="getCoupleScoreMaxLength(item)"
+                                                    myOnlyInteger (change)="checkResultIsMatched(item)"
+                                                    [disabled]="!item.checked || !permission.isLeader"
+                                                    [(ngModel)]="item.awayValue" [ngClass]="{'warning':item.isResultWarning
                                                         && (item.awayValue===null || item.awayValue==='') }" />
-                                                </div>
                                             </div>
-                                        </ng-container>
-                                        <ng-container *ngSwitchCase="5">
-                                            <div class="text-box-control">
-                                                <div>
-                                                    <input
-                                                        *ngIf="match.matchDetail.gameType === 1 && item.betType === '9090'; else positiveTimeOnly"
-                                                        type="text" maxlength="3" negativeInteger
+                                        </div>
+                                    </ng-container>
+                                    <ng-container *ngSwitchCase="5">
+                                        <div class="text-box-control">
+                                            <div>
+                                                <input
+                                                    *ngIf="match.matchDetail.gameType === 1 && item.betType === '9090'; else positiveTimeOnly"
+                                                    type="text" maxlength="3" negativeInteger
+                                                    [disabled]="!item.checked || !permission.isLeader"
+                                                    [(ngModel)]="item.homeValue" (change)="checkResultIsMatched(item)"
+                                                    (keyup)="changeNegativeMinute(item)" [ngClass]="{'warning': item.isResultWarning &&
+                                                        (item.homeValue===null || item.homeValue==='') }" />
+                                                <ng-template #positiveTimeOnly>
+                                                    <input type="text" maxlength="3" myOnlyInteger decimal="true"
                                                         [disabled]="!item.checked || !permission.isLeader"
                                                         [(ngModel)]="item.homeValue"
-                                                        (change)="checkResultIsMatched(item)"
-                                                        (keyup)="changeNegativeMinute(item)" [ngClass]="{'warning': item.isResultWarning &&
-                                                        (item.homeValue===null || item.homeValue==='') }" />
-                                                    <ng-template #positiveTimeOnly>
-                                                        <input type="text" maxlength="3" myOnlyInteger decimal="true"
-                                                            [disabled]="!item.checked || !permission.isLeader"
-                                                            [(ngModel)]="item.homeValue"
-                                                            (change)="checkResultIsMatched(item)" [ngClass]="{'warning': item.isResultWarning &&
+                                                        (change)="checkResultIsMatched(item)" [ngClass]="{'warning': item.isResultWarning &&
                                                             (item.homeValue===null || item.homeValue==='') }" />
-                                                    </ng-template>
-                                                </div>
-                                                <div class="line"></div>
-                                                <div>
-                                                    <input type="text" maxlength="2" myOnlyInteger decimal="true"
-                                                        [disabled]="!item.checked || !permission.isLeader"
-                                                        [(ngModel)]="item.awayValue"
-                                                        (change)="checkResultIsMatched(item)"
-                                                        (keyup)="changeSecond(item)"
-                                                        [ngClass]="{'warning':item.isDurationWarning || item.isResultWarning}" />
-                                                </div>
+                                                </ng-template>
+                                            </div>
+                                            <div class="line"></div>
+                                            <div>
+                                                <input type="text" maxlength="2" myOnlyInteger decimal="true"
+                                                    [disabled]="!item.checked || !permission.isLeader"
+                                                    [(ngModel)]="item.awayValue" (change)="checkResultIsMatched(item)"
+                                                    (keyup)="changeSecond(item)"
+                                                    [ngClass]="{'warning':item.isDurationWarning || item.isResultWarning}" />
+                                            </div>
+                                        </div>
+                                    </ng-container>
+                                    <ng-container *ngSwitchCase="6">
+                                        <select [(ngModel)]="item.homeValue"
+                                            [ngClass]="{'warning':item.isResultWarning}"
+                                            [disabled]="!item.checked || !permission.isLeader"
+                                            (ngModelChange)="checkResultIsMatched(item)">
+                                            <option></option>
+                                            <option value="M">Middle</option>
+                                            <option value="NM">Top or Bottom</option>
+                                            <option value="N">None</option>
+                                        </select>
+                                    </ng-container>
+                                    <ng-container *ngSwitchCase="7">
+                                        <input type="text" [maxlength]="3" myOnlyInteger
+                                            (change)="checkResultIsMatched(item)" class="single-input"
+                                            [disabled]="!item.checked || !permission.isLeader"
+                                            [(ngModel)]="item.homeValue" [ngClass]="{'warning':item.isResultWarning
+                                                    && (item.homeValue===null || item.homeValue==='') }" />
+                                    </ng-container>
+                                    <ng-container *ngSwitchCase="8">
+                                        <select [(ngModel)]="item.homeValue"
+                                            [ngClass]="{'warning':item.isResultWarning}"
+                                            [disabled]="!item.checked || !permission.isLeader"
+                                            (ngModelChange)="checkResultIsMatched(item)">
+                                            <option></option>
+                                            <option value="T">Top</option>
+                                            <option value="B">Bottom</option>
+                                            <option value="N">None</option>
+                                        </select>
+                                    </ng-container>
+                                    <ng-container *ngSwitchCase="9">
+                                        <select [(ngModel)]="item.homeValue"
+                                            [ngClass]="{'warning':item.isResultWarning}"
+                                            [disabled]="!item.checked || !permission.isLeader"
+                                            (ngModelChange)="checkResultIsMatched(item)">
+                                            <option></option>
+                                            <option value="T">Top</option>
+                                            <option value="NT">Middle or Bottom</option>
+                                            <option value="N">None</option>
+                                        </select>
+                                    </ng-container>
+                                    <ng-container *ngSwitchCase="10">
+                                        <select [(ngModel)]="item.homeValue"
+                                            [ngClass]="{'warning':item.isResultWarning}"
+                                            [disabled]="!item.checked || !permission.isLeader"
+                                            (ngModelChange)="checkResultIsMatched(item)">
+                                            <option></option>
+                                            <option value="B">Bottom</option>
+                                            <option value="NB">Top or Middle</option>
+                                            <option value="N">None</option>
+                                        </select>
+                                    </ng-container>
+                                    <ng-container *ngSwitchCase="11">
+                                        <select [(ngModel)]="item.homeValue"
+                                            [ngClass]="{'warning':item.isResultWarning}"
+                                            [disabled]="!item.checked || !permission.isLeader"
+                                            (ngModelChange)="checkResultIsMatched(item)">
+                                            <option></option>
+                                            <option value="O">Overlord</option>
+                                            <option value="T">Tyrant</option>
+                                            <option value="N">None</option>
+                                        </select>
+                                    </ng-container>
+                                    <ng-container *ngSwitchCase="12">
+                                        <select [(ngModel)]="item.homeValue"
+                                            [ngClass]="{'warning':item.isResultWarning}"
+                                            [disabled]="!item.checked || !permission.isLeader"
+                                            (ngModelChange)="checkResultIsMatched(item)">
+                                            <option></option>
+                                            <option value="T">Tyrant</option>
+                                            <option value="NT">Overlord or Middle</option>
+                                            <option value="N">None</option>
+                                        </select>
+                                    </ng-container>
+                                    <ng-container *ngSwitchCase="13">
+                                        <select [(ngModel)]="item.homeValue"
+                                            [ngClass]="{'warning':item.isResultWarning}"
+                                            [disabled]="!item.checked || !permission.isLeader"
+                                            (ngModelChange)="checkResultIsMatched(item)">
+                                            <option></option>
+                                            <option value="Y">Yes</option>
+                                            <option value="N">No</option>
+                                            <option value="NONE">None</option>
+                                        </select>
+                                    </ng-container>
+                                </ng-container>
+                            </td>
+
+                            <ng-container *ngFor="let result of item.externalScores; let x=index">
+                                <td *ngIf="x < (maxProviderCol +1) && permission.isLeader" class="map">
+                                    <ng-container [ngSwitch]="item.groupBetType">
+                                        <ng-container *ngSwitchCase="0">
+                                            <div class="outside-source-text"
+                                                [matTooltip]="getTextTooltip(result.homeName, 13)"
+                                                matTooltipPosition="above">
+                                                {{result.homeName}}
                                             </div>
                                         </ng-container>
+                                        <ng-container *ngSwitchCase="1">
+                                            <div class="outside-source-text"
+                                                [matTooltip]="getTextTooltip(result.homeName, 13)"
+                                                matTooltipPosition="above">
+                                                {{result.homeName}}
+                                            </div>
+                                        </ng-container>
+                                        <ng-container *ngSwitchCase="2">
+                                            <div class="outside-source-text"
+                                                [matTooltip]="getTextTooltip(result.homeName, 13)"
+                                                matTooltipPosition="above">
+                                                {{result.homeName}}
+                                            </div>
+                                        </ng-container>
+                                        <ng-container *ngSwitchCase="3">
+                                            <div class="outside-source-text">
+                                                {{result.homeName}}
+                                            </div>
+                                        </ng-container>
+                                        <ng-container *ngSwitchCase="4">
+                                            <div>{{result.homeValue | resultByTeamName}}</div>
+                                            <div>{{result.awayValue | resultByTeamName}}</div>
+                                        </ng-container>
+                                        <ng-container *ngSwitchCase="5">
+                                            <div *ngIf="result.homeValue && result.awayValue; else emptyTimeResult">
+                                                {{result.homeValue}}:{{result.awayValue}}</div>
+                                            <ng-template #emptyTimeResult>
+                                                <div>-</div>
+                                            </ng-template>
+                                        </ng-container>
                                         <ng-container *ngSwitchCase="6">
-                                            <select [(ngModel)]="item.homeValue"
-                                                [ngClass]="{'warning':item.isResultWarning}"
-                                                [disabled]="!item.checked || !permission.isLeader"
-                                                (ngModelChange)="checkResultIsMatched(item)">
-                                                <option></option>
-                                                <option value="M">Middle</option>
-                                                <option value="NM">Top or Bottom</option>
-                                                <option value="N">None</option>
-                                            </select>
+                                            <div class="outside-source-text">
+                                                {{result.homeName}}
+                                            </div>
                                         </ng-container>
                                         <ng-container *ngSwitchCase="7">
-                                            <input type="text" [maxlength]="3" myOnlyInteger
-                                                (change)="checkResultIsMatched(item)" class="single-input"
-                                                [disabled]="!item.checked || !permission.isLeader"
-                                                [(ngModel)]="item.homeValue" [ngClass]="{'warning':item.isResultWarning
-                                                    && (item.homeValue===null || item.homeValue==='') }" />
+                                            <div class="outside-source-text">
+                                                {{result.homeValue}}
+                                            </div>
                                         </ng-container>
                                         <ng-container *ngSwitchCase="8">
-                                            <select [(ngModel)]="item.homeValue"
-                                                [ngClass]="{'warning':item.isResultWarning}"
-                                                [disabled]="!item.checked || !permission.isLeader"
-                                                (ngModelChange)="checkResultIsMatched(item)">
-                                                <option></option>
-                                                <option value="T">Top</option>
-                                                <option value="B">Bottom</option>
-                                                <option value="N">None</option>
-                                            </select>
+                                            <div class="outside-source-text">
+                                                {{result.homeName}}
+                                            </div>
                                         </ng-container>
                                         <ng-container *ngSwitchCase="9">
-                                            <select [(ngModel)]="item.homeValue"
-                                                [ngClass]="{'warning':item.isResultWarning}"
-                                                [disabled]="!item.checked || !permission.isLeader"
-                                                (ngModelChange)="checkResultIsMatched(item)">
-                                                <option></option>
-                                                <option value="T">Top</option>
-                                                <option value="NT">Middle or Bottom</option>
-                                                <option value="N">None</option>
-                                            </select>
+                                            <div class="outside-source-text">
+                                                {{result.homeName}}
+                                            </div>
                                         </ng-container>
                                         <ng-container *ngSwitchCase="10">
-                                            <select [(ngModel)]="item.homeValue"
-                                                [ngClass]="{'warning':item.isResultWarning}"
-                                                [disabled]="!item.checked || !permission.isLeader"
-                                                (ngModelChange)="checkResultIsMatched(item)">
-                                                <option></option>
-                                                <option value="B">Bottom</option>
-                                                <option value="NB">Top or Middle</option>
-                                                <option value="N">None</option>
-                                            </select>
+                                            <div class="outside-source-text">
+                                                {{result.homeName}}
+                                            </div>
                                         </ng-container>
                                         <ng-container *ngSwitchCase="11">
-                                            <select [(ngModel)]="item.homeValue"
-                                                [ngClass]="{'warning':item.isResultWarning}"
-                                                [disabled]="!item.checked || !permission.isLeader"
-                                                (ngModelChange)="checkResultIsMatched(item)">
-                                                <option></option>
-                                                <option value="O">Overlord</option>
-                                                <option value="T">Tyrant</option>
-                                                <option value="N">None</option>
-                                            </select>
+                                            <div class="outside-source-text">
+                                                {{result.homeName}}
+                                            </div>
                                         </ng-container>
                                         <ng-container *ngSwitchCase="12">
-                                            <select [(ngModel)]="item.homeValue"
-                                                [ngClass]="{'warning':item.isResultWarning}"
-                                                [disabled]="!item.checked || !permission.isLeader"
-                                                (ngModelChange)="checkResultIsMatched(item)">
-                                                <option></option>
-                                                <option value="T">Tyrant</option>
-                                                <option value="NT">Overlord or Middle</option>
-                                                <option value="N">None</option>
-                                            </select>
+                                            <div class="outside-source-text">
+                                                {{result.homeName}}
+                                            </div>
                                         </ng-container>
                                         <ng-container *ngSwitchCase="13">
-                                            <select [(ngModel)]="item.homeValue"
-                                                [ngClass]="{'warning':item.isResultWarning}"
-                                                [disabled]="!item.checked || !permission.isLeader"
-                                                (ngModelChange)="checkResultIsMatched(item)">
-                                                <option></option>
-                                                <option value="Y">Yes</option>
-                                                <option value="N">No</option>
-                                                <option value="NONE">None</option>
-                                            </select>
+                                            <div class="outside-source-text">
+                                                {{result.homeName}}
+                                            </div>
                                         </ng-container>
                                     </ng-container>
                                 </td>
-
-                                <ng-container *ngFor="let result of item.externalScores; let x=index">
-                                    <td *ngIf="x < (maxProviderCol +1) && permission.isLeader" class="map">
+                                <ng-container *ngIf="x >= (maxProviderCol +1)">
+                                    <td class="map"
+                                        [ngClass]="{'striped': x % 2 === 0, 'can-settle': canSettleResult(item)}">
                                         <ng-container [ngSwitch]="item.groupBetType">
                                             <ng-container *ngSwitchCase="0">
-                                                <div class="outside-source-text"
-                                                    [matTooltip]="getTextTooltip(result.homeName, 13)"
+                                                <select [(ngModel)]="result.homeValue" [disabled]="!item.checked"
+                                                    (ngModelChange)="verifyAndAutoFillResult(item)"
+                                                    [matTooltip]="getDropdownTooltip(result.homeValue, 9)"
                                                     matTooltipPosition="above">
-                                                    {{result.homeName}}
-                                                </div>
+                                                    <option></option>
+                                                    <option value="H">{{match.matchDetail.homeName}}</option>
+                                                    <option value="A">{{match.matchDetail.awayName}}</option>
+                                                    <option value="N">None</option>
+                                                </select>
                                             </ng-container>
                                             <ng-container *ngSwitchCase="1">
-                                                <div class="outside-source-text"
-                                                    [matTooltip]="getTextTooltip(result.homeName, 13)"
+                                                <select [(ngModel)]="result.homeValue" [disabled]="!item.checked"
+                                                    (ngModelChange)="verifyAndAutoFillResult(item)"
+                                                    [matTooltip]="getDropdownTooltip(result.homeValue, 9)"
                                                     matTooltipPosition="above">
-                                                    {{result.homeName}}
-                                                </div>
+                                                    <option></option>
+                                                    <option value="H">{{match.matchDetail.homeName}}</option>
+                                                    <option value="A">{{match.matchDetail.awayName}}</option>
+                                                </select>
                                             </ng-container>
                                             <ng-container *ngSwitchCase="2">
-                                                <div class="outside-source-text"
-                                                    [matTooltip]="getTextTooltip(result.homeName, 13)"
+                                                <select [(ngModel)]="result.homeValue" [disabled]="!item.checked"
+                                                    (ngModelChange)="verifyAndAutoFillResult(item)"
+                                                    [matTooltip]="getDropdownTooltip(result.homeValue, 9)"
                                                     matTooltipPosition="above">
-                                                    {{result.homeName}}
-                                                </div>
+                                                    <option></option>
+                                                    <option value="H">{{match.matchDetail.homeName}}</option>
+                                                    <option value="A">{{match.matchDetail.awayName}}</option>
+                                                    <option value="D">Draw</option>
+                                                </select>
                                             </ng-container>
                                             <ng-container *ngSwitchCase="3">
-                                                <div class="outside-source-text">
-                                                    {{result.homeName}}
-                                                </div>
+                                                <select [(ngModel)]="result.homeValue" [disabled]="!item.checked"
+                                                    (ngModelChange)="verifyAndAutoFillResult(item)">
+                                                    <option></option>
+                                                    <option value="Y">Yes</option>
+                                                    <option value="N">No</option>
+                                                </select>
                                             </ng-container>
                                             <ng-container *ngSwitchCase="4">
-                                                <div>{{result.homeValue | resultByTeamName}}</div>
-                                                <div>{{result.awayValue | resultByTeamName}}</div>
+                                                <div class="score">
+                                                    <input type="text" maxlength="getCoupleScoreMaxLength(item)"
+                                                        myOnlyInteger (change)="verifyAndAutoFillResult(item)"
+                                                        [disabled]="!item.checked" [(ngModel)]="result.homeValue" />
+                                                </div>
+                                                <div class="score">
+                                                    <input type="text" maxlength="getCoupleScoreMaxLength(item)"
+                                                        myOnlyInteger (change)="verifyAndAutoFillResult(item)"
+                                                        [disabled]="!item.checked" [(ngModel)]="result.awayValue" />
+                                                </div>
                                             </ng-container>
                                             <ng-container *ngSwitchCase="5">
-                                                <div *ngIf="result.homeValue && result.awayValue; else emptyTimeResult">
-                                                    {{result.homeValue}}:{{result.awayValue}}</div>
-                                                <ng-template #emptyTimeResult>
-                                                    <div>-</div>
-                                                </ng-template>
-                                            </ng-container>
-                                            <ng-container *ngSwitchCase="6">
-                                                <div class="outside-source-text">
-                                                    {{result.homeName}}
-                                                </div>
-                                            </ng-container>
-                                            <ng-container *ngSwitchCase="7">
-                                                <div class="outside-source-text">
-                                                    {{result.homeValue}}
-                                                </div>
-                                            </ng-container>
-                                            <ng-container *ngSwitchCase="8">
-                                                <div class="outside-source-text">
-                                                    {{result.homeName}}
-                                                </div>
-                                            </ng-container>
-                                            <ng-container *ngSwitchCase="9">
-                                                <div class="outside-source-text">
-                                                    {{result.homeName}}
-                                                </div>
-                                            </ng-container>
-                                            <ng-container *ngSwitchCase="10">
-                                                <div class="outside-source-text">
-                                                    {{result.homeName}}
-                                                </div>
-                                            </ng-container>
-                                            <ng-container *ngSwitchCase="11">
-                                                <div class="outside-source-text">
-                                                    {{result.homeName}}
-                                                </div>
-                                            </ng-container>
-                                            <ng-container *ngSwitchCase="12">
-                                                <div class="outside-source-text">
-                                                    {{result.homeName}}
-                                                </div>
-                                            </ng-container>
-                                            <ng-container *ngSwitchCase="13">
-                                                <div class="outside-source-text">
-                                                    {{result.homeName}}
-                                                </div>
-                                            </ng-container>
-                                        </ng-container>
-                                    </td>
-                                    <ng-container *ngIf="x >= (maxProviderCol +1)">
-                                        <td class="map"
-                                            [ngClass]="{'striped': x % 2 === 0, 'can-settle': canSettleResult(item)}">
-                                            <ng-container [ngSwitch]="item.groupBetType">
-                                                <ng-container *ngSwitchCase="0">
-                                                    <select [(ngModel)]="result.homeValue" [disabled]="!item.checked"
-                                                        (ngModelChange)="verifyAndAutoFillResult(item)"
-                                                        [matTooltip]="getDropdownTooltip(result.homeValue, 9)"
-                                                        matTooltipPosition="above">
-                                                        <option></option>
-                                                        <option value="H">{{match.matchDetail.homeName}}</option>
-                                                        <option value="A">{{match.matchDetail.awayName}}</option>
-                                                        <option value="N">None</option>
-                                                    </select>
-                                                </ng-container>
-                                                <ng-container *ngSwitchCase="1">
-                                                    <select [(ngModel)]="result.homeValue" [disabled]="!item.checked"
-                                                        (ngModelChange)="verifyAndAutoFillResult(item)"
-                                                        [matTooltip]="getDropdownTooltip(result.homeValue, 9)"
-                                                        matTooltipPosition="above">
-                                                        <option></option>
-                                                        <option value="H">{{match.matchDetail.homeName}}</option>
-                                                        <option value="A">{{match.matchDetail.awayName}}</option>
-                                                    </select>
-                                                </ng-container>
-                                                <ng-container *ngSwitchCase="2">
-                                                    <select [(ngModel)]="result.homeValue" [disabled]="!item.checked"
-                                                        (ngModelChange)="verifyAndAutoFillResult(item)"
-                                                        [matTooltip]="getDropdownTooltip(result.homeValue, 9)"
-                                                        matTooltipPosition="above">
-                                                        <option></option>
-                                                        <option value="H">{{match.matchDetail.homeName}}</option>
-                                                        <option value="A">{{match.matchDetail.awayName}}</option>
-                                                        <option value="D">Draw</option>
-                                                    </select>
-                                                </ng-container>
-                                                <ng-container *ngSwitchCase="3">
-                                                    <select [(ngModel)]="result.homeValue" [disabled]="!item.checked"
-                                                        (ngModelChange)="verifyAndAutoFillResult(item)">
-                                                        <option></option>
-                                                        <option value="Y">Yes</option>
-                                                        <option value="N">No</option>
-                                                    </select>
-                                                </ng-container>
-                                                <ng-container *ngSwitchCase="4">
-                                                    <div class="score">
-                                                        <input type="text" maxlength="getCoupleScoreMaxLength(item)"
-                                                            myOnlyInteger (change)="verifyAndAutoFillResult(item)"
+                                                <div class="text-box-control">
+                                                    <div>
+                                                        <input
+                                                            *ngIf="match.matchDetail.gameType === 1 && item.betType === '9090'; else positiveOutsideTimeOnly"
+                                                            type="text" maxlength="3" negativeInteger
+                                                            (keyup)="changeNegativeMinute(result)"
+                                                            (change)="verifyAndAutoFillResult(item)"
                                                             [disabled]="!item.checked" [(ngModel)]="result.homeValue" />
-                                                    </div>
-                                                    <div class="score">
-                                                        <input type="text" maxlength="getCoupleScoreMaxLength(item)"
-                                                            myOnlyInteger (change)="verifyAndAutoFillResult(item)"
-                                                            [disabled]="!item.checked" [(ngModel)]="result.awayValue" />
-                                                    </div>
-                                                </ng-container>
-                                                <ng-container *ngSwitchCase="5">
-                                                    <div class="text-box-control">
-                                                        <div>
-                                                            <input
-                                                                *ngIf="match.matchDetail.gameType === 1 && item.betType === '9090'; else positiveOutsideTimeOnly"
-                                                                type="text" maxlength="3" negativeInteger
-                                                                (keyup)="changeNegativeMinute(result)"
+                                                        <ng-template #positiveOutsideTimeOnly>
+                                                            <input type="text" maxlength="3" myOnlyInteger
                                                                 (change)="verifyAndAutoFillResult(item)"
                                                                 [disabled]="!item.checked"
                                                                 [(ngModel)]="result.homeValue" />
-                                                            <ng-template #positiveOutsideTimeOnly>
-                                                                <input type="text" maxlength="3" myOnlyInteger
-                                                                    (change)="verifyAndAutoFillResult(item)"
-                                                                    [disabled]="!item.checked"
-                                                                    [(ngModel)]="result.homeValue" />
-                                                            </ng-template>
-                                                        </div>
-                                                        <div class="line"></div>
-                                                        <div>
-                                                            <input type="text" maxlength="2" myOnlyInteger
-                                                                (change)="verifyAndAutoFillResult(item)"
-                                                                (keyup)="changeSecond(result)"
-                                                                [disabled]="!item.checked"
-                                                                [(ngModel)]="result.awayValue" />
-                                                        </div>
+                                                        </ng-template>
                                                     </div>
-                                                </ng-container>
-                                                <ng-container *ngSwitchCase="6">
-                                                    <select [(ngModel)]="result.homeValue" [disabled]="!item.checked"
-                                                        (ngModelChange)="verifyAndAutoFillResult(item)">
-                                                        <option></option>
-                                                        <option value="M">Middle</option>
-                                                        <option value="NM">Top or Bottom</option>
-                                                        <option value="N">None</option>
-                                                    </select>
-                                                </ng-container>
-                                                <ng-container *ngSwitchCase="7">
-                                                    <div class="score">
-                                                        <input type="text" maxlength="3" myOnlyInteger
+                                                    <div class="line"></div>
+                                                    <div>
+                                                        <input type="text" maxlength="2" myOnlyInteger
                                                             (change)="verifyAndAutoFillResult(item)"
-                                                            [disabled]="!item.checked" [(ngModel)]="result.homeValue" />
+                                                            (keyup)="changeSecond(result)" [disabled]="!item.checked"
+                                                            [(ngModel)]="result.awayValue" />
                                                     </div>
-                                                </ng-container>
-                                                <ng-container *ngSwitchCase="8">
-                                                    <select [(ngModel)]="result.homeValue" [disabled]="!item.checked"
-                                                        (ngModelChange)="verifyAndAutoFillResult(item)">
-                                                        <option></option>
-                                                        <option value="T">Top</option>
-                                                        <option value="B">Bottom</option>
-                                                        <option value="N">None</option>
-                                                    </select>
-                                                </ng-container>
-                                                <ng-container *ngSwitchCase="9">
-                                                    <select [(ngModel)]="result.homeValue" [disabled]="!item.checked"
-                                                        (ngModelChange)="verifyAndAutoFillResult(item)">
-                                                        <option></option>
-                                                        <option value="T">Top</option>
-                                                        <option value="NT">Middle or Bottom</option>
-                                                        <option value="N">None</option>
-                                                    </select>
-                                                </ng-container>
-                                                <ng-container *ngSwitchCase="10">
-                                                    <select [(ngModel)]="result.homeValue" [disabled]="!item.checked"
-                                                        (ngModelChange)="verifyAndAutoFillResult(item)">
-                                                        <option></option>
-                                                        <option value="B">Bottom</option>
-                                                        <option value="NB">Top or Middle</option>
-                                                        <option value="N">None</option>
-                                                    </select>
-                                                </ng-container>
-                                                <ng-container *ngSwitchCase="11">
-                                                    <select [(ngModel)]="result.homeValue" [disabled]="!item.checked"
-                                                        (ngModelChange)="verifyAndAutoFillResult(item)">
-                                                        <option></option>
-                                                        <option value="O">Overlord</option>
-                                                        <option value="T">Tyrant</option>
-                                                        <option value="N">None</option>
-                                                    </select>
-                                                </ng-container>
-                                                <ng-container *ngSwitchCase="12">
-                                                    <select [(ngModel)]="result.homeValue" [disabled]="!item.checked"
-                                                        (ngModelChange)="verifyAndAutoFillResult(item)">
-                                                        <option></option>
-                                                        <option value="T">Tyrant</option>
-                                                        <option value="NT">Overlord or Middle</option>
-                                                        <option value="N">None</option>
-                                                    </select>
-                                                </ng-container>
-                                                <ng-container *ngSwitchCase="13">
-                                                    <select [(ngModel)]="result.homeValue" [disabled]="!item.checked"
-                                                        (ngModelChange)="verifyAndAutoFillResult(item)">
-                                                        <option></option>
-                                                        <option value="Y">Yes</option>
-                                                        <option value="N">No</option>
-                                                        <option value="NONE">None</option>
-                                                    </select>
-                                                </ng-container>
+                                                </div>
                                             </ng-container>
-                                        </td>
-                                    </ng-container>
+                                            <ng-container *ngSwitchCase="6">
+                                                <select [(ngModel)]="result.homeValue" [disabled]="!item.checked"
+                                                    (ngModelChange)="verifyAndAutoFillResult(item)">
+                                                    <option></option>
+                                                    <option value="M">Middle</option>
+                                                    <option value="NM">Top or Bottom</option>
+                                                    <option value="N">None</option>
+                                                </select>
+                                            </ng-container>
+                                            <ng-container *ngSwitchCase="7">
+                                                <div class="score">
+                                                    <input type="text" maxlength="3" myOnlyInteger
+                                                        (change)="verifyAndAutoFillResult(item)"
+                                                        [disabled]="!item.checked" [(ngModel)]="result.homeValue" />
+                                                </div>
+                                            </ng-container>
+                                            <ng-container *ngSwitchCase="8">
+                                                <select [(ngModel)]="result.homeValue" [disabled]="!item.checked"
+                                                    (ngModelChange)="verifyAndAutoFillResult(item)">
+                                                    <option></option>
+                                                    <option value="T">Top</option>
+                                                    <option value="B">Bottom</option>
+                                                    <option value="N">None</option>
+                                                </select>
+                                            </ng-container>
+                                            <ng-container *ngSwitchCase="9">
+                                                <select [(ngModel)]="result.homeValue" [disabled]="!item.checked"
+                                                    (ngModelChange)="verifyAndAutoFillResult(item)">
+                                                    <option></option>
+                                                    <option value="T">Top</option>
+                                                    <option value="NT">Middle or Bottom</option>
+                                                    <option value="N">None</option>
+                                                </select>
+                                            </ng-container>
+                                            <ng-container *ngSwitchCase="10">
+                                                <select [(ngModel)]="result.homeValue" [disabled]="!item.checked"
+                                                    (ngModelChange)="verifyAndAutoFillResult(item)">
+                                                    <option></option>
+                                                    <option value="B">Bottom</option>
+                                                    <option value="NB">Top or Middle</option>
+                                                    <option value="N">None</option>
+                                                </select>
+                                            </ng-container>
+                                            <ng-container *ngSwitchCase="11">
+                                                <select [(ngModel)]="result.homeValue" [disabled]="!item.checked"
+                                                    (ngModelChange)="verifyAndAutoFillResult(item)">
+                                                    <option></option>
+                                                    <option value="O">Overlord</option>
+                                                    <option value="T">Tyrant</option>
+                                                    <option value="N">None</option>
+                                                </select>
+                                            </ng-container>
+                                            <ng-container *ngSwitchCase="12">
+                                                <select [(ngModel)]="result.homeValue" [disabled]="!item.checked"
+                                                    (ngModelChange)="verifyAndAutoFillResult(item)">
+                                                    <option></option>
+                                                    <option value="T">Tyrant</option>
+                                                    <option value="NT">Overlord or Middle</option>
+                                                    <option value="N">None</option>
+                                                </select>
+                                            </ng-container>
+                                            <ng-container *ngSwitchCase="13">
+                                                <select [(ngModel)]="result.homeValue" [disabled]="!item.checked"
+                                                    (ngModelChange)="verifyAndAutoFillResult(item)">
+                                                    <option></option>
+                                                    <option value="Y">Yes</option>
+                                                    <option value="N">No</option>
+                                                    <option value="NONE">None</option>
+                                                </select>
+                                            </ng-container>
+                                        </ng-container>
+                                    </td>
                                 </ng-container>
-                                <td [ngClass]="{'calculated': isCompleted(item.resultStatusId, item.settlementStatusId)
+                            </ng-container>
+                            <td [ngClass]="{'calculated': isCompleted(item.resultStatusId, item.settlementStatusId)
                                     , 'refunded': isRefunded(item.resultStatusId, item.settlementStatusId)}">
-                                    {{item.resultStatus}}
-                                </td>
-                                <td class="select-proceed">
-                                    <input type="checkbox" [disabled]="item.resultSettingData.isHoldResult"
-                                        [(ngModel)]="item.checked" (change)="onChangeBetType(item, map);" />
-                                </td>
-                                <td class="hold-result">
-                                    <div [ngClass]="getResultSettingIcon(item.resultSettingData.isHoldResult)"
-                                        (click)="isChangeSetting(item, map)"></div>
-                                </td>
-                            </tr>
-                        </ng-template>
-                    </tbody>
-                </table>
+                                {{item.resultStatus}}
+                            </td>
+                            <td class="select-proceed">
+                                <input type="checkbox" [disabled]="item.resultSettingData.isHoldResult"
+                                    [(ngModel)]="item.checked" (change)="onChangeBetType(item, map);" />
+                            </td>
+                            <td class="hold-result">
+                                <div [ngClass]="getResultSettingIcon(item.resultSettingData.isHoldResult)"
+                                    (click)="isChangeSetting(item, map)"></div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </tbody>
+            </table>
+        </div>
+        <div class="footer">
+            <div *ngIf="oldMatchDetail" class="hedge-match">
+                <input type="checkbox" [(ngModel)]="isSettleOldMatch" id="settleOldMatch" />
+                <label for="settleOldMatch">Apply for moved match '<strong>{{oldMatchDetail.matchCode}}</strong>'
+                    also.</label>
             </div>
-            <div class="footer">
-                <div *ngIf="oldMatchDetail" class="hedge-match">
-                    <input type="checkbox" [(ngModel)]="isSettleOldMatch" id="settleOldMatch" />
-                    <label for="settleOldMatch">Apply for moved match '<strong>{{oldMatchDetail.matchCode}}</strong>'
-                        also.</label>
-                </div>
-                <div>
-                    <button *ngIf="permission.canCalculate"
-                        [ngClass]="{'button': true, 'button-disabled': isDisabledCalculate}" (click)="calculate()"
-                        [disabled]="isDisabledCalculate">
-                        Calculate
-                    </button>
-                    <button *ngIf="permission.canUncalculate"
-                        [ngClass]="{'button': true, 'button-disabled': isDisabledUnCalculate}" (click)="unCalculate()"
-                        [disabled]="isDisabledUnCalculate">
-                        Uncalculate
-                    </button>
-                    <button class="new-refund-button save-score" [disabled]="isDisabledSaveScore"
-                        (click)="saveResult()">Save Score</button>
-                </div>
-            </div>
-            <div class="footer" *ngIf="permission.canRefund">
-                <div class="sub-footer">
-                    <span>
-                        <input type="checkbox" [(ngModel)]="isShowRefundButton" id="displayRefundButton" />&nbsp;<label
-                            for="displayRefundButton">Show/Hide Refund button</label>
-                    </span>
-                    <button *ngIf="isShowRefundButton && permission.isLeader"
-                        [ngClass]="{'btn btn-outline-primary button-confirmed': true}" [disabled]="isDisabledCalculate"
-                        (click)="confirmRefund()">
-                        Confirm/Undo-confirm Refund
-                    </button>
-                    <button *ngIf="isShowRefundButton"
-                        [ngClass]="{'button new-refund-button': true, 'margin-left-button': permission.isLeader, 'button-disabled': isDisabledCalculate}"
-                        (click)="refund()" [disabled]="isDisabledCalculate">
-                        Refund
-                    </button>
-                </div>
+            <div>
+                <button *ngIf="permission.canCalculate"
+                    [ngClass]="{'button': true, 'button-disabled': isDisabledCalculate}" (click)="calculate()"
+                    [disabled]="!isReadyMatch || isDisabledCalculate">
+                    Calculate
+                </button>
+                <button *ngIf="permission.canUncalculate"
+                    [ngClass]="{'button': true, 'button-disabled': isDisabledUnCalculate}" (click)="unCalculate()"
+                    [disabled]="!isReadyMatch || isDisabledUnCalculate">
+                    Uncalculate
+                </button>
+                <button class="new-refund-button save-score" [disabled]="!isReadyMatch || isDisabledSaveScore"
+                    (click)="saveResult()">Save Score</button>
             </div>
         </div>
-        <resettle-checker (proceedEvent)="onResettleCheckboxChange($event)" [checked]="isReSettledTickets">
-        </resettle-checker>
+        <div class="footer" *ngIf="permission.canRefund">
+            <div class="sub-footer">
+                <span>
+                    <input type="checkbox" [(ngModel)]="isShowRefundButton" id="displayRefundButton" />&nbsp;<label
+                        for="displayRefundButton">Show/Hide Refund button</label>
+                </span>
+                <button *ngIf="isShowRefundButton && permission.isLeader"
+                    [ngClass]="{'btn btn-outline-primary button-confirmed': true}"
+                    [disabled]="!isReadyMatch || isDisabledCalculate" (click)="confirmRefund()">
+                    Confirm/Undo-confirm Refund
+                </button>
+                <button *ngIf="isShowRefundButton"
+                    [ngClass]="{'button new-refund-button': true, 'margin-left-button': permission.isLeader, 'button-disabled': isDisabledCalculate}"
+                    (click)="refund()" [disabled]="!isReadyMatch || isDisabledCalculate">
+                    Refund
+                </button>
+            </div>
+        </div>
     </div>
-    <div *ngIf="!isReadyMatch">
-        <not-ready-match></not-ready-match>
-    </div>
+    <resettle-checker (proceedEvent)="onResettleCheckboxChange($event)" [checked]="isReSettledTickets">
+    </resettle-checker>
+
 </div>
 <div *ngIf="blockUI" class="in modal-backdrop">
     <div class="loading">

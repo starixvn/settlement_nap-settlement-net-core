@@ -39,6 +39,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     public isShowRefundButton = false;
     public oldMatchDetail: HedgeMatchDetail;
     public isSettleOldMatch: boolean;
+
     public isReadyMatch: boolean;
 
     constructor(
@@ -98,6 +99,10 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         this.groupMap = this.earlyConstraintService.getGroupMap(this.match.resultDetails);
         this.permission = this.match.permission;
         this.renderFilterSelect();
+
+        if (!this.isReadyMatch) {
+            this.toastrService.error(Language.minimumPlayTimeNotReached);
+        }
     }
 
     private renderFilterSelect() {

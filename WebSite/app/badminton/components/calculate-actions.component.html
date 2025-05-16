@@ -1,43 +1,40 @@
 <span toastContainer></span>
 <div class="padding" *ngIf="match">
-	<div *ngIf="isReadyMatch">
-		<calculate-match-detail [match]="match"></calculate-match-detail>
-		<ticket-count [ticketCounts]="match.ticketCounts"></ticket-count>
-		<div class="calculation-actions">
-			<div *ngIf="hedgeMatchDetail" class="hedge-match">
-				<input type="checkbox" [(ngModel)]="applyHedgeMatch" id="ApplyHedgeMatch" />
-				<label for="ApplyHedgeMatch">Apply for hedge match '<strong>{{ hedgeMatchDetail.matchCode }}</strong>'
-					also.</label>
-			</div>
-			<table>
-				<ng-template *ngTemplateOutlet="header"></ng-template>
-				<ng-template *ngTemplateOutlet="body"></ng-template>
-			</table>
-			<resettle-checker (proceedEvent)="onResettleCheckboxChange($event)"
-				[checked]="isReSettledTickets"></resettle-checker>
+	<!-- <div *ngIf="isReadyMatch"> -->
+	<calculate-match-detail [match]="match"></calculate-match-detail>
+	<ticket-count [ticketCounts]="match.ticketCounts"></ticket-count>
+	<div class="calculation-actions">
+		<div *ngIf="hedgeMatchDetail" class="hedge-match">
+			<input type="checkbox" [(ngModel)]="applyHedgeMatch" id="ApplyHedgeMatch" />
+			<label for="ApplyHedgeMatch">Apply for hedge match '<strong>{{ hedgeMatchDetail.matchCode }}</strong>'
+				also.</label>
 		</div>
-		@if(!sportWithPassiveChildMatch.includes(match.matchDetail.sportType) && match.childMatches.length > 0 &&
-		permission.canRefund)
-		{
-		<div>
-			<div class="child-match">
-				<span class="collapse-icon" [ngClass]="collapse ? 'collapsed' : ''" (click)="collapseChildMatch()">&emsp;Related
-					Matches</span>
-			</div>
-			<div *ngIf="!collapse">
-				<ng-template *ngTemplateOutlet="childMatches"></ng-template>
-			</div>
+		<table>
+			<ng-template *ngTemplateOutlet="header"></ng-template>
+			<ng-template *ngTemplateOutlet="body"></ng-template>
+		</table>
+		<resettle-checker (proceedEvent)="onResettleCheckboxChange($event)"
+			[checked]="isReSettledTickets"></resettle-checker>
+	</div>
+	@if(!sportWithPassiveChildMatch.includes(match.matchDetail.sportType) && match.childMatches.length > 0 &&
+	permission.canRefund)
+	{
+	<div>
+		<div class="child-match">
+			<span class="collapse-icon" [ngClass]="collapse ? 'collapsed' : ''" (click)="collapseChildMatch()">&emsp;Related
+				Matches</span>
 		</div>
-		}
-		@if(sportWithPassiveChildMatch.includes(match.matchDetail.sportType) && match.childMatches.length > 0 &&
-		permission.canRefund) {
-		<tb-child-match [matchDetail]="match.matchDetail" [matches]="match.childMatches" [isLeader]="permission.isLeader" />
-		}
+		<div *ngIf="!collapse">
+			<ng-template *ngTemplateOutlet="childMatches"></ng-template>
+		</div>
+	</div>
+	}
+	@if(sportWithPassiveChildMatch.includes(match.matchDetail.sportType) && match.childMatches.length > 0 &&
+	permission.canRefund) {
+	<tb-child-match [matchDetail]="match.matchDetail" [matches]="match.childMatches" [isLeader]="permission.isLeader" />
+	}
 
-	</div>
-	<div *ngIf="!isReadyMatch">
-		<not-ready-match></not-ready-match>
-	</div>
+	<!-- </div> -->
 </div>
 
 <ng-template #header>
@@ -143,13 +140,16 @@
 
 		<tr>
 			<td colSpan="100%" class="button-group">
-				<button class="button" (click)="calculate()">Calculate</button>
+				<button class="button" (click)="calculate()" [disabled]="!isReadyMatch">
+					Calculate
+				</button>
 				<button *ngIf="match.permission.canUncalculate"
-					[ngClass]="{ button: true, 'button-disabled': !enableUncalculate }" [disabled]="!enableUncalculate"
-					(click)="uncalculate()">
+					[ngClass]="{ button: true, 'button-disabled': !enableUncalculate }"
+					[disabled]="!isReadyMatch || !enableUncalculate" (click)="uncalculate()">
 					Uncalculate
 				</button>
-				<button class="new-refund-button save-score" [disabled]="isSaveScoreDisabled()" (click)="saveScore()">Save
+				<button class="new-refund-button save-score" [disabled]="!isReadyMatch || isSaveScoreDisabled()"
+					(click)="saveScore()">Save
 					Score</button>
 			</td>
 		</tr>

@@ -11,6 +11,7 @@ import { Storage } from "../storage.service";
 import { ResultRowStateService } from "../result-row-state.service";
 import { ResultState } from "../../models/result-state.model";
 import { ResultSettingModel } from "../../../shared/models";
+import { KickOffTime } from "../../constants/kick-off-time.constant";
 import { AutoSelectResultsService } from "../../../shared/services/auto-select-results.service.native";
 
 
@@ -29,6 +30,7 @@ export interface ICalculateStorage extends Storage  {
   }
 )
 export class CalculateStorage implements ICalculateStorage {
+
 
   #aioService = inject(AioService);
   #verificationBaseService = inject(VerificationBaseService);
@@ -183,12 +185,6 @@ export class CalculateStorage implements ICalculateStorage {
     this.getAllInnings().forEach((inning) => {
       this.setResultState(service,inning);
     })
-  }
-
-  unSelectResults = () => {
-    this.getResultChecked().forEach((item) => {
-      item.checked = false;
-    });
   }
 }
 

@@ -1,13 +1,14 @@
 <div>
   <button *ngIf="permission().canCalculate" [ngClass]="{'button': true, 'button-disabled': isDisableAction()}"
-    (click)="calculate()" [disabled]="isDisableAction()">
+    (click)="calculate()" [disabled]="!isReadyMatch || isDisableAction()">
     Calculate
   </button>
   <button *ngIf="permission().canUncalculate" [ngClass]="{'button': true, 'button-disabled': isDisableAction()}"
-    (click)="unCalculate()" [disabled]="isDisableAction()">
+    (click)="unCalculate()" [disabled]="!isReadyMatch || isDisableAction()">
     Uncalculate
   </button>
-  <button class="new-refund-button save-score" [disabled]="isDisableAction()" (click)="saveResult()">Save Score</button>
+  <button class="new-refund-button save-score" [disabled]="!isReadyMatch || isDisableAction()"
+    (click)="saveResult()">Save Score</button>
 </div>
 
 <div class="sub-footer">
@@ -16,13 +17,13 @@
       for="displayRefundButton">Show/Hide Refund button</label>
   </span>
   <button *ngIf="isShowRefundButton && permission().isLeader"
-    [ngClass]="{'btn btn-outline-primary button-confirmed': true}" [disabled]="isDisableAction()"
+    [ngClass]="{'btn btn-outline-primary button-confirmed': true}" [disabled]="!isReadyMatch || isDisableAction()"
     (click)="confirmRefund()">
     Confirm/Undo-confirm Refund
   </button>
   <button *ngIf="isShowRefundButton"
     [ngClass]="{'button new-refund-button': true, 'button-disabled': isDisableAction(), 'margin-left-button': permission().isLeader}"
-    (click)="refund()" [disabled]="isDisableAction()">
+    (click)="refund()" [disabled]="!isReadyMatch || isDisableAction()">
     Refund
   </button>
 </div>

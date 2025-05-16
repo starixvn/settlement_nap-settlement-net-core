@@ -55,6 +55,10 @@ export class OtherCalculationComponent implements SportTemplate {
     this.matchDetail = this.match.matchDetail;
     this.hedgeMatchDetail = this.match.hedgeMatchDetail;
     this.mapValue();
+
+    if (!this.isReadyMatch) {
+      this.toastrService.error(Language.minimumPlayTimeNotReached);
+    }
   }
 
   public get externalSourceName() {
