@@ -22,13 +22,26 @@ public class MatchServiceImp(
 {
     public async Task<List<Match>> SetNewOsMatchInfo(List<Match> matches, List<ResultDetail> resultDetails)
     {
-        foreach (var match in matches)
-        {
-            var sourceResults = GetResultsBySource(resultDetails, match.MatchId);
-            UpdateMatchOsInfo(match, sourceResults.normalResults, sourceResults.otherResults);
-        }
+        SetNewEventStatus(matches, resultDetails);
 
-        return await newInfoMatchService.GetAutoSetting(matches);
+        await SetAutoStatus(matches);
+
+        return matches;
+    }
+
+    private async Task SetAutoStatus(List<Match> matches)
+    {
+        var autoPayoutStatus = await newInfoMatchService.GetAutoPayoutStatus([.. matches.Select(x => x.MatchId)]);
+
+        matches.ForEach(match =>
+        {
+            var matchStatus = autoPayoutStatus.FirstOrDefault(m => m.MatchId == match.MatchId);
+            if (matchStatus != null)
+            {
+                match.AutoPayoutStatus = matchStatus.AutoPayoutStatus;
+                match.AutoInstantStatus = matchStatus.InstantStatus;
+            }
+        });
     }
 
     private static (List<ResultDetail> normalResults, List<ResultDetail> otherResults) GetResultsBySource(List<ResultDetail> resultDetails, long matchId)
@@ -40,17 +53,21 @@ public class MatchServiceImp(
         );
     }
 
-    private void UpdateMatchOsInfo(
-        Match match,
-        List<ResultDetail> currentResults,
-        List<ResultDetail> otherSourceResults)
+    private void SetNewEventStatus(List<Match> matches, List<ResultDetail> resultDetails)
     {
-        match.NewEventStatus = newInfoMatchService.NewEventStatus(match, currentResults);
-        match.EventStatusColor = newInfoMatchService.OSEventStatusColor(match);
-        match.EarlySettleStatus = newInfoMatchService.EarlyOSSettlementStatus(match);
-        match.ConfirmHalfTimeScore = newInfoMatchService.ConfirmScore(otherSourceResults, ResourceType.Halftime);
-        match.ConfirmFullTimeScore = newInfoMatchService.ConfirmScore(otherSourceResults, ResourceType.Final);
-        match.RefDataService = refDataService;
+        foreach (var match in matches)
+        {
+            var sourceResults = GetResultsBySource(resultDetails, match.MatchId);
+            var currentResults = sourceResults.normalResults;
+            var otherSourceResults = sourceResults.otherResults;
+
+            match.NewEventStatus = newInfoMatchService.NewEventStatus(match, currentResults);
+            match.EventStatusColor = newInfoMatchService.OSEventStatusColor(match);
+            match.EarlySettleStatus = newInfoMatchService.EarlyOSSettlementStatus(match);
+            match.ConfirmHalfTimeScore = newInfoMatchService.ConfirmScore(otherSourceResults, ResourceType.Halftime);
+            match.ConfirmFullTimeScore = newInfoMatchService.ConfirmScore(otherSourceResults, ResourceType.Final);
+            match.RefDataService = refDataService;
+        }
     }
 
     public List<Match> GetScoreForMatchBySportType(List<Match> matches, List<ResultDetail> resultDetails, int sportType, bool isLeader = false)

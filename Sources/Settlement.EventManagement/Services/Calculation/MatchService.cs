@@ -1,13 +1,13 @@
 ﻿namespace Settlement.EventManagement.Services.Calculation;
 
-using System.Security.Cryptography;
-using System.Text;
 using Criteria;
 using Requests;
 using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.EventManagement.Models.Calculation;
+using System.Security.Cryptography;
+using System.Text;
 using Match = Models.Calculation.Match;
 
 public interface MatchService
@@ -42,6 +42,35 @@ public class MatchServiceImp(
 
     private async Task<List<Match>> SetNewMatchInfo(List<Match> matches, List<ResultDetail> listResultDetail, bool isAutoPage = false)
     {
+        SetNewEventStatus(matches, listResultDetail);
+        if (isAutoPage)
+        {
+            return matches;
+        }
+
+        await SetAutoPayoutStatus(matches);
+
+
+        return matches;
+    }
+
+    private async Task SetAutoPayoutStatus(List<Match> matches)
+    {
+        var matchIds = matches.Select(m => m.MatchId).ToList();
+        var autoPayoutStatus = await newInfoMatchService.GetAutoPayoutStatus(matchIds);
+        matches.ForEach(match =>
+        {
+            var matchStatus = autoPayoutStatus.FirstOrDefault(m => m.MatchId == match.MatchId);
+            if (matchStatus != null)
+            {
+                match.AutoPayoutStatus = matchStatus.AutoPayoutStatus;
+                match.AutoInstantStatus = matchStatus.InstantStatus;
+            }
+        });
+    }
+
+    private void SetNewEventStatus(List<Match> matches, List<ResultDetail> listResultDetail)
+    {
         foreach (var match in matches)
         {
             var sourceResultDetail = listResultDetail.Where(m => m.MatchId == match.MatchId && m.SourceId != SourceType.Normal).ToList();
@@ -62,8 +91,6 @@ public class MatchServiceImp(
             match.IsTraderConfirmHt = currentResultDetail.Exists(r => r.ResourceId == ResourceType.Halftime && r.ResultStatusId == ResultStatus.Confirmed);
             match.MoreScores = GetMoreScores(currentResultDetail);
         }
-
-        return isAutoPage ? matches : await newInfoMatchService.GetAutoSetting(matches);
     }
 
 

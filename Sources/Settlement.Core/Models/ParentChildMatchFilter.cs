@@ -12,4 +12,7 @@ public class ParentChildMatchFilter
 
     [JsonPropertyName("e")]
     public string Eventstatus { get; set; }
+
+    [JsonPropertyName("s")]
+    public int SportType { get; set; }
 }

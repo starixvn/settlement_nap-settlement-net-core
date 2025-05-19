@@ -165,6 +165,7 @@ export class MatchStateService {
   }
 
   getEarlySettleBackground(match: Match, overStatus: string) {
+    //TODO
     const backgroundColorBlinking = match.isExistsConfirmedEarly && this.isEarlyOverAndOtherStatus(overStatus) ? BackgroundColor.confirmedEarlyBlinking : '';
     const isRunning = !_.isNull(match.earlySettleStatus) && _.isEqual(match.earlySettleStatus.toLowerCase(), BackgroundColor.running)
       && _.isEqual(match.eventStatus.toLowerCase(), BackgroundColor.completed);
