@@ -55,9 +55,13 @@ public class FastMarketHandler(
     {
         var result = await fastMarketService.Calculate(request);
 
-        await publishEndpoint.Publish(
-            new ResultAmendSettled(request.MatchId, result.SettledSessionId, result.IsOrg),
-            new CancellationTokenSource(TimeSpan.FromSeconds(3)).Token);
+        if (result.HasResultAmendment)
+        {
+            await publishEndpoint.Publish(
+                new ResultAmendSettled(request.MatchId, result.SettledSessionId, result.IsOrg),
+                new CancellationTokenSource(TimeSpan.FromSeconds(3)).Token);
+        }
+
 
         return result;
     }

@@ -36,7 +36,7 @@ public class GenerationServiceImp(
         criteria.EventCounters = eventCounter.Result;
         criteria.Results = results.Result;
         criteria.OldResults = await fastMarketResultService.OldResults(request.BetTypes, request.MatchId);
-        criteria.SelectedResources = results.OriginalItems.SelectMany(fastMarketResultService.CreateResourcesFromBetType);
+        criteria.SelectedResources = results.OriginalItems.SelectMany(i => fastMarketResultService.CreateResourcesFromBetType(i, request.Action, request.IsSettleDetermined));
         return criteria;
     }
 

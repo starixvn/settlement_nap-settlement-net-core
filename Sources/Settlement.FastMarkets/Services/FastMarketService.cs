@@ -130,14 +130,15 @@ public class FastMarketServiceImp(
 
         await scaleOutSettleService.UpdateMatchInfo(requestUpdateInfo);
 
-        await WriteLog(criteria);
+        var hasResultAmendment = await WriteLog(criteria);
 
         ExecuteCalculate(criteria);
 
         return new Result
         {
             SettledSessionId = criteria.BroadcastSessionId,
-            IsOrg = criteria.IsOrg
+            IsOrg = criteria.IsOrg,
+            HasResultAmendment = hasResultAmendment
         };
     }
 
@@ -150,7 +151,7 @@ public class FastMarketServiceImp(
         }
     }
 
-    private async Task WriteLog(PushFastMarketResultCriteria criteria)
+    private async Task<bool> WriteLog(PushFastMarketResultCriteria criteria)
     {
         var resourceRoot = new Resources<ResourceItem>
         {
@@ -167,24 +168,33 @@ public class FastMarketServiceImp(
         await logService.WriteLog(insertLogCriteria);
         await logService.WriteLog(criteria.MatchId, message);
 
-        await UpdateResultAmendment(criteria, selectedResources);
+        return await UpdateResultAmendment(criteria, selectedResources);
     }
 
-    private async Task UpdateResultAmendment(PushFastMarketResultCriteria request, string selectedResources)
+    private async Task<bool> UpdateResultAmendment(PushFastMarketResultCriteria request, string selectedResources)
     {
         try
         {
             if (request.Action == ActionName.Undo)
             {
-                return;
+                return false;
             }
 
             var resettleResult = await fastMarketResultAmendmentService.GetResultChanged(request, selectedResources);
-            await fastMarketResultAmendmentService.PublishResultAmendment(request, request.SelectedResources, resettleResult);
+            var resultChangeds = resettleResult.ToList();
+            if (resultChangeds.Any())
+            {
+                await fastMarketResultAmendmentService.PublishResultAmendment(request, request.SelectedResources, resultChangeds);
+                return true;
+            }
+
+            return false;
+
         }
         catch (Exception ex)
         {
             await LogService.ErrorAsync("ResultAmendmentService", ex);
+            return false;
         }
     }
 

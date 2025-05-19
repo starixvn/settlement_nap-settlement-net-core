@@ -1,9 +1,11 @@
-﻿using Settlement.Core.Models;
+﻿using Settlement.Core.Constants;
+using Settlement.Core.Models;
 using Settlement.FastMarkets.Constants;
 using Settlement.FastMarkets.Criteria;
 using Settlement.FastMarkets.Models;
 using Settlement.FastMarkets.Models.BetTypeModels;
 using Settlement.FastMarkets.Models.TimeMachineOldResult;
+using BetType = Settlement.FastMarkets.Models.BetType;
 using ResourceItem = Fanex.Settlement.MessageBridge.ResultAmendment.ResourceItem;
 
 namespace Settlement.FastMarkets.Services;
@@ -14,7 +16,7 @@ public interface IFastMarketResultService
 
     Task<string> OldResults(List<BetType> betTypes, int matchId);
 
-    IEnumerable<ResourceItem> CreateResourcesFromBetType(BetTypeElement betType);
+    IEnumerable<ResourceItem> CreateResourcesFromBetType(BetTypeElement betType, string action, bool isSettleDetermined);
 }
 
 public class FastMarketResultServiceImp(
@@ -72,8 +74,17 @@ public class FastMarketResultServiceImp(
     }
 
 
-    public IEnumerable<ResourceItem> CreateResourcesFromBetType(BetTypeElement betType)
+    public IEnumerable<ResourceItem> CreateResourcesFromBetType(BetTypeElement betType, string action, bool isSettleDetermined)
     {
+        if (action == ActionType.RefundAll && !isSettleDetermined)
+        {
+            return betType.Items.Select(item => new ResourceItem
+            {
+                ResourceId = betType.Id.ToString(),
+                OtherInfo = item.Position.ToString()
+            });
+        }
+
         if (betType.Id == FastMarketBetType.TimeMachineHdp)
         {
             return betType.Items.Select(item => new ResourceItem
