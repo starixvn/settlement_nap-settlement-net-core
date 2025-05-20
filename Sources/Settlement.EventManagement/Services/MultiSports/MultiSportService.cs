@@ -1,4 +1,4 @@
-﻿namespace Settlement.EventManagement.Services.MultiSports;
+namespace Settlement.EventManagement.Services.MultiSports;
 
 using Criteria;
 using Fanex.Data.Repository;
@@ -7,6 +7,7 @@ using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.EventManagement.Models;
 using Settlement.EventManagement.Models.MultiSports;
+using System.Threading.Tasks;
 using System.Text.Json;
 using Match = Models.MultiSports.Match;
 using MatchFilterTuple = (List<Models.MultiSports.Match> Matches, List<MatchOverStatus> MatchOverStatuses, List<ParentChildMatchFilter> ParentChildMatchFilters);
@@ -42,50 +43,50 @@ public class MultiSportServiceImp(
         return GroupSport(matchesSorted);
     }
 
-    private async Task<(List<ResourceTicketStatistic>, Dictionary<long, List<MatchTicketStatistic>>)> GetOSTicketInfo(MatchFilterTuple matchTuple, SportsbookCriteria filterCriteria)
+    private async Task<(Dictionary<int, List<ResourceTicketStatistic>>, Dictionary<int, List<MatchTicketStatistic>>)> GetOSTicketInfo(
+        MatchFilterTuple matchTuple,
+        SportsbookCriteria filterCriteria)
     {
+        var matchesOverStatus = matchTuple.MatchOverStatuses;
+        var parentChildMatchFilters = matchTuple.ParentChildMatchFilters;
         var matchesInfo = matchTuple.Matches.Select(x => new MatchRequest
         {
             MatchId = x.MatchId,
             ChildMatchType = x.ChildMatchType,
-            EventStatus = x.EventStatus,
+            EventStatus = x.OriginalEventStatus,
             SportType = x.SportType,
             ConfirmFT = x.ConfirmFT,
             ConfirmHT = x.ConfirmHT,
             ParentId = x.ParentId
         });
 
-        var matchesOverStatus = matchTuple.MatchOverStatuses;
-        var parentChildMatchFilters = matchTuple.ParentChildMatchFilters;
 
         var criteria = new OSTicketInfoSelCriteria
         {
             MatchInfo = JsonSerializer.Serialize(matchesInfo),
-            ChildMatchInfo = parentChildMatchFilters.Count == 0 ? string.Empty : JsonSerializer.Serialize(parentChildMatchFilters),
+            ChildMatchInfo = parentChildMatchFilters.Count == 0
+                ? string.Empty
+                : JsonSerializer.Serialize(parentChildMatchFilters),
             OverStatus = filterCriteria.OverStatus,
             MatchCode = filterCriteria.MatchCode
         };
 
-        return await GetTicketInfoAllDbSites(criteria);
+        var result = await GetTicketInfoAllDbSites(criteria);
+
+        return result;
     }
 
 
-    private async Task<(List<ResourceTicketStatistic>, Dictionary<long, List<MatchTicketStatistic>>)> GetTicketInfoAllDbSites(OSTicketInfoSelCriteria criteria)
+    private async Task<(Dictionary<int, List<ResourceTicketStatistic>>, Dictionary<int, List<MatchTicketStatistic>>)> GetTicketInfoAllDbSites(OSTicketInfoSelCriteria criteria)
     {
         var siteDbServer = appSettingsKey.Value.SiteDbServer;
         var getTicketInfoTasks = siteDbServer.Select(s => GetTicketInfo(s, criteria));
 
         var results = await Task.WhenAll(getTicketInfoTasks);
 
-
-        var x = results.SelectMany(t => t.Item1).ToList();
         var resourceGroupedMatches = results
             .SelectMany(t => t.Item1)
-            .GroupBy(x => new
-            {
-                x.MatchId,
-                x.ResourceId
-            })
+            .GroupBy(x => x.MatchId)
             .ToDictionary(x => x.Key, x => x.ToList());
 
         var groupedMatches = results
@@ -93,8 +94,7 @@ public class MultiSportServiceImp(
             .GroupBy(x => x.MatchId)
             .ToDictionary(x => x.Key, x => x.ToList());
 
-
-        return (x, groupedMatches);
+        return (resourceGroupedMatches, groupedMatches);
     }
 
     private async Task<(IEnumerable<ResourceTicketStatistic>, IEnumerable<MatchTicketStatistic>)> GetTicketInfo(string server, OSTicketInfoSelCriteria criteria)
@@ -111,41 +111,46 @@ public class MultiSportServiceImp(
         return (result.Item1.ToList(), result.Item2.ToList(), result.Item3.ToList());
     }
 
-    private async Task<List<Match>> GetMatchesAllInfo(SportsbookCriteria criteria)
+    private async Task<List<Match>> GetMatchesAllInfo(SportsbookCriteria criteria, MatchFilterTuple matchTuple)
     {
-        var matchTuple = await GetMatches(criteria);
-        var (x, matchTicketStatistics) = (await GetOSTicketInfo(matchTuple, criteria));
-
         var matches = matchTuple.Matches.ToList();
+        var (ticketStatistics, matchTicketStatistics) = (await GetOSTicketInfo(matchTuple, criteria));
 
-
-        SetMatchTicketInfo(matches, matchTicketStatistics);
+        SetMatchTicketInfo(matches, ticketStatistics, matchTicketStatistics);
 
         return matches;
     }
 
-    private void SetMatchTicketInfo(List<Match> matches, Dictionary<long, List<MatchTicketStatistic>> siteMatches)
+    private void SetMatchTicketInfo(
+        IEnumerable<Match> matches,
+        Dictionary<int, List<ResourceTicketStatistic>> ticketStatistics,
+        Dictionary<int, List<MatchTicketStatistic>> siteMatches)
     {
         foreach (var match in matches)
         {
             var isExistTicket = siteMatches.TryGetValue(match.MatchId, out var matchTicketStatistics);
-            if (!isExistTicket)
+            if (isExistTicket)
             {
-                continue;
+                match.SuspenderFullTime = matchTicketStatistics.Find(x => !string.IsNullOrEmpty(x.SuspenderFullTime))?.SuspenderFullTime;
+                match.SuspenderHalfTime = matchTicketStatistics.Find(x => !string.IsNullOrEmpty(x.SuspenderHalfTime))?.SuspenderHalfTime;
+
+                match.IsExistEarlyBetTypes = matchTicketStatistics.Exists(x => x.IsExistEarlyBetTypes);
+                match.IsRunningEarlyBetTypes = matchTicketStatistics.Exists(x => x.IsRunningEarlyBetTypes);
+                match.IsWaitingEarlyBetTypes = matchTicketStatistics.Exists(x => x.IsWaitingEarlyBetTypes);
+                match.IsExistRunningTicket = matchTicketStatistics.Exists(x => x.IsExistRunningTicket);
+                match.IsExistMarkedTicket = matchTicketStatistics.Exists(x => x.IsExistMarkedTicket);
+                //match.IsExistsConfirmedEarly = ticketInfo.Exists(x => x.IsExistsConfirmedEarly);
+
+                match.IsCalculatingSingle = siteMatchService.IsCalculating([.. matchTicketStatistics.Select(x => x.IsCalculatingSingle)]);
+                match.IsCalculatingMP = siteMatchService.IsCalculating([.. matchTicketStatistics.Select(x => x.IsCalculatingMP)]);
             }
 
-            match.SuspenderFullTime = matchTicketStatistics.Find(x => !string.IsNullOrEmpty(x.SuspenderFullTime))?.SuspenderFullTime;
-            match.SuspenderHalfTime = matchTicketStatistics.Find(x => !string.IsNullOrEmpty(x.SuspenderHalfTime))?.SuspenderHalfTime;
-
-            match.IsExistEarlyBetTypes = matchTicketStatistics.Exists(x => x.IsExistEarlyBetTypes);
-            match.IsRunningEarlyBetTypes = matchTicketStatistics.Exists(x => x.IsRunningEarlyBetTypes);
-            match.IsWaitingEarlyBetTypes = matchTicketStatistics.Exists(x => x.IsWaitingEarlyBetTypes);
-            match.IsExistRunningTicket = matchTicketStatistics.Exists(x => x.IsExistRunningTicket);
-            match.IsExistMarkedTicket = matchTicketStatistics.Exists(x => x.IsExistMarkedTicket);
-            //match.IsExistsConfirmedEarly = ticketInfo.Exists(x => x.IsExistsConfirmedEarly);
-
-            match.IsCalculatingSingle = siteMatchService.IsCalculating([.. matchTicketStatistics.Select(x => x.IsCalculatingSingle)]);
-            match.IsCalculatingMP = siteMatchService.IsCalculating([.. matchTicketStatistics.Select(x => x.IsCalculatingMP)]);
+            var isExistResourceTicket = ticketStatistics.TryGetValue(match.MatchId, out var resourceTicketStatistics);
+            if (isExistResourceTicket)
+            {
+                match.ResourceTicketStatistics = resourceTicketStatistics;
+                //match.
+            }
         }
     }
 
@@ -156,7 +161,7 @@ public class MultiSportServiceImp(
             .Select(sports => new MatchesBySportTypeModel
             {
                 SportType = sports.Key,
-                Matches = sports.ToList()
+                Matches = [.. sports]
             })
             .ToList();
 
@@ -234,17 +239,33 @@ public class MultiSportServiceImp(
     {
         var criteria = mapper.Map<FilterMultiSportRequest, SportsbookCriteria>(request);
 
-        var matches = await GetMatchesAllInfo(criteria);
+        var matchTuple = await GetMatches(criteria);
+
+        var matches = await GetMatchesAllInfo(criteria, matchTuple);
 
         var resultDetails = await ResultDetailByMatchIds(matches);
 
-        matches = await matchService.SetNewOsMatchInfo(matches, resultDetails);
+        var filteredMatches = ApplyFilterOverStatus(matches, matchTuple.MatchOverStatuses, criteria.OverStatus);
+
+        await matchService.SetNewOsMatchInfo(filteredMatches, resultDetails);
 
         return new MultiSportResult
         {
-            Matches = matches,
+            Matches = filteredMatches,
             ResultDetails = resultDetails
         };
+    }
+
+    private List<Match> ApplyFilterOverStatus(List<Match> matches, List<MatchOverStatus> matchOverStatuses, string overStatus)
+    {
+        if (string.IsNullOrEmpty(overStatus) || overStatus.Equals("0"))
+            return matches;
+
+        return matches
+            .Where(match => match.MatchTicketStatistics.Count > 0)
+            .Where(match => matchOverStatuses.Any(x => x.MatchId == match.MatchId))
+            .Where(match => match.ResourceTicketStatistics != null && match.ResourceTicketStatistics.Count > 0)
+            .ToList();
     }
 
     private async Task<List<ResultDetail>> ResultDetailByMatchIds(List<Match> matches)

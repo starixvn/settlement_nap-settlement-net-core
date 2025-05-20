@@ -34,7 +34,7 @@ public interface NewInfoMatchService
 
     bool IsExistsConfirmedEarly(MultiSportMatch match);
 
-    Task<IEnumerable<MatchStatusModel>> GetAutoPayoutStatus(List<int> matchesIds);
+    Task<(IEnumerable<MatchStatusModel>, IEnumerable<FailedAutoResource>)> GetAutoPayoutStatus(List<int> matchesIds);
 
 }
 
@@ -197,7 +197,7 @@ public class NewInfoMatchServiceImp(
     }
 
 
-    public async Task<IEnumerable<MatchStatusModel>> GetAutoPayoutStatus(List<int> matchesIds)
+    public async Task<(IEnumerable<MatchStatusModel>, IEnumerable<FailedAutoResource>)> GetAutoPayoutStatus(List<int> matchesIds)
     {
         var matchIds = string.Join(',', matchesIds);
         var criteria = new GetAutoStatusCriteria
@@ -205,7 +205,9 @@ public class NewInfoMatchServiceImp(
             MatchIds = matchIds
         };
 
-        return await repository.FetchAsync<MatchStatusModel>(criteria);
+        var result = await repository.FetchMultipleAsync<MatchStatusModel, FailedAutoResource>(criteria);
+
+        return result;
     }
 
     private GoalIconQueryModel GoalIconQuery(Match match)

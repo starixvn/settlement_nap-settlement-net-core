@@ -57,7 +57,7 @@ public class MatchServiceImp(
     private async Task SetAutoPayoutStatus(List<Match> matches)
     {
         var matchIds = matches.Select(m => m.MatchId).ToList();
-        var autoPayoutStatus = await newInfoMatchService.GetAutoPayoutStatus(matchIds);
+        var (autoPayoutStatus, _) = await newInfoMatchService.GetAutoPayoutStatus(matchIds);
         matches.ForEach(match =>
         {
             var matchStatus = autoPayoutStatus.FirstOrDefault(m => m.MatchId == match.MatchId);

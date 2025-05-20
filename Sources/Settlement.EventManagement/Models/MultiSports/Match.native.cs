@@ -79,6 +79,12 @@ public class Match : BaseMatch
     [IgnoreMember]
     public int ParentId { get; set; }
 
+    [IgnoreMember]
+    public List<FailedAutoResource> FailedAutoResources { get; set; }
+
+    [IgnoreMember]
+    public List<ResourceTicketStatistic> ResourceTicketStatistics { get; set; }
+
     [Key("hasProviderHT")]
     public bool HasProviderHT { get; set; }
 

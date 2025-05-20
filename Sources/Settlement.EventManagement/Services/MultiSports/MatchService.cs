@@ -9,7 +9,7 @@ public interface IMatchService
 {
     List<Match> GetScoreForMatchBySportType(List<Match> matches, List<ResultDetail> resultDetails, int sportType, bool isLeader = false);
 
-    Task<List<Match>> SetNewOsMatchInfo(List<Match> matches, List<ResultDetail> resultDetails);
+    Task SetNewOsMatchInfo(List<Match> matches, List<ResultDetail> resultDetails);
 
     List<Match> SortingMatches(List<Match> matches);
 }
@@ -20,18 +20,17 @@ public class MatchServiceImp(
     NewInfoMatchService newInfoMatchService)
     : IMatchService
 {
-    public async Task<List<Match>> SetNewOsMatchInfo(List<Match> matches, List<ResultDetail> resultDetails)
+    public async Task SetNewOsMatchInfo(List<Match> matches, List<ResultDetail> resultDetails)
     {
         SetNewEventStatus(matches, resultDetails);
 
         await SetAutoStatus(matches);
 
-        return matches;
     }
 
     private async Task SetAutoStatus(List<Match> matches)
     {
-        var autoPayoutStatus = await newInfoMatchService.GetAutoPayoutStatus([.. matches.Select(x => x.MatchId)]);
+        var (autoPayoutStatus, failedAutoResources) = await newInfoMatchService.GetAutoPayoutStatus([.. matches.Select(x => x.MatchId)]);
 
         matches.ForEach(match =>
         {
@@ -41,6 +40,8 @@ public class MatchServiceImp(
                 match.AutoPayoutStatus = matchStatus.AutoPayoutStatus;
                 match.AutoInstantStatus = matchStatus.InstantStatus;
             }
+
+            match.FailedAutoResources = [.. failedAutoResources.Where(x => x.MatchId == match.MatchId)];
         });
     }
 
