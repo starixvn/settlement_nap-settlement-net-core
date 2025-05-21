@@ -50,6 +50,7 @@ export class MatchComponent implements OnChanges, OnInit {
   language = Language;
   readonly sportTypeCricket = SportType.cricket;
   readonly sportSupportInstant = SportSupportInstant;
+  readonly sportNewAutoPayout = SportNewAutoPayout;
   readonly dialogMessage: ModalDialogMessage = new ModalDialogMessage();
   matchState: MatchState;
   state$ = new BehaviorSubject<MatchState>(null)

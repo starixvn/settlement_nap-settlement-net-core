@@ -98,7 +98,8 @@
 			@if (!matchState.isHideHtScore) {
 			<div>{{ match.confirmHalfTimeScore }}</div>
 			}
-			@if (matchState.hasProviderHT) {
+			@if ((sportNewAutoPayout.includes(match.sportType) || !sportNewAutoPayout.includes(match.sportType) &&
+			!store.state.permission.isLeader) && matchState.hasProviderHT) {
 			<div>(provider ready)</div>
 			}
 		</td>
@@ -107,7 +108,8 @@
 			@if (!matchState.isHideFinalScore) {
 			<div>{{ match.confirmFullTimeScore }}</div>
 			}
-			@if (matchState.hasProviderFT) {
+			@if ((sportNewAutoPayout.includes(match.sportType) || !sportNewAutoPayout.includes(match.sportType) &&
+			!store.state.permission.isLeader) && matchState.hasProviderFT) {
 			<div>(provider ready)</div>
 			}
 
