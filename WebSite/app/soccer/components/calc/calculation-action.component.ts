@@ -67,6 +67,8 @@ export class CalculationActionComponent implements OnInit {
     this.scoreChanged(this.fullTimeResult);
 
     this.matchDetail.applyGoalRecord = this.disableGoalRecordCheckbox = this.calculateGoalRecordState(matchDetail);
+
+    this.enableAction = this.halfTimeResult.checked || this.fullTimeResult.checked;
   }
 
   get isTraderHtConfirmed() {
