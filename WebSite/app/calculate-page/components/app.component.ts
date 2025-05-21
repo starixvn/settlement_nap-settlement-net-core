@@ -4,10 +4,11 @@ import { BackGroundService, DetectChangesService, GenerateFilterService, HandleA
 import { BlockUIService, DialogBoxService, HttpRequestService, MessageBoxService, ReCheckInService, VerifyDateService } from '../../shared/services';
 import { PageComponent } from './calculation';
 import * as _ from 'lodash';
-import { AutoCalculatePageComponent, AutoCalculateService } from './auto-calculation';
+import { AutoCalculatePageComponent } from './auto-calculation';
 import { PageBaseComponent } from './base-component';
 import { NgIf, DatePipe } from '@angular/common';
 import { UpdateSettingsService } from '../services/update-settings.service';
+import { AutoSettingsService } from '../services/auto-settings.service';
 
 @Component({
     selector: 'app-root',
@@ -25,9 +26,9 @@ import { UpdateSettingsService } from '../services/update-settings.service';
         HandleActionsService,
         BackGroundService,
         DetectChangesService,
-        AutoCalculateService,
         GenerateFilterService,
-        UpdateSettingsService
+        UpdateSettingsService,
+        AutoSettingsService
     ],
     standalone: true,
     imports: [NgIf],
@@ -55,7 +56,6 @@ export class AppComponent implements OnInit {
 
     private getComponentFactory(): ComponentFactory<PageBaseComponent> {
         const pageType = this.elementRef.nativeElement.getAttribute('page-type');
-        // return this.componentFactoryResolver.resolveComponentFactory(AutoCalculatePageComponent);
         return _.isEqual(pageType, 'Calculation')
             ? this.componentFactoryResolver.resolveComponentFactory(PageComponent)
             : this.componentFactoryResolver.resolveComponentFactory(AutoCalculatePageComponent);

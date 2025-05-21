@@ -130,10 +130,7 @@
 							</div>
 						</td>
 						<td rowspan="2" class="remark-status" [ngClass]="getBackgroundAutoSetting(match)">
-							<div>
-								{{ match.autoCalcSetting.isAutoPayoutForMatch ? "AUTO" : match.autoCalcSetting.isDirectPayoutForMatch ?
-								"DIRECT" : "OFF" }}
-							</div>
+							<div [innerHTML]="getStatusAutoPayout(leagueMatch, match)"></div>
 						</td>
 					</tr>
 					<tr class="row-3" [ngClass]="rowColor(match.remark, !isEven)">
