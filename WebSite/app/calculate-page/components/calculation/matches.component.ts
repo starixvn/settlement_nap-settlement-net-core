@@ -148,7 +148,7 @@ export class MatchesComponent extends MatchesBaseComponent implements OnChanges,
       return match.confirmHalfTimeScore;
     }
 
-    if(isHalfTime && !finalScore.isNotSettled && !this.permission.isLeader) {
+    if(isHalfTime && !halfTimeScore.isNotSettled && !this.permission.isLeader && match.confirmHalfTimeScore) {
       return '(provider ready)';
     }
     
@@ -156,7 +156,7 @@ export class MatchesComponent extends MatchesBaseComponent implements OnChanges,
       return match.confirmFullTimeScore;
     }
 
-    if(!finalScore.isNotSettled && !this.permission.isLeader) {
+    if(!finalScore.isNotSettled && !this.permission.isLeader && match.confirmFullTimeScore) {
       return '(provider ready)';
     }
 
