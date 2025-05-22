@@ -80,10 +80,16 @@ public class Match : BaseMatch
     public int ParentId { get; set; }
 
     [IgnoreMember]
-    public List<FailedAutoResource> FailedAutoResources { get; set; }
+    public List<FailedAutoResource> FailedAutoResources { get; set; } = [];
 
     [IgnoreMember]
-    public List<ResourceTicketStatistic> ResourceTicketStatistics { get; set; }
+    public List<ResourceTicketStatistic> ResourceTicketStatistics { get; set; } = [];
+
+    [IgnoreMember]
+    public List<MatchTicketStatistic> MatchTicketStatistics { get; set; } = [];
+
+    [IgnoreMember]
+    public bool HasFailedResource => FailedAutoResources.Exists(f => ResourceTicketStatistics.Exists(r => r.ResourceId == f.ResourceId));
 
     [Key("hasProviderHT")]
     public bool HasProviderHT { get; set; }

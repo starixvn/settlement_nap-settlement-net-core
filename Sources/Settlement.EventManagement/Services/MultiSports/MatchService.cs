@@ -58,15 +58,13 @@ public class MatchServiceImp(
     {
         foreach (var match in matches)
         {
-            var sourceResults = GetResultsBySource(resultDetails, match.MatchId);
-            var currentResults = sourceResults.normalResults;
-            var otherSourceResults = sourceResults.otherResults;
+            var (normalResults, otherResults) = GetResultsBySource(resultDetails, match.MatchId);
 
-            match.NewEventStatus = newInfoMatchService.NewEventStatus(match, currentResults);
+            match.NewEventStatus = newInfoMatchService.NewEventStatus(match, normalResults);
             match.EventStatusColor = newInfoMatchService.OSEventStatusColor(match);
             match.EarlySettleStatus = newInfoMatchService.EarlyOSSettlementStatus(match);
-            match.ConfirmHalfTimeScore = newInfoMatchService.ConfirmScore(otherSourceResults, ResourceType.Halftime);
-            match.ConfirmFullTimeScore = newInfoMatchService.ConfirmScore(otherSourceResults, ResourceType.Final);
+            match.ConfirmHalfTimeScore = newInfoMatchService.ConfirmScore(otherResults, ResourceType.Halftime);
+            match.ConfirmFullTimeScore = newInfoMatchService.ConfirmScore(otherResults, ResourceType.Final);
             match.RefDataService = refDataService;
         }
     }

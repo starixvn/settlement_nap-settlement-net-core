@@ -111,7 +111,7 @@ public class MultiSportServiceImp(
         return (result.Item1.ToList(), result.Item2.ToList(), result.Item3.ToList());
     }
 
-    private async Task<List<Match>> GetMatchesAllInfo(SportsbookCriteria criteria, MatchFilterTuple matchTuple)
+    private async Task<List<Match>> GetMatchesAllInfo(SportsbookCriteria criteria)
     {
         var matches = matchTuple.Matches.ToList();
         var (ticketStatistics, matchTicketStatistics) = (await GetOSTicketInfo(matchTuple, criteria));
@@ -122,7 +122,7 @@ public class MultiSportServiceImp(
     }
 
     private void SetMatchTicketInfo(
-        List<Match> matches,
+        IEnumerable<Match> matches,
         Dictionary<int, List<ResourceTicketStatistic>> ticketStatistics,
         Dictionary<int, List<MatchTicketStatistic>> siteMatches)
     {
@@ -247,7 +247,7 @@ public class MultiSportServiceImp(
 
         var filteredMatches = ApplyFilterOverStatus(matches, matchTuple.MatchOverStatuses, criteria.OverStatus);
 
-        await matchService.SetNewOsMatchInfo(filteredMatches, resultDetails);
+        await matchService.SetNewOsMatchInfo(matches, resultDetails);
 
         return new MultiSportResult
         {
