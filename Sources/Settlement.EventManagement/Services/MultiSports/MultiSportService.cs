@@ -122,7 +122,7 @@ public class MultiSportServiceImp(
     }
 
     private void SetMatchTicketInfo(
-        IEnumerable<Match> matches,
+        List<Match> matches,
         Dictionary<int, List<ResourceTicketStatistic>> ticketStatistics,
         Dictionary<int, List<MatchTicketStatistic>> siteMatches)
     {

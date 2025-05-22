@@ -78,7 +78,7 @@ public class MatchServiceTests
         repository.FetchAsync<Match>(Arg.Any<ICriteria>()).Returns(listMatch);
         repository.FetchAsync<ResultDetail>(Arg.Any<ICriteria>()).Returns(new List<ResultDetail>());
         refDataService.GetLeagueName(Arg.Any<string>()).Returns(string.Empty);
-        newInfoMatchService.GetAutoSetting(Arg.Any<List<Match>>()).Returns(listMatch);
+        //newInfoMatchService.GetAutoPayoutStatus((Arg.Any<List<int>>()).Returns((listMatch);
         var sportBooks = await service.GetMatches(new FilterCalculationRequest());
 
         Assert.NotNull(sportBooks);

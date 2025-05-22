@@ -7,13 +7,17 @@ public class ResourceTicketStatistic
     public int TotalWaitingTicket { get; set; }
     public int TotalRunningTicket { get; set; }
     public int TotalMarkedTicket { get; set; }
-    public long MatchId { get; set; }
+    public int MatchId { get; set; }
+    public int ParentId { get; set; }
+    public byte ChildMatchType { get; set; }
+    public bool IsEarly { get; set; }
+    public bool IsOverFilter { get; set; }
     public string ResourceId { get; set; } = string.Empty;
 }
 
 public class MatchTicketStatistic
 {
-    public long MatchId { get; set; }
+    public int MatchId { get; set; }
     public string? SuspenderHalfTime { get; set; }
     public string? SuspenderFullTime { get; set; }
     public int? IsCalculatingSingle { get; set; }

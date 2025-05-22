@@ -227,7 +227,7 @@ public class NewInfoMatchServiceTests
         };
 
         repository.FetchAsync<MatchStatusModel>(Arg.Any<GetAutoStatusCriteria>()).Returns(matchStatuses);
-        await service.GetAutoSetting(matches);
+        await service.GetAutoPayoutStatus(matches.Select(x => x.MatchId).ToList());
 
         Assert.Equal(3, matches[0].AutoPayoutStatus);
         Assert.Equal(2, matches[1].AutoPayoutStatus);
