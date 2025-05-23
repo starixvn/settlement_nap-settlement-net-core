@@ -13,7 +13,7 @@ export class SaveScoreHandler extends AbstractHandler {
   handle(storage: Storage) {
     const { matchDetail, resultDetails } = storage.getMatch();
     const resultSelected = resultDetails.filter((resultDetail) => resultDetail.checked);
-    const traderResults = resultDetails.filter((resultDetail) => resultDetail.sourceId === ScoreSourceType.trader && resultSelected.some((result) => result.resourceId === resultDetail.resourceId));
+    const traderResults = resultDetails.flatMap(r => r.externalScores.filter((resultDetail) => resultDetail.sourceId === ScoreSourceType.trader && resultSelected.some((result) => result.resourceId === resultDetail.resourceId)));
 
   
     const goalRecord = matchDetail.applyGoalRecord ? matchDetail.goalRecord : "";

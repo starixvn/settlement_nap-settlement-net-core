@@ -1,14 +1,12 @@
 import { inject } from "@angular/core";
 import { VerifyScoreGoalService } from "../../../components/calc/services/verify-score-goal.service";
 import { AbstractHandler } from "../../abstract.handler.native";
-import { RequestService } from "../../../components/calc/services/request.service";
 import { Storage } from "../../../storage/storage.service.native";
-import { ChildMatch, FantasyRelatedMatch, MatchDetail } from "../../../components/calc/models/match.model";
+import { ChildMatch, FantasyRelatedMatch, MatchDetailSoccer as MatchDetail } from "../../../components/calc/models/match.model";
 import { Language } from "../../../../shared/language.native";
-import { CalculateAction, SettlementStatusId } from "../../../../shared/constants";
+import { CalculateAction } from "../../../../shared/constants";
 import { VerifyActionService } from "../../../components/calc/services/verify-action.service";
-import { ResourceIds } from "../../../constants";
-import { ResultDetail } from "../../../models";
+import { ResultDetail } from "../../../../shared/models/sportsbook-sop/result-detail.model";
 
 export class VerifyFulltimeHandler extends AbstractHandler {
    #verifyScoreGoalService = inject(VerifyScoreGoalService);
@@ -30,7 +28,7 @@ export class VerifyFulltimeHandler extends AbstractHandler {
 
   private async verifyFullTime(fulltime: ResultDetail, matchDetail: MatchDetail, selectedChildMatches: ChildMatch[], relatedMatches: FantasyRelatedMatch[]) {
     
-    if (this.#verifyScoreGoalService.verifyScore(fulltime, matchDetail, false)) {
+    if (this.#verifyScoreGoalService.verifyScore(fulltime)) {
       return Language.warningInputScore;
     }
     if (this.#verifyScoreGoalService.verifyScoreForChildMatch(fulltime, selectedChildMatches)) {

@@ -1,5 +1,5 @@
 import { inject } from "@angular/core";
-import { ChildMatch, FantasyRelatedMatch, MatchDetail } from "../../../components/calc/models/match.model";
+import { ChildMatch, FantasyRelatedMatch, MatchDetailSoccer as MatchDetail } from "../../../components/calc/models/match.model";
 import { VerifyScoreGoalService } from "../../../components/calc/services/verify-score-goal.service";
 import { AbstractHandler } from "../../abstract.handler.native";
 import { Language } from "../../../../shared/language.native";
@@ -29,7 +29,7 @@ export class VerifyAllHandler extends AbstractHandler {
   private  async verifyAll(storage: Storage, matchDetail: MatchDetail, selectedChildMatches: ChildMatch[], relatedMatches: FantasyRelatedMatch[]) {
       const {resultDetails }  = storage.getMatch();
       const checkedResultDetails = resultDetails.filter(x => x.checked);
-    if (this.#verifyScoreGoalService.verifyScoreAll(checkedResultDetails, matchDetail)) {
+    if (this.#verifyScoreGoalService.verifyScoreAll(checkedResultDetails)) {
         return Language.warningInputScore;
       }
   

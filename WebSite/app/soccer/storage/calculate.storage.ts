@@ -1,16 +1,15 @@
-import { ChangeDetectorRef, inject, Injectable, signal } from "@angular/core";
-import { ModalDialogMessage, Result } from "../../shared/models";
-import { Match, MatchDetail, UndoChecking } from "../components/calc/models/match.model";
+import {inject, Injectable, signal } from "@angular/core";
+import { ModalDialogMessage } from "../../shared/models";
+import { Match, MatchDetailSoccer, UndoChecking } from "../components/calc/models/match.model";
 import { VerifyScoreGoalService } from "../components/calc/services/verify-score-goal.service";
 import { ToastContainerDirective, ToastrService } from "ngx-toastr";
 import { Storage } from "./storage.service.native";
 import * as _ from "lodash";
 import { Language } from "../../shared/language.native";
 import { ResourceIds } from "../constants";
-import { ResultDetail } from "../models";
-import { ResultStatusId, ScoreSourceType, SettlementStatusId, TicketStatus, TicketStatusText } from "../../shared/constants";
+import { ResultStatusId, SettlementStatusId, TicketStatusText } from "../../shared/constants";
+import {  ResultDetail } from "../../shared/models/sportsbook-sop";
 import { OverStatus } from "../../shared/constants/over-status.native";
-import { ExternalResultDetail } from "../../shared/models/sportsbook-sop";
 
 @Injectable()
 export class CalculateStorage implements Storage {
@@ -20,18 +19,13 @@ export class CalculateStorage implements Storage {
   
   #match = signal<Match>(null);
 
-  #matchDetail: MatchDetail;
+  #matchDetail: MatchDetailSoccer;
   #isResettleTicket = false;
   #isApplyHedgeMatch = false;
   #calculateAction: string;
   #instantScore: UndoChecking;
   #halfTimeResult: ResultDetail;
   #fullTimeResult: ResultDetail;
-
-  #outsideHtResult: ExternalResultDetail[];
-  #outsideFtResult: ExternalResultDetail[];
-  #traderHtResult: ResultDetail;
-  #traderFtResult: ResultDetail;
 
   #isIgnoreCheckHt = false;
   #isReadyMatch = false;
@@ -64,15 +58,6 @@ export class CalculateStorage implements Storage {
     return this.#isResettleTicket;
   }
 
-  getOutsideHtResult() {
-    return this.#outsideHtResult;
-  }
-
-  getOutsideFtResult() {
-    return this.#outsideFtResult;
-  }
-
-
   getRelatedMatches() {
     return this.#matchDetail.isFantasyMatch
       ? this.#match().fantasyMatch.relatedMatches.filter((match) => !match.isDeleted)
@@ -97,15 +82,6 @@ export class CalculateStorage implements Storage {
 
   getExternalResultDetails() {
     return this.#match().externalResults.flatMap(x => x.resultDetails);
-  }
-
-
-  get traderHtResult() {
-    return this.#traderHtResult
-  }
-
-  get traderFtResult() {
-    return this.#traderFtResult
   }
 
   getIsIgnoreCheckHt() {
@@ -147,28 +123,20 @@ export class CalculateStorage implements Storage {
 
   setMatch(match: Match, filterOver?: string) {
     this.#match.set(match);
-    const { resultDetails, externalResults } = this.#match();
+    const { resultDetails } = this.#match();
     this.#matchDetail = this.#match().matchDetail;
 
-    this.#halfTimeResult = this.#match().resultDetails
-      .find((result) => result.resourceId === ResourceIds.halfTime && result.sourceId === ScoreSourceType.emptySource);
 
-    this.#fullTimeResult = this.#match().resultDetails
-      .find((result) => result.resourceId === ResourceIds.fullTime && result.sourceId === ScoreSourceType.emptySource);
 
 
     this.autoSelectResultByFilterOver(filterOver);
 
     this.#isApplyHedgeMatch = this.#match().hedgeMatchDetail != null && !this.#match().hedgeMatchDetail.isUndecided;
+   
+    this.#halfTimeResult = resultDetails.find(x => x.resourceId === ResourceIds.halfTime);
+    this.#fullTimeResult = resultDetails.find(x => x.resourceId === ResourceIds.fullTime);
     this.#halfTimeResult.resourceName = "HT";
-    this.#fullTimeResult.resourceName = "FT";
-
-
-    this.#outsideHtResult = externalResults.map(x => x.resultDetails.find(y => y.resourceId === ResourceIds.halfTime));
-    this.#outsideFtResult = externalResults.map(x => x.resultDetails.find(y => y.resourceId === ResourceIds.fullTime));
-
-    this.#traderHtResult = resultDetails.find(x => x.sourceId === ScoreSourceType.trader && x.resourceId === ResourceIds.halfTime);
-    this.#traderFtResult = resultDetails.find(x => x.sourceId === ScoreSourceType.trader && x.resourceId === ResourceIds.fullTime);
+    this.#fullTimeResult.resourceName = "FT"; 
   }
 
 
@@ -222,20 +190,15 @@ export class CalculateStorage implements Storage {
 
   clear() {
     this.toastrService.clear()
-    this.#matchDetail.isWarningHalfTimeAwayScore = false;
-    this.#matchDetail.isWarningHalfTimeHomeScore = false;
-    this.#matchDetail.isWarningFinalAwayScore = false;
-    this.#matchDetail.isWarningFinalHomeScore = false;
     this.#matchDetail.isWarningGoalRecord = false;
 
-    this.traderFtResult.isHomeValueWarning = false;
-    this.traderFtResult.isAwayValueWarning = false;
-    this.traderHtResult.isHomeValueWarning = false;
-    this.traderFtResult.isAwayValueWarning = false;
-
-    this.traderFtResult.isInvalidValue = false;
-    this.traderHtResult.isInvalidValue = false;
-
+    this.#match().resultDetails.forEach(x => {
+      x.isResultWarning = false;
+      x.externalScores?.forEach(y => {
+        y.isHomeValueWarning = false;
+        y.isAwayValueWarning = false;
+      });
+    });
   }
 
   changeScore() {

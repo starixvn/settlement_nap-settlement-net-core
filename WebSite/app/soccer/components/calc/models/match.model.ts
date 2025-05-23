@@ -1,17 +1,14 @@
 import { Remark } from "../../../../shared/models";
-import { ExternalResult, Permission } from "../../../../shared/models/sportsbook-sop";
-import { TicketCount, ResultDetail, MatchDetailBase } from '../../../models';
+import {GeneralMatch, MatchDetail, ResultDetail } from "../../../../shared/models/sportsbook-sop";
+import { GoalIcon, MatchDetailBase } from '../../../models';
 import { Resource } from "./resouce.model";
 
-export interface Match {
-    matchDetail: MatchDetail;
-    permission: Permission;
-    ticketCounts: TicketCount[];
+export interface Match extends GeneralMatch {
+    matchDetail: MatchDetailSoccer;
     resultDetails: ResultDetail[];
     hedgeMatchDetail: HedgeMatchDetail;
     fantasyMatch: FantasyMatch;
     childMatches: ChildMatch[];
-    externalResults: ExternalResult[];
 }
 
 export interface ChildMatch {
@@ -36,22 +33,12 @@ export interface HedgeMatchDetail {
     isUndecided: boolean;
 }
 
-export interface MatchDetail extends MatchDetailBase {
-    playTime: number,
-    exHTHomeScore: string,
-    exHTAwayScore: string,
-    exFTHomeScore: string,
-    exFTAwayScore: string,
+export interface MatchDetailSoccer extends MatchDetail, MatchDetailBase {
     isFantasyMatch: boolean,
     isInstant: boolean,
     hasInstantCompleted: boolean,
-    confirmHT: number,
-    confirmFT: number,
     isLive: boolean,
     offerLive: boolean,
-    childMatchType: number,
-    sportType: number,
-    parentId: number,
 }
 
 export interface FantasyMatch {

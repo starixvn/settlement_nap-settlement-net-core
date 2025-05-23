@@ -1,6 +1,6 @@
-import { ResultDetail } from "../../../models";
+import { ResultDetail } from "../../../../shared/models/sportsbook-sop";
 import { CalculateAction } from "../../../../shared/constants/calculate-action.native";
-import { MatchDetail, UndoChecking } from "./match.model";
+import { MatchDetailSoccer as MatchDetail, UndoChecking } from "./match.model";
 import * as _ from "lodash";
 import { Resource } from "./resouce.model";
 export class SettleQuery {
@@ -25,7 +25,6 @@ export class SettleQuery {
     public childMatchType: number;
     public sportType: number;
     public parentId: number;
-    public resultDetails: ResultDetail[];
     public selectedResultDetails: ResultDetail[];
 
 
@@ -50,7 +49,6 @@ export class SettleQuery {
         this.childMatchType = matchDetail.childMatchType;
         this.sportType = matchDetail.sportType;
         this.parentId = matchDetail.parentId;
-        this.resultDetails = resultDetails;
         this.selectedResultDetails = resultDetails.filter(x => x.checked);
         
         if (matchDetail.applyGoalRecord) {

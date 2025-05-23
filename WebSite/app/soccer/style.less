@@ -9,7 +9,6 @@
     width: 790px !important;
 
     .calc-bottom {
-        width: 636px;
         min-height: 60px;
         padding-bottom: 5px;
         display: flex;
@@ -454,9 +453,13 @@ soccer-ticket-count {
 }
 
 .calc-popup .calculate-action {
-    width: 760px;
+    table {
+        th {
+            width: 80px;
+        }
+    }
 
-    .mismatched {
+    .mismatched:not(:nth-child(-n+2)) {
         background-color: #f40000;
     }
 

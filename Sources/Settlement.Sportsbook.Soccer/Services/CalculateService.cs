@@ -25,6 +25,8 @@ public interface ICalculateService
     Task<Result> CheckStatus(CheckStatusRequest request);
 
     Task<Result> SaveScore(SaveScoreRequest request);
+
+    Task<Result> SaveOutsideScore(SaveOutsideScoreRequest request);
 }
 
 public class CalculateServiceImp(
@@ -89,10 +91,7 @@ public class CalculateServiceImp(
 
     private async Task SaveOutsideScores(SettleRequest request)
     {
-        var selectedResourceIds = request.SelectedResultDetails.Select(x => x.ResourceId);
-
-        var outsideScores = request.ResultDetails
-            .Where(x => selectedResourceIds.Contains(x.ResourceId) && x.SourceId == SourceType.Screenshot);
+        var outsideScores = request.SelectedResultDetails.SelectMany(r => r.ExternalScores);
 
         var criteria = new SaveOutsideScoreCriteria
         {
@@ -116,6 +115,20 @@ public class CalculateServiceImp(
         return xmlConvertService.Serialize(resources);
     }
 
+    public async Task<Result> SaveOutsideScore(SaveOutsideScoreRequest request)
+    {
+        var criteria = new SaveOutsideScoreCriteria
+        {
+            MatchId = request.MatchId,
+            UserId = napSession.UserId,
+            Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString(),
+            OutsideSources = CreateScoreResources(request.ScoresToSave),
+            Sources = CreateScoreResources(request.CheckedScores)
+        };
+
+        await repository.ExecuteAsync(criteria);
+        return new Result(criteria.ErrCode, criteria.ErrMsg);
+    }
     public async Task<Result> UncalculateFt(UncalculateFtRequest request)
     {
         var criteria = createCriteriaService.CreateUnCalculateFtCriteria(request);

@@ -1,10 +1,9 @@
 import { Injectable } from "@angular/core";
 import * as _ from "lodash";
 import { EventStatus, TicketStatusText } from "../../../../shared/constants";
-import { ChildMatch, FantasyRelatedMatch, MatchDetail, Score } from '../models/match.model';
+import { ChildMatch, FantasyRelatedMatch, MatchDetailSoccer as MatchDetail, Score } from '../models/match.model';
 import { VerificationBaseService } from "../../../services/verification-base.service";
-import { ResultDetail } from "../../../models";
-import { ResourceIds } from '../../../constants';
+import { ResultDetail } from "../../../../shared/models/sportsbook-sop";
 import { ExternalResultDetail } from "../../../../shared/models/sportsbook-sop";
 import { GeneralResultDetail } from "../../../../shared/models";
 
@@ -75,24 +74,16 @@ export class VerifyScoreGoalService extends VerificationBaseService {
         return false;
     }
 
-    public verifyScore(resultDetail: ResultDetail, matchDetail: MatchDetail, isHalfTime = true) {
+    public verifyScore(resultDetail: ResultDetail) {
         if (this.isEmptyScore(resultDetail.homeValue) || this.isEmptyScore(resultDetail.awayValue)) {
-            if (isHalfTime) {
-                matchDetail.isWarningHalfTimeHomeScore = this.isEmptyScore(resultDetail.homeValue);
-                matchDetail.isWarningHalfTimeAwayScore = this.isEmptyScore(resultDetail.awayValue);
-            } else {
-                matchDetail.isWarningFinalHomeScore = this.isEmptyScore(resultDetail.homeValue);
-                matchDetail.isWarningFinalAwayScore = this.isEmptyScore(resultDetail.awayValue);
-            }
+            resultDetail.isResultWarning = true;
             return true;
         }
         return false;
     }
 
-    public verifyScoreAll(resultDetails: ResultDetail[], matchDetail: MatchDetail) {
-        const isHTEmpty = this.verifyScore(resultDetails.find(r => r.resourceId === ResourceIds.halfTime), matchDetail, true);
-        const isFTEmpty = this.verifyScore(resultDetails.find(r => r.resourceId === ResourceIds.fullTime), matchDetail, false);
-        return isFTEmpty || isHTEmpty;
+    public verifyScoreAll(resultDetails: ResultDetail[]) {
+        return resultDetails.filter(this.verifyScore.bind(this)).length > 0;
     }
 
     public isHalfTimeSettled(matchDetail: MatchDetail) {
@@ -154,10 +145,10 @@ export class VerifyScoreGoalService extends VerificationBaseService {
     }
 
     public isHtFtNotConsistent(halfTimeResult: GeneralResultDetail, fullTimeResult: GeneralResultDetail) {
-        return this.isValidResult(halfTimeResult) 
-            && this.isValidResult(fullTimeResult) 
+        return this.isValidResult(halfTimeResult)
+            && this.isValidResult(fullTimeResult)
             && (+halfTimeResult.homeValue > +fullTimeResult.homeValue
-            || +halfTimeResult.awayValue > +fullTimeResult.awayValue);
+                || +halfTimeResult.awayValue > +fullTimeResult.awayValue);
     }
 
     public verifyScoreForChildMatch(fulltimeResult: ResultDetail, selectedChildMatches: ChildMatch[]) {
@@ -171,23 +162,17 @@ export class VerifyScoreGoalService extends VerificationBaseService {
             }
         }
 
-        const filteredResults =([...externalResultDetails, ...resultDetails] as GeneralResultDetail[])
+        const filteredResults = ([...externalResultDetails, ...resultDetails] as GeneralResultDetail[])
             .filter(result => !_.isEmpty(result.homeValue) && !_.isEmpty(result.awayValue));
-        
-        if(filteredResults.length === 1) {
-            return [false,undefined];
+
+        if (filteredResults.length === 1) {
+            return [false, undefined];
         }
 
         const uniqueResults = _.uniqWith(filteredResults, (a, b) =>
             a.homeValue === b.homeValue && a.awayValue === b.awayValue
         );
 
-        return [uniqueResults.length  === 1, uniqueResults[0]];
-    }
-
-    public isMismatched(resultDetails: GeneralResultDetail[]) {
-        const filteredResults = resultDetails.filter(result => result && !_.isEmpty(result.homeValue) && !_.isEmpty(result.awayValue));
-        const isDifferent = _.uniqWith(filteredResults, (a, b) => a.homeValue === b.homeValue && a.awayValue === b.awayValue).length > 1;
-        return isDifferent;
+        return [uniqueResults.length === 1, uniqueResults[0]];
     }
 }

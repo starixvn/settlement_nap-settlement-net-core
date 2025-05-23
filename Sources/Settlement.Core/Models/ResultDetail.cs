@@ -1,5 +1,5 @@
-﻿
-using System.Text.Json;
+﻿using Newtonsoft.Json;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Settlement.Core.Models;
 
@@ -43,6 +43,9 @@ public class ResultDetail : ResultDetailBase
     public string OtherInfo { get; set; }
 
     public byte ResultSetting { get; set; }
+
+    [JsonIgnore]
+    public IEnumerable<ExternalResultDetailModel> ExternalScores { get; set; } = new List<ExternalResultDetailModel>();
 
     public ResultDetailSetting ResultSettingData => new()
     {

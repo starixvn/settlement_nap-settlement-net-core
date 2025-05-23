@@ -3,14 +3,16 @@ import { Language } from '../../../../shared/language.native';
 import { AbstractHandler } from '../../abstract.handler.native';
 import { Storage } from '../../../storage/storage.service.native';
 import { inject } from '@angular/core';
-import { ResultDetail } from '../../../models';
 import { ScoreSourceType } from '../../../../shared/constants';
+import { ExternalResultDetail, ResultDetail } from '../../../../shared/models/sportsbook-sop';
+
 export class VerifyTraderScoreHandler extends AbstractHandler {
   #verifyScoreGoalService = inject(VerifyScoreGoalService);
+
   handle(storage: Storage) {
     const { resultDetails } = storage.getMatch();
     const resultSelected = resultDetails.filter((resultDetail) => resultDetail.checked);
-    const traderResults = resultDetails.filter((resultDetail) => resultDetail.sourceId === ScoreSourceType.trader && resultSelected.some((result) => result.resourceId === resultDetail.resourceId));
+    const traderResults = this.getTraderResults(resultSelected);
 
     if(this.verifyScore(traderResults)) {
       storage.error(Language.warningInputScore);
@@ -19,7 +21,11 @@ export class VerifyTraderScoreHandler extends AbstractHandler {
     }
   }
 
-  private verifyScore(resultSelected: ResultDetail[]) {
+  private getTraderResults(selectedResults: ResultDetail[]): ExternalResultDetail[] {
+    return selectedResults.flatMap(result => result.externalScores.filter(score => score.sourceId === ScoreSourceType.trader));
+  }
+
+  private verifyScore(resultSelected: ExternalResultDetail[]) {
     let existScoreInvalid = false;
     resultSelected.forEach((resultDetail) => {
       if(this.#verifyScoreGoalService.isEmptyScore(resultDetail.homeValue) || this.#verifyScoreGoalService.isEmptyScore(resultDetail.awayValue)) {

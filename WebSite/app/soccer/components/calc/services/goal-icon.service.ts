@@ -1,11 +1,11 @@
 import { Injectable } from "@angular/core";
 import * as _ from "lodash";
-import { MatchDetail } from '../models/match.model';
+import { MatchDetailSoccer as MatchDetail } from '../models/match.model';
 import { GoalIcon } from '../../../models/goal-icon.model';
 import { GoalRecordWithOutSemicolonService } from "./goal-record-with-out-semicolon.service";
 import { GoalRecordWithSemicolonService } from "./goal-record-with-semicolon.service";
 import { VerifyScoreGoalService } from "./verify-score-goal.service";
-import { ResultDetail } from "../../../models";
+import { ResultDetail } from "../../../../shared/models/sportsbook-sop";
 
 @Injectable()
 export class GoalIconService {

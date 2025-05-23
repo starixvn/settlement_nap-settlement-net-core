@@ -3,8 +3,9 @@ import { firstValueFrom } from 'rxjs';
 import { HttpRequestService } from "../../../../shared/services";
 import { InstantCalculationQuery, SettleQuery, UncalculateFullTimeQuery } from "../models/query.model";
 import { Result } from "../../../../shared/models";
-import { Match, MatchDetail, TicketGroupCount, UndoChecking } from "../models/match.model";
+import { Match, MatchDetailSoccer as MatchDetail, TicketGroupCount, UndoChecking } from "../models/match.model";
 import { ResultDetail } from "../../../models";
+import { ExternalResultDetail, SaveScoreQuery } from "../../../../shared/models/sportsbook-sop";
 
 @Injectable()
 export class RequestService {
@@ -78,7 +79,7 @@ export class RequestService {
         return firstValueFrom(request);
     }
 
-    saveScore(match: MatchDetail, goalRecord: string,resultDetails: ResultDetail[]): Promise<Result> {
+    saveScore(match: MatchDetail, goalRecord: string, resultDetails: ExternalResultDetail[]): Promise<Result> {
         const query = {
             matchId: match.matchId,
             isEnabledGoalRecordHt: match.isEnabledGoalRecordHt,
@@ -87,6 +88,11 @@ export class RequestService {
             goalRecord
         };
         const request =  this.httpRequestService.postJson<Result>(query,`${this.soccerApi}/save-score`);
+        return firstValueFrom(request);
+    }
+
+    saveOutsideScore(query: SaveScoreQuery) {
+        const request = this.httpRequestService.postJson<Result>(query, `${this.soccerApi}/save-outside-score`);
         return firstValueFrom(request);
     }
 

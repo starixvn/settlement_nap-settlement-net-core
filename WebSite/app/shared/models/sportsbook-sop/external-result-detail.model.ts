@@ -26,4 +26,7 @@ export class ExternalResultDetail extends GeneralResultDetail {
     public map: number;
     public fromResultDetail = false;
     public multipleResultSelect: MultipleSelect;
+    public isProvider: boolean;
+    public isHomeValueWarning: boolean;
+    public isAwayValueWarning: boolean;
 }

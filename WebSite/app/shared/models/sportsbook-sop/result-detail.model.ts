@@ -36,4 +36,10 @@ export class ResultDetail extends GeneralResultDetail {
     isResultWarningByBetType: boolean;
     ordNo: number;
     intervalNo: number;
+    isNotTaken: boolean;
+    isSettleDetermined: boolean;
+    isSettleDeterminedOriginal: boolean;
+    isInvalidSelectedProceed: boolean;
+    isNotExistedValue: boolean;
+    resultState: string;
 }

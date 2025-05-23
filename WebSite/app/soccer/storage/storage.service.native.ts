@@ -1,7 +1,7 @@
 import { ModalDialogMessage } from "../../shared/models";
 import { ExternalResultDetail } from "../../shared/models/sportsbook-sop";
 import { FantasyRelatedMatch, Match, UndoChecking } from "../components/calc/models/match.model";
-import { ResultDetail } from "../models";
+import { ResultDetail } from "../../shared/models/sportsbook-sop/result-detail.model";
 
 export interface Storage {
   getMatch(): Match

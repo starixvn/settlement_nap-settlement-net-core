@@ -1,23 +1,29 @@
 import { CalculateAction } from './../../../../shared/constants/calculate-action.native';
 
 import { LeagueGroup, TimeMinute } from "../../../components/calc/models/constant.native";
-import { MatchDetail } from "../../../components/calc/models/match.model";
+import { MatchDetailSoccer as MatchDetail } from "../../../components/calc/models/match.model";
 import { Storage } from "../../../storage/storage.service.native";
 import { AbstractHandler } from "../../abstract.handler.native";
 import { Language } from '../../../../shared/language.native';
 import { ResultStatusId, ScoreSourceType } from '../../../../shared/constants';
-import { ResultDetail } from '../../../models';
+import { ResultDetail } from '../../../../shared/models/sportsbook-sop';
 import * as _ from 'lodash';
+import { inject } from '@angular/core';
+import { VerificationBaseService } from '../../../../core/services/verification-base.service';
+import { MessageBoxService } from '../../../../shared/services/message-box.service.native';
 
 
 export class VerifyScoreConfirmHandler extends AbstractHandler {
+  #verificationService = inject(VerificationBaseService);
+  #messageBoxService = inject(MessageBoxService);
 
   async handle(storage: Storage) {
-    const { matchDetail, resultDetails } = storage.getMatch();
+    const { matchDetail, resultDetails, permission } = storage.getMatch();
     const calculateAction = storage.getCalculateAction();
     const isHalfTime = calculateAction === CalculateAction.calculateHalfTime;
     const isFullTime = calculateAction === CalculateAction.calculateFullTime;
     const isCalculate = calculateAction === CalculateAction.calculate;
+    const checkedResults = this.getCheckedResults(resultDetails);
     const halfTimeResult = storage.getHalfTimeResult();
 
     if (this.halfTimeCompleted(halfTimeResult, isFullTime && !halfTimeResult.checked)) {
@@ -32,12 +38,12 @@ export class VerifyScoreConfirmHandler extends AbstractHandler {
       return;
     }
 
-    if (!this.isExistsOutsideResults(resultDetails)) {
+    if (!this.#verificationService.allMapHaveScreenshotSource(checkedResults)) {
       storage.error(Language.sop.notScreenshot);
       return;
     }
 
-    if (this.isExistsMismatchOutsideResults(resultDetails)) {
+    if (this.#verificationService.isExistMismatchedScoreScreenshot(checkedResults)) {
       storage.error(Language.sop.mismatchedScreenshot);
       return;
     }
@@ -64,27 +70,6 @@ export class VerifyScoreConfirmHandler extends AbstractHandler {
 
     return this.byPassDisableRule(matchDetail) ? false : flag;
   }
-
-  private isExistsOutsideResults(resultDetails: ResultDetail[]) {
-    const resultsId = resultDetails.filter(x => x.checked)
-      .map(x => x.resourceId);
-
-    return resultDetails.filter(x => x.sourceId === ScoreSourceType.screenshot
-      && resultsId.includes(x.resourceId)
-      && !_.isEmpty(x.homeValue)
-      && !_.isEmpty(x.awayValue)).length > 0;
-  }
-
-  private isExistsMismatchOutsideResults(resultDetails: ResultDetail[]) {
-    const checkedResults = this.getCheckedResults(resultDetails);
-
-    return checkedResults.some(x => {
-      const outsideResult = resultDetails.find(y => y.sourceId === ScoreSourceType.screenshot && y.resourceId === x.resourceId);
-      return outsideResult && (outsideResult.homeValue !== x.homeValue || outsideResult.awayValue !== x.awayValue);
-    });
-  }
-
-  
 
   private getCheckedResults(resultDetails: ResultDetail[]) {
     return resultDetails.filter(x => x.checked);

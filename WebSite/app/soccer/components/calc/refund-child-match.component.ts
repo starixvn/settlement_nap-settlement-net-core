@@ -2,7 +2,7 @@ import { FormsModule } from '@angular/forms';
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import * as _ from "lodash";
 import { BackgroundColor, EventStatus } from "../../../shared/constants";
-import { ChildMatch, Match, MatchDetail } from "./models/match.model";
+import { ChildMatch, MatchDetailSoccer as MatchDetail } from "./models/match.model";
 import { CommonModule } from "@angular/common";
 
 @Component({

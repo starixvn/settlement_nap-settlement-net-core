@@ -10,6 +10,5 @@ public class SettleRequest : SettleBaseRequest, IRequest<Result>
     public short ChildMatchType { get; set; }
     public short SportType { get; set; }
     public int ParentId { get; set; }
-    public List<ResultDetail> ResultDetails { get; set; }
     public List<ResultDetail> SelectedResultDetails { get; set; }
 }

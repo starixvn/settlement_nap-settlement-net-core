@@ -2,7 +2,9 @@ import { Injectable } from "@angular/core";
 import * as _ from 'lodash';
 import { EventStatus } from "../../shared/constants";
 import { Goal } from "../constants";
-import { MatchDetailBase, ResultDetail } from "../models";
+import { MatchDetailSoccer } from "../components/calc/models/match.model";
+import { ResultDetail } from "../../shared/models/sportsbook-sop";
+import { MatchDetailBase } from "../models";
 
 @Injectable()
 export class VerificationBaseService {
@@ -17,15 +19,15 @@ export class VerificationBaseService {
         return _.isNull(value) || _.isEmpty(value);
     }
 
-    public goalRecordExistSemicolon(matchDetail: MatchDetailBase) {
+    public goalRecordExistSemicolon(matchDetail: MatchDetailSoccer | MatchDetailBase) {
         return matchDetail.applyGoalRecord && matchDetail.goalRecord.indexOf(';') >= 0;
     }
 
-    public goalRecordNotExistSemicolon(matchDetail: MatchDetailBase) {
+    public goalRecordNotExistSemicolon(matchDetail: MatchDetailSoccer| MatchDetailBase) {
         return matchDetail.applyGoalRecord && matchDetail.goalRecord.indexOf(';') < 0;
     }
 
-    public isHtGoalRecordInvalid(matchDetail: MatchDetailBase) {
+    public isHtGoalRecordInvalid(matchDetail: MatchDetailSoccer | MatchDetailBase) {
         const homeScore = Number(matchDetail.halfTimeHomeScore);
         const awayScore = Number(matchDetail.halfTimeAwayScore);
         const htGoalRecord = matchDetail.goalRecord.indexOf(';') < 0 ?
@@ -36,7 +38,7 @@ export class VerificationBaseService {
         return (homeScore + awayScore) !== htGoalRecord.length || (goalRecordHomeScore !== homeScore || goalRecordAwayScore !== awayScore);
     }
 
-    public isHtGoalRecordInvalidWithResultDetail(matchDetail: MatchDetailBase, halfTimeResult: ResultDetail) {
+    public isHtGoalRecordInvalidWithResultDetail(matchDetail: MatchDetailSoccer | MatchDetailBase, halfTimeResult: ResultDetail) {
         const homeScore = Number(halfTimeResult.homeValue);
         const awayScore = Number(halfTimeResult.awayValue);
         const htGoalRecord = matchDetail.goalRecord.indexOf(';') < 0 ?
@@ -47,7 +49,7 @@ export class VerificationBaseService {
         return (homeScore + awayScore) !== htGoalRecord.length || (goalRecordHomeScore !== homeScore || goalRecordAwayScore !== awayScore);
     }
 
-    public isHTGoalRecordConsistentWithResultDetail(matchDetail: MatchDetailBase, halfTimeResult: ResultDetail) {
+    public isHTGoalRecordConsistentWithResultDetail(matchDetail: MatchDetailSoccer | MatchDetailBase, halfTimeResult: ResultDetail) {
         let isSuspendHalfTime = true;
         if ((!this.isEmptyScore(halfTimeResult.homeValue)
                 || !this.isEmptyScore(halfTimeResult.awayValue)
@@ -59,7 +61,7 @@ export class VerificationBaseService {
         return matchDetail.applyGoalRecord && !isSuspendHalfTime && this.isHtGoalRecordInvalidWithResultDetail(matchDetail, halfTimeResult);
      }
 
-    public isHTGoalRecordConsistent(matchDetail: MatchDetailBase) {
+    public isHTGoalRecordConsistent(matchDetail: MatchDetailSoccer | MatchDetailBase) {
         let isSuspendHalfTime = true;
         if ((!this.isEmptyScore(matchDetail.halfTimeHomeScore)
             || !this.isEmptyScore(matchDetail.halfTimeAwayScore)
@@ -75,7 +77,7 @@ export class VerificationBaseService {
         return !this.isEmpty(betStatus) && _.includes(betStatus.toLowerCase(), EventStatus.refund.toLowerCase());
     }
 
-    public isFullTimeGoalRecordInvalid(matchDetail: MatchDetailBase) {
+    public isFullTimeGoalRecordInvalid(matchDetail: MatchDetailSoccer | MatchDetailBase) {
         const homeScore = Number(matchDetail.finalHomeScore);
         const awayScore = Number(matchDetail.finalAwayScore);
         const fulltimeGoalRecord = matchDetail.goalRecord.replace(';', '');
@@ -86,7 +88,7 @@ export class VerificationBaseService {
             || (goalRecordHomeScore !== homeScore || goalRecordAwayScore !== awayScore));
     }
 
-    public isFullTimeGoalRecordInvalidWithResultDetail(matchDetail: MatchDetailBase, fullTimeResult: ResultDetail) {
+    public isFullTimeGoalRecordInvalidWithResultDetail(matchDetail: MatchDetailSoccer | MatchDetailBase, fullTimeResult: ResultDetail) {
         const homeScore = Number(fullTimeResult.homeValue);
         const awayScore = Number(fullTimeResult.awayValue);
         const fulltimeGoalRecord = matchDetail.goalRecord.replace(';', '');

@@ -46,6 +46,8 @@ public class MatchServiceImp(
     IFetchDataService fetchDataService)
     : IMatchService
 {
+    private static readonly List<string> resourcesSoccer = [ResourceType.Halftime, ResourceType.Final];
+
     public string GetBetStatus(int matchId)
     {
         var criteria = new GetMatchInfoCriteria
@@ -77,15 +79,13 @@ public class MatchServiceImp(
 
         var matchDetail = match.MatchDetail;
         matchDetail.RefDataService = refDataService;
-        SetExMatchScore(matchDetail, resultDetails);
         SetNormalResults(matchDetail, resultDetails);
-
-        SetTraderResults(resultDetails);
 
         var goalIconQuery = GoalIconQuery(matchDetail);
         matchDetail.GoalIcon = goalIconService.GetGoalIcon(goalIconQuery);
 
         var externalResults = await GetOutsideSources(matchDetail.MatchId);
+        SetTraderResults(resultDetails, externalResults);
 
         var hedgeMatchDetail = await GetHedgeMatch(request.MatchId);
 
@@ -103,10 +103,14 @@ public class MatchServiceImp(
             item.RefDataService = refDataService;
         }
 
+        var resultSorted = resultDetails
+            .Where(r => r.SourceId == SourceType.Normal && resourcesSoccer.Contains(r.ResourceId))
+            .OrderBy(r => resourcesSoccer.IndexOf(r.ResourceId));
+
         return new Match
         {
             MatchDetail = matchDetail,
-            ResultDetails = resultDetails,
+            ResultDetails = resultSorted,
             TicketCounts = match.TicketCounts,
             ChildMatches = childMatches,
             FantasyMatch = fantasyMatch,
@@ -124,8 +128,8 @@ public class MatchServiceImp(
         };
 
         var results = await repository.FetchAsync<ExternalResultDetailModel>(criteria);
-
-        var externalResult = results.GroupBy(resultDetail => new { resultDetail.SourceId, resultDetail.SourceName, resultDetail.OrderNo, resultDetail.Remark })
+        var listResult = results.ToList();
+        var externalResult = listResult.GroupBy(resultDetail => new { resultDetail.SourceId, resultDetail.SourceName, resultDetail.OrderNo, resultDetail.Remark })
             .Select(resultDetail => new ExternalResultModel
             {
                 SourceId = resultDetail.Key.SourceId,
@@ -227,7 +231,7 @@ public class MatchServiceImp(
 
     private static void SetExMatchScore(MatchDetail match, List<ResultDetail> resultDetails)
     {
-        //TODO
+        //TODO: Should Remove after Refund Popup use ResultDetail instead of Table Match
         var externalResultDetail = resultDetails.Where(result => result.SourceId == SourceType.Sbo).ToList();
         var halfTimeResult = externalResultDetail.Find(result => result.ResourceId == ResourceType.Halftime);
         var fullTimeResult = externalResultDetail.Find(result => result.ResourceId == ResourceType.Final);
@@ -249,6 +253,7 @@ public class MatchServiceImp(
 
     private static void SetNormalResults(MatchDetail match, List<ResultDetail> resultDetails)
     {
+
         var internalResultDetail = resultDetails.Where(result => result.SourceId == SourceType.Normal).ToList();
 
         var halfTimeResult = internalResultDetail.Find(result => result.ResourceId == ResourceType.Halftime);
@@ -260,7 +265,7 @@ public class MatchServiceImp(
         }
         else
         {
-            resultDetails.Add(new ResultDetail { ResourceId = ResourceType.Halftime, SourceId = SourceType.Normal, HomeValue = "", AwayValue = "" });
+            resultDetails.Add(new ResultDetail { ResourceId = ResourceType.Halftime, SourceId = SourceType.Normal, TicketStatus = TicketStatus.Running });
         }
 
         if (fullTimeResult != null)
@@ -269,32 +274,42 @@ public class MatchServiceImp(
         }
         else
         {
-            resultDetails.Add(new ResultDetail { ResourceId = ResourceType.Final, SourceId = SourceType.Normal, HomeValue = "", AwayValue = "" });
+            resultDetails.Add(new ResultDetail { ResourceId = ResourceType.Final, SourceId = SourceType.Normal, TicketStatus = TicketStatus.Running });
         }
     }
 
-    private static void SetTraderResults(List<ResultDetail> resultDetails)
+    private static void SetTraderResults(List<ResultDetail> resultDetails, List<ExternalResultModel> externalResults)
     {
+        if (externalResults.Exists(r => r.SourceId == SourceType.Trader))
+        {
+            return;
+        }
         var validStatus = new List<byte> { ResultStatus.Confirmed, ResultStatus.AutoSettled, ResultStatus.ManuallySettled };
         var internalResultDetails = resultDetails.Where(result => result.SourceId == SourceType.Normal).ToList();
 
-        AddTraderResult(resultDetails, internalResultDetails, ResourceType.Halftime, validStatus);
-        AddTraderResult(resultDetails, internalResultDetails, ResourceType.Final, validStatus);
+        AddTraderResult(externalResults, internalResultDetails, validStatus);
     }
 
-    private static void AddTraderResult(List<ResultDetail> resultDetails, List<ResultDetail> internalResultDetails, string resourceType, List<byte> validStatus)
+    private static void AddTraderResult(List<ExternalResultModel> externalResults, List<ResultDetail> internalResultDetails, List<byte> validStatus)
     {
+        string[] resultFinal = [ResourceType.Final, ResourceType.Halftime];
         var result = internalResultDetails
-            .Find(detail => detail.ResourceId == resourceType && validStatus.Contains(detail.ResultStatusId ?? 0));
+            .Where(detail => resultFinal.Contains(detail.ResourceId) && validStatus.Contains(detail.ResultStatusId ?? 0));
 
-        resultDetails.Add(new ResultDetail
+        externalResults.Insert(0, new ExternalResultModel
         {
-            ResourceId = resourceType,
+
             SourceId = SourceType.Trader,
-            HomeValue = result?.HomeValue ?? string.Empty,
-            AwayValue = result?.AwayValue ?? string.Empty,
-            SettlementStatusId = result?.SettlementStatusId,
-            ResultStatusId = result?.ResultStatusId
+            SourceName = "Trader",
+            OrderNo = 0,
+            ResultDetails = result.Select(r => new ExternalResultDetailModel
+            {
+                HomeValue = r.HomeValue,
+                AwayValue = r.AwayValue,
+                ResourceId = r.ResourceId,
+                SourceId = r.SourceId,
+                SourceName = r.SourceName,
+            }).ToList()
         });
     }
 

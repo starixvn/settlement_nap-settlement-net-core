@@ -36,6 +36,8 @@ export interface MatchDetailBase {
     originalGoalRecord: string,
     isScoreInconsistent: boolean,
     sportType: number,
-    childMatchType: number;
-    parentId: number;
+    childMatchType: number,
+    parentId: number,
+    
+    
 }

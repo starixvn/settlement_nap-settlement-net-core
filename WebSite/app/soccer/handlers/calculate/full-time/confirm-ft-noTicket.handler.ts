@@ -6,6 +6,7 @@ import { inject } from "@angular/core";
 import { RequestService } from "../../../components/calc/services/request.service";
 import { CalculateAction, ResourceIds, ResultStatusId, ScoreSourceType, } from "../../../../shared/constants";
 import * as _ from "lodash";
+import { SourceIds } from "../../../../basketball/constants/source-ids";
 
 export class ConfirmFtNoTicketHandler extends AbstractHandler {
   #messageBoxService = inject(MessageBoxService);
@@ -14,7 +15,7 @@ export class ConfirmFtNoTicketHandler extends AbstractHandler {
   readonly sourceTypeIds = [ScoreSourceType.trader, ScoreSourceType.Sbo];
 
   async handle(storage: Storage) {
-    const { matchDetail, resultDetails } = storage.getMatch();
+    const { matchDetail, externalResults } = storage.getMatch();
     const halfTimeResult = storage.getHalfTimeResult();
 
     const isHalfTimeSettled = this.resultSettledStatusIds.includes(halfTimeResult.resultStatusId);
@@ -22,17 +23,15 @@ export class ConfirmFtNoTicketHandler extends AbstractHandler {
     const ticketCounts = await this.#requestService.countTickets(matchDetail.matchId);
     const isExistsTicket = ticketCounts.some(x => ["1H", "2H", "BothHalf"].includes(x.groupResult) && x.totalTicket > 0);
 
-    const isExistsHtSourceResult = resultDetails
-      .filter(x => x.resourceId === ResourceIds.halfTime && this.sourceTypeIds.includes(x.sourceId))
+    const isExistsHtSourceResult = externalResults.filter(e => this.sourceTypeIds.includes(e.sourceId)).flatMap(m => m.resultDetails)
+      .filter(x => x.resourceId === ResourceIds.halfTime)
       .some(x => !_.isEmpty(x.homeValue) && !_.isEmpty(x.awayValue));
 
     if (!halfTimeResult.checked && !isHalfTimeSettled && !isExistsTicket && !isExistsHtSourceResult) {
       const confirmMessage = `${Language.soccer.confirmAutoSelectFtNoTicket}`;
       storage.setConfirmMessage(confirmMessage);
       this.#messageBoxService.confirm(storage.getConfirmMessage(), () => {
-        halfTimeResult.homeValue = '0';
-        halfTimeResult.awayValue = '0';
-        halfTimeResult.checked = true;
+        this.setValueHalfTime(storage);
 
         storage.setIsIgnoreCheckHt(true);
         storage.setCalculateAction(CalculateAction.calculate);
@@ -41,5 +40,19 @@ export class ConfirmFtNoTicketHandler extends AbstractHandler {
       return;
     }
     super.handle(storage);
+  }
+
+
+  private setValueHalfTime(storage: Storage) {
+    const halfTimeResult = storage.getHalfTimeResult();
+    halfTimeResult.homeValue = '0';
+    halfTimeResult.awayValue = '0';
+    halfTimeResult.checked = true;
+    const screenshot = halfTimeResult.externalScores.find(x => x.sourceId === SourceIds.screenshot);
+    if (screenshot) {
+      screenshot.homeValue = '0';
+      screenshot.awayValue = '0';
+    }
+    
   }
 }

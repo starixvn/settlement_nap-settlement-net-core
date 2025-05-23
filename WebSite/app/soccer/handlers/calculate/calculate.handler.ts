@@ -6,8 +6,8 @@ import { RequestService } from "../../components/calc/services/request.service";
 import { includes, isEmpty, isEqual } from "lodash";
 import { CalculateAction } from "../../../shared/constants";
 import { SettleQuery } from "../../components/calc/models/query.model";
-import { MatchDetail } from "../../components/calc/models/match.model";
-import { ResultDetail } from "../../models";
+import { MatchDetailSoccer as MatchDetail } from "../../components/calc/models/match.model";
+import { ResultDetail } from "../../../shared/models/sportsbook-sop";
 import { ResourceIds } from "../../constants";
 
 
