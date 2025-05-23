@@ -278,42 +278,6 @@ public class MatchServiceImp(
         }
     }
 
-    private static void SetTraderResults(List<ResultDetail> resultDetails, List<ExternalResultModel> externalResults)
-    {
-        if (externalResults.Exists(r => r.SourceId == SourceType.Trader))
-        {
-            return;
-        }
-        var validStatus = new List<byte> { ResultStatus.Confirmed, ResultStatus.AutoSettled, ResultStatus.ManuallySettled };
-        var internalResultDetails = resultDetails.Where(result => result.SourceId == SourceType.Normal).ToList();
-
-        AddTraderResult(externalResults, internalResultDetails, validStatus);
-    }
-
-    private static void AddTraderResult(List<ExternalResultModel> externalResults, List<ResultDetail> internalResultDetails, List<byte> validStatus)
-    {
-        string[] resultFinal = [ResourceType.Final, ResourceType.Halftime];
-        var result = internalResultDetails
-            .Where(detail => resultFinal.Contains(detail.ResourceId) && validStatus.Contains(detail.ResultStatusId ?? 0));
-
-        externalResults.Insert(0, new ExternalResultModel
-        {
-
-            SourceId = SourceType.Trader,
-            SourceName = "Trader",
-            OrderNo = 0,
-            ResultDetails = result.Select(r => new ExternalResultDetailModel
-            {
-                HomeValue = r.HomeValue,
-                AwayValue = r.AwayValue,
-                ResourceId = r.ResourceId,
-                SourceId = r.SourceId,
-                SourceName = r.SourceName,
-            }).ToList()
-        });
-    }
-
-
     public async Task<MatchDetail> GetLatestMatchDetail(GetLatestMatchDetailRequest request)
     {
         var criteria = mapper.Map<GetLatestMatchDetailRequest, GetLatestMatchDetailCriteria>(request);

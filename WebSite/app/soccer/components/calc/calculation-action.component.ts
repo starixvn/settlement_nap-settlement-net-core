@@ -67,11 +67,11 @@ export class CalculationActionComponent implements OnInit {
       ...this.#storage.match(),
       originalResultDetail: _.cloneDeep(resultDetails)
     });
+    this.resetHomeAway(this.resultDetails);
     this.setState();
-    this.scoreChanged(this.halfTimeResult);
-    this.scoreChanged(this.fullTimeResult);
-    this.outSideCount =  resultDetails[0].externalScores.filter(x =>
-      x.sourceId !== ScoreSourceType.trader && x.sourceId >= ScoreSourceType.screenshot).length
+    this.verifyAndAutoFillScore(this.halfTimeResult);
+    this.verifyAndAutoFillScore(this.fullTimeResult);
+    this.outSideCount =  resultDetails[0].externalScores.filter(x => x.sourceId >= ScoreSourceType.screenshot).length
     this.matchDetail.applyGoalRecord = this.disableGoalRecordCheckbox = this.calculateGoalRecordState(matchDetail);
 
     this.enableAction = this.halfTimeResult.checked || this.fullTimeResult.checked;
@@ -97,6 +97,15 @@ export class CalculationActionComponent implements OnInit {
 
     this.halfTimeResult.resultSettingData.iconHoldResult = this.getResultSettingIcon(this.halfTimeResult);
     this.fullTimeResult.resultSettingData.iconHoldResult = this.getResultSettingIcon(this.fullTimeResult);
+  }
+
+  private resetHomeAway(resultDetails: ResultDetail[]) {
+    resultDetails.forEach((map) => {
+      const hideScore = map.settlementStatusId === SettlementStatusId.Refund
+        || (map.resultStatusId !== ResultStatusId.ManualCompleted && map.resultStatusId !== ResultStatusId.AutoCompleted);
+      map.homeValue = hideScore ? "" : map.homeValue;
+      map.awayValue = hideScore ? "" : map.awayValue;
+    });
   }
 
 
@@ -240,8 +249,10 @@ export class CalculationActionComponent implements OnInit {
       && this.#verificationService.isValidTraderConfirmScore(result);
   }
 
-  verifyAndAutoFillScore(map: ResultDetail) {
-    map.isScoreMismatched = this.#verificationService.isMismatchedWarning(map);
+  private verifyAndAutoFillScore(map: ResultDetail, isOnload = false) {
+    if(isOnload && map.settlementStatusId  === SettlementStatusId.Refund) {
+      return;
+    }
     this.#verificationService.autoFillScore(map);
     this.scoreChanged(map);
   }

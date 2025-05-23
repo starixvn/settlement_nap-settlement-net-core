@@ -91,7 +91,7 @@ public class CalculateServiceImp(
 
     private async Task SaveOutsideScores(SettleRequest request)
     {
-        var outsideScores = request.SelectedResultDetails.SelectMany(r => r.ExternalScores);
+        var outsideScores = request.SelectedResultDetails.SelectMany(r => r.ExternalScores).Where(s => s.SourceId >= SourceType.Screenshot);
 
         var criteria = new SaveOutsideScoreCriteria
         {
@@ -117,12 +117,13 @@ public class CalculateServiceImp(
 
     public async Task<Result> SaveOutsideScore(SaveOutsideScoreRequest request)
     {
+        var ignoreProviderScores = request.ScoresToSave.Where(s => s.SourceId >= SourceType.Screenshot);
         var criteria = new SaveOutsideScoreCriteria
         {
             MatchId = request.MatchId,
             UserId = napSession.UserId,
             Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString(),
-            OutsideSources = CreateScoreResources(request.ScoresToSave),
+            OutsideSources = CreateScoreResources(ignoreProviderScores.ToList()),
             Sources = CreateScoreResources(request.CheckedScores)
         };
 
