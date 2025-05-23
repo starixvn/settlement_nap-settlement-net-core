@@ -131,6 +131,8 @@ public class MultiSportServiceImp(
             var isExistTicket = siteMatches.TryGetValue(match.MatchId, out var matchTicketStatistics);
             if (isExistTicket)
             {
+                match.MatchTicketStatistics = matchTicketStatistics;
+
                 match.SuspenderFullTime = matchTicketStatistics.Find(x => !string.IsNullOrEmpty(x.SuspenderFullTime))?.SuspenderFullTime;
                 match.SuspenderHalfTime = matchTicketStatistics.Find(x => !string.IsNullOrEmpty(x.SuspenderHalfTime))?.SuspenderHalfTime;
 
@@ -247,6 +249,8 @@ public class MultiSportServiceImp(
 
         var filteredMatches = ApplyFilterOverStatus(matches, matchTuple.MatchOverStatuses, criteria.OverStatus);
 
+        SetIsExistsConfirmedEarly(filteredMatches, matchTuple.MatchOverStatuses);
+
         await matchService.SetNewOsMatchInfo(matches, resultDetails);
 
         return new MultiSportResult
@@ -259,13 +263,27 @@ public class MultiSportServiceImp(
     private List<Match> ApplyFilterOverStatus(List<Match> matches, List<MatchOverStatus> matchOverStatuses, string overStatus)
     {
         if (string.IsNullOrEmpty(overStatus) || overStatus.Equals("0"))
-            return matches;
+            return matches
+                  .Where(match => match.MatchTicketStatistics.Count > 0)
+                  .ToList();
 
         return matches
             .Where(match => match.MatchTicketStatistics.Count > 0)
             .Where(match => matchOverStatuses.Any(x => x.MatchId == match.MatchId))
             .Where(match => match.ResourceTicketStatistics != null && match.ResourceTicketStatistics.Count > 0)
             .ToList();
+    }
+
+    private void SetIsExistsConfirmedEarly(List<Match> matches, List<MatchOverStatus> matchOverStatuses)
+    {
+        if (matchOverStatuses.Count == 0)
+            return;
+
+        matches.ForEach(m =>
+        {
+            m.IsExistsConfirmedEarly = m.ResourceTicketStatistics
+                .Exists(x => x.IsEarly && matchOverStatuses.Exists(y => y.MatchId == x.MatchId && y.ResourceId == x.ResourceId));
+        });
     }
 
     private async Task<List<ResultDetail>> ResultDetailByMatchIds(List<Match> matches)
