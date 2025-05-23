@@ -12,22 +12,22 @@ export class AutoSelectResultsService {
   public selectByOverStatus(resultDetails: ResultDetail[], finalResult: ResultDetail, overStatus: string) { 
     const overStatuses = overStatus.split(',');
 
-    if (!finalResult || !overStatuses.length) {
+    if (!finalResult || !overStatuses.length || overStatuses.length > 1) {
       return;
     }
 
     resultDetails.forEach(item => {
-      item.checked = item.checked || this.shouldCheckResult(item, overStatuses, finalResult);
+      item.checked = item.checked || this.shouldCheckResult(item, overStatuses);
     });
 
 
   }
 
-  private shouldCheckResult(resultDetail: ResultDetail, overStatuses: string[], finalResult: ResultDetail): boolean {
+  private shouldCheckResult(resultDetail: ResultDetail, overStatuses: string[]): boolean {
     return overStatuses.some(status => {
       switch (status) {
         case OverStatus.MainOver:
-          return this.isMainOverMet(resultDetail, finalResult);
+          return this.isMainOverMet(resultDetail)
         case OverStatus.Over:
           return this.isOverMet(resultDetail);
         case OverStatus.SettledWithRunningTicket:
@@ -38,15 +38,14 @@ export class AutoSelectResultsService {
     });
   }
 
-  private isMainOverMet(resultDetail: ResultDetail, finalResult: ResultDetail): boolean {
-    const isFinalSettledResult = this.settledResultStatusIds.includes(finalResult.resultStatusId);
-    
-    return isFinalSettledResult || resultDetail.resultStatusId === ResultStatusId.TraderConfirm;
+  private isMainOverMet(resultDetail: ResultDetail): boolean {
+    console.log(resultDetail);
+    return resultDetail.resultStatusId === ResultStatusId.TraderConfirm;
   }
 
   private isOverMet(resultDetail: ResultDetail): boolean {
     return !this.settledResultStatusIds.includes(resultDetail.resultStatusId);
-  }
+  } 
   
   private isSettledWithRunningTicketMet(resultDetail: ResultDetail): boolean {
     return resultDetail.settlementStatusId === SettlementStatusId.Calculated 

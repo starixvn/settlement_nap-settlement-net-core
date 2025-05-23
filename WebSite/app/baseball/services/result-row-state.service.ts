@@ -56,6 +56,8 @@ export class ResultRowStateService {
       || isEqual(result.resultStatus, ResultStatus.noResult)
       || isEqual(result.resultStatus, ResultStatus.running);
 
+
+
     return isRunning
       && !result.isScoreMismatched
       && this.verificationService.isValidTraderConfirmScore(result);

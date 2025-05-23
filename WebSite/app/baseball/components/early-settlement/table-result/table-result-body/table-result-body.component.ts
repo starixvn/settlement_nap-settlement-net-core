@@ -98,6 +98,7 @@ export class TableResultBodyComponent  implements OnInit{
   canSettleResult(resultDetail: ResultDetail) {
     const isRunning = isEqual(resultDetail.ticketStatus, TicketStatusText.running)
       || isEqual(resultDetail.resultStatus, ResultStatus.noResult) || isEqual(resultDetail.resultStatus, ResultStatus.running);
+
     return isRunning && !resultDetail.isScoreMismatched && !isNil(this.#earlySettlementService.isExistInhouseResult(resultDetail));
   }
 

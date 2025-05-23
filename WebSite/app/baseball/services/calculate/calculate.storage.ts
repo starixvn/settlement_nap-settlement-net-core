@@ -79,7 +79,7 @@ export class CalculateStorage implements ICalculateStorage {
     this.setIsApplyHedgeMatch(!!matchFetched.hedgeMatchDetail);
     this.#isMatchSeries.set(matchFetched.matchDetail.sessionTime === 1);
 
-    this.#autoSelectResultsService.selectByOverStatus(this.getInningsExcludeExtraAndTotalHits(), this.fulltimeResult, overStatus);
+    this.#autoSelectResultsService.selectByOverStatus(this.getResultDetails(), this.fulltimeResult, overStatus);
 
   }
 
