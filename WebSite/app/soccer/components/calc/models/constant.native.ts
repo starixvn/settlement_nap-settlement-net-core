@@ -1,5 +1,6 @@
 export const LeagueGroup = {
     pinGoal: 113,
+    pinGoalMarble: 252,
     sabaVirtual: 42
 }
 

@@ -50,7 +50,7 @@ export class VerifyScoreConfirmHandler extends AbstractHandler {
   }
 
   private byPassDisableRule(matchDetail: MatchDetail) {
-    return matchDetail.leagueGroupId === LeagueGroup.pinGoal || matchDetail.leagueGroupId === LeagueGroup.sabaVirtual;
+    return [LeagueGroup.pinGoal, LeagueGroup.pinGoalMarble].includes(matchDetail.leagueGroupId) || matchDetail.leagueGroupId === LeagueGroup.sabaVirtual;
   }
 
   private isDisableCalculateHalfTime(matchDetail: MatchDetail) {
