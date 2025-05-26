@@ -268,9 +268,9 @@ public class MultiSportServiceImp(
                   .ToList();
 
         return matches
-            .Where(match => match.MatchTicketStatistics.Count > 0)
+            .Where(match => match.MatchTicketStatistics.Count > 0 || match.ParentId == 0)
             .Where(match => matchOverStatuses.Any(x => x.MatchId == match.MatchId))
-            .Where(match => match.ResourceTicketStatistics != null && match.ResourceTicketStatistics.Count > 0)
+            .Where(match => match.ResourceTicketStatistics != null && match.ResourceTicketStatistics.Count > 0 || match.ParentId == 0)
             .ToList();
     }
 

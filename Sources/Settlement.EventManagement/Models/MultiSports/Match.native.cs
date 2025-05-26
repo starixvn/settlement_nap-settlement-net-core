@@ -106,4 +106,6 @@ public class Match : BaseMatch
     {
         return MatchId;
     }
+
+    public override string ToString() => MatchId.ToString();
 }
