@@ -143,12 +143,13 @@ export class MatchesComponent extends MatchesBaseComponent implements OnChanges,
   
   public getConfirmScore(match: CalculationMatch, isHalfTime: boolean) {
     const {halfTimeScore, finalScore} = match.moreScores;
+
     
     if(isHalfTime && (!halfTimeScore.isNotSettled || this.permission.isLeader)) {
       return match.confirmHalfTimeScore;
     }
 
-    if(isHalfTime && !halfTimeScore.isNotSettled && !this.permission.isLeader && match.confirmHalfTimeScore) {
+    if(isHalfTime && halfTimeScore.isNotSettled && !this.permission.isLeader && match.confirmHalfTimeScore) {
       return '(provider ready)';
     }
     
@@ -156,7 +157,7 @@ export class MatchesComponent extends MatchesBaseComponent implements OnChanges,
       return match.confirmFullTimeScore;
     }
 
-    if(!finalScore.isNotSettled && !this.permission.isLeader && match.confirmFullTimeScore) {
+    if(finalScore.isNotSettled && !this.permission.isLeader && match.confirmFullTimeScore) {
       return '(provider ready)';
     }
 

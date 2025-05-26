@@ -846,6 +846,7 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
       || _.isEqual(result.resultStatus, ResultStatus.noResult)
       || _.isEqual(result.resultStatus, ResultStatus.running);
 
+
     return isRunning
       && !result.isScoreMismatched
       && this.verificationService.isValidTraderConfirmScore(result);
