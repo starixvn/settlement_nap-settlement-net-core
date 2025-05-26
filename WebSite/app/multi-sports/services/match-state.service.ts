@@ -28,6 +28,11 @@ export class MatchStateService {
   }
 
   getBackgroundAutoSetting(match: Match, permission: Permission, isPayout = true) {
+    //TODO
+    // match.hasFailedResource = true;
+    console.log(match.hasFailedResource);
+    console.log(permission.canAutoPayout, isPayout);
+    console.log(match.autoPayoutStatus);
     const enableLink = permission.canAutoPayout && isPayout ? BackgroundColor.codeLink : "";
     const status = isPayout ? match.autoPayoutStatus : match.autoInstantStatus;
     const colorStatus = _.isEqual(status, this.autoSettingCompleted) ? 'auto-setting-completed' :

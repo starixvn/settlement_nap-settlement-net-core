@@ -31,7 +31,6 @@ public class MatchRequest
 public class OSTicketInfoSelCriteria : CriteriaBase
 {
     public string MatchInfo { get; set; }
-    //public string MatchOverStatus { get; set; }
     public string ChildMatchInfo { get; set; }
     public string OverStatus { get; set; }
     public string MatchCode { get; set; }

@@ -1,4 +1,4 @@
-﻿namespace Settlement.EventManagement.Models;
+﻿namespace Settlement.Core.Models;
 
 public class ResourceTicketStatistic
 {

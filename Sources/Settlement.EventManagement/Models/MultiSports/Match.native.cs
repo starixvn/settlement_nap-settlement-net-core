@@ -88,7 +88,7 @@ public class Match : BaseMatch
     [IgnoreMember]
     public List<MatchTicketStatistic> MatchTicketStatistics { get; set; } = [];
 
-    [IgnoreMember]
+    [Key("hasFailedResource")]
     public bool HasFailedResource => FailedAutoResources.Exists(f => ResourceTicketStatistics.Exists(r => r.ResourceId == f.ResourceId));
 
     [Key("hasProviderHT")]

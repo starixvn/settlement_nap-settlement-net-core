@@ -141,7 +141,6 @@ public class MultiSportServiceImp(
                 match.IsWaitingEarlyBetTypes = matchTicketStatistics.Exists(x => x.IsWaitingEarlyBetTypes);
                 match.IsExistRunningTicket = matchTicketStatistics.Exists(x => x.IsExistRunningTicket);
                 match.IsExistMarkedTicket = matchTicketStatistics.Exists(x => x.IsExistMarkedTicket);
-                //match.IsExistsConfirmedEarly = ticketInfo.Exists(x => x.IsExistsConfirmedEarly);
 
                 match.IsCalculatingSingle = siteMatchService.IsCalculating([.. matchTicketStatistics.Select(x => x.IsCalculatingSingle)]);
                 match.IsCalculatingMP = siteMatchService.IsCalculating([.. matchTicketStatistics.Select(x => x.IsCalculatingMP)]);
@@ -151,7 +150,6 @@ public class MultiSportServiceImp(
             if (isExistResourceTicket)
             {
                 match.ResourceTicketStatistics = resourceTicketStatistics;
-                //match.
             }
         }
     }
@@ -262,16 +260,23 @@ public class MultiSportServiceImp(
 
     private List<Match> ApplyFilterOverStatus(List<Match> matches, List<MatchOverStatus> matchOverStatuses, string overStatus)
     {
-        if (string.IsNullOrEmpty(overStatus) || overStatus.Equals("0"))
+        if (matchOverStatuses.Count == 0)
             return matches
                   .Where(match => match.MatchTicketStatistics.Count > 0)
                   .ToList();
 
         return matches
-            .Where(match => match.MatchTicketStatistics.Count > 0 || match.ParentId == 0)
+            .Where(match => match.MatchTicketStatistics.Count > 0 || IsParentMatchNotTicket(match, matches))
             .Where(match => matchOverStatuses.Any(x => x.MatchId == match.MatchId))
-            .Where(match => match.ResourceTicketStatistics != null && match.ResourceTicketStatistics.Count > 0 || match.ParentId == 0)
+            //.Where(match => match.ResourceTicketStatistics != null && match.ResourceTicketStatistics.Count > 0 || match.ParentId == 0)
             .ToList();
+    }
+
+    private bool IsParentMatchNotTicket(Match match, List<Match> matches)
+    {
+        return match.ParentId == 0
+            && match.SportType == SportType.TableTennis
+            && !matches.Any(m => m.MatchId == match.ParentId && m.MatchTicketStatistics.Count > 0);
     }
 
     private void SetIsExistsConfirmedEarly(List<Match> matches, List<MatchOverStatus> matchOverStatuses)

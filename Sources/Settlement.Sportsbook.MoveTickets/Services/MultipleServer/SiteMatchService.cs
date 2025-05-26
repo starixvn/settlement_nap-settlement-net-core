@@ -11,7 +11,7 @@ public interface SiteMatchService
 
     int? IsCalculatingSingle(Match match);
 
-    int? IsCalculatingSingle(List<SiteMatch> siteMatches);
+    int? IsCalculatingSingle(List<MatchTicketStatistic> matchTicketStatistics);
 }
 
 public class SiteMatchServiceImp : SiteMatchService
@@ -43,24 +43,25 @@ public class SiteMatchServiceImp : SiteMatchService
         return null;
     }
 
-    public int? IsCalculatingSingle(List<SiteMatch> siteMatches)
+
+    public int? IsCalculatingSingle(List<MatchTicketStatistic> matchTicketStatistics)
     {
-        if (siteMatches.Exists(m => m.IsCalculatingSingle == CalculateStatus.IsWaiting))
+        if (matchTicketStatistics.Exists(m => m.IsCalculatingSingle == CalculateStatus.IsWaiting))
         {
             return CalculateStatus.IsWaiting;
         }
 
-        if (siteMatches.Exists(m => m.IsCalculatingSingle == CalculateStatus.IsCalculating))
+        if (matchTicketStatistics.Exists(m => m.IsCalculatingSingle == CalculateStatus.IsCalculating))
         {
             return CalculateStatus.IsCalculating;
         }
 
-        if (siteMatches.Exists(m => m.IsCalculatingSingle == CalculateStatus.IsFailed))
+        if (matchTicketStatistics.Exists(m => m.IsCalculatingSingle == CalculateStatus.IsFailed))
         {
             return CalculateStatus.IsFailed;
         }
 
-        if (siteMatches.TrueForAll(m => m.IsCalculatingSingle == CalculateStatus.IsSuccess))
+        if (matchTicketStatistics.TrueForAll(m => m.IsCalculatingSingle == CalculateStatus.IsSuccess))
         {
             return CalculateStatus.IsSuccess;
         }
