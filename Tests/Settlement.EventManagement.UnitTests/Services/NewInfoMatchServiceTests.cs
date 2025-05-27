@@ -9,6 +9,10 @@ using Match = Settlement.EventManagement.Models.MultiSports.Match;
 
 namespace Settlement.EventManagement.UnitTests.Services;
 
+using Fanex.NAP.Client;
+using Fanex.NAP.Client.Configuration;
+using Fanex.NAP.Client.Services;
+using NSubstitute;
 using Settlement.Core.Services.SpecificService;
 
 public class NewInfoMatchServiceTests
@@ -32,7 +36,7 @@ public class NewInfoMatchServiceTests
         eventStatusService = Substitute.For<EventStatusService>();
         adjustEventStatusService = Substitute.For<AdjustEventStatusService>();
         repository = Substitute.For<IDynamicRepository>();
-        var permissionService = Substitute.For<PermissionService>();
+        var permissionService = new PermissionServiceImp(Substitute.For<INapSession>(), Substitute.For<IUserService>(), Substitute.For<INapSettings>());
 
         service = new NewInfoMatchServiceImp(siteMatchService, goalIconService, eventStatusService, adjustEventStatusService, repository, permissionService);
     }
@@ -220,18 +224,20 @@ public class NewInfoMatchServiceTests
             },
             new ()
             {
-            MatchId = 2,
-            HasInstantFail = true,
-            AutoPayoutStatus = 2
-        }
+                MatchId = 2,
+                HasInstantFail = true,
+                AutoPayoutStatus = 2
+            }
         };
 
-        repository.FetchAsync<MatchStatusModel>(Arg.Any<GetAutoStatusCriteria>()).Returns(matchStatuses);
-        await service.GetAutoPayoutStatus(matches.Select(x => x.MatchId).ToList());
+        repository.FetchMultipleAsync<MatchStatusModel, FailedAutoResource>(Arg.Any<GetAutoStatusCriteria>()).Returns((matchStatuses, []));
 
-        Assert.Equal(3, matches[0].AutoPayoutStatus);
-        Assert.Equal(2, matches[1].AutoPayoutStatus);
-        Assert.Equal(1, matches[0].AutoInstantStatus);
-        Assert.Equal(3, matches[1].AutoInstantStatus);
+
+        var (result, _) = await service.GetAutoPayoutStatus(matches.Select(x => x.MatchId).ToList());
+
+        Assert.Equal(3, result.ToList()[0].AutoPayoutStatus);
+        Assert.Equal(2, result.ToList()[1].AutoPayoutStatus);
+        Assert.Equal(1, result.ToList()[0].InstantStatus);
+        Assert.Equal(3, result.ToList()[1].InstantStatus);
     }
 }

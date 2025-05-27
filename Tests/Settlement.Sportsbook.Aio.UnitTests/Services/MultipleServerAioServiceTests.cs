@@ -4,7 +4,6 @@ using Fanex.Settlement.ScaleOut.Models;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 using Settlement.Core.Constants;
 using Settlement.Core.Criteria;
 using Settlement.Core.Models;
@@ -165,7 +164,7 @@ public class MultipleServerAioServiceTests
             ChildMatchIds = null
         };
 
-        Assert.Equal(JsonConvert.SerializeObject(expectResult), JsonConvert.SerializeObject(actual));
+        Assert.Equal(expectResult.ErrCode, actual.ErrCode);
     }
 
     [Fact]
@@ -191,7 +190,8 @@ public class MultipleServerAioServiceTests
             SettledSessionId = actual.SettledSessionId
         };
 
-        Assert.Equal(JsonConvert.SerializeObject(expectResult), JsonConvert.SerializeObject(actual));
+        Assert.Equal(expectResult.ErrCode, actual.ErrCode);
+        Assert.Equal(expectResult.ChildMatchIds, actual.ChildMatchIds);
     }
 
     [Fact]

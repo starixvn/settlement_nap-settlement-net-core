@@ -11,7 +11,9 @@ using ReferenceAction = Settlement.EventManagement.Models.Calculation.ReferenceA
 
 namespace Settlement.EventManagement.UnitTests.Services.Calculation;
 
+using NSubstitute;
 using Requests;
+using Settlement.EventManagement.Models;
 
 public class MatchServiceTests
 {
@@ -74,11 +76,36 @@ public class MatchServiceTests
             IsExistRunningTicket = true,
             MatchCode = "1234"
         };
+
+        var matchStatusModels = new List<MatchStatusModel>
+        {
+            new MatchStatusModel
+            {
+                MatchId = match.MatchId,
+                HasAutoPayoutFail = false,
+                InstantStatus = 1
+            },
+            new MatchStatusModel
+            {
+                MatchId = matchCompletedWithRunning.MatchId,
+                HasAutoPayoutFail = false,
+                InstantStatus = 1
+            },
+            new MatchStatusModel
+            {
+                MatchId = matchRunning.MatchId,
+                HasAutoPayoutFail = false,
+                InstantStatus = 1
+            }
+        };
+
         var listMatch = new List<Match> { match, matchCompletedWithRunning, matchRunning };
         repository.FetchAsync<Match>(Arg.Any<ICriteria>()).Returns(listMatch);
         repository.FetchAsync<ResultDetail>(Arg.Any<ICriteria>()).Returns(new List<ResultDetail>());
         refDataService.GetLeagueName(Arg.Any<string>()).Returns(string.Empty);
-        //newInfoMatchService.GetAutoPayoutStatus((Arg.Any<List<int>>()).Returns((listMatch);
+
+        newInfoMatchService.GetAutoPayoutStatus(Arg.Any<List<int>>()).Returns(([], []));
+
         var sportBooks = await service.GetMatches(new FilterCalculationRequest());
 
         Assert.NotNull(sportBooks);
