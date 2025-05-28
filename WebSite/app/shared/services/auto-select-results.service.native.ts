@@ -19,8 +19,20 @@ export class AutoSelectResultsService {
     resultDetails.forEach(item => {
       item.checked = item.checked || this.shouldCheckResult(item, overStatuses);
     });
+  }
 
+  public selectByOverStatusHasScoreDirect(resultDetails: ResultDetail[], finalResult: ResultDetail, overStatus: string, isScoreDirect: boolean) { 
+    const overStatuses = overStatus.split(',');
 
+    if (!finalResult || !overStatuses.length || overStatuses.length > 1) {
+      return;
+    }
+
+    resultDetails.forEach(item => {
+      if(isScoreDirect && item.resourceId === '00') {
+        item.checked = item.checked || this.shouldCheckResult(item, overStatuses);
+      }
+    });
   }
 
   private shouldCheckResult(resultDetail: ResultDetail, overStatuses: string[]): boolean {
@@ -39,7 +51,6 @@ export class AutoSelectResultsService {
   }
 
   private isMainOverMet(resultDetail: ResultDetail): boolean {
-    console.log(resultDetail);
     return resultDetail.resultStatusId === ResultStatusId.TraderConfirm;
   }
 
