@@ -1,16 +1,17 @@
-import { Component, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
 import { BackGroundService, RequestService, PopupService } from '../../services';
 import { Match, MoreScore, Score } from '../../../shared/models';
 import { BackgroundColor, CalculationStatus, EventStatus } from '../../../shared/constants';
 import * as _ from 'lodash';
 import { Language } from '../../../shared/language.native';
 import { MatchesBaseComponent } from '../base-component/matches-base.component';
-import { CalculationMatch, FilterQuery } from '../../models';
+import { CalculationMatch, FilterQuery, League } from '../../models';
 import { ISubscription } from 'rxjs-compat/Subscription';
 import { interval } from 'rxjs';
 import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 import { DynamicHeightDirective } from '../../../shared/directives/dynamic-height.directive.native';
 import { NgTemplateOutlet, NgClass, DatePipe } from '@angular/common';
+import { AutoSettingsService } from '../../services/auto-settings.service';
 
 @Component({
   selector: 'matches',
@@ -19,6 +20,7 @@ import { NgTemplateOutlet, NgClass, DatePipe } from '@angular/common';
   imports: [NgTemplateOutlet, DynamicHeightDirective, NgClass, NgbTooltip, DatePipe]
 })
 export class MatchesComponent extends MatchesBaseComponent implements OnChanges, OnInit, OnDestroy {
+
   @Input() public disableRefund: boolean;
   @Input() public filterQuery: FilterQuery;
   @Input() public disableRefresh: boolean;
@@ -26,6 +28,9 @@ export class MatchesComponent extends MatchesBaseComponent implements OnChanges,
   private readonly period = 6000;
   private readonly intervalTimer = interval(this.period);
   private readonly autoSettingFailed = 3;
+ 
+  private readonly autoSettingsService = inject(AutoSettingsService);
+
   constructor(
     protected popupService: PopupService,
     protected requestService: RequestService,
@@ -138,15 +143,28 @@ export class MatchesComponent extends MatchesBaseComponent implements OnChanges,
   
   public getConfirmScore(match: CalculationMatch, isHalfTime: boolean) {
     const {halfTimeScore, finalScore} = match.moreScores;
+
     
     if(isHalfTime && (!halfTimeScore.isNotSettled || this.permission.isLeader)) {
       return match.confirmHalfTimeScore;
+    }
+
+    if(isHalfTime && halfTimeScore.isNotSettled && !this.permission.isLeader && match.confirmHalfTimeScore) {
+      return '(provider ready)';
     }
     
     if(!finalScore.isNotSettled || this.permission.isLeader) {
       return match.confirmFullTimeScore;
     }
 
+    if(finalScore.isNotSettled && !this.permission.isLeader && match.confirmFullTimeScore) {
+      return '(provider ready)';
+    }
+
     return '';
+  }
+
+  getStatusAutoPayout(league: League, match: CalculationMatch) {
+    return this.autoSettingsService.getStatusAutoPayoutMatch(match, league);
   }
 }

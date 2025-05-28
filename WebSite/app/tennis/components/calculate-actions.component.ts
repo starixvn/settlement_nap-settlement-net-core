@@ -1,6 +1,6 @@
 import { CalculateCommonModule } from './../../shared/modules/calculate-common.module';
 import { CalculateMatchDetailComponent } from './calculate-match-detail.component';
-import { Component, Injector, Input, ViewChild } from '@angular/core';
+import { Component, inject, Injector, Input, ViewChild } from '@angular/core';
 import * as _ from 'lodash';
 import { MessageBoxService, AioService, IntervalCalculationService, BlockUIService } from '../../shared/services';
 import { ModalDialogMessage, Result } from '../../shared/models';
@@ -13,6 +13,8 @@ import { ExternalResultDetail, HedgeMatchDetail, MatchDetail, ResultDetail, Save
 import { ResourceNameByIdPipe } from '../pipes';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import { UpdateSettlementResultHistoryStatus } from '../../shared/models/update-settle-result-history-status';
+import { AutoSelectResultsService } from '../../shared/services/auto-select-results.service.native';
+import { UrlHelper } from '../../helper';
 
 @Component({
   selector: 'calculate-actions',
@@ -36,18 +38,20 @@ export class CalculateActionsComponent implements SportTemplate {
   public readonly totalGamesId = ResourcesIds.totalGames;
   public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
   private readonly infoDialog: ModalDialogMessage = new ModalDialogMessage();
-  constructor(
-    protected injector: Injector,
-    private readonly messageBoxService: MessageBoxService,
-    private readonly tennisService: TennisService,
-    private readonly verificationService: VerificationService,
-    private readonly aioService: AioService,
-    private readonly toastrService: ToastrService) {
-    this.confirmationDialogMessage.title = Language.confirmationBox;
-  }
+
+  private readonly messageBoxService = inject(MessageBoxService);
+  private readonly tennisService = inject(TennisService);
+  private readonly verificationService = inject(VerificationService);
+  private readonly aioService = inject(AioService);
+  private readonly toastrService = inject(ToastrService);
+  private readonly blockUIService = inject(BlockUIService);
+  private readonly autoSelectResultsService = inject(AutoSelectResultsService);
+  overStatus: string;
 
   async getMatch(matchId: number) {
-    this.injector.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
+    this.overStatus = UrlHelper.getUrlParameter('overStatus');
+    this.confirmationDialogMessage.title = Language.confirmationBox;
+    this.blockUIService.blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
     const query = {
       matchId,
       apikey: TennisApiKeys.NormalMatch,
@@ -83,6 +87,7 @@ export class CalculateActionsComponent implements SportTemplate {
     this.match.originalResultDetail = _.cloneDeep(this.match.resultDetails);
     this.autoFillScoreOnLoad(this.match.resultDetails);
     this.generateOutsideTotalGames();
+    this.autoSelectResultsService.selectByOverStatus(this.match.resultDetails, this.totalGames, this.overStatus);
   }
 
   private resetHomeAway(resultDetails: ResultDetail[]) {

@@ -42,7 +42,7 @@ export class TableResultBodyComponent implements OnInit {
 
   constructor() {
     effect(() => {
-      this.changeState(true);
+      this.changeState();
       this.tableIsReady = true;
     });
   }
@@ -189,12 +189,12 @@ export class TableResultBodyComponent implements OnInit {
     return text?.length > maxLength ? text : null;
   }
 
-  private changeState(modifySelectState = false) {
+  private changeState() {
     this.innings.forEach((inning) => {
       inning.resultState = new ResultState(this.#resultRowState, inning);
-      if(modifySelectState) {
-        inning.checked = inning.resourceId === ResourceIds.fullTime ? this.#storage.isScoreDirect() : false;
-      }
+      // if(modifySelectState && this.#storage.isScoreDirect()) {
+      //   inning.checked = inning.resourceId === ResourceIds.fullTime;
+      // }
     });
   }
 }

@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges} from '@angular/core';
 import { BackGroundService, RequestService, PopupService } from '../../services';
-import { League, Calculation, CalculationMatch } from '../../models';
+import { League, Calculation, CalculationMatch, FilterQuery } from '../../models';
 import {Remark } from '../../../shared/models';
 import { Permission } from '../../../shared/models/sportsbook-sop';
 import { BackgroundColor, CalculationStatus } from '../../../shared/constants';
@@ -28,8 +28,8 @@ export class MatchesBaseComponent extends LeagueBaseComponent implements OnChang
     this.leagues = this.calculation.leagues;
   }
 
-  public popupCalc(match: CalculationMatch) {
-    const src = `/apps/soccer-recalculate?matchId=${match.matchId}`;
+  public popupCalc(match: CalculationMatch, filterQuery: FilterQuery | null = null) {
+    const src = `/apps/soccer-recalculate?matchId=${match.matchId}&filterOver=${filterQuery?.filterOver}`;
     this.popupService.openAndHandlePopup(src, Language.CalcPopupTitle, '800px', '800px', match);
   }
 

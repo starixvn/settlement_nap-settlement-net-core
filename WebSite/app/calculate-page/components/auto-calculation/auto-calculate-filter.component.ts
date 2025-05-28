@@ -7,12 +7,12 @@ import { FilterAutoQuery, LeagueQuery } from '../../models';
 import { RequestService } from '../../services';
 import * as _ from 'lodash';
 import { ItemsSelect, League, MultipleSelect } from '../../../shared/models';
-import { AutoCalculateService } from './auto-calculate.service';
 import { Statuses } from '../../constants';
 import { FilterBaseComponent } from '../../../shared/components/gaming/filter-base.component';
 import { NewMultipleSelectComponent } from '../../../shared/components/multiple-select/multiple-select.component';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { DatepickerComponent } from '../../../shared/components/date-picker/date-picker.component';
+import { AutoSettingsService } from '../../services/auto-settings.service';
 
 @Component({
     selector: 'auto-calculate-filter',
@@ -39,7 +39,7 @@ export class AutoCalculateFilterComponent extends FilterBaseComponent implements
         protected verifyDateService: VerifyDateService,
         protected messageBoxService: MessageBoxService,
         private readonly requestService: RequestService,
-        private readonly autoCalculateService: AutoCalculateService
+        private readonly autoSettingsService: AutoSettingsService
     ) {
         super(verifyDateService, messageBoxService);
     }
@@ -52,7 +52,7 @@ export class AutoCalculateFilterComponent extends FilterBaseComponent implements
     private defaultDateFilter() {
         this.query.statusId = Number(this.statuses[0].value);
         this.query.leagueId = '0';
-        this.payoutSelect.items = this.autoCalculateService.createAutoPayoutFilter();
+        this.payoutSelect.items = this.autoSettingsService.createAutoPayoutFilter();
         this.statuses = this.statuses.filter(status => status.value !== this.completedWithRunningTicket);
     }
 

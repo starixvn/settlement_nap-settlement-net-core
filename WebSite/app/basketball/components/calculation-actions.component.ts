@@ -49,6 +49,8 @@ import { RelatedMatchesComponent } from "./fantasy/related-matches.component";
 import { FantasyMatch } from "../models/fantasy.model";
 import { SourceIds } from "../constants/source-ids";
 import { VerificationFantasyMatchService } from "../services/verification-fantasy-match.service";
+import { AutoSelectResultsService } from "../../shared/services/auto-select-results.service.native";
+import { UrlHelper } from "../../helper";
 
 @Component({
   selector: "calculation-actions",
@@ -84,6 +86,8 @@ export class CalculationActionsComponent implements SportTemplate {
   private readonly verificationFantasyMatchService = inject(VerificationFantasyMatchService);
   private readonly toastrService = inject(ToastrService);
   private readonly blockUiService = inject(BlockUIService);
+  private readonly autoSelectResultsService = inject(AutoSelectResultsService);
+
   readonly overTimeId = ResourcesIds.ot;
 
   blockUI = false;
@@ -100,8 +104,10 @@ export class CalculationActionsComponent implements SportTemplate {
   isReadyMatch: boolean;
   readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
   public SOURCE_ID = SourceIds;
+  overStatus: string;
 
   async getMatch(matchId: number) {
+    this.overStatus = UrlHelper.getUrlParameter('overStatus');
     this.initService();
     const matchQuery = {
       matchId,
@@ -163,6 +169,8 @@ export class CalculationActionsComponent implements SportTemplate {
     );
     this.match.originalResultDetail = _.cloneDeep(this.resultDetails);
     this.autoFillScoreOnLoad(this.resultDetails);
+
+    this.autoSelectResultsService.selectByOverStatus(this.resultDetails, this.fullTime, this.overStatus);
   }
 
   get selectedResources(): ResultDetail[] {

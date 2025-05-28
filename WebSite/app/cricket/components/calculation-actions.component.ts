@@ -1,7 +1,7 @@
 ﻿import { lastValueFrom } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { CalculationMatchDetailComponent } from './calculation-match-detail.component';
-import { Component, ViewChild, Injector } from '@angular/core';
+import { Component, ViewChild, Injector, inject } from '@angular/core';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import * as _ from 'lodash';
 import { MessageBoxService, AioService, BlockUIService } from '../../shared/services';
@@ -22,6 +22,8 @@ import { ResultByPlayerNamePipe, ResultNameByIdPipe, ResultValuePipe } from '../
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
 import { SettleChildMatchQuery } from '../../shared/models/settle-childmatch.model';
 import { UpdateSettlementResultHistoryStatus } from '../../shared/models/update-settle-result-history-status';
+import { AutoSelectResultsService } from '../../shared/services/auto-select-results.service.native';
+import { UrlHelper } from '../../helper';
 
 @Component({
     selector: 'calculation-actions',
@@ -54,11 +56,15 @@ export class CalculationActionsComponent implements SportTemplate {
     public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
     public SOURCE_ID = ScoreSourceType;
 
+    private readonly autoSelectResultsService = inject(AutoSelectResultsService);
+    overStatus: string;
+
     constructor(private readonly injector: Injector) {
         this.confirmationDialogMessage.title = Language.confirmationBox;
     }
 
     async getMatch(matchId: number): Promise<void> {
+        this.overStatus = UrlHelper.getUrlParameter('overStatus');
         this.initService();
         const matchQuery = {
             matchId,
@@ -98,6 +104,8 @@ export class CalculationActionsComponent implements SportTemplate {
         this.resultNameByIdPipe = this.injector.get(ResultNameByIdPipe)
         this.injector.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
         this.toastrService.overlayContainer = this.toastContainer;
+
+
     }
 
     private init() {
@@ -108,7 +116,8 @@ export class CalculationActionsComponent implements SportTemplate {
         this.match.originalResultDetail = _.cloneDeep(this.match.resultDetails);
         this.resetHomeAway(this.match.resultDetails);
         this.autoFillScoreOnLoad(this.match.resultDetails);
-        this.isDisabledUnCalculate = this.verificationService.isDisableUncalculate(this.match.resultDetails);
+        this.isDisabledUnCalculate = this.verificationService.isDisableUncalculate(this.match.resultDetails );
+        this.autoSelectResultsService.selectByOverStatus(this.match.resultDetails, this.matchWinner, this.overStatus);
     }
 
     public get selectedResources(): ResultDetail[] {

@@ -1,12 +1,12 @@
 ﻿namespace Settlement.EventManagement.Services.MultiSports;
 
+using System.Text.Json;
 using Criteria;
 using Fanex.Data.Repository;
 using Requests;
 using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.EventManagement.Models.MultiSports;
-using System.Text.Json;
 using Match = Models.MultiSports.Match;
 using MatchFilterTuple = (List<Models.MultiSports.Match> Matches, List<MatchOverStatus> MatchOverStatuses, List<ParentChildMatchFilter> ParentChildMatchFilters);
 
@@ -217,6 +217,8 @@ public class MultiSportServiceImp(
         var matches = await GetMatchesAllInfo(criteria);
 
         var resultDetails = await ResultDetailByMatchIds(matches);
+
+        //TODO
 
         matches = await matchService.SetNewOsMatchInfo(matches, resultDetails);
 

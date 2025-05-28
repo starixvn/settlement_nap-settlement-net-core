@@ -1,6 +1,6 @@
 ﻿import { CalculationMatchDetailComponent } from './calculation-match-detail.component';
 import { CalculateCommonModule } from './../../shared/modules/calculate-common.module';
-import { Component, Injector, ViewChild } from '@angular/core';
+import { Component, inject, Injector, ViewChild } from '@angular/core';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import * as _ from 'lodash';
 import { MessageBoxService, AioService, BlockUIService } from '../../shared/services';
@@ -13,6 +13,8 @@ import { HedgeMatchDetail, ResultDetail, MatchDetail, ExternalResult, SaveScoreQ
 import { VerificationService, ESportsService } from '../services';
 import { ResourceNameByIdPipe } from '../pipes';
 import { SourceIds } from '../../basketball/constants/source-ids';
+import { AutoSelectResultsService } from '../../shared/services/auto-select-results.service.native';
+import { UrlHelper } from '../../helper';
 
 @Component({
     selector: 'calculation-actions',
@@ -23,11 +25,13 @@ import { SourceIds } from '../../basketball/constants/source-ids';
 })
 export class CalculationActionsComponent implements SportTemplate {
     @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
-    private messageBoxService: MessageBoxService;
-    private verificationService: VerificationService;
-    private eSportsService: ESportsService;
-    private aioService: AioService;
-    private toastrService: ToastrService;
+    private readonly messageBoxService = inject(MessageBoxService);
+    private readonly verificationService = inject(VerificationService);
+    private readonly eSportsService = inject(ESportsService);
+    private readonly aioService = inject(AioService);
+    private readonly toastrService = inject(ToastrService);
+    private readonly autoSelectResultsService = inject(AutoSelectResultsService);
+
     public blockUI = true;
     public match: Match;
     public isLeader: boolean;
@@ -45,23 +49,23 @@ export class CalculationActionsComponent implements SportTemplate {
     public isReadyMatch: boolean;
     public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
     public SOURCE_ID = SourceIds;
+    overStatus: string;
 
     constructor(private readonly injector: Injector) {
         this.confirmationDialogMessage.title = Language.confirmationBox;
     }
 
     async getMatch(matchId: number): Promise<void> {
+        this.overStatus = UrlHelper.getUrlParameter('overStatus');
         this.init();
         const matchQuery = {
             matchId,
             apikey: ApiKeys.NormalMatch,
             settleType: "MNL"
         };
-
         this.match = await this.aioService.getMatch(matchQuery) as Match;
         this.isReadyMatch = this.match.matchDetail.playTime >= KickOffTime.playTime;
 
-        
         this.hedgeMatchDetail = this.match.hedgeMatchDetail;
         this.oldMatchDetail = this.match.oldMatchDetail;
         this.applyHedgeMatch = this.hedgeMatchDetail != null;
@@ -74,14 +78,10 @@ export class CalculationActionsComponent implements SportTemplate {
         this.resetHomeAway(this.match.resultDetails);
         this.match.originalResultDetail = _.cloneDeep(this.match.resultDetails);
         this.autoFillScoreOnLoad(this.match.resultDetails);
+        this.autoSelectResultsService.selectByOverStatus(this.match.resultDetails, this.finalResource, this.overStatus);
     }
 
     public init() {
-        this.messageBoxService = this.injector.get(MessageBoxService);
-        this.verificationService = this.injector.get(VerificationService);
-        this.eSportsService = this.injector.get(ESportsService);
-        this.aioService = this.injector.get(AioService);
-        this.toastrService = this.injector.get(ToastrService);
         this.injector.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
         this.toastrService.overlayContainer = this.toastContainer;
     }

@@ -14,9 +14,9 @@ import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { DynamicHeightDirective } from '../../../shared/directives/dynamic-height.directive.native';
 import { CommonModule } from '@angular/common';
-import { AutoCalculateService } from './auto-calculate.service';
 import { AutoSettleSetting } from '../../models/auto-settle-settings';
 import { UpdateSettingsService } from '../../services/update-settings.service';
+import { AutoSettingsService } from '../../services/auto-settings.service';
 
 @Component({
     selector: 'auto-calculate-matches',
@@ -36,7 +36,7 @@ export class AutoCalculateMatchesComponent extends MatchesBaseComponent implemen
     private subscriber: ISubscription;
     private readonly period = 6000;
     private readonly intervalTimer = interval(this.period);
-    private readonly autoCalculateService = inject(AutoCalculateService);
+    private readonly autoSettingsService = inject(AutoSettingsService);
     private readonly updateSettingsService = inject(UpdateSettingsService);
 
     constructor(
@@ -89,8 +89,8 @@ export class AutoCalculateMatchesComponent extends MatchesBaseComponent implemen
 
     public getStatusAutoPayout(league: League, match: CalculationMatch | null = null) {
         return match
-            ? this.autoCalculateService.getStatusAutoPayoutMatch(match, league)
-            : this.autoCalculateService.getStatusAutoPayoutLeague(league);
+            ? this.autoSettingsService.getStatusAutoPayoutMatch(match, league)
+            : this.autoSettingsService.getStatusAutoPayoutLeague(league);
     }
 
     public getTittleInstant(isInstant: boolean) {

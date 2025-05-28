@@ -19,6 +19,7 @@ import { ExternalLinkPipe } from "../../score-source-setting/pipes";
 import { ResultByTeamNamePipe } from "../pipes/result-by-team-name.pipe";
 import { IntervalBackgroundPipe } from "../pipes/interval-background.pipe";
 import { OnlyIntegerDirective } from "../../shared/directives";
+import { AutoSelectResultsService } from "../services/auto-select-results.service.native";
 
 @NgModule({
   exports: [
@@ -50,6 +51,7 @@ import { OnlyIntegerDirective } from "../../shared/directives";
     AioService,
     ResultByTeamNamePipe,
     IntervalBackgroundPipe,
+    AutoSelectResultsService,
   ],
 })
 export class CalculateCommonModule {}

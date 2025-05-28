@@ -76,10 +76,10 @@ export class CalculationComponent implements Soccer {
     private readonly verifyMatchService = inject(VerifyMatchService);
     #storage = inject(CalculateStorage);
 
-    async getMatch(matchId: number) {
+    async getMatch(matchId: number, filterOver?: string) {
         this.#storage.setToastrOverlay(this.toastContainer);
         this.match = await this.requestService.getMatch(matchId);
-        this.#storage.setMatch(this.match);
+        this.#storage.setMatch(this.match, filterOver);
         this.matchDetail = this.match.matchDetail;
         this.isMatchReady = this.isReadyToSettle(this.matchDetail);
         this.childMatches = this.match.childMatches;
@@ -90,6 +90,7 @@ export class CalculationComponent implements Soccer {
             ? this.match.fantasyMatch.relatedMatches.filter((match) => !match.isDeleted)
             : []
         this.#storage.resetHomeAway();
+
     }
 
     private isReadyToSettle(matchDetail: MatchDetail) {
