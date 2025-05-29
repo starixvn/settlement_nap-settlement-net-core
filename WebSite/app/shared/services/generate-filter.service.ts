@@ -119,7 +119,7 @@ export class GenerateFilterService {
                 item.leagueId,
                 item.leagueId.toString(),
                 item.leagueName,
-                true,
+                false,
                 true,
                 true,
                 []);
