@@ -151,8 +151,7 @@ export class MatchStateService {
   }
 
   isHideFinalScore(match: Match, permission: Permission) {
-    console.log('match.isCalculated', match.isCalculated);
-    console.log('match.isCalRefund', match.isCalRefund);
+
     return (ResultType.havingConfirmedStatus.includes(match.sportType)
       || ResultType.havingHalfTimeConfirmedStatus.includes(match.sportType))
       && !permission.isLeader

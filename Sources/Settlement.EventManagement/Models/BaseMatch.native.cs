@@ -118,7 +118,7 @@ public class BaseMatch
         }
     }
 
-    [IgnoreMember]
+    [Key("originalEventStatus")]
     public string OriginalEventStatus { get; set; }
 
     [Key("betStatus")]

@@ -44,6 +44,9 @@ public class Score
     [Key("isNotSettled")]
     public bool IsNotSettled { get; set; }
 
+    [Key("isSettled")]
+    public bool IsSettled { get; set; } = false;
+
     public bool EqualValue(Score score)
     {
         return Home == score.Home && Away == score.Away;

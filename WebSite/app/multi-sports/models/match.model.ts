@@ -16,6 +16,7 @@ export class Match {
      public finalAwayScore: number;
      public eventStatus: string;
      public newEventStatus: string;
+     public originalEventStatus: string;
      public suspenderHalfTime: string;
      public suspenderFullTime: string;
      public remark: Remark;
