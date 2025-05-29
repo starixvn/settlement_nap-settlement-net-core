@@ -51,6 +51,7 @@ export class CalculationComponent implements OnInit {
   public selectedResultStatus: string[];
   public selectedTicketStatus: string[];
   public selectedSelection: string[];
+  public sportType: number;
 
   constructor(
     private readonly requestService: RequestService,
@@ -61,6 +62,7 @@ export class CalculationComponent implements OnInit {
 
   public ngOnInit() {
     this.matchId = Number(UrlHelper.getUrlParameter("matchId"));
+    this.sportType = Number(UrlHelper.getUrlParameter("sportType"));
     this.warningDialogMessage.title = Language.confirmationBox;
     this.resultStatusSelect = this.calculationFilterService.initialResultStatus();
     this.ticketStatusSelect = this.calculationFilterService.initialTicketStatus();
@@ -180,7 +182,8 @@ export class CalculationComponent implements OnInit {
       const query = new SettleQuery(
         this.matchId,
         resources,
-        CalculateAction.calculate
+        CalculateAction.calculate,
+        this.sportType
       );
       this.push(query);
     });
@@ -215,7 +218,8 @@ export class CalculationComponent implements OnInit {
       const query = new SettleQuery(
         this.matchId,
         resources,
-        CalculateAction.unCalculate
+        CalculateAction.unCalculate,
+        this.sportType
       );
       this.push(query);
     });

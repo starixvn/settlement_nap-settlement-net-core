@@ -17,7 +17,7 @@ export class PopupService {
     }
 
     public popupCalc(match: MatchDetail) {
-        const src = `/home/bet-builder?matchId=${match.matchId}`;
+        const src = `/home/bet-builder?matchId=${match.matchId}&sportType=${match.sportType}`;
         const frameSrc = encodeURI(src);
         const dialogData = new DialogDataIframe(Language.BetBuilderPopupTitle, frameSrc);
         this.dialogBoxService.popup(dialogData, '1011px', '800px').subscribe(result => {

@@ -25,12 +25,14 @@ export class GetMatchesQuery {
 
 export class SettleQuery {
     matchId: number;
+    sportType: number;
     resources: Selection[];
     actionName: string;
 
-    constructor(matchId: number, resources: Selection[], actionName: string) {
+    constructor(matchId: number, resources: Selection[], actionName: string, sportType: number) {
         this.matchId = matchId;
         this.resources = resources;
         this.actionName = actionName;
+        this.sportType = sportType;
     }
 }
