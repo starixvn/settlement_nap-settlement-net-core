@@ -10,7 +10,8 @@ export class DetectChangesService {
             && (this.isInfoDifferent(oldMatch, newMatch)
                 || this.isScoreDifferent(oldMatch, newMatch)
                 || this.isStatusDifferent(oldMatch, newMatch)
-                || this.isSuspenderDifferent(oldMatch, newMatch));
+                || this.isSuspenderDifferent(oldMatch, newMatch)
+                || this.isSettlementDifferent(oldMatch, newMatch));
     }
 
     private isInfoDifferent(oldMatch: Match, newMatch: MatchWaiting) {
@@ -67,5 +68,10 @@ export class DetectChangesService {
             || oldMatch.suspenderFullTime !== newMatch.suspenderFullTime
             || oldMatch.autoPayoutStatus !== newMatch.autoPayoutStatus
             || oldMatch.autoInstantStatus !== newMatch.autoInstantStatus;
+    }
+
+    private isSettlementDifferent(oldMatch: Match, newMatch: MatchWaiting) {
+        return oldMatch.moreScores.halfTimeScore.isSettled !== newMatch.moreScores.halfTimeScore.isSettled
+            || oldMatch.moreScores.finalScore.isSettled !== newMatch.moreScores.finalScore.isSettled;
     }
 }
