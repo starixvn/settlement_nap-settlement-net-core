@@ -1,4 +1,6 @@
-﻿namespace Settlement.FastMarkets.Criteria;
+﻿using Fanex.Settlement.MessageBridge.ResultAmendment;
+
+namespace Settlement.FastMarkets.Criteria;
 
 public class PushFastMarketResultCriteria : NonQueryCommand
 {
@@ -22,8 +24,12 @@ public class PushFastMarketResultCriteria : NonQueryCommand
 
     public string OldResults { get; set; }
 
+    public bool IsOrg { get; set; } = true;
+
     public string BroadcastSessionId { get; } = Guid.NewGuid().ToString();
 
+    [SpParam(Ignored = true)]
+    public IEnumerable<ResourceItem> SelectedResources { get; set; }
     [SpParam(Ignored = true)]
     public string DbServer { get; set; }
 

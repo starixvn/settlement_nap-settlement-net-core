@@ -33,10 +33,10 @@ public class GenerationServiceImp(
         var criteria = mapper.Map<SettleRequest, PushFastMarketResultCriteria>(request);
         criteria.AdminId = currentSession.UserId;
         criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
-        criteria.EventCounters = eventCounter;
-        criteria.Results = results;
+        criteria.EventCounters = eventCounter.Result;
+        criteria.Results = results.Result;
         criteria.OldResults = await fastMarketResultService.OldResults(request.BetTypes, request.MatchId);
-
+        criteria.SelectedResources = results.OriginalItems.SelectMany(i => fastMarketResultService.CreateResourcesFromBetType(i, request.Action, request.IsSettleDetermined));
         return criteria;
     }
 

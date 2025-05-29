@@ -12,6 +12,8 @@ public class InsertLogCriteria : NonQueryCommand
 
     public string Action { get; set; }
 
+    public string Mode { get; set; }
+
     public int Sporttype { get; set; }
 
     public bool IsAuto { get; set; } = false;

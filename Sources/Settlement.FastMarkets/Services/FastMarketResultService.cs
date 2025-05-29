@@ -1,16 +1,22 @@
-﻿using Settlement.Core.Models;
+﻿using Settlement.Core.Constants;
+using Settlement.Core.Models;
+using Settlement.FastMarkets.Constants;
 using Settlement.FastMarkets.Criteria;
 using Settlement.FastMarkets.Models;
 using Settlement.FastMarkets.Models.BetTypeModels;
 using Settlement.FastMarkets.Models.TimeMachineOldResult;
+using BetType = Settlement.FastMarkets.Models.BetType;
+using ResourceItem = Fanex.Settlement.MessageBridge.ResultAmendment.ResourceItem;
 
 namespace Settlement.FastMarkets.Services;
 
 public interface IFastMarketResultService
 {
-    string Result(List<BetType> betTypeList, string action);
+    XMLResult<BetTypeElement> Result(List<BetType> betTypeList, string action);
 
     Task<string> OldResults(List<BetType> betTypes, int matchId);
+
+    IEnumerable<ResourceItem> CreateResourcesFromBetType(BetTypeElement betType, string action, bool isSettleDetermined);
 }
 
 public class FastMarketResultServiceImp(
@@ -19,7 +25,9 @@ public class FastMarketResultServiceImp(
     IDynamicRepository repository)
     : IFastMarketResultService
 {
-    public string Result(List<BetType> betTypeList, string action)
+    private const short TimeMachineHandicapScoreRange = 10;
+
+    public XMLResult<BetTypeElement> Result(List<BetType> betTypeList, string action)
     {
         var betType = betTypeElementService.GetBetTypes(betTypeList, action);
         var betTypesRoot = new BetTypesRoot
@@ -27,8 +35,11 @@ public class FastMarketResultServiceImp(
             BetType = betType
         };
 
-        return xmlConvertService.Serialize(betTypesRoot);
-
+        return new XMLResult<BetTypeElement>
+        {
+            OriginalItems = betType,
+            Result = xmlConvertService.Serialize(betTypesRoot)
+        };
     }
 
     public async Task<string> OldResults(List<BetType> betTypes, int matchId)
@@ -60,6 +71,37 @@ public class FastMarketResultServiceImp(
         }
 
         return oldResults.Any() ? GenerateOldResultsResource(oldResults) : string.Empty;
+    }
+
+
+    public IEnumerable<ResourceItem> CreateResourcesFromBetType(BetTypeElement betType, string action, bool isSettleDetermined)
+    {
+        if (action == ActionType.RefundAll && !isSettleDetermined)
+        {
+            return betType.Items.Select(item => new ResourceItem
+            {
+                ResourceId = betType.Id.ToString(),
+                OtherInfo = item.Position.ToString()
+            });
+        }
+
+        if (betType.Id == FastMarketBetType.TimeMachineHdp)
+        {
+            return betType.Items.Select(item => new ResourceItem
+            {
+                ResourceId = betType.Id.ToString(),
+                OtherInfo = item.Position.ToString(),
+                HomeValue = (Convert.ToInt32(item.Result) % TimeMachineHandicapScoreRange).ToString(),
+                AwayValue = (Convert.ToInt32(item.Result) / TimeMachineHandicapScoreRange).ToString()
+            });
+        }
+
+        return betType.Items.Select(item => new ResourceItem
+        {
+            ResourceId = betType.Id.ToString(),
+            OtherInfo = item.Position.ToString(),
+            HomeValue = item.Result
+        });
     }
 
     private string GenerateOldResultsResource(List<OldResult> oldResults)

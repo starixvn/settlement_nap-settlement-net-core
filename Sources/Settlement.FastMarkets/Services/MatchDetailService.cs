@@ -57,7 +57,7 @@ public class MatchDetailServiceImp(
     public async Task<MarkedTickets> CheckingMarkedTickets(CheckingMarkedTicketsRequest request)
     {
         var results = fastMarketResultService.Result(request.BetTypes, string.Empty);
-        var criteria = new CheckingMarkedTicketsCriteria { MatchId = request.MatchId, Results = results };
+        var criteria = new CheckingMarkedTicketsCriteria { MatchId = request.MatchId, Results = results.Result };
         foreach (var server in appSettingsKey.SiteDbServer)
         {
             criteria.DbServer = server;

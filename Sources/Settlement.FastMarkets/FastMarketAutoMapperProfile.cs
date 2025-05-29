@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Fanex.Settlement.ScaleOut.Request;
+using Settlement.Core.Criteria;
 using Settlement.FastMarkets.Criteria;
 using Settlement.FastMarkets.Requests;
 
@@ -16,5 +17,6 @@ public class FastMarketAutoMapperProfile : Profile
         CreateMap<GetTimeMachineResultRequest, GetTimeMachineResultCriteria>();
         CreateMap<GetOuTimeMachineResultRequest, GetOuTimeMachineResultCriteria>();
         CreateMap<PushFastMarketResultCriteria, EventTicketFastMarketRequest>();
+        CreateMap<PushFastMarketResultCriteria, InsertLogCriteria>();
     }
 }

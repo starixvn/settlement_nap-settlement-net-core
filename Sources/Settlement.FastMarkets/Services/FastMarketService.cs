@@ -1,14 +1,19 @@
 ﻿using AutoMapper;
+using Fanex.Settlement.MessageBridge.Constants;
 using Fanex.Settlement.ScaleOut.Constants;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.Extensions.Options;
+using Settlement.Core.Constants;
+using Settlement.Core.Criteria;
 using Settlement.Core.Models;
-using Settlement.Core.Services;
-using Settlement.FastMarkets.Constants;
 using Settlement.FastMarkets.Criteria;
 using Settlement.FastMarkets.Models;
 using Settlement.FastMarkets.Requests;
+using ILogService = Settlement.Core.Services.LogService;
+using LogService = Fanex.Logging.LogService;
+using ResourceItem = Fanex.Settlement.MessageBridge.ResultAmendment.ResourceItem;
+using TicketStatus = Settlement.FastMarkets.Constants.TicketStatus;
 
 namespace Settlement.FastMarkets.Services;
 
@@ -34,7 +39,9 @@ public class FastMarketServiceImp(
     IOptions<AppSettingsKey> appSettingsKey,
     ScaleOutSettleService scaleOutSettleService,
     GenerationService generationService,
-    LogService logService)
+    ILogService logService,
+    IFastMarketResultAmendmentService fastMarketResultAmendmentService,
+    XmlConvertService xmlConvertService)
     : IFastMarketService
 {
     private readonly AppSettingsKey appSettingsKey = appSettingsKey.Value;
@@ -123,12 +130,16 @@ public class FastMarketServiceImp(
 
         await scaleOutSettleService.UpdateMatchInfo(requestUpdateInfo);
 
-        var message = $"NAP: Fast Market {criteria.Action} for matchId: {criteria.MatchId}";
-        await logService.WriteLog(criteria.MatchId, message);
+        var hasResultAmendment = await WriteLog(criteria);
 
         ExecuteCalculate(criteria);
 
-        return new Result();
+        return new Result
+        {
+            SettledSessionId = criteria.BroadcastSessionId,
+            IsOrg = criteria.IsOrg,
+            HasResultAmendment = hasResultAmendment
+        };
     }
 
     private void ExecuteCalculate(PushFastMarketResultCriteria criteria)
@@ -137,6 +148,53 @@ public class FastMarketServiceImp(
         {
             criteria.DbServer = server;
             repository.Execute(criteria);
+        }
+    }
+
+    private async Task<bool> WriteLog(PushFastMarketResultCriteria criteria)
+    {
+        var resourceRoot = new Resources<ResourceItem>
+        {
+            ResourceItems = criteria.SelectedResources.ToList()
+        };
+        var selectedResources = xmlConvertService.Serialize(resourceRoot);
+
+        var insertLogCriteria = mapper.Map<InsertLogCriteria>(criteria);
+        insertLogCriteria.SelectedResources = selectedResources;
+        insertLogCriteria.Sporttype = SportType.Soccer;
+        insertLogCriteria.Mode = ResultAmendmentType.FastMarket;
+        var message = $"NAP: Fast Market {criteria.Action} for matchId: {criteria.MatchId}";
+
+        await logService.WriteLog(insertLogCriteria);
+        await logService.WriteLog(criteria.MatchId, message);
+
+        return await UpdateResultAmendment(criteria, selectedResources);
+    }
+
+    private async Task<bool> UpdateResultAmendment(PushFastMarketResultCriteria request, string selectedResources)
+    {
+        try
+        {
+            if (request.Action == ActionName.Undo)
+            {
+                return false;
+            }
+
+            var resettleResult = await fastMarketResultAmendmentService.GetResultChanged(request, selectedResources);
+            var resultChangeds = resettleResult.ToList();
+            if (resultChangeds.Any())
+            {
+                await fastMarketResultAmendmentService.PublishResultAmendment(request, request.SelectedResources, resultChangeds);
+                return true;
+            }
+
+            return false;
+
+        }
+        catch (Exception ex)
+        {
+            await LogService.ErrorAsync("ResultAmendmentService", ex);
+            return false;
         }
     }
 

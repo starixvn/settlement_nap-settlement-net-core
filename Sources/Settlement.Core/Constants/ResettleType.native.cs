@@ -1,5 +1,4 @@
-﻿namespace Settlement.Sportsbook.Aio.Constants.Cricket;
-
+﻿namespace Settlement.Core.Constants;
 public static class ReSettleType
 {
     public const short ReCalc = 1;
