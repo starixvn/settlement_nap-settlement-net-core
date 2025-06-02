@@ -37,7 +37,10 @@ public class ScoreTennisServiceImp(IScoreSetService scoreSetService) : ScoreTenn
         var totalSet = resultDetails.Find(n => n.ResourceId == ResourceType.Final);
         if (totalSet is { MatchId: > 0 })
         {
-            moreScore.FinalScore = scoreSetService.GetScore(totalSet, isLeader);
+            var finalScore = scoreSetService.GetScore(totalSet, isLeader);
+            finalScore.IsSettled = totalSet.ResultStatusId is ResultStatus.ManuallySettled or ResultStatus.AutoSettled;
+            moreScore.FinalScore = finalScore;
+
             moreScore.HalfTimeScore = TotalGame(moreScore.FinalScore.Home, items);
         }
 

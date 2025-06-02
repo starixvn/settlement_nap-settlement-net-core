@@ -14,9 +14,11 @@ export class BadmintonService {
     let resultDetail = resultDetailList.filter((map) => map.resourceId.length < 5 && _.isNil(map.betTypeName) && map.resourceId !== ResourcesIds.totalGames);
     const last = resultDetailList.find((map) => map.resourceId === ResourcesIds.totalGames);
     const totalPoints = new ResultDetail();
+  
     totalPoints.resourceId = ResourcesIds.totalPoints;
     totalPoints.ticketStatus = last.ticketStatus;
     totalPoints.resultStatusId = last.resultStatusId;
+
     if (this.isRefundMatch(last)) {
       totalPoints.settlementStatusId = SettlementStatusId.Refund;
     } else {

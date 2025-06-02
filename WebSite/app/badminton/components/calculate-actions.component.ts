@@ -141,39 +141,14 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
     this.autoInputDirectly();
     this.match.childMatches.forEach(item => item.resourceId = ResourcesIds.totalGames);
 
+    if(!this.match.isScoreDirect) {  
     this.autoSelectResultsService.selectByOverStatus(this.match.resultDetails, this.totalGames, this.filterOverStatus);
-
-    // this.autoSelectResultsByOverStatus();
+    } else {
+      this.autoSelectResultsService.selectByOverStatusHasScoreDirect(this.match.resultDetails, this.totalGames, this.filterOverStatus, this.match.isScoreDirect);
+    }
   }
   
-  private autoSelectResultsByOverStatus() {
-    const finalResult = this.match.resultDetails.find(item => item.resourceId === ResourcesIds.totalGames);
-    const settledResultStatusIds = [ResultStatusId.ManualCompleted, ResultStatusId.AutoCompleted];
-    const isFinalSettledResult = finalResult && !settledResultStatusIds.includes(finalResult.resultStatusId);
 
-    const overStatusArray = this.filterOverStatus.split(',');
-
-    if (overStatusArray.includes(OverStatus.MainOver)) {
-      this.match.resultDetails.forEach(item => {
-        item.checked = item.checked 
-          || isFinalSettledResult
-          || item.resultStatusId === ResultStatusId.TraderConfirm;
-      });
-    }
-
-    if (overStatusArray.includes(OverStatus.Over)) {
-      this.match.resultDetails.forEach(item => {
-        item.checked = item.checked || !settledResultStatusIds.includes(item.resultStatusId);
-      });
-    }
-
-    if (overStatusArray.includes(OverStatus.SettledWithRunningTicket)) {
-      this.match.resultDetails.forEach(item => {
-        item.checked = item.checked 
-          || item.settlementStatusId === SettlementStatusId.Calculated && item.ticketStatus === TicketStatusText.running;
-      });
-    }
-  }
 
   get noTotalPoints(): ResultDetail[] {
     return _.filter(this.match.resultDetails, (map: ResultDetail) => !_.isEqual(map.resourceId, ResourcesIds.totalPoints));

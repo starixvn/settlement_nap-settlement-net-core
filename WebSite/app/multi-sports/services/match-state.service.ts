@@ -151,6 +151,7 @@ export class MatchStateService {
   }
 
   isHideFinalScore(match: Match, permission: Permission) {
+
     return (ResultType.havingConfirmedStatus.includes(match.sportType)
       || ResultType.havingHalfTimeConfirmedStatus.includes(match.sportType))
       && !permission.isLeader

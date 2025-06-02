@@ -76,7 +76,13 @@ public class ScoreServiceImp(IScoreSetService scoreSetService) : ScoreService
 
         var hasResult = resultDetail is { MatchId: > 0 };
 
-        return hasResult ? scoreSetService.GetScore(resultDetail, isLeader) : new Score("-");
+        if (hasResult)
+        {
+            var score = scoreSetService.GetScore(resultDetail, isLeader);
+            score.IsSettled = resultDetail.ResultStatusId is ResultStatus.ManuallySettled or ResultStatus.AutoSettled;
+            return score;
+        }
+        return new Score("-");
     }
 
     private static List<ResultDetail> ResultDetailsFilter(IEnumerable<ResultDetail> resultDetails, bool isBeachVolleyball)
