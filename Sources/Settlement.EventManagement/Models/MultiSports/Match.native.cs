@@ -107,5 +107,5 @@ public class Match : BaseMatch
         return MatchId;
     }
 
-    public override string ToString() => MatchId.ToString();
+    public override string ToString() => $"{MatchId} ParentId {ParentId} has ticket {MatchTicketStatistics.Count}";
 }

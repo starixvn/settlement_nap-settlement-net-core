@@ -5,8 +5,8 @@ using Fanex.Data.Repository;
 using Requests;
 using Settlement.Core.Criteria;
 using Settlement.Core.Models;
-using Settlement.EventManagement.Models;
 using Settlement.EventManagement.Models.MultiSports;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Text.Json;
 using Match = Models.MultiSports.Match;
@@ -276,7 +276,7 @@ public class MultiSportServiceImp(
     {
         return match.ParentId == 0
             && match.SportType == SportType.TableTennis
-            && !matches.Any(m => m.MatchId == match.ParentId && m.MatchTicketStatistics.Count > 0);
+            && matches.Any(m => m.ParentId == match.MatchId && m.MatchTicketStatistics.Count > 0);
     }
 
     private void SetIsExistsConfirmedEarly(List<Match> matches, List<MatchOverStatus> matchOverStatuses)

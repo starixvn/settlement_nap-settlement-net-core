@@ -199,25 +199,16 @@ public class NewInfoMatchServiceImp(
 
     public async Task<(IEnumerable<MatchStatusModel>, IEnumerable<FailedAutoResource>)> GetAutoPayoutStatus(List<int> matchesIds)
     {
-
-        try
+        var matchIds = string.Join(',', matchesIds);
+        var criteria = new GetAutoStatusCriteria
         {
-            var matchIds = string.Join(',', matchesIds);
-            var criteria = new GetAutoStatusCriteria
-            {
-                MatchIds = matchIds
-            };
+            MatchIds = matchIds
+        };
 
-            var result = await repository.FetchMultipleAsync<MatchStatusModel, FailedAutoResource>(criteria);
+        var result = await repository.FetchMultipleAsync<MatchStatusModel, FailedAutoResource>(criteria);
 
-            return result;
-        }
-        catch (Exception ex)
-        {
+        return result;
 
-            Console.WriteLine(ex);
-            return ([], []);
-        }
     }
 
     private GoalIconQueryModel GoalIconQuery(Match match)
