@@ -31,7 +31,6 @@ export interface ICalculateStorage extends Storage  {
 )
 export class CalculateStorage implements ICalculateStorage {
 
-
   #aioService = inject(AioService);
   #verificationBaseService = inject(VerificationBaseService);
   #autoSelectResultsService = inject(AutoSelectResultsService);
@@ -81,8 +80,9 @@ export class CalculateStorage implements ICalculateStorage {
     this.setIsApplyHedgeMatch(!!matchFetched.hedgeMatchDetail);
     this.#isMatchSeries.set(matchFetched.matchDetail.sessionTime === 1);
 
-    this.#autoSelectResultsService.selectByOverStatus(this.getResultDetails(), this.fulltimeResult, overStatus);
-
+    if(this.isReadyMatch()) {
+      this.#autoSelectResultsService.selectByOverStatus(this.getResultDetails(), this.fulltimeResult, overStatus);
+    }
   }
 
   mapTicketStatusExtraInning() {
@@ -185,6 +185,16 @@ export class CalculateStorage implements ICalculateStorage {
     this.getAllInnings().forEach((inning) => {
       this.setResultState(service,inning);
     })
+  }
+
+  isReadyMatch(): boolean {
+    return this.#match().matchDetail.playTime >= KickOffTime.playTime;
+  }
+
+  unSelectResults = () => {
+    this.getResultChecked().forEach((item) => {
+      item.checked = false;
+    });
   }
 }
 

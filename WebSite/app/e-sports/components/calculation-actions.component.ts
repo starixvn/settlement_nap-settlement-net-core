@@ -81,6 +81,7 @@ export class CalculationActionsComponent implements SportTemplate {
         
         if (!this.isReadyMatch) {
             this.toastrService.error(Language.minimumPlayTimeNotReached);
+            return;
         }
         this.autoSelectResultsService.selectByOverStatus(this.match.resultDetails, this.finalResource, this.overStatus);
     }

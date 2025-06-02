@@ -141,9 +141,9 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
     this.autoInputDirectly();
     this.match.childMatches.forEach(item => item.resourceId = ResourcesIds.totalGames);
 
-
     if (!this.isReadyMatch) {
       this.toastrService.error(Language.minimumPlayTimeNotReached);
+      return;
     }
 
     if(!this.match.isScoreDirect) {  
