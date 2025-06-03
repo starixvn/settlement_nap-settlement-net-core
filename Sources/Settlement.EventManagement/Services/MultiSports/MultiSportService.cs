@@ -8,7 +8,6 @@ using Settlement.Core.Models;
 using Settlement.EventManagement.Models.MultiSports;
 using System.Text.Json;
 using System.Threading.Tasks;
-using System.Text.Json;
 using Match = Models.MultiSports.Match;
 using MatchFilterTuple = (List<Models.MultiSports.Match> Matches, List<MatchOverStatus> MatchOverStatuses, List<ParentChildMatchFilter> ParentChildMatchFilters);
 
@@ -111,7 +110,7 @@ public class MultiSportServiceImp(
         return (result.Item1.ToList(), result.Item2.ToList(), result.Item3.ToList());
     }
 
-    private async Task<List<Match>> GetMatchesAllInfo(SportsbookCriteria criteria)
+    private async Task<List<Match>> GetMatchesAllInfo(SportsbookCriteria criteria, MatchFilterTuple matchTuple)
     {
         var matches = matchTuple.Matches.ToList();
         var (ticketStatistics, matchTicketStatistics) = (await GetOSTicketInfo(matchTuple, criteria));
