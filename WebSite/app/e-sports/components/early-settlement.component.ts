@@ -20,8 +20,7 @@ import { ResourceNameByIdPipe } from '../pipes/resource-name-by-id.pipe';
     selector: 'early-settlement',
     templateUrl: './early-settlement.component.html',
     standalone: true,
-    imports: [EarlyCommonModule, PipesModule, MatchDetailComponent,
-        NotReadyMatchComponent],
+    imports: [EarlyCommonModule, PipesModule, MatchDetailComponent],
     providers: [
         EarlyConstraintService,
         VerificationBaseService,

@@ -13,18 +13,18 @@
     <div class="footer">
       <div>
         <button *ngIf="permission.canCalculate" [ngClass]="{'button': true, 'button-disabled': isDisabledCalculate}"
-          (click)="calculate()" [disabled]="isDisabledCalculate">
+          (click)="calculate()" [disabled]="!isReadyMatch || isDisabledCalculate">
           Calculate
         </button>
         <button *ngIf="permission.canUncalculate" [ngClass]="{'button': true, 'button-disabled': isDisabledUnCalculate}"
-          (click)="unCalculate()" [disabled]="isDisabledUnCalculate">
+          (click)="unCalculate()" [disabled]="!isReadyMatch || isDisabledUnCalculate">
           Uncalculate
         </button>
         <button *ngIf="permission.canUncalculate || permission.canCalculate" class="new-refund-button save-score"
           [disabled]="isDisabledSaveScore" (click)="saveScore()">
           Save Score</button>
-        <button class="new-refund-button save-trader-score" *ngIf="permission.isTrader" [disabled]="isDisabledSaveScore"
-          (click)="saveTraderScore()">Save Trader Score</button>
+        <button class="new-refund-button save-trader-score" *ngIf="permission.isTrader"
+          [disabled]="!isReadyMatch || isDisabledSaveScore" (click)="saveTraderScore()">Save Trader Score</button>
       </div>
     </div>
     <div class="footer" *ngIf="permission.canRefund">

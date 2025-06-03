@@ -32,13 +32,13 @@
             for="displayRefundButton">Show/Hide Refund button</label>
         </span>
         <button *ngIf="isShowRefundButton && permission.isLeader"
-          [ngClass]="{'btn btn-outline-primary button-confirmed': true}"
-          [disabled]="!isReadyMatch || isDisabledCalculate" (click)="confirmRefund()">
+          [ngClass]="{'btn btn-outline-primary button-confirmed': true}" [disabled]="isDisabledCalculate"
+          (click)="confirmRefund()">
           Confirm/Undo-confirm Refund
         </button>
         <button *ngIf="isShowRefundButton"
           [ngClass]="{'button new-refund-button': true, 'button-disabled': isDisabledCalculate, 'margin-left-button': permission.isLeader}"
-          (click)="refund()" [disabled]="!isReadyMatch || isDisabledCalculate">
+          (click)="refund()" [disabled]="isDisabledCalculate">
           Refund
         </button>
       </div>

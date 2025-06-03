@@ -152,8 +152,6 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
       this.autoSelectResultsService.selectByOverStatusHasScoreDirect(this.match.resultDetails, this.totalGames, this.filterOverStatus, this.match.isScoreDirect);
     }
   }
-  
-
 
   get noTotalPoints(): ResultDetail[] {
     return _.filter(this.match.resultDetails, (map: ResultDetail) => !_.isEqual(map.resourceId, ResourcesIds.totalPoints));

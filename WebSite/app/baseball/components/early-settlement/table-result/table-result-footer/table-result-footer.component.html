@@ -17,13 +17,13 @@
       for="displayRefundButton">Show/Hide Refund button</label>
   </span>
   <button *ngIf="isShowRefundButton && permission().isLeader"
-    [ngClass]="{'btn btn-outline-primary button-confirmed': true}" [disabled]="!isReadyMatch || isDisableAction()"
+    [ngClass]="{'btn btn-outline-primary button-confirmed': true}" [disabled]="isDisableAction()"
     (click)="confirmRefund()">
     Confirm/Undo-confirm Refund
   </button>
   <button *ngIf="isShowRefundButton"
     [ngClass]="{'button new-refund-button': true, 'button-disabled': isDisableAction(), 'margin-left-button': permission().isLeader}"
-    (click)="refund()" [disabled]="!isReadyMatch || isDisableAction()">
+    (click)="refund()" [disabled]="isDisableAction()">
     Refund
   </button>
 </div>
