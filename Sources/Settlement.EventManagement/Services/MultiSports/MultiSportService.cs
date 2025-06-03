@@ -266,7 +266,7 @@ public class MultiSportServiceImp(
 
         return matches
             .Where(match => match.MatchTicketStatistics.Count > 0
-                && matchOverStatuses.Any(x => x.MatchId == match.MatchId && match.ResourceTicketStatistics.Any(rt => rt.ResourceId == x.ResourceId))
+                && matchOverStatuses.Any(x => x.MatchId == match.MatchId && (string.IsNullOrEmpty(x.ResourceId) || match.ResourceTicketStatistics.Any(rt => rt.ResourceId == x.ResourceId)))
                 || IsParentMatchNotTicket(match, matches))
             .ToList();
     }
