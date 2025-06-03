@@ -18,7 +18,7 @@ public interface BetBuilderGenerateService
 {
     string SelectedSection(List<ResourcesItemModel> selectedResources);
 
-    Task<string> GetInfoMarket(CalculateRequest request, string selectedSelection);
+    Task<(string, List<string>)> GetInfoMarket(CalculateRequest request, string selectedSelection);
 
     Task UpdateMatchInfo(CalculateRequest request, string selectedMarket, string selectedSelection);
 
@@ -46,7 +46,7 @@ public class BetBuilderGenerateServiceImp(
         return xmlConvertService.Serialize(resources);
     }
 
-    public async Task<string> GetInfoMarket(CalculateRequest request, string selectedSelection)
+    public async Task<(string, List<string>)> GetInfoMarket(CalculateRequest request, string selectedSelection)
     {
         var getMarketIdCriteria = new GetMarketIdCriteria
         {
@@ -59,7 +59,7 @@ public class BetBuilderGenerateServiceImp(
         var listMarketIds = (await repository.FetchAsync<string>(getMarketIdCriteria)).ToList();
         if (listMarketIds.Count == 0)
         {
-            return string.Empty;
+            return (string.Empty, []);
         }
 
         var resources = new ResourcesMarketIdModel
@@ -67,7 +67,7 @@ public class BetBuilderGenerateServiceImp(
             Items = listMarketIds.Select(item => new ResourceMarketItemModel { MarketId = item }).ToList()
         };
 
-        return xmlConvertService.Serialize(resources);
+        return (xmlConvertService.Serialize(resources), listMarketIds);
     }
 
     public async Task UpdateMatchInfo(CalculateRequest request, string selectedMarket, string selectedSelection)
@@ -104,7 +104,8 @@ public class BetBuilderGenerateServiceImp(
         return new Result
         {
             ErrCode = resultFailed.Count,
-            ErrMsg = string.Join(" | ", resultFailed.Select(r => r.ErrMsg).ToArray())
+            ErrMsg = string.Join(" | ", resultFailed.Select(r => r.ErrMsg).ToArray()),
+            IsOrg = criteria.IsOrg
         };
     }
 
@@ -116,7 +117,8 @@ public class BetBuilderGenerateServiceImp(
         return new Result
         {
             ErrCode = criteria.ErrCode,
-            ErrMsg = $"{server}: {criteria.ErrCode} - {criteria.ErrMsg}"
+            ErrMsg = $"{server}: {criteria.ErrCode} - {criteria.ErrMsg}",
+            IsOrg = criteria.IsOrg
         };
     }
 
@@ -129,7 +131,8 @@ public class BetBuilderGenerateServiceImp(
             Action = request.ActionName,
             Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString(),
             SelectedMarket = selectedMarket,
-            SelectedSelection = selectedSection
+            SelectedSelection = selectedSection,
+            BroadcastSessionId = request.BroadcastSessionId,
         };
     }
 }

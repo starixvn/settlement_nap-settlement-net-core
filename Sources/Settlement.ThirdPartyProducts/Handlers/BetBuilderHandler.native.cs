@@ -1,4 +1,6 @@
-﻿using MediatR;
+﻿using Fanex.Settlement.MessageBridge.ResultAmendment;
+using MassTransit;
+using MediatR;
 using Settlement.Core.Models;
 using Settlement.ThirdPartyProducts.Models;
 using Settlement.ThirdPartyProducts.Requests;
@@ -11,7 +13,8 @@ public class BetBuilderHandler(
     PermissionService permissionService,
     BetBuilderService betBuilderService,
     BetBuilderMatchesService betBuilderMatchesService,
-    BetBuilderCalculateService calculateService)
+    BetBuilderCalculateService calculateService,
+    IPublishEndpoint publishEndpoint)
     : IRequestHandler<FilterRequest, MultiSportsModel>,
         IRequestHandler<SportRequest, List<Sport>>,
         IRequestHandler<GetSelectionRequest, SelectionPermissionModel>,
@@ -45,5 +48,14 @@ public class BetBuilderHandler(
         => await matchService.GetMatch(request);
 
     public async Task<Result> Handle(CalculateRequest request, CancellationToken cancellationToken)
-        => await calculateService.Calculate(request);
+    {
+        var result = await calculateService.Calculate(request);
+        if (result.HasResultAmendment)
+        {
+            await publishEndpoint.Publish(
+            new ResultAmendSettled(request.MatchId, result.SettledSessionId, result.IsOrg),
+    new CancellationTokenSource(TimeSpan.FromSeconds(3)).Token);
+        }
+        return result;
+    }
 }

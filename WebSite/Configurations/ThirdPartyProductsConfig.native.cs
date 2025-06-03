@@ -17,6 +17,7 @@ public static class ThirdPartyProductsConfig
         services.AddTransient<MergeMatchInfo, MergeMatchInfoImp>();
         services.AddTransient<BetBuilderCalculateService, BetBuilderCalculateServiceImp>();
         services.AddTransient<BetBuilderGenerateService, BetBuilderGenerateServiceImp>();
+        services.AddTransient<IBetbuilderResultAmendmentService, BetbuilderResultAmendmentService>();
     }
 
     public static void ThirdPartyProductsConfigMediator(this IServiceCollection services)
