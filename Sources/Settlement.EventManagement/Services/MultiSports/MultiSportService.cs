@@ -5,6 +5,7 @@ using Fanex.Data.Repository;
 using Requests;
 using Settlement.Core.Criteria;
 using Settlement.Core.Models;
+using Settlement.EventManagement.Constants;
 using Settlement.EventManagement.Models.MultiSports;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -265,8 +266,7 @@ public class MultiSportServiceImp(
                   .ToList();
 
         return matches
-            .Where(match => match.MatchTicketStatistics.Count > 0
-                && matchOverStatuses.Any(x => x.MatchId == match.MatchId && (string.IsNullOrEmpty(x.ResourceId) || match.ResourceTicketStatistics.Any(rt => rt.ResourceId == x.ResourceId)))
+            .Where(match => IsMatchExistsTicket(match, matchOverStatuses, overStatus)
                 || IsParentMatchNotTicket(match, matches))
             .ToList();
     }
@@ -278,6 +278,32 @@ public class MultiSportServiceImp(
             && matches.Any(m => m.ParentId == match.MatchId && m.MatchTicketStatistics.Count > 0);
     }
 
+    private bool IsMatchExistsTicket(Match match, List<MatchOverStatus> matchOverStatuses, string overStatus)
+    {
+        var overStatusArray = overStatus.Split(',').Select(x => int.Parse(x)).ToArray();
+
+        if (match.MatchTicketStatistics.Count == 0)
+        {
+            return false;
+        }
+
+        if (overStatusArray.Count() == 1 && overStatusArray.Contains(OverStatuses.EarlyOver))
+        {
+            return IsMatchExistsEarlyCfmTicket(match, matchOverStatuses);
+        }
+
+
+        return matchOverStatuses.Any(x => x.MatchId == match.MatchId)
+            || overStatusArray.Contains(OverStatuses.EarlyOver) && IsMatchExistsEarlyCfmTicket(match, matchOverStatuses);
+    }
+
+    private bool IsMatchExistsEarlyCfmTicket(Match match, List<MatchOverStatus> matchOverStatuses)
+    {
+        return match.ResourceTicketStatistics.Exists(x => x.IsEarly
+            && x.TotalRunningTicket > 0
+            && matchOverStatuses.Exists(mo => mo.MatchId == x.MatchId && mo.ResourceId == x.ResourceId)); ;
+    }
+
     private void SetIsExistsConfirmedEarly(List<Match> matches, List<MatchOverStatus> matchOverStatuses)
     {
         if (matchOverStatuses.Count == 0)
@@ -285,8 +311,7 @@ public class MultiSportServiceImp(
 
         matches.ForEach(m =>
         {
-            m.IsExistsConfirmedEarly = m.ResourceTicketStatistics
-                .Exists(x => x.IsEarly && matchOverStatuses.Exists(y => y.MatchId == x.MatchId && y.ResourceId == x.ResourceId));
+            m.IsExistsConfirmedEarly = IsMatchExistsEarlyCfmTicket(m, matchOverStatuses);
         });
     }
 
