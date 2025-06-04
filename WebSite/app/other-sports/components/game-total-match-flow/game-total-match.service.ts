@@ -14,7 +14,9 @@ export class GameTotalMatchService {
             private readonly requestService: RequestService){}
 
     public isReadyMatch(matchDetail: MatchDetail) {
-        return this.isCompletedOrConfirmScore(matchDetail) || matchDetail.playTime >= KickOffTime.playTime;
+        return this.isCompletedOrConfirmScore(matchDetail) 
+            || matchDetail.parentId !== 0 && matchDetail.playTime >= 0 
+            || matchDetail.playTime >= KickOffTime.playTime;
     }
 
     private isCompletedOrConfirmScore(matchDetail: MatchDetail) {

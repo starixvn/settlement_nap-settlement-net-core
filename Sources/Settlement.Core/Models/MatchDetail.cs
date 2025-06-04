@@ -106,4 +106,6 @@ public class MatchDetail
     public int ChildMatchType { get; set; }
 
     public int LeagueType { get; set; }
+
+    public int ParentId { get; set; }
 }
