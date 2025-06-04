@@ -296,7 +296,8 @@ public class MultiSportServiceImp(
         var isEarly = overStatusArray.Contains(OverStatuses.EarlyOver) && matchOverStatuses.Any(x => x.MatchId == match.MatchId && x.OverStatus == OverStatuses.EarlyOver) && IsMatchExistsEarlyCfmTicket(match, matchOverStatuses);
 
         // orther
-        var isOther = !overStatusArray.Contains(OverStatuses.EarlyOver) && !overStatusArray.Contains(OverStatuses.MainOver) && isConfirm;
+        var isOther = (overStatusArray.Contains(OverStatuses.Over) || overStatusArray.Contains(OverStatuses.SettledWithRunningTicket))
+            && matchOverStatuses.Any(x => x.MatchId == match.MatchId && (x.OverStatus == OverStatuses.Over || x.OverStatus == OverStatuses.SettledWithRunningTicket));
 
 
         return isMain || isEarly || isOther;
