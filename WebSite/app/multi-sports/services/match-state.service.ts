@@ -28,17 +28,34 @@ export class MatchStateService {
   }
 
   getBackgroundAutoSetting(match: Match, permission: Permission, isPayout = true) {
-    //TODO
-    // match.hasFailedResource = true;
-    // console.log(match.hasFailedResource);
-    // console.log(permission.canAutoPayout, isPayout);
-    // console.log(match.autoPayoutStatus);
+
     const enableLink = permission.canAutoPayout && isPayout ? BackgroundColor.codeLink : "";
-    const status = isPayout ? match.autoPayoutStatus : match.autoInstantStatus;
-    const colorStatus = _.isEqual(status, this.autoSettingCompleted) ? 'auto-setting-completed' :
-      _.isEqual(status, this.autoSettingFailed) ? 'auto-setting-failed' : '';
+    const colorStatus = this.getBgColor(match, permission, isPayout);
 
     return `${enableLink} ${colorStatus}`;
+  }
+
+  getBgColor(match: Match, permission: Permission, isPayout = true) {
+    const status = isPayout ? match.autoPayoutStatus : match.autoInstantStatus;
+
+    if(_.isEqual(status, this.autoSettingCompleted)){
+      return 'auto-setting-completed';
+    }
+
+    if(isPayout && SportNewAutoPayout.includes(match.sportType)){
+      if(match.hasFailedResource){
+        return 'auto-setting-failed';
+      } else {
+        return '';
+      }
+    }
+
+    if(_.isEqual(status, this.autoSettingFailed)){
+      return 'auto-setting-failed';
+    }
+
+    return '';
+    
   }
 
   ResultConfirmedBackGround(match: Match, teamName: string) {
