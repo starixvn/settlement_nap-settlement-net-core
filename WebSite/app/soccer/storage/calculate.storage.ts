@@ -129,7 +129,6 @@ export class CalculateStorage implements Storage {
   }
 
   setIsReadyMatch(value: boolean) {
-    console.log("setIsReadyMatch", value);
     this.#isReadyMatch = value;
   }
 

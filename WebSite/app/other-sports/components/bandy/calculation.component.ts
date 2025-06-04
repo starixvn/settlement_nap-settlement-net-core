@@ -94,7 +94,9 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
 
     this.permission = this.match.permission;
 
-    this.isReadyMatch = this.isCompletedOrConfirmScore(this.matchDetail) || this.matchDetail.playTime >= KickOffTime.playTime;
+    this.isReadyMatch = this.isCompletedOrConfirmScore(this.matchDetail) 
+      || this.matchDetail.parentId !== 0 && this.matchDetail.playTime >= 0 
+      || this.matchDetail.playTime >= KickOffTime.playTime;
 
     this.createProviderResource();
 

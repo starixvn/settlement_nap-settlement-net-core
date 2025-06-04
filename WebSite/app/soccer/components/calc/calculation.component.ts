@@ -101,7 +101,8 @@ export class CalculationComponent implements Soccer {
     private isReadyToSettle(matchDetail: MatchDetail) {
 
         return this.verifyMatchService.isCompletedMatch(matchDetail) || this.verifyMatchService.isInstantMatch(matchDetail)
-            || this.verifyMatchService.isEndFirstHalf(matchDetail) || this.verifyMatchService.isPinGoalOrSaba(matchDetail);
+            || this.verifyMatchService.isEndFirstHalf(matchDetail) || this.verifyMatchService.isPinGoalOrSaba(matchDetail)
+            || this.verifyMatchService.isChildMatch(matchDetail);
     }
 
     onResettleCheckboxChange(checked: boolean) {

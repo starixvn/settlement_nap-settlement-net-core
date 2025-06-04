@@ -32,7 +32,9 @@ export class OtherService {
     }
 
     public isReadyMatch(matchDetail: MatchDetail) {
-        return this.isCompletedOrConfirmScore(matchDetail) || this.isMatchReadyBySportType(matchDetail);
+        return this.isCompletedOrConfirmScore(matchDetail) 
+            || matchDetail.parentId !== 0 && matchDetail.playTime >= 0 
+            || this.isMatchReadyBySportType(matchDetail);
     }
 
     private isCompletedOrConfirmScore(matchDetail: MatchDetail) {

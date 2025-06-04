@@ -47,7 +47,9 @@ export class FullTimeCalculationComponent implements SportTemplate {
     this.match = otherSportsMatch.match;
     this.permission = otherSportsMatch.permission;
     this.matchDetail = this.match.matchDetail;
-    this.isReadyMatch = this.isCompletedOrConfirmScore || this.checkPlayTimeBySportType;
+    this.isReadyMatch = this.isCompletedOrConfirmScore 
+      || this.matchDetail.parentId !== 0 && this.matchDetail.playTime >= 0 
+      || this.checkPlayTimeBySportType;
     this.fullTimeService.initScoreByPermission(this.matchDetail, this.permission);
     this.resetScore();
 

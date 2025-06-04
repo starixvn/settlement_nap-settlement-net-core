@@ -76,7 +76,9 @@ export class GameTotalCalculationComponent implements SportTemplate {
     this.matchDetail = this.match.matchDetail;
     this.resultDetails = this.gameTotalService.getResultDetail(this.match.resultDetails);
 
-    this.isReadyMatch = this.isCompletedOrConfirmScore || this.matchDetail.playTime >= KickOffTime.playTime;
+    this.isReadyMatch = this.isCompletedOrConfirmScore 
+      || this.matchDetail.parentId !== 0 && this.matchDetail.playTime >= 0 
+      || this.matchDetail.playTime >= KickOffTime.playTime;
 
     if (!this.isReadyMatch) {
       this.toastrService.error(Language.minimumPlayTimeNotReached);
