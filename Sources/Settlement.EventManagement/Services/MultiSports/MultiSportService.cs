@@ -287,14 +287,19 @@ public class MultiSportServiceImp(
             return false;
         }
 
-        if (overStatusArray.Count() == 1 && overStatusArray.Contains(OverStatuses.EarlyOver))
-        {
-            return IsMatchExistsEarlyCfmTicket(match, matchOverStatuses);
-        }
+        var isConfirm = matchOverStatuses.Any(x => x.MatchId == match.MatchId);
+
+        // main
+        var isMain = overStatusArray.Contains(OverStatuses.MainOver) && matchOverStatuses.Any(x => x.MatchId == match.MatchId && x.OverStatus == OverStatuses.MainOver) && match.MatchTicketStatistics.Count() > 0;
+
+        // early 
+        var isEarly = overStatusArray.Contains(OverStatuses.EarlyOver) && matchOverStatuses.Any(x => x.MatchId == match.MatchId && x.OverStatus == OverStatuses.EarlyOver) && IsMatchExistsEarlyCfmTicket(match, matchOverStatuses);
+
+        // orther
+        var isOther = !overStatusArray.Contains(OverStatuses.EarlyOver) && !overStatusArray.Contains(OverStatuses.MainOver) && isConfirm;
 
 
-        return matchOverStatuses.Any(x => x.MatchId == match.MatchId)
-            || overStatusArray.Contains(OverStatuses.EarlyOver) && IsMatchExistsEarlyCfmTicket(match, matchOverStatuses);
+        return isMain || isEarly || isOther;
     }
 
     private bool IsMatchExistsEarlyCfmTicket(Match match, List<MatchOverStatus> matchOverStatuses)
