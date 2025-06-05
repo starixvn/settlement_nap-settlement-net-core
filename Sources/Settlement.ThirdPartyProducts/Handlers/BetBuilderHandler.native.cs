@@ -53,8 +53,7 @@ public class BetBuilderHandler(
         if (result.HasResultAmendment)
         {
             await publishEndpoint.Publish(
-            new ResultAmendSettled(request.MatchId, result.SettledSessionId, result.IsOrg),
-    new CancellationTokenSource(TimeSpan.FromSeconds(3)).Token);
+            new ResultAmendSettled(request.MatchId, result.SettledSessionId, result.IsOrg), new CancellationTokenSource(TimeSpan.FromSeconds(3)).Token);
         }
         return result;
     }

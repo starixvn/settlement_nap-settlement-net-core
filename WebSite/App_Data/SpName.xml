@@ -130,6 +130,8 @@
 		<Setting Key="NAP_Set_SportsSel_by_Vendor" SpName="NAP_Set_SportsSel_by_Vendor" DbName="DBPRO.bodb02.wsv_nap" />
 		<Setting Key="NAP_Set_MatchSelInfo_by_Vendor" SpName="NAP_Set_MatchSelInfo_by_Vendor" DbName="DBPRO.bodb02.wsv_nap" />
 		<Setting Key="NAP_Admin_ChangedMarket_Sel" SpName="NAP_Admin_ChangedMarket_Sel" DbName="DBPRO.bodb02.wsv_nap" />
+		<Setting Key="NAP_Settlement_MarketIDSel" SpName="NAP_Settlement_MarketIDSel_xtest" DbName="DBPRO.bodb02.wsv_nap" />
+
 	</Function>
 	<Function Name="Calculate NumberGame">
 		<Setting Key="NAP_Set_MatchSelNumberGame" SpName="NAP_Set_MatchSelNumberGame" DbName="DBPRO.bodb02.wsv_nap" />
@@ -363,7 +365,7 @@
 			<Setting Key="NAP_Admin_Settlement_BetBuilder_Push_DBTXN" SpName="NAP_Admin_Settlement_BetBuilder_Push_xtest" DbName="DBTXN.bodb02.wsv_nap" />
 			<Setting Key="NAP_Admin_Settlement_BetBuilder_Push_DBSITE01" SpName="NAP_Admin_Settlement_BetBuilder_Push_xtest" DbName="DBSITE01.bodb02.wsv_nap" />
 			<Setting Key="NAP_Admin_Settlement_BetBuilder_Push_DBSITE02" SpName="NAP_Admin_Settlement_BetBuilder_Push_xtest" DbName="DBSITE02.bodb02.wsv_nap" />
-			<Setting Key="NAP_Admin_Settlement_BetBuilder_Push_DBSITE03" SpName="NAP_Admin_Settlement_BetBuilder_Push" DbName="DBSITE03.bodb02.wsv_nap" />
+			<Setting Key="NAP_Admin_Settlement_BetBuilder_Push_DBSITE03" SpName="NAP_Admin_Settlement_BetBuilder_Push_xtest" DbName="DBSITE03.bodb02.wsv_nap" />
 		</Function>
 		<Function Name="NAP_Set_SMPSelectionDetailSel_Ticket">
 			<Setting Key="NAP_Set_SMPSelectionDetailSel_Ticket_DBTXN" SpName="NAP_Set_SMPSelectionDetailSel_Ticket" DbName="DBTXN.bodb02.wsv_nap" />

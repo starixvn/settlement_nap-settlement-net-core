@@ -2,7 +2,11 @@
 using Fanex.Settlement.MessageBridge.ResultAmendment;
 using MassTransit;
 using Settlement.Core.Criteria;
+using Settlement.ThirdPartyProducts.Criteria;
+using Settlement.ThirdPartyProducts.Models;
 using Settlement.ThirdPartyProducts.Requests;
+
+using ResourceItem = Fanex.Settlement.MessageBridge.ResultAmendment.ResourceItem;
 
 namespace Settlement.ThirdPartyProducts.Services
 {
@@ -39,16 +43,55 @@ namespace Settlement.ThirdPartyProducts.Services
 
         public async Task PublishResultAmendment(CalculateRequest request, IEnumerable<ResourceItem> selectedResources, IEnumerable<ResultChanged> results)
         {
+            var selectionTypes = string.Join(',', selectedResources
+                .Select(x => x.ResourceId)
+                .Concat(results.Select(r => r.ResourceId))
+                .Distinct());
+
+            var selectionMarkets = await GetMarkets(request.MatchId, selectionTypes);
+
+            var newSelectedResources = selectedResources.Join(
+                selectionMarkets,
+                resource => resource.ResourceId,
+                market => market.SelectionType,
+                (resource, market) =>
+                {
+                    resource.OtherInfo = market.MarketId;
+                    return resource;
+                }).ToList();
+
+            var newResultChanged = results.Join(
+                selectionMarkets,
+                changed => changed.ResourceId,
+                market => market.SelectionType,
+                (changed, market) =>
+                {
+                    changed.OtherInfo = market.MarketId;
+                    return changed;
+                }).ToList();
+
             await _publishEndpoint.Publish(new ResultAmended(
                 request.MatchId,
                 request.BroadcastSessionId,
                 1,
                 request.ActionName,
-                [.. selectedResources],
-                [.. results],
+                [.. newSelectedResources],
+                [.. newResultChanged],
                 "BB"
             ),
             new CancellationTokenSource(TimeSpan.FromSeconds(3)).Token);
+        }
+
+        private async Task<List<SelectionMarket>> GetMarkets(int matchId, string selectionTypes)
+        {
+            var ciriteria = new GetMarketIdsCriteria
+            {
+                MatchId = matchId,
+                SelectionType = selectionTypes
+            };
+            var markets = await _repository.FetchAsync<SelectionMarket>(ciriteria);
+
+            return [.. markets];
         }
     }
 }
