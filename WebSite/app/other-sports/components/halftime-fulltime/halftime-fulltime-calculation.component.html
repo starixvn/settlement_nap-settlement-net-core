@@ -29,7 +29,8 @@
             {{matchDetail.htStatus}}
           </div>
           <div class="action-button">
-            <button *ngIf="permission.canCalculate" class="button float-left" (click)="calculateHalfTime()"
+            <button *ngIf="permission.canCalculate" class="button float-left"
+              [ngClass]="{'button-disabled':!isReadyMatch}" (click)="calculateHalfTime()"
               [disabled]="!isReadyMatch">Calculate
               HT</button>
           </div>
@@ -40,7 +41,8 @@
             {{matchDetail.ftStatus}}
           </div>
           <div class="action-button">
-            <button *ngIf="permission.canCalculate" class="button float-left" (click)="calculateFullTime()"
+            <button *ngIf="permission.canCalculate" class="button float-left"
+              [ngClass]="{'button-disabled':!isReadyMatch}" (click)="calculateFullTime()"
               [disabled]="!isReadyMatch">Calculate
               FT</button>
           </div>
@@ -49,8 +51,8 @@
 
       <div class="row-2">
         <div class="action-button">
-          <button *ngIf="permission.canCalculate" class="button" (click)="calculateAll()"
-            [disabled]="!isReadyMatch">Calculate All
+          <button *ngIf="permission.canCalculate" [ngClass]="{'button': true, 'button-disabled':!isReadyMatch}"
+            (click)="calculateAll()" [disabled]="!isReadyMatch">Calculate All
           </button>
 
           <button *ngIf="permission.canUncalculate"

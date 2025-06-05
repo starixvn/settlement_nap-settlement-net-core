@@ -22,11 +22,11 @@
           also.</label>
       </div>
       <div class="calc-action">
-        <button class="button" *ngIf="permission.canCalculate" (click)="calculation()"
-          [disabled]="!isReadyMatch">Calculate
+        <button class="button" [ngClass]="{'button-disabled':!isReadyMatch}" *ngIf="permission.canCalculate"
+          (click)="calculation()" [disabled]="!isReadyMatch">Calculate
           All</button>
-        <button class="button" *ngIf="permission.canUncalculate" (click)="uncalculation()"
-          [disabled]="!isReadyMatch">Uncalculate</button>
+        <button class="button" [ngClass]="{'button-disabled':!isReadyMatch}" *ngIf="permission.canUncalculate"
+          (click)="uncalculation()" [disabled]="!isReadyMatch">Uncalculate</button>
       </div>
       <div class="clear-both">
         <resettle-checker (proceedEvent)="onResettleCheckboxChange($event)"

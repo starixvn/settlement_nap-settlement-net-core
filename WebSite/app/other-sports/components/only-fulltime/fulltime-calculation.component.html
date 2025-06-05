@@ -15,8 +15,9 @@
 		<ticket-count [ticketCounts]="match.ticketCount[0]"></ticket-count>
 		<div class="calc-action">
 			<button class="button" *ngIf="permission.canCalculate" (click)="calculation()"
-				[disabled]="!isReadyMatch">Calculate All</button>
-			<button class="button" *ngIf="permission.canUncalculate" [disabled]="!isReadyMatch" (click)="uncalculation()">
+				[ngClass]="{'button-disabled':!isReadyMatch}" [disabled]="!isReadyMatch">Calculate All</button>
+			<button class="button" *ngIf="permission.canUncalculate" [ngClass]="{'button-disabled':!isReadyMatch}"
+				[disabled]="!isReadyMatch" (click)="uncalculation()">
 				Uncalculate
 			</button>
 		</div>

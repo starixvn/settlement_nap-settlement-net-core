@@ -23,11 +23,11 @@
       </div>
       <div class="table-button">
         <div class="calc-action">
-          <button class="button" *ngIf="permission.canCalculate" (click)="calculation()"
-            [disabled]="!isReadyMatch">Calculate
+          <button class="button" [ngClass]="{'button-disabled':!isReadyMatch}" *ngIf="permission.canCalculate"
+            (click)="calculation()" [ngClass]="{'button-disabled':!isReadyMatch}" [disabled]="!isReadyMatch">Calculate
             All</button>
-          <button class="button" *ngIf="permission.canUncalculate" (click)="uncalculate()"
-            [disabled]="!isReadyMatch">Uncalculate</button>
+          <button class="button" [ngClass]="{'button-disabled':!isReadyMatch}" *ngIf="permission.canUncalculate"
+            (click)="uncalculate()" [disabled]="!isReadyMatch">Uncalculate</button>
         </div>
       </div>
       <div class="clear-both"></div>

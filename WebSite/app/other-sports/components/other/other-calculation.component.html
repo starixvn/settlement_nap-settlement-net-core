@@ -28,7 +28,7 @@
           </div>
           <div class="action-button">
             <button *ngIf="permission.canCalculate" [disabled]="!isReadyMatch" class="button float-left"
-              (click)="calculateHalfTime()">Calculate
+              [ngClass]="{ 'button-disabled':!isReadyMatch}" (click)="calculateHalfTime()">Calculate
               HT</button>
           </div>
         </div>
@@ -39,15 +39,16 @@
           </div>
           <div class="action-button">
             <button *ngIf="permission.canCalculate" [disabled]="!isReadyMatch" class="button float-left"
-              (click)="calculateFullTime()">Calculate
+              [ngClass]="{'button-disabled':!isReadyMatch}" (click)="calculateFullTime()">Calculate
               FT</button>
           </div>
         </div>
       </div>
-      <button class="button" *ngIf="permission.canCalculate" [disabled]="!isReadyMatch"
-        (click)="calculateAll()">Calculate All</button>
-      <button class="button" *ngIf="permission.canUncalculate" [disabled]="!isReadyMatch || !matchDetail.isUnCalculate"
-        (click)="uncalculate()">Uncalculate</button>
+      <button class="button" *ngIf="permission.canCalculate" [ngClass]="{'button-disabled':!isReadyMatch}"
+        [disabled]="!isReadyMatch" (click)="calculateAll()">Calculate All</button>
+      <button class="button" *ngIf="permission.canUncalculate"
+        [ngClass]="{'button-disabled':!isReadyMatch || !matchDetail.isUnCalculate}"
+        [disabled]="!isReadyMatch || !matchDetail.isUnCalculate" (click)="uncalculate()">Uncalculate</button>
     </div>
     <div class="clear-both">
       <resettle-checker (proceedEvent)="onResettleCheckboxChange($event)"

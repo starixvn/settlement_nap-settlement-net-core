@@ -18,7 +18,7 @@ import { ChildMatchType, LeagueType } from '../../constants';
 })
 export class HalfTimeFullTimeCalculationComponent implements SportTemplate {
   @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
-  isReadyMatch = true;
+  isReadyMatch = false;
   match: Match;
   matchDetail: MatchDetail;
   permission: Permission;
