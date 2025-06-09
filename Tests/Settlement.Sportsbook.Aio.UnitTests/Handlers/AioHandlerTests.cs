@@ -23,6 +23,7 @@ public class AioHandlerTests
     private readonly IAioService service;
 
     private readonly ResultAmendmentService resultAmendmentService;
+
     private readonly IPublishEndpoint publishEndpoint;
 
     public AioHandlerTests()
