@@ -9,9 +9,9 @@ using MatchDetail = Settlement.FastMarkets.Models.MatchDetail;
 
 namespace Settlement.FastMarkets.UnitTests.Services;
 
+using Models.BetTypeModels;
 using NSubstitute;
 using Settlement.Core.Services.SpecificService;
-using Settlement.FastMarkets.Models.BetTypeModels;
 
 public class MatchDetailServiceTests
 {
@@ -26,7 +26,7 @@ public class MatchDetailServiceTests
         var fastMarketResultService = Substitute.For<IFastMarketResultService>();
 
         fastMarketResultService.Result(Arg.Any<List<BetType>>(), Arg.Any<string>())
-            .Returns(callInfo => new XMLResult<BetTypeElement>());
+            .Returns(_ => new XMLResult<BetTypeElement>());
 
         dynamicRepository.Get<MarkedTickets>(Arg.Any<CriteriaBase>()).Returns(new MarkedTickets());
         var appSetting = new AppSettingsKey();

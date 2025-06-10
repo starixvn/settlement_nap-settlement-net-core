@@ -1,5 +1,6 @@
 ﻿using Fanex.Data.Repository;
 using Microsoft.Extensions.Options;
+using Settlement.Core.Criteria.ResultAmendment;
 using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.Criteria.Cricket;
 using Settlement.Sportsbook.Aio.Services.Cricket;
@@ -8,7 +9,6 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services.Cricket;
 
 using Fanex.Settlement.MessageBridge.ResultAmendment;
 using MassTransit;
-using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Sportsbook.Aio.Services;
 using ResourceItem = Core.Models.ResourceItem;

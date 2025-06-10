@@ -48,13 +48,13 @@ public class GenerationServiceTests
     public async Task QuerySettle_Always_CallRelatedMethod()
     {
         fastMarketResultService.Result(Arg.Any<List<BetType>>(), Arg.Any<string>())
-            .Returns(callInfo => new XMLResult<BetTypeElement>());
+            .Returns(_ => new XMLResult<BetTypeElement>());
 
         eventCounterService.Result(Arg.Any<SettleRequest>())
-            .Returns(callInfo => new XMLResult<EventCounterElement>());
+            .Returns(_ => new XMLResult<EventCounterElement>());
 
         fastMarketResultService.OldResults(Arg.Any<List<BetType>>(), Arg.Any<int>())
-            .Returns(callInfo => "TestOldResult");
+            .Returns(_ => "TestOldResult");
 
         var result = await service.QuerySettle(new SettleRequest());
 
