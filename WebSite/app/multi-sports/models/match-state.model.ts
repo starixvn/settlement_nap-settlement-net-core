@@ -73,8 +73,9 @@ export class MatchState {
     this.remarkState = service.getRemarkState(match.remark);
     this.autoSetting = SportNewAutoPayout.includes(match.sportType) ? service.getAutoNewSetting(match.autoCalcSetting) : service.getAutoSetting(match.autoCalcSetting);
     this.mercyAbandonedInfo = service.getMercyAbandonedInfo(match);
-    this.hasProviderHT = (SportNewAutoPayout.includes(match.sportType) && match.moreScores?.halfTimeScore?.isSettled || !SportNewAutoPayout.includes(match.sportType) && !store.state.permission.isLeader) && match.hasProviderHT;
-    this.hasProviderFT = (SportNewAutoPayout.includes(match.sportType) && (match.originalEventStatus !== "completed" || match.moreScores?.finalScore?.isNotSettled) || !SportNewAutoPayout.includes(match.sportType) && !store.state.permission.isLeader) && match.hasProviderFT;
+
+    this.hasProviderHT = service.getHasProviderHT(match, store.state.permission);
+    this.hasProviderFT = service.getHasProviderFT(match, store.state.permission);
   }
 }
 
