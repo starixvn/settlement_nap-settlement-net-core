@@ -1,7 +1,7 @@
 ﻿using Fanex.Data.Repository;
 using Fanex.Settlement.MessageBridge.ResultAmendment;
 using MassTransit;
-using Settlement.Core.Criteria;
+using Settlement.Core.Criteria.ResultAmendment;
 using Settlement.ThirdPartyProducts.Criteria;
 using Settlement.ThirdPartyProducts.Models;
 using Settlement.ThirdPartyProducts.Requests;
@@ -73,7 +73,7 @@ namespace Settlement.ThirdPartyProducts.Services
             await _publishEndpoint.Publish(new ResultAmended(
                 request.MatchId,
                 request.BroadcastSessionId,
-                1,
+                request.SportType,
                 request.ActionName,
                 [.. newSelectedResources],
                 [.. newResultChanged],
@@ -84,7 +84,7 @@ namespace Settlement.ThirdPartyProducts.Services
 
         private async Task<List<SelectionMarket>> GetMarkets(int matchId, string selectionTypes)
         {
-            var ciriteria = new GetMarketIdsCriteria
+            var ciriteria = new GetSelectionMarketsCriteria
             {
                 MatchId = matchId,
                 SelectionTypes = selectionTypes

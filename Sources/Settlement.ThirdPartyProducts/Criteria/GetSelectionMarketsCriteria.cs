@@ -2,7 +2,7 @@
 
 namespace Settlement.ThirdPartyProducts.Criteria;
 
-public class GetMarketIdsCriteria : CriteriaBase
+public class GetSelectionMarketsCriteria : CriteriaBase
 {
     public int MatchId { get; set; }
     public string SelectionTypes { get; set; }
