@@ -87,7 +87,7 @@ namespace Settlement.ThirdPartyProducts.Services
             var ciriteria = new GetMarketIdsCriteria
             {
                 MatchId = matchId,
-                SelectionType = selectionTypes
+                SelectionTypes = selectionTypes
             };
             var markets = await _repository.FetchAsync<SelectionMarket>(ciriteria);
 
