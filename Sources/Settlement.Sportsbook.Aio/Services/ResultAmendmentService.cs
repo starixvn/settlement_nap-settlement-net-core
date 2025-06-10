@@ -2,7 +2,7 @@
 using MassTransit;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Constants;
-using Settlement.Core.Criteria;
+using Settlement.Core.Criteria.ResultAmendment;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Aio.Criteria;
@@ -85,8 +85,6 @@ public class ResultAmendmentServiceImp(
         return true;
     }
 
-
-
     private async Task<bool> PublishResultAmendment(SettleCriteria settleCriteria, List<ResourceItem> selectedResources, IEnumerable<ResultChanged> results)
     {
         var specialSportTypes = new List<int> { SportType.BasketBall, SportType.ESports, SportType.VolleyBall, SportType.TableTennis, SportType.Tennis };
@@ -111,7 +109,6 @@ public class ResultAmendmentServiceImp(
                     HomeId = x.HomeId,
                     OtherInfo = x.OtherInfo,
                     GroupBetType = x.GroupBetType,
-
                 })],
                 [.. results]),
                 new CancellationTokenSource(TimeSpan.FromSeconds(3)).Token);

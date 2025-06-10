@@ -22,7 +22,6 @@ public class FastMarketHandlerTests
     private readonly FastMarketHandler handler;
 
     private readonly ISettingService settingService;
-    private readonly IPublishEndpoint publishEndpoint;
 
     public FastMarketHandlerTests()
     {
@@ -38,9 +37,9 @@ public class FastMarketHandlerTests
         matchDetailService = Substitute.For<IMatchDetailService>();
         fastMarketService = Substitute.For<IFastMarketService>();
         settingService = Substitute.For<ISettingService>();
-        publishEndpoint = Substitute.For<IPublishEndpoint>();
+        var publishEndpoint1 = Substitute.For<IPublishEndpoint>();
 
-        handler = new FastMarketHandler(matchDetailService, permissionService, fastMarketService, settingService, napSession, publishEndpoint);
+        handler = new FastMarketHandler(matchDetailService, permissionService, fastMarketService, settingService, napSession, publishEndpoint1);
     }
 
     [Fact]

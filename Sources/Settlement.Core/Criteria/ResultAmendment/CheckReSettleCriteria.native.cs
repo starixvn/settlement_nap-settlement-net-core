@@ -1,6 +1,6 @@
 ﻿using Fanex.Data.Repository;
 
-namespace Settlement.Core.Criteria;
+namespace Settlement.Core.Criteria.ResultAmendment;
 
 public class CheckReSettleCriteria : CriteriaBase
 {
