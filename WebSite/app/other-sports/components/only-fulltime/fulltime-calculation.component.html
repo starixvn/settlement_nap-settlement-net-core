@@ -1,34 +1,33 @@
 <span toastContainer></span>
 <div *ngIf="match">
-	<div *ngIf="isReadyMatch">
-		<div class="padding">
-			<div class="league">
-				<div class="icon"></div>
-				{{ matchDetail.sportName.toUpperCase() }} - {{ matchDetail.leagueName }}
-			</div>
-			<table>
-				<ng-template *ngTemplateOutlet="header"></ng-template>
-				<ng-template *ngTemplateOutlet="body"></ng-template>
-			</table>
-			<div *ngIf="permission.isLeader" class="result">
-				<ng-template *ngTemplateOutlet="externalSource"></ng-template>
-			</div>
-			<ticket-count [ticketCounts]="match.ticketCount[0]"></ticket-count>
-			<div class="calc-action">
-				<button class="button" *ngIf="permission.canCalculate" (click)="calculation()">Calculate All</button>
-				<button class="button" *ngIf="permission.canUncalculate" [disabled]="!matchDetail.isUnCalculate" (click)="uncalculation()">
-					Uncalculate
-				</button>
-			</div>
-			<div class="clear-both">
-				<resettle-checker (proceedEvent)="onResettleCheckboxChange($event)" [checked]="isReSettledTickets"></resettle-checker>
-			</div>
+	<div class="padding">
+		<div class="league">
+			<div class="icon"></div>
+			{{ matchDetail.sportName.toUpperCase() }} - {{ matchDetail.leagueName }}
+		</div>
+		<table>
+			<ng-template *ngTemplateOutlet="header"></ng-template>
+			<ng-template *ngTemplateOutlet="body"></ng-template>
+		</table>
+		<div *ngIf="permission.isLeader" class="result">
+			<ng-template *ngTemplateOutlet="externalSource"></ng-template>
+		</div>
+		<ticket-count [ticketCounts]="match.ticketCount[0]"></ticket-count>
+		<div class="calc-action">
+			<button class="button" *ngIf="permission.canCalculate" (click)="calculation()"
+				[ngClass]="{'button-disabled':!isReadyMatch}" [disabled]="!isReadyMatch">Calculate All</button>
+			<button class="button" *ngIf="permission.canUncalculate" [ngClass]="{'button-disabled':!isReadyMatch}"
+				[disabled]="!isReadyMatch" (click)="uncalculation()">
+				Uncalculate
+			</button>
+		</div>
+		<div class="clear-both">
+			<resettle-checker (proceedEvent)="onResettleCheckboxChange($event)"
+				[checked]="isReSettledTickets"></resettle-checker>
 		</div>
 	</div>
-	<div *ngIf="!isReadyMatch">
-		<not-ready-match></not-ready-match>
-	</div>
 </div>
+
 <ng-template #header>
 	<thead>
 		<tr>
@@ -50,37 +49,26 @@
 				{{ matchDetail.kickOffTime | date: "hh:mm:ss a" }}
 			</td>
 			<td class="home-team-name">{{ matchDetail.homeName }}</td>
-			<td class="final-score" [ngClass]="{ 'bg-result-confirmed': isFinalScoreConfirmed(), 'not-consistent': isScoreInconsistent }">
-				<input
-					type="text"
-					[ngClass]="scoreClass"
-					myOnlyInteger
-					maxlength="4"
-					tabindex="1"
-					[(ngModel)]="matchDetail.finalHomeScore"
-					(ngModelChange)="changeScore()"
-				/>
+			<td class="final-score"
+				[ngClass]="{ 'bg-result-confirmed': isFinalScoreConfirmed(), 'not-consistent': isScoreInconsistent }">
+				<input type="text" [ngClass]="scoreClass" myOnlyInteger maxlength="4" tabindex="1"
+					[(ngModel)]="matchDetail.finalHomeScore" (ngModelChange)="changeScore()" />
 			</td>
 		</tr>
 		<tr>
 			<td>{{ matchDetail.matchId }}</td>
 			<td class="away-team-name">{{ matchDetail.awayName }}</td>
-			<td class="final-score" [ngClass]="{ 'bg-result-confirmed': isFinalScoreConfirmed(), 'not-consistent': isScoreInconsistent }">
-				<input
-					type="text"
-					[ngClass]="scoreClass"
-					myOnlyInteger
-					maxlength="4"
-					tabindex="2"
-					[(ngModel)]="matchDetail.finalAwayScore"
-					(ngModelChange)="changeScore()"
-				/>
+			<td class="final-score"
+				[ngClass]="{ 'bg-result-confirmed': isFinalScoreConfirmed(), 'not-consistent': isScoreInconsistent }">
+				<input type="text" [ngClass]="scoreClass" myOnlyInteger maxlength="4" tabindex="2"
+					[(ngModel)]="matchDetail.finalAwayScore" (ngModelChange)="changeScore()" />
 			</td>
 		</tr>
 		<tr *ngIf="matchDetail.sportType === muayThai">
 			<td colspan="4" class="input-directly">
 				KO at Round
-				<input type="text" class="KO" myOnlyInteger maxlength="1" tabindex="3" [(ngModel)]="matchDetail.betStatus" (keyup)="changeBetStatus()" />
+				<input type="text" class="KO" myOnlyInteger maxlength="1" tabindex="3" [(ngModel)]="matchDetail.betStatus"
+					(keyup)="changeBetStatus()" />
 			</td>
 		</tr>
 	</tbody>

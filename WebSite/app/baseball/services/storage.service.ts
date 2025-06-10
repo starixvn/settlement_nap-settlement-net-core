@@ -19,4 +19,5 @@ export interface Storage {
   getOriginalResultDetails() : ResultDetail[];
   setResultsCheckedState?: (service: ResultRowStateService) => void;
   setResultsWarningState?: (resultDetails: ResultDetail[]) => void;
+  isReadyMatch?: () => boolean;
 }

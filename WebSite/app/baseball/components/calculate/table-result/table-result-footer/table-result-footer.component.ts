@@ -21,6 +21,7 @@ export class TableResultFooterComponent implements OnInit {
   disableScoreDirect = false;
   isInputScoreDirect = false;
   canUncalculate = this.#storage.getPermission().canUncalculate;
+  isReadyMatch = this.#storage.isReadyMatch();
 
   ngOnInit(): void {
     this.disableScoreDirect =

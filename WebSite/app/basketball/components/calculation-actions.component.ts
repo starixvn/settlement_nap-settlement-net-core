@@ -170,6 +170,11 @@ export class CalculationActionsComponent implements SportTemplate {
     this.match.originalResultDetail = _.cloneDeep(this.resultDetails);
     this.autoFillScoreOnLoad(this.resultDetails);
 
+    if (!this.isReadyMatch) {
+      this.toastrService.error(Language.minimumPlayTimeNotReached);
+      return;
+    }
+
     this.autoSelectResultsService.selectByOverStatus(this.resultDetails, this.fullTime, this.overStatus);
   }
 

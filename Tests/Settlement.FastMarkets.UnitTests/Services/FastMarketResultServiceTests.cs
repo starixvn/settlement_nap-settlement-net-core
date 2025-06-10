@@ -24,11 +24,11 @@ public class FastMarketResultServiceTests
     [Fact]
     public void Result_Always_ReturnXMLResult()
     {
-        betTypeElementService.GetBetTypes(Arg.Any<List<BetType>>(), Arg.Any<string>()).Returns([]);
+        betTypeElementService.GetBetTypes(Arg.Any<List<BetType>>(), Arg.Any<string>()).Returns(new List<BetTypeElement>());
         xmlConvertService.Serialize(Arg.Any<BetTypesRoot>()).Returns("XML");
 
-        var result = service.Result([], "");
+        var result = service.Result(new List<BetType>(), "");
 
-        Assert.Equal("XML", result);
+        Assert.Equal("XML", result.Result);
     }
 }

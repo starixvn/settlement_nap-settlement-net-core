@@ -23,6 +23,10 @@ export class VerifyMatchService {
         return matchDetail.playTime > TimeMinute.firstHalf;
     }
 
+    public isChildMatch(matchDetail: MatchDetail) {
+        return matchDetail.parentId !== 0 && matchDetail.playTime >= 0;
+    }
+
     public isRelatedMatchesInsufficient(relatedTeams: string[], fantasyRelatedMatches: FantasyRelatedMatch[]) {
         return fantasyRelatedMatches.length * 2 < relatedTeams.length
             || _.some(relatedTeams, (teamId) => {

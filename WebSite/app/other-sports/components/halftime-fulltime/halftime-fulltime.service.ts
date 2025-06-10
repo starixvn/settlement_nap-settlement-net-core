@@ -27,7 +27,9 @@ export class HalfTimeFullTimeService {
     }
 
     public isReadyMatch(matchDetail: MatchDetail) {
-        return this.isCompletedOrConfirmScore(matchDetail) || this.isReadyMatchBySportType(matchDetail.sportType, matchDetail.playTime);
+        return this.isCompletedOrConfirmScore(matchDetail) 
+            || matchDetail.parentId !== 0 && matchDetail.playTime >= 0 
+            || this.isReadyMatchBySportType(matchDetail.sportType, matchDetail.playTime);
     }
 
     private isCompletedOrConfirmScore(matchDetail: MatchDetail) {

@@ -14,7 +14,6 @@ import { EarlyBaseComponent } from '../../shared/components/sportsbook-sop/early
 import { MatchDetailComponent } from './match-detail.component';
 import { NewMultipleSelectComponent } from '../../shared/components/multiple-select/multiple-select.component';
 import { ResourceNameByIdPipe } from '../pipes/resource-name-by-id.pipe';
-import {ResultControlGroup} from "../../cricket/constants";
 
 @Component({
     selector: 'early-settlement',
@@ -77,6 +76,10 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         this.match.originalResultDetail = _.cloneDeep(this.resultDetails);
         this.hideTicketWaiting(this.groupMap);
         this.renderFilterSelect();
+
+        if (!this.isReadyMatch) {
+            this.toastrService.error(Language.minimumPlayTimeNotReached);
+        }
     }
 
     public hasNoneOption(betType: string) {

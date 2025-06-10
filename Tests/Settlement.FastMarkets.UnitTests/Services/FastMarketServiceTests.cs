@@ -35,6 +35,13 @@ public class FastMarketServiceTests
         generationService = Substitute.For<GenerationService>();
         var appSettingKey = new AppSettingsKey { SiteDbServer = ["01", "02"] };
         var option = Options.Create(appSettingKey);
+
+        // Add a mock for IFastMarketResultAmendmentService
+        var fastMarketResultAmendmentService = Substitute.For<IFastMarketResultAmendmentService>();
+
+        // Add a mock for XmlConvertService
+        var xmlConvertService = Substitute.For<XmlConvertService>();
+
         service = new FastMarketServiceImp(
             repository,
             mapper,
@@ -42,7 +49,10 @@ public class FastMarketServiceTests
             option,
             scaleOutSettleService,
             generationService,
-            logService);
+            logService,
+            fastMarketResultAmendmentService, // Pass the required parameter
+            xmlConvertService // Pass the required parameter
+        );
     }
 
     [Theory]

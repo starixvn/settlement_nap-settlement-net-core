@@ -117,7 +117,13 @@ export class CalculationActionsComponent implements SportTemplate {
         this.resetHomeAway(this.match.resultDetails);
         this.autoFillScoreOnLoad(this.match.resultDetails);
         this.isDisabledUnCalculate = this.verificationService.isDisableUncalculate(this.match.resultDetails );
+
+        if (!this.isReadyMatch) {
+            this.toastrService.error(Language.minimumPlayTimeNotReached);
+            return;
+        }
         this.autoSelectResultsService.selectByOverStatus(this.match.resultDetails, this.matchWinner, this.overStatus);
+
     }
 
     public get selectedResources(): ResultDetail[] {

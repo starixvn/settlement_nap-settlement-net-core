@@ -78,6 +78,11 @@ export class CalculationActionsComponent implements SportTemplate {
         this.resetHomeAway(this.match.resultDetails);
         this.match.originalResultDetail = _.cloneDeep(this.match.resultDetails);
         this.autoFillScoreOnLoad(this.match.resultDetails);
+        
+        if (!this.isReadyMatch) {
+            this.toastrService.error(Language.minimumPlayTimeNotReached);
+            return;
+        }
         this.autoSelectResultsService.selectByOverStatus(this.match.resultDetails, this.finalResource, this.overStatus);
     }
 

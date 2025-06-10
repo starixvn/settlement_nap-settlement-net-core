@@ -2,6 +2,8 @@
 using Fanex.NAP.Client;
 using Microsoft.AspNetCore.Http;
 using Settlement.FastMarkets.Models;
+using Settlement.FastMarkets.Models.BetTypeModels;
+using Settlement.FastMarkets.Models.EventCounterModels;
 using Settlement.FastMarkets.Requests;
 using Settlement.FastMarkets.Services;
 
@@ -45,9 +47,14 @@ public class GenerationServiceTests
     [Fact]
     public async Task QuerySettle_Always_CallRelatedMethod()
     {
-        fastMarketResultService.Result(Arg.Any<List<BetType>>(), Arg.Any<string>()).Returns("test");
-        eventCounterService.Result(Arg.Any<SettleRequest>()).Returns("testEventCounter");
-        fastMarketResultService.OldResults(Arg.Any<List<BetType>>(), Arg.Any<int>()).Returns("TestOldResult");
+        fastMarketResultService.Result(Arg.Any<List<BetType>>(), Arg.Any<string>())
+            .Returns(callInfo => new XMLResult<BetTypeElement>());
+
+        eventCounterService.Result(Arg.Any<SettleRequest>())
+            .Returns(callInfo => new XMLResult<EventCounterElement>());
+
+        fastMarketResultService.OldResults(Arg.Any<List<BetType>>(), Arg.Any<int>())
+            .Returns(callInfo => "TestOldResult");
 
         var result = await service.QuerySettle(new SettleRequest());
 

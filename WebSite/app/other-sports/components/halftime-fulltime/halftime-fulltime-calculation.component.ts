@@ -18,7 +18,7 @@ import { ChildMatchType, LeagueType } from '../../constants';
 })
 export class HalfTimeFullTimeCalculationComponent implements SportTemplate {
   @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
-  isReadyMatch = true;
+  isReadyMatch = false;
   match: Match;
   matchDetail: MatchDetail;
   permission: Permission;
@@ -67,6 +67,10 @@ export class HalfTimeFullTimeCalculationComponent implements SportTemplate {
     this.verificationService.isScoreMismatched(this.halfTime, this.fullTime, this.matchDetail,
       this.halfTimeOriginal, this.fullTimeOriginal);
     this.isOTInvalid = this.verifyOTValue();
+
+    if (!this.isReadyMatch) {
+      this.toastrService.error(Language.minimumPlayTimeNotReached);
+    }
   }
 
   private setValue(otherSportsMatch: OtherSportsMatch) {

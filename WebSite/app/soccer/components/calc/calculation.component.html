@@ -1,7 +1,6 @@
 <span toastContainer></span>
 @if (match) {
 <div class="calculate-popup">
-  @if (isMatchReady) {
   <div>
     <match-detail [match]="match" pageType="ReCalculate"></match-detail>
     <soccer-ticket-count [ticketCounts]="match.ticketCounts"></soccer-ticket-count>
@@ -27,11 +26,6 @@
     <fantasy [fantasyMatch]="match.fantasyMatch" (autoFillScore)="autoFillFantasyMatch($event)"></fantasy>
     }
   </div>
-  }
-  @if (!isMatchReady) {
-  <div>
-    <not-ready-match></not-ready-match>
-  </div>
-  }
+
 </div>
 }

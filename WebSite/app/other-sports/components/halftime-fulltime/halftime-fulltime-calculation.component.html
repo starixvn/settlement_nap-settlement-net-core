@@ -1,75 +1,75 @@
 <span toastContainer></span>
 <div *ngIf="match">
-  <div *ngIf="isReadyMatch">
-    <div class="padding">
-      <div class="league">
-        <div class="icon">
-        </div>
-        {{matchDetail.sportName.toUpperCase()}} - {{matchDetail.leagueName}}
+  <div class="padding">
+    <div class="league">
+      <div class="icon">
       </div>
-      <table>
-        <ng-template *ngTemplateOutlet="header"></ng-template>
-        <ng-template *ngTemplateOutlet="body"></ng-template>
-      </table>
-
-      <div *ngIf="permission.isLeader" class='result'>
-        <ng-template *ngTemplateOutlet="externalSource"></ng-template>
-      </div>
-
-      <ticket-count [ticketCounts]="match.ticketCount[0]"></ticket-count>
-      <div *ngIf="hedgeMatchDetail" class="hedge-match">
-        <input type="checkbox" [(ngModel)]="applyHedgeMatch" id="ApplyHedgeMatch" />
-        <label for="ApplyHedgeMatch">Apply for hedge match '<strong>{{hedgeMatchDetail.matchCode}}</strong>'
-          also.</label>
-      </div>
-      <div class="calc-action">
-        <div *ngIf="hasHalfTime">
-          <div class="row-1">
-            <div class="header">First Half</div>
-            <div class="status {{halftimeTicketStatusBackground}}">
-              {{matchDetail.htStatus}}
-            </div>
-            <div class="action-button">
-              <button *ngIf="permission.canCalculate" class="button float-left" (click)="calculateHalfTime()">Calculate
-                HT</button>
-            </div>
-          </div>
-          <div class="row-1">
-            <div class="header">Full Time</div>
-            <div class="status {{fullTimeTicketStatusBackground}}">
-              {{matchDetail.ftStatus}}
-            </div>
-            <div class="action-button">
-              <button *ngIf="permission.canCalculate" class="button float-left" (click)="calculateFullTime()">Calculate
-                FT</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="row-2">
-          <div class="action-button">
-            <button *ngIf="permission.canCalculate" class="button" (click)="calculateAll()">
-              Calculate All
-            </button>
-
-            <button *ngIf="permission.canUncalculate"
-              [ngClass]="{'button': true, 'button-disabled': !matchDetail.isUnCalculate}"
-              [disabled]="!matchDetail.isUnCalculate" (click)="unCalculate()">
-              Uncalculate
-            </button>
-          </div>
-        </div>
-      </div>
-      <div class="clear-both"></div>
-      <resettle-checker (proceedEvent)="onResettleCheckboxChange($event)" [checked]="isReSettledTickets">
-      </resettle-checker>
+      {{matchDetail.sportName.toUpperCase()}} - {{matchDetail.leagueName}}
     </div>
-  </div>
+    <table>
+      <ng-template *ngTemplateOutlet="header"></ng-template>
+      <ng-template *ngTemplateOutlet="body"></ng-template>
+    </table>
 
-  <div *ngIf="!isReadyMatch">
-    <not-ready-match></not-ready-match>
+    <div *ngIf="permission.isLeader" class='result'>
+      <ng-template *ngTemplateOutlet="externalSource"></ng-template>
+    </div>
+
+    <ticket-count [ticketCounts]="match.ticketCount[0]"></ticket-count>
+    <div *ngIf="hedgeMatchDetail" class="hedge-match">
+      <input type="checkbox" [(ngModel)]="applyHedgeMatch" id="ApplyHedgeMatch" />
+      <label for="ApplyHedgeMatch">Apply for hedge match '<strong>{{hedgeMatchDetail.matchCode}}</strong>'
+        also.</label>
+    </div>
+    <div class="calc-action">
+      <div *ngIf="hasHalfTime">
+        <div class="row-1">
+          <div class="header">First Half</div>
+          <div class="status {{halftimeTicketStatusBackground}}">
+            {{matchDetail.htStatus}}
+          </div>
+          <div class="action-button">
+            <button *ngIf="permission.canCalculate" class="button float-left"
+              [ngClass]="{'button-disabled':!isReadyMatch}" (click)="calculateHalfTime()"
+              [disabled]="!isReadyMatch">Calculate
+              HT</button>
+          </div>
+        </div>
+        <div class="row-1">
+          <div class="header">Full Time</div>
+          <div class="status {{fullTimeTicketStatusBackground}}">
+            {{matchDetail.ftStatus}}
+          </div>
+          <div class="action-button">
+            <button *ngIf="permission.canCalculate" class="button float-left"
+              [ngClass]="{'button-disabled':!isReadyMatch}" (click)="calculateFullTime()"
+              [disabled]="!isReadyMatch">Calculate
+              FT</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="row-2">
+        <div class="action-button">
+          <button *ngIf="permission.canCalculate" [ngClass]="{'button': true, 'button-disabled':!isReadyMatch}"
+            (click)="calculateAll()" [disabled]="!isReadyMatch">Calculate All
+          </button>
+
+          <button *ngIf="permission.canUncalculate"
+            [ngClass]="{'button': true, 'button-disabled': !matchDetail.isUnCalculate}"
+            [disabled]="!isReadyMatch || !matchDetail.isUnCalculate" (click)="unCalculate()">
+            Uncalculate
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="clear-both"></div>
+    <resettle-checker (proceedEvent)="onResettleCheckboxChange($event)" [checked]="isReSettledTickets">
+    </resettle-checker>
   </div>
 </div>
+
+
 <ng-template #header>
   <thead>
     <tr>

@@ -16,6 +16,7 @@ export class CalculateStorage implements Storage {
 
   private readonly verifyScoreGoalService = inject(VerifyScoreGoalService);
   private readonly toastrService = inject(ToastrService);
+  
   #match = signal<Match>(null);
 
   #matchDetail: MatchDetail;
@@ -34,6 +35,7 @@ export class CalculateStorage implements Storage {
   #providerFtResult: ResultDetail;
 
   #isIgnoreCheckHt = false;
+  #isReadyMatch = false;
 
   match = this.#match.asReadonly();
   readonly dialogMessage = new ModalDialogMessage(Language.confirmationBox);
@@ -120,6 +122,14 @@ export class CalculateStorage implements Storage {
 
   setIsIgnoreCheckHt(value: boolean) {
     this.#isIgnoreCheckHt = value;
+  }
+
+  getIsReadyMatch() {
+    return this.#isReadyMatch;
+  }
+
+  setIsReadyMatch(value: boolean) {
+    this.#isReadyMatch = value;
   }
 
   // Setters

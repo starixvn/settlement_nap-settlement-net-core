@@ -24,23 +24,23 @@ public class EventCounterServiceTests
     [Fact]
     public void Result_ActionIsNotCAL_ReturnsEmpty()
     {
-        // Arrange
+        // Arrange  
         var queryModel = new SettleRequest
         {
             Action = "REFUND"
         };
 
-        // Act
+        // Act  
         var actual = service.Result(queryModel);
 
-        // Assert
-        Assert.Empty(actual);
+        // Assert  
+        Assert.Empty(actual.Result); // Fix: Access the 'Result' property of XMLResult<T> which is expected to be a string or enumerable.  
     }
 
     [Fact]
     public void Result_ActionIsCALAndNotEventCounter_ReturnsNoEventCounterElement()
     {
-        // Arrange
+        // Arrange  
         var queryModel = new SettleRequest
         {
             Action = "CAL",
@@ -49,18 +49,18 @@ public class EventCounterServiceTests
 
         eventCounterElementService.GetEventCounters(Arg.Any<List<EventCounter>>()).Returns([]);
 
-        // Act
+        // Act  
         var result = service.Result(queryModel);
 
-        // Assert
-        xmlDoc.LoadXml(result);
+        // Assert  
+        xmlDoc.LoadXml(result.Result); // Fix: Access the 'Result' property of XMLResult<T> which is expected to be a string.  
         Assert.True(xmlDoc.DocumentElement is { ChildNodes.Count: 0 });
     }
 
     [Fact]
     public void Result_ActionIsCALAndHaveEventCounter_ReturnsOneEventCounterElement()
     {
-        // Arrange
+        // Arrange  
         var queryModel = new SettleRequest
         {
             Action = "CAL",
@@ -74,11 +74,11 @@ public class EventCounterServiceTests
 
         eventCounterElementService.GetEventCounters(Arg.Any<List<EventCounter>>()).Returns(eventCounters);
 
-        // Act
+        // Act  
         var result = service.Result(queryModel);
 
-        // Assert
-        xmlDoc.LoadXml(result);
+        // Assert  
+        xmlDoc.LoadXml(result.Result); // Fix: Access the 'Result' property of XMLResult<T> which is expected to be a string.  
         Assert.True(xmlDoc.DocumentElement is { ChildNodes.Count: 1 });
     }
 }

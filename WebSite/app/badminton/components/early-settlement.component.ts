@@ -94,6 +94,10 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     this.resultDetails = this.match.resultDetails;
     this.hideTicketWaiting(this.groupMap);
     this.renderFilterSelect();
+
+    if (!this.isReadyMatch) {
+      this.toastrService.error(Language.minimumPlayTimeNotReached);
+    }
   }
 
   private getGroupMap() {

@@ -11,6 +11,7 @@ import { Storage } from "../storage.service";
 import { ResultRowStateService } from "../result-row-state.service";
 import { ResultState } from "../../models/result-state.model";
 import { ResultSettingModel } from "../../../shared/models";
+import { KickOffTime } from "../../constants/kick-off-time.constant";
 import { AutoSelectResultsService } from "../../../shared/services/auto-select-results.service.native";
 
 
@@ -79,8 +80,9 @@ export class CalculateStorage implements ICalculateStorage {
     this.setIsApplyHedgeMatch(!!matchFetched.hedgeMatchDetail);
     this.#isMatchSeries.set(matchFetched.matchDetail.sessionTime === 1);
 
-    this.#autoSelectResultsService.selectByOverStatus(this.getResultDetails(), this.fulltimeResult, overStatus);
-
+    if(this.isReadyMatch()) {
+      this.#autoSelectResultsService.selectByOverStatus(this.getResultDetails(), this.fulltimeResult, overStatus);
+    }
   }
 
   mapTicketStatusExtraInning() {
@@ -183,6 +185,10 @@ export class CalculateStorage implements ICalculateStorage {
     this.getAllInnings().forEach((inning) => {
       this.setResultState(service,inning);
     })
+  }
+
+  isReadyMatch(): boolean {
+    return this.#match().matchDetail.playTime >= KickOffTime.playTime;
   }
 
   unSelectResults = () => {

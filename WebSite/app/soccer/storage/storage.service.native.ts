@@ -20,4 +20,6 @@ export interface Storage {
   getOutsideHtResult(): ResultDetail
   getIsIgnoreCheckHt(): boolean
   setIsIgnoreCheckHt(value: boolean): void
+  getIsReadyMatch(): boolean
+  setIsReadyMatch(value: boolean): void
 }

@@ -2,6 +2,7 @@
 using Fanex.NAP.Client;
 using Fanex.NAP.Client.Configuration;
 using Fanex.NAP.Client.Services;
+using MassTransit;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.FastMarkets.Handlers;
@@ -21,6 +22,7 @@ public class FastMarketHandlerTests
     private readonly FastMarketHandler handler;
 
     private readonly ISettingService settingService;
+    private readonly IPublishEndpoint publishEndpoint;
 
     public FastMarketHandlerTests()
     {
@@ -36,7 +38,9 @@ public class FastMarketHandlerTests
         matchDetailService = Substitute.For<IMatchDetailService>();
         fastMarketService = Substitute.For<IFastMarketService>();
         settingService = Substitute.For<ISettingService>();
-        handler = new FastMarketHandler(matchDetailService, permissionService, fastMarketService, settingService, napSession);
+        publishEndpoint = Substitute.For<IPublishEndpoint>();
+
+        handler = new FastMarketHandler(matchDetailService, permissionService, fastMarketService, settingService, napSession, publishEndpoint);
     }
 
     [Fact]

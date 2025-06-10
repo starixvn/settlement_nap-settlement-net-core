@@ -21,7 +21,7 @@ import { SportTemplate } from '../../../shared/models/sportsbook-sop';
 })
 export class FullTimeCalculationComponent implements SportTemplate {
   @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
-  public isReadyMatch = true;
+  public isReadyMatch = false;
   public match: Match;
   public matchDetail: MatchDetail;
   public permission: Permission;
@@ -47,9 +47,16 @@ export class FullTimeCalculationComponent implements SportTemplate {
     this.match = otherSportsMatch.match;
     this.permission = otherSportsMatch.permission;
     this.matchDetail = this.match.matchDetail;
-    this.isReadyMatch = this.isCompletedOrConfirmScore || this.checkPlayTimeBySportType;
+    this.isReadyMatch = this.isCompletedOrConfirmScore 
+      || this.matchDetail.parentId !== 0 && this.matchDetail.playTime >= 0 
+      || this.checkPlayTimeBySportType;
+
     this.fullTimeService.initScoreByPermission(this.matchDetail, this.permission);
     this.resetScore();
+
+    if (!this.isReadyMatch) {
+      this.toastrService.error(Language.minimumPlayTimeNotReached);
+    }
   }
 
   public get externalSourceName() {

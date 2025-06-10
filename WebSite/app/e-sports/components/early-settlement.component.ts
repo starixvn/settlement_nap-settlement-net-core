@@ -20,8 +20,7 @@ import { ResourceNameByIdPipe } from '../pipes/resource-name-by-id.pipe';
     selector: 'early-settlement',
     templateUrl: './early-settlement.component.html',
     standalone: true,
-    imports: [EarlyCommonModule, PipesModule, MatchDetailComponent,
-        NotReadyMatchComponent],
+    imports: [EarlyCommonModule, PipesModule, MatchDetailComponent],
     providers: [
         EarlyConstraintService,
         VerificationBaseService,
@@ -39,6 +38,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     public isShowRefundButton = false;
     public oldMatchDetail: HedgeMatchDetail;
     public isSettleOldMatch: boolean;
+
     public isReadyMatch: boolean;
 
     constructor(
@@ -98,6 +98,10 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         this.groupMap = this.earlyConstraintService.getGroupMap(this.match.resultDetails);
         this.permission = this.match.permission;
         this.renderFilterSelect();
+
+        if (!this.isReadyMatch) {
+            this.toastrService.error(Language.minimumPlayTimeNotReached);
+        }
     }
 
     private renderFilterSelect() {

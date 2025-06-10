@@ -200,13 +200,13 @@
       <div>
         @if (permission.canCalculate) {
         <button [ngClass]="{'button': true, 'button-disabled': isDisabledCalculate}" (click)="calculate()"
-          [disabled]="isDisabledCalculate">
+          [disabled]="!isReadyMatch || isDisabledCalculate">
           Calculate
         </button>
         }
         @if (permission.canUncalculate) {
         <button [ngClass]="{'button': true, 'button-disabled': isDisabledUnCalculate}" (click)="unCalculate()"
-          [disabled]="isDisabledUnCalculate">
+          [disabled]="!isReadyMatch || isDisabledUnCalculate">
           Uncalculate
         </button>
         }

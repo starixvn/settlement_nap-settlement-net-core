@@ -87,7 +87,8 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
     };
     this.match = await this.aioService.getMatch(matchQuery) as Match;
 
-    this.isReadyMatch = this.match.matchDetail.playTime >= KickOffTime.playTime;
+    this.isReadyMatch =  this.match.matchDetail.playTime >= KickOffTime.playTime;
+    
     this.cloneResultDetail();
     this.init();
   }
@@ -141,14 +142,17 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
     this.autoInputDirectly();
     this.match.childMatches.forEach(item => item.resourceId = ResourcesIds.totalGames);
 
+    if (!this.isReadyMatch) {
+      this.toastrService.error(Language.minimumPlayTimeNotReached);
+      return;
+    }
+
     if(!this.match.isScoreDirect) {  
     this.autoSelectResultsService.selectByOverStatus(this.match.resultDetails, this.totalGames, this.filterOverStatus);
     } else {
       this.autoSelectResultsService.selectByOverStatusHasScoreDirect(this.match.resultDetails, this.totalGames, this.filterOverStatus, this.match.isScoreDirect);
     }
   }
-  
-
 
   get noTotalPoints(): ResultDetail[] {
     return _.filter(this.match.resultDetails, (map: ResultDetail) => !_.isEqual(map.resourceId, ResourcesIds.totalPoints));

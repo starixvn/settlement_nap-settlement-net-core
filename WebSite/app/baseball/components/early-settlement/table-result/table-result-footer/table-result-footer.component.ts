@@ -23,6 +23,7 @@ export class TableResultFooterComponent {
   #earlySettlementService = inject(EarlySettlementService);
   isDisableAction = this.#storage.disableAction;
   isShowRefundButton = false;
+  isReadyMatch = this.#storage.isReadyMatch();
 
   calculate() {
     this.#notifyService.clearError();
