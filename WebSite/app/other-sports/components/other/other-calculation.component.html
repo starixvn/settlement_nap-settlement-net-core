@@ -46,9 +46,8 @@
       </div>
       <button class="button" *ngIf="permission.canCalculate" [ngClass]="{'button-disabled':!isReadyMatch}"
         [disabled]="!isReadyMatch" (click)="calculateAll()">Calculate All</button>
-      <button class="button" *ngIf="permission.canUncalculate"
-        [ngClass]="{'button-disabled':!isReadyMatch || !matchDetail.isUnCalculate}"
-        [disabled]="!isReadyMatch || !matchDetail.isUnCalculate" (click)="uncalculate()">Uncalculate</button>
+      <button class="button" *ngIf="permission.canUncalculate" [disabled]="!matchDetail.isUnCalculate"
+        (click)="uncalculate()">Uncalculate</button>
     </div>
     <div class="clear-both">
       <resettle-checker (proceedEvent)="onResettleCheckboxChange($event)"

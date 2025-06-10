@@ -110,12 +110,12 @@
       <td colSpan="100%" class="button-group">
         <button class="button" (click)="calculate()" [disabled]="!isReadyMatch">Calculate</button>
         <button *ngIf="match.permission.canUncalculate"
-          [ngClass]="{'button': true, 'button-disabled': !enableUncalculate}"
-          [disabled]="!isReadyMatch || !enableUncalculate" (click)="uncalculate()">
+          [ngClass]="{'button': true, 'button-disabled': !enableUncalculate}" [disabled]="!enableUncalculate"
+          (click)="uncalculate()">
           Uncalculate
         </button>
-        <button class="new-refund-button save-score" [disabled]="!isReadyMatch || isSaveScoreDisabled()"
-          (click)="saveScore()">Save Score</button>
+        <button class="new-refund-button save-score" [disabled]="isSaveScoreDisabled()" (click)="saveScore()">Save
+          Score</button>
       </td>
     </tr>
   </tbody>

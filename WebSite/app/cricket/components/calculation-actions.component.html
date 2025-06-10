@@ -135,9 +135,9 @@
                     [disabled]="!isReadyMatch">Calculate</button>
                 <button *ngIf="match.permission.canUncalculate"
                     [ngClass]="{'button': true, 'button-disabled': isDisabledUnCalculate}"
-                    [disabled]="!isReadyMatch || isDisabledUnCalculate" (click)="uncalculate()">Uncalculate</button>
+                    [disabled]="isDisabledUnCalculate" (click)="uncalculate()">Uncalculate</button>
                 <button class="new-refund-button save-score" *ngIf="canCalculate || canUncalculate"
-                    [disabled]="!isReadyMatch || isSaveScoreDisabled()" (click)="saveScore()">Save Score</button>
+                    [disabled]="isSaveScoreDisabled()" (click)="saveScore()">Save Score</button>
                 <button class="new-refund-button save-trader-score" *ngIf="isTrader"
                     [disabled]="!isReadyMatch || isSaveScoreDisabled()" (click)="saveTraderScore()">Save Trader
                     Score</button>

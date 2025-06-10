@@ -4,11 +4,10 @@
     Calculate
   </button>
   <button *ngIf="permission().canUncalculate" [ngClass]="{'button': true, 'button-disabled': isDisableAction()}"
-    (click)="unCalculate()" [disabled]="!isReadyMatch || isDisableAction()">
+    (click)="unCalculate()" [disabled]="isDisableAction()">
     Uncalculate
   </button>
-  <button class="new-refund-button save-score" [disabled]="!isReadyMatch || isDisableAction()"
-    (click)="saveResult()">Save Score</button>
+  <button class="new-refund-button save-score" [disabled]="isDisableAction()" (click)="saveResult()">Save Score</button>
 </div>
 
 <div class="sub-footer">

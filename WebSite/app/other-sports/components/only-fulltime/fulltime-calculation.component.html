@@ -16,8 +16,7 @@
 		<div class="calc-action">
 			<button class="button" *ngIf="permission.canCalculate" (click)="calculation()"
 				[ngClass]="{'button-disabled':!isReadyMatch}" [disabled]="!isReadyMatch">Calculate All</button>
-			<button class="button" *ngIf="permission.canUncalculate" [ngClass]="{'button-disabled':!isReadyMatch}"
-				[disabled]="!isReadyMatch" (click)="uncalculation()">
+			<button class="button" *ngIf="permission.canUncalculate" (click)="uncalculation()">
 				Uncalculate
 			</button>
 		</div>

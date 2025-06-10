@@ -17,7 +17,7 @@
           Calculate
         </button>
         <button *ngIf="permission.canUncalculate" [ngClass]="{'button': true, 'button-disabled': isDisabledUnCalculate}"
-          (click)="unCalculate()" [disabled]="!isReadyMatch || isDisabledUnCalculate">
+          (click)="unCalculate()" [disabled]="isDisabledUnCalculate">
           Uncalculate
         </button>
         <button *ngIf="permission.canUncalculate || permission.canCalculate" class="new-refund-button save-score"
