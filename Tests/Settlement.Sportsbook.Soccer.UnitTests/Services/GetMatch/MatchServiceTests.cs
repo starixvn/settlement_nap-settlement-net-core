@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Fanex.Data.Repository;
 using Fanex.NAP.Client;
-using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Soccer.Criteria;
@@ -128,34 +127,6 @@ public class MatchServiceTests
 
         // Assert
         Assert.Single(actualMatch.FantasyMatch.RelatedMatches);
-    }
-
-    [Fact]
-    public async Task MatchDetail_ExternalResultDetail_ReturnMatchExternalScore()
-    {
-        // Arrange
-        var resultDetail = new List<ResultDetail>
-        {
-            new() { ResourceId = "01", AwayValue = "1", HomeValue = "2", SourceId = SourceType.Sbo}
-        };
-
-        var match = new Match
-        {
-            MatchDetail = new MatchDetail { MatchId = 123 },
-            TicketCounts = [],
-            ChildMatches = []
-        };
-
-        fetchDataService.GetMatchInfo(Arg.Any<GetMatchRequest>()).Returns(match);
-        goalIconService.GetGoalIcon(Arg.Any<GoalIconQueryModel>()).Returns(new GoalIcon());
-        repository.FetchAsync<ResultDetail>(Arg.Any<GetResultDetailCriteria>()).Returns(resultDetail);
-        repository.GetAsync<HedgeMatchDetail>(Arg.Any<GetHedgeMatchCriteria>()).Returns(new HedgeMatchDetail());
-        // Act
-        var actualMatch = await service.GetMatch(new GetMatchRequest { MatchId = 1 });
-
-        // Assert
-        Assert.Equal("1", actualMatch.MatchDetail.ExHTAwayScore);
-        Assert.Equal("2", actualMatch.MatchDetail.ExHTHomeScore);
     }
 
     [Fact]

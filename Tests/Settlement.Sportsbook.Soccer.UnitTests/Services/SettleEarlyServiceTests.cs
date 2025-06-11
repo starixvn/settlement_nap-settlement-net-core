@@ -1,7 +1,9 @@
 ﻿using Fanex.Data.Repository;
+using Fanex.Settlement.MessageBridge.RefundEvents;
 using Fanex.Settlement.ScaleOut.Models;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
+using MassTransit;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Criteria;
 using Settlement.Core.Models;
@@ -24,6 +26,8 @@ public class SettleEarlyServiceTests
 
     private readonly LogService logService;
 
+    private readonly IPublishEndpoint publishEndpoint;
+
     public SettleEarlyServiceTests()
     {
         createCriteriaService = Substitute.For<ICreateCriteriaService>();
@@ -33,9 +37,11 @@ public class SettleEarlyServiceTests
 
         var appSettings = new AppSettingsKey { SiteDbServer = ["DB01", "DB02"] };
         var appSettingsOptions = Options.Create(appSettings);
+        publishEndpoint = Substitute.For<IPublishEndpoint>();
+
         service = new SettleEarlyServiceImp(
             createCriteriaService, appSettingsOptions,
-            repository, scaleOutSettleService, logService, null);
+            repository, scaleOutSettleService, logService, publishEndpoint);
     }
 
     [Fact]
@@ -65,8 +71,20 @@ public class SettleEarlyServiceTests
             .Returns(new ResultMessage());
         createCriteriaService.CreateCalculateEarlyLogCriteria(Arg.Any<SettleEarlyRequest>()).Returns(new InsertLogCriteria());
 
+        var selectedResources = new List<Settlement.Core.Models.ResourceItem>
+        {
+            new Settlement.Core.Models.ResourceItem
+            {
+                ResourceId = "127"
+            }
+        };
+
         //act
-        await service.CalculateEarly(new SettleEarlyRequest());
+        await service.CalculateEarly(new SettleEarlyRequest()
+        {
+            ActionName = "CAL",
+            SelectedResources = selectedResources
+        });
 
         //assert
         Received.InOrder(() =>
@@ -74,6 +92,7 @@ public class SettleEarlyServiceTests
             scaleOutSettleService.UpdateMatchInfo(Arg.Any<UpdateMatchInfoRequest>());
             repository.ExecuteAsync(Arg.Any<CalculateEarlyCriteria>());
             repository.ExecuteAsync(Arg.Any<CalculateEarlyCriteria>());
+            publishEndpoint.Publish(Arg.Any<ResultsCalculated>(), Arg.Any<CancellationToken>());
         });
     }
 }

@@ -37,7 +37,6 @@ public class CalculateServiceTests
         scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
         var xmlConvertService = Substitute.For<XmlConvertService>();
         var currentSession = Substitute.For<INapSession>();
-        var httpContext = Substitute.For<IHttpContextAccessor>();
         var publishEndpoint = Substitute.For<IPublishEndpoint>();
 
         logService = Substitute.For<LogService>();
@@ -48,8 +47,17 @@ public class CalculateServiceTests
         var mapper = new Mapper(config);
         var appSettings = new AppSettingsKey { SiteDbServer = ["DB01", "DB02", "DB03"] };
         var appSettingsOptions = Options.Create(appSettings);
+        var accessor = Substitute.For<IHttpContextAccessor>();
+        var context = new DefaultHttpContext
+        {
+            Connection =
+            {
+                RemoteIpAddress = new System.Net.IPAddress(1)
+            }
+        };
+        accessor.HttpContext = context;
         service = new CalculateServiceImp(
-            mapper, repository, appSettingsOptions, createCriteriaService, scaleOutSettleService, logService, matchService, publishEndpoint, currentSession, httpContext, xmlConvertService);
+            mapper, repository, appSettingsOptions, createCriteriaService, scaleOutSettleService, logService, matchService, publishEndpoint, currentSession, accessor, xmlConvertService);
     }
 
     [Theory]
@@ -60,12 +68,24 @@ public class CalculateServiceTests
         var query = new SettleRequest
         {
             GoalRecord = "AH",
-            ActionName = ActionType.CalculateAll
+            ActionName = ActionType.CalculateAll,
+            SelectedResultDetails =
+            [
+                new ResultDetail()
+                {
+                    ResourceId = ResourceType.Final, HomeValue = "2", AwayValue = "1", ExternalScores =
+                        new List<ExternalResultDetailModel>()
+                        {
+                            new() { SourceId = SourceType.Screenshot }
+                        }
+                }
+            ]
         };
         var criteria = new CalculateCriteria
         {
             Action = ActionType.CalculateAll
         };
+
         createCriteriaService.CreateCalculateCriteria(Arg.Any<SettleRequest>()).Returns(criteria);
         createCriteriaService.CreateCalculateLogCriteria(Arg.Any<SettleRequest>()).Returns(new InsertLogCriteria());
         await logService.WriteLog(Arg.Any<int>(), Arg.Any<string>());
@@ -82,7 +102,18 @@ public class CalculateServiceTests
         var query = new SettleRequest
         {
             GoalRecord = "AH",
-            ActionName = ActionType.CalculateAll
+            ActionName = ActionType.CalculateAll,
+            SelectedResultDetails =
+            [
+                new ResultDetail()
+                {
+                    ResourceId = ResourceType.Final, HomeValue = "2", AwayValue = "1", ExternalScores =
+                        new List<ExternalResultDetailModel>()
+                        {
+                            new() { SourceId = SourceType.Screenshot }
+                        }
+                }
+            ]
         };
         var criteria = new CalculateCriteria
         {
@@ -110,7 +141,18 @@ public class CalculateServiceTests
             GoalRecord = "AH",
             ActionName = ActionType.CalculateAll,
             IsApplyHedging = true,
-            HedgeMatchId = 123
+            HedgeMatchId = 123,
+            SelectedResultDetails =
+            [
+                new ResultDetail()
+                {
+                    ResourceId = ResourceType.Final, HomeValue = "2", AwayValue = "1", ExternalScores =
+                        new List<ExternalResultDetailModel>()
+                        {
+                            new() { SourceId = SourceType.Screenshot }
+                        }
+                }
+            ]
         };
         var criteria = new CalculateCriteria
         {

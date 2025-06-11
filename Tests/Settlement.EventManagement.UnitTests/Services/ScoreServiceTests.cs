@@ -136,6 +136,10 @@ public class ScoreServiceTests
         };
 
         // Act
+        scoreSetService.GetScore(Arg.Any<ResultDetail>(), Arg.Any<bool>()).Returns(new Score()
+        {
+            IsSettled = true
+        });
         service.HalftimeScore(SportGroup.SupportSettleDetermine[0], resultDetails, isLeader);
 
         // Assert
@@ -225,6 +229,10 @@ public class ScoreServiceTests
         };
 
         // Act
+        scoreSetService.GetScore(Arg.Any<ResultDetail>(), Arg.Any<bool>()).Returns(new Score()
+        {
+            IsSettled = true
+        });
         service.FinalScore(SportGroup.SupportSettleDetermine[0], resultDetails, isLeader);
 
         // Assert
