@@ -85,7 +85,6 @@ public class MatchServiceImp(
         matchDetail.GoalIcon = goalIconService.GetGoalIcon(goalIconQuery);
 
         var externalResults = await GetOutsideSources(matchDetail.MatchId);
-        SetTraderResults(resultDetails, externalResults);
 
         var hedgeMatchDetail = await GetHedgeMatch(request.MatchId);
 

@@ -55,6 +55,7 @@ export class CalculationActionComponent implements OnInit {
   readonly resultSettledStatusIds = [ResultStatusId.AutoCompleted,ResultStatusId.ManualCompleted];
 
   resultDetails: ResultDetail[] = [];
+  isReadyMatch = false;
 
   ngOnInit() {
     this.permission = this.#storage.getPermission();
@@ -67,13 +68,14 @@ export class CalculationActionComponent implements OnInit {
       ...this.#storage.match(),
       originalResultDetail: _.cloneDeep(resultDetails)
     });
+
     this.resetHomeAway(this.resultDetails);
     this.setState();
     this.verifyAndAutoFillScore(this.halfTimeResult);
     this.verifyAndAutoFillScore(this.fullTimeResult);
     this.outSideCount =  resultDetails[0].externalScores.filter(x => x.sourceId >= ScoreSourceType.screenshot).length
     this.matchDetail.applyGoalRecord = this.disableGoalRecordCheckbox = this.calculateGoalRecordState(matchDetail);
-
+    this.isReadyMatch = this.matchDetail.playTime >= 0;
     this.enableAction = this.halfTimeResult.checked || this.fullTimeResult.checked;
   }
 
@@ -150,7 +152,7 @@ export class CalculationActionComponent implements OnInit {
   }
 
   scoreChanged(resultDetail: ResultDetail) {
-    this.isReadyMatch && this.#storage.clear();
+   this.#storage.clear();
     this.#storage.changeScore();
 
     resultDetail.isScoreMismatched = this.#verificationService.isMismatchedWarning(resultDetail);
