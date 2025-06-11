@@ -25,7 +25,7 @@ public class BetBuilderCalculateServiceImp(
     public async Task<Result> Calculate(CalculateRequest request)
     {
         var selectedSection = betBuilderGenerateService.SelectedSection(request.Resources);
-        var (selectedMarket, marketIds) = await betBuilderGenerateService.GetInfoMarket(request, selectedSection);
+        var (selectedMarket, _) = await betBuilderGenerateService.GetInfoMarket(request, selectedSection);
 
         await betBuilderGenerateService.UpdateMatchInfo(request, selectedMarket, selectedSection);
 
