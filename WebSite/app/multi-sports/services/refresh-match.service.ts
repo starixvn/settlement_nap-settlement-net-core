@@ -31,6 +31,7 @@ export class RefreshMatchService {
   }
 
   private changeInfoAfterRefreshMatches(currentSportMatches: SportMatch[], matches: MatchWaiting[]) {
+    console.log('MatchWaiting', matches);
     for (const sport of currentSportMatches) {
       sport.leagues.forEach((league, leagueIndex) => {
         league.matches.forEach((match, matchIndex) => {

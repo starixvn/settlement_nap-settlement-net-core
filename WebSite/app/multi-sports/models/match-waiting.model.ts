@@ -8,6 +8,8 @@ export class MatchWaiting {
   public finalHomeScore: number;
   public finalAwayScore: number;
   public eventStatus: string;
+  public originalEventStatus: string;
+
   public newEventStatus: string;
   public suspenderHalfTime: string;
   public suspenderFullTime: string;
