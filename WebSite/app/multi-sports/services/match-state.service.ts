@@ -318,12 +318,12 @@ export class MatchStateService {
       position: ""
     };
 
-    if (match.eventStatus.toLowerCase() == EventStatus.completed.toLowerCase()
-      || match.eventStatus.toLowerCase() == EventStatus.refund.toLowerCase()
+    if (match.eventStatus.toLowerCase() === EventStatus.completed.toLowerCase()
+      || match.eventStatus.toLowerCase() === EventStatus.refund.toLowerCase()
       || _.isNull(match.mercyAbandonedInfo)
       || _.isEmpty(match.mercyAbandonedInfo)) {
       return defaultInfo;
-    }
+  }
 
     const [position, status] = match.mercyAbandonedInfo.split(":");
 

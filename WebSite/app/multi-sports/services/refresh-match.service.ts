@@ -31,8 +31,6 @@ export class RefreshMatchService {
   }
 
   private changeInfoAfterRefreshMatches(currentSportMatches: SportMatch[], matches: MatchWaiting[]) {
-    console.log('currentSportMatches', currentSportMatches);
-    console.log('MatchWaiting', matches);
     for (const sport of currentSportMatches) {
       sport.leagues.forEach((league, leagueIndex) => {
         league.matches.forEach((match, matchIndex) => {
@@ -41,7 +39,6 @@ export class RefreshMatchService {
           );
           if (!_.isNil(newMatch)) {
             const updatedMatch = { ...newMatch, hasFailedResource: newMatch.failedAutoResourcesIds.length > 0 && newMatch.failedAutoResourcesIds.some(id => match.resourceIdsHasTicket.includes(id)) };
-            console.log('updatedMatch', updatedMatch);
             sport.leagues[leagueIndex].matches[matchIndex] = { ...match, ...updatedMatch };
           }
         })

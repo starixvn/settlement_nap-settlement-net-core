@@ -72,7 +72,7 @@ import { Component, Input } from "@angular/core";
   ],
 })
 export class ButtonComponent {
-  @Input() variant: string = "primary";
-  @Input() type: string = "button";
-  @Input() disabled: boolean = false;
+  @Input() variant = "primary";
+  @Input() type = "button";
+  @Input() disabled = false;
 }

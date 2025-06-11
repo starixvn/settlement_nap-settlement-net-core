@@ -16,8 +16,8 @@ export class ModalDialogComponent {
     @Input() readonly yes = 'Yes';
     @Input() readonly no = 'No';
     @Input() readonly hideNo = false;
-    @Input() checkboxLabel: string = '';
-    @Input() requireCheckbox: boolean = false;
+    @Input() checkboxLabel = '';
+    @Input() requireCheckbox = false;
 
     isChecked = false;
 

@@ -275,7 +275,7 @@ public class MultiSportServiceImp(
     {
         return match.ParentId == 0
             && match.SportType == SportType.TableTennis
-            && matches.Any(m => m.ParentId == match.MatchId && m.MatchTicketStatistics.Count > 0);
+            && matches.Exists(m => m.ParentId == match.MatchId && m.MatchTicketStatistics.Count > 0);
     }
 
     private bool IsMatchExistsTicket(Match match, List<MatchOverStatus> matchOverStatuses, string overStatus)
@@ -287,20 +287,24 @@ public class MultiSportServiceImp(
             return false;
         }
 
-        var isConfirm = matchOverStatuses.Any(x => x.MatchId == match.MatchId);
-
-        // main
-        var isMain = overStatusArray.Contains(OverStatuses.MainOver) && matchOverStatuses.Any(x => x.MatchId == match.MatchId && x.OverStatus == OverStatuses.MainOver) && match.MatchTicketStatistics.Count() > 0;
-
-        // early 
-        var isEarly = overStatusArray.Contains(OverStatuses.EarlyOver) && matchOverStatuses.Any(x => x.MatchId == match.MatchId && x.OverStatus == OverStatuses.EarlyOver) && IsMatchExistsEarlyCfmTicket(match, matchOverStatuses);
-
-        // orther
         var isOther = (overStatusArray.Contains(OverStatuses.Over) || overStatusArray.Contains(OverStatuses.SettledWithRunningTicket))
-            && matchOverStatuses.Any(x => x.MatchId == match.MatchId && (x.OverStatus == OverStatuses.Over || x.OverStatus == OverStatuses.SettledWithRunningTicket));
+            && matchOverStatuses.Exists(x => x.MatchId == match.MatchId && (x.OverStatus == OverStatuses.Over || x.OverStatus == OverStatuses.SettledWithRunningTicket));
 
 
-        return isMain || isEarly || isOther;
+        return IsMatchMainOrEarlyOver(overStatusArray, matchOverStatuses, match) || isOther;
+    }
+
+    private bool IsMatchMainOrEarlyOver(int[] overStatusArray, List<MatchOverStatus> matchOverStatuses, Match match)
+    {
+        var isMain = overStatusArray.Contains(OverStatuses.MainOver)
+            && matchOverStatuses.Exists(x => x.MatchId == match.MatchId && x.OverStatus == OverStatuses.MainOver)
+            && match.MatchTicketStatistics.Count > 0;
+
+        var isEarly = overStatusArray.Contains(OverStatuses.EarlyOver)
+            && matchOverStatuses.Exists(x => x.MatchId == match.MatchId && x.OverStatus == OverStatuses.EarlyOver)
+            && IsMatchExistsEarlyCfmTicket(match, matchOverStatuses);
+
+        return isMain || isEarly;
     }
 
     private bool IsMatchExistsEarlyCfmTicket(Match match, List<MatchOverStatus> matchOverStatuses)
@@ -313,7 +317,9 @@ public class MultiSportServiceImp(
     private void SetIsExistsConfirmedEarly(List<Match> matches, List<MatchOverStatus> matchOverStatuses)
     {
         if (matchOverStatuses.Count == 0)
+        {
             return;
+        }
 
         matches.ForEach(m =>
         {
