@@ -206,7 +206,7 @@
         }
         @if (permission.canUncalculate) {
         <button [ngClass]="{'button': true, 'button-disabled': isDisabledUnCalculate}" (click)="unCalculate()"
-          [disabled]="!isReadyMatch || isDisabledUnCalculate">
+          [disabled]="isDisabledUnCalculate">
           Uncalculate
         </button>
         }

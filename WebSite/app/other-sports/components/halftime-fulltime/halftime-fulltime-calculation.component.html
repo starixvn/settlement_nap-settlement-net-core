@@ -55,9 +55,8 @@
             (click)="calculateAll()" [disabled]="!isReadyMatch">Calculate All
           </button>
 
-          <button *ngIf="permission.canUncalculate"
-            [ngClass]="{'button': true, 'button-disabled': !matchDetail.isUnCalculate}"
-            [disabled]="!isReadyMatch || !matchDetail.isUnCalculate" (click)="unCalculate()">
+          <button *ngIf="permission.canUncalculate" class="button" [disabled]="!matchDetail.isUnCalculate"
+            (click)="unCalculate()">
             Uncalculate
           </button>
         </div>

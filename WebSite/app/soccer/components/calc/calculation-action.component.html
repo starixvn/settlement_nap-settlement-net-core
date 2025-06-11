@@ -162,18 +162,18 @@
         <button [ngClass]="{ button: true}" [disabled]="!isReadyMatch||  !enableAction"
           (click)="calculate()">Calculate</button>
 
-        <button *ngIf="permission.canUncalculate" [ngClass]="{ button: true}" [disabled]="!isReadyMatch||!enableAction"
+        <button *ngIf="permission.canUncalculate" [ngClass]="{ button: true}" [disabled]="!enableAction"
           (click)="uncalculate()">
           Uncalculate
         </button>
 
         <button *ngIf="permission.canUncalculateInstant"
-          [ngClass]="{ 'button instant': true, 'button-disabled': !matchDetail.hasInstantCompleted}"
-          [disabled]="!isReadyMatch||!matchDetail.hasInstantCompleted" (click)="unCalcInstant()">
+          [ngClass]="{ 'button instant': true, 'button-disabled':!matchDetail.hasInstantCompleted}"
+          [disabled]="!matchDetail.hasInstantCompleted" (click)="unCalcInstant()">
           Uncalculate Ins.Settle
         </button>
         @if(permission.isLeader) {
-        <button class="new-refund-button save-score" [disabled]="!isReadyMatch||!enableAction"
+        <button class="new-refund-button save-score" [disabled]="!isReadyMatch || !enableAction"
           (click)="saveScore()">Save
           Trader Score</button>
         }

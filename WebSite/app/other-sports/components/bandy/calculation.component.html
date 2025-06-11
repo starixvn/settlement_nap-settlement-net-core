@@ -83,7 +83,7 @@
     <td colSpan="100%" class="button-group">
       <button class="button" *ngIf="permission.canCalculate" (click)="calculation()"
         [disabled]="!isReadyMatch || !existsSelectedResult">Calculate</button>
-      <button class="button" *ngIf="permission.canUncalculate" [disabled]="!isReadyMatch || !existsSelectedResult"
+      <button class="button" *ngIf="permission.canUncalculate" [disabled]="!existsSelectedResult"
         (click)="uncalculation()">Uncalculate</button>
     </td>
   </tr>

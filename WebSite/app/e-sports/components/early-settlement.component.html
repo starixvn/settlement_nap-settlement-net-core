@@ -559,10 +559,10 @@
                 </button>
                 <button *ngIf="permission.canUncalculate"
                     [ngClass]="{'button': true, 'button-disabled': isDisabledUnCalculate}" (click)="unCalculate()"
-                    [disabled]="!isReadyMatch || isDisabledUnCalculate">
+                    [disabled]="isDisabledUnCalculate">
                     Uncalculate
                 </button>
-                <button class="new-refund-button save-score" [disabled]="!isReadyMatch || isDisabledSaveScore"
+                <button class="new-refund-button save-score" [disabled]="isDisabledSaveScore"
                     (click)="saveResult()">Save Score</button>
             </div>
         </div>
