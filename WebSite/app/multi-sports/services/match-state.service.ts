@@ -317,7 +317,7 @@ export class MatchStateService {
   }
 
   getHasProviderHT(match: Match, permission: Permission) {
-    const isSOPCompleted = SportNewAutoPayout.includes(match.sportType) && match.moreScores?.halfTimeScore?.isSettled;
+    const isSOPCompleted = SportNewAutoPayout.includes(match.sportType) && !match.moreScores?.halfTimeScore?.isSettled;
     const isNotSOPCompleted = !SportNewAutoPayout.includes(match.sportType) && match.originalEventStatus.toLowerCase() !== "completed";
     const isNotLeader = !permission.isLeader;
 
@@ -325,7 +325,7 @@ export class MatchStateService {
   }
 
   getHasProviderFT(match: Match, permission: Permission) {
-    const isSOPCompleted = SportNewAutoPayout.includes(match.sportType) && (match.originalEventStatus.toLowerCase() !== "completed" || match.moreScores?.finalScore?.isNotSettled);
+    const isSOPCompleted = SportNewAutoPayout.includes(match.sportType) && (match.originalEventStatus.toLowerCase() !== "completed" || !match.moreScores?.finalScore?.isSettled);
     const isNotSOPCompleted = !SportNewAutoPayout.includes(match.sportType) && match.originalEventStatus.toLowerCase() !== "completed";
     const isNotLeader = !permission.isLeader;
 
