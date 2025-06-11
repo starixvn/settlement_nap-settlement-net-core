@@ -59,4 +59,5 @@ export class Match {
      public hasFailedResource: boolean;
      public hasProviderHT: boolean;
      public hasProviderFT: boolean;
+     public resourceIdsHasTicket: string[];
 }

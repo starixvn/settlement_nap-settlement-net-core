@@ -91,6 +91,9 @@ public class Match : BaseMatch
     [Key("hasFailedResource")]
     public bool HasFailedResource => FailedAutoResources.Exists(f => ResourceTicketStatistics.Exists(r => r.ResourceId == f.ResourceId));
 
+    [Key("resourceIdsHasTicket")]
+    public List<string> ResourceIdsHasTicket => [.. ResourceTicketStatistics.Select(r => r.ResourceId).Distinct()];
+
     [Key("hasProviderHT")]
     public bool HasProviderHT { get; set; }
 

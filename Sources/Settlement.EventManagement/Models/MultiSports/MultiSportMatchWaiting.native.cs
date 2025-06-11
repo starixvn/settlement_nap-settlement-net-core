@@ -113,4 +113,11 @@ public class MultiSportMatchWaiting
 
     [Key("mercyAbandonedInfo")]
     public string MercyAbandonedInfo { get; set; }
+
+    [Key("originalEventStatus")]
+
+    public string OriginalEventStatus { get; set; }
+
+    [Key("failedAutoResourcesIds")]
+    public List<string> FailedAutoResourcesIds { get; set; }
 }

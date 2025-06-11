@@ -36,4 +36,5 @@ export class MatchWaiting {
   public isHavingIntervalScore: boolean;
   public exHalfTimeScore: string;
   public exFullTimeScore: string;
+  public failedAutoResourcesIds: string[];
 }

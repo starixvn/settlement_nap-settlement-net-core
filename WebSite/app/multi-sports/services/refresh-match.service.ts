@@ -31,6 +31,7 @@ export class RefreshMatchService {
   }
 
   private changeInfoAfterRefreshMatches(currentSportMatches: SportMatch[], matches: MatchWaiting[]) {
+    console.log('currentSportMatches', currentSportMatches);
     console.log('MatchWaiting', matches);
     for (const sport of currentSportMatches) {
       sport.leagues.forEach((league, leagueIndex) => {
@@ -39,7 +40,9 @@ export class RefreshMatchService {
             this.detectChangesService.detect(match, matchWaiting)
           );
           if (!_.isNil(newMatch)) {
-            sport.leagues[leagueIndex].matches[matchIndex] = { ...match, ...newMatch };
+            const updatedMatch = { ...newMatch, hasFailedResource: newMatch.failedAutoResourcesIds.length > 0 && newMatch.failedAutoResourcesIds.some(id => match.resourceIdsHasTicket.includes(id)) };
+            console.log('updatedMatch', updatedMatch);
+            sport.leagues[leagueIndex].matches[matchIndex] = { ...match, ...updatedMatch };
           }
         })
       });
