@@ -325,7 +325,7 @@ export class MatchStateService {
   }
 
   getHasProviderFT(match: Match, permission: Permission) {
-    const isSOPCompleted = SportNewAutoPayout.includes(match.sportType) && (match.originalEventStatus.toLowerCase() !== "completed" || !match.moreScores?.finalScore?.isSettled);
+    const isSOPCompleted = SportNewAutoPayout.includes(match.sportType) && (match.originalEventStatus.toLowerCase() !== "completed" || match.moreScores?.finalScore?.isNotSettled);
     const isNotSOPCompleted = !SportNewAutoPayout.includes(match.sportType) && match.originalEventStatus.toLowerCase() !== "completed";
     const isNotLeader = !permission.isLeader;
 
