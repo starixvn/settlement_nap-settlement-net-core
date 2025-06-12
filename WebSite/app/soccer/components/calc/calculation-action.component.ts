@@ -22,11 +22,12 @@ import { ExternalSourceNamePipe } from '../../../shared/pipes/external-source-na
 import { VerificationBaseService } from '../../../core/services/verification-base.service';
 import { MatchDetailSoccer } from './models/match.model';
 import { VerificationBaseService as sopVerificationService } from '../../../core/services/verification-base.service';
+import { ResourceNamePipe } from '../../pipes/resource-name.pipe';
 
 @Component({
   selector: 'calculation-action',
   standalone: true,
-  imports: [CommonModule, FormsModule, OnlyGoalRecordDirective, OnlyIntegerDirective, MatTooltipModule, ExternalLinkPipe, ExternalSourceNamePipe],
+  imports: [CommonModule, FormsModule, OnlyGoalRecordDirective, OnlyIntegerDirective, MatTooltipModule, ExternalLinkPipe, ExternalSourceNamePipe, ResourceNamePipe],
   providers: [GoalIconService, GoalRecordWithOutSemicolonService, VerificationBaseService, sopVerificationService],
   templateUrl: './calculation-action.component.html',
 })
@@ -152,7 +153,7 @@ export class CalculationActionComponent implements OnInit {
   }
 
   scoreChanged(resultDetail: ResultDetail) {
-   this.#storage.clear();
+    this.#storage.clear();
     this.#storage.changeScore();
 
     resultDetail.isScoreMismatched = this.#verificationService.isMismatchedWarning(resultDetail);
@@ -255,6 +256,7 @@ export class CalculationActionComponent implements OnInit {
     if(isOnload && map.settlementStatusId  === SettlementStatusId.Refund) {
       return;
     }
+    map.isScoreMismatched = this.#verificationService.isMismatchedWarning(map);
     this.#verificationService.autoFillScore(map);
     this.scoreChanged(map);
   }

@@ -48,7 +48,7 @@
 <ng-template #body>
   <tbody>
     <tr *ngFor="let result of resultDetails; let i = index" [ngClass]="{ mismatched: result.isScoreMismatched}">
-      <td style="font-weight: bold;">{{ i === 0 ? 'First Half' : 'Full Time' }}</td>
+      <td style="font-weight: bold;">{{ result.resourceId | resourceName }}</td>
       <td style="font-weight: bold;" [ngClass]="result.ticketStatus?.toLowerCase()" class="set-status">
         {{ result.ticketStatus }}
       </td>
@@ -116,7 +116,7 @@
     </tr>
     <tr>
       <td colSpan="100%" class="action-button">
-        <button [ngClass]="{ button: true}" [disabled]="!isReadyMatch||  !enableAction"
+        <button [ngClass]="{ button: true}" [disabled]="!isReadyMatch ||  !enableAction"
           (click)="calculate()">Calculate</button>
 
         <button *ngIf="permission.canUncalculate" [ngClass]="{ button: true}" [disabled]="!enableAction"
@@ -129,10 +129,12 @@
           [disabled]="!matchDetail.hasInstantCompleted" (click)="unCalcInstant()">
           Uncalculate Ins.Settle
         </button>
-        <button class="new-refund-button save-score" [disabled]="!enableAction" (click)="saveScore()">Save
+        <button class="new-refund-button save-score" [disabled]="!isReadyMatch ||  !enableAction"
+          (click)="saveScore()">Save
           Score</button>
         @if(permission.isLeader) {
-        <button class="new-refund-button save-score" [disabled]="!enableAction" (click)="saveTraderScore()">Save
+        <button class="new-refund-button save-score" [disabled]="!isReadyMatch ||  !enableAction"
+          (click)="saveTraderScore()">Save
           Trader Score</button>
         }
       </td>
