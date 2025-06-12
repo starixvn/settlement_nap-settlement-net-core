@@ -27,3 +27,9 @@ public class MatchStatusModel
 
     public bool HasInstantFail { get; set; }
 }
+
+public class FailedAutoResource
+{
+    public int MatchId { get; set; }
+    public string ResourceId { get; set; }
+}

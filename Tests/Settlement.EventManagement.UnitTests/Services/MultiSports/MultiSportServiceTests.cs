@@ -57,7 +57,7 @@ public class MultiSportServiceTests
         refDataService.GetLeagueName(Arg.Any<string>()).Returns(string.Empty);
         matchService.GetScoreForMatchBySportType(Arg.Any<List<Match>>(), Arg.Any<List<ResultDetail>>(), Arg.Any<int>()).Returns(
             [match]);
-        matchService.SetNewOsMatchInfo(Arg.Any<List<Match>>(), Arg.Any<List<ResultDetail>>()).Returns(listMatch);
+        //matchService.SetNewOsMatchInfo(Arg.Any<List<Match>>(), Arg.Any<List<ResultDetail>>()).Returns(listMatch);
         matchService.SortingMatches(Arg.Any<List<Match>>()).Returns([match]);
 
         // Act

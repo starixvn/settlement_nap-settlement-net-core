@@ -155,7 +155,7 @@ public class MoveTicketServiceImp(
         };
     }
 
-    private async Task<IEnumerable<SiteMatch>> GetTicketInfoAllDbSites(OSTicketInfoSelCriteria criteria)
+    private async Task<IEnumerable<MatchTicketStatistic>> GetTicketInfoAllDbSites(OSTicketInfoSelCriteria criteria)
     {
         var siteDbServer = appSettingsKey.SiteDbServer;
         var getTicketInfoTasks = siteDbServer.Select(s => GetTicketInfo(s, criteria));
@@ -167,14 +167,16 @@ public class MoveTicketServiceImp(
         return newResult;
     }
 
-    private async Task<IEnumerable<SiteMatch>> GetTicketInfo(string server, OSTicketInfoSelCriteria criteria)
+    private async Task<IEnumerable<MatchTicketStatistic>> GetTicketInfo(string server, OSTicketInfoSelCriteria criteria)
     {
         criteria.DbServer = server;
 
-        return await repository.FetchAsync<SiteMatch>(criteria);
+        var (_, matchTicketStatistics) = await repository.FetchMultipleAsync<ResourceTicketStatistic, MatchTicketStatistic>(criteria);
+
+        return matchTicketStatistics;
     }
 
-    private async Task<IEnumerable<SiteMatch>> GetOSTicketInfo(List<Match> matches, List<ParentChildMatchFilter> parentChildMatchFilters)
+    private async Task<IEnumerable<MatchTicketStatistic>> GetOSTicketInfo(List<Match> matches, List<ParentChildMatchFilter> parentChildMatchFilters)
     {
         var matchesInfo = matches.Select(x => new MatchRequest
         {
@@ -193,11 +195,11 @@ public class MoveTicketServiceImp(
         return await GetTicketInfoAllDbSites(criteria);
     }
 
-    private void SetMatchTicketInfo(List<Match> matches, List<SiteMatch> siteMatches)
+    private void SetMatchTicketInfo(List<Match> matches, List<MatchTicketStatistic> matchTicketStatistics)
     {
         foreach (var item in matches)
         {
-            var ticketInfo = siteMatches.Where(x => x.MatchId == item.MatchId).ToList();
+            var ticketInfo = matchTicketStatistics.Where(x => x.MatchId == item.MatchId).ToList();
 
             item.SuspenderFullTime = ticketInfo.Find(x => string.IsNullOrEmpty(x.SuspenderFullTime))?.SuspenderFullTime;
             item.SuspenderHalfTime = ticketInfo.Find(x => string.IsNullOrEmpty(x.SuspenderHalfTime))?.SuspenderHalfTime;
@@ -207,7 +209,7 @@ public class MoveTicketServiceImp(
             item.IsWaitingEarlyBetTypes = ticketInfo.Exists(x => x.IsWaitingEarlyBetTypes);
             item.IsExistRunningTicket = ticketInfo.Exists(x => x.IsExistRunningTicket);
             item.IsExistMarkedTicket = ticketInfo.Exists(x => x.IsExistMarkedTicket);
-            item.IsCalculatingSingle = siteMatchService.IsCalculatingSingle(ticketInfo);
+            item.IsCalculatingSingle = siteMatchService.IsCalculatingSingle(matchTicketStatistics);
         }
     }
 
@@ -218,9 +220,9 @@ public class MoveTicketServiceImp(
         var matches = result.Item1.ToList();
         var parentChildMatchFilters = result.Item3.ToList();
 
-        var siteMatches = (await GetOSTicketInfo(matches, parentChildMatchFilters)).ToList();
+        var matchTicketStatistics = (await GetOSTicketInfo(matches, parentChildMatchFilters)).ToList();
 
-        SetMatchTicketInfo(matches, siteMatches);
+        SetMatchTicketInfo(matches, matchTicketStatistics);
 
         return matches;
     }

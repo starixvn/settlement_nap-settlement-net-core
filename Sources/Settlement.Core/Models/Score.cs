@@ -45,7 +45,7 @@ public class Score
     public bool IsNotSettled { get; set; }
 
     [Key("isSettled")]
-    public bool IsSettled { get; set; } = false;
+    public bool IsSettled { get; set; }
 
     public bool EqualValue(Score score)
     {

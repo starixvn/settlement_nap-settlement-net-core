@@ -79,6 +79,21 @@ public class Match : BaseMatch
     [IgnoreMember]
     public int ParentId { get; set; }
 
+    [IgnoreMember]
+    public List<FailedAutoResource> FailedAutoResources { get; set; } = [];
+
+    [IgnoreMember]
+    public List<ResourceTicketStatistic> ResourceTicketStatistics { get; set; } = [];
+
+    [IgnoreMember]
+    public List<MatchTicketStatistic> MatchTicketStatistics { get; set; } = [];
+
+    [Key("hasFailedResource")]
+    public bool HasFailedResource => FailedAutoResources.Exists(f => ResourceTicketStatistics.Exists(r => r.ResourceId == f.ResourceId));
+
+    [Key("resourceIdsHasTicket")]
+    public List<string> ResourceIdsHasTicket => [.. ResourceTicketStatistics.Select(r => r.ResourceId).Distinct()];
+
     [Key("hasProviderHT")]
     public bool HasProviderHT { get; set; }
 
@@ -94,4 +109,6 @@ public class Match : BaseMatch
     {
         return MatchId;
     }
+
+    public override string ToString() => $"{MatchId} ParentId {ParentId} has ticket {MatchTicketStatistics.Count}";
 }

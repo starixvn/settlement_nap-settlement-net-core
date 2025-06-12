@@ -6,6 +6,7 @@ import { MatchWaiting } from '../models/match-waiting.model';
 @Injectable()
 export class DetectChangesService {
     public detect(oldMatch: Match, newMatch: MatchWaiting) {
+
         return oldMatch.matchId === newMatch.matchId
             && (this.isInfoDifferent(oldMatch, newMatch)
                 || this.isScoreDifferent(oldMatch, newMatch)
@@ -71,7 +72,8 @@ export class DetectChangesService {
     }
 
     private isSettlementDifferent(oldMatch: Match, newMatch: MatchWaiting) {
-        return oldMatch.moreScores.halfTimeScore.isSettled !== newMatch.moreScores.halfTimeScore.isSettled
-            || oldMatch.moreScores.finalScore.isSettled !== newMatch.moreScores.finalScore.isSettled;
+
+        return oldMatch.moreScores?.halfTimeScore?.isSettled !== newMatch.moreScores?.halfTimeScore?.isSettled
+            || oldMatch.moreScores?.finalScore?.isSettled !== newMatch.moreScores?.finalScore?.isSettled;
     }
 }

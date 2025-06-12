@@ -1,11 +1,11 @@
 ﻿namespace Settlement.EventManagement.Services;
 
-using System.Threading.Tasks;
 using Criteria;
 using Models;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Core.Services.SpecificService;
+using System.Threading.Tasks;
 using Match = Models.Calculation.Match;
 using MultiSportMatch = Models.MultiSports.Match;
 
@@ -34,7 +34,8 @@ public interface NewInfoMatchService
 
     bool IsExistsConfirmedEarly(MultiSportMatch match);
 
-    Task<List<T>> GetAutoSetting<T>(List<T> matches) where T : BaseMatch;
+    Task<(IEnumerable<MatchStatusModel>, IEnumerable<FailedAutoResource>)> GetAutoPayoutStatus(List<int> matchesIds);
+
 }
 
 public class NewInfoMatchServiceImp(
@@ -195,26 +196,19 @@ public class NewInfoMatchServiceImp(
         return siteMatchService.IsExistsConfirmedEarly(match);
     }
 
-    public async Task<List<T>> GetAutoSetting<T>(List<T> matches) where T : BaseMatch
-    {
-        var matchStatuses = (await GetMatchStatus(matches)).ToList();
-        return matches.Join(matchStatuses, m => m.MatchId, s => s.MatchId, (m, s) =>
-        {
-            m.AutoPayoutStatus = s.AutoPayoutStatus;
-            m.AutoInstantStatus = s.InstantStatus;
-            return m;
-        }).ToList();
-    }
 
-    private async Task<IEnumerable<MatchStatusModel>> GetMatchStatus(IEnumerable<BaseMatch> matches)
+    public async Task<(IEnumerable<MatchStatusModel>, IEnumerable<FailedAutoResource>)> GetAutoPayoutStatus(List<int> matchesIds)
     {
-        var matchIds = string.Join(',', matches.Select(m => m.MatchId));
+        var matchIds = string.Join(',', matchesIds);
         var criteria = new GetAutoStatusCriteria
         {
             MatchIds = matchIds
         };
 
-        return await repository.FetchAsync<MatchStatusModel>(criteria);
+        var result = await repository.FetchMultipleAsync<MatchStatusModel, FailedAutoResource>(criteria);
+
+        return result;
+
     }
 
     private GoalIconQueryModel GoalIconQuery(Match match)

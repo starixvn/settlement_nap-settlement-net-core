@@ -76,14 +76,14 @@ public class MoveTicketServiceTests
 
         repository.FetchAsync<ResultDetail>(Arg.Any<ICriteria>()).Returns(new List<ResultDetail> { resultDetail });
         repository.Fetch<ReferenceAction>(Arg.Any<ICriteria>()).Returns([]);
-        repository.FetchAsync<SiteMatch>(Arg.Any<OSTicketInfoSelCriteria>()).Returns(new List<SiteMatch>
+        repository.FetchMultipleAsync<ResourceTicketStatistic, MatchTicketStatistic>(Arg.Any<OSTicketInfoSelCriteria>()).Returns(([], new List<MatchTicketStatistic>
         {
            new ()
            {
                 MatchId = 1,
                 IsExistMarkedTicket = true
            }
-        });
+        }));
         matchService.GetScoreForMatchBySportType(Arg.Any<List<Match>>(), Arg.Any<List<ResultDetail>>(), Arg.Any<int>(), Arg.Any<int>()).Returns(fakeMatches);
 
         // Act

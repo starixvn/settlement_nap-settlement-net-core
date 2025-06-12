@@ -1,4 +1,5 @@
-﻿using Settlement.EventManagement.Models;
+﻿using Microsoft.AspNetCore.Authorization;
+using Settlement.EventManagement.Models;
 using Settlement.EventManagement.Models.MultiSports;
 using Settlement.EventManagement.Requests;
 
@@ -24,6 +25,7 @@ public class MultiSportController(
         return Ok(respond);
     }
 
+    [AllowAnonymous]
     [HttpPost]
     [Route("filter")]
     public async Task<IActionResult> Filter(FilterMultiSportRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));

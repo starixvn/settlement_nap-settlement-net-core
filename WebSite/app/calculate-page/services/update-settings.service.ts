@@ -45,7 +45,7 @@ export class UpdateSettingsService {
     }
 
     private getSettingValue(setting: AutoSettleSetting, settleType: AutoSettleType, key: keyof ResultSetting): any {
-        return setting.resultSettings.find(setting => setting.settleType === settleType)?.[key];
+        return setting.resultSettings.find(x => x.settleType === settleType)?.[key];
     }
 
     private isMatchEligibleForAutoCalc(eventStatus: string): boolean {

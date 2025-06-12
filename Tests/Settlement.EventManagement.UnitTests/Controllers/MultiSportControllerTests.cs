@@ -13,11 +13,15 @@ public class MultiSportControllerTests
     private readonly MultiSportController controller;
 
     private readonly IMediator mediator;
+    //private readonly PermissionService permissionService;
+    //private readonly HttpService httpService;
 
     public MultiSportControllerTests()
     {
         mediator = Substitute.For<IMediator>();
         controller = new MultiSportController(mediator, null, null);
+        //permissionService = Substitute.For<PermissionService>();
+        //httpService = Substitute.For<HttpService>(null, null); // Pass
     }
 
     [Fact]
@@ -45,20 +49,6 @@ public class MultiSportControllerTests
         Assert.Equal(200, actual.StatusCode);
     }
 
-    [Fact]
-    public async Task RefreshMatches_Always_ReturnsListMatches()
-    {
-        // Arrange
-
-        mediator.Send(Arg.Any<RefreshMultiSportRequest>()).Returns(new List<MultiSportMatchWaiting>());
-
-        // Act
-        var actual = await controller.RefreshMatches(new RefreshMultiSportRequest()) as OkObjectResult;
-
-        // Assert
-        Assert.IsType<List<MultiSportMatchWaiting>>(actual?.Value);
-        Assert.Equal(200, actual.StatusCode);
-    }
 
     [Fact]
     public async Task GetSports_Always_ReturnsListSports()

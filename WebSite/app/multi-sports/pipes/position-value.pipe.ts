@@ -16,7 +16,7 @@ export class PositionValuePipe implements PipeTransform {
       return '';
     }
 
-    let value = this.positionMap[positionStr] || 
+    const value = this.positionMap[positionStr] || 
                 (positionStr.startsWith("010") ? parseInt(positionStr.slice(3)).toString() : positionStr);
 
     if (otherInfo) {

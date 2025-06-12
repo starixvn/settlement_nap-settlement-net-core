@@ -10,5 +10,5 @@ import { Component, input, Input } from '@angular/core';
 })
 export class CircleBadgeComponent {
   value = input<string>('');
-  @Input() color: string = '';
+  @Input() color = '';
 }

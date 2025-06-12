@@ -17,11 +17,13 @@ public class MultiSportHandler(
     public async Task<MultiSportModel> Handle(FilterMultiSportRequest request, CancellationToken cancellationToken)
     {
         var permission = permissionService.Permission;
-        return new MultiSportModel
+        var result = new MultiSportModel
         {
             Sports = await multiSportService.GetSportBook(request, permission.IsLeader),
             Permission = permissionService.Permission
         };
+
+        return result;
     }
 
     public async Task<List<LeagueTypeModel>> Handle(LeagueRequest request, CancellationToken cancellationToken) => await getDataFilterService.GetLeagues(request);

@@ -28,12 +28,34 @@ export class MatchStateService {
   }
 
   getBackgroundAutoSetting(match: Match, permission: Permission, isPayout = true) {
+
     const enableLink = permission.canAutoPayout && isPayout ? BackgroundColor.codeLink : "";
-    const status = isPayout ? match.autoPayoutStatus : match.autoInstantStatus;
-    const colorStatus = _.isEqual(status, this.autoSettingCompleted) ? 'auto-setting-completed' :
-      _.isEqual(status, this.autoSettingFailed) ? 'auto-setting-failed' : '';
+    const colorStatus = this.getBgColor(match, permission, isPayout);
 
     return `${enableLink} ${colorStatus}`;
+  }
+
+  getBgColor(match: Match, permission: Permission, isPayout = true) {
+    const status = isPayout ? match.autoPayoutStatus : match.autoInstantStatus;
+
+    if(_.isEqual(status, this.autoSettingCompleted)){
+      return 'auto-setting-completed';
+    }
+
+    if(isPayout && SportNewAutoPayout.includes(match.sportType)){
+      if(match.hasFailedResource){
+        return 'auto-setting-failed';
+      } else {
+        return '';
+      }
+    }
+
+    if(_.isEqual(status, this.autoSettingFailed)){
+      return 'auto-setting-failed';
+    }
+
+    return '';
+    
   }
 
   ResultConfirmedBackGround(match: Match, teamName: string) {
@@ -165,6 +187,7 @@ export class MatchStateService {
   }
 
   getEarlySettleBackground(match: Match, overStatus: string) {
+    //TODO
     const backgroundColorBlinking = match.isExistsConfirmedEarly && this.isEarlyOverAndOtherStatus(overStatus) ? BackgroundColor.confirmedEarlyBlinking : '';
     const isRunning = !_.isNull(match.earlySettleStatus) && _.isEqual(match.earlySettleStatus.toLowerCase(), BackgroundColor.running)
       && _.isEqual(match.eventStatus.toLowerCase(), BackgroundColor.completed);
@@ -295,12 +318,12 @@ export class MatchStateService {
       position: ""
     };
 
-    if (match.eventStatus.toLowerCase() == EventStatus.completed.toLowerCase()
-      || match.eventStatus.toLowerCase() == EventStatus.refund.toLowerCase()
+    if (match.eventStatus.toLowerCase() === EventStatus.completed.toLowerCase()
+      || match.eventStatus.toLowerCase() === EventStatus.refund.toLowerCase()
       || _.isNull(match.mercyAbandonedInfo)
       || _.isEmpty(match.mercyAbandonedInfo)) {
       return defaultInfo;
-    }
+  }
 
     const [position, status] = match.mercyAbandonedInfo.split(":");
 

@@ -275,7 +275,6 @@ export class CalculateStorage implements Storage {
     if (filterOver === OverStatus.FTOver) {
       this.#halfTimeResult.checked = !settledResultStatusIds.includes(this.#halfTimeResult.resultStatusId);
       this.#fullTimeResult.checked = !settledResultStatusIds.includes(this.#fullTimeResult.resultStatusId);
-      return;
     }
   }
 }

@@ -38,7 +38,8 @@ export class RefreshMatchService {
             this.detectChangesService.detect(match, matchWaiting)
           );
           if (!_.isNil(newMatch)) {
-            sport.leagues[leagueIndex].matches[matchIndex] = { ...match, ...newMatch };
+            const updatedMatch = { ...newMatch, hasFailedResource: newMatch.failedAutoResourcesIds.length > 0 && newMatch.failedAutoResourcesIds.some(id => match.resourceIdsHasTicket.includes(id)) };
+            sport.leagues[leagueIndex].matches[matchIndex] = { ...match, ...updatedMatch };
           }
         })
       });

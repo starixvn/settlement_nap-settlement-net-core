@@ -62,8 +62,14 @@ export class NumberInputComponent implements ControlValueAccessor {
   }
 
   private isValidNumber(value: number | null): boolean {
-    if (this.min !== undefined && value < this.min) return false;
-    if (this.max !== undefined && value > this.max) return false;
+    if (this.min !== undefined && value < this.min) {
+      return false;
+    }
+
+    if (this.max !== undefined && value > this.max) {
+      return false;
+    }
+    
     return true;
   }
 }
