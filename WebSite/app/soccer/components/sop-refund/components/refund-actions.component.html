@@ -1,0 +1,68 @@
+@if (hedgeMatchDetail) {
+<div class="hedge-match">
+  <input type="checkbox" id="ApplyHedgeMatch" [(ngModel)]="matchDetail.applyHedgeMatch"
+    [disabled]="hedgeMatchDetail.isUndecided" (ngModelChange)="changeApplyHedgeMatch()" />
+  <label [matTooltip]="hedgeMatchDetail.isUndecided ? 'Disabled due to undecided hedge match.' : null"
+    for="ApplyHedgeMatch">Apply for hedge match '<strong>{{hedgeMatchDetail.matchCode}}</strong>' also.</label>
+</div>
+@if (hedgeMatchDetail.isDeterminedHedgeMatch) {
+<div class="hedge-match">
+  <input type="checkbox" [(ngModel)]="isDeterminedHedgeMatch" id="isDeterminedHedgeMatch"
+    [disabled]="disableSettleDeterminedHedgeMatch">
+  <label for="isDeterminedHedgeMatch">Settle determined FT/1H Over/Under tickets for hedge match.</label>
+</div>
+}
+}
+<div class="refund-action">
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">Result Name</th>
+        <th scope="col">Final Score</th>
+        <th scope="col">Select to Process</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let result of resultDetails; let i = index">
+        <td>{{ i === 0 ? 'First Half' : 'Full Time' }}</td>
+        <td [ngClass]="matchDetail.isScoreInconsistent ? 'mismatched' : result.ticketStatus?.toLowerCase()">
+          <input class="score-input" type="text" myOnlyInteger [disabled]="!result.isEnabled"
+            [(ngModel)]="result.homeValue" (ngModelChange)="changeScore(result)" />
+          &nbsp;
+          <input class="score-input" type="text" myOnlyInteger [disabled]="!result.isEnabled"
+            [(ngModel)]="result.awayValue" (ngModelChange)="changeScore(result)" />
+        </td>
+        <td>
+          <input type="checkbox" [(ngModel)]="result.checked" (ngModelChange)="onResultCheckedChange(result)" />
+        </td>
+      </tr>
+      <tr class="soccer">
+        <td>Goal Record</td>
+        <td [ngClass]="{'mismatched':matchDetail.isWarningGoalRecord && matchDetail.applyGoalRecord}">
+          <input type="text" maxlength="50" class="goal-record-input" [(ngModel)]="matchDetail.goalRecord"
+            myOnlyGoalRecord [disabled]="!matchDetail.applyGoalRecord" (ngModelChange)="goalRecordModelChange($event)">
+        </td>
+        <td>
+          <input type="checkbox" [(ngModel)]="matchDetail.applyGoalRecord" [disabled]="disableGoalRecordCheckbox" />
+        </td>
+      </tr>
+      <tr>
+        <td colspan="4" class="action-button">
+          <button class="button" (click)="refund()" [disabled]="!enableAction">Refund</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="settlement-options">
+  <label style="font-weight: bold;">
+    - Settlement options for current match.
+  </label>
+  <div class="sub-option">
+    <label class="sub-option-label">
+      <input type="checkbox" [(ngModel)]="settleDeterminableTicketsOnly" />
+      Settle determinable tickets.
+    </label>
+  </div>
+</div>

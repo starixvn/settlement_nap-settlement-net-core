@@ -1,0 +1,21 @@
+table {
+  td {
+    font-weight: bold;
+    min-width: 100px;
+    width: 100px;
+  }
+
+  width: fit-content;
+}
+
+.action-button {
+  padding: 5px 0;
+}
+
+.score-input {
+  width: 35px;
+}
+
+.sub-option-label {
+  padding-left: 10px;
+}

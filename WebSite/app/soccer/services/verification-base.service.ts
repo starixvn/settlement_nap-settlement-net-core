@@ -5,6 +5,7 @@ import { Goal } from "../constants";
 import { MatchDetailSoccer } from "../components/calc/models/match.model";
 import { ResultDetail } from "../../shared/models/sportsbook-sop";
 import { MatchDetailBase } from "../models";
+import { GeneralResultDetail } from "../../shared/models";
 
 @Injectable()
 export class VerificationBaseService {
@@ -38,7 +39,7 @@ export class VerificationBaseService {
         return (homeScore + awayScore) !== htGoalRecord.length || (goalRecordHomeScore !== homeScore || goalRecordAwayScore !== awayScore);
     }
 
-    public isHtGoalRecordInvalidWithResultDetail(matchDetail: MatchDetailSoccer | MatchDetailBase, halfTimeResult: ResultDetail) {
+    public isHtGoalRecordInvalidWithResultDetail(matchDetail: MatchDetailSoccer | MatchDetailBase, halfTimeResult: GeneralResultDetail) {
         const homeScore = Number(halfTimeResult.homeValue);
         const awayScore = Number(halfTimeResult.awayValue);
         const htGoalRecord = matchDetail.goalRecord.indexOf(';') < 0 ?
@@ -49,7 +50,7 @@ export class VerificationBaseService {
         return (homeScore + awayScore) !== htGoalRecord.length || (goalRecordHomeScore !== homeScore || goalRecordAwayScore !== awayScore);
     }
 
-    public isHTGoalRecordConsistentWithResultDetail(matchDetail: MatchDetailSoccer | MatchDetailBase, halfTimeResult: ResultDetail) {
+    public isHTGoalRecordConsistentWithResultDetail(matchDetail: MatchDetailSoccer | MatchDetailBase, halfTimeResult: GeneralResultDetail) {
         let isSuspendHalfTime = true;
         if ((!this.isEmptyScore(halfTimeResult.homeValue)
                 || !this.isEmptyScore(halfTimeResult.awayValue)
@@ -88,7 +89,7 @@ export class VerificationBaseService {
             || (goalRecordHomeScore !== homeScore || goalRecordAwayScore !== awayScore));
     }
 
-    public isFullTimeGoalRecordInvalidWithResultDetail(matchDetail: MatchDetailSoccer | MatchDetailBase, fullTimeResult: ResultDetail) {
+    public isFullTimeGoalRecordInvalidWithResultDetail(matchDetail: MatchDetailSoccer | MatchDetailBase, fullTimeResult: GeneralResultDetail) {
         const homeScore = Number(fullTimeResult.homeValue);
         const awayScore = Number(fullTimeResult.awayValue);
         const fulltimeGoalRecord = matchDetail.goalRecord.replace(';', '');

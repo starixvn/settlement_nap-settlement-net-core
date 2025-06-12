@@ -150,8 +150,10 @@ public class MatchServiceImp(
         var matchDetail = match.MatchDetail;
         var resultDetails = await GetResultDetail(request.MatchId);
 
+        SetNormalResults(matchDetail, resultDetails);
+
         matchDetail.RefDataService = refDataService;
-        SetExMatchScore(matchDetail, resultDetails);
+
         var goalIconQuery = GoalIconQuery(matchDetail);
         matchDetail.GoalIcon = goalIconService.GetGoalIcon(goalIconQuery);
 
@@ -168,10 +170,14 @@ public class MatchServiceImp(
         var betFairCriteria = new BetFairCheckingCriteria { MatchId = request.MatchId };
         var betFair = await fetchDataService.GetMultiServersBetFair(betFairCriteria);
 
+        var resultSorted = resultDetails
+            .Where(r => r.SourceId == SourceType.Normal && resourcesSoccer.Contains(r.ResourceId))
+            .OrderBy(r => resourcesSoccer.IndexOf(r.ResourceId));
+
         return new Match
         {
             MatchDetail = matchDetail,
-            ResultDetails = resultDetails,
+            ResultDetails = resultSorted,
             HedgeMatchDetail = hedgeMatchDetail,
             BetDaq = betDaq,
             BetFair = betFair,
@@ -225,28 +231,6 @@ public class MatchServiceImp(
             FantasyMatchDetail = matchDetail,
             RelatedMatches = relatedMatches
         };
-    }
-
-    private static void SetExMatchScore(MatchDetail match, List<ResultDetail> resultDetails)
-    {
-        //TODO: Should Remove after Refund Popup use ResultDetail instead of Table Match
-        var externalResultDetail = resultDetails.Where(result => result.SourceId == SourceType.Sbo).ToList();
-        var halfTimeResult = externalResultDetail.Find(result => result.ResourceId == ResourceType.Halftime);
-        var fullTimeResult = externalResultDetail.Find(result => result.ResourceId == ResourceType.Final);
-
-        if (halfTimeResult != null && !string.IsNullOrWhiteSpace(halfTimeResult.AwayValue) &&
-            !string.IsNullOrWhiteSpace(halfTimeResult.HomeValue))
-        {
-            match.ExHTAwayScore = halfTimeResult.AwayValue;
-            match.ExHTHomeScore = halfTimeResult.HomeValue;
-        }
-
-        if (fullTimeResult != null && !string.IsNullOrWhiteSpace(fullTimeResult.AwayValue) &&
-            !string.IsNullOrWhiteSpace(fullTimeResult.HomeValue))
-        {
-            match.ExFTAwayScore = fullTimeResult.AwayValue;
-            match.ExFTHomeScore = fullTimeResult.HomeValue;
-        }
     }
 
     private static void SetNormalResults(MatchDetail match, List<ResultDetail> resultDetails)

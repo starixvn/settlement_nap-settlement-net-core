@@ -61,6 +61,7 @@ export class RefundComponent implements Soccer {
     this.betFair = this.match.betFair;
     this.buttonRefundStatus = this.verifyMatchService.setDisableRefund(this.matchDetail, this.match.resultDetails);
     this.matchDetail.originalGoalRecord = this.matchDetail.goalRecord;
+    
   }
 
   public changeApplyHedgeMatch() {

@@ -6,21 +6,10 @@ import { Result } from "../../../../shared/models";
 import { Match, MatchDetailSoccer as MatchDetail, TicketGroupCount, UndoChecking } from "../models/match.model";
 import { ResultDetail } from "../../../models";
 import { ExternalResultDetail, SaveScoreQuery } from "../../../../shared/models/sportsbook-sop";
-
+import { RequestBaseService } from "../../../services/request-base.service";
 @Injectable()
-export class RequestService {
-    private readonly soccerApi = '/api/soccer';
-    constructor(private readonly httpRequestService: HttpRequestService) { }
-
-    public getMatch(matchId: number) {
-        const query = {
-            matchId,
-            isRefundPage: false
-        };
-        const request =  this.httpRequestService.postJson<Match>(query, `${this.soccerApi}/get-match`);
-        return firstValueFrom(request);
-    }
-
+export class RequestService extends RequestBaseService {
+    
     public checkNewStatus(matchId: number, actionName: string) {
         const query = {
             matchId,
@@ -61,16 +50,6 @@ export class RequestService {
 
     public pushInstantScore(query: InstantCalculationQuery) {
         const request = this.httpRequestService.postJson<Result>(query, `${this.soccerApi}/push-instant-score`);
-        return firstValueFrom(request);
-    }
-
-    public alertMessageToLetstalkForFastMarket(matchId: number, actionName: string) {
-        const query = {
-            matchId,
-            actionName
-        };
-        const fastMarketApi = "/api/fast-market";
-        const request = this.httpRequestService.postJson(query, `${fastMarketApi}/insert-message-letstalk`);
         return firstValueFrom(request);
     }
 
