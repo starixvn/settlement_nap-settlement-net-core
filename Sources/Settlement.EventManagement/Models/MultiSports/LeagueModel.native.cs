@@ -32,4 +32,7 @@ public class LeagueModel
 
     [Key("sportType")]
     public int SportType { get; set; }
+
+    [Key("apGroup")]
+    public int ApGroup { get; set; }
 }

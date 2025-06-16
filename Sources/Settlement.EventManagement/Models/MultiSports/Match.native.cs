@@ -100,6 +100,9 @@ public class Match : BaseMatch
     [Key("hasProviderFT")]
     public bool HasProviderFT { get; set; }
 
+    [Key("apGroup")]
+    public int ApGroup { get; set; }
+
     public override bool Equals(object obj)
     {
         return obj is Match match && match.MatchId == MatchId;

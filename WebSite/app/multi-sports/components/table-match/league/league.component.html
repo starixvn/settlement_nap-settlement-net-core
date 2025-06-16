@@ -8,20 +8,21 @@
   }
 </td>
 <td class="remark-status instant-time">
-  <ng-container *ngIf="league.matches[0].applyDirect && !sportSupportNewAutoPayout.includes(league.sportType)">
+  <ng-container *ngIf="league.matches[0].applyDirect && !league.apGroup">
     <div *ngIf="permission.canAutoPayout" class="act-direct-time" [matTooltip]="language.payout.titleDirectTime"
       matTooltipPosition="above" (click)="openUpdateTime()"></div>
     <div>Waiting time: {{ league.autoWaitingTime }}sec</div>
   </ng-container>
-  <ng-container *ngIf="sportSupportNewAutoPayout.includes(league.sportType)">
-      Main: {{ league.autoMainWaitingTime | timeConverter }} - Early: {{ league.autoEarlyWaitingTime | timeConverter }}
+  <ng-container *ngIf="league.apGroup">
+    Main: {{ league.autoMainWaitingTime | timeConverter }} - Early: {{ league.autoEarlyWaitingTime | timeConverter }}
   </ng-container>
 </td>
 
 <td [ngClass]="{ 'code-link enable': permission.canAutoPayout, 'auto-setting auto-setting-text': true }">
-    @if(sportSupportNewAutoPayout.includes(league.sportType)) {
-        <div class="cursor-pointer new-status-setting"  [innerHTML]="getAutoNewSettingLeague()" (click)="changeAutoLeague()"></div>
-    } @else {
-          <div class="cursor-pointer" (click)="changeAutoLeague()">{{getAutoSettingLeague() }}</div>
-    }
+  @if(league.apGroup) {
+  <div class="cursor-pointer new-status-setting" [innerHTML]="getAutoNewSettingLeague()" (click)="changeAutoLeague()">
+  </div>
+  } @else {
+  <div class="cursor-pointer" (click)="changeAutoLeague()">{{getAutoSettingLeague() }}</div>
+  }
 </td>

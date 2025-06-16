@@ -231,7 +231,8 @@ public class MultiSportServiceImp(
             AutoCalcSetting = match.AutoCalcSetting,
             Matches = [],
             RefundWaitingTime = match.RefundWaitingTime,
-            SportType = match.SportType
+            SportType = match.SportType,
+            ApGroup = match.ApGroup
         };
     }
 
