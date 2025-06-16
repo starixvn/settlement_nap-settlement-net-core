@@ -34,5 +34,5 @@ public class LeagueModel
     public int SportType { get; set; }
 
     [Key("apGroup")]
-    public int ApGroup { get; set; }
+    public int APGroup { get; set; }
 }

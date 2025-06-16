@@ -232,7 +232,7 @@ public class MultiSportServiceImp(
             Matches = [],
             RefundWaitingTime = match.RefundWaitingTime,
             SportType = match.SportType,
-            ApGroup = match.ApGroup
+            APGroup = match.APGroup
         };
     }
 

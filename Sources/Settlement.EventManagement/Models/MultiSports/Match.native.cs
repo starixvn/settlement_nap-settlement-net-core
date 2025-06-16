@@ -101,7 +101,7 @@ public class Match : BaseMatch
     public bool HasProviderFT { get; set; }
 
     [Key("apGroup")]
-    public int ApGroup { get; set; }
+    public int APGroup { get; set; }
 
     public override bool Equals(object obj)
     {
