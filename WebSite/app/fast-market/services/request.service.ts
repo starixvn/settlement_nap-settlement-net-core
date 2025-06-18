@@ -64,6 +64,11 @@ export class RequestService {
     return this.httpRequestService.postJson(leagueSetting, url);
   }
 
+  public updateAutoSettle(query: {}) {
+    const url = `api/auto-settle-settings/update-settings`;
+    return this.httpRequestService.postJson(query, url);
+  }
+
   public updateWaterBreakSetting(query: UpdateWaterBreakQuery) {
     const url = `${this.fastMarketApi}/update-water-break`;
     return this.httpRequestService.postJson(query, url);

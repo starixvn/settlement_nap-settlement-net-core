@@ -101,9 +101,30 @@ export class MatchDetailComponent implements OnInit {
 
             this.messageBoxService.confirm(
                 dialogModel,
-                () => this.updateLeagueAutoSettle(true),
-                () => this.updateLeagueAutoSettle(false));
+                () => this.updateLeagueRefund(true),
+                () => this.updateLeagueRefund(false));
         }
+    }
+
+    private updateLeagueRefund(isApplyAll: boolean) {
+        const query = {
+            matchId: this.matchDetail.matchId,
+            leagueId: this.matchDetail.leagueId,
+            typeObject: "League",
+            isApplyAll: isApplyAll,
+            resultSettings: [
+                {
+                    settleType: "FMRefund",
+                    enable: true,
+                    resourceType: "Main",
+                    isApplyChildMatches: true,
+                }
+            ]
+        }
+
+        this.requestService
+            .updateAutoSettle(query)
+            .subscribe((response: Result) => { this.processUpdateSettingResult(response); });
     }
 
     public confirmUpdateMatchRefund() {
