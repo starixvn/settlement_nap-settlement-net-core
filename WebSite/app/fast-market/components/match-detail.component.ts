@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import * as _ from 'lodash';
 import { MessageBoxService } from '../../shared/services';
 import { ModalDialogMessage, AutoSettingMatchQuery, AutoSettingLeagueQuery, Result } from '../../shared/models';
@@ -14,16 +14,17 @@ import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 })
 
 export class MatchDetailComponent implements OnInit {
+
     @Input() toastContainer: ToastContainerDirective;
     private readonly fastMarketAutoType = 3;
+    private readonly requestService = inject(RequestService);
+    private readonly messageBoxService = inject(MessageBoxService);
+    private readonly toastService = inject(ToastrService);
+    
     public matchDetail: MatchDetail;
     public readonly warningDialogMessage: ModalDialogMessage = new ModalDialogMessage();
 
-    constructor(
-        private readonly requestService: RequestService,
-        private readonly messageBoxService: MessageBoxService,
-        private readonly toastService: ToastrService) {
-    }
+
 
     public ngOnInit() {
         const matchId = Number(UrlHelper.getUrlParameter("matchId"));
@@ -84,6 +85,38 @@ export class MatchDetailComponent implements OnInit {
                 this.warningDialogMessage,
                 () => this.updateLeagueAutoSettle(true),
                 () => this.updateLeagueAutoSettle(false));
+        }
+    }
+
+    public confirmUpdateLeagueRefund() {
+        this.toastService.clear();
+        if (!this.matchDetail.autoSettingIcon.disabled) {
+            const dialogModel = {
+                title: Language.confirmationBoxTitle,
+                message: Language.updateLeagueRefundConfirmationMessage,
+                checkboxLabel: 'Apply to Un-Calculated matches',
+                requireCheckbox: true
+            } as ModalDialogMessage;
+ 
+
+            this.messageBoxService.confirm(
+                dialogModel,
+                () => this.updateLeagueAutoSettle(true),
+                () => this.updateLeagueAutoSettle(false));
+        }
+    }
+
+    public confirmUpdateMatchRefund() {
+        this.toastService.clear();
+        if (!this.matchDetail.autoSettingIcon.disabled) {
+            this.warningDialogMessage.title = Language.confirmationBoxTitle;
+            this.warningDialogMessage.message = Language.updateMatchRefundConfirmationMessage;
+
+
+            this.messageBoxService.confirm(
+                this.warningDialogMessage,
+                () => {},
+                () => {});
         }
     }
 

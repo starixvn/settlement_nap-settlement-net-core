@@ -1,74 +1,88 @@
 ﻿@if (matchDetail) {
-  <div class="league">
-    {{matchDetail.leagueName}}
-    <div class="auto-setting-btn {{matchDetail.autoSettingIcon.league}}"
-      title="{{matchDetail.leagueAutoSettingTooltip}}"
-    (click)="confirmUpdateLeagueAutoSettle()"></div>
-    <div class="auto-setting-label">Auto-Settle</div>
+<div class="league" style="display: flex; justify-content: space-between;">
+  <div>{{matchDetail.leagueName}}</div>
+  <div style="display: flex; align-items: center; gap: 5px;">
+    <div style="display: flex; align-items: center; gap: 5px;">
+      <div>Auto-Settle</div>
+      <div class="{{matchDetail.autoSettingIcon.league}}" title="{{matchDetail.leagueAutoSettingTooltip}}"
+        (click)="confirmUpdateLeagueAutoSettle()"></div>
+    </div>
+    <div>|</div>
+    <div style="display: flex; align-items: center; gap: 5px;">
+      <div>Auto Refund Special Session</div>
+      <div class="{{matchDetail.autoSettingIcon.league}}" title="{{matchDetail.leagueAutoSettingTooltip}}"
+        (click)="confirmUpdateLeagueRefund()"></div>
+    </div>
   </div>
+</div>
 }
 @if (matchDetail) {
-  <table class="table-calculation">
-    <thead>
-      <tr>
-        <th class="code">
-          Match Code/ID
-        </th>
-        <th class="kick-off-time">
-          Kick-off Time
-        </th>
-        <th class="event">
-          Team
-        </th>
-        <th class="score">HT Score</th>
-        <th class="score">FT Score</th>
-        <th>Auto-Settle</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td class="code">
-          <div class="no-link">{{matchDetail.matchCode}}</div>
-        </td>
-        <td class="kick-off-time" rowspan="2">
-          {{matchDetail.kickOffTime | date : 'mediumDate' }}
-          <br />
-          {{matchDetail.kickOffTime | date : 'hh:mm:ss a' }}
-        </td>
-        <td>
-          <div class="match-home">
-            {{matchDetail.homeName}}
-          </div>
-          <span class="{{matchDetail.goalIcon.homeGoal}}"></span>
-          <span class="{{matchDetail.goalIcon.halfTimeHomeGoal}}"></span>
-        </td>
-        <td class="ht-score">{{matchDetail.halfTimeHomeScore}}</td>
-        <td>
-          <span class="final-score">{{matchDetail.finalHomeScore}}</span>
-        </td>
-        <td rowspan="2">
-          <div class="{{matchDetail.autoSettingIcon.match}}" title="{{matchDetail.matchAutoSettingTooltip}}"
+<table class="table-calculation">
+  <thead>
+    <tr>
+      <th class="code">
+        Match Code/ID
+      </th>
+      <th class="kick-off-time">
+        Kick-off Time
+      </th>
+      <th class="event">
+        Team
+      </th>
+      <th class="score">HT Score</th>
+      <th class="score">FT Score</th>
+      <th>Auto-Settle</th>
+      <th style="width: 60px;">Auto Refund Special Session</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="code">
+        <div class="no-link">{{matchDetail.matchCode}}</div>
+      </td>
+      <td class="kick-off-time" rowspan="2">
+        {{matchDetail.kickOffTime | date : 'mediumDate' }}
+        <br />
+        {{matchDetail.kickOffTime | date : 'hh:mm:ss a' }}
+      </td>
+      <td>
+        <div class="match-home">
+          {{matchDetail.homeName}}
+        </div>
+        <span class="{{matchDetail.goalIcon.homeGoal}}"></span>
+        <span class="{{matchDetail.goalIcon.halfTimeHomeGoal}}"></span>
+      </td>
+      <td class="ht-score">{{matchDetail.halfTimeHomeScore}}</td>
+      <td>
+        <span class="final-score">{{matchDetail.finalHomeScore}}</span>
+      </td>
+      <td rowspan="2">
+        <div class="{{matchDetail.autoSettingIcon.match}}" title="{{matchDetail.matchAutoSettingTooltip}}"
           (click)="confirmUpdateMatchAutoSettle()"></div>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          {{matchDetail.matchId}}
-        </td>
-        <td>
-          <div class="match-away">
-            {{matchDetail.awayName}}
-          </div>
-          <span class="{{matchDetail.goalIcon.awayGoal}}"></span>
-          <span class="{{matchDetail.goalIcon.halfTimeAwayGoal}}"></span>
-        </td>
-        <td>
-          <span class="ht-score">{{matchDetail.halfTimeAwayScore}}</span>
-        </td>
-        <td>
-          <span class="final-score">{{matchDetail.finalAwayScore}}</span>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+      </td>
+      <td rowspan="2">
+        <div class="{{matchDetail.autoSettingIcon.match}}" title="{{matchDetail.matchAutoSettingTooltip}}"
+          (click)="confirmUpdateMatchRefund()"></div>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        {{matchDetail.matchId}}
+      </td>
+      <td>
+        <div class="match-away">
+          {{matchDetail.awayName}}
+        </div>
+        <span class="{{matchDetail.goalIcon.awayGoal}}"></span>
+        <span class="{{matchDetail.goalIcon.halfTimeAwayGoal}}"></span>
+      </td>
+      <td>
+        <span class="ht-score">{{matchDetail.halfTimeAwayScore}}</span>
+      </td>
+      <td>
+        <span class="final-score">{{matchDetail.finalAwayScore}}</span>
+      </td>
+    </tr>
+  </tbody>
+</table>
 }

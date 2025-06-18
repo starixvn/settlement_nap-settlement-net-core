@@ -15,7 +15,7 @@ import {
   AutoSettingMatchQuery,
 } from "../../shared/models";
 import { TimeMachineResult } from "../models/interval.model";
-import { IUpdateSettlementResultHistoryStatus } from "shared/models/update-settle-result-history-status";
+import { IUpdateSettlementResultHistoryStatus } from "../../shared/models/update-settle-result-history-status";
 
 @Injectable()
 export class RequestService {
