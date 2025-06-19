@@ -1,6 +1,6 @@
 import { inject } from "@angular/core";
 import { Language } from "../../../../shared/language.native";
-import { Storage } from "../../../storage/storage.service.native";
+import { CalculateBaseStorage } from "../../../storage/storage.service.native";
 import { AbstractHandler } from "../../abstract.handler.native";
 import { ClosePopupService, MessageBoxService } from "../../../../shared/services";
 import { InstantCalculationQuery } from "../../../components/calc/models/query.model";
@@ -11,7 +11,7 @@ export class PushInstantScoreHandler extends AbstractHandler {
   #messageBoxService = inject(MessageBoxService)
   #requestService = inject(RequestService);
   #closePopupService = inject(ClosePopupService);
-  async handle(storage: Storage) {
+  async handle(storage: CalculateBaseStorage) {
     const scoreResult = storage.getInstantScore();
     const { matchDetail} = storage.getMatch();
     const currentScore = `${scoreResult.homeScore}-${scoreResult.awayScore}`;

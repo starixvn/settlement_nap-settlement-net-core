@@ -6,12 +6,16 @@ using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Requests;
+using CheckingMarkedTicketsCriteria = Settlement.Sportsbook.Soccer.Criteria.CheckingMarkedTicketsCriteria;
+using CheckingMarkedTicketsCriteriaWithResources = Settlement.Core.Criteria.CheckingMarkedTicketsCriteria;
 
 namespace Settlement.Sportsbook.Soccer.Services;
 
 public interface IRefundService
 {
     Task<MarkedTickets> CheckMarkedTickets(CheckingMarkedTicketsCriteria criteria);
+
+    Task<MarkedTickets> CheckMarkedTicketsWithResources(CheckingMarkedTicketsCriteriaWithResources criteria);
 
     Task<Result> MoveThirdPartyBetTickets(MoveThirdPartyBetTicketCriteria criteria);
 
@@ -31,6 +35,24 @@ public class RefundServiceImp(
     : IRefundService
 {
     public async Task<MarkedTickets> CheckMarkedTickets(CheckingMarkedTicketsCriteria criteria)
+    {
+        foreach (var server in appSettingsKey.Value.SiteDbServer)
+        {
+            criteria.DbServer = server;
+            await repository.ExecuteAsync(criteria);
+            if (criteria.IsExistMarkedTicket)
+            {
+                return new MarkedTickets
+                {
+                    IsExistMarkedTicket = criteria.IsExistMarkedTicket
+                };
+            }
+        }
+
+        return new MarkedTickets();
+    }
+
+    public async Task<MarkedTickets> CheckMarkedTicketsWithResources(CheckingMarkedTicketsCriteriaWithResources criteria)
     {
         foreach (var server in appSettingsKey.Value.SiteDbServer)
         {

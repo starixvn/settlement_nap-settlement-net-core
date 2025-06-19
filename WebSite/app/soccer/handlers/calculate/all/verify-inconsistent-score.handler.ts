@@ -1,5 +1,4 @@
-
-import { Storage } from "../../../storage/storage.service.native";
+import { CalculateBaseStorage } from "../../../storage/storage.service.native";
 import { AbstractHandler } from "../../abstract.handler.native";
 import { Language } from '../../../../shared/language.native';
 import * as _ from 'lodash';
@@ -14,7 +13,7 @@ export class VerifyInconsistentScoreHandler extends AbstractHandler {
   #verificationService = inject(VerificationBaseService);
   #messageBoxService = inject(MessageBoxService);
 
-  async handle(storage: Storage) {
+  async handle(storage: CalculateBaseStorage) {
     const { permission, resultDetails } = storage.getMatch();
     const isIgnoreCheckHt = storage.getIsIgnoreCheckHt();
     const checkedResults = isIgnoreCheckHt

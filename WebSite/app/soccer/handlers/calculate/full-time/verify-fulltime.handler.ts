@@ -1,7 +1,7 @@
 import { inject } from "@angular/core";
 import { VerifyScoreGoalService } from "../../../components/calc/services/verify-score-goal.service";
 import { AbstractHandler } from "../../abstract.handler.native";
-import { Storage } from "../../../storage/storage.service.native";
+import { CalculateBaseStorage } from "../../../storage/storage.service.native";
 import { ChildMatch, FantasyRelatedMatch, MatchDetailSoccer as MatchDetail } from "../../../components/calc/models/match.model";
 import { Language } from "../../../../shared/language.native";
 import { CalculateAction } from "../../../../shared/constants";
@@ -12,7 +12,7 @@ export class VerifyFulltimeHandler extends AbstractHandler {
    #verifyScoreGoalService = inject(VerifyScoreGoalService);
   #verifyActionService = inject(VerifyActionService);
 
-   async handle(storage: Storage) {
+   async handle(storage: CalculateBaseStorage) {
     const {matchDetail, childMatches, fantasyMatch} = storage.getMatch();
     const fulltimeResult = storage.getFullTimeResult();
     const relatedMatches = fantasyMatch?.relatedMatches;

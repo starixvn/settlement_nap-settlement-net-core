@@ -8,7 +8,7 @@
 @if (hedgeMatchDetail.isDeterminedHedgeMatch) {
 <div class="hedge-match">
   <input type="checkbox" [(ngModel)]="isDeterminedHedgeMatch" id="isDeterminedHedgeMatch"
-    [disabled]="disableSettleDeterminedHedgeMatch">
+    [disabled]="disableSettleDeterminedHedgeMatch" (ngModelChange)="changeIsDeterminedHedgeMatch()">
   <label for="isDeterminedHedgeMatch">Settle determined FT/1H Over/Under tickets for hedge match.</label>
 </div>
 }

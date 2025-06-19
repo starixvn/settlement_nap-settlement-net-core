@@ -1,9 +1,19 @@
-import { ModalDialogMessage } from "../../shared/models";
+import { GeneralResultDetail, ModalDialogMessage } from "../../shared/models";
 import { ExternalResultDetail } from "../../shared/models/sportsbook-sop";
 import { FantasyRelatedMatch, Match, UndoChecking } from "../components/calc/models/match.model";
 import { ResultDetail } from "../../shared/models/sportsbook-sop/result-detail.model";
+import { Match as RefundMatch } from "../components/refund/model/match.model";
 
-export interface Storage {
+
+export interface RefundBaseStorage {
+  getMatch(): RefundMatch
+  getSelectedResource(): GeneralResultDetail[]
+  error(message: string)
+  setConfirmMessage(message: string): void
+  getIsDeterminedHedgeMatch(): boolean
+}
+
+export interface CalculateBaseStorage {
   getMatch(): Match
   getHalfTimeResult(): ResultDetail
   getFullTimeResult(): ResultDetail

@@ -1,6 +1,8 @@
-﻿namespace Settlement.Sportsbook.Aio.Criteria;
+﻿using Fanex.Data;
+using Fanex.Data.Repository;
 
-public class CheckMarkedTicketsCriteria : NonQueryCommand
+namespace Settlement.Core.Criteria;
+public class CheckingMarkedTicketsCriteria : NonQueryCommand
 {
     public int MatchId { get; set; }
 

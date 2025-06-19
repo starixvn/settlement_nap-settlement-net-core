@@ -8,12 +8,14 @@ import { RefundStorage } from '../../../storage/refund.storage';
 import { RefundActionsComponent } from './refund-actions.component';
 import { RefundService } from '../services/refund.service';
 import { VerificationBaseService } from '../../../services/verification-base.service';
+import { LogicService } from '../services/logic.service';
+import { VerifyService } from '../services/verify.service';
 
 @Component({
   selector: 'refund',
   standalone: true,
   imports: [MatchDetailComponent, ToastContainerModule, RefundActionsComponent],
-  providers: [RequestService, RefundService, VerificationBaseService],
+  providers: [],
   templateUrl: './refund.component.html',
   styleUrl: './refund.component.css'
 })
@@ -23,14 +25,14 @@ export class RefundComponent implements Soccer, OnInit {
   matchDetail: MatchDetail;
 
   #requestService = inject(RequestService);
-  #refundService = inject(RefundService);
+  #logicService = inject(LogicService);
   #storage = inject(RefundStorage);
 
   async getMatch(matchId: number, filterOver?: string) {
     this.match = await this.#requestService.getMatch(matchId, true);
     this.#storage.setMatch(this.match);
     this.matchDetail = this.match.matchDetail;
-    this.#refundService.resetScore();
+    this.#logicService.resetScore();
   }
 
   ngOnInit(): void {

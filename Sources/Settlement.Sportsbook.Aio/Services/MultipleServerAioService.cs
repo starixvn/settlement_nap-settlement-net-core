@@ -127,7 +127,7 @@ public class MultipleServerAioServiceImp(
 
     public async Task<MarkedTickets> CheckMarkedTickets(CheckMarkedTicketsRequest request)
     {
-        var criteria = new CheckMarkedTicketsCriteria
+        var criteria = new CheckingMarkedTicketsCriteria
         {
             MatchId = request.MatchId,
             ResourceIds = GetResourceIds(request.SelectedResources)

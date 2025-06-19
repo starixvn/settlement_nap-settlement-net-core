@@ -1,5 +1,5 @@
 import { AbstractHandler } from "../../abstract.handler.native";
-import { Storage } from "../../../storage/storage.service.native";
+import { CalculateBaseStorage } from "../../../storage/storage.service.native";
 import { VerifyScoreGoalService } from "../../../components/calc/services/verify-score-goal.service";
 import { inject } from "@angular/core";
 import { Language } from "../../../../shared/language.native";
@@ -10,7 +10,7 @@ export class HalfTimeSettledHandler extends AbstractHandler {
   readonly #verifyScoreGoalService = inject(VerifyScoreGoalService);
   readonly #scoreService = inject(ScoreService);
 
-  public handle(storage: Storage): void {
+  public handle(storage: CalculateBaseStorage): void {
     const {matchDetail} = storage.getMatch();
     const ftResultDetail = storage.getFullTimeResult();
     const providerScore = ftResultDetail.externalScores.find(e => e.sourceId === ScoreSourceType.Sbo)

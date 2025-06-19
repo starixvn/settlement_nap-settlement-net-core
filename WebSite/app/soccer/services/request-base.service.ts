@@ -17,10 +17,10 @@ export class RequestBaseService {
     }
 
 
-    public checkingMarkedTicket(actionName: string, matchId: number) {
+    public checkingMarkedTicket(resourceIds: string, matchId: number) {
         const query = {
             matchId,
-            actionName
+            resourceIds
         };
 
         const request = this.httpRequestService.postJson<MarkedTicketsModel>(query, `${this.soccerApi}/checking-marked-tickets`, false);

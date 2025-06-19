@@ -1,48 +1,42 @@
 import { inject, Injectable } from "@angular/core";
 import { RefundStorage } from "../../../storage/refund.storage";
-import { VerificationBaseService } from "../../../services/verification-base.service";
-import { SettlementStatusId } from "../../../../shared/constants";
+import { VerifyMarkedTicketHandler } from "../../../handlers/Refund/verify-marked-ticket.handler";
+import { RefundHandler } from "../../../handlers/Refund/refund.handler";
+import { ConfirmationHandler } from "../../../handlers/Refund/half-time/confirmation.handler";
+import { VerifyStatusHandler } from "../../../handlers/Refund/half-time/verify-status.handler";
+import { CalculateAction } from "../../../../shared/constants";
 
 @Injectable({
   providedIn: 'root'
 })
 export class RefundService {
-
   #refundStorage = inject(RefundStorage);
-  #verificationBaseService = inject(VerificationBaseService);
 
-  verifyScore(){
-    const htExists = !this.#verificationBaseService.isEmptyScore(this.#refundStorage.getHalfTimeResult().homeValue) && !this.#verificationBaseService.isEmptyScore(this.#refundStorage.getHalfTimeResult().awayValue);
-    const ftExists = !this.#verificationBaseService.isEmptyScore(this.#refundStorage.getFullTimeResult().homeValue) && !this.#verificationBaseService.isEmptyScore(this.#refundStorage.getFullTimeResult().awayValue);
-    const isInconsistent = Number(this.#refundStorage.getHalfTimeResult().homeValue) > Number(this.#refundStorage.getFullTimeResult().homeValue) || Number(this.#refundStorage.getHalfTimeResult().awayValue) > Number(this.#refundStorage.getFullTimeResult().awayValue);
-    this.#refundStorage.getMatchDetail().isScoreInconsistent = htExists && ftExists && isInconsistent;
+  //Refund HT
+  #verifyMarkedTicketHandler = new VerifyMarkedTicketHandler();
+  #refundHandler = new RefundHandler();
+  #halfTimeConfirmationHandler = new ConfirmationHandler();
+  #verifyStatusHandler = new VerifyStatusHandler();
+
+  constructor(){
+    this.#verifyMarkedTicketHandler.setNextHandler(this.#verifyStatusHandler);
+    this.#verifyStatusHandler.setNextHandler(this.#halfTimeConfirmationHandler);
+    this.#halfTimeConfirmationHandler.setNextHandler(this.#refundHandler);
   }
 
-  resetScore(){
-    const halfTimeResult = this.#refundStorage.getHalfTimeResult();
-    const fullTimeResult = this.#refundStorage.getFullTimeResult();
-
-    if(halfTimeResult.settlementStatusId !== SettlementStatusId.Calculated && halfTimeResult.settlementStatusId !== SettlementStatusId.Abandoned1H){
-      halfTimeResult.homeValue = "";
-      halfTimeResult.awayValue = "";
-    }
-
-    if(fullTimeResult.settlementStatusId !== SettlementStatusId.Calculated && fullTimeResult.settlementStatusId !== SettlementStatusId.Abandoned2H){
-      fullTimeResult.homeValue = "";
-      fullTimeResult.awayValue = "";
+  refund(actionName: string){
+    if(actionName === CalculateAction.refundHalfTime){
+      this.refundHalfTime();
+    }else if(actionName === CalculateAction.refundFullTime){
+      this.refundFullTime();
     }
   }
 
-  verifySettleDeterminableInput(){
-    const halfTime = this.#refundStorage.getHalfTimeResult();
-    const fullTime = this.#refundStorage.getFullTimeResult();
+  refundHalfTime(){
+    this.#verifyMarkedTicketHandler.handle(this.#refundStorage);
+  }
 
-    if(halfTime.checked && fullTime.checked){
-      fullTime.isEnabled = false;
-      halfTime.isEnabled = true;
-    }else{
-      fullTime.isEnabled = fullTime.checked;
-      halfTime.isEnabled = halfTime.checked;
-    }
+  refundFullTime(){
+   
   }
 }

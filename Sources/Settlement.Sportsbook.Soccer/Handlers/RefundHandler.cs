@@ -3,6 +3,8 @@ using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Requests;
 using Settlement.Sportsbook.Soccer.Services;
+using CheckingMarkedTicketsCriteria = Settlement.Sportsbook.Soccer.Criteria.CheckingMarkedTicketsCriteria;
+using CheckingMarkedTicketsCriteriaWithResources = Settlement.Core.Criteria.CheckingMarkedTicketsCriteria;
 
 namespace Settlement.Sportsbook.Soccer.Handlers;
 
@@ -28,8 +30,17 @@ public class RefundHandler(
 
     public async Task<MarkedTickets> Handle(CheckingMarkedTicketsRequest request, CancellationToken cancellationToken)
     {
-        var criteria = mapper.Map<CheckingMarkedTicketsRequest, CheckingMarkedTicketsCriteria>(request);
-        return await refundService.CheckMarkedTickets(criteria);
+        //Todo: Should remove check by Action Name after release SOP Refund
+        if (string.IsNullOrEmpty(request.ActionName))
+        {
+            var criteria = mapper.Map<CheckingMarkedTicketsRequest, CheckingMarkedTicketsCriteriaWithResources>(request);
+            return await refundService.CheckMarkedTicketsWithResources(criteria);
+        }
+        else
+        {
+            var criteria = mapper.Map<CheckingMarkedTicketsRequest, CheckingMarkedTicketsCriteria>(request);
+            return await refundService.CheckMarkedTickets(criteria);
+        }
     }
 
     public async Task<Result> Handle(RefundRequest request, CancellationToken cancellationToken)

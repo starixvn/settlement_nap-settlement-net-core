@@ -3,6 +3,8 @@ using Settlement.Core.Models;
 using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Requests;
+using CheckingMarkedTicketsCriteria = Settlement.Sportsbook.Soccer.Criteria.CheckingMarkedTicketsCriteria;
+using CheckingMarkedTicketsCriteriaWithResources = Settlement.Core.Criteria.CheckingMarkedTicketsCriteria;
 
 namespace Settlement.Sportsbook.Soccer;
 
@@ -20,6 +22,7 @@ public class SoccerAutoMapperProfile : Profile
         CreateMap<RefundRequest, GoalCondition>();
         CreateMap<GetSpecificBetTypeRequest, SpecificBetTypesCriteria>();
         CreateMap<CheckingMarkedTicketsRequest, CheckingMarkedTicketsCriteria>().ForMember(dest => dest.Action, opt => opt.MapFrom(src => src.ActionName));
+        CreateMap<CheckingMarkedTicketsRequest, CheckingMarkedTicketsCriteriaWithResources>();
         CreateMap<MoveBetRequest, MoveThirdPartyBetTicketCriteria>();
         CreateMap<Models.MatchDetail, GoalIconQueryModel>();
         CreateMap<UncalculateFtRequest, SettleBaseRequest>();

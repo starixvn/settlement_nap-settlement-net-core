@@ -1,7 +1,7 @@
 import { VerifyScoreGoalService } from './../../../components/calc/services/verify-score-goal.service';
 import { Language } from '../../../../shared/language.native';
 import { AbstractHandler } from '../../abstract.handler.native';
-import { Storage } from '../../../storage/storage.service.native';
+import { CalculateBaseStorage } from '../../../storage/storage.service.native';
 import { inject } from '@angular/core';
 import { ScoreSourceType } from '../../../../shared/constants';
 import { ExternalResultDetail, ResultDetail } from '../../../../shared/models/sportsbook-sop';
@@ -9,7 +9,7 @@ import { ExternalResultDetail, ResultDetail } from '../../../../shared/models/sp
 export class VerifyTraderScoreHandler extends AbstractHandler {
   #verifyScoreGoalService = inject(VerifyScoreGoalService);
 
-  handle(storage: Storage) {
+  handle(storage: CalculateBaseStorage) {
     const { resultDetails } = storage.getMatch();
     const resultSelected = resultDetails.filter((resultDetail) => resultDetail.checked);
     const traderResults = this.getTraderResults(resultSelected);

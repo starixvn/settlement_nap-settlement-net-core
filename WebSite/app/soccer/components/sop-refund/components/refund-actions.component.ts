@@ -10,6 +10,8 @@ import { OnlyIntegerDirective } from '../../../../shared/directives/only-integer
 import { RefundService } from '../services/refund.service';
 import { ResourceIds } from '../../../constants';
 import { VerificationBaseService } from '../../../services/verification-base.service';
+import { VerifyService } from '../services/verify.service';
+import { LogicService } from '../services/logic.service';
 
 @Component({
   selector: 'refund-actions',
@@ -21,7 +23,9 @@ import { VerificationBaseService } from '../../../services/verification-base.ser
 export class RefundActionsComponent implements OnInit {
   #storage = inject(RefundStorage);
   #refundService = inject(RefundService);
+  #verifyService = inject(VerifyService);
   #verificationService = inject(VerificationBaseService);
+  #logicService = inject(LogicService);
 
   #match: Match;
   matchDetail: MatchDetail;
@@ -43,7 +47,7 @@ export class RefundActionsComponent implements OnInit {
     this.disableGoalRecordCheckbox = this.matchDetail.isExistResultAndFirstTeamScore ||
       this.matchDetail.isEnabledGoalRecordFt || this.matchDetail.isEnabledGoalRecordHt;
     this.matchDetail.applyGoalRecord = this.disableGoalRecordCheckbox;
-    this.#refundService.verifyScore();
+    this.#verifyService.verifyScore();
   }
 
 
@@ -53,7 +57,7 @@ export class RefundActionsComponent implements OnInit {
       this.#storage.clearFullTimeResult();
     }
 
-    this.#refundService.verifyScore();
+    this.#verifyService.verifyScore();
   }
 
   changeApplyHedgeMatch() {
@@ -65,6 +69,10 @@ export class RefundActionsComponent implements OnInit {
     }
   }
 
+  changeIsDeterminedHedgeMatch() {
+    this.#storage.setIsDeterminedHedgeMatch(this.isDeterminedHedgeMatch);
+  }
+
   goalRecordModelChange(value: string) {
     this.#storage.clear();
     this.matchDetail.goalRecord = value;
@@ -74,13 +82,12 @@ export class RefundActionsComponent implements OnInit {
   }
 
   confirmRefund() {
-    // TODO: Implement confirm refund logic
-    console.log('Confirm Refund clicked');
+   
   }
 
   refund() {
-    // TODO: Implement refund logic
-    console.log('Refund clicked');
+    const actionName = this.#logicService.getActionName();
+    this.#refundService.refund(actionName);
   }
 
   onResultCheckedChange(result: ResultDetail): void {
@@ -90,6 +97,6 @@ export class RefundActionsComponent implements OnInit {
       return;
     }
 
-    this.#refundService.verifySettleDeterminableInput();
+    this.#verifyService.verifySettleDeterminableInput();
   }
 }

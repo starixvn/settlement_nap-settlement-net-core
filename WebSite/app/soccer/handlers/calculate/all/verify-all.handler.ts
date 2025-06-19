@@ -5,7 +5,7 @@ import { AbstractHandler } from "../../abstract.handler.native";
 import { Language } from "../../../../shared/language.native";
 import { CalculateAction } from "../../../../shared/constants";
 import { VerifyActionService } from "../../../components/calc/services/verify-action.service";
-import {  Storage } from "../../../storage/storage.service.native";
+import { CalculateBaseStorage } from "../../../storage/storage.service.native";
 import { ResultDetail } from "../../../models";
 
 export class VerifyAllHandler extends AbstractHandler {
@@ -13,7 +13,7 @@ export class VerifyAllHandler extends AbstractHandler {
   #verifyActionService = inject(VerifyActionService);
 
 
-  async handle(storage: Storage) {
+  async handle(storage: CalculateBaseStorage) {
       const {matchDetail, childMatches, fantasyMatch} = storage.getMatch();
       const relatedMatches = fantasyMatch?.relatedMatches;
       const selectedChildMatches = childMatches.filter(x => x.checked);
@@ -26,7 +26,7 @@ export class VerifyAllHandler extends AbstractHandler {
       super.handle(storage);
     }
 
-  private  async verifyAll(storage: Storage, matchDetail: MatchDetail, selectedChildMatches: ChildMatch[], relatedMatches: FantasyRelatedMatch[]) {
+  private  async verifyAll(storage: CalculateBaseStorage, matchDetail: MatchDetail, selectedChildMatches: ChildMatch[], relatedMatches: FantasyRelatedMatch[]) {
       const {resultDetails }  = storage.getMatch();
       const checkedResultDetails = resultDetails.filter(x => x.checked);
     if (this.#verifyScoreGoalService.verifyScoreAll(checkedResultDetails)) {

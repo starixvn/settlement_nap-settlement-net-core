@@ -7,7 +7,9 @@ import { ResultDetail } from "../../shared/models/sportsbook-sop";
 import { MatchDetailBase } from "../models";
 import { GeneralResultDetail } from "../../shared/models";
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class VerificationBaseService {
     public isEmptyScore(value: string | number) {
         if (_.isNumber(value)) {

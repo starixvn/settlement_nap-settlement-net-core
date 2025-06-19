@@ -1,10 +1,10 @@
 import { ResultStatusId, TicketStatusText } from "../../../../shared/constants";
 import { Language } from "../../../../shared/language.native";
-import { Storage } from "../../../storage/storage.service.native";
+import { CalculateBaseStorage } from "../../../storage/storage.service.native";
 import { AbstractHandler } from "../../abstract.handler.native";
 
 export class VerifySettledResultHandler extends AbstractHandler {
-  handle(storage: Storage) {
+  handle(storage: CalculateBaseStorage) {
     const { resultDetails } = storage.getMatch();
     const settledResult = resultDetails.filter((resultDetail) => resultDetail.checked
       && (resultDetail.resultStatusId === ResultStatusId.AutoCompleted

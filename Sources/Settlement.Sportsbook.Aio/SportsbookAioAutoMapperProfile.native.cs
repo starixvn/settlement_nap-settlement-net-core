@@ -13,7 +13,7 @@ public class SportsbookAioAutoMapperProfile : Profile
         CreateMap<GetMatchRequest, GetMatchDetailCriteria>();
         CreateMap<GetMatchRequest, GetResultDetailCriteria>();
         CreateMap<GetRecalResultRequest, GetRecalResultCriteria>();
-        CreateMap<CheckMarkedTicketsRequest, CheckMarkedTicketsCriteria>();
+        CreateMap<CheckMarkedTicketsRequest, CheckingMarkedTicketsCriteria>();
         CreateMap<GetMatchRequest, GetHedgeMatchCriteria>();
         CreateMap<SettleRequest, SettleCriteria>()
             .ForMember(dest => dest.Action, map => map.MapFrom(src => src.ActionName))

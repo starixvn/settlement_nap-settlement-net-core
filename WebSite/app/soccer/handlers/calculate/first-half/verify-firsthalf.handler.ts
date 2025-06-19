@@ -4,7 +4,7 @@ import { VerifyScoreGoalService } from "../../../components/calc/services/verify
 import { AbstractHandler } from "../../abstract.handler.native";
 import { Language } from "../../../../shared/language.native";
 import { CalculateAction } from "../../../../shared/constants";
-import { Storage } from "../../../storage/storage.service.native";
+import { CalculateBaseStorage } from "../../../storage/storage.service.native";
 import { VerifyActionService } from "../../../components/calc/services/verify-action.service";
 import { ResultDetail } from "../../../../shared/models/sportsbook-sop";
 
@@ -13,7 +13,7 @@ export class VerifyFirstHalfHandler extends AbstractHandler {
   #verifyScoreGoalService = inject(VerifyScoreGoalService);
   #verifyActionService = inject(VerifyActionService);
 
-  public async handle(storage: Storage) {
+  public async handle(storage: CalculateBaseStorage) {
     const { matchDetail } = storage.getMatch();
     const halftimeResult = storage.getHalfTimeResult();
     const errorMessage = await this.verifyFirstHalf(halftimeResult, matchDetail, storage.getRelatedMatches());

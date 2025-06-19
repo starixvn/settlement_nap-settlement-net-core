@@ -1,6 +1,6 @@
 import { inject } from "@angular/core";
 import { AbstractHandler } from "../../abstract.handler.native";
-import { Storage } from "../../../storage/storage.service.native";
+import { CalculateBaseStorage } from "../../../storage/storage.service.native";
 import { Language } from "../../../../shared/language.native";
 import { ClosePopupService, MessageBoxService } from "../../../../shared/services";
 import { RequestService } from "../../../components/calc/services/request.service";
@@ -10,7 +10,7 @@ import { ScoreSourceType } from "../../../../shared/constants";
 export class SaveScoreHandler extends AbstractHandler {
   #requestService = inject(RequestService);
   #messageBoxService = inject(MessageBoxService);
-  handle(storage: Storage) {
+  handle(storage: CalculateBaseStorage) {
     const { matchDetail, resultDetails } = storage.getMatch();
     const resultSelected = resultDetails.filter((resultDetail) => resultDetail.checked);
     const traderResults = resultDetails.flatMap(r => r.externalScores.filter((resultDetail) => resultDetail.sourceId === ScoreSourceType.trader && resultSelected.some((result) => result.resourceId === resultDetail.resourceId)));

@@ -2,7 +2,7 @@ import { CalculateAction } from './../../../../shared/constants/calculate-action
 
 import { LeagueGroup, TimeMinute } from "../../../components/calc/models/constant.native";
 import { MatchDetailSoccer as MatchDetail } from "../../../components/calc/models/match.model";
-import { Storage } from "../../../storage/storage.service.native";
+import { CalculateBaseStorage } from "../../../storage/storage.service.native";
 import { AbstractHandler } from "../../abstract.handler.native";
 import { Language } from '../../../../shared/language.native';
 import { ResultStatusId } from '../../../../shared/constants';
@@ -15,7 +15,7 @@ import { VerificationBaseService } from '../../../../core/services/verification-
 export class VerifyScoreConfirmHandler extends AbstractHandler {
   #verificationService = inject(VerificationBaseService);
 
-  async handle(storage: Storage) {
+  async handle(storage: CalculateBaseStorage) {
     const { matchDetail, resultDetails } = storage.getMatch();
     const calculateAction = storage.getCalculateAction();
     const checkedResults = this.getCheckedResults(resultDetails);

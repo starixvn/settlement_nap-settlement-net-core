@@ -43,7 +43,7 @@ export class RequestService {
             actionName
         };
 
-        const request = this.httpRequestService.postJson<MarkedTicketsModel>(query, `${this.soccerApi}/checking-marked-tickets`, false);
+        const request = this.httpRequestService.postJson<MarkedTicketsModel>(query, `${this.soccerApi}/checking-marked-tickets-by-resource`, false);
         return firstValueFrom(request);
     }
 

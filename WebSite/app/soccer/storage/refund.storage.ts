@@ -3,23 +3,30 @@ import { ToastContainerDirective, ToastrService } from "ngx-toastr";
 import { Match } from "../components/refund/model/match.model";
 import * as _ from "lodash";
 import { ResourceIds } from "../constants/resourceIds.native";
+import { RefundBaseStorage } from "./storage.service.native";
 import { ResultDetail } from "../models";
+import { CalculateAction } from "../../shared/constants";
+import { ModalDialogMessage } from "../../shared/models";
+import { Language } from "../../shared/language.native";
+import { MessageBoxService } from "../../shared/services/message-box.service.native";
 
 @Injectable({
   providedIn: 'root'
 })
-export class RefundStorage  {
-  private readonly toastrService = inject(ToastrService);
+export class RefundStorage implements RefundBaseStorage {
+  #toastrService = inject(ToastrService);
   
   #match = signal<Match>(null);
+  #dialogMessage = new ModalDialogMessage(Language.confirmationBox);
 
   match = this.#match.asReadonly();
+  #isDeterminedHedgeMatch = false;
 
   #halfTimeResult: ResultDetail;
   #fullTimeResult: ResultDetail;
 
   // Getters
-  getMatch() {
+  getMatch(): Match {
     return this.#match();
   }
 
@@ -34,6 +41,18 @@ export class RefundStorage  {
   getFullTimeResult() {
     return this.#fullTimeResult;
   }
+  
+  getSelectedResource(): ResultDetail[] {
+    return this.#match().resultDetails.filter(x => x.checked);
+  }
+
+  getConfirmMessage() {
+    return this.#dialogMessage;
+  }
+
+  getIsDeterminedHedgeMatch() {
+    return this.#isDeterminedHedgeMatch;
+  }
 
   // Setters
   setMatch(match: Match) {
@@ -42,8 +61,16 @@ export class RefundStorage  {
     this.#fullTimeResult = this.#match().resultDetails.find(x => x.resourceId === ResourceIds.fullTime);
   }
 
+  setIsDeterminedHedgeMatch(isDeterminedHedgeMatch: boolean) {
+    this.#isDeterminedHedgeMatch = isDeterminedHedgeMatch;
+  }
+
   setToastrOverlay(toastContainer: ToastContainerDirective) {
-    this.toastrService.overlayContainer = toastContainer;
+    this.#toastrService.overlayContainer = toastContainer;
+  }
+
+  setConfirmMessage(message: string) {
+    this.#dialogMessage.message = message;
   }
 
   clearFullTimeResult() {
@@ -53,14 +80,14 @@ export class RefundStorage  {
 
   error(message: string) {
     if (!_.isEmpty(message)) {
-      this.toastrService.error(message);
+      this.#toastrService.error(message);
     } else {
-      this.toastrService.clear();
+      this.#toastrService.clear();
     }
   }
 
   clear() {
-    this.toastrService.clear();
+    this.#toastrService.clear();
     this.#match().matchDetail.isScoreInconsistent = false;
   }
 }

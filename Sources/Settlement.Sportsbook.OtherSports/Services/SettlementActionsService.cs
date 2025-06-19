@@ -1,4 +1,5 @@
 ﻿using Fanex.NAP.Client;
+using Settlement.Core.Criteria;
 using Settlement.Sportsbook.OtherSports.Models;
 using System.Text;
 
