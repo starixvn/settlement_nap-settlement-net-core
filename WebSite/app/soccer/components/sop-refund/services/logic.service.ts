@@ -3,7 +3,10 @@ import { CalculateAction } from "../../../../shared/constants/calculate-action.n
 import { ResourceIds } from "../../../constants/resourceIds.native";
 import { RefundStorage } from "../../../storage/refund.storage";
 import { MessageBoxService } from "../../../../shared/services";
-import { SettlementStatusId } from "../../../../shared/constants";
+import { EventStatus, SettlementStatusId } from "../../../../shared/constants";
+import { MatchDetail } from "../../refund/model/match.model";
+
+import * as _ from "lodash";
 
 @Injectable({
   providedIn: 'root'
@@ -32,16 +35,16 @@ export class LogicService {
     this.#messageBoxService.closePopup();
   }
 
-  resetScore(){
+  resetScore() {
     const halfTimeResult = this.#refundStorage.getHalfTimeResult();
     const fullTimeResult = this.#refundStorage.getFullTimeResult();
 
-    if(halfTimeResult.settlementStatusId !== SettlementStatusId.Calculated && halfTimeResult.settlementStatusId !== SettlementStatusId.Abandoned1H){
+    if (halfTimeResult.settlementStatusId !== SettlementStatusId.Calculated && halfTimeResult.settlementStatusId !== SettlementStatusId.Abandoned1H) {
       halfTimeResult.homeValue = "";
       halfTimeResult.awayValue = "";
     }
 
-    if(fullTimeResult.settlementStatusId !== SettlementStatusId.Calculated && fullTimeResult.settlementStatusId !== SettlementStatusId.Abandoned2H){
+    if (fullTimeResult.settlementStatusId !== SettlementStatusId.Calculated && fullTimeResult.settlementStatusId !== SettlementStatusId.Abandoned2H) {
       fullTimeResult.homeValue = "";
       fullTimeResult.awayValue = "";
     }

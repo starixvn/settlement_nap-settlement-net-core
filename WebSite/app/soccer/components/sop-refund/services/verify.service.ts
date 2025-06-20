@@ -1,6 +1,10 @@
 import { inject, Injectable } from "@angular/core";
 import { RefundStorage } from "../../../storage/refund.storage";
 import { VerificationBaseService } from "../../../services/verification-base.service";
+import { ResultDetail } from "../../../models";
+import { MatchDetail } from "../../refund/model/match.model";
+import { EventStatus } from "../../../../shared/constants";
+import * as _ from "lodash";
 
 @Injectable({
   providedIn: 'root'
@@ -18,16 +22,34 @@ export class VerifyService {
   }
 
 
-  verifySettleDeterminableInput(){
-    const halfTime = this.#refundStorage.getHalfTimeResult();
-    const fullTime = this.#refundStorage.getFullTimeResult();
+  verifySettleDeterminableInput(settleDeterminableTickets: boolean){
+    const halfTime = this.#refundStorage.getHalfTimeResult() as ResultDetail;
+    const fullTime = this.#refundStorage.getFullTimeResult() as ResultDetail;
+
+    if(!settleDeterminableTickets){
+      fullTime.isEnabled = false;
+      halfTime.isEnabled = false;
+      return;
+    }
 
     if(halfTime.checked && fullTime.checked){
       fullTime.isEnabled = false;
       halfTime.isEnabled = true;
     }else{
       fullTime.isEnabled = fullTime.checked;
-      halfTime.isEnabled = halfTime.checked;
+      halfTime.isEnabled = false;
     }
   }
+
+   isRefundHalfTimeBetStatus(matchDetail: MatchDetail) {
+    return !_.isNil(matchDetail.betStatus) &&
+      (_.includes(matchDetail.betStatus, `${EventStatus.refundHalftime};`) || _.includes(matchDetail.betStatus, `${EventStatus.refund};`));
+  }
+
+   isEmptyScore(value: string | number) {
+    if (_.isNumber(value)) {
+        return false;
+    }
+    return _.isNull(value) || _.isEmpty(value);
+}
 }

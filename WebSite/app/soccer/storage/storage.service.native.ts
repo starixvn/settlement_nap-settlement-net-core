@@ -11,6 +11,8 @@ export interface RefundBaseStorage {
   error(message: string)
   setConfirmMessage(message: string): void
   getIsDeterminedHedgeMatch(): boolean
+  getFullTimeResult(): GeneralResultDetail
+  getHalfTimeResult(): GeneralResultDetail
 }
 
 export interface CalculateBaseStorage {

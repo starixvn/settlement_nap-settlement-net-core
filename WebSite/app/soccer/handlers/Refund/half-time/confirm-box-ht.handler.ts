@@ -4,7 +4,7 @@ import { Language } from "../../../../shared/language.native";
 import { inject } from "@angular/core";
 import { LogicService } from "../../../components/sop-refund/services/logic.service";
 
-export class ConfirmationHandler extends AbstractHandler {
+export class ConfirmBoxHTHandler extends AbstractHandler {
   #logicService = inject(LogicService);
   async handle(storage: RefundBaseStorage): Promise<void> {
     const { matchDetail } = storage.getMatch();

@@ -24,13 +24,13 @@
     </thead>
     <tbody>
       <tr *ngFor="let result of resultDetails; let i = index">
-        <td>{{ i === 0 ? 'First Half' : 'Full Time' }}</td>
-        <td [ngClass]="matchDetail.isScoreInconsistent ? 'mismatched' : result.ticketStatus?.toLowerCase()">
-          <input class="score-input" type="text" myOnlyInteger [disabled]="!result.isEnabled"
-            [(ngModel)]="result.homeValue" (ngModelChange)="changeScore(result)" />
+        <td>{{ result.resourceId | resourceName }}</td>
+        <td [ngClass]="matchDetail.isScoreInconsistent ? 'mismatched' : result.settlementStatusId | resourceStatus">
+          <input class="score-input" [ngClass]="{'warning' : result.isInvalidValue}" type="text" myOnlyInteger
+            [disabled]="!result.isEnabled" [(ngModel)]="result.homeValue" (ngModelChange)="changeScore(result)" />
           &nbsp;
-          <input class="score-input" type="text" myOnlyInteger [disabled]="!result.isEnabled"
-            [(ngModel)]="result.awayValue" (ngModelChange)="changeScore(result)" />
+          <input class="score-input" [ngClass]="{'warning' : result.isInvalidValue}" type="text" myOnlyInteger
+            [disabled]="!result.isEnabled" [(ngModel)]="result.awayValue" (ngModelChange)="changeScore(result)" />
         </td>
         <td>
           <input type="checkbox" [(ngModel)]="result.checked" (ngModelChange)="onResultCheckedChange(result)" />
@@ -61,7 +61,8 @@
   </label>
   <div class="sub-option">
     <label class="sub-option-label">
-      <input type="checkbox" [(ngModel)]="settleDeterminableTicketsOnly" />
+      <input type="checkbox" [(ngModel)]="settleDeterminableTickets"
+        (ngModelChange)="onSettleDeterminableTicketsChange()" />
       Settle determinable tickets.
     </label>
   </div>

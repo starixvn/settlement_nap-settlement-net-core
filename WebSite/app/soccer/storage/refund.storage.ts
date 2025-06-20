@@ -4,11 +4,9 @@ import { Match } from "../components/refund/model/match.model";
 import * as _ from "lodash";
 import { ResourceIds } from "../constants/resourceIds.native";
 import { RefundBaseStorage } from "./storage.service.native";
-import { ResultDetail } from "../models";
-import { CalculateAction } from "../../shared/constants";
-import { ModalDialogMessage } from "../../shared/models";
+import { GeneralResultDetail, ModalDialogMessage } from "../../shared/models";
 import { Language } from "../../shared/language.native";
-import { MessageBoxService } from "../../shared/services/message-box.service.native";
+import { ResultDetail } from "../../shared/models/sportsbook-sop/result-detail.model";
 
 @Injectable({
   providedIn: 'root'
@@ -22,8 +20,8 @@ export class RefundStorage implements RefundBaseStorage {
   match = this.#match.asReadonly();
   #isDeterminedHedgeMatch = false;
 
-  #halfTimeResult: ResultDetail;
-  #fullTimeResult: ResultDetail;
+  #halfTimeResult: GeneralResultDetail;
+  #fullTimeResult: GeneralResultDetail;
 
   // Getters
   getMatch(): Match {
@@ -42,7 +40,7 @@ export class RefundStorage implements RefundBaseStorage {
     return this.#fullTimeResult;
   }
   
-  getSelectedResource(): ResultDetail[] {
+  getSelectedResource(): GeneralResultDetail[] {
     return this.#match().resultDetails.filter(x => x.checked);
   }
 

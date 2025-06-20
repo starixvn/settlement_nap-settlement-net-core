@@ -12,11 +12,13 @@ import { ResourceIds } from '../../../constants';
 import { VerificationBaseService } from '../../../services/verification-base.service';
 import { VerifyService } from '../services/verify.service';
 import { LogicService } from '../services/logic.service';
+import { ResourceNamePipe } from "../../../pipes/resource-name.pipe";
+import { ResourceStatusPipe } from '../../../pipes/resource-status.pipe';
 
 @Component({
   selector: 'refund-actions',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatTooltipModule, OnlyGoalRecordDirective, OnlyIntegerDirective],
+  imports: [CommonModule, FormsModule, MatTooltipModule, OnlyGoalRecordDirective, OnlyIntegerDirective, ResourceNamePipe, ResourceStatusPipe],
   templateUrl: './refund-actions.component.html',
   styleUrl: './refund-actions.component.css'
 })
@@ -35,7 +37,6 @@ export class RefundActionsComponent implements OnInit {
   disableSettleDeterminedHedgeMatch = false;
 
   settleDeterminableTickets = false;
-  settleDeterminableTicketsOnly = false;
   disableGoalRecordCheckbox = false;
   enableAction = false;
 
@@ -53,7 +54,7 @@ export class RefundActionsComponent implements OnInit {
 
   changeScore(result: ResultDetail) {
     this.#storage.clear();
-    if(result.resourceId == ResourceIds.halfTime){
+    if (result.resourceId == ResourceIds.halfTime) {
       this.#storage.clearFullTimeResult();
     }
 
@@ -73,30 +74,30 @@ export class RefundActionsComponent implements OnInit {
     this.#storage.setIsDeterminedHedgeMatch(this.isDeterminedHedgeMatch);
   }
 
+  onSettleDeterminableTicketsChange() {
+    this.#verifyService.verifySettleDeterminableInput(this.settleDeterminableTickets);
+  }
+
   goalRecordModelChange(value: string) {
     this.#storage.clear();
     this.matchDetail.goalRecord = value;
     this.matchDetail.isWarningGoalRecord = this.#verificationService.isHtGoalRecordInvalidWithResultDetail(this.matchDetail, this.#storage.getHalfTimeResult()) ||
-    this.#verificationService.isFullTimeGoalRecordInvalidWithResultDetail(this.matchDetail, this.#storage.getFullTimeResult());
+      this.#verificationService.isFullTimeGoalRecordInvalidWithResultDetail(this.matchDetail, this.#storage.getFullTimeResult());
 
   }
 
   confirmRefund() {
-   
+
   }
 
   refund() {
     const actionName = this.#logicService.getActionName();
-    this.#refundService.refund(actionName);
+    this.#refundService.refund(actionName, this.settleDeterminableTickets);
   }
 
   onResultCheckedChange(result: ResultDetail): void {
     this.enableAction = this.resultDetails.some(x => x.checked);
-    
-    if (!this.settleDeterminableTicketsOnly) {
-      return;
-    }
+    this.#verifyService.verifySettleDeterminableInput(this.settleDeterminableTickets);
 
-    this.#verifyService.verifySettleDeterminableInput();
   }
 }
