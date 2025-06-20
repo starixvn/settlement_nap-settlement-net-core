@@ -40,7 +40,7 @@ public class UpdateAutoSettingsHandler(
 
     private async Task<Result> ProcessResultSetting(UpdateAutoSettingsCommand command, UpdateResultSettingItem item)
     {
-        var result = item.SettleType != AutoSettleType.AutoRefund
+        var result = item.SettleType != AutoSettleType.AutoRefund || item.SettleType != AutoSettleType.FastMarketAutoRefund
             ? await EnableAutoSettle(command, item)
             : new Result();
 
@@ -95,7 +95,12 @@ public class UpdateAutoSettingsHandler(
     private async Task WriteLogUpdateSetting(UpdateAutoSettingsCommand command, UpdateResultSettingItem item, Result result)
     {
         var oldItem = command.OldResultSettings
-            .First(x => x.ResourceType == item.ResourceType && x.SettleType == item.SettleType);
+            .FirstOrDefault(x => x.ResourceType == item.ResourceType && x.SettleType == item.SettleType);
+
+        if (oldItem is null)
+        {
+            return;
+        }
 
         var differences = GetSpecificDifferences(oldItem, item);
 

@@ -21,9 +21,16 @@ public class LeagueSettingSourceCriteriaStrategy : SettingSourceCriteriaStrategy
             LeagueId = command.LeagueId
         };
 
-        if (item.SettleType == AutoSettleType.AutoRefund)
+        if (item.SettleType is AutoSettleType.AutoRefund)
         {
             criteria.Main_WaitingTime = item.WaitingTime;
+        }
+        else if (item.SettleType == AutoSettleType.FastMarketAutoRefund)
+        {
+
+            criteria.Main_WaitingTime = item.WaitingTime;
+            criteria.Enable = item.Enabled;
+            criteria.IsApplyAll = item.IsApplyChildMatches;
         }
         else
         {
@@ -49,6 +56,12 @@ public class MatchCriteriaStrategy : SettingSourceCriteriaStrategy
         if (item.SettleType == AutoSettleType.AutoRefund)
         {
             criteria.Main_WaitingTime = item.WaitingTime;
+        }
+        else if (item.SettleType == AutoSettleType.FastMarketAutoRefund)
+        {
+
+            criteria.Main_WaitingTime = item.WaitingTime;
+            criteria.Enable = item.Enabled;
         }
         else
         {

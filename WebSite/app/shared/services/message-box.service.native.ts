@@ -17,7 +17,7 @@ export class MessageBoxService {
         modal.componentInstance.hideNo = true;
     }
 
-    public confirm(dialogModel: ModalDialogMessage, func: () => void, rejectedFunc: () => void = null) {
+    public confirm(dialogModel: ModalDialogMessage, func: (checked?: boolean) => void, rejectedFunc: () => void = null) {
         const modal = this.modalService.open(ModalDialogComponent);
         modal.componentInstance.title = dialogModel.title;
         modal.componentInstance.message = dialogModel.message;
@@ -28,7 +28,8 @@ export class MessageBoxService {
             return;
         }, (reason: string) => {
             if (reason === 'Yes') {
-                func();
+                const isChecked = dialogModel.requireCheckbox ? modal.componentInstance.isChecked : undefined;
+                func(isChecked);
             } else if (dialogModel.hasActionOnNoBtn && reason === 'No' && rejectedFunc !== null) {
                 rejectedFunc();
             }
