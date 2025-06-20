@@ -76,7 +76,7 @@ public class FastMarketResultServiceImp(
 
     public IEnumerable<ResourceItem> CreateResourcesFromBetType(BetTypeElement betType, string action, bool isSettleDetermined)
     {
-        if (action == ActionType.RefundAll && !isSettleDetermined)
+        if ((action == ActionType.RefundAll && !isSettleDetermined) || action == ActionType.UnCalculate)
         {
             return betType.Items.Select(item => new ResourceItem
             {
@@ -87,12 +87,16 @@ public class FastMarketResultServiceImp(
 
         if (betType.Id == FastMarketBetType.TimeMachineHdp)
         {
-            return betType.Items.Select(item => new ResourceItem
+            return betType.Items.Select(item =>
             {
-                ResourceId = betType.Id.ToString(),
-                OtherInfo = item.Position.ToString(),
-                HomeValue = (Convert.ToInt32(item.Result) % TimeMachineHandicapScoreRange).ToString(),
-                AwayValue = (Convert.ToInt32(item.Result) / TimeMachineHandicapScoreRange).ToString()
+                var result = string.IsNullOrWhiteSpace(item.Result) ? 0 : Convert.ToInt32(item.Result);
+                return new ResourceItem
+                {
+                    ResourceId = betType.Id.ToString(),
+                    OtherInfo = item.Position.ToString(),
+                    HomeValue = (Convert.ToInt32(result) % TimeMachineHandicapScoreRange).ToString(),
+                    AwayValue = (Convert.ToInt32(result) / TimeMachineHandicapScoreRange).ToString()
+                };
             });
         }
 
