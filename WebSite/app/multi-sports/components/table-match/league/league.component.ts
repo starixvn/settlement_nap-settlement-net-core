@@ -8,7 +8,7 @@ import { MultiSportsStore } from "../../../services/multi-sports.store";
 import { Permission } from "../../../models/permission.model";
 import { Subject, distinctUntilChanged, map, takeUntil } from "rxjs";
 import { isEqual } from "lodash";
-import { BackgroundColor } from "../../../../shared/constants";
+import { BackgroundColor, SportType } from "../../../../shared/constants";
 import { AutoSetting, AutoSettingLeagueQuery } from "../../../../shared/models";
 import { Language } from "../../../../shared/language.native";
 import { AutoSettingPosition } from "../../../constants";
@@ -25,7 +25,7 @@ import { TimeConverterPipe } from '../../../../shared/pipes/time-converter.pipe'
 export class LeagueComponent implements OnInit, OnDestroy {
   @Input() league: LeagueMatch;
   readonly sportSupportInstant = SportSupportInstant;
-  readonly sportSupportNewAutoPayout = SportNewAutoPayout;
+  // readonly sportSupportNewAutoPayout = [...SportNewAutoPayout, SportType.snookerPool];
   permission: Permission;
   language = Language;
   ngUnsubscribe = new Subject();
@@ -104,7 +104,7 @@ export class LeagueComponent implements OnInit, OnDestroy {
 
   changeAutoLeague() {
     if (this.permission.canAutoPayout) {
-      SportNewAutoPayout.includes(this.league.sportType)
+      this.league.apGroup
         ? this.popupService.openAutoSettleSetting("League", this.league, null, null, () => { this.cd.markForCheck() })
         : this.popupService.openUpdatePayoutForLeague(this.league, () => { this.cd.markForCheck() });
     }

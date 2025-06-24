@@ -60,4 +60,5 @@ export class Match {
      public hasProviderHT: boolean;
      public hasProviderFT: boolean;
      public resourceIdsHasTicket: string[];
+     public apGroup: number | null;
 }

@@ -13,4 +13,5 @@ export class LeagueMatch {
     public autoRetryTime: number;
     public autoCalcSetting: AutoSetting;
     public refundWaitingTime: number;
+    public apGroup: number | null;
 }
