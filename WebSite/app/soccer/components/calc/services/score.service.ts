@@ -1,32 +1,31 @@
 import { inject, Injectable } from "@angular/core";
 import { CalculateStorage } from "../../../storage/calculate.storage";
 import { MessageBoxService } from "../../../../shared/services";
-import { CalculateAction, SettlementStatusId } from "../../../../shared/constants";
+import { CalculateAction, ScoreSourceType, SettlementStatusId } from "../../../../shared/constants";
 import { isEqual, isNull } from "lodash";
-import { ResultDetail } from "../../../models";
-import { VerifyScoreGoalService } from "./verify-score-goal.service";
+import { ResultDetail } from "../../../../shared/models/sportsbook-sop/result-detail.model";
+import { VerificationBaseService } from "../../../../core/services/verification-base.service";
 
 @Injectable()
 export class ScoreService {
        #storage = inject(CalculateStorage);
        #messageBoxService = inject(MessageBoxService);
-       #verifyScoreGoalService = inject(VerifyScoreGoalService);
-
+       #verificationService = inject(VerificationBaseService);
 
        confirmCopyScore(message: string, type: string) {
-              const { matchDetail } = this.#storage.getMatch();
               this.#storage.dialogMessage.message = message;
               this.#messageBoxService.confirm(this.#storage.dialogMessage, () => {
                      if (isEqual(type, CalculateAction.copyHTScore) || isEqual(type, CalculateAction.copyAllScore)) {
-                            this.#storage.setHaftTimeScore(matchDetail.exHTHomeScore, matchDetail.exHTAwayScore);
-                            const halfTimeResults = [this.#storage.getHalfTimeResult(),this.#storage.outsideHtResult,this.#storage.traderHtResult,this.#storage.providerHtResult] 
-                           
-                            this.#storage.getHalfTimeResult().isMismatch =  this.#verifyScoreGoalService.isMismatched(halfTimeResults);;
+                            const halfTimeResult = this.#storage.getHalfTimeResult();
+                            const providerResult = this.getProviderResult(halfTimeResult);
+                            this.#storage.setHaftTimeScore(providerResult.homeValue, providerResult.awayValue);
+                            this.#storage.getHalfTimeResult().isScoreMismatched =  this.#verificationService.isMismatchedWarning(halfTimeResult);
                      }
                      if (isEqual(type, CalculateAction.copyFTScore) || isEqual(type, CalculateAction.copyAllScore)) {
-                            this.#storage.setFullTimeScore(matchDetail.exFTHomeScore, matchDetail.exFTAwayScore);      
-                            const fullTimeResults = [this.#storage.getFullTimeResult(),this.#storage.outsideFtResult,this.#storage.traderFtResult,this.#storage.providerFtResult] 
-                            this.#storage.getFullTimeResult().isMismatch =  this.#verifyScoreGoalService.isMismatched(fullTimeResults);;
+                            const fullTimeResult = this.#storage.getFullTimeResult();
+                            const providerResult = this.getProviderResult(fullTimeResult);
+                            this.#storage.setFullTimeScore(providerResult.homeValue, providerResult.awayValue);      
+                            this.#storage.getFullTimeResult().isScoreMismatched =  this.#verificationService.isMismatchedWarning(fullTimeResult);
                      }
                      this.#storage.changeScore();
                      this.changeResultState();
@@ -49,10 +48,14 @@ export class ScoreService {
                             return;
                      }
        
-                     if (resultDetail.isMismatch || matchDetail.isScoreInconsistent) {
+                     if (resultDetail.isScoreMismatched || matchDetail.isScoreInconsistent) {
                             resultDetail.resultState += ' mismatched';
                      }
               });
        
+       }
+
+       private getProviderResult(resultDetail: ResultDetail) {
+              return resultDetail.externalScores.find(x => x.sourceId === ScoreSourceType.Sbo);
        }
 }

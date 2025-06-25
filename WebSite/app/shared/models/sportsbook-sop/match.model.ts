@@ -12,7 +12,7 @@ export class GeneralMatch {
     public isClickOnCalculate: boolean;
     public isScoreDirect: boolean;
     public permission: Permission;
-    public ticketCounts: TicketCount;
+    public ticketCounts: TicketCount[] | TicketCount;
 
     constructor(matchDetail: MatchDetail) {
         this.matchDetail = matchDetail;

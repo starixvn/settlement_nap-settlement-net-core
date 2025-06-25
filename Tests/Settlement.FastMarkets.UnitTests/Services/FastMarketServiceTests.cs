@@ -10,6 +10,7 @@ using Settlement.FastMarkets.Criteria;
 using Settlement.FastMarkets.Models;
 using Settlement.FastMarkets.Requests;
 using Settlement.FastMarkets.Services;
+using ResourceItem = Fanex.Settlement.MessageBridge.ResultAmendment.ResourceItem;
 
 namespace Settlement.FastMarkets.UnitTests.Services;
 
@@ -134,7 +135,7 @@ public class FastMarketServiceTests
     {
         // Arrange
         var query = new SettleRequest();
-        generationService.QuerySettle(Arg.Any<SettleRequest>()).Returns(new PushFastMarketResultCriteria());
+        generationService.QuerySettle(Arg.Any<SettleRequest>()).Returns(new PushFastMarketResultCriteria() { SelectedResources = new List<ResourceItem>() });
         scaleOutSettleService.ValidateEventAndTicketFastMarket(Arg.Any<EventTicketFastMarketRequest>())
             .Returns(new ResultMessage());
 

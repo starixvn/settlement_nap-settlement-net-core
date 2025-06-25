@@ -2,6 +2,12 @@
     <div class="icon">
     </div>
     SOCCER - {{matchDetail.leagueName}}
+    @if(pageType === pageTypeEnum.ReCalculate){
+    <button *ngIf="match.permission.canChangeScoreSource" class="button manage-outside"
+        (click)="manageOutSideSourcePopup()">
+        Manage Outside Source
+    </button>
+    }
 </div>
 <table class="table-calculation">
     <thead>

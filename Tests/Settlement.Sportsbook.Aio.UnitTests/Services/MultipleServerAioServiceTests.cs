@@ -161,7 +161,8 @@ public class MultipleServerAioServiceTests
         {
             ErrCode = 1,
             ErrMsg = "Message",
-            ChildMatchIds = null
+            ChildMatchIds = null,
+            SettledSessionId = actual.SettledSessionId,
         };
 
         Assert.Equal(expectResult.ErrCode, actual.ErrCode);
@@ -187,7 +188,8 @@ public class MultipleServerAioServiceTests
             ErrCode = 0,
             ErrMsg = null,
             ChildMatchIds = "123,456",
-            SettledSessionId = actual.SettledSessionId
+            SettledSessionId = actual.SettledSessionId,
+            IsOrg = true
         };
 
         Assert.Equal(expectResult.ErrCode, actual.ErrCode);

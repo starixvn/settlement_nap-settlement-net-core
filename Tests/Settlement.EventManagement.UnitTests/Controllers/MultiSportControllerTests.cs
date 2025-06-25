@@ -1,6 +1,10 @@
-﻿using MediatR;
+﻿using Fanex.NAP.Client;
+using Fanex.NAP.Client.Configuration;
+using Fanex.NAP.Client.Services;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Settlement.Core.Models;
+using Settlement.Core.Services;
 using Settlement.EventManagement.Controllers;
 using Settlement.EventManagement.Models;
 using Settlement.EventManagement.Models.MultiSports;
@@ -16,12 +20,19 @@ public class MultiSportControllerTests
     //private readonly PermissionService permissionService;
     //private readonly HttpService httpService;
 
+
     public MultiSportControllerTests()
     {
         mediator = Substitute.For<IMediator>();
-        controller = new MultiSportController(mediator, null, null);
-        //permissionService = Substitute.For<PermissionService>();
-        //httpService = Substitute.For<HttpService>(null, null); // Pass
+        var napSession = Substitute.For<INapSession>();
+        napSession.UserId = 1;
+
+        var napSettings = Substitute.For<INapSettings>();
+        var userService = Substitute.For<IUserService>();
+        var permisstionService = Substitute.For<PermissionService>(napSession, userService, napSettings);
+        permisstionService.Permission.Returns(new Permission());
+
+        controller = new MultiSportController(mediator, permisstionService, null);
     }
 
     [Fact]

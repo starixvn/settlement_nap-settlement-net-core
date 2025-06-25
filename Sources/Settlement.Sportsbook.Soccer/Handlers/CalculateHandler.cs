@@ -25,7 +25,8 @@ public class CalculateHandler(
         IRequestHandler<UncalculateFtRequest, Result>,
         IRequestHandler<GetResultDetailRequest, IEnumerable<ResultDetail>>,
         IRequestHandler<SaveScoreRequest, Result>,
-        IRequestHandler<CountTicketsRequest, CountTicketResponse>
+        IRequestHandler<CountTicketsRequest, CountTicketResponse>,
+        IRequestHandler<SaveOutsideScoreRequest, Result>
 
 {
     public async Task<Match> Handle(GetMatchRequest request, CancellationToken cancellationToken)
@@ -76,4 +77,9 @@ public class CalculateHandler(
 
     public async Task<CountTicketResponse> Handle(CountTicketsRequest request, CancellationToken cancellationToken)
         => await fetchDataService.CountTickets(request.MatchId);
+
+    public async Task<Result> Handle(SaveOutsideScoreRequest request, CancellationToken cancellationToken)
+    {
+        return await calculateService.SaveOutsideScore(request);
+    }
 }

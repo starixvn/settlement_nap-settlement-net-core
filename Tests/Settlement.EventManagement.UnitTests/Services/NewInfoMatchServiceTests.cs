@@ -36,7 +36,12 @@ public class NewInfoMatchServiceTests
         eventStatusService = Substitute.For<EventStatusService>();
         adjustEventStatusService = Substitute.For<AdjustEventStatusService>();
         repository = Substitute.For<IDynamicRepository>();
-        var permissionService = new PermissionServiceImp(Substitute.For<INapSession>(), Substitute.For<IUserService>(), Substitute.For<INapSettings>());
+        var napSession = Substitute.For<INapSession>();
+        napSession.UserId = 1;
+
+        var napSettings = Substitute.For<INapSettings>();
+        var userService = Substitute.For<IUserService>();
+        var permissionService = Substitute.For<PermissionService>(napSession, userService, napSettings);
 
         service = new NewInfoMatchServiceImp(siteMatchService, goalIconService, eventStatusService, adjustEventStatusService, repository, permissionService);
     }

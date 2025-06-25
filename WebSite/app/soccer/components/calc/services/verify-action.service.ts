@@ -1,10 +1,10 @@
 import { Injectable } from "@angular/core";
 import * as _ from "lodash";
 import { TicketStatusText, SettlementStatusId } from "../../../../shared/constants";
-import { FantasyRelatedMatch, MatchDetail } from '../models/match.model';
+import { FantasyRelatedMatch, MatchDetailSoccer as MatchDetail } from '../models/match.model';
 import { VerifyScoreGoalService } from "./verify-score-goal.service";
 import { RequestService } from './request.service';
-import { ResultDetail } from "../../../models";
+import { ResultDetail } from "../../../../shared/models/sportsbook-sop";
 
 @Injectable()
 export class VerifyActionService {

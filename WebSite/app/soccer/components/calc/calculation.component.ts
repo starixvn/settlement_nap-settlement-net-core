@@ -1,7 +1,7 @@
 import { FormsModule } from '@angular/forms';
 import { Component, inject, ViewChild } from '@angular/core';
 import { ToastContainerDirective, ToastContainerModule, ToastrService } from 'ngx-toastr';
-import { ChildMatch, FantasyRelatedMatch, HedgeMatchDetail, Match, MatchDetail, Score } from './models/match.model';
+import { ChildMatch, FantasyRelatedMatch, HedgeMatchDetail, Match, MatchDetailSoccer as MatchDetail, Score } from './models/match.model';
 import { Soccer } from '../soccer.model';
 import { RequestService } from './services/request.service';
 import { VerifyMatchService } from './services/verify-match.service';
@@ -26,6 +26,7 @@ import { CalculateService } from './services/calculate.service';
 import { ScoreService } from './services/score.service';
 import { GoalHistoryComponent } from './goal-history.component';
 import { GoalRecordWithSemicolonService } from './services/goal-record-with-semicolon.service';
+import { VerificationBaseService as sopVerificationService } from '../../../core/services/verification-base.service';
 
 @Component({
     selector: 'calculation',
@@ -55,7 +56,8 @@ import { GoalRecordWithSemicolonService } from './services/goal-record-with-semi
         CalculateStorage,
         CalculateService,
         ScoreService,
-        GoalRecordWithSemicolonService
+        GoalRecordWithSemicolonService,
+        sopVerificationService
     ]
 })
 export class CalculationComponent implements Soccer {

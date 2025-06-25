@@ -1,4 +1,5 @@
 import { ResultSettingModel, GeneralResultDetail } from '../../shared/models';
+import { ExternalResultDetail } from '../../shared/models/sportsbook-sop';
 export class ResultDetail extends GeneralResultDetail{
     public map: number;
     public sourceId : number;
@@ -9,12 +10,13 @@ export class ResultDetail extends GeneralResultDetail{
     public isResultWarning: boolean;
     public isHomeValueWarning: boolean;
     public isAwayValueWarning: boolean;
-    public isInvalidValue: boolean;
     public isNotTaken: boolean;
     public isSettleDetermined: boolean;
     public isSettleDeterminedOriginal: boolean;
     public isInvalidSelectedProceed: boolean;
     public isNotExistedValue: boolean;
+    public traderScore: GeneralResultDetail;
+    public externalScores: ExternalResultDetail[];
     public resultSettingData: ResultSettingModel = {
         isHoldResult: false,
         isConfirmedRefund: false,

@@ -3,7 +3,7 @@ import { Storage } from "../../../storage/storage.service.native";
 import { VerifyScoreGoalService } from "../../../components/calc/services/verify-score-goal.service";
 import { inject } from "@angular/core";
 import { Language } from "../../../../shared/language.native";
-import { CalculateAction } from "../../../../shared/constants";
+import { CalculateAction, ScoreSourceType } from "../../../../shared/constants";
 import { ScoreService } from "../../../components/calc/services/score.service";
 
 export class HalfTimeSettledHandler extends AbstractHandler {
@@ -12,7 +12,9 @@ export class HalfTimeSettledHandler extends AbstractHandler {
 
   public handle(storage: Storage): void {
     const {matchDetail} = storage.getMatch();
-    const isExtFTScoreValid = this.#verifyScoreGoalService.isScoresValid(matchDetail.exFTHomeScore, matchDetail.exFTAwayScore);
+    const ftResultDetail = storage.getFullTimeResult();
+    const providerScore = ftResultDetail.externalScores.find(e => e.sourceId == ScoreSourceType.Sbo)
+    const isExtFTScoreValid = this.#verifyScoreGoalService.isScoresValid(providerScore?.homeValue, providerScore?.awayValue);
 
     if (this.#verifyScoreGoalService.isHalfTimeSettled(matchDetail)) {
       if (isExtFTScoreValid) {

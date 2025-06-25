@@ -68,6 +68,9 @@ public class SoccerController(IMediator mediator) : ControllerBase
     [Route("save-score"), HttpPost]
     public async Task<IActionResult> SaveScore(SaveScoreRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
+    [Route("save-outside-score"), HttpPost]
+    public async Task<IActionResult> SaveOutsideScore(SaveOutsideScoreRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+
     [Route("count-group-tickets"), HttpPost]
     public async Task<IActionResult> CountTickets(CountTicketsRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 }

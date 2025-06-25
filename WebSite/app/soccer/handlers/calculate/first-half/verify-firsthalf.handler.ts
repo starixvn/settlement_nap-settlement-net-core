@@ -1,12 +1,12 @@
 import { inject } from "@angular/core";
-import { FantasyRelatedMatch, MatchDetail } from "../../../components/calc/models/match.model";
+import { FantasyRelatedMatch, MatchDetailSoccer as MatchDetail } from "../../../components/calc/models/match.model";
 import { VerifyScoreGoalService } from "../../../components/calc/services/verify-score-goal.service";
 import { AbstractHandler } from "../../abstract.handler.native";
 import { Language } from "../../../../shared/language.native";
-import { CalculateAction, ResourceIds } from "../../../../shared/constants";
+import { CalculateAction } from "../../../../shared/constants";
 import { Storage } from "../../../storage/storage.service.native";
 import { VerifyActionService } from "../../../components/calc/services/verify-action.service";
-import { ResultDetail } from "../../../models";
+import { ResultDetail } from "../../../../shared/models/sportsbook-sop";
 
 
 export class VerifyFirstHalfHandler extends AbstractHandler {
@@ -26,7 +26,7 @@ export class VerifyFirstHalfHandler extends AbstractHandler {
 
 
   private async verifyFirstHalf(halftimeResult: ResultDetail, matchDetail: MatchDetail, relatedMatches: FantasyRelatedMatch[]) {
-    if (this.#verifyScoreGoalService.verifyScore(halftimeResult, matchDetail)) {
+    if (this.#verifyScoreGoalService.verifyScore(halftimeResult)) {
       return Language.warningInputScore;
     }
 

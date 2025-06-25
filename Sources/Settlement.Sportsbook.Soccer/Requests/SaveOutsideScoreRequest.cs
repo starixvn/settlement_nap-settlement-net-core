@@ -2,10 +2,11 @@
 
 namespace Settlement.Sportsbook.Soccer.Requests;
 
-public class SaveOutsideScoreRequest
+public class SaveOutsideScoreRequest : IRequest<Result>
 {
     public int MatchId { get; set; }
 
-    public IList<ResultDetail> CheckedResults { get; set; }
-    public IList<ResultDetail> OutsideResults { get; set; }
+    public List<SaveScoreModel> ScoresToSave { get; set; }
+
+    public List<SaveScoreModel> CheckedScores { get; set; }
 }

@@ -1,12 +1,10 @@
 import { FormsModule } from '@angular/forms';
 import { Component, inject, OnInit } from '@angular/core';
-import { MatchDetail } from './models/match.model';
-import { ResourceIds } from '../../constants';
-import { ResultDetail } from '../../models';
+import { ExternalResult, ExternalResultDetail, ResultDetail } from '../../../shared/models/sportsbook-sop';
 import { CommonModule } from '@angular/common';
 import { ResultSettingQuery } from '../../../shared/models';
 import { Language } from '../../../shared/language.native';
-import { ResultSettingType, ResultStatusId, ScoreSourceType } from '../../../shared/constants';
+import { ResourceIds, ResultSettingType, ResultStatus, ResultStatusId, ScoreSourceType, SettlementStatusId, SportType, TicketStatusText } from '../../../shared/constants';
 import { AioService, MessageBoxService } from '../../../shared/services';
 import * as _ from 'lodash';
 import { CalculateStorage } from '../../storage/calculate.storage';
@@ -18,13 +16,19 @@ import { OnlyGoalRecordDirective } from '../../directives/only-goal-record.direc
 import { ScoreService } from './services/score.service';
 import { OnlyIntegerDirective } from '../../../shared/directives';
 import { VerifyScoreGoalService } from './services/verify-score-goal.service';
-
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { ExternalLinkPipe } from '../../../score-source-setting/pipes';
+import { ExternalSourceNamePipe } from '../../../shared/pipes/external-source-name.pipe';
+import { VerificationBaseService } from '../../../core/services/verification-base.service';
+import { MatchDetailSoccer } from './models/match.model';
+import { VerificationBaseService as sopVerificationService } from '../../../core/services/verification-base.service';
+import { ResourceNamePipe } from '../../pipes/resource-name.pipe';
 
 @Component({
   selector: 'calculation-action',
   standalone: true,
-  imports: [CommonModule, FormsModule, OnlyGoalRecordDirective, OnlyIntegerDirective],
-  providers: [GoalIconService, GoalRecordWithOutSemicolonService],
+  imports: [CommonModule, FormsModule, OnlyGoalRecordDirective, OnlyIntegerDirective, MatTooltipModule, ExternalLinkPipe, ExternalSourceNamePipe, ResourceNamePipe],
+  providers: [GoalIconService, GoalRecordWithOutSemicolonService, VerificationBaseService, sopVerificationService],
   templateUrl: './calculation-action.component.html',
 })
 export class CalculationActionComponent implements OnInit {
@@ -35,94 +39,80 @@ export class CalculationActionComponent implements OnInit {
   #scoreService = inject(ScoreService);
   #storage = inject(CalculateStorage);
   #verifyScoreGoalService = inject(VerifyScoreGoalService);
+  #verificationService = inject(VerificationBaseService);
 
-  matchDetail: MatchDetail;
+  SOURCE_ID = ScoreSourceType;
+  matchDetail: MatchDetailSoccer;
   permission: Permission;
   
   halfTimeResult: ResultDetail;
   fullTimeResult: ResultDetail;
 
-  outsideHtResult: ResultDetail;
-  outsideFtResult: ResultDetail;
-  traderHtResult: ResultDetail;
-  traderFtResult: ResultDetail;
-
+  outSideCount = 1;
+  maxProviderCol = 3;
   enableAction = false;
   disableGoalRecordCheckbox = false;
 
   readonly resultSettledStatusIds = [ResultStatusId.AutoCompleted,ResultStatusId.ManualCompleted];
 
-  isReadyMatch = this.#storage.getIsReadyMatch();
+  resultDetails: ResultDetail[] = [];
+  isReadyMatch = false;
 
   ngOnInit() {
     this.permission = this.#storage.getPermission();
-    const { matchDetail } = this.#storage.match();
+    const { matchDetail, resultDetails, externalResults } = this.#storage.match();
     this.matchDetail = matchDetail;
+    this.resultDetails = resultDetails;
+    this.maxProviderCol = this.getProviderCol(externalResults);
+    this.#verificationService.generateExternalScores(this.#storage.match(), resultDetails, SportType.soccer, this.maxProviderCol);
+    this.#storage.setMatch({
+      ...this.#storage.match(),
+      originalResultDetail: _.cloneDeep(resultDetails)
+    });
 
+    this.resetHomeAway(this.resultDetails);
     this.setState();
-
-    
-    this.autoSetHtFinalResult();
-    this.autoSetFtFinalResult();
-
-    this.scoreChanged(this.halfTimeResult);
-    this.scoreChanged(this.fullTimeResult);
-
+    this.verifyAndAutoFillScore(this.halfTimeResult);
+    this.verifyAndAutoFillScore(this.fullTimeResult);
+    this.outSideCount =  resultDetails[0].externalScores.filter(x => x.sourceId >= ScoreSourceType.screenshot).length
     this.matchDetail.applyGoalRecord = this.disableGoalRecordCheckbox = this.calculateGoalRecordState(matchDetail);
-
+    this.isReadyMatch = this.matchDetail.playTime >= 0;
     this.enableAction = this.halfTimeResult.checked || this.fullTimeResult.checked;
   }
 
-  get isTraderHtConfirmed() {
-    return this.traderHtResult.resultStatusId === ResultStatusId.TraderConfirm 
-      && !_.isEmpty(this.traderHtResult.homeValue) && !_.isEmpty(this.traderHtResult.awayValue);
+
+
+  isConfirmed(result: ExternalResultDetail) {
+    return result.resultStatusId === ResultStatusId.TraderConfirm 
+      && !_.isEmpty(result.homeValue) && !_.isEmpty(result.awayValue);
   }
 
-  get isTraderFtConfirmed() {
-    return this.traderFtResult.resultStatusId === ResultStatusId.TraderConfirm 
-      && !_.isEmpty(this.traderFtResult.homeValue) && !_.isEmpty(this.traderFtResult.awayValue);
+  private getProviderCol(externalResults: ExternalResult[]) {
+    const providers = _.filter(externalResults, (item: ExternalResult) =>
+      item.sourceId !== ScoreSourceType.trader && item.sourceId < ScoreSourceType.screenshot).length
+    return providers > 3 ? 3 : providers == 0 ? 1 : providers;
   }
+
 
   private setState() {
     this.halfTimeResult = this.#storage.getHalfTimeResult();
     this.fullTimeResult = this.#storage.getFullTimeResult();
 
-    this.outsideHtResult = this.#storage.outsideHtResult;
-    this.outsideFtResult = this.#storage.outsideFtResult;
-    
-    this.traderHtResult = this.#storage.traderHtResult;
-    this.traderFtResult = this.#storage.traderFtResult;
-
     this.halfTimeResult.resultSettingData.iconHoldResult = this.getResultSettingIcon(this.halfTimeResult);
     this.fullTimeResult.resultSettingData.iconHoldResult = this.getResultSettingIcon(this.fullTimeResult);
   }
 
-
-  private autoSetHtFinalResult() {
-    const [valid, validResult] = this.#verifyScoreGoalService.tryGetValidResult(this.outsideHtResult,[this.traderHtResult,this.#storage.providerHtResult]);
-    const isHalfTimeSettled = this.resultSettledStatusIds.includes(this.halfTimeResult.resultStatusId);
-    if(valid && !isHalfTimeSettled) {
-      this.#storage.setHaftTimeScore(validResult.homeValue,validResult.awayValue);
-    } 
-
-    if(!valid && !isHalfTimeSettled) {
-      this.#storage.setHaftTimeScore("","");
-    }
+  private resetHomeAway(resultDetails: ResultDetail[]) {
+    resultDetails.forEach((map) => {
+      const hideScore = map.settlementStatusId === SettlementStatusId.Refund
+        || (map.resultStatusId !== ResultStatusId.ManualCompleted && map.resultStatusId !== ResultStatusId.AutoCompleted);
+      map.homeValue = hideScore ? "" : map.homeValue;
+      map.awayValue = hideScore ? "" : map.awayValue;
+    });
   }
 
-  private autoSetFtFinalResult() {
-    const [valid, validResult] = this.#verifyScoreGoalService.tryGetValidResult(this.outsideFtResult,[this.traderFtResult,this.#storage.providerFtResult]);
-    const isFullTimeSettled = this.resultSettledStatusIds.includes(this.fullTimeResult.resultStatusId);
-    if(valid && !isFullTimeSettled) {
-      this.#storage.setFullTimeScore(validResult.homeValue,validResult.awayValue);
-    }
-    
-    if(!valid && !isFullTimeSettled) {
-      this.#storage.setFullTimeScore("","");
-    }
-  }
 
-  private calculateGoalRecordState(matchDetail: MatchDetail): boolean {
+  private calculateGoalRecordState(matchDetail: MatchDetailSoccer): boolean {
     return matchDetail.isExistFgLg ||
       matchDetail.isExistHtFgLg ||
       matchDetail.isExistResultAndFirstTeamScore ||
@@ -133,6 +123,10 @@ export class CalculationActionComponent implements OnInit {
   copyScore() {
     this.#storage.clear();
     this.#calculateService.copyScore();
+  }
+
+  getTextTooltip(text: string, maxLength: number) {
+    return text?.length > maxLength ? text : null;
   }
 
   selectResult() {
@@ -159,59 +153,38 @@ export class CalculationActionComponent implements OnInit {
   }
 
   scoreChanged(resultDetail: ResultDetail) {
-    this.isReadyMatch && this.#storage.clear();
+    this.#storage.clear();
     this.#storage.changeScore();
 
-    const isHalfTime = resultDetail.resourceId === ResourceIds.halfTime;
-    const { homeExScore, awayExScore, homeValue, awayValue } = this.getScores(isHalfTime);
-
-    resultDetail.isMismatch = this.checkMismatch(homeExScore, awayExScore, homeValue, awayValue);
-
-    if(isHalfTime) {
-      this.halfTimeResult.isMismatch = this.isMismatched(resultDetail);
-    }  else {
-      this.fullTimeResult.isMismatch = this.isMismatched(resultDetail); 
-    }
+    resultDetail.isScoreMismatched = this.#verificationService.isMismatchedWarning(resultDetail);
 
     this.#scoreService.changeResultState();  
   }
 
-  changeConfirmScore(resultDetail: ResultDetail) {
+  changeConfirmScore(externalScore: ExternalResultDetail, result: ResultDetail) {
     this.#storage.clear();
 
-    if(resultDetail.resourceId === ResourceIds.halfTime) {
-      this.autoSetHtFinalResult();
-      this.halfTimeResult.isMismatch = this.isMismatched(resultDetail);
+    const oppositeResource = this.getOutsideResult(externalScore);
+    if(externalScore.resourceId === ResourceIds.halfTime) {
+      externalScore.isInvalidValue = this.#verifyScoreGoalService
+      .isHtFtNotConsistent(externalScore, oppositeResource);
     } else {
-      this.autoSetFtFinalResult();
-      this.fullTimeResult.isMismatch = this.isMismatched(resultDetail);
+      externalScore.isInvalidValue = this.#verifyScoreGoalService
+      .isHtFtNotConsistent(oppositeResource, externalScore);
     }
-
-    if(resultDetail.sourceId === ScoreSourceType.trader) {
-      this.traderFtResult.isInvalidValue = this.#verifyScoreGoalService
-        .isHtFtNotConsistent(this.traderHtResult,this.traderFtResult);
-      this.traderHtResult.isInvalidValue = this.#verifyScoreGoalService
-        .isHtFtNotConsistent(this.traderHtResult,this.traderFtResult);
-    }
-
-    if(resultDetail.sourceId === ScoreSourceType.screenshot) {
-      this.outsideFtResult.isInvalidValue = this.#verifyScoreGoalService
-        .isHtFtNotConsistent(this.outsideHtResult,this.outsideFtResult);
-      this.outsideHtResult.isInvalidValue = this.#verifyScoreGoalService
-        .isHtFtNotConsistent(this.outsideHtResult,this.outsideFtResult);
-    }
+    oppositeResource.isInvalidValue = externalScore.isInvalidValue;
 
     this.#storage.changeScore();
     this.#scoreService.changeResultState();
+    this.verifyAndAutoFillScore(result)
   }
 
-
-  private isMismatched(resultDetail: ResultDetail) {
-    const isHalfTime = resultDetail.resourceId === ResourceIds.halfTime;
-    const results =  isHalfTime 
-      ? [this.halfTimeResult,this.outsideHtResult,this.traderHtResult,this.#storage.providerHtResult] 
-      : [this.fullTimeResult,this.outsideFtResult,this.traderFtResult,this.#storage.providerFtResult];
-    return this.#verifyScoreGoalService.isMismatched(results);
+  private getOutsideResult(externalScore: ExternalResultDetail) {
+    const oppositeResourceId = externalScore.resourceId === ResourceIds.halfTime ? ResourceIds.fullTime : ResourceIds.halfTime;
+    return this.resultDetails
+      .find(x => x.resourceId === oppositeResourceId)
+      ?.externalScores
+      .find(x => x.sourceId === externalScore.sourceId);
   }
 
   calculate() {
@@ -249,9 +222,14 @@ export class CalculationActionComponent implements OnInit {
     this.#calculateService.unCalcInstant();
   }
 
-  saveScore() {
+  saveTraderScore() {
     this.#storage.clear();
     this.#calculateService.saveScore();
+  }
+
+  saveScore() {
+    this.#storage.clear();
+    this.#calculateService.saveOutsideScore();
   }
 
   goalRecordModelChange(value: string) {
@@ -260,29 +238,26 @@ export class CalculationActionComponent implements OnInit {
     this.matchDetail.goalIcon = this.#goalIconService.generateGoalIcon(this.matchDetail, this.halfTimeResult, this.fullTimeResult);
   }
 
-
   private getResultSettingIcon(result: ResultDetail) {
     return result.resultSettingData?.isHoldResult ? 'icon-yes' : 'icon-no';
   }
 
-  private isEmptyScore(value: string) {
-    return _.isNull(value) || _.isEmpty(value) || _.isNaN(value);
+  canSettleResult(result: ResultDetail) {
+    const isRunning = _.isEqual(result.ticketStatus, TicketStatusText.running)
+      || _.isEqual(result.resultStatus, ResultStatus.noResult)
+      || _.isEqual(result.resultStatus, ResultStatus.running);
+
+    return isRunning
+      && !result.isScoreMismatched
+      && this.#verificationService.isValidTraderConfirmScore(result);
   }
 
-  private getScores(isHalfTime: boolean) {
-    return {
-      homeExScore: isHalfTime ? this.matchDetail.exHTHomeScore : this.matchDetail.exFTHomeScore,
-      awayExScore: isHalfTime ? this.matchDetail.exHTAwayScore : this.matchDetail.exFTAwayScore,
-      homeValue: isHalfTime ? this.halfTimeResult.homeValue : this.fullTimeResult.homeValue,
-      awayValue: isHalfTime ? this.halfTimeResult.awayValue : this.fullTimeResult.awayValue,
-    };
-  }
-
-  private checkMismatch(homeExScore: string, awayExScore: string, homeValue: string, awayValue: string) {
-    return !this.isEmptyScore(homeExScore) &&
-      !this.isEmptyScore(awayExScore) &&
-      !this.isEmptyScore(homeValue) &&
-      !this.isEmptyScore(awayValue) &&
-      (!_.isEqual(homeValue, homeExScore) || !_.isEqual(awayValue, awayExScore));
+  private verifyAndAutoFillScore(map: ResultDetail, isOnload = false) {
+    if(isOnload && map.settlementStatusId  === SettlementStatusId.Refund) {
+      return;
+    }
+    map.isScoreMismatched = this.#verificationService.isMismatchedWarning(map);
+    this.#verificationService.autoFillScore(map);
+    this.scoreChanged(map);
   }
 }

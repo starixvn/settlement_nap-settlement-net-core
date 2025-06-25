@@ -1,11 +1,10 @@
 import { Injectable } from "@angular/core";
 import * as _ from "lodash";
-import { MatchDetail } from '../models/match.model';
 import { GoalNameIcon } from '../models/constant.native';
 import { GoalIcon } from '../../../models/goal-icon.model';
 import { VerifyScoreGoalService } from "./verify-score-goal.service";
 import { Goal } from "../../../constants";
-import { ResultDetail } from "../../../models";
+import { ResultDetail } from "../../../../shared/models/sportsbook-sop";
 
 @Injectable()
 export class GoalRecordWithOutSemicolonService {

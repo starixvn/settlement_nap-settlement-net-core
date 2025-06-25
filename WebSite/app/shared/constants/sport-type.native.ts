@@ -70,6 +70,7 @@ export const SportType = {
 };
 
 export const SpoSports = [
+  SportType.soccer,
   SportType.tennis,
   SportType.cricket,
   SportType.badminton,

@@ -25,6 +25,7 @@ import { VerifyScoreConfirmHandler } from "../../../handlers/calculate/all/verif
 import { ConfirmFtNoTicketHandler } from "../../../handlers/calculate/full-time/confirm-ft-noTicket.handler";
 import { VerifyInconsistentScoreHandler } from "../../../handlers/calculate/all/verify-inconsistent-score.handler";
 import { VerifyInsufficientScoreHandler } from "../../../handlers/calculate/all/verify-insufficient-score.handler";
+import { SaveOutsideScoreHandler } from "../../../handlers/calculate/save-outside-score/save-outside-score.handler";
 
 @Injectable()
 
@@ -72,6 +73,9 @@ export class CalculateService {
 
   #verifyScoreInstant = new VerifyScoreInstantHandler();
   #pushInstantScore = new PushInstantScoreHandler();
+
+  //Save-Outside-Score
+  #saveOutsideScoreHandler = new SaveOutsideScoreHandler();
 
   #calculateHandler = new CalculateHandler();
   #storage = inject(CalculateStorage);
@@ -131,6 +135,10 @@ export class CalculateService {
 
   saveScore(){
     this.#verifySettledResultHandler.handle(this.#storage);
+  }
+
+  saveOutsideScore(){
+    this.#saveOutsideScoreHandler.handle(this.#storage);
   }
 
   calculateHalfTime(){
