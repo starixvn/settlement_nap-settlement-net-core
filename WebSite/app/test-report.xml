@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testExecutions version="1">
-  <file path="D:\nap-settlement-net-core\WebSite\app\soccer\handlers\calculate\full-time\confirm-uncalcFT.handler.spec.ts">
-    <testCase name="ConfirmUncalcFTHandler should set confirm message and call messageBoxService.confirm twice" duration="19"/>
+  <file path="D:\nap-settlement-net-core\WebSite\app\fast-market\services\time-machine.service.spec.ts">
+  </file>
+  <file path="D:\nap-settlement-net-core\WebSite\app\fast-market\services\verification.service.spec.ts">
+  </file>
+  <file path="D:\nap-settlement-net-core\WebSite\app\fast-market\services\request.service.spec.ts">
   </file>
 </testExecutions>

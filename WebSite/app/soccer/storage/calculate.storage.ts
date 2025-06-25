@@ -123,20 +123,17 @@ export class CalculateStorage implements Storage {
 
   setMatch(match: Match, filterOver?: string) {
     this.#match.set(match);
-    const { resultDetails } = this.#match();
-    this.#matchDetail = this.#match().matchDetail;
+    const { resultDetails } = match;
 
-
-
-
-    this.autoSelectResultByFilterOver(filterOver);
-
-    this.#isApplyHedgeMatch = this.#match().hedgeMatchDetail != null && !this.#match().hedgeMatchDetail.isUndecided;
-   
     this.#halfTimeResult = resultDetails.find(x => x.resourceId === ResourceIds.halfTime);
     this.#fullTimeResult = resultDetails.find(x => x.resourceId === ResourceIds.fullTime);
     this.#halfTimeResult.resourceName = "HT";
     this.#fullTimeResult.resourceName = "FT"; 
+
+    this.#matchDetail = match.matchDetail;
+    this.autoSelectResultByFilterOver(filterOver);
+
+    this.#isApplyHedgeMatch = match.hedgeMatchDetail != null && !match.hedgeMatchDetail.isUndecided;
   }
 
 
