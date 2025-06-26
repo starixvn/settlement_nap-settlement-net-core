@@ -1,0 +1,6 @@
+<div style="display: flex; align-items: center;">
+  <div style="width:6px; height:1px; background:#000000; margin:0 5px;"></div>
+  <select [(ngModel)]="autoReFilterInterval" (change)="onAutoReFilterIntervalChange($event.target.value)">
+    <option *ngFor="let option of options" [value]="option.value">{{option.label}}</option>
+  </select>
+</div>

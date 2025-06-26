@@ -33,7 +33,7 @@
             [multipleSelect]="matchStatusSelect"></new-multiple-select>
         </div>
       </div>
-      <div class="field">
+      <div class=" small-field">
         <label class="inner-label">
           Auto Payout
         </label>
@@ -42,7 +42,7 @@
             [multipleSelect]="autoPayoutSelect"></new-multiple-select>
         </div>
       </div>
-      <div class="remark field">
+      <div class="remark small-field">
         <label class="inner-label">
           Hold Status
         </label>
@@ -68,7 +68,7 @@
             [multipleSelect]="sportOptions$ | async"></new-multiple-select>
         </div>
       </div>
-      <div id="leagues" class="field large-field">
+      <div id="leagues" class="large-field">
         <label class="inner-label leagues">
           League
         </label>
@@ -77,11 +77,11 @@
             [multipleSelect]="leagueOption$ |async"></new-multiple-select>
         </div>
       </div>
-      <div class="field include-test">
+      <div class="include-test">
         <input id="isIncludeTest" type="checkbox" [(ngModel)]="isIncludeTestMatch">
         <label for="isIncludeTest" class="bold">&nbsp;Include Test Matches</label>
       </div>
-      <div class="field">
+      <div class="small-field">
         <label class="inner-label">
           Match Type
         </label>
@@ -91,8 +91,11 @@
           }
         </select>
       </div>
-      <div class="submit field">
-        <button class="button" (click)="search()">Submit</button>
+      <div class="field" style="display: flex;">
+        <button class="button" (click)="search()">Submit<span *ngIf="countdown() > 0">
+            ({{countdown()}}s)</span></button>
+        <app-auto-re-filter [disabled]="disableAutoReFilter" (triggerRefilter)="refilter()"
+          (countDown)="countdown.set($event)"></app-auto-re-filter>
       </div>
     </div>
   </div>

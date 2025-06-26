@@ -1,5 +1,5 @@
-import { DatePipe } from '@angular/common';
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { CommonModule, DatePipe } from '@angular/common';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnInit, Output, signal } from '@angular/core';
 import { NgbDateParserFormatter, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { CustomNgbDateParserFormatter } from '../../../shared/components/date-picker/custom-ngb-date-parser-formatter';
 import { MessageBoxService, VerifyDateService } from '../../../shared/services';
@@ -13,6 +13,7 @@ import { NewMultipleSelectComponent } from '../../../shared/components/multiple-
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { DatepickerComponent } from '../../../shared/components/date-picker/date-picker.component';
 import { AutoSettingsService } from '../../services/auto-settings.service';
+import { AutoReFilterComponent } from '../../../shared/components/auto-re-filter/auto-re-filter.component';
 
 @Component({
     selector: 'auto-calculate-filter',
@@ -21,11 +22,14 @@ import { AutoSettingsService } from '../../services/auto-settings.service';
         { provide: NgbDateParserFormatter, useFactory: () => new CustomNgbDateParserFormatter('MMM dd, y') }],
     standalone: true,
     imports: [
-    DatepickerComponent,
-    ReactiveFormsModule,
-    FormsModule,
-    NewMultipleSelectComponent
-],
+        CommonModule,
+        DatepickerComponent,
+        ReactiveFormsModule,
+        FormsModule,
+        NewMultipleSelectComponent,
+        AutoReFilterComponent
+    ],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AutoCalculateFilterComponent extends FilterBaseComponent implements OnInit {
     @Output() public readonly searchAction = new EventEmitter();
@@ -35,14 +39,20 @@ export class AutoCalculateFilterComponent extends FilterBaseComponent implements
     private readonly completedWithRunningTicket = "16";
     public readonly query = new FilterAutoQuery();
     public payoutSelect = new MultipleSelect();
+    countdown = signal(0);
+    previousQuery: FilterAutoQuery | null = null;
+    disableAutoReFilter = true;
+
     constructor(
         protected verifyDateService: VerifyDateService,
         protected messageBoxService: MessageBoxService,
         private readonly requestService: RequestService,
-        private readonly autoSettingsService: AutoSettingsService
+        private readonly autoSettingsService: AutoSettingsService,
+        private readonly cdr: ChangeDetectorRef,
     ) {
         super(verifyDateService, messageBoxService);
     }
+
 
     public ngOnInit() {
         this.defaultDateFilter();
@@ -89,20 +99,33 @@ export class AutoCalculateFilterComponent extends FilterBaseComponent implements
         } else {
             this.leagues = [allLeague];
         }
+        this.cdr.detectChanges();
     }
 
     public async search() {
         this.query.fromDate = this.verifyDateService.dateFormat(this.fromDate);
         this.query.toDate = this.verifyDateService.dateFormat(this.toDate);
 
+        this.filter(this.query);
+        this.previousQuery = { ...this.query };
+        this.disableAutoReFilter = false;
+    }
+
+    private async filter(query: FilterAutoQuery) {
         this.disableRefresh.emit(true);
-        this.requestService.searchAutoCalculation(this.query).then(calculation => {
-            this.searchAction.emit({ calculation, filterQuery: this.query });
+        this.requestService.searchAutoCalculation(query).then(calculation => {
+            this.searchAction.emit({ calculation, filterQuery: query });
             this.disableRefresh.emit(false);
         });
     }
 
     public onSelectPayout(value: ItemsSelect[]) {
         this.query.autoSetting = value.length > 0 && value.length < this.payoutSelect.items.length ? value.map(item => Number(item.value)).join() : '';
+    }
+
+    refilter() {
+        if (this.previousQuery) {
+            this.filter(this.previousQuery);
+        }
     }
 }

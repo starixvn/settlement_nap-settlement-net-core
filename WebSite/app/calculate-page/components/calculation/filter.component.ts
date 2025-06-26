@@ -1,6 +1,6 @@
 import { GenerateFilterService } from './../../services';
-import { DatePipe } from '@angular/common';
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { CommonModule, DatePipe } from '@angular/common';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnInit, Output, signal } from '@angular/core';
 import { NgbDateParserFormatter, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { CustomNgbDateParserFormatter } from '../../../shared/components/date-picker/custom-ngb-date-parser-formatter';
 import { MessageBoxService, VerifyDateService } from '../../../shared/services';
@@ -15,19 +15,23 @@ import { Language } from '../../../shared/language.native';
 import { NewMultipleSelectComponent } from '../../../shared/components/multiple-select/multiple-select.component';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { DatepickerComponent } from '../../../shared/components/date-picker/date-picker.component';
+import { AutoReFilterComponent } from '../../../shared/components/auto-re-filter/auto-re-filter.component';
 
 @Component({
-    selector: 'filter',
-    templateUrl: './filter.component.html',
-    providers: [DatePipe,
-        { provide: NgbDateParserFormatter, useFactory: () => new CustomNgbDateParserFormatter('MMM dd, y') }],
-    standalone: true,
-    imports: [
+  selector: 'filter',
+  templateUrl: './filter.component.html',
+  providers: [DatePipe,
+    { provide: NgbDateParserFormatter, useFactory: () => new CustomNgbDateParserFormatter('MMM dd, y') }],
+  standalone: true,
+  imports: [
+    CommonModule,
     DatepickerComponent,
     ReactiveFormsModule,
     FormsModule,
-    NewMultipleSelectComponent
-],
+    NewMultipleSelectComponent,
+    AutoReFilterComponent
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FilterComponent extends FilterBaseComponent implements OnInit {
   @Output() public readonly searchAction = new EventEmitter();
@@ -43,11 +47,16 @@ export class FilterComponent extends FilterBaseComponent implements OnInit {
   public holdStatusSelect = new MultipleSelect();
   private readonly leagueWidth = "70%";
   private readonly MatchStatusWidth = "200px";
+  previousQuery: FilterQuery | null = null;
+  countdown = signal(null);
+  disableAutoReFilter = true;
+
   constructor(
     protected verifyDateService: VerifyDateService,
     protected messageBoxService: MessageBoxService,
     private readonly requestService: RequestService,
-    private readonly generateFilterService: GenerateFilterService) {
+    private readonly generateFilterService: GenerateFilterService,
+    private readonly changeDetectorRef: ChangeDetectorRef) {
     super(verifyDateService, messageBoxService);
   }
 
@@ -61,15 +70,19 @@ export class FilterComponent extends FilterBaseComponent implements OnInit {
   public async search() {
     this.query.fromDate = this.verifyDateService.dateFormat(this.fromDate);
     this.query.toDate = this.verifyDateService.dateFormat(this.toDate);
-
     if (this.validateQuery()) {
       return;
     }
+    this.filter(this.query);
+    this.previousQuery = { ...this.query };
+    this.disableAutoReFilter = false;
+  }
 
+  private async filter(query: FilterQuery) {
     this.disableRefresh.emit(true);
-    this.requestService.search(this.query).then(calculation => {
-      this.disableRefund.emit(_.isEmpty(this.query.matchCode) && !_.isEqual(this.query.filterOver.toString(), this.overStatus[0].value));
-      this.searchAction.emit({ calculation, filterQuery: this.query });
+    this.requestService.search(query).then(calculation => {
+      this.disableRefund.emit(_.isEmpty(query.matchCode) && !_.isEqual(query.filterOver.toString(), this.overStatus[0].value));
+      this.searchAction.emit({ calculation, filterQuery: query });
       this.disableRefresh.emit(false);
     });
   }
@@ -120,6 +133,7 @@ export class FilterComponent extends FilterBaseComponent implements OnInit {
     } else {
       this.initLeague([]);
     }
+    this.changeDetectorRef.detectChanges();
   }
 
   public onSelectLeague(value: ItemsSelect[]) {
@@ -146,5 +160,11 @@ export class FilterComponent extends FilterBaseComponent implements OnInit {
     }
 
     return false;
+  }
+
+  refilter() {
+    if (this.previousQuery) {
+      this.filter(this.previousQuery);
+    }
   }
 }

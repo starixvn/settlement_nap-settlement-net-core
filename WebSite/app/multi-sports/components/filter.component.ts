@@ -1,6 +1,6 @@
 import { NgbDateStruct, NgbDateParserFormatter } from "@ng-bootstrap/ng-bootstrap";
 import { DefaultValue, MatchType, Resources } from '../constants';
-import { Component, OnInit, Output, EventEmitter, Injector, inject, ChangeDetectionStrategy, ChangeDetectorRef } from "@angular/core";
+import { Component, OnInit, Output, EventEmitter, Injector, inject, ChangeDetectionStrategy, ChangeDetectorRef, signal } from "@angular/core";
 import { CommonModule, DatePipe } from "@angular/common";
 import { CustomNgbDateParserFormatter } from '../../shared/components/date-picker/custom-ngb-date-parser-formatter';
 import { MultiSportService } from '../services';
@@ -20,6 +20,7 @@ import { NewMultipleSelectComponent } from "../../shared/components/multiple-sel
 import { DatepickerComponent } from "../../shared/components/date-picker/date-picker.component";
 import { MultiSportsStore } from "../services/multi-sports.store";
 import { BehaviorSubject } from "rxjs";
+import { AutoReFilterComponent } from "../../shared/components/auto-re-filter/auto-re-filter.component";
 
 @Component({
     selector: 'filter',
@@ -30,6 +31,7 @@ import { BehaviorSubject } from "rxjs";
     imports: [
         DatepickerComponent,
         NewMultipleSelectComponent,
+        AutoReFilterComponent,
         ReactiveFormsModule,
         FormsModule,
         CommonModule
@@ -63,6 +65,9 @@ export class FilterComponent implements OnInit {
     readonly overStatusSelect = new MultipleSelect();
     getLeagueParams: LeagueFilterRequest;
     private readonly widthMultiSelect = "205px";
+    previousSearch = null;
+    countdown = signal(0);
+    disableAutoReFilter = true;
 
     async ngOnInit() {
         this.generateFilter();
@@ -104,6 +109,7 @@ export class FilterComponent implements OnInit {
             matchType: this.matchType.toString()
         };
 
+
         if (!this.isValidInput(this.fromDate, this.toDate)) {
             this.showWarningMessage(Resources.invalidDate);
             return;
@@ -119,10 +125,16 @@ export class FilterComponent implements OnInit {
             return;
         }
 
+        this.filter(query);
+        this.previousSearch = { ...query };
+        this.disableAutoReFilter = false;
+    }
+
+    private async filter(query: FilterRequest) {
         const multiSport = await this.multiSportService.filter(query);
 
         const matchIds = this.getAllMatchId(multiSport.sports);
-        const request = new MatchRequest(this.leaguesSelected, matchIds, fromDate, toDate, this.overStatusSelected, this.matchCode);
+        const request = new MatchRequest(this.leaguesSelected, matchIds, query.fromDate, query.toDate, this.overStatusSelected, this.matchCode);
         this.multiSportsStore.request = { ...request };
         this.multiSportsStore.enableRefresh = multiSport.sports.length > 0;
         this.multiSportsStore.setState(multiSport);
@@ -195,7 +207,7 @@ export class FilterComponent implements OnInit {
         const toDateValue = this.verifyDateService.dateFormat(toDate);
         const params = new SportFilterRequest(fromDateValue, toDateValue);
         const listSport = await this.multiSportService.getSport(params);
-        const newSportOptions = { ...this.sportOptions$.value, items: this.generateFilterService.renderSportTypes(listSport)};
+        const newSportOptions = { ...this.sportOptions$.value, items: this.generateFilterService.renderSportTypes(listSport) };
         this.sportOptions$.next(newSportOptions);
         this.sportTypesSelected = this.sportOptions$.value.items.map(item => Number(item.value)).join();
     }
@@ -245,5 +257,11 @@ export class FilterComponent implements OnInit {
             && _.isEqual(query.leagueIds, DefaultValue.unCheckAll)
             && _.isEqual(query.overStatus.toString(), DefaultValue.unCheckAll)
             && _.isEqual(query.matchType.toString(), this.matchTypes[0].value);
+    }
+
+    refilter() {
+        if (this.previousSearch) {
+            this.filter(this.previousSearch);
+        }
     }
 }

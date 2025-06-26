@@ -22,7 +22,7 @@
             </label>
             <select [(ngModel)]="query.filterOver">
               @for (item of overStatus; track item) {
-                <option [value]="item.value">{{ item.text }}</option>
+              <option [value]="item.value">{{ item.text }}</option>
               }
             </select>
           </div>
@@ -31,13 +31,15 @@
             <label class="inner-label">
               Match Status
             </label>
-            <new-multiple-select (formValue)="onSelectMatchStatus($event)" [multipleSelect]="matchStatusSelect"></new-multiple-select>
+            <new-multiple-select (formValue)="onSelectMatchStatus($event)"
+              [multipleSelect]="matchStatusSelect"></new-multiple-select>
           </div>
           <div class="field margin">
             <label class="inner-label">
               Hold Status
             </label>
-            <new-multiple-select (formValue)="onSelectHoldStatus($event)" [multipleSelect]="holdStatusSelect"></new-multiple-select>
+            <new-multiple-select (formValue)="onSelectHoldStatus($event)"
+              [multipleSelect]="holdStatusSelect"></new-multiple-select>
           </div>
         </div>
       </div>
@@ -52,11 +54,8 @@
       <div class="league-list">
         <label style="margin-left: 4px;" class="inner-label">League</label>
         <div>
-          <new-multiple-select
-            [style.width]="leagueSelect.maxWidth"
-            (formValue)="onSelectLeague($event)"
-            [multipleSelect]="leagueSelect"
-          ></new-multiple-select>
+          <new-multiple-select [style.width]="leagueSelect.maxWidth" (formValue)="onSelectLeague($event)"
+            [multipleSelect]="leagueSelect"></new-multiple-select>
         </div>
       </div>
       <div class="field">
@@ -65,7 +64,7 @@
         </label>
         <select [(ngModel)]="query.matchType">
           @for (item of matchTypes; track item) {
-            <option [value]="item.value">{{ item.text }}</option>
+          <option [value]="item.value">{{ item.text }}</option>
           }
         </select>
       </div>
@@ -73,8 +72,11 @@
         <input id="isIncludeTest" type="checkbox" [(ngModel)]="query.isIncludeTest" />
         <label for="isIncludeTest" class="bold">&nbsp;Include Test Matches</label>
       </div>
-      <div class="col-md-1">
-        <button class="button" (click)="search()" [disabled]="isDisabled">Submit</button>
+      <div class="col-md-2" style="display: flex; align-items: center;">
+        <button class="button" (click)="search()">Submit<span *ngIf="countdown()">
+            ({{countdown()}}s)</span></button>
+        <app-auto-re-filter [disabled]="disableAutoReFilter" (triggerRefilter)="refilter()"
+          (countDown)="countdown.set($event)"></app-auto-re-filter>
       </div>
     </div>
   </div>

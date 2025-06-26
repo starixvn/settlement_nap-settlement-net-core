@@ -27,62 +27,65 @@
             </label>
           </div>
           <div class="col-md-2 field">
-            <input id="IsMarkedTicket" type="checkbox" value="true"
-              [(ngModel)]="query.isMarkedTicket">
-              <label for="IsMarkedTicket" class="bold">&nbsp;Marked Tickets</label>
-            </div>
-
-            <div class="col-md-2 field">
-              <input id="isHtOverOnly" type="checkbox" [(ngModel)]="query.isHtOverOnly">
-              <label for="isHtOverOnly" class="bold">&nbsp; HT Over Only</label>
-            </div>
-
-            <div class="col-md-2 field">
-              <input id="isOverOnly" type="checkbox" [(ngModel)]="query.isOverOnly">
-              <label for="isOverOnly" class="bold">&nbsp; Over Only</label>
-            </div>
+            <input id="IsMarkedTicket" type="checkbox" value="true" [(ngModel)]="query.isMarkedTicket">
+            <label for="IsMarkedTicket" class="bold">&nbsp;Marked Tickets</label>
           </div>
-        </div>
-      </div>
-      <div class="row" style="margin-top: 5px">
-        <div class="col-md-2">
-          <label for="matchCode" class="inner-label">
-            Match Code/ID
-          </label>
-          <input id="matchCode" maxlength="50" style="width: 107px" type="text" [(ngModel)]="query.matchCode">
-        </div>
-        <div class="league-list">
-          <label style="margin-left: 4px;" class="inner-label">League</label>
-          <select [(ngModel)]="query.leagueId" class="league-select">
-            @for (item of leagues; track item) {
-              <option [value]="item.leagueId">{{item.leagueName}}</option>
-            }
-          </select>
-        </div>
-        <div class="col-md-2">
-          <label class="inner-label">
-            Status
-          </label>
-          <select [(ngModel)]="query.statusId" [disabled]="query.isUnCalculate || query.isMarkedTicket">
-            @for (item of statuses; track item) {
-              <option [value]="item.value">{{item.text}}</option>
-            }
-          </select>
-        </div>
 
-        <div class="col-md-2 field over-status">
-          <label class="inner-label">
-            Auto Payout
-          </label>
-          <div>
-            <new-multiple-select (formValue)="onSelectPayout($event)" [multipleSelect]="payoutSelect"></new-multiple-select>
+          <div class="col-md-2 field">
+            <input id="isHtOverOnly" type="checkbox" [(ngModel)]="query.isHtOverOnly">
+            <label for="isHtOverOnly" class="bold">&nbsp; HT Over Only</label>
           </div>
-        </div>
-        <div class="col-md-1">
-          <button class="button" (click)="search()" [disabled]="isDisabled">Submit</button>
+
+          <div class="col-md-2 field">
+            <input id="isOverOnly" type="checkbox" [(ngModel)]="query.isOverOnly">
+            <label for="isOverOnly" class="bold">&nbsp; Over Only</label>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+    <div class="row" style="margin-top: 5px">
+      <div class="col-md-2">
+        <label for="matchCode" class="inner-label">
+          Match Code/ID
+        </label>
+        <input id="matchCode" maxlength="50" style="width: 107px" type="text" [(ngModel)]="query.matchCode">
+      </div>
+      <div class="league-list">
+        <label style="margin-left: 4px;" class="inner-label">League</label>
+        <select [(ngModel)]="query.leagueId" class="league-select">
+          @for (item of leagues; track item) {
+          <option [value]="item.leagueId">{{item.leagueName}}</option>
+          }
+        </select>
+      </div>
+      <div class="col-md-2">
+        <label class="inner-label">
+          Status
+        </label>
+        <select [(ngModel)]="query.statusId" [disabled]="query.isUnCalculate || query.isMarkedTicket">
+          @for (item of statuses; track item) {
+          <option [value]="item.value">{{item.text}}</option>
+          }
+        </select>
+      </div>
 
-  <div class="line"></div>
+      <div class="col-md-2 field over-status">
+        <label class="inner-label">
+          Auto Payout
+        </label>
+        <div>
+          <new-multiple-select (formValue)="onSelectPayout($event)"
+            [multipleSelect]="payoutSelect"></new-multiple-select>
+        </div>
+      </div>
+      <div class="col-md-2" style="display: flex; align-items: center;">
+        <button class="button" (click)="search()" [disabled]="isDisabled">Submit<span *ngIf="countdown() > 0">
+            ({{countdown()}}s)</span></button>
+        <app-auto-re-filter [disabled]="disableAutoReFilter" (triggerRefilter)="refilter()"
+          (countDown)="countdown.set($event)"></app-auto-re-filter>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="line"></div>
