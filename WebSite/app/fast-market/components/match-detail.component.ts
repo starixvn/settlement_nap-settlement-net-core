@@ -22,7 +22,7 @@ export class MatchDetailComponent implements OnInit {
     private readonly requestService = inject(RequestService);
     private readonly messageBoxService = inject(MessageBoxService);
     private readonly toastService = inject(ToastrService);
-    
+
     public matchDetail: MatchDetail;
     public readonly warningDialogMessage: ModalDialogMessage = new ModalDialogMessage();
 
@@ -92,16 +92,19 @@ export class MatchDetailComponent implements OnInit {
 
     public confirmUpdateLeagueRefund() {
         this.toastService.clear();
-    
-        if (!this.matchDetail.autoSettingIcon.disabled) {
-            const dialogModel = {
-                title: Language.confirmationBoxTitle,
-                message: Language.updateLeagueRefundConfirmationMessage,
-                checkboxLabel: 'Apply to Un-Calculated matches',
-                requireCheckbox: true
-            } as ModalDialogMessage;
-            this.messageBoxService.confirm(dialogModel,(isChecked) => this.updateLeagueRefund(isChecked))
-        }
+
+        const message = Language.updateLeagueRefundConfirmationMessage
+            .replace(/EXPECTED_STATE/g, !this.matchDetail.isFMAutoRefundLeague ? 'ON' : 'OFF');
+
+        const dialogModel = {
+            title: Language.confirmationBoxTitle,
+            message,
+            checkboxLabel: 'Apply to Un-Calculated matches',
+            requireCheckbox: true
+        } as ModalDialogMessage;
+
+        this.messageBoxService.confirm(dialogModel, (isChecked) => this.updateLeagueRefund(isChecked))
+
     }
 
     private updateLeagueRefund(isApplyAll: boolean) {
@@ -113,7 +116,7 @@ export class MatchDetailComponent implements OnInit {
             resultSettings: [
                 {
                     settleType: AutoSettleType.AutoRefundFM,
-                    enabled: true,
+                    enabled: !this.matchDetail.isFMAutoRefundLeague,
                     resourceType: ResourceType.Main,
                     isApplyChildMatches: isApplyAll,
                     waitingTime: 5
@@ -130,7 +133,9 @@ export class MatchDetailComponent implements OnInit {
         this.toastService.clear();
         if (!this.matchDetail.autoSettingIcon.disabled) {
             this.warningDialogMessage.title = Language.confirmationBoxTitle;
-            this.warningDialogMessage.message = Language.updateMatchRefundConfirmationMessage;
+            const message = Language.updateMatchRefundConfirmationMessage
+                .replace(/EXPECTED_STATE/g, !this.matchDetail.isFMAutoRefund ? 'ON' : 'OFF');
+            this.warningDialogMessage.message = message;
 
 
             this.messageBoxService.confirm(
@@ -172,5 +177,9 @@ export class MatchDetailComponent implements OnInit {
         } else {
             this.toastService.error(result.errMsg);
         }
+    }
+
+    getAutoRefundClass(isEnabled: boolean) {
+        return isEnabled ? Icon.yes : Icon.no;
     }
 }

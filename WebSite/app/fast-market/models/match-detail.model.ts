@@ -20,4 +20,6 @@ export class MatchDetail {
     public leagueAutoSettingTooltip: string;
     public goalIcon: GoalIcon;
     public fastMarketStatus: string;
+    public isFMAutoRefundLeague: boolean | null;
+    public isFMAutoRefund: boolean | null;
 }

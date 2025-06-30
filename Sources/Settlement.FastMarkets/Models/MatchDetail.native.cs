@@ -90,6 +90,9 @@ public class MatchDetail
 
     public AutoSettingIcon AutoSettingIcon => autoSettingIcon ?? GetDefaultAutoSettingIcon();
 
+    public bool? IsFMAutoRefundLeague { get; set; }
+    public bool? IsFMAutoRefund { get; set; }
+
     private static string EmptyScore(string score)
     {
         return string.IsNullOrEmpty(score) ? "-" : score;

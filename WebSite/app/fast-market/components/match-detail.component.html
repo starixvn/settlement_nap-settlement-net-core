@@ -10,8 +10,7 @@
     <div>|</div>
     <div style="display: flex; align-items: center; gap: 5px;">
       <div>Auto Refund Special Session</div>
-      <div class="{{matchDetail.autoSettingIcon.league}}" title="{{matchDetail.leagueAutoSettingTooltip}}"
-        (click)="confirmUpdateLeagueRefund()"></div>
+      <div class="{{getAutoRefundClass(matchDetail.isFMAutoRefundLeague)}}" (click)="confirmUpdateLeagueRefund()"></div>
     </div>
   </div>
 </div>
@@ -61,8 +60,7 @@
           (click)="confirmUpdateMatchAutoSettle()"></div>
       </td>
       <td rowspan="2">
-        <div class="{{matchDetail.autoSettingIcon.match}}" title="{{matchDetail.matchAutoSettingTooltip}}"
-          (click)="confirmUpdateMatchRefund()"></div>
+        <div class="{{getAutoRefundClass(matchDetail.isFMAutoRefund)}}" (click)="confirmUpdateMatchRefund()"></div>
       </td>
     </tr>
     <tr>
