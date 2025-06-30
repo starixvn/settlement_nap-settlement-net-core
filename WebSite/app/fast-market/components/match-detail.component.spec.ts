@@ -14,6 +14,7 @@ import { RequestService } from '../services/request.service';
 import { UrlHelper } from '../../helper';
 import { ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 import { MaterialModule } from '../../shared/material-module';
+import { ModalContentDialogComponent } from '../../shared/components/modal-dialog/modal-content-dialog.component';
 
 describe('Component: MatchDetailComponent', () => {
     let component: MatchDetailComponent;

@@ -108,26 +108,36 @@ export class MatchDetailComponent implements OnInit {
     }
 
     private updateLeagueRefund(isApplyAll: boolean) {
-        const query = {
-            matchId: this.matchDetail.matchId,
-            leagueId: this.matchDetail.leagueId,
-            typeObject: "League",
-            isApplyAll: isApplyAll,
-            resultSettings: [
-                {
-                    settleType: AutoSettleType.AutoRefundFM,
-                    enabled: !this.matchDetail.isFMAutoRefundLeague,
-                    resourceType: ResourceType.Main,
-                    isApplyChildMatches: isApplyAll,
-                    waitingTime: 5
-                }
-            ]
-        }
+        const query = this.getLeagueRefundQuery(isApplyAll);
 
         this.requestService
             .updateAutoSettle(query)
             .subscribe((response: Result) => { this.processUpdateSettingResult(response); });
     }
+
+    private getLeagueRefundQuery(isApplyAll: boolean) {
+        const { matchId, leagueId } = this.matchDetail;
+        const isCurrentlyEnabled = this.matchDetail.isFMAutoRefundLeague;
+        
+        const createSetting = (enabled: boolean) => ({
+            settleType: AutoSettleType.AutoRefundFM,
+            enabled,
+            resourceType: ResourceType.Main,
+            isApplyChildMatches: isApplyAll,
+            waitingTime: 5
+        });
+        
+        return {
+            matchId,
+            leagueId,
+            typeObject: "League",
+            isApplyAll,
+            resultSettings: [createSetting(!isCurrentlyEnabled)],
+            oldResultSettings: [createSetting(isCurrentlyEnabled)]
+        };
+    }
+
+
 
     public confirmUpdateMatchRefund() {
         this.toastService.clear();
@@ -145,23 +155,35 @@ export class MatchDetailComponent implements OnInit {
     }
 
     private updateMatchRefund() {
-        const query = {
+        const query = this.getAutoRefundQuery(this.matchDetail.isFMAutoRefund);
+
+        this.requestService
+            .updateAutoSettle(query)
+            .subscribe((response: Result) => { this.processUpdateSettingResult(response); });
+    }
+
+    private getAutoRefundQuery(isEnabled: boolean) {
+        return {
             matchId: this.matchDetail.matchId,
             leagueId: this.matchDetail.leagueId,
             typeObject: "Match",
             resultSettings: [
                 {
                     settleType: AutoSettleType.AutoRefundFM,
-                    enabled: !this.matchDetail.isFMAutoRefund,
+                    enabled: !isEnabled,
+                    resourceType: ResourceType.Main,
+                    waitingTime: 5
+                }
+            ],
+            oldResultSettings: [
+                {
+                    settleType: AutoSettleType.AutoRefundFM,
+                    enabled: isEnabled,
                     resourceType: ResourceType.Main,
                     waitingTime: 5
                 }
             ]
         }
-
-        this.requestService
-            .updateAutoSettle(query)
-            .subscribe((response: Result) => { this.processUpdateSettingResult(response); });
     }
 
     private updateLeagueAutoSettle(isApplyAll: boolean) {

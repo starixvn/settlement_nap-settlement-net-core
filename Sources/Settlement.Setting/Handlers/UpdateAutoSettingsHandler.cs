@@ -109,18 +109,28 @@ public class UpdateAutoSettingsHandler(
             return;
         }
 
-        var objectInfo = string.Equals(command.TypeObject, League) ? $"League({command.LeagueId})" : $"Match({command.MatchId})";
-        var settingTypeInfo = $"for {item.SettleType} {item.ResourceType} ";
-
-        var childMatchInfo = command.IsApplyAll && !string.IsNullOrEmpty(result.ChildMatchIds) ? $"Effect child match: {result.ChildMatchIds}" : string.Empty;
-
-        var msg = $"NAP: Update auto setting on {objectInfo} {settingTypeInfo} has isApplyAll({command.IsApplyAll.ToString()}) {childMatchInfo} {differences}";
+        var logMessage = BuildLogMessage(command, item, result, differences);
 
         var actionLogId = GetActionLogId(command.TypeObject);
 
-        var logCriteria = new LogCriteria(command.MatchId, msg, actionLogId, napSession.UserId);
+        var logCriteria = new LogCriteria(command.MatchId, logMessage, actionLogId, napSession.UserId);
 
         await logService.WriteLog(logCriteria);
+    }
+
+    private string BuildLogMessage(UpdateAutoSettingsCommand command, UpdateResultSettingItem item, Result result, string differences)
+    {
+        var objectInfo = string.Equals(command.TypeObject, "League")
+            ? $"League({command.LeagueId})"
+            : $"Match({command.MatchId})";
+
+        var settingTypeInfo = $"for {item.SettleType} {item.ResourceType}";
+
+        var childMatchInfo = command.IsApplyAll && !string.IsNullOrEmpty(result.ChildMatchIds)
+            ? $"Effect child match: {result.ChildMatchIds}"
+            : string.Empty;
+
+        return $"NAP: Update auto setting on {objectInfo} {settingTypeInfo} has isApplyAll({command.IsApplyAll}) {childMatchInfo} {differences}".Trim();
     }
 
     private static int GetActionLogId(string typeObject)
