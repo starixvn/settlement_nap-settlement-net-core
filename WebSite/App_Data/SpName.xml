@@ -55,7 +55,7 @@
 		<Setting Key="NAP_Set_AutoPayout_LeagueSetting_Sel" SpName="NAP_Set_AutoPayout_LeagueSetting_Sel" DbName="DBPRO.bodb02.wsv_nap" />
 		<Setting Key="NAP_Set_AutoPayout_MatchSetting_Sel" SpName="NAP_Set_AutoPayout_MatchSetting_Sel" DbName="DBPRO.bodb02.wsv_nap" />
 		<Setting Key="NAP_Set_AutoPayout_SettingLeagueUpd" SpName="NAP_Set_AutoPayout_SettingLeagueUpd" DbName="DBPRO.bodb02.wsv_nap" />
-		<Setting Key="NAP_Set_AutoPayout_LeagueSetting_Update" SpName="NAP_Set_AutoPayout_LeagueSetting_Update" DbName="DBPRO.bodb02.wsv_nap" />
+		<Setting Key="NAP_Set_AutoPayout_LeagueSetting_Update" SpName="NAP_Set_AutoPayout_LeagueSetting_Update_xtest" DbName="DBPRO.bodb02.wsv_nap" />
 		<Setting Key="NAP_Set_AutoPayout_MatchSetting_Update" SpName="NAP_Set_AutoPayout_MatchSetting_Update" DbName="DBPRO.bodb02.wsv_nap" />
 		<Setting Key="NAP_Set_AutoPayout_SourceInfo_Sel" SpName="NAP_Set_AutoPayout_SourceInfo_Sel" DbName="DBPRO.bodb02.wsv_nap" />
 	</Function>

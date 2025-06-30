@@ -1,4 +1,6 @@
-﻿namespace Settlement.Setting.Criteria;
+﻿using Fanex.Data;
+
+namespace Settlement.Setting.Criteria;
 
 public class SourceSettleCriteriaBase
 {
@@ -28,20 +30,34 @@ public class SourceSettleCriteriaBase
     #endregion
 }
 
-public class UpdateLeagueAutoSettleSourceCriteria : SourceSettleCriteriaBase, INonQueryCommand
+public class UpdateLeagueAutoSettleSourceCriteria : SourceSettleCriteriaBase, AutoSettleRunUpdateCriteria
 {
     public int LeagueId { get; set; }
     public bool IsApplyAll { get; set; }
-    public string UpdatedMatchIds { get; set; }
+    public string UpdatedMatchIDs { get; set; } = string.Empty;
+    [SpParam(Ignored = true)]
+    public int ErrCode { set; get; }
+
+    [SpParam(Ignored = true)]
+    public string ErrMsg { set; get; }
 
     public string GetSettingKey() => "NAP_Set_AutoPayout_LeagueSetting_Update";
 
     public bool IsValid() => true;
 }
 
-public class UpdateMatchAutoSettleSourceCriteria : SourceSettleCriteriaBase, INonQueryCommand
+public class UpdateMatchAutoSettleSourceCriteria : SourceSettleCriteriaBase, AutoSettleRunUpdateCriteria
 {
     public int MatchId { get; set; }
+
+    [SpParam(Ignored = true)]
+
+    public string UpdatedMatchIDs { get; set; }
+    [SpParam(Ignored = true)]
+    public int ErrCode { set; get; }
+
+    [SpParam(Ignored = true)]
+    public string ErrMsg { set; get; }
 
     public string GetSettingKey() => "NAP_Set_AutoPayout_MatchSetting_Update";
 

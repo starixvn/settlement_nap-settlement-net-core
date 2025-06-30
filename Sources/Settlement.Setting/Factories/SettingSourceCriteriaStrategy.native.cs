@@ -7,13 +7,13 @@ namespace Settlement.Setting.Factories;
 
 public interface SettingSourceCriteriaStrategy
 {
-    INonQueryCommand CreateCriteria(UpdateAutoSettingsCommand command, UpdateResultSettingItem item);
+    AutoSettleRunUpdateCriteria CreateCriteria(UpdateAutoSettingsCommand command, UpdateResultSettingItem item);
 }
 
 
 public class LeagueSettingSourceCriteriaStrategy : SettingSourceCriteriaStrategy
 {
-    public INonQueryCommand CreateCriteria(UpdateAutoSettingsCommand command, UpdateResultSettingItem item)
+    public AutoSettleRunUpdateCriteria CreateCriteria(UpdateAutoSettingsCommand command, UpdateResultSettingItem item)
     {
         var criteria = new UpdateLeagueAutoSettleSourceCriteria
         {
@@ -24,28 +24,28 @@ public class LeagueSettingSourceCriteriaStrategy : SettingSourceCriteriaStrategy
         if (item.SettleType is AutoSettleType.AutoRefund)
         {
             criteria.Main_WaitingTime = item.WaitingTime;
+            return criteria;
         }
-        else if (item.SettleType == AutoSettleType.FastMarketAutoRefund)
+
+        if (item.SettleType == AutoSettleType.FastMarketAutoRefund)
         {
 
             criteria.Main_WaitingTime = item.WaitingTime;
             criteria.Enable = item.Enabled;
             criteria.IsApplyAll = item.IsApplyChildMatches;
+            return criteria;
         }
-        else
-        {
-            LeagueSettingsHelper.MapProviderDetails(item, criteria, item.ResourceType == ResourceType.Main);
-        }
+
+        LeagueSettingsHelper.MapProviderDetails(item, criteria, item.ResourceType == ResourceType.Main);
+
 
         return criteria;
     }
-
-
 }
 
 public class MatchCriteriaStrategy : SettingSourceCriteriaStrategy
 {
-    public INonQueryCommand CreateCriteria(UpdateAutoSettingsCommand command, UpdateResultSettingItem item)
+    public AutoSettleRunUpdateCriteria CreateCriteria(UpdateAutoSettingsCommand command, UpdateResultSettingItem item)
     {
         var criteria = new UpdateMatchAutoSettleSourceCriteria
         {

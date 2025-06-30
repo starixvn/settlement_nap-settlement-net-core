@@ -40,12 +40,13 @@ public class UpdateAutoSettingsHandler(
 
     private async Task<Result> ProcessResultSetting(UpdateAutoSettingsCommand command, UpdateResultSettingItem item)
     {
-        var result = item.SettleType != AutoSettleType.AutoRefund || item.SettleType != AutoSettleType.FastMarketAutoRefund
+        var result = item.SettleType != AutoSettleType.AutoRefund && item.SettleType != AutoSettleType.FastMarketAutoRefund
             ? await EnableAutoSettle(command, item)
             : new Result();
 
         var sourceCriteria = CreateSettingSourceCriteria(command, item);
         await repository.ExecuteAsync(sourceCriteria);
+        result.ChildMatchIds = sourceCriteria.UpdatedMatchIDs;
 
         await WriteLogUpdateSetting(command, item, result);
 
@@ -167,7 +168,7 @@ public class UpdateAutoSettingsHandler(
         return result.ToString();
     }
 
-    private static INonQueryCommand CreateSettingSourceCriteria(UpdateAutoSettingsCommand command, UpdateResultSettingItem item)
+    private static AutoSettleRunUpdateCriteria CreateSettingSourceCriteria(UpdateAutoSettingsCommand command, UpdateResultSettingItem item)
     {
         SettingSourceCriteriaStrategy strategy = command.TypeObject switch
         {
