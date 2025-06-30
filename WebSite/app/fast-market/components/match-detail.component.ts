@@ -99,7 +99,7 @@ export class MatchDetailComponent implements OnInit {
         const dialogModel = {
             title: Language.confirmationBoxTitle,
             message,
-            checkboxLabel: 'Apply to Un-Calculated matches',
+            checkboxLabel: 'Also apply to Running matches',
             requireCheckbox: true
         } as ModalDialogMessage;
 
