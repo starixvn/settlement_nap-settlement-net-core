@@ -152,7 +152,7 @@ export class MatchDetailComponent implements OnInit {
             resultSettings: [
                 {
                     settleType: AutoSettleType.AutoRefundFM,
-                    enabled: true,
+                    enabled: !this.matchDetail.isFMAutoRefund,
                     resourceType: ResourceType.Main,
                     waitingTime: 5
                 }
@@ -179,7 +179,8 @@ export class MatchDetailComponent implements OnInit {
         }
     }
 
-    getAutoRefundClass(isEnabled: boolean) {
-        return isEnabled ? Icon.yes : Icon.no;
+    getAutoRefundClass(isEnabled: boolean, disabled: boolean) {
+        const icon = isEnabled ? Icon.yes : Icon.no;
+        return disabled ? `${icon}-disable` : icon;
     }
 }

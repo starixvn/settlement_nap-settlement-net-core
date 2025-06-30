@@ -22,4 +22,5 @@ export class MatchDetail {
     public fastMarketStatus: string;
     public isFMAutoRefundLeague: boolean | null;
     public isFMAutoRefund: boolean | null;
+    public hasAutoSettlementPermission: boolean;
 }

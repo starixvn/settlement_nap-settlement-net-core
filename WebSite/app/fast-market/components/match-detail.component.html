@@ -10,7 +10,8 @@
     <div>|</div>
     <div style="display: flex; align-items: center; gap: 5px;">
       <div>Auto Refund Special Session</div>
-      <div class="{{getAutoRefundClass(matchDetail.isFMAutoRefundLeague)}}" (click)="confirmUpdateLeagueRefund()"></div>
+      <div class="{{getAutoRefundClass(matchDetail.isFMAutoRefundLeague, !matchDetail.hasAutoSettlementPermission)}}"
+        (click)="confirmUpdateLeagueRefund()"></div>
     </div>
   </div>
 </div>
@@ -60,7 +61,8 @@
           (click)="confirmUpdateMatchAutoSettle()"></div>
       </td>
       <td rowspan="2">
-        <div class="{{getAutoRefundClass(matchDetail.isFMAutoRefund)}}" (click)="confirmUpdateMatchRefund()"></div>
+        <div class="{{getAutoRefundClass(matchDetail.isFMAutoRefund, !matchDetail.hasAutoSettlementPermission)}}"
+          (click)="confirmUpdateMatchRefund()"></div>
       </td>
     </tr>
     <tr>
