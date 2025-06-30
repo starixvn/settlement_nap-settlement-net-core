@@ -1,7 +1,6 @@
 ﻿using NSubstitute;
 using Settlement.Core.Models;
-using Settlement.Core.Services;
-using Xunit;
+using Xunit.Sdk;
 
 namespace Settlement.Core.UnitTests.Services;
 
@@ -537,10 +536,11 @@ public class FirstGoalLastGoalServiceTests
     }
 
     [Theory]
-    [CombinatorialData]
-    public void GetFullTimeGoalByGoalRecord_GoalRecordIsInvalid_ReturnsHomeIsNull(
-        [CombinatorialValues(true, false)] bool isSettled,
-        [CombinatorialValues("M", "Mn")] string goalRecord)
+    [InlineData(true, "M")]
+    [InlineData(true, "Mn")]
+    [InlineData(false, "M")]
+    [InlineData(false, "Mn")]
+    public void GetFullTimeGoalByGoalRecord_GoalRecordIsInvalid_ReturnsHomeIsNull(bool isSettled, string goalRecord)
     {
         // Act
         var goalIcon = service.GetFullTimeGoalByGoalRecord(goalRecord, isSettled);
@@ -550,10 +550,11 @@ public class FirstGoalLastGoalServiceTests
     }
 
     [Theory]
-    [CombinatorialData]
-    public void GetFullTimeGoalByGoalRecord_GoalRecordIsInvalid_ReturnsAwayIsNull(
-        [CombinatorialValues(true, false)] bool isSettled,
-        [CombinatorialValues("M", "Mn")] string goalRecord)
+    [InlineData(true, "M")]
+    [InlineData(true, "Mn")]
+    [InlineData(false, "M")]
+    [InlineData(false, "Mn")]
+    public void GetFullTimeGoalByGoalRecord_GoalRecordIsInvalid_ReturnsAwayIsNull(bool isSettled, string goalRecord)
     {
         // Act
         var goalIcon = service.GetFullTimeGoalByGoalRecord(goalRecord, isSettled);

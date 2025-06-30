@@ -1,4 +1,4 @@
-﻿using Settlement.Core.Models;
+﻿using Fanex.Settlement.MessageBridge.JackTime;
 using Settlement.Core.Services;
 using System.Text.Json.Serialization;
 

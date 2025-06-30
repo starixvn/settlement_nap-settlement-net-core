@@ -1,4 +1,6 @@
-﻿using Fanex.Data.Repository;
+﻿using AutoMapper;
+using Fanex.Caching;
+using Fanex.Data.Repository;
 using Fanex.Settlement.ScaleOut.Models;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
@@ -36,6 +38,8 @@ public class RefundServiceTests
         scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
         logService = Substitute.For<LogService>();
         var publishEndpoint = Substitute.For<IPublishEndpoint>();
+
+        var mapper = Substitute.For<IMapper>();
 
         var context = new DefaultHttpContext
         {
@@ -136,6 +140,8 @@ public class RefundServiceTests
         {
             Action = ActionType.RefundAll
         };
+
+        createCriteriaService.SoccerRefundGetTicketInfoCriteria(Arg.Any<RefundCriteria>(), Arg.Any<bool>()).Returns(new SoccerGetTicketInfoCriteria());
         createCriteriaService.CreateRefundCriteria(Arg.Any<RefundRequest>()).Returns(criteria);
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>())
             .Returns(new ResultMessage { ErrorCode = errorCode, ErrorMessage = errorMsg });
@@ -157,6 +163,8 @@ public class RefundServiceTests
         {
             Action = ActionType.CalculateAll
         };
+
+        createCriteriaService.SoccerRefundGetTicketInfoCriteria(Arg.Any<RefundCriteria>(), Arg.Any<bool>()).Returns(new SoccerGetTicketInfoCriteria());
         createCriteriaService.CreateRefundCriteria(Arg.Any<RefundRequest>()).Returns(criteria);
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
 
@@ -180,6 +188,8 @@ public class RefundServiceTests
         {
             Action = ActionType.CalculateAll
         };
+
+        createCriteriaService.SoccerRefundGetTicketInfoCriteria(Arg.Any<RefundCriteria>(), Arg.Any<bool>()).Returns(new SoccerGetTicketInfoCriteria());
         createCriteriaService.CreateRefundCriteria(Arg.Any<RefundRequest>()).Returns(criteria);
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
         await repository.ExecuteAsync(Arg.Any<RefundCriteria>());

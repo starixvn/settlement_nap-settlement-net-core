@@ -1,11 +1,10 @@
 import { TestBed, waitForAsync, ComponentFixture, fakeAsync, tick } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
-import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { HttpClientModule } from '@angular/common/http';
 import { of } from 'rxjs';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ElementRef } from "@angular/core";
-import { ModalDialogComponent, ModalContentDialogComponent, MultipleSelectComponent, TreeViewComponent } from '../../shared/components';
+
 import { BetTypesComponent } from './bet-types.component';
 import {
     FastMarkets,
@@ -33,6 +32,9 @@ import { TimeMachineService, VerificationService } from '../services';
 import { SpecialSessionComponent } from './special-session.component';
 import { MaterialModule } from '../../shared/material-module';
 import { ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
+import { ModalDialogComponent } from '../../shared/components/modal-dialog/modal-dialog.component';
+import { ModalContentDialogComponent } from '../../shared/components/modal-dialog/modal-content-dialog.component';
+import { NewMultipleSelectComponent } from '../../shared/components/multiple-select/multiple-select.component';
 
 describe('Component: BetTypesComponent', () => {
     let component: BetTypesComponent;
@@ -157,16 +159,12 @@ describe('Component: BetTypesComponent', () => {
             declarations: [
                 BetTypesComponent,
                 FilterComponent,
-                ModalDialogComponent,
-                ModalContentDialogComponent,
                 SpecialSessionComponent,
                 ResultStatusPipe,
                 TicketStatusPipe,
                 IntervalPipe,
                 SpecialTimeEventCounterPipe,
-                SpecialTimePipe,
-                MultipleSelectComponent,
-                TreeViewComponent,
+                SpecialTimePipe
             ],
             providers: [
                 HttpRequestService,
@@ -180,6 +178,9 @@ describe('Component: BetTypesComponent', () => {
                 { provide: ElementRef, useValue: new MockElementRef()} ,
             ],
             imports: [
+                ModalDialogComponent,
+                ModalContentDialogComponent,
+                NewMultipleSelectComponent,
                 FormsModule,
                 HttpClientModule,
                 NgbModule,
@@ -206,7 +207,7 @@ describe('Component: BetTypesComponent', () => {
 
     it('onCollapsedClick - should collapse bet type', () => {
         betType.collapsed = true;
-        spyOn(toastrService, 'clear');
+        toastrService.clear = jest.fn();
 
         component.onCollapsedClick(betType);
 
@@ -217,7 +218,7 @@ describe('Component: BetTypesComponent', () => {
     describe('onCollapsedEventCounter', () => {
         it('should collapse when input false', () => {
             component.fastMarkets = fastMarkets;
-            spyOn(toastrService, 'clear');
+            toastrService.clear = jest.fn();
 
             component.onCollapsedEventCounter(false);
 
@@ -227,7 +228,7 @@ describe('Component: BetTypesComponent', () => {
 
         it('should unCollapse when input true', () => {
             component.fastMarkets = fastMarkets;
-            spyOn(toastrService, 'clear');
+            toastrService.clear = jest.fn();
 
             component.onCollapsedEventCounter(true);
 
@@ -241,10 +242,10 @@ describe('Component: BetTypesComponent', () => {
         const timeMachineResult = new FastMarketResult();
         timeMachineResult.resultStatus = 0;
         timeMachine.fastMarketResults = [timeMachineResult];
-        spyOn(timeMachineService, 'isIntervalSettled').and.returnValue(true);
-        spyOn(requestService, 'getFastMarketResult').and.returnValue(of(fastMarkets));
-        spyOn(UrlHelper, 'getUrlParameter').and.returnValue(fastMarkets.matchId);
-        spyOn(timeMachineService, 'getCorrespondingInterval').and.returnValue(new FastMarketResult());
+        timeMachineService.isIntervalSettled = jest.fn().mockReturnValue(true);
+        requestService.getFastMarketResult = jest.fn().mockReturnValue(of(fastMarkets));
+        UrlHelper.getUrlParameter = jest.fn().mockReturnValue(fastMarkets.matchId);
+        timeMachineService.getCorrespondingInterval = jest.fn().mockReturnValue(new FastMarketResult());
 
         component.ngOnInit();
         none.radioResult = 0;
@@ -267,8 +268,8 @@ describe('Component: BetTypesComponent', () => {
 
     it('refresh - should set fastMarkets', () => {
         component.fastMarkets = fastMarkets;
-        spyOn(requestService, 'getFastMarketResult').and.returnValue(of(fastMarkets));
-        spyOn(timeMachineService, 'getCorrespondingInterval').and.returnValue(new FastMarketResult());
+        requestService.getFastMarketResult = jest.fn().mockReturnValue(of(fastMarkets));
+        timeMachineService.getCorrespondingInterval = jest.fn().mockReturnValue(new FastMarketResult());
 
         component.refresh();
 
@@ -279,12 +280,12 @@ describe('Component: BetTypesComponent', () => {
         it('should calculate successfully and clear error message', fakeAsync(() => {
             const message = 'Are you sure you want to CALCULATE the selected result?';
             component.fastMarkets = fastMarkets;
-            spyOn(requestService, 'doSubmitByAction').and.returnValue(of(successfulResult));
-            spyOn(messageBoxService, 'closePopup');
-            spyOn(verificationService, 'verifyBeforeCalculation').and.returnValue(true);
-            spyOn(verificationService, 'verifyChangedSettledTickets').and.returnValue(of(true));
-            spyOn(requestService, 'checkingStatus').and.returnValue(of(successfulResult));
-            spyOn(toastrService, 'clear');
+            requestService.doSubmitByAction = jest.fn().mockReturnValue(of(successfulResult));
+            messageBoxService.closePopup = jest.fn();
+            verificationService.verifyBeforeCalculation = jest.fn().mockReturnValue(true);
+            verificationService.verifyChangedSettledTickets = jest.fn().mockReturnValue(of(true));
+            requestService.checkingStatus = jest.fn().mockReturnValue(of(successfulResult));
+            toastrService.clear = jest.fn();
 
             component.calculateAction();
             tick();
@@ -303,10 +304,10 @@ describe('Component: BetTypesComponent', () => {
 
         it('should calculate fail and return error message', fakeAsync(() => {
             component.fastMarkets = fastMarkets;
-            spyOn(requestService, 'doSubmitByAction').and.returnValue(of(unSuccessfulResult));
-            spyOn(verificationService, 'verifyBeforeCalculation').and.returnValue(true);
-            spyOn(verificationService, 'verifyChangedSettledTickets').and.returnValue(of(false));
-            spyOn(requestService, 'checkingStatus').and.returnValue(of(successfulResult));
+            requestService.doSubmitByAction = jest.fn().mockReturnValue(of(unSuccessfulResult));
+            verificationService.verifyBeforeCalculation = jest.fn().mockReturnValue(true);
+            verificationService.verifyChangedSettledTickets = jest.fn().mockReturnValue(of(false));
+            requestService.checkingStatus = jest.fn().mockReturnValue(of(successfulResult));
 
             component.calculateAction();
             tick();
@@ -322,10 +323,10 @@ describe('Component: BetTypesComponent', () => {
         it('should success and clear error message', fakeAsync(() => {
             const uncalMessage = 'Are you sure you want to UNCALCULATE the selected result?';
             component.fastMarkets = fastMarkets;
-            spyOn(requestService, 'doSubmitByAction').and.returnValue(of(successfulResult));
-            spyOn(messageBoxService, 'closePopup');
-            spyOn(verificationService, 'verifyBeforeUncalculation').and.returnValue(true);
-            spyOn(toastrService, 'clear');
+            requestService.doSubmitByAction = jest.fn().mockReturnValue(of(successfulResult));
+            messageBoxService.closePopup = jest.fn();
+            verificationService.verifyBeforeUncalculation = jest.fn().mockReturnValue(true);
+            toastrService.clear = jest.fn();
 
             component.unCalculateAction();
             const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
@@ -339,8 +340,8 @@ describe('Component: BetTypesComponent', () => {
 
         it('should fail and return error message', fakeAsync(() => {
             component.fastMarkets = fastMarkets;
-            spyOn(requestService, 'doSubmitByAction').and.returnValue(of(unSuccessfulResult));
-            spyOn(verificationService, 'verifyBeforeUncalculation').and.returnValue(true);
+            requestService.doSubmitByAction = jest.fn().mockReturnValue(of(unSuccessfulResult));
+            verificationService.verifyBeforeUncalculation = jest.fn().mockReturnValue(true);
 
             component.unCalculateAction();
             const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
@@ -358,8 +359,8 @@ describe('Component: BetTypesComponent', () => {
             const uncalMessage = "WARNING! Please double check the results selected to Uncalculate. "
             + "Selected results with Result Status as 'Running' might be affected: "
             + "they will not be auto key-in or auto- settled any more.";
-            spyOn(requestService, 'doSubmitByAction').and.returnValue(of(unSuccessfulResult));
-            spyOn(verificationService, 'verifyBeforeUncalculation').and.returnValue(true);
+            requestService.doSubmitByAction = jest.fn().mockReturnValue(of(unSuccessfulResult));
+            verificationService.verifyBeforeUncalculation = jest.fn().mockReturnValue(true);
 
             component.unCalculateAction();
             const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
@@ -375,12 +376,12 @@ describe('Component: BetTypesComponent', () => {
         it('should success and clear error message', fakeAsync(() => {
             const uncalMessage = 'Are you sure you want to REFUND the selected result?';
             component.fastMarkets = fastMarkets;
-            spyOn(requestService, 'checkingMarkedTickets').and.returnValue(of(noMarkedTicket));
-            spyOn(requestService, 'doSubmitByAction').and.returnValue(of(successfulResult));
-            spyOn(messageBoxService, 'closePopup');
-            spyOn(verificationService, 'verifyBeforeRefund').and.returnValue(true);
-            spyOn(requestService, 'checkingStatus').and.returnValue(of(successfulResult));
-            spyOn(toastrService, 'clear');
+            requestService.checkingMarkedTickets = jest.fn().mockReturnValue(of(noMarkedTicket));
+            requestService.doSubmitByAction = jest.fn().mockReturnValue(of(successfulResult));
+            messageBoxService.closePopup = jest.fn();
+            verificationService.verifyBeforeRefund = jest.fn().mockReturnValue(true);
+            requestService.checkingStatus = jest.fn().mockReturnValue(of(successfulResult));
+            toastrService.clear = jest.fn();
 
             component.refundAction();
             tick();
@@ -395,10 +396,10 @@ describe('Component: BetTypesComponent', () => {
 
         it('should fail and return error message', fakeAsync(() => {
             component.fastMarkets = fastMarkets;
-            spyOn(requestService, 'checkingMarkedTickets').and.returnValue(of(noMarkedTicket));
-            spyOn(requestService, 'doSubmitByAction').and.returnValue(of(unSuccessfulResult));
-            spyOn(verificationService, 'verifyBeforeRefund').and.returnValue(true);
-            spyOn(requestService, 'checkingStatus').and.returnValue(of(successfulResult));
+            requestService.checkingMarkedTickets = jest.fn().mockReturnValue(of(noMarkedTicket));
+            requestService.doSubmitByAction = jest.fn().mockReturnValue(of(unSuccessfulResult));
+            verificationService.verifyBeforeRefund = jest.fn().mockReturnValue(true);
+            requestService.checkingStatus = jest.fn().mockReturnValue(of(successfulResult));
 
             component.refundAction();
             tick();
@@ -411,9 +412,9 @@ describe('Component: BetTypesComponent', () => {
 
         it('should alert when there is marked ticket', fakeAsync(() => {
             component.fastMarkets = fastMarkets;
-            spyOn(requestService, 'checkingMarkedTickets').and.returnValue(of(existMarkedTicket));
-            spyOn(requestService, 'checkingStatus').and.returnValue(of(successfulResult));
-            spyOn(toastrService, 'error');
+            requestService.checkingMarkedTickets = jest.fn().mockReturnValue(of(existMarkedTicket));
+            requestService.checkingStatus = jest.fn().mockReturnValue(of(successfulResult));
+            toastrService.error = jest.fn();
 
             component.refundAction();
             tick();

@@ -1,4 +1,7 @@
-﻿using Fanex.Settlement.MessageBridge.RefundEvents;
+﻿using Fanex.Caching;
+using Fanex.Settlement.MessageBridge.JackTime;
+using Fanex.Settlement.MessageBridge.JackTime.Constants;
+using Fanex.Settlement.MessageBridge.RefundEvents;
 using MassTransit;
 using Settlement.Core.Constants;
 using Settlement.Core.Criteria;
@@ -31,7 +34,9 @@ public class RefundServiceImp(
     ICreateCriteriaService createCriteriaService,
     ScaleOutSettleService scaleOutSettleService,
     LogService logService,
-    IPublishEndpoint publishEndpoint)
+    IPublishEndpoint publishEndpoint,
+    ICacheService cacheService,
+    IMapper mapper)
     : IRefundService
 {
     public async Task<MarkedTickets> CheckMarkedTickets(CheckingMarkedTicketsCriteria criteria)
@@ -80,16 +85,18 @@ public class RefundServiceImp(
             return validationResult;
         }
 
-        var insertLogCriteria = createCriteriaService.CreateRefundLogCriteria(request);
-        await WriteLog(criteria, insertLogCriteria);
+        var logCriteria = createCriteriaService.CreateRefundLogCriteria(request);
+        var ticketCriteria = createCriteriaService.SoccerRefundGetTicketInfoCriteria(criteria, request.IsSettleAbandonedMatchIbc);
 
+        await WriteLog(criteria, logCriteria);
+        await SendJackTimeTicketToCache(ticketCriteria);
         await ExecuteRefund(criteria);
 
         await publishEndpoint.Publish(
             new MatchRefunded(request.MatchId, request.ParentId, request.SportType, request.ChildMatchType, request.ActionName),
             new CancellationTokenSource(TimeSpan.FromSeconds(2)).Token);
-
         await RefundHedgeMatch(request, criteria);
+        await PublishJackTimeRequest(ticketCriteria);
 
         return validationResult;
     }
@@ -162,11 +169,13 @@ public class RefundServiceImp(
     {
         await UpdateMatchInfo(criteria);
 
-        foreach (var server in appSettingsKey.Value.SiteDbServer)
+        var tasks = appSettingsKey.Value.SiteDbServer.Select(async server =>
         {
             criteria.DbServer = server;
             await repository.ExecuteAsync(criteria);
-        }
+        });
+
+        await Task.WhenAll(tasks);
     }
 
     private async Task WriteLog(RefundCriteria criteria, InsertLogCriteria insertLogCriteria)
@@ -201,11 +210,13 @@ public class RefundServiceImp(
 
         await WriteLogDirectly(request);
 
-        foreach (var server in appSettingsKey.Value.SiteDbServer)
+        var tasks = appSettingsKey.Value.SiteDbServer.Select(async server =>
         {
             criteria.DbServer = server;
             await repository.ExecuteAsync(criteria);
-        }
+        });
+
+        await Task.WhenAll(tasks);
 
         return result;
     }
@@ -248,11 +259,14 @@ public class RefundServiceImp(
     {
         criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
         criteria.SpName = spName;
-        foreach (var server in appSettingsKey.Value.SiteDbServer)
+
+        var tasks = appSettingsKey.Value.SiteDbServer.Select(async server =>
         {
             criteria.DbServer = server;
             await repository.ExecuteAsync(criteria);
-        }
+        });
+
+        await Task.WhenAll(tasks);
     }
 
     private async Task<Result> VerifyBeforeMoveBetTickets(MoveThirdPartyBetTicketCriteria criteria, string spName)
@@ -286,5 +300,29 @@ public class RefundServiceImp(
         var action = criteria.ActionName == ActionType.BetDaq ? "BetDaq" : "BetFair";
         var message = $"{action} Movement from OldMatch: {criteria.MatchId}, NewMatch: {criteria.NewMatchId}";
         await logService.WriteLog(criteria.MatchId, message);
+    }
+
+    private async Task PublishJackTimeRequest(SoccerGetTicketInfoCriteria criteria)
+    {
+        var request = mapper.Map<SoccerGetTicketInfoCriteria, SoccerResult>(criteria);
+        await publishEndpoint.Publish(
+            request,
+            new CancellationTokenSource(TimeSpan.FromSeconds(3)).Token);
+    }
+
+    private async Task SendJackTimeTicketToCache(SoccerGetTicketInfoCriteria criteria)
+    {
+        var fetchTasks = appSettingsKey.Value.SiteDbServer.Select(async server =>
+        {
+            criteria.DbServer = server;
+
+            return await repository.FetchAsync<VoidBetInfo>(criteria);
+        });
+
+        var results = await Task.WhenAll(fetchTasks);
+        var listVoidBetInfo = results.SelectMany(voidBets => voidBets).ToList();
+
+        var cacheKey = $"{RedisJTKey.SoccerJT}-{criteria.MatchId}-{criteria.Action}";
+        await cacheService.SetAsync(cacheKey, listVoidBetInfo);
     }
 }

@@ -13,6 +13,7 @@ import { Language } from '../../../shared/language.native';
 import { AutoSetting } from '../../../shared/models';
 import { of } from 'rxjs';
 import { ModalDialogComponent } from '../../../shared/components/modal-dialog/modal-dialog.component';
+import { AutoSettingType } from '../../constants';
 
 describe('MatchesComponent', () => {
     let component: AutoCalculateMatchesComponent;
@@ -37,9 +38,6 @@ describe('MatchesComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [
-                AutoCalculateMatchesComponent,
-                ModalDialogComponent],
             providers: [
                 BackGroundService,
                 RequestService,
@@ -52,6 +50,8 @@ describe('MatchesComponent', () => {
                 DetectChangesService
             ],
             imports: [
+                AutoCalculateMatchesComponent,
+                ModalDialogComponent,
                 FormsModule,
                 HttpClientModule,
                 NgbModule,
@@ -76,16 +76,17 @@ describe('MatchesComponent', () => {
     });
 
     it('ngOnInit - should refresh matches', fakeAsync(() => {
-        spyOn(requestService, 'refreshMatches');
+        requestService.refreshMatches = jest.fn();
         component.leagues = [new League()];
         component.filterQuery = new FilterAutoQuery();
         component.filterQuery.leagueId = '1';
+        component.disableRefresh = false;
 
         component.ngOnInit();
         tick(6000);
         component.ngOnDestroy();
 
-        expect(requestService.refreshMatches).toHaveBeenCalled();
+        expect(requestService.refreshMatches).toHaveBeenCalledWith('1', component.leagues, true);
     }));
 
     test.each([
@@ -113,7 +114,6 @@ describe('MatchesComponent', () => {
             expect(classResult).toEqual(expected);
         });
 
-
     describe('updateInstant', () => {
         test.each([
             [true, CalculationStatus.waiting],
@@ -122,7 +122,7 @@ describe('MatchesComponent', () => {
                 component.permission = new Permission();
                 component.permission.canAutoPayout = permission;
                 match.isCalculatingSingle = calculateStatus;
-                spyOn(messageBoxService, 'confirm');
+                messageBoxService.confirm = jest.fn();
 
                 component.updateInstant(match);
 
@@ -132,10 +132,11 @@ describe('MatchesComponent', () => {
         it('should call update instant when match pass validation', fakeAsync(() => {
             component.permission = new Permission();
             component.permission.canAutoPayout = true;
-            match.isCalculatingSingle = CalculationStatus.success;
+            match.isCalculatingSingle = null;
+            match.matchId = '123';
             match.autoCalcSetting = new AutoSetting();
             match.autoCalcSetting.isInstantForMatch = false;
-            spyOn(requestService, 'updateSettingMatch').and.returnValue(of(mockResultSuccess));
+            requestService.updateSettingMatch = jest.fn().mockResolvedValue(mockResultSuccess);
 
             component.updateInstant(match);
             const buttonYes = document.getElementsByClassName('btn-danger')[0] as HTMLElement;
@@ -143,17 +144,24 @@ describe('MatchesComponent', () => {
             tick();
 
             expect(match.autoCalcSetting.isInstantForMatch).toBeTruthy();
-            expect(requestService.updateSettingMatch).toHaveBeenCalled();
+            expect(requestService.updateSettingMatch).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    matchId: 123,
+                    autoType: AutoSettingType.instant,
+                    isEnabled: true
+                })
+            );
         }));
 
         it('should alert when update failed', fakeAsync(() => {
             component.permission = new Permission();
             component.permission.canAutoPayout = true;
-            match.isCalculatingSingle = CalculationStatus.success;
+            match.isCalculatingSingle = null;
+            match.matchId = '123';
             match.autoCalcSetting = new AutoSetting();
             match.autoCalcSetting.isInstantForMatch = false;
-            spyOn(requestService, 'updateSettingMatch').and.returnValue(of(mockResultFailed));
-            spyOn(messageBoxService, 'alert');
+            requestService.updateSettingMatch = jest.fn().mockResolvedValue(mockResultFailed);
+            messageBoxService.alert = jest.fn();
 
             component.updateInstant(match);
             const buttonYes = document.getElementsByClassName('btn-danger')[0] as HTMLElement;
@@ -168,9 +176,11 @@ describe('MatchesComponent', () => {
     describe('updateInstantForLeague', () => {
         it('should apply status for all match when select confirm yes', fakeAsync(() => {
             const league = new League();
+            league.leagueId = 123;
             const setting = new AutoSetting();
-            spyOn(requestService, 'updateSettingLeague').and.returnValue(of(mockResultSuccess));
-            spyOn(handleActionsService, 'handleAutoInstantForMatch');
+            setting.isInstantForLeague = false;
+            requestService.updateSettingLeague = jest.fn().mockResolvedValue(mockResultSuccess);
+            handleActionsService.handleAutoInstantForMatch = jest.fn();
             component.updateInstantForLeague(setting, league);
 
             const buttonYes = document.getElementsByClassName('btn-danger')[0] as HTMLElement;
@@ -178,15 +188,16 @@ describe('MatchesComponent', () => {
             tick();
 
             expect(setting.isInstantForLeague).toBeTruthy();
-            expect(handleActionsService.handleAutoInstantForMatch).toHaveBeenCalled();
+            expect(handleActionsService.handleAutoInstantForMatch).toHaveBeenCalledWith(league, true);
         }));
 
         it('should not apply status for all match when select confirm no', fakeAsync(() => {
             const league = new League();
+            league.leagueId = 123;
             const setting = new AutoSetting();
             setting.isInstantForLeague = true;
-            spyOn(requestService, 'updateSettingLeague').and.returnValue(of(mockResultSuccess));
-            spyOn(handleActionsService, 'handleAutoInstantForMatch');
+            requestService.updateSettingLeague = jest.fn().mockResolvedValue(mockResultSuccess);
+            handleActionsService.handleAutoInstantForMatch = jest.fn();
             component.updateInstantForLeague(setting, league);
 
             const buttonNo = document.getElementsByClassName('btn-default')[0] as HTMLElement;
@@ -199,10 +210,11 @@ describe('MatchesComponent', () => {
 
         it('should alert when update failed', fakeAsync(() => {
             const league = new League();
+            league.leagueId = 123;
             const setting = new AutoSetting();
             setting.isInstantForLeague = true;
-            spyOn(requestService, 'updateSettingLeague').and.returnValue(of(mockResultFailed));
-            spyOn(messageBoxService, 'alert');
+            requestService.updateSettingLeague = jest.fn().mockResolvedValue(mockResultFailed);
+            messageBoxService.alert = jest.fn();
             component.updateInstantForLeague(setting, league);
 
             const buttonNo = document.getElementsByClassName('btn-default')[0] as HTMLElement;
@@ -218,7 +230,7 @@ describe('MatchesComponent', () => {
         component.filterQuery = new FilterAutoQuery();
         component.filterQuery.fromDate = "2020/10/10";
         component.filterQuery.toDate = "2020/10/11";
-        spyOn(popupService, 'popupLog');
+        popupService.popupLog = jest.fn();
 
         component.getLog('123');
 
@@ -233,7 +245,7 @@ describe('MatchesComponent', () => {
                 match.isCalculatingSingle = calculateStatus;
                 component.permission = new Permission();
                 component.permission.canAutoPayout = permission;
-                spyOn(popupService, 'openUpdatePayout');
+                popupService.openUpdatePayout = jest.fn();
 
                 component.openUpdatePayout(match);
 
@@ -241,14 +253,14 @@ describe('MatchesComponent', () => {
             });
 
         it('should openPopup when pass validation', () => {
-            match.isCalculatingSingle = CalculationStatus.success;
+            match.isCalculatingSingle = null;
             component.permission = new Permission();
             component.permission.canAutoPayout = true;
-            spyOn(popupService, 'openUpdatePayout');
+            popupService.openUpdatePayout = jest.fn();
 
             component.openUpdatePayout(match);
 
-            expect(popupService.openUpdatePayout).toHaveBeenCalled();
+            expect(popupService.openUpdatePayout).toHaveBeenCalledWith(match);
         });
     });
 
@@ -256,19 +268,21 @@ describe('MatchesComponent', () => {
         it('should call open popup when has permission', () => {
             component.permission = new Permission();
             component.permission.canAutoPayout = true;
-            spyOn(popupService, 'openUpdatePayoutForLeague');
+            popupService.openUpdatePayoutForLeague = jest.fn();
+            const league = new League();
 
-            component.openUpdatePayoutForLeague(new League());
+            component.openUpdatePayoutForLeague(league);
 
-            expect(popupService.openUpdatePayoutForLeague).toHaveBeenCalled();
+            expect(popupService.openUpdatePayoutForLeague).toHaveBeenCalledWith(league);
         });
 
         it('should not open popup when not has permission', () => {
             component.permission = new Permission();
             component.permission.canAutoPayout = false;
-            spyOn(popupService, 'openUpdatePayoutForLeague');
+            popupService.openUpdatePayoutForLeague = jest.fn();
+            const league = new League();
 
-            component.openUpdatePayoutForLeague(new League());
+            component.openUpdatePayoutForLeague(league);
 
             expect(popupService.openUpdatePayoutForLeague).not.toHaveBeenCalled();
         });
@@ -278,19 +292,21 @@ describe('MatchesComponent', () => {
         it('should call open popup when has permission', () => {
             component.permission = new Permission();
             component.permission.canAutoPayout = true;
-            spyOn(popupService, 'openUpdateTime');
+            popupService.openUpdateTime = jest.fn();
+            const league = new League();
 
-            component.openUpdateTime(new League(), true);
+            component.openUpdateTime(league, true);
 
-            expect(popupService.openUpdateTime).toHaveBeenCalled();
+            expect(popupService.openUpdateTime).toHaveBeenCalledWith(league, true);
         });
 
         it('should not open popup when not has permission', () => {
             component.permission = new Permission();
             component.permission.canAutoPayout = false;
-            spyOn(popupService, 'openUpdateTime');
+            popupService.openUpdateTime = jest.fn();
+            const league = new League();
 
-            component.openUpdateTime(new League(), true);
+            component.openUpdateTime(league, true);
 
             expect(popupService.openUpdateTime).not.toHaveBeenCalled();
         });
@@ -300,6 +316,7 @@ describe('MatchesComponent', () => {
         [1, false, ""],
         [0, true, ""],
         [1, true, BackgroundColor.autoSettleRunning]])('getClassInstantStatus - return status with score diff:%p and instant:%p', (scoreDiff: number, instant: boolean, expected: string) => {
+            match.autoCalcSetting = new AutoSetting();
             match.autoCalcSetting.isInstantForMatch = instant;
             match.instantScoreDiff = scoreDiff;
 
@@ -325,30 +342,33 @@ describe('MatchesComponent', () => {
             ["1", ""]])('Should Stop when exist score instant empty', (home: string, away: string) => {
                 match.instantAwayScore = away;
                 match.instantHomeScore = home;
-                spyOn(requestService, 'pushInstantStatus');
+                requestService.pushInstantStatus = jest.fn();
 
                 component.doUpdateInstantStatus(match);
 
-                expect(requestService.checkingMatch).not.toHaveBeenCalled();
+                expect(requestService.pushInstantStatus).not.toHaveBeenCalled();
             });
 
         it('should alert when update failed', fakeAsync(() => {
             match.instantAwayScore = "1";
             match.instantHomeScore = "1";
-            spyOn(requestService, 'pushInstantStatus').and.returnValue(of(mockResultFailed));
-            spyOn(messageBoxService, 'alert');
+            requestService.pushInstantStatus = jest.fn().mockResolvedValue(mockResultFailed);
+            messageBoxService.alert = jest.fn();
 
             component.doUpdateInstantStatus(match);
+            tick();
+            const buttonYes = document.getElementsByClassName('btn-danger')[0] as HTMLElement;
+            buttonYes.click();
             tick();
 
             expect(messageBoxService.alert).toHaveBeenCalled();
         }));
 
-        it('should push instant score when update failed', fakeAsync(() => {
+        it('should push instant score when update success', fakeAsync(() => {
             match.instantAwayScore = "1";
             match.instantHomeScore = "1";
-            spyOn(requestService, 'pushInstantStatus').and.returnValue(of(mockResultSuccess));
-            spyOn(handleActionsService, 'handleChangeInstantStatus');
+            requestService.pushInstantStatus = jest.fn().mockResolvedValue(mockResultSuccess);
+            handleActionsService.handleChangeInstantStatus = jest.fn();
 
             component.doUpdateInstantStatus(match);
             tick();
@@ -357,14 +377,14 @@ describe('MatchesComponent', () => {
             tick();
 
             expect(requestService.pushInstantStatus).toHaveBeenCalled();
-            expect(handleActionsService.handleChangeInstantStatus).toHaveBeenCalled();
+            expect(handleActionsService.handleChangeInstantStatus).toHaveBeenCalledWith(match);
         }));
 
         it('should alert when push score failed', fakeAsync(() => {
             match.instantAwayScore = "1";
             match.instantHomeScore = "1";
-            spyOn(requestService, 'pushInstantStatus').and.returnValue(of(mockResultFailed));
-            spyOn(messageBoxService, 'alert');
+            requestService.pushInstantStatus = jest.fn().mockResolvedValue(mockResultFailed);
+            messageBoxService.alert = jest.fn();
 
             component.doUpdateInstantStatus(match);
             tick();
@@ -378,7 +398,7 @@ describe('MatchesComponent', () => {
     });
 
     test.each([
-        null, ""])("isNullOrEmpty - return true whn value null or empty", (value: string) => {
+        null, ""])("isNullOrEmpty - return true when value null or empty", (value: string) => {
             const actual = component.isNullOrEmpty(value);
 
             expect(actual).toBeTruthy();

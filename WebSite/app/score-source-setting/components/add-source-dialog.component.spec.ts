@@ -2,7 +2,7 @@ import { waitForAsync, ComponentFixture, TestBed, fakeAsync, tick } from '@angul
 import { AddSourceDialogComponent } from './add-source-dialog.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
-import { HttpRequestService } from '../../shared/services';
+import { HttpRequestService, MessageBoxService, BlockUIService } from '../../shared/services';
 import { HttpClient, HttpHandler } from '@angular/common/http';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MaterialModule } from '../../shared/material-module';
@@ -37,7 +37,12 @@ describe('AddSourceDialogComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-        declarations: [
+        imports: [
+          AddSourceDialogComponent,
+          BrowserModule,
+          FormsModule,
+          MaterialModule,
+          NgbModule,
           ModalDialogComponent,
           ModalContentDialogComponent
         ],
@@ -47,15 +52,10 @@ describe('AddSourceDialogComponent', () => {
           HttpHandler,
           QueryService,
           NgbModal,
+          MessageBoxService,
+          BlockUIService,
           { provide: MatDialogRef, useValue: dialogMock },
           { provide: MAT_DIALOG_DATA, useValue: data }
-        ],
-        imports: [
-          AddSourceDialogComponent,
-          BrowserModule,
-          FormsModule,
-          MaterialModule,
-          NgbModule
         ]
     })
     

@@ -40,13 +40,18 @@ describe('CalculateComponent', () => {
 
   it('should fetch match details', async () => {
     const matchId = 123;
-    const mockMatch = new Match(new MatchDetail());
-    spyOn(calculateStorage, 'fetchMatch').and.returnValue(Promise.resolve());
-    spyOn(calculateStorage, 'getMatchDetail').and.returnValue(mockMatch);
+    const mockMatch = new Match({ playTime: 123 } as MatchDetail);
+    calculateStorage.fetchMatch = jest.fn().mockResolvedValue(mockMatch);
+    calculateStorage.getMatch = jest.fn().mockReturnValue(mockMatch);
+    calculateStorage.getMatchDetail = jest.fn().mockReturnValue(mockMatch.matchDetail);
+    calculateStorage.resetHomeAway = jest.fn();
+    calculateStorage.mapTicketStatusExtraInning = jest.fn();
 
     await component.getMatch(matchId);
 
     expect(calculateStorage.fetchMatch).toHaveBeenCalledWith(matchId);
+    expect(calculateStorage.resetHomeAway).toHaveBeenCalled();
+    expect(calculateStorage.mapTicketStatusExtraInning).toHaveBeenCalled();
     expect(component.isReadyMatch).toBe(true);
     expect(component.match).toEqual(mockMatch);
   });

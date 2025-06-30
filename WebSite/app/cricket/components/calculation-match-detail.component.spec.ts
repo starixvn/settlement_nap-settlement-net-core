@@ -46,9 +46,10 @@ describe("E-sport - Calculation Match Detail Component", () => {
   const matchDetail = new MatchDetail();
   const match = new Match(matchDetail);
   const source = new LeagueOutsideSource();
+
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [CalculationMatchDetailComponent, ManageLeagueComponent],
+      declarations: [],
       providers: [
         MessageBoxService,
         HttpRequestService,
@@ -59,7 +60,7 @@ describe("E-sport - Calculation Match Detail Component", () => {
         ResultByTeamNamePipe,
         { provide: MessageBoxService, useClass: MessageBoxService },
       ],
-      imports: [FormsModule, HttpClientModule, MaterialModule],
+      imports: [FormsModule, HttpClientModule, MaterialModule, CalculationMatchDetailComponent, ManageLeagueComponent],
     })
       .compileComponents()
       .then(() => {
@@ -68,6 +69,10 @@ describe("E-sport - Calculation Match Detail Component", () => {
         component.match = match;
         aioService = fixture.debugElement.injector.get(AioService);
         dialog = fixture.debugElement.injector.get(MatDialog);
+        
+        // Setup Jest mocks
+        aioService.getLeagueSources = jest.fn().mockReturnValue(of(source));
+        dialog.open = jest.fn();
       });
   }));
 
@@ -77,15 +82,12 @@ describe("E-sport - Calculation Match Detail Component", () => {
 
   it("ngOnInit - should set match detail", () => {
     component.ngOnInit();
-
     expect(component.matchDetail).toEqual(match.matchDetail);
   });
 
   it("manageOutSideSourcePopup -should call getLeagueSources from aioService.", () => {
     matchDetail.leagueId = 123;
     component.matchDetail = matchDetail;
-    spyOn(aioService, "getLeagueSources").and.returnValue(of(source));
-    spyOn(dialog, "open");
 
     component.manageOutSideSourcePopup();
 

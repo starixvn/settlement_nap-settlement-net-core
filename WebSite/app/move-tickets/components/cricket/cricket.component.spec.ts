@@ -10,17 +10,15 @@ import {
     FilterComponent,
     LeagueComponent,
 } from '.';
-import {
-    DatepickerComponent,
-    NewMultipleSelectComponent,
-    ModalContentDialogComponent,
-} from '../../../shared/components';
 import { MoveTicketsService } from './move-tickets.service';
 import { MaterialModule } from '../../../shared/material-module';
-import { of } from 'rxjs';
 import { MultiSport, MatchWaitingRequest } from '../../models';
 import { IntervalScorePipe } from '../../../shared/pipes/interval-score.pipe';
 import { ElementRef } from '@angular/core';
+import { NewMultipleSelectComponent } from '../../../shared/components/multiple-select/multiple-select.component';
+import { DatepickerComponent } from '../../../shared/components/date-picker/date-picker.component';
+import { ModalContentDialogComponent } from '../../../shared/components/modal-dialog/modal-content-dialog.component';
+import { DatePipe } from '@angular/common';
 
 describe('MoveTickets - CricketComponent', () => {
     let component: CricketComponent;
@@ -33,21 +31,22 @@ describe('MoveTickets - CricketComponent', () => {
             declarations: [
                 CricketComponent,
                 FilterComponent,
-                LeagueComponent,
+                LeagueComponent
+            ],
+            imports: [
+                IntervalScorePipe,
                 DatepickerComponent,
                 NewMultipleSelectComponent,
                 ModalContentDialogComponent,
-                IntervalScorePipe,
-            ],
-            imports: [
                 BrowserModule,
                 FormsModule,
                 ReactiveFormsModule,
                 HttpClientModule,
                 NgbModule,
-                MaterialModule,
+                MaterialModule
             ],
             providers: [
+                DatePipe,
                 VerifyDateService,
                 MessageBoxService,
                 GenerateFilterService,

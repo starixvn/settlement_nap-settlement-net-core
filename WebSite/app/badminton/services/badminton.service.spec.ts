@@ -19,10 +19,6 @@ describe('BadmintonService', () => {
   let intervalBackgroundPipe: IntervalBackgroundPipe;
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [
-        ModalDialogComponent,
-        ModalContentDialogComponent,
-      ],
       providers: [
         BadmintonService,
         HttpRequestService,
@@ -33,7 +29,9 @@ describe('BadmintonService', () => {
       ],
       imports: [
         HttpClientModule,
-        NgbModule
+        NgbModule,
+        ModalDialogComponent,
+        ModalContentDialogComponent,
       ],
     });
 

@@ -7,7 +7,7 @@ import { Selection, GroupSelection } from '../models';
 import { MultipleSelect, ItemsSelect } from '../../shared/models';
 import { TicketStatus, ResultStatusId } from '../../shared/constants';
 
-describe('BetBuilder - Calculation Filter Sevice', () => {
+describe('BetBuilder - Calculation Filter Service', () => {
     let service: CalculationFilterService = null;
 
     beforeEach(() => {

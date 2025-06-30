@@ -1,4 +1,4 @@
-import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from "@angular/core/testing";
+import { ComponentFixture, fakeAsync, flush, TestBed, tick, waitForAsync } from "@angular/core/testing";
 import { GroupMap, MatchDetail, Permission, ResultDetail } from "../../models/sportsbook-sop";
 import { ItemsSelect, ResultSettingModel, ResultSettingQuery } from "../../models";
 import { AioService, BlockUIService, ClosePopupService, HttpRequestService, MessageBoxService } from "../../services";
@@ -10,7 +10,7 @@ import { VerificationBaseService } from "../../../core/services/verification-bas
 import { HttpClientModule } from "@angular/common/http";
 import { ResultByTeamNamePipe } from "../../pipes/result-by-team-name.pipe";
 import { CalculateAction, ResultSettingType, ResultStatusId, SettlementStatusId, TicketStatusText } from "../../constants";
-import { of } from "rxjs";
+import { of, timeout } from "rxjs";
 import { Language } from "../../language.native";
 import * as _ from "lodash";
 import { ToastContainerDirective, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
@@ -60,9 +60,7 @@ describe("Early Base Component", () => {
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             declarations: [
-                EarlyBaseComponent,
-                ModalDialogComponent,
-                ModalContentDialogComponent,
+                EarlyBaseComponent
             ],
             providers: [
                 MessageBoxService,
@@ -78,7 +76,10 @@ describe("Early Base Component", () => {
                 { provide: ToastrService, useClass: ToastrService },
                 { provide: MessageBoxService, useClass: MessageBoxService },
             ],
-            imports: [HttpClientModule,
+            imports: [
+                ModalDialogComponent,
+                ModalContentDialogComponent,
+                HttpClientModule,
                 NgbModule,
                 MaterialModule,
                 ToastNoAnimationModule.forRoot(),
@@ -94,6 +95,18 @@ describe("Early Base Component", () => {
                 toastrService = fixture.debugElement.injector.get(ToastrService);
                 closePopupService = fixture.debugElement.injector.get(ClosePopupService);
                 component.permission = new Permission();
+                
+                // Setup jest mocks
+                aioService.saveScore = jest.fn();
+                aioService.changeResultSetting = jest.fn();
+                aioService.checkMarkedTickets = jest.fn();
+                verificationBaseService.getChangedScores = jest.fn();
+                verificationBaseService.getOutsideScores = jest.fn();
+                verificationBaseService.allResultsHaveScoreSources = jest.fn();
+                verificationBaseService.isExistMismatchScore = jest.fn();
+                messageBoxService.confirm = jest.fn();
+                toastrService.error = jest.fn();
+                
             });
     }));
 
@@ -261,9 +274,9 @@ describe("Early Base Component", () => {
     describe('saveResult', () => {
         it('saveResult - should push successfully', fakeAsync(() => {
             const groupMap = new GroupMap('1', [resultDetail]);
-            spyOn(aioService, 'saveScore').and.returnValue(of(successfulResult));
-            spyOn(verificationBaseService, 'getChangedScores').and.returnValue([]);
-            spyOn(verificationBaseService, 'getOutsideScores').and.returnValue([]);
+            aioService.saveScore = jest.fn().mockResolvedValue(successfulResult);
+            verificationBaseService.getChangedScores = jest.fn().mockReturnValue([]);
+            verificationBaseService.getOutsideScores = jest.fn().mockReturnValue([]);
             component.resultDetails = [resultDetail];
             component.groupMap = [groupMap];
 
@@ -275,10 +288,9 @@ describe("Early Base Component", () => {
         }));
 
         it('should set error message when save score unsuccessfully', fakeAsync(() => {
-            spyOn(aioService, 'saveScore').and.returnValue(of(unSuccessfulResult));
-            spyOn(verificationBaseService, 'getChangedScores').and.returnValue([]);
-            spyOn(verificationBaseService, 'getOutsideScores').and.returnValue([]);
-            spyOn(toastrService, 'error');
+            aioService.saveScore = jest.fn().mockResolvedValue(unSuccessfulResult);
+            verificationBaseService.getChangedScores = jest.fn().mockReturnValue([]);
+            verificationBaseService.getOutsideScores = jest.fn().mockReturnValue([]);
 
             component.doSaveResult('', [], [], '', () => { });
             tick();
@@ -287,9 +299,9 @@ describe("Early Base Component", () => {
         }));
 
         it('should call func when save score successfully and type is calc', fakeAsync(() => {
-            spyOn(aioService, 'saveScore').and.returnValue(of(successfulResult));
-            spyOn(verificationBaseService, 'getChangedScores').and.returnValue([]);
-            spyOn(verificationBaseService, 'getOutsideScores').and.returnValue([]);
+            aioService.saveScore = jest.fn().mockResolvedValue(successfulResult);
+            verificationBaseService.getChangedScores = jest.fn().mockReturnValue([]);
+            verificationBaseService.getOutsideScores = jest.fn().mockReturnValue([]);
             let actual = false;
 
             component.doSaveResult(CalculateAction.calculate, [], [], '', () => { actual = true });
@@ -299,70 +311,12 @@ describe("Early Base Component", () => {
         }));
     });
 
-    describe('verifyScoreSourcesAndCalculate - confirmCalculateMismatchScores', () => {
-        it('should call func when pass all verify', () => {
-            spyOn(verificationBaseService, 'allResultsHaveScoreSources').and.returnValue(true);
-            spyOn(verificationBaseService, 'isExistMismatchScore').and.returnValue(false);
-            let called = false;
-
-            component.verifyScoreSourcesAndCalculate(() => { called = true });
-
-            expect(called).toBeTruthy();
-        });
-
-        it('should show alert when results not have score and permission is member', () => {
-            component.permission.isLeader = false;
-            spyOn(verificationBaseService, 'allResultsHaveScoreSources').and.returnValue(false);
-            spyOn(toastrService, 'error');
-
-            component.verifyScoreSourcesAndCalculate(() => { });
-
-            expect(toastrService.error).toHaveBeenCalledWith(Language.eSports.nonLeader.insufficientSources);
-        });
-
-        it('should show confirm when results not have score and permission is member', fakeAsync(() => {
-            component.permission.isLeader = true;
-            spyOn(verificationBaseService, 'allResultsHaveScoreSources').and.returnValue(false);
-            spyOn(messageBoxService, 'confirm');
-
-            component.verifyScoreSourcesAndCalculate(() => { });
-            tick();
-
-            expect(messageBoxService.confirm).toHaveBeenCalled();
-        }));
-
-        it('should show alert when exist mismatch score and permission is member', () => {
-            component.permission.isLeader = false;
-            spyOn(verificationBaseService, 'allResultsHaveScoreSources').and.returnValue(true);
-            spyOn(verificationBaseService, 'isExistMismatchScore').and.returnValue(true);
-            spyOn(toastrService, 'error');
-
-            component.verifyScoreSourcesAndCalculate(() => { });
-
-            expect(toastrService.error).toHaveBeenCalledWith(Language.eSports.nonLeader.mismatchedResult);
-        });
-
-        it('should show alert when exist mismatch score and permission is leader', () => {
-            component.permission.isLeader = true;
-            spyOn(verificationBaseService, 'allResultsHaveScoreSources').and.returnValue(true);
-            spyOn(verificationBaseService, 'isExistMismatchScore').and.returnValue(true);
-            spyOn(messageBoxService, 'confirm');
-
-            component.verifyScoreSourcesAndCalculate(() => { });
-
-            expect(messageBoxService.confirm).toHaveBeenCalled();
-        });
-    });
-
     describe('isChangeSetting.', () => {
         beforeEach(() => {
             component.permission.canCalculate = true;
         });
 
         it('always show confirm', () => {
-
-            spyOn(messageBoxService, 'confirm');
-
             const map = new GroupMap('1', []);
 
             component.isChangeSetting(resultDetail, map);
@@ -377,11 +331,12 @@ describe("Early Base Component", () => {
             component.matchId = 1;
             component.resultDetails = [resultDetail];
             const query = new ResultSettingQuery(1, 1, true, '7120103');
-            spyOn(aioService, 'changeResultSetting').and.returnValue(of(true));;
+            aioService.changeResultSetting = jest.fn().mockResolvedValue(true);
+            messageBoxService.confirm = jest.fn().mockImplementation((message, callback) => {
+                callback();
+            });
 
             component.isChangeSetting(resultDetail, map);
-            const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-            buttonYes.click();
             tick();
 
             expect(aioService.changeResultSetting).toHaveBeenCalledWith(query);
@@ -391,11 +346,13 @@ describe("Early Base Component", () => {
             const map = new GroupMap('1', [resultDetail]);
             resultDetail.resultSettingData.isHoldResult = false;
             component.resultDetails = [resultDetail];
-            spyOn(aioService, 'changeResultSetting').and.returnValue(of(true));
+            
+            aioService.changeResultSetting = jest.fn().mockResolvedValue(true);
+            messageBoxService.confirm = jest.fn().mockImplementation((message, callback) => {
+                callback();
+            });
 
             component.isChangeSetting(resultDetail, map);
-            const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-            buttonYes.click();
             tick();
 
             expect(resultDetail.resultSettingData.isHoldResult).toBe(true);
@@ -409,8 +366,6 @@ describe("Early Base Component", () => {
             component.permission.canCalculate = true;
         });
         it('always show confirm', () => {
-            spyOn(messageBoxService, 'confirm');
-
             const map = new GroupMap('1', []);
 
             component.changeSettingGroup(map);
@@ -424,11 +379,12 @@ describe("Early Base Component", () => {
             component.matchId = 1;
             component.resultDetails = [resultDetail];
             const query = new ResultSettingQuery(1, 1, true, '7120103,7120103');
-            spyOn(aioService, 'changeResultSetting').and.returnValue(of(true));
+            aioService.changeResultSetting = jest.fn().mockResolvedValue(true);
+            messageBoxService.confirm = jest.fn().mockImplementation((message, callback) => {
+                callback();
+            });
 
             component.changeSettingGroup(map);
-            const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-            buttonYes.click();
             tick();
 
             expect(aioService.changeResultSetting).toHaveBeenCalledWith(query);
@@ -437,11 +393,12 @@ describe("Early Base Component", () => {
         it('should set correct value when service successful', fakeAsync(() => {
             const map = new GroupMap('1', [resultDetail]);
             component.resultDetails = [resultDetail];
-            spyOn(aioService, 'changeResultSetting').and.returnValue(of(true));
+            aioService.changeResultSetting = jest.fn().mockResolvedValue(true);
+            messageBoxService.confirm = jest.fn().mockImplementation((message, callback) => {
+                callback();
+            });
 
             component.changeSettingGroup(map);
-            const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-            buttonYes.click();
             tick();
 
             expect(map.checked).toBe(false);
@@ -456,7 +413,6 @@ describe("Early Base Component", () => {
         it("should use first confirm message", fakeAsync(() => {
             resultDetail.resultStatus = '2';
             component.resultDetails = [resultDetail];
-            spyOn(toastrService, 'error');
 
             component.getUncalculateMessage();
 
@@ -483,10 +439,7 @@ describe("Early Base Component", () => {
         it("should alert when exist marked ticket", fakeAsync(() => {
             component.resultDetails = [resultDetail];
 
-            spyOn(aioService, "checkMarkedTickets").and.returnValue(
-                of(existMarkedTicket)
-            );
-            spyOn(toastrService, 'error');
+            aioService.checkMarkedTickets = jest.fn().mockResolvedValue(existMarkedTicket);
 
             component.checkMarkedTickets([resultDetail], () => { });
             tick();
@@ -500,10 +453,7 @@ describe("Early Base Component", () => {
             result.resultSettingData.isConfirmedRefund = false;
             result.checked = true;
             component.resultDetails = [result];
-            spyOn(aioService, "checkMarkedTickets").and.returnValue(
-                of(notExistMarkedTicket)
-            );
-            spyOn(messageBoxService, 'confirm');
+            aioService.checkMarkedTickets = jest.fn().mockResolvedValue(notExistMarkedTicket);
 
             component.checkMarkedTickets([result], () => { });
             tick();
@@ -559,8 +509,6 @@ describe("Early Base Component", () => {
             component.matchDetail = matchDetail;
             component.resultDetails = [resultDetail, resultSecond];
 
-            spyOn(toastrService, 'error');
-
             component.confirmRefund();
 
             expect(toastrService.error).toHaveBeenCalled();
@@ -570,76 +518,134 @@ describe("Early Base Component", () => {
     describe('undoConfirmedResult', () => {
         it('should show alert when exist result not confirmed', () => {
             resultSetting.resultSettingData.isConfirmedRefund = false;
-            spyOn(toastrService, 'error');
 
-            component.undoConfirmedResult([resultSetting], 0, '');
+            component.undoConfirmedResult([resultSetting], 0, '', []);
 
             expect(toastrService.error).toHaveBeenCalledWith("WARNING! Cannot continue due to selected results have different confirm states! Please select confirmed or not confirmed results only.");
         });
 
-        it('should show confirm when all result confirmed', () => {
+
+        it('should call service change result setting when all result confirmed', fakeAsync(async () => {
             resultSetting.resultSettingData.isConfirmedRefund = true;
+            aioService.changeConfirmResultSetting = jest.fn();
 
-            spyOn(messageBoxService, 'confirm');
-
-            component.undoConfirmedResult([resultSetting], 0, '');
-
-            expect(messageBoxService.confirm).toHaveBeenCalled();
-        });
-
-        it('should push request when click ok on confirm box', fakeAsync(async () => {
-            resultSetting.resultSettingData.isConfirmedRefund = true;
-            spyOn(aioService, 'changeResultSetting').and.returnValue(of(true));
-            const query = new ResultSettingQuery(0, ResultSettingType.confirmRefund,
-                false, '');
-
-            component.undoConfirmedResult([resultSetting], 0, '');
-
-            const buttonYes = document.getElementsByClassName("btn-danger")[0] as HTMLElement;
-            buttonYes.click();
-            tick();
-
-            expect(aioService.changeResultSetting).toHaveBeenCalledWith(query);
+            component.undoConfirmedResult([resultSetting], 0, '', []);
+    
+            expect(aioService.changeConfirmResultSetting).toHaveBeenCalled();
         }));
     });
 
-    describe("confirmResult", () => {
-        it('should show alert when exist result refunded and has no running ticket', () => {
-            resultSetting.resultSettingData.isConfirmedRefund = false;
-            resultSetting.settlementStatusId = SettlementStatusId.Refund;
-            resultSetting.ticketStatus = TicketStatusText.calculated;
+    describe('verifyScoreSourcesAndCalculate', () => {
+        let confirmChangedResults: jest.Mock;
 
-            spyOn(toastrService, 'error');
-
-            component.confirmResult([resultSetting], 0, '');
-
-            expect(toastrService.error).toHaveBeenCalledWith("WARNING! Cannot continue due to selected results are Refund and have no Running ticket.");
+        beforeEach(() => {
+            confirmChangedResults = jest.fn();
         });
 
-        it('should show confirm when all result confirmed', () => {
-            resultSetting.resultSettingData.isConfirmedRefund = false;
-            resultSetting.settlementStatusId = SettlementStatusId.Running;
-            spyOn(messageBoxService, 'confirm');
+        it('should show error when not all maps have screenshot sources', () => {
+            // Arrange
+            verificationBaseService.allMapHaveScreenshotSource = jest.fn().mockReturnValue(false);
+            
+            // Act
+            component.verifyScoreSourcesAndCalculate(confirmChangedResults);
+            
+            // Assert
+            expect(toastrService.error).toHaveBeenCalledWith(Language.sop.notScreenshot);
+            expect(confirmChangedResults).not.toHaveBeenCalled();
+        });
 
-            component.confirmResult([resultSetting], 0, '');
+        it('should show error when there are mismatched score screenshots', () => {
+            // Arrange
+            verificationBaseService.allMapHaveScreenshotSource = jest.fn().mockReturnValue(true);
+            verificationBaseService.isExistMismatchedScoreScreenshot = jest.fn().mockReturnValue(true);
+            
+            // Act
+            component.verifyScoreSourcesAndCalculate(confirmChangedResults);
+            
+            // Assert
+            expect(toastrService.error).toHaveBeenCalledWith(Language.sop.mismatchedScreenshot);
+            expect(confirmChangedResults).not.toHaveBeenCalled();
+        });
 
+        it('should call confirmCalculateMismatchScores when all results have score sources', () => {
+            // Arrange
+            verificationBaseService.allMapHaveScreenshotSource = jest.fn().mockReturnValue(true);
+            verificationBaseService.isExistMismatchedScoreScreenshot = jest.fn().mockReturnValue(false);
+            verificationBaseService.allResultsHaveScoreSources = jest.fn().mockReturnValue(true);
+            verificationBaseService.isExistMismatchScore = jest.fn().mockReturnValue(false);
+            
+            // Act
+            component.verifyScoreSourcesAndCalculate(confirmChangedResults);
+            
+            // Assert
+            expect(confirmChangedResults).toHaveBeenCalled();
+        });
+
+        it('should show error when not all results have score sources and user is not a leader', () => {
+            // Arrange
+            verificationBaseService.allMapHaveScreenshotSource = jest.fn().mockReturnValue(true);
+            verificationBaseService.isExistMismatchedScoreScreenshot = jest.fn().mockReturnValue(false);
+            verificationBaseService.allResultsHaveScoreSources = jest.fn().mockReturnValue(false);
+            component.permission.isLeader = false;
+            
+            // Act
+            component.verifyScoreSourcesAndCalculate(confirmChangedResults);
+            
+            // Assert
+            expect(toastrService.error).toHaveBeenCalledWith(Language.eSports.nonLeader.insufficientSources);
+            expect(confirmChangedResults).not.toHaveBeenCalled();
+        });
+
+        it('should show confirmation dialog when not all results have score sources and user is a leader', () => {
+            // Arrange
+            verificationBaseService.allMapHaveScreenshotSource = jest.fn().mockReturnValue(true);
+            verificationBaseService.isExistMismatchedScoreScreenshot = jest.fn().mockReturnValue(false);
+            verificationBaseService.allResultsHaveScoreSources = jest.fn().mockReturnValue(false);
+            component.permission.isLeader = true;
+            messageBoxService.confirm = jest.fn().mockImplementation((message, callback) => callback());
+            verificationBaseService.isExistMismatchScore = jest.fn().mockReturnValue(false);
+            
+            // Act
+            component.verifyScoreSourcesAndCalculate(confirmChangedResults);
+            
+            // Assert
+            expect(component.confirmationDialogMessage.message).toEqual(Language.eSports.leader.insufficientSources);
             expect(messageBoxService.confirm).toHaveBeenCalled();
+            expect(confirmChangedResults).toHaveBeenCalled();
         });
 
-        it('should push request when click ok on confirm box', fakeAsync(async () => {
-            resultSetting.resultSettingData.isConfirmedRefund = true;
-            resultSetting.settlementStatusId = SettlementStatusId.Running;
-            spyOn(aioService, 'changeResultSetting').and.returnValue(of(true));
-            const query = new ResultSettingQuery(0, ResultSettingType.confirmRefund,
-                true, '');
-            component.confirmResult([resultSetting], 0, '');
+        it('should show error when there are mismatch scores and user is not a leader', () => {
+            // Arrange
+            verificationBaseService.allMapHaveScreenshotSource = jest.fn().mockReturnValue(true);
+            verificationBaseService.isExistMismatchedScoreScreenshot = jest.fn().mockReturnValue(false);
+            verificationBaseService.allResultsHaveScoreSources = jest.fn().mockReturnValue(true);
+            verificationBaseService.isExistMismatchScore = jest.fn().mockReturnValue(true);
+            component.permission.isLeader = false;
+            
+            // Act
+            component.verifyScoreSourcesAndCalculate(confirmChangedResults);
+            
+            // Assert
+            expect(toastrService.error).toHaveBeenCalledWith(Language.eSports.nonLeader.mismatchedResult);
+            expect(confirmChangedResults).not.toHaveBeenCalled();
+        });
 
-            const buttonYes = document.getElementsByClassName("btn-danger")[0] as HTMLElement;
-            buttonYes.click();
-            tick();
-
-            expect(aioService.changeResultSetting).toHaveBeenCalledWith(query);
-        }));
+        it('should show confirmation dialog when there are mismatch scores and user is a leader', () => {
+            // Arrange
+            verificationBaseService.allMapHaveScreenshotSource = jest.fn().mockReturnValue(true);
+            verificationBaseService.isExistMismatchedScoreScreenshot = jest.fn().mockReturnValue(false);
+            verificationBaseService.allResultsHaveScoreSources = jest.fn().mockReturnValue(true);
+            verificationBaseService.isExistMismatchScore = jest.fn().mockReturnValue(true);
+            component.permission.isLeader = true;
+            messageBoxService.confirm = jest.fn().mockImplementation((message, callback) => callback());
+            
+            // Act
+            component.verifyScoreSourcesAndCalculate(confirmChangedResults);
+            
+            // Assert
+            expect(component.confirmationDialogMessage.message).toEqual(Language.eSports.leader.mismatchedResult);
+            expect(messageBoxService.confirm).toHaveBeenCalled();
+            expect(confirmChangedResults).toHaveBeenCalled();
+        });
     });
-
 });

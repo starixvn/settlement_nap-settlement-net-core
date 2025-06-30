@@ -1,6 +1,7 @@
 ﻿using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Sportsbook.Soccer.Constants;
+using Settlement.Sportsbook.Soccer.Criteria;
 
 namespace Settlement.Sportsbook.Soccer.Services;
 
@@ -32,6 +33,10 @@ public interface IResourceService
     List<ResourceItem> AllEmptyResources();
 
     List<ResourceItem> CreateResourceByAction(string action);
+
+    List<ResourceItem> CreateRefundJTResource(RefundCriteria criteria, bool isSettleAbandonedMatchIBC);
+
+    List<ResourceItem> CreateJTResource(CalculateCriteria criteria);
 }
 
 public class ResourceServiceImp(IActionResourceService actionResourceService, IGoalRecordService goalRecordService)
@@ -311,6 +316,63 @@ public class ResourceServiceImp(IActionResourceService actionResourceService, IG
         };
 
         return halfTimeAction.Contains(action) ? [new() { ResourceId = ResourceType.Halftime, AwayValue = string.Empty, HomeValue = string.Empty }] : AllEmptyResources();
+    }
+
+    public List<ResourceItem> CreateRefundJTResource(RefundCriteria criteria, bool isSettleAbandonedMatchIBC)
+    {
+        return AllEmptyResources()
+            .Where(r => criteria.Action == ActionType.RefundAll || (r.ResourceId == ResourceType.Final && criteria.Action == ActionType.RefundFullTime) ||
+                        (r.ResourceId == ResourceType.Halftime && criteria.Action == ActionType.RefundHalfTime))
+            .Select(r =>
+            {
+                if (isSettleAbandonedMatchIBC)
+                {
+                    if (r.ResourceId == ResourceType.Final)
+                    {
+                        r.HomeValue = criteria.FullTimeHome?.ToString() ?? string.Empty;
+                        r.AwayValue = criteria.FullTimeAway?.ToString() ?? string.Empty;
+                    }
+                    else
+                    {
+                        r.HomeValue = criteria.HalfTimeHome?.ToString() ?? string.Empty;
+                        r.AwayValue = criteria.HalfTimeAway?.ToString() ?? string.Empty;
+                    }
+                }
+                return r;
+            }).ToList();
+
+    }
+
+    public List<ResourceItem> CreateJTResource(CalculateCriteria criteria)
+    {
+        var resources = AllEmptyResources()
+            .Where(r => criteria.Action == ActionType.CalculateAll || criteria.Action == ActionType.UnCalculate ||
+                        (r.ResourceId == ResourceType.Final && criteria.Action == ActionType.CalculateFullTime) ||
+                        (r.ResourceId == ResourceType.Halftime && criteria.Action == ActionType.CalculateHalfTime))
+            .ToList();
+        var selectedResources = criteria.Action.Contains(ActionType.UnCalculate)
+            ? resources
+            : FillValueById(resources, criteria);
+
+        return selectedResources;
+    }
+
+    private List<ResourceItem> FillValueById(List<ResourceItem> resources, CalculateCriteria criteria)
+    {
+        return resources.Select(r =>
+        {
+            if (r.ResourceId == ResourceType.Final)
+            {
+                r.HomeValue = criteria.FullTimeHome.ToString();
+                r.AwayValue = criteria.FullTimeAway.ToString();
+            }
+            else
+            {
+                r.HomeValue = criteria.HalfTimeHome.ToString();
+                r.AwayValue = criteria.HalfTimeAway.ToString();
+            }
+            return r;
+        }).ToList();
     }
 
     private static XmlResource InitialResource(string resourceId)

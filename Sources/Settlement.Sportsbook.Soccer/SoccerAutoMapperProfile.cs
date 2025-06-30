@@ -1,4 +1,5 @@
-﻿using Settlement.Core.Criteria;
+﻿using Fanex.Settlement.MessageBridge.JackTime;
+using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Models;
@@ -28,5 +29,6 @@ public class SoccerAutoMapperProfile : Profile
         CreateMap<UncalculateFtRequest, SettleBaseRequest>();
         CreateMap<RefundCriteria, InsertLogCriteria>();
         CreateMap<XmlResource, ResourceItem>();
+        CreateMap<SoccerGetTicketInfoCriteria, SoccerResult>();
     }
 }

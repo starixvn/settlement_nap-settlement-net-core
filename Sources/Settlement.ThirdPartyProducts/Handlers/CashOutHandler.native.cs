@@ -1,9 +1,10 @@
-﻿using MediatR;
-using Settlement.Core.Models;
+﻿using Fanex.Settlement.MessageBridge.JackTime;
+using MediatR;
 using Settlement.ThirdPartyProducts.Constants;
 using Settlement.ThirdPartyProducts.Requests;
 using Settlement.ThirdPartyProducts.Requests.CashOut;
 using Settlement.ThirdPartyProducts.Services;
+using VoidBetRequest = Settlement.ThirdPartyProducts.Requests.CashOut.VoidBetRequest;
 
 namespace Settlement.ThirdPartyProducts.Handlers;
 

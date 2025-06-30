@@ -9,6 +9,7 @@
     <PackageReference Include="Fanex.Settlement.Converter" Version="1.0.0.1" />
     <PackageReference Include="MediatR" Version="13.0.0" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.7" />
+    <PackageReference Include="Fanex.Caching.Redis" Version="2.2.8" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Fanex.Settlement.ScaleOut\Fanex.Settlement.ScaleOut.csproj" />
