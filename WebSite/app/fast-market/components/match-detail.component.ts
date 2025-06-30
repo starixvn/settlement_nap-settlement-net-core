@@ -117,7 +117,7 @@ export class MatchDetailComponent implements OnInit {
 
     private getLeagueRefundQuery(isApplyAll: boolean) {
         const { matchId, leagueId } = this.matchDetail;
-        const isCurrentlyEnabled = this.matchDetail.isFMAutoRefundLeague;
+        const isCurrentlyEnabled = this.matchDetail.isFMAutoRefundLeague ?? false;
         
         const createSetting = (enabled: boolean) => ({
             settleType: AutoSettleType.AutoRefundFM,
@@ -162,7 +162,7 @@ export class MatchDetailComponent implements OnInit {
             .subscribe((response: Result) => { this.processUpdateSettingResult(response); });
     }
 
-    private getAutoRefundQuery(isEnabled: boolean) {
+    private getAutoRefundQuery(isEnabled: boolean | null) {
         return {
             matchId: this.matchDetail.matchId,
             leagueId: this.matchDetail.leagueId,
@@ -170,7 +170,7 @@ export class MatchDetailComponent implements OnInit {
             resultSettings: [
                 {
                     settleType: AutoSettleType.AutoRefundFM,
-                    enabled: !isEnabled,
+                    enabled: !isEnabled ,
                     resourceType: ResourceType.Main,
                     waitingTime: 5
                 }
@@ -178,7 +178,7 @@ export class MatchDetailComponent implements OnInit {
             oldResultSettings: [
                 {
                     settleType: AutoSettleType.AutoRefundFM,
-                    enabled: isEnabled,
+                    enabled: !!isEnabled,
                     resourceType: ResourceType.Main,
                     waitingTime: 5
                 }

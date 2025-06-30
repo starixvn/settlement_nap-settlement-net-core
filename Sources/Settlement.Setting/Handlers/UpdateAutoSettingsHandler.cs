@@ -128,7 +128,7 @@ public class UpdateAutoSettingsHandler(
         var settingTypeInfo = $"for {item.SettleType} {item.ResourceType}";
 
         var childMatchInfo = command.IsApplyAll && !string.IsNullOrEmpty(result.ChildMatchIds)
-            ? $"Effect child match: {result.ChildMatchIds}"
+            ? $"effect child match: {result.ChildMatchIds}"
             : string.Empty;
 
         return $"NAP: Update auto setting on {objectInfo} {settingTypeInfo} has isApplyAll({command.IsApplyAll}) {childMatchInfo} {differences}".Trim();
