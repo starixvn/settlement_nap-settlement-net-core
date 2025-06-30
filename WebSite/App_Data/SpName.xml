@@ -415,10 +415,10 @@
 			<Setting Key="NAP_Admin_Settlement_CheckingMoveBetDay_DBSITE03" SpName="NAP_Admin_Settlement_CheckingMoveBetDay" DbName="DBSITE03.bodb02.wsv_nap" />
 		</Function>
 		<Function Name="NAP_Set_MatchOtherSports_TicketInfoSel">
-			<Setting Key="NAP_Set_MatchOtherSports_TicketInfoSel_DBTXN" SpName="NAP_Set_MatchOtherSports_TicketInfoSel" DbName="DBTXN.bodb02.wsv_nap" />
-			<Setting Key="NAP_Set_MatchOtherSports_TicketInfoSel_DBSITE01" SpName="NAP_Set_MatchOtherSports_TicketInfoSel" DbName="DBSITE01.bodb02.wsv_nap" />
-			<Setting Key="NAP_Set_MatchOtherSports_TicketInfoSel_DBSITE02" SpName="NAP_Set_MatchOtherSports_TicketInfoSel" DbName="DBSITE02.bodb02.wsv_nap" />
-			<Setting Key="NAP_Set_MatchOtherSports_TicketInfoSel_DBSITE03" SpName="NAP_Set_MatchOtherSports_TicketInfoSel" DbName="DBSITE03.bodb02.wsv_nap" />
+			<Setting Key="NAP_Set_MatchOtherSports_TicketInfoSel_DBTXN" SpName="NAP_Set_MatchOtherSports_TicketInfoSel" DbName="DBTXN.bodb02.wsv_nap" TimeOut="60" />
+			<Setting Key="NAP_Set_MatchOtherSports_TicketInfoSel_DBSITE01" SpName="NAP_Set_MatchOtherSports_TicketInfoSel" DbName="DBSITE01.bodb02.wsv_nap" TimeOut="60" />
+			<Setting Key="NAP_Set_MatchOtherSports_TicketInfoSel_DBSITE02" SpName="NAP_Set_MatchOtherSports_TicketInfoSel" DbName="DBSITE02.bodb02.wsv_nap" TimeOut="60" />
+			<Setting Key="NAP_Set_MatchOtherSports_TicketInfoSel_DBSITE03" SpName="NAP_Set_MatchOtherSports_TicketInfoSel" DbName="DBSITE03.bodb02.wsv_nap" TimeOut="60" />
 		</Function>
 		<Function Name="NAP_Set_MatchTicket_CheckingByGroupResult">
 			<Setting Key="NAP_Set_MatchTicket_CheckingByGroupResult_DBTXN" SpName="NAP_Set_MatchTicket_CheckingByGroupResult" DbName="DBTXN.bodb02.wsv_nap" />
