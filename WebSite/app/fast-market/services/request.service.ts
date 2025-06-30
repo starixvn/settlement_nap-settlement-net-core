@@ -65,7 +65,7 @@ export class RequestService {
   }
 
   public updateAutoSettle(query: {}) {
-    const url = `api/auto-settle-settings/update-settings`;
+    const url = `/api/auto-settle-settings/update-settings`;
     return this.httpRequestService.postJson(query, url);
   }
 
