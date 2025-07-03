@@ -1,5 +1,6 @@
-import { GoalIcon, MatchDetailBase, ResultDetail } from "../../../models";
+import {MatchDetailBase, ResultDetail } from "../../../models";
 import { Permission } from "../../../../shared/models/sportsbook-sop/permission.model";
+import { ExternalResult } from "../../../../shared/models/sportsbook-sop";
 
 export interface Match {
     matchDetail: MatchDetail;
@@ -8,6 +9,7 @@ export interface Match {
     hedgeMatchDetail: HedgeMatchDetail;
     betDaq: BetDaq;
     betFair: BetFair;
+    externalResults: ExternalResult[];
 }
 
 export interface BetDaq {
@@ -39,6 +41,8 @@ export interface MatchDetail extends MatchDetailBase{
     isCalRefund: boolean;
     isSettleAbandonedMatchIBC: boolean;
     applyHedgeMatch: boolean;
+    isSettleDetermined: boolean;
+    isMarkedRefundAll: boolean;
 }
 
 export interface MatchMoveBet {

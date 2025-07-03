@@ -3,10 +3,13 @@ import { CalculateAction } from "../../../../shared/constants/calculate-action.n
 import { ResourceIds } from "../../../constants/resourceIds.native";
 import { RefundStorage } from "../../../storage/refund.storage";
 import { MessageBoxService } from "../../../../shared/services";
-import { EventStatus, SettlementStatusId } from "../../../../shared/constants";
-import { MatchDetail } from "../../refund/model/match.model";
+import { EventStatus, ScoreSourceType, SettlementStatusId } from "../../../../shared/constants";
+import { BetDaq, BetFair, MatchDetail } from "../../refund/model/match.model";
 
 import * as _ from "lodash";
+import { Language } from "../../../../shared/language.native";
+import { ResultDetail } from "../../../models";
+import { ExternalResultDetail } from "../../../../shared/models/sportsbook-sop";
 
 @Injectable({
   providedIn: 'root'
@@ -35,18 +38,70 @@ export class LogicService {
     this.#messageBoxService.closePopup();
   }
 
+  closePopupNotChanged() {
+    this.#messageBoxService.closePopupNotChanged();
+  }
+
   resetScore() {
-    const halfTimeResult = this.#refundStorage.getHalfTimeResult();
-    const fullTimeResult = this.#refundStorage.getFullTimeResult();
+    const { resultDetails, externalResults } = this.#refundStorage.getMatch();
+    const resourceConfirmedSdt = externalResults.find(r => r.sourceId == ScoreSourceType.confirmRefundSource);
+    resultDetails.forEach(r => {
+      if (r.settlementStatusId !== SettlementStatusId.Calculated && r.settlementStatusId !== SettlementStatusId.Abandoned1H) {
+        r.homeValue = "";
+        r.awayValue = "";
+      }
 
-    if (halfTimeResult.settlementStatusId !== SettlementStatusId.Calculated && halfTimeResult.settlementStatusId !== SettlementStatusId.Abandoned1H) {
-      halfTimeResult.homeValue = "";
-      halfTimeResult.awayValue = "";
+      if (r.resultSettingData.isConfirmedRefundSdt) {
+        const correspondingResult = resourceConfirmedSdt.resultDetails.find(e => e.resourceId === r.resourceId);
+        r.homeValue = correspondingResult.homeValue ?? "";
+        r.awayValue = correspondingResult.awayValue ?? "";
+      }
+    });
+  }
+
+  autoSelect() {
+    const { resultDetails, permission, matchDetail } = this.#refundStorage.getMatch();
+    if (permission.isLeader) {
+      resultDetails.forEach(r => {
+        if (matchDetail.isMarkedRefundAll || r.resultSettingData.isConfirmedRefundSdt || r.resultSettingData.isConfirmedRefund) {
+          r.checked = true;
+        }
+      })
+    }
+  }
+
+  settleDetermineUpdate(settleDeterminableTickets: boolean) {
+    const halfTime = this.#refundStorage.getHalfTimeResult() as ResultDetail;
+    const fullTime = this.#refundStorage.getFullTimeResult() as ResultDetail;
+
+    if (!settleDeterminableTickets) {
+      fullTime.isEnabled = false;
+      halfTime.isEnabled = false;
+      return;
     }
 
-    if (fullTimeResult.settlementStatusId !== SettlementStatusId.Calculated && fullTimeResult.settlementStatusId !== SettlementStatusId.Abandoned2H) {
-      fullTimeResult.homeValue = "";
-      fullTimeResult.awayValue = "";
+    if (halfTime.checked && fullTime.checked) {
+      fullTime.isEnabled = false;
+      halfTime.isEnabled = true;
+    } else {
+      fullTime.isEnabled = fullTime.checked;
+      halfTime.isEnabled = false;
     }
+  }
+
+  createContentSpecificBetTypes(betDaq: BetDaq, betFair: BetFair) {
+    if (betDaq.settleDeterminedBetDaq && betFair.settleDeterminedBetFair) {
+      return `${Language.specificBetType.betDaq} and ${Language.specificBetType.betFair}`;
+    } else if (betDaq.settleDeterminedBetDaq) {
+      return Language.specificBetType.betDaq;
+    } else if (betFair.settleDeterminedBetFair) {
+      return Language.specificBetType.betFair;
+    } else {
+      return "";
+    }
+  }
+
+  getMarkRemainTicket(betTicket: string) {
+    return Language.specificBetType.MarkRemainTicket.replace("{0}", betTicket);
   }
 }

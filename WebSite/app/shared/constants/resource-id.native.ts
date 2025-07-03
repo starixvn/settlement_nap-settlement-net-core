@@ -6,5 +6,6 @@ export const ResourceIds = {
     InningOne: '0101',
     extraInning: "EI",
     totalHits: "8816",
-    mercy: "Mercy"
+    mercy: "Mercy",
+    goalRecord: "GR"
 }

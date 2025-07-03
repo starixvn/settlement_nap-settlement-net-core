@@ -174,6 +174,9 @@ public class MatchServiceImp(
             .Where(r => r.SourceId == SourceType.Normal && resourcesSoccer.Contains(r.ResourceId))
             .OrderBy(r => resourcesSoccer.IndexOf(r.ResourceId));
 
+
+        var externalResults = await GetConfirmSource(request.MatchId);
+
         return new Match
         {
             MatchDetail = matchDetail,
@@ -181,10 +184,32 @@ public class MatchServiceImp(
             HedgeMatchDetail = hedgeMatchDetail,
             BetDaq = betDaq,
             BetFair = betFair,
-            Permission = permissionService.Permission
+            Permission = permissionService.Permission,
+            ExternalResults = externalResults
         };
     }
 
+    private async Task<List<ExternalResultModel>> GetConfirmSource(int matchId)
+    {
+        var confirmRefundCriteria = new GetResultConfirmRefundCriteria { MatchId = matchId };
+        var results = await repository.FetchAsync<ExternalResultDetailModel>(confirmRefundCriteria);
+        var listResult = results.ToList();
+        var externalResult = listResult.GroupBy(resultDetail => new { resultDetail.SourceId, resultDetail.SourceName, resultDetail.OrderNo, resultDetail.Remark })
+            .Select(resultDetail => new ExternalResultModel
+            {
+                SourceId = resultDetail.Key.SourceId,
+                SourceName = resultDetail.Key.SourceName,
+                OrderNo = resultDetail.Key.OrderNo,
+                Remark = resultDetail.Key.Remark,
+                ResultDetails = resultDetail.ToList()
+            })
+            .OrderBy(result => result.OrderNo)
+            .ThenBy(result => result.SourceName)
+            .ToList();
+
+        return externalResult;
+
+    }
 
     private static GoalIconQueryModel GoalIconQuery(MatchDetail match)
     {

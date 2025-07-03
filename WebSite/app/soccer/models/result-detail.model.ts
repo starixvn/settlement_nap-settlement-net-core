@@ -28,4 +28,5 @@ export class ResultDetail extends GeneralResultDetail{
     public resultState: string;
     public isShow = true;
     public isEnabled = false;
+    
 }

@@ -35,7 +35,7 @@ export class MatchesBaseComponent extends LeagueBaseComponent implements OnChang
 
   public popupRefund(match: CalculationMatch) {
     const src = `/apps/soccer-refund?matchId=${match.matchId}`;
-    this.popupService.openAndHandlePopup(src, Language.RefundPopupTitle, '790px', '600px', match);
+    this.popupService.openAndHandlePopup(src, Language.RefundPopupTitle, '790px', '700px', match);
   }
 
   public popupChangeRemarkSetting(match: CalculationMatch) {

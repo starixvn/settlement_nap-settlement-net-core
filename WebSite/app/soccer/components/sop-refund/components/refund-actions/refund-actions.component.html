@@ -18,14 +18,14 @@
     <thead>
       <tr>
         <th scope="col">Result Name</th>
-        <th scope="col">Final Score</th>
+        <th scope="col" class="score">Final Score</th>
         <th scope="col">Select to Process</th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let result of resultDetails; let i = index">
         <td>{{ result.resourceId | resourceName }}</td>
-        <td [ngClass]="matchDetail.isScoreInconsistent ? 'mismatched' : result.settlementStatusId | resourceStatus">
+        <td [ngClass]="getResultRowClass(result)">
           <input class="score-input" [ngClass]="{'warning' : result.isInvalidValue}" type="text" myOnlyInteger
             [disabled]="!result.isEnabled" [(ngModel)]="result.homeValue" (ngModelChange)="changeScore(result)" />
           &nbsp;
@@ -33,22 +33,33 @@
             [disabled]="!result.isEnabled" [(ngModel)]="result.awayValue" (ngModelChange)="changeScore(result)" />
         </td>
         <td>
-          <input type="checkbox" [(ngModel)]="result.checked" (ngModelChange)="onResultCheckedChange(result)" />
+          <input type="checkbox" [(ngModel)]="result.checked" (ngModelChange)="onResultCheckedChange()" />
         </td>
       </tr>
       <tr class="soccer">
         <td>Goal Record</td>
         <td [ngClass]="{'mismatched':matchDetail.isWarningGoalRecord && matchDetail.applyGoalRecord}">
-          <input type="text" maxlength="50" class="goal-record-input" [(ngModel)]="matchDetail.goalRecord"
-            myOnlyGoalRecord [disabled]="!matchDetail.applyGoalRecord" (ngModelChange)="goalRecordModelChange($event)">
+          <input type="text" maxlength="50" class="goal-record-refund-input" [(ngModel)]="matchDetail.goalRecord"
+            myOnlyGoalRecord [disabled]="!matchDetail.applyGoalRecord" (ngModelChange)="goalRecordModelChange()">
         </td>
         <td>
           <input type="checkbox" [(ngModel)]="matchDetail.applyGoalRecord" [disabled]="disableGoalRecordCheckbox" />
         </td>
       </tr>
       <tr>
-        <td colspan="4" class="action-button">
-          <button class="button" (click)="refund()" [disabled]="!enableAction">Refund</button>
+        <td colspan="4">
+          <div style="display: flex; gap: 5px; justify-content: center;">
+            @if(isExistedConfirmRefund && permission.isLeader) {
+            <button type="button" class="btn btn-warning button-refund" [disabled]="!enableAction"
+              [ngClass]="{'btn-disabled': !enableAction}" (click)="confirmRefund()">Undo Confirm Refund </button>
+            }
+            @if(!isExistedConfirmRefund && permission.isLeader) {
+            <button type="button" class="btn btn-warning button-refund" [disabled]="!enableAction"
+              [ngClass]="{'btn-disabled': !enableAction}" (click)="confirmRefund()">Confirm Refund </button>
+            }
+            <button type="button" class="btn btn-primary button-refund" (click)="refund()" [disabled]="!enableAction"
+              [ngClass]="{'btn-disabled': !enableAction}">Refund</button>
+          </div>
         </td>
       </tr>
     </tbody>
@@ -61,7 +72,7 @@
   </label>
   <div class="sub-option">
     <label class="sub-option-label">
-      <input type="checkbox" [(ngModel)]="settleDeterminableTickets"
+      <input type="checkbox" [(ngModel)]="matchDetail.isSettleDetermined"
         (ngModelChange)="onSettleDeterminableTicketsChange()" />
       Settle determinable tickets.
     </label>

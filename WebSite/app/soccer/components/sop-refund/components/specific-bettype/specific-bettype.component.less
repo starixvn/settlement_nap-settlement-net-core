@@ -1,0 +1,17 @@
+.multi-column ul {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px 24px;
+  max-height: 400px;
+  overflow-y: auto;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding-left: 20px;
+}
+
+.multi-column li {
+  list-style: inside;
+  font-size: 14px;
+  break-inside: avoid;
+}

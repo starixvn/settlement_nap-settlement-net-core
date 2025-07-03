@@ -3,8 +3,8 @@
     </div>
     SOCCER - {{matchDetail.leagueName}}
     @if(pageType === pageTypeEnum.ReCalculate){
-    <button *ngIf="match.permission.canChangeScoreSource" class="button manage-outside"
-        (click)="manageOutSideSourcePopup()">
+    <button *ngIf="match.permission.canChangeScoreSource" style="float: right; margin-bottom: 5px;"
+        class="btn btn-primary" (click)="manageOutSideSourcePopup()">
         Manage Outside Source
     </button>
     }

@@ -21,26 +21,6 @@ export class VerifyService {
     this.#refundStorage.getMatchDetail().isScoreInconsistent = htExists && ftExists && isInconsistent;
   }
 
-
-  verifySettleDeterminableInput(settleDeterminableTickets: boolean){
-    const halfTime = this.#refundStorage.getHalfTimeResult() as ResultDetail;
-    const fullTime = this.#refundStorage.getFullTimeResult() as ResultDetail;
-
-    if(!settleDeterminableTickets){
-      fullTime.isEnabled = false;
-      halfTime.isEnabled = false;
-      return;
-    }
-
-    if(halfTime.checked && fullTime.checked){
-      fullTime.isEnabled = false;
-      halfTime.isEnabled = true;
-    }else{
-      fullTime.isEnabled = fullTime.checked;
-      halfTime.isEnabled = false;
-    }
-  }
-
    isRefundHalfTimeBetStatus(matchDetail: MatchDetail) {
     return !_.isNil(matchDetail.betStatus) &&
       (_.includes(matchDetail.betStatus, `${EventStatus.refundHalftime};`) || _.includes(matchDetail.betStatus, `${EventStatus.refund};`));

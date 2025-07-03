@@ -24,8 +24,11 @@ export class ConfirmBoxHandler extends AbstractHandler{
         match.betFair.settleDeterminedBetFair;
     if (isEqual(actionName, CalculateAction.refund)) {
         return isAbandonedMatch ? Language.soccer.refundAllAbandoned : Language.soccer.refundAllNormal;
-    } else {
+    } else if(isEqual(actionName, CalculateAction.refundFullTime)) {
         return isAbandonedMatch ? Language.soccer.refundFullTimeAbandoned : Language.soccer.refundFullTimeNormalNotSdt;
+    } else {
+        match.matchDetail.isSettleAbandonedMatchIBC = false;
+        return Language.soccer.refundHalfTime;
     }
 }
 }

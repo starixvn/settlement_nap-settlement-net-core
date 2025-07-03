@@ -1,0 +1,23 @@
+<h1 mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragBoundary=".cdk-overlay-container"
+  cdkDragHandle>
+  <label class="title">
+    Move {{title}} Tickets
+  </label>
+  <button type="button" class="close dialog-close" (click)="close()">X</button>
+</h1>
+<span toastContainer></span>
+@if (listMatch) {
+<div class="move-match">
+  <div class="available-match">Found available matches:</div>
+  <div class="list-new-match">
+    @for (match of listMatch; track match) {
+    <div>
+      <input id="{{match.matchId}}" type="radio" [value]="match.matchId" [(ngModel)]="matchIdSelected">
+      <label for="{{match.matchId}}">{{match.matchCode}}
+        ({{match.eventDate| date : 'mediumDate'}})</label>
+    </div>
+    }
+  </div>
+  <button class="button refund-button move" (click)="moveBet()"> Move</button>
+</div>
+}

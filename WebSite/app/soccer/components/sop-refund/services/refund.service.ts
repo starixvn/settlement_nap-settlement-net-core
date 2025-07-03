@@ -3,51 +3,98 @@ import { RefundStorage } from "../../../storage/refund.storage";
 import { VerifyMarkedTicketHandler } from "../../../handlers/Refund/common/verify-marked-ticket.handler";
 import { RefundHandler } from "../../../handlers/Refund/common/refund.handler";
 
-import { VerifyStatusHandler } from "../../../handlers/Refund/half-time/verify-status.handler";
+import { VerifyStatusHandler } from "../../../handlers/Refund/common/verify-status.handler";
 import { CalculateAction } from "../../../../shared/constants";
-import { ConfirmBoxHTHandler } from "../../../handlers/Refund/half-time/confirm-box-ht.handler";
 import { ConfirmBoxHandler } from "../../../handlers/Refund/common/confirm-box.handler";
 import { VerifyScoreFTHandler } from "../../../handlers/Refund/full-time/verify-score-ft.handler";
 import { VerifyGoalRecordFTHandler } from "../../../handlers/Refund/full-time/verify-goal-record-ft.handler";
 import { VerifyGoalRecordHTHandler } from "../../../handlers/Refund/all/verify-goal-record-ht.handler";
 import { VerifyScoreHTHandler } from "../../../handlers/Refund/all/verify-score-ht.handler";
 import { AbstractHandler } from "../../../handlers/abstract.handler.native";
+import { UndoConfirmHandler } from "../../../handlers/Refund/confirm-refund/undo-comfirm.handler.handler";
+import { find } from "lodash";
+import { ChangeConfirmSettingHandler } from "../../../handlers/Refund/common/change-confirm-setting.handler";
+import { DoubleCheckConfirmRefundHandler, } from "../../../handlers/Refund/confirm-refund/double-check-confirm-refund.handler.handler";
+import { VerifyStateConfirmedHandler } from "../../../handlers/Refund/common/verify-state-confirmed.handler";
 
 @Injectable({
   providedIn: 'root'
 })
 export class RefundService {
   #refundStorage = inject(RefundStorage);
-  refundHTChain: AbstractHandler;
-  refundNotSdtChain: AbstractHandler;
-  refundFTChain: AbstractHandler;
-  refundAllChain: AbstractHandler;
-
+  refundHandler: AbstractHandler;
+  undoConfirmChain: AbstractHandler;
+  verifyRefundHalfTimeChain: AbstractHandler;
+  verifyRefundFullTimeChain: AbstractHandler;
+  verifyRefundAllChain: AbstractHandler;
+  verifyRefundNotSdtChain: AbstractHandler;
+  
   constructor() {
-    this.refundHTChain = this.buildChain(
-      new VerifyMarkedTicketHandler(),
-      new VerifyStatusHandler(),
-      new ConfirmBoxHTHandler(),
-      new RefundHandler());
-    this.refundNotSdtChain = this.buildChain(
-      new VerifyMarkedTicketHandler(),
-      new VerifyStatusHandler(),
+    this.refundHandler = this.buildChain(
+      new VerifyStateConfirmedHandler(),
       new ConfirmBoxHandler(),
-      new RefundHandler());
-    this.refundFTChain = this.buildChain(
+      new RefundHandler()
+    );
+    this.undoConfirmChain = this.buildChain(
+      new UndoConfirmHandler(),
+      new DoubleCheckConfirmRefundHandler(),
+      new ChangeConfirmSettingHandler()
+    );
+    
+    this.verifyRefundHalfTimeChain = this.buildChain(
+      new VerifyMarkedTicketHandler(),
+      new VerifyStatusHandler(),
+      new DoubleCheckConfirmRefundHandler(),
+      new ChangeConfirmSettingHandler()
+    );
+    
+    this.verifyRefundFullTimeChain = this.buildChain(
       new VerifyScoreFTHandler(),
       new VerifyGoalRecordFTHandler(),
       new VerifyMarkedTicketHandler(),
       new VerifyStatusHandler(),
-      new ConfirmBoxHandler(),
-      new RefundHandler());
-    this.refundAllChain = this.buildChain(
+      new DoubleCheckConfirmRefundHandler(),
+      new ChangeConfirmSettingHandler()
+    );
+    
+    this.verifyRefundAllChain = this.buildChain(
       new VerifyScoreHTHandler(),
       new VerifyGoalRecordHTHandler(),
       new VerifyMarkedTicketHandler(),
       new VerifyStatusHandler(),
-      new ConfirmBoxHandler(),
-      new RefundHandler());
+      new DoubleCheckConfirmRefundHandler(),
+      new ChangeConfirmSettingHandler()
+    );
+    
+    this.verifyRefundNotSdtChain = this.buildChain(
+      new VerifyMarkedTicketHandler(),
+      new VerifyStatusHandler(),
+      new DoubleCheckConfirmRefundHandler(),
+      new ChangeConfirmSettingHandler()
+    );
+  }
+
+  confirmRefund(isSettleDetermined: boolean, actionName: string) {
+    const {resultDetails} = this.#refundStorage.getMatch();
+    const existResultConfirmed = find(resultDetails, item => 
+      (item.resultSettingData.isConfirmedRefund || item.resultSettingData.isConfirmedRefundSdt)
+    );
+    if(existResultConfirmed) {
+      this.undoConfirmChain.handle(this.#refundStorage);
+    } else {
+       var chain = this.verifyRefund(actionName,isSettleDetermined) ;
+       chain.handle(this.#refundStorage);
+    }
+  }
+
+  private verifyRefund(actionName: string, settleDeterminableTickets: boolean): AbstractHandler{
+      if (actionName === CalculateAction.refundHalfTime) {
+        return this.verifyRefundHalfTimeChain;
+      } else if (actionName === CalculateAction.refundFullTime) {
+        return settleDeterminableTickets ? this.verifyRefundFullTimeChain : this.verifyRefundNotSdtChain;
+      } else if (actionName === CalculateAction.refund) {
+        return settleDeterminableTickets ? this.verifyRefundAllChain : this.verifyRefundNotSdtChain;
+      }
   }
 
   private buildChain(...handlers: AbstractHandler[]): AbstractHandler {
@@ -57,37 +104,26 @@ export class RefundService {
     return handlers[0];
   }
 
-  refund(actionName: string, settleDeterminableTickets: boolean) {
+
+
+  refund(actionName: string, settleDeterminableTickets: boolean) {;
     if (actionName === CalculateAction.refundHalfTime) {
       this.refundHalfTime();
-    } else if (actionName === CalculateAction.refundFullTime) {
+    } else {
       this.refundFullTime(settleDeterminableTickets);
-    } else if (actionName === CalculateAction.refund) {
-      this.refundAll(settleDeterminableTickets);
     }
   }
 
   refundHalfTime() {
-    this.refundHTChain.handle(this.#refundStorage);
+    this.refundHandler.handle(this.#refundStorage);
   }
 
   refundFullTime(settleDeterminableTickets: boolean) {
     const { matchDetail, betDaq, betFair } = this.#refundStorage.getMatch();
     if (settleDeterminableTickets || betDaq.settleDeterminedBetDaq || betFair.settleDeterminedBetFair) {
       matchDetail.isSettleAbandonedMatchIBC = settleDeterminableTickets;
-      this.refundFTChain.handle(this.#refundStorage);
-    } else {
-      this.refundNotSdtChain.handle(this.#refundStorage);
-    }
-  }
+    } 
 
-  refundAll(settleDeterminableTickets: boolean) {
-    const { matchDetail, betDaq, betFair } = this.#refundStorage.getMatch();
-    if (settleDeterminableTickets || betDaq.settleDeterminedBetDaq || betFair.settleDeterminedBetFair) {
-      matchDetail.isSettleAbandonedMatchIBC = settleDeterminableTickets;
-      this.refundAllChain.handle(this.#refundStorage);
-    } else {
-      this.refundNotSdtChain.handle(this.#refundStorage);
-    }
+    this.refundHandler.handle(this.#refundStorage);
   }
 }
