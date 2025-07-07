@@ -40,6 +40,7 @@ public class RefundServiceTests
         var publishEndpoint = Substitute.For<IPublishEndpoint>();
 
         var mapper = Substitute.For<IMapper>();
+        var cacheService = Substitute.For<ICacheService>();
 
         var context = new DefaultHttpContext
         {
@@ -51,7 +52,7 @@ public class RefundServiceTests
         accessor.HttpContext = context;
 
         var option = Options.Create(appSettings);
-        service = new RefundServiceImp(repository, accessor, option, createCriteriaService, scaleOutSettleService, logService, publishEndpoint);
+        service = new RefundServiceImp(repository, accessor, option, createCriteriaService, scaleOutSettleService, logService, publishEndpoint, cacheService, mapper);
     }
 
     [Theory]
@@ -108,7 +109,7 @@ public class RefundServiceTests
     [Theory]
     [InlineData(0, null, 3)]
     [InlineData(1, "Error", 0)]
-    public async Task MoveThirdPartyBetTickets_Always_ReturnsTrue(byte errorCode, string errorMsg, byte executeTime)
+    public async Task MoveThirdPartyBetTickets_Always_ReturnsTrue(byte errorCode, string? errorMsg, byte executeTime)
     {
         // Arrange
         var criteria = new MoveThirdPartyBetTicketCriteria

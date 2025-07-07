@@ -62,7 +62,7 @@ public class CalculateServiceTests
         };
         accessor.HttpContext = context;
         service = new CalculateServiceImp(
-            mapper, repository, appSettingsOptions, createCriteriaService, scaleOutSettleService, logService, matchService, publishEndpoint, currentSession, accessor, xmlConvertService);
+            mapper, repository, appSettingsOptions, createCriteriaService, scaleOutSettleService, logService, matchService, publishEndpoint, currentSession, accessor, xmlConvertService, cacheService);
     }
 
     [Theory]

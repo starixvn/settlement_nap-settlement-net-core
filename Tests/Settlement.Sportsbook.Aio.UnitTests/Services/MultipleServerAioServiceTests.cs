@@ -161,7 +161,6 @@ public class MultipleServerAioServiceTests
 
         var expectResult = new Result
         {
-            SettledSessionId = actual.SettledSessionId,
             ErrCode = 1,
             ErrMsg = "Message",
             ChildMatchIds = null,

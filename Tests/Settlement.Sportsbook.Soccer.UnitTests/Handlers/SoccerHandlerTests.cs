@@ -37,7 +37,7 @@ public class SoccerHandlerTests
         var result = new Match();
         matchService.GetMatch(Arg.Any<GetMatchRequest>()).Returns(result);
 
-        var actual = await handler.Handle(new GetMatchRequest(), new CancellationToken());
+        var actual = await handler.Handle(new GetMatchRequest(), TestContext.Current.CancellationToken);
 
         Assert.Equal(result, actual);
     }
@@ -48,7 +48,7 @@ public class SoccerHandlerTests
         var result = new Result();
         calculateService.Calculate(Arg.Any<SettleRequest>()).Returns(result);
 
-        var actual = await handler.Handle(new SettleRequest { ActionName = ActionType.CalculateAll }, new CancellationToken());
+        var actual = await handler.Handle(new SettleRequest { ActionName = ActionType.CalculateAll }, TestContext.Current.CancellationToken);
 
         Assert.Equal(result, actual);
     }
@@ -59,7 +59,7 @@ public class SoccerHandlerTests
         var result = new Result();
         calculateService.UnCalculate(Arg.Any<SettleRequest>()).Returns(result);
 
-        var actual = await handler.Handle(new SettleRequest { ActionName = ActionType.UnCalculate }, new CancellationToken());
+        var actual = await handler.Handle(new SettleRequest { ActionName = ActionType.UnCalculate }, TestContext.Current.CancellationToken);
 
         Assert.Equal(result, actual);
     }
@@ -70,7 +70,7 @@ public class SoccerHandlerTests
         var result = new MatchDetail();
         matchService.GetLatestMatchDetail(Arg.Any<GetLatestMatchDetailRequest>()).Returns(result);
 
-        var actual = await handler.Handle(new GetLatestMatchDetailRequest(), new CancellationToken());
+        var actual = await handler.Handle(new GetLatestMatchDetailRequest(), TestContext.Current.CancellationToken);
 
         Assert.Equal(result, actual);
     }
@@ -81,7 +81,7 @@ public class SoccerHandlerTests
         var result = new Result();
         calculateService.CheckStatus(Arg.Any<CheckStatusRequest>()).Returns(result);
 
-        var actual = await handler.Handle(new CheckStatusRequest(), new CancellationToken());
+        var actual = await handler.Handle(new CheckStatusRequest(), TestContext.Current.CancellationToken);
 
         Assert.Equal(result, actual);
     }
