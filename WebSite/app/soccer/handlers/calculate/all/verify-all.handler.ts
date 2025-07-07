@@ -29,6 +29,11 @@ export class VerifyAllHandler extends AbstractHandler {
   private  async verifyAll(storage: CalculateBaseStorage, matchDetail: MatchDetail, selectedChildMatches: ChildMatch[], relatedMatches: FantasyRelatedMatch[]) {
       const {resultDetails }  = storage.getMatch();
       const checkedResultDetails = resultDetails.filter(x => x.checked);
+
+      if(checkedResultDetails.some(x => x.resultSettingData.isConfirmedRefundSdt || x.resultSettingData.isConfirmedRefund)) {
+        return Language.confirmRefund.calculateResultNotConfirmed;
+      }
+
     if (this.#verifyScoreGoalService.verifyScoreAll(checkedResultDetails)) {
         return Language.warningInputScore;
       }

@@ -16,7 +16,7 @@ export class ChangeConfirmSettingHandler extends AbstractHandler {
         const {matchDetail} = storage.getMatch();
         const selectedResources = storage.getSelectedResource() as ResultDetail[];
         this.addGoalRecord(matchDetail, selectedResources);
-        const isEnable = selectedResources.some(item => !item.resultSettingData.isConfirmedRefundSdt && !item.resultSettingData.isConfirmedRefund);
+        const isEnable = selectedResources.every(item => !item.resultSettingData.isConfirmedRefundSdt && !item.resultSettingData.isConfirmedRefund);
         if (matchDetail.isSettleDetermined || selectedResources.some(item => item.resultSettingData.isConfirmedRefundSdt)) {
             await this.changeConfirmResult(selectedResources, ResultSettingType.confirmRefundSDT, matchDetail.matchId, isEnable, storage);
         } else {

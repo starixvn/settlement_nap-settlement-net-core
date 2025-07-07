@@ -26,6 +26,10 @@ export class VerifyFirstHalfHandler extends AbstractHandler {
 
 
   private async verifyFirstHalf(halftimeResult: ResultDetail, matchDetail: MatchDetail, relatedMatches: FantasyRelatedMatch[]) {
+    if(halftimeResult.resultSettingData.isConfirmedRefundSdt || halftimeResult.resultSettingData.isConfirmedRefund) {
+      return Language.confirmRefund.calculateResultNotConfirmed;
+    }
+   
     if (this.#verifyScoreGoalService.verifyScore(halftimeResult)) {
       return Language.warningInputScore;
     }

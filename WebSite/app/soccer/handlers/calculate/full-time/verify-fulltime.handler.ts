@@ -28,6 +28,10 @@ export class VerifyFulltimeHandler extends AbstractHandler {
 
   private async verifyFullTime(fulltime: ResultDetail, matchDetail: MatchDetail, selectedChildMatches: ChildMatch[], relatedMatches: FantasyRelatedMatch[]) {
     
+    if(fulltime.resultSettingData.isConfirmedRefundSdt || fulltime.resultSettingData.isConfirmedRefund) {
+      return Language.confirmRefund.calculateResultNotConfirmed;
+    }
+    
     if (this.#verifyScoreGoalService.verifyScore(fulltime)) {
       return Language.warningInputScore;
     }

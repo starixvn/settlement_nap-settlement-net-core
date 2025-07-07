@@ -34,6 +34,7 @@ export class RefundComponent implements Soccer, OnInit {
     this.matchDetail = this.match.matchDetail;
     this.#logicService.resetScore();
     this.#logicService.autoSelect();
+    this.#logicService.autoSelectGoalRecordAndSettleDetermined();
     this.betDaq = this.match.betDaq;
     this.betFair = this.match.betFair;
   }

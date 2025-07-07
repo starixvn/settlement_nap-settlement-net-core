@@ -71,6 +71,7 @@ export class RefundActionsComponent implements OnInit {
     }
 
     this.#verifyService.verifyScore();
+    this.goalRecordModelChange();
   }
 
   changeApplyHedgeMatch() {
@@ -104,6 +105,7 @@ export class RefundActionsComponent implements OnInit {
   }
 
   onResultCheckedChange(): void {
+    this.#storage.clear();
     this.enableAction = this.resultDetails.some(x => x.checked);
     this.#logicService.settleDetermineUpdate(this.matchDetail.isSettleDetermined || this.betDaq.settleDeterminedBetDaq || this.betFair.settleDeterminedBetFair);
   }

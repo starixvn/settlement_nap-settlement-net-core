@@ -10,7 +10,7 @@
 <div class="move-match">
   <div class="available-match">Found available matches:</div>
   <div class="list-new-match">
-    @for (match of listMatch; track match) {
+    @for (match of listMatch; track match.matchId) {
     <div>
       <input id="{{match.matchId}}" type="radio" [value]="match.matchId" [(ngModel)]="matchIdSelected">
       <label for="{{match.matchId}}">{{match.matchCode}}

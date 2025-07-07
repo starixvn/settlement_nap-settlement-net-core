@@ -43,31 +43,49 @@ export class LogicService {
   }
 
   resetScore() {
-    const { resultDetails, externalResults } = this.#refundStorage.getMatch();
-    const resourceConfirmedSdt = externalResults.find(r => r.sourceId == ScoreSourceType.confirmRefundSource);
+    const { resultDetails, externalResults, permission } = this.#refundStorage.getMatch();
+    const resourceConfirmed = externalResults.find(r => r.sourceId == ScoreSourceType.confirmRefundSource);
     resultDetails.forEach(r => {
       if (r.settlementStatusId !== SettlementStatusId.Calculated && r.settlementStatusId !== SettlementStatusId.Abandoned1H) {
         r.homeValue = "";
         r.awayValue = "";
       }
 
-      if (r.resultSettingData.isConfirmedRefundSdt) {
-        const correspondingResult = resourceConfirmedSdt.resultDetails.find(e => e.resourceId === r.resourceId);
+      if (r.resultSettingData.isConfirmedRefundSdt && permission.isLeader) {
+        const correspondingResult = resourceConfirmed?.resultDetails.find(e => e.resourceId === r.resourceId);
         r.homeValue = correspondingResult.homeValue ?? "";
         r.awayValue = correspondingResult.awayValue ?? "";
       }
     });
+
   }
 
   autoSelect() {
     const { resultDetails, permission, matchDetail } = this.#refundStorage.getMatch();
+  
     if (permission.isLeader) {
       resultDetails.forEach(r => {
-        if (matchDetail.isMarkedRefundAll || r.resultSettingData.isConfirmedRefundSdt || r.resultSettingData.isConfirmedRefund) {
+        const isMarkedRefundAll = matchDetail.isMarkedRefundAll && (r.settlementStatusId === SettlementStatusId.Running || r.settlementStatusId === SettlementStatusId.Calculated);
+        if (isMarkedRefundAll || r.resultSettingData.isConfirmedRefundSdt || r.resultSettingData.isConfirmedRefund) {
           r.checked = true;
         }
-      })
+      });
+
     }
+  }
+
+  autoSelectGoalRecordAndSettleDetermined() {
+    const { externalResults, permission, matchDetail, resultDetails } = this.#refundStorage.getMatch();
+    const resourceConfirmed = externalResults.find(r => r.sourceId == ScoreSourceType.confirmRefundSource);
+    const goalRecordConfirmed = resourceConfirmed?.resultDetails.find(r => r.resourceId == ResourceIds.goalRecord)
+
+    if(goalRecordConfirmed && permission.isLeader) {
+      matchDetail.goalRecord = goalRecordConfirmed.homeValue ?? "",
+      matchDetail.applyGoalRecord = true;
+    }
+
+    const settleDetermined = resultDetails.some(r => r.resultSettingData.isConfirmedRefundSdt);
+    matchDetail.isSettleDetermined = settleDetermined;
   }
 
   settleDetermineUpdate(settleDeterminableTickets: boolean) {

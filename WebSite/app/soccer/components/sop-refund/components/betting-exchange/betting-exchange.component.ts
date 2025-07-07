@@ -27,6 +27,7 @@ export class BettingExchangeComponent {
   #logicService = inject(LogicService);
 
   onOpenPopupSpecificBetTypes( type: string, action: string ) {
+    this.#refundStorage.clear();
     this.#dialog.open(SpecificBettypeComponent, {
       width: '630px',
       height: '500px',
@@ -39,6 +40,7 @@ export class BettingExchangeComponent {
   }
 
   onOpenPopupMoveBet(isBetDaq: boolean) {
+    this.#refundStorage.clear();
     this.#dialog.open(MoveBetComponent, {
       width: '630px',
       height: '500px',
@@ -47,6 +49,14 @@ export class BettingExchangeComponent {
         refundType: isBetDaq ? RefundType.refundBetDaq : RefundType.refundBetFair
       },
       hasBackdrop: true
+    }).afterClosed().subscribe((value) => {
+      if (value) {
+        if (value.result.isSuccessful) {
+          this.#logicService.closePopupNotChanged();
+        } else {
+          this.#refundStorage.error(value.result.errMsg);
+        }
+      }
     });
   }
 

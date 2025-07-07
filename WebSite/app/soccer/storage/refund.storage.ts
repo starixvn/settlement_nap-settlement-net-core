@@ -85,6 +85,6 @@ export class RefundStorage implements RefundBaseStorage {
 
   clear() {
     this.#toastrService.clear();
-    this.#match().matchDetail.isScoreInconsistent = false;
+    this.match().resultDetails.forEach(x => x.isResultWarning = false);
   }
 }

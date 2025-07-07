@@ -13,6 +13,7 @@ import { CommonModule, DatePipe } from '@angular/common';
   selector: 'move-bet',
   templateUrl: './move-bet.component.html',
   standalone: true,
+  providers: [ToastrService],
   imports: [CommonModule, FormsModule, MatDialogModule, DatePipe, ToastContainerModule]
 })
 export class MoveBetComponent implements OnInit {

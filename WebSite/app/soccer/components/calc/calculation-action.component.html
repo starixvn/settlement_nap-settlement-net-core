@@ -47,7 +47,8 @@
 
 <ng-template #body>
   <tbody>
-    <tr *ngFor="let result of resultDetails; let i = index" [ngClass]="{ mismatched: result.isScoreMismatched}">
+    <tr *ngFor="let result of resultDetails; let i = index"
+      [ngClass]="{ mismatched: result.isScoreMismatched, 'confirmed-refund': isConfirmRefund(result)}">
       <td style="font-weight: bold;">{{ result.resourceId | resourceName }}</td>
       <td style="font-weight: bold;" [ngClass]="result.ticketStatus?.toLowerCase()" class="set-status">
         {{ result.ticketStatus }}
