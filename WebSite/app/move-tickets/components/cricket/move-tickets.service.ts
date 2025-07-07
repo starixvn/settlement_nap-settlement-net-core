@@ -36,6 +36,15 @@ export class MoveTicketsService {
     return this.httpRequestService.postJson(request, `/api/moveticket/move-ticket`);
   }
 
+  public updateAutoMoveTicketsStatus(isEnabled: boolean): Observable<Result> {
+    const request = { isEnabled };
+    return this.httpRequestService.postJson(request, `/api/moveticket/update-auto-move-status`);
+  }
+
+  public getAutoMoveTicketsStatus(): Observable<{ isEnabled: boolean }> {
+    return this.httpRequestService.getJson(`/api/moveticket/get-auto-move-status`);
+  }
+
   public popupLog(matchId: string, fromDate: string, toData: string ) {
     const src = `/home/log?matchCode=${matchId}&fromDate=${fromDate}&toDate=${toData}&isShowMenu=false&productType=ALL`;
     const frameSrc = encodeURI(src);

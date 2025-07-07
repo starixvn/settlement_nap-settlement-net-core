@@ -2,7 +2,7 @@
     <div class="line">
     </div>
     <div class="filter-bar-inner">
-        <div class="row">
+        <div class="row filter-row">
             <div class="col-md-2 field">
                 <label for="FromDate" class="inner-label from-date">
                     From
@@ -22,6 +22,12 @@
                 <div>
                     <new-multiple-select (formValue)="onSelectMatchStatus($event)" [multipleSelect]="matchStatusSelect"></new-multiple-select>
                 </div>
+            </div>
+            <div class="move-ticket-setting-container">
+                <label for="MoveTicketSetting" class="inner-label">Auto move tickets status</label>
+                <button id="MoveTicketSetting" class="button" type="button" (click)="toggleAutoMoveTicketsStatus()">
+                    {{ isAutoMoveTicketsEnabled ? 'On' : 'Off' }}
+                </button>
             </div>
         </div>
         <div class="row" style="margin-top: 10px;">

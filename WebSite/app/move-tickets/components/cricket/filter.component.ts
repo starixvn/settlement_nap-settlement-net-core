@@ -35,6 +35,7 @@ export class FilterComponent implements OnInit {
     public leaguesSelected: string;
     public matchStatusSelected: string;
     public isIncludeTestMatch = false;
+    public isAutoMoveTicketsEnabled = false;
     public leagueSelect = new MultipleSelect();
     public readonly matchStatusSelect = new MultipleSelect();
 
@@ -48,6 +49,7 @@ export class FilterComponent implements OnInit {
     public ngOnInit() {
         this.sportTypesSelected = SportType.baseBall.toString();
         this.initiateData();
+        this.loadAutoMoveTicketsStatus();
     }
 
     private initiateData() {
@@ -161,5 +163,32 @@ export class FilterComponent implements OnInit {
         this.leagueSelect.maxWidth = '450px';
         this.leagueSelect.enableSearchBox = true;
         this.leagueSelect.disableCheckAll = true;
+    }
+
+    public toggleAutoMoveTicketsStatus() {
+        this.isAutoMoveTicketsEnabled = !this.isAutoMoveTicketsEnabled;
+        console.log('Auto move tickets status:', this.isAutoMoveTicketsEnabled ? 'Enabled' : 'Disabled');
+        
+        this.moveTicketsService.updateAutoMoveTicketsStatus(this.isAutoMoveTicketsEnabled).subscribe(
+            (result) => {
+                console.log('Auto move tickets status updated successfully:', result);
+            },
+            (error) => {
+                console.error('Error updating auto move tickets status:', error);
+                // Revert the status if update fails
+                this.isAutoMoveTicketsEnabled = !this.isAutoMoveTicketsEnabled;
+            }
+        );
+    }
+
+    private loadAutoMoveTicketsStatus() {
+        this.moveTicketsService.getAutoMoveTicketsStatus().subscribe(
+            (status) => {
+                this.isAutoMoveTicketsEnabled = status.isEnabled;
+            },
+            (error) => {
+                console.error('Error loading auto move tickets status:', error);
+            }
+        );
     }
 }
