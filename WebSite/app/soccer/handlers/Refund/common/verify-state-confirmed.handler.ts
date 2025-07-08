@@ -7,19 +7,24 @@ import { ResourceIds } from "../../../../shared/constants";
 
 export class VerifyStateConfirmedHandler extends AbstractHandler {
   public async handle(storage: RefundBaseStorage): Promise<void> {
-    const { matchDetail } = storage.getMatch();
+    const { matchDetail } = storage.getMatch()
+    const selectedResources = storage.getSelectedResource() as ResultDetail[];;
     if(matchDetail.isMarkedRefundAll) {
       super.handle(storage);
       return;
     }
+    
+    if(selectedResources.some(item => !item.resultSettingData.isConfirmedRefundSdt && !item.resultSettingData.isConfirmedRefund)){
+      storage.error(Language.confirmRefund.refundResultNotConfirmed);
+      return;
+    }
 
-    const selectedResources = storage.getSelectedResource() as ResultDetail[];
     if (matchDetail.isSettleDetermined) {
       const allConfirmed = selectedResources.every(item => item.resultSettingData.isConfirmedRefundSdt);
-      allConfirmed && this.verifyGoalRecord(storage, selectedResources) && this.verifyStateConfirmed(storage, selectedResources) ? super.handle(storage) : this.showAlert(storage, matchDetail.isSettleDetermined);
+      allConfirmed && this.verifyGoalRecord(storage, selectedResources) && this.verifyStateConfirmed(storage, selectedResources) ? super.handle(storage) : this.showAlert(storage, matchDetail.isSettleDetermined, allConfirmed);
     } else {
       const allConfirmed = selectedResources.every(item => item.resultSettingData.isConfirmedRefund);
-      allConfirmed && this.verifyGoalRecord(storage, selectedResources) ? super.handle(storage) : this.showAlert(storage, matchDetail.isSettleDetermined);
+      allConfirmed && this.verifyGoalRecord(storage, selectedResources) ? super.handle(storage) : this.showAlert(storage, matchDetail.isSettleDetermined, allConfirmed);
 
     }
   }
@@ -29,8 +34,8 @@ export class VerifyStateConfirmedHandler extends AbstractHandler {
     const confirmedScores = externalResults.find(item => item.sourceId == 99);
     if (confirmedScores) {
       return selectedResources.every(item => {
-        const confirmedScore = confirmedScores.resultDetails.find(item => item.resourceId == item.resourceId);
-        return confirmedScore && confirmedScore.homeValue == item.homeValue && confirmedScore.awayValue == item.awayValue;
+        const confirmedScore = confirmedScores.resultDetails.find(r => r.resourceId === item.resourceId);
+        return confirmedScore && confirmedScore.homeValue === item.homeValue && confirmedScore.awayValue === item.awayValue;
       });
     }
     return false;
@@ -44,10 +49,10 @@ export class VerifyStateConfirmedHandler extends AbstractHandler {
       const goalRecordConfirmed = confirmedGoalRecord.resultDetails.find(item => item.resourceId == ResourceIds.goalRecord);
       return goalRecordConfirmed && goalRecordConfirmed.homeValue == matchDetail.goalRecord;
     }
-    return false;
+    return true;
   }
 
-  private showAlert(storage: RefundBaseStorage, isSettleDetermined: boolean) {
+  private showAlert(storage: RefundBaseStorage, isSettleDetermined: boolean, allConfirmed: boolean) {
     if (isSettleDetermined) {
       storage.error(Language.confirmRefund.sdtErrorMessage);
     } else {

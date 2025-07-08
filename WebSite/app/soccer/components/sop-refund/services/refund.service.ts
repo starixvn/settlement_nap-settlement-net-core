@@ -35,6 +35,7 @@ export class RefundService {
   constructor() {
     this.refundHandler = this.buildChain(
       new VerifyStateConfirmedHandler(),
+      new VerifyMarkedTicketHandler(),
       new ConfirmBoxHandler(),
       new RefundHandler()
     );
@@ -47,7 +48,6 @@ export class RefundService {
     this.verifyRefundHalfTimeChain = this.buildChain(
       new MarkedRefundAllHandler(),
       new SdtHtVerifyHandler(),
-      new VerifyMarkedTicketHandler(),
       new VerifyStatusHandler(),
       new DoubleCheckConfirmRefundHandler(),
       new ChangeConfirmSettingHandler()
@@ -58,7 +58,6 @@ export class RefundService {
       new VerifyScoreFTHandler(),
       new SdtFtVerifyHandler(),
       new VerifyGoalRecordFTHandler(),
-      new VerifyMarkedTicketHandler(),
       new VerifyStatusHandler(),
       new DoubleCheckConfirmRefundHandler(),
       new ChangeConfirmSettingHandler()
@@ -68,7 +67,6 @@ export class RefundService {
       new MarkedRefundAllHandler(),
       new VerifyScoreHTHandler(),
       new VerifyGoalRecordHTHandler(),
-      new VerifyMarkedTicketHandler(),
       new VerifyStatusHandler(),
       new DoubleCheckConfirmRefundHandler(),
       new ChangeConfirmSettingHandler()
@@ -76,7 +74,6 @@ export class RefundService {
     
     this.verifyRefundNotSdtChain = this.buildChain(
       new MarkedRefundAllHandler(),
-      new VerifyMarkedTicketHandler(),
       new VerifyStatusHandler(),
       new DoubleCheckConfirmRefundHandler(),
       new ChangeConfirmSettingHandler()

@@ -272,7 +272,7 @@ public class MatchServiceImp(
         }
         else
         {
-            resultDetails.Add(new ResultDetail { ResourceId = ResourceType.Halftime, SourceId = SourceType.Normal, TicketStatus = match.HtStatus });
+            resultDetails.Add(new ResultDetail { ResourceId = ResourceType.Halftime, SourceId = SourceType.Normal, TicketStatus = match.HtStatus, SettlementStatusId = SettlementStatus.Running });
         }
 
         if (fullTimeResult != null)
@@ -281,7 +281,7 @@ public class MatchServiceImp(
         }
         else
         {
-            resultDetails.Add(new ResultDetail { ResourceId = ResourceType.Final, SourceId = SourceType.Normal, TicketStatus = match.FtStatus });
+            resultDetails.Add(new ResultDetail { ResourceId = ResourceType.Final, SourceId = SourceType.Normal, TicketStatus = match.FtStatus, SettlementStatusId = SettlementStatus.Running });
         }
     }
 
