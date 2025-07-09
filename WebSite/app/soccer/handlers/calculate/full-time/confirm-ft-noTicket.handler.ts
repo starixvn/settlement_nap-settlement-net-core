@@ -7,6 +7,7 @@ import { RequestService } from "../../../components/calc/services/request.servic
 import { CalculateAction, ResourceIds, ResultStatusId, ScoreSourceType, } from "../../../../shared/constants";
 import * as _ from "lodash";
 import { SourceIds } from "../../../../basketball/constants/source-ids";
+import { ExternalResult, ResultDetail } from "../../../../shared/models/sportsbook-sop";
 
 export class ConfirmFtNoTicketHandler extends AbstractHandler {
   #messageBoxService = inject(MessageBoxService);
@@ -17,17 +18,18 @@ export class ConfirmFtNoTicketHandler extends AbstractHandler {
   async handle(storage: Storage) {
     const { matchDetail, externalResults } = storage.getMatch();
     const halfTimeResult = storage.getHalfTimeResult();
-
-    const isHalfTimeSettled = this.resultSettledStatusIds.includes(halfTimeResult.resultStatusId);
+    const fullTimeResult = storage.getFullTimeResult();
 
     const ticketCounts = await this.#requestService.countTickets(matchDetail.matchId);
     const isExistsTicket = ticketCounts.some(x => ["1H", "2H", "BothHalf"].includes(x.groupResult) && x.totalTicket > 0);
+    const isHalfTimeSettledOrConfirmed = this.isHalfTimeSettledOrConfirmed(halfTimeResult, externalResults);
+    const isFTConfirmed = fullTimeResult.resultStatusId === ResultStatusId.TraderConfirm;
+    if (isExistsTicket || isHalfTimeSettledOrConfirmed) {
+      super.handle(storage);
+      return;
+    }
 
-    const isExistsHtSourceResult = externalResults.filter(e => this.sourceTypeIds.includes(e.sourceId)).flatMap(m => m.resultDetails)
-      .filter(x => x.resourceId === ResourceIds.halfTime)
-      .some(x => !_.isEmpty(x.homeValue) && !_.isEmpty(x.awayValue));
-
-    if (!halfTimeResult.checked && !isHalfTimeSettled && !isExistsTicket && !isExistsHtSourceResult) {
+    if (isFTConfirmed) {
       const confirmMessage = `${Language.soccer.confirmAutoSelectFtNoTicket}`;
       storage.setConfirmMessage(confirmMessage);
       this.#messageBoxService.confirm(storage.getConfirmMessage(), () => {
@@ -37,9 +39,17 @@ export class ConfirmFtNoTicketHandler extends AbstractHandler {
         storage.setCalculateAction(CalculateAction.calculate);
         super.handle(storage);
       });
-      return;
+    } else {
+      storage.error(Language.soccer.halfTimeNotSettleYet);
     }
-    super.handle(storage);
+
+  }
+
+  private isHalfTimeSettledOrConfirmed(halfTimeResult: ResultDetail, externalResults: ExternalResult[]) {
+    const isHalfTimeSettled = this.resultSettledStatusIds.includes(halfTimeResult.resultStatusId);
+    const isExistsHtSourceResult = externalResults.filter(e => this.sourceTypeIds.includes(e.sourceId)).flatMap(m => m.resultDetails)
+
+    return isHalfTimeSettled || isExistsHtSourceResult.length > 0 || halfTimeResult.checked;
   }
 
 
@@ -53,6 +63,6 @@ export class ConfirmFtNoTicketHandler extends AbstractHandler {
       screenshot.homeValue = '0';
       screenshot.awayValue = '0';
     }
-    
+
   }
 }
