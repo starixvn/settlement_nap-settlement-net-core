@@ -32,6 +32,11 @@ public class MoveTicketController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> MoveRunningTickets(MoveRunningTicketsRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
     [Route("get-auto-move-status")]
+    [HttpGet]
+    public async Task<IActionResult> GetAutoMoveStatus() => Ok(await mediator.Send(new GetAutoMoveStatusRequest()).ConfigureAwait(false));
+
+    [Route("update-auto-move-status")]
     [HttpPost]
-    public async Task<IActionResult> GetAutoMoveStatus(GetAutoMoveStatusRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+    [LogPushRequest]
+    public async Task<IActionResult> UpdateAutoMoveStatus(UpdateAutoMoveStatusRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 }

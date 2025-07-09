@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpRequestService, DialogBoxService } from "../../../shared/services";
-import { Observable } from 'rxjs';
+import { Observable, firstValueFrom } from 'rxjs';
 import {
   FilterRequest,
   MultiSport,
@@ -36,13 +36,15 @@ export class MoveTicketsService {
     return this.httpRequestService.postJson(request, `/api/moveticket/move-ticket`);
   }
 
-  public updateAutoMoveTicketsStatus(isEnabled: boolean): Observable<Result> {
-    const request = { isEnabled };
-    return this.httpRequestService.postJson(request, `/api/moveticket/update-auto-move-status`);
+  public updateAutoMoveTicketsStatus(isAutoMoveTicketsEnabled: boolean) {
+    const query = { isAutoMoveTicketsEnabled : !isAutoMoveTicketsEnabled };
+    const request = this.httpRequestService.postJson<boolean>(query, `/api/moveticket/update-auto-move-status`);
+    return firstValueFrom(request);
   }
 
-  public getAutoMoveTicketsStatus(): Observable<{ isEnabled: boolean }> {
-    return this.httpRequestService.getJson(`/api/moveticket/get-auto-move-status`);
+  public getAutoMoveTicketsStatus() {
+    const request = this.httpRequestService.getJson<boolean>(`/api/moveticket/get-auto-move-status`);
+    return firstValueFrom(request);
   }
 
   public popupLog(matchId: string, fromDate: string, toData: string ) {

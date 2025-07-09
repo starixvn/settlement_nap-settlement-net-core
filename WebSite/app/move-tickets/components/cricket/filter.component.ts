@@ -28,6 +28,8 @@ export class FilterComponent implements OnInit {
     @Output() public searchAction = new EventEmitter();
     @Output() public requestEmitter = new EventEmitter();
     public readonly warningDialogMessage = new ModalDialogMessage();
+    public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
+  
     public matchCode = "";
     public fromDate: NgbDateStruct;
     public toDate: NgbDateStruct;
@@ -47,12 +49,13 @@ export class FilterComponent implements OnInit {
     }
 
     public ngOnInit() {
+        this.confirmationDialogMessage.title = Language.confirmationBox;
         this.sportTypesSelected = SportType.baseBall.toString();
         this.initiateData();
-        this.loadAutoMoveTicketsStatus();
+       
     }
 
-    private initiateData() {
+    private async initiateData() {
         this.moveTicketsService.getDate()
             .subscribe((date: DateFilter) => {
                 this.fromDate = this.verifyDateService.convertToDateStruct(date.fromDate);
@@ -63,6 +66,8 @@ export class FilterComponent implements OnInit {
         this.matchStatusSelect.items = this.generateFilterService.renderMatchStatusGroupSelect();
         this.matchStatusSelect.haveGroup = true;
         this.matchStatusSelect.maxWidth = '200px';
+
+        this.isAutoMoveTicketsEnabled = await  this.moveTicketsService.getAutoMoveTicketsStatus();
     }
 
     public search() {
@@ -166,29 +171,15 @@ export class FilterComponent implements OnInit {
     }
 
     public toggleAutoMoveTicketsStatus() {
-        this.isAutoMoveTicketsEnabled = !this.isAutoMoveTicketsEnabled;
-        console.log('Auto move tickets status:', this.isAutoMoveTicketsEnabled ? 'Enabled' : 'Disabled');
+        this.confirmationDialogMessage.message = this.getAutoMoveTicketsStatusTooltip();
+        this.messageBoxService.confirm(this.confirmationDialogMessage, async () => {
+           this.isAutoMoveTicketsEnabled = await  this.moveTicketsService.updateAutoMoveTicketsStatus(this.isAutoMoveTicketsEnabled)
+        });
         
-        this.moveTicketsService.updateAutoMoveTicketsStatus(this.isAutoMoveTicketsEnabled).subscribe(
-            (result) => {
-                console.log('Auto move tickets status updated successfully:', result);
-            },
-            (error) => {
-                console.error('Error updating auto move tickets status:', error);
-                // Revert the status if update fails
-                this.isAutoMoveTicketsEnabled = !this.isAutoMoveTicketsEnabled;
-            }
-        );
     }
 
-    private loadAutoMoveTicketsStatus() {
-        this.moveTicketsService.getAutoMoveTicketsStatus().subscribe(
-            (status) => {
-                this.isAutoMoveTicketsEnabled = status.isEnabled;
-            },
-            (error) => {
-                console.error('Error loading auto move tickets status:', error);
-            }
-        );
+    public getAutoMoveTicketsStatusTooltip() {
+        const status = this.isAutoMoveTicketsEnabled ? 'OFF' : 'ON';
+        return `Are you sure you want to turn ${status} auto move tickets service?`;
     }
 }

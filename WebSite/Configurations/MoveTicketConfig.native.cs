@@ -19,6 +19,7 @@ public static class MoveTicketConfig
         services.AddTransient<MoveRunningService, MoveRunningServiceImp>();
         services.AddTransient<NewInfoMatchService, NewInfoMatchServiceImp>();
         services.AddTransient<SiteMatchService, SiteMatchServiceImp>();
+        services.AddTransient<AutoMoveStatusService, AutoMoveStatusServiceImp>();
     }
 
     public static void ConfigMoveTicketMediator(this IServiceCollection services)

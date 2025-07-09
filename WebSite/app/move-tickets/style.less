@@ -323,6 +323,22 @@
             display: inline-table;
         }
     }
+
+    .show_icon(@width, @height, @position-left, @position-top) {
+        background: url(@sprite) no-repeat @position-left @position-top;
+        cursor: pointer;
+        height: @height;
+        margin: auto;
+        width: @width;
+    }
+
+    .icon-yes {
+        .show_icon(46px, 18px, -35px, -292px);
+    }
+
+    .icon-no {
+        .show_icon(46px, 18px, -84px, -292px);
+    }
 }
 .custom-dialog-container .mat-dialog-container {
     border: 1px solid #d3d3d3;
@@ -428,7 +444,7 @@ ngb-modal-backdrop {
 
 .move-ticket-setting-container {
     position: absolute;
-    right: 0;
+    right: 15px;
     top: 0;
 }
 

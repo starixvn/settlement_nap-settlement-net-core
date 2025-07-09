@@ -1,39 +1,39 @@
-using Settlement.Core.Models;
 using Fanex.Caching;
+using Settlement.Core.Constants;
 
 namespace Settlement.Sportsbook.MoveTickets.Services;
 
-public interface IAutoMoveStatusService
+public interface AutoMoveStatusService
 {
-    Task<Result> GetAutoMoveStatus();
+    Task<bool> GetAutoMoveStatus();
+
+    Task<bool> UpdateAutoMoveStatus(bool isAutoMoveTicketsEnabled);
 }
 
-public class AutoMoveStatusService(ICacheService cacheService) : IAutoMoveStatusService
+public class AutoMoveStatusServiceImp(ICacheService cacheService) : AutoMoveStatusService
 {
-    private const string AutoMoveStatusKey = "AutoMoveStatus";
-
-    public async Task<Result> GetAutoMoveStatus()
+    public async Task<bool> GetAutoMoveStatus()
     {
         try
         {
-            // ICacheService is usually synchronous, but wrap in Task for compatibility
-            var status = cacheService.Get<string>(AutoMoveStatusKey);
-            var isEnabled = status != null && status == "true";
+            var isExistedKey = await cacheService.ContainAsync(CacheSettings.AutoMoveStatusKey);
+            if (isExistedKey)
+            {
+                var (_, value) = await cacheService.TryGetAsync<bool>(CacheSettings.AutoMoveStatusKey);
+                return value;
+            }
 
-            return new Result
-            {
-                ErrCode = 0,
-                ErrMsg = string.Empty,
-                ChildMatchIds = isEnabled.ToString()
-            };
+            return true;
         }
-        catch (Exception ex)
+        catch
         {
-            return new Result
-            {
-                ErrCode = 500,
-                ErrMsg = $"Error reading auto move status from cache: {ex.Message}"
-            };
+            return false;
         }
     }
-} 
+
+    public async Task<bool> UpdateAutoMoveStatus(bool isAutoMoveTicketsEnabled)
+    {
+        await cacheService.SetAsync(CacheSettings.AutoMoveStatusKey, isAutoMoveTicketsEnabled);
+        return await GetAutoMoveStatus();
+    }
+}

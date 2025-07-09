@@ -1,9 +1,8 @@
 using MediatR;
-using Settlement.Core.Models;
 
 namespace Settlement.Sportsbook.MoveTickets.Requests;
 
-public class GetAutoMoveStatusRequest : IRequest<Result>
+public class GetAutoMoveStatusRequest : IRequest<bool>
 {
     // No properties needed since we're just reading a flag from Redis
-} 
+}

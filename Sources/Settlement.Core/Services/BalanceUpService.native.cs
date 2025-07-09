@@ -19,7 +19,7 @@ public class BalanceUpServiceImp(
     private BalanceUp BalanceUp => repository.Get<BalanceUp>(new GetBalanceUpDayCriteria());
 
     public BalanceUp GetBalanceUpDay() => cacheService.GetOrSet(
-       CacheSettings.Keys.MemoryCacheBalanceUpDay,
+       CacheSettings.MemoryCacheBalanceUpDay,
         () => BalanceUp,
-        new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(CacheSettings.Expiration.BalanceUpTimerMinutes)));
+        new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(Expiration.BalanceUpTimerMinutes)));
 }

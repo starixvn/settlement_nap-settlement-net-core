@@ -24,10 +24,9 @@
                 </div>
             </div>
             <div class="move-ticket-setting-container">
-                <label for="MoveTicketSetting" class="inner-label">Auto move tickets status</label>
-                <button id="MoveTicketSetting" class="button" type="button" (click)="toggleAutoMoveTicketsStatus()">
-                    {{ isAutoMoveTicketsEnabled ? 'On' : 'Off' }}
-                </button>
+                <label for="MoveTicketSetting" class="inner-label">Auto Move Tickets Setting</label>
+                <span (click)="toggleAutoMoveTicketsStatus()" [title]="getAutoMoveTicketsStatusTooltip()" [ngClass]="{'btn':1, 'icon-yes': isAutoMoveTicketsEnabled,
+                                'icon-no': !isAutoMoveTicketsEnabled}"></span>
             </div>
         </div>
         <div class="row" style="margin-top: 10px;">
