@@ -1,19 +1,26 @@
 import { AbstractHandler } from "../../abstract.handler.native";
 import { RefundBaseStorage } from "../../../storage/storage.service.native";
-import { Language } from "../../../../shared/language.native";
-import { ResultDetail } from "../../../models";
 import { ResultStatusId } from "../../../../shared/constants";
+import { ResultDetail } from "../../../models";
+import { Language } from "../../../../shared/language.native";
 
-export class SdtFtVerifyHandler extends AbstractHandler {
+export class SdtVerifyHandler extends AbstractHandler {
   async handle(storage: RefundBaseStorage): Promise<void> {
     const { matchDetail } = storage.getMatch();
+    const fullTime = storage.getFullTimeResult() as ResultDetail;
     const halfTime = storage.getHalfTimeResult() as ResultDetail;
     const halfTimeIsRunning = halfTime.resultStatusId != ResultStatusId.AutoCompleted && halfTime.resultStatusId != ResultStatusId.ManualCompleted;
     
-    if(matchDetail.isSettleDetermined && halfTimeIsRunning) {
-      storage.error(Language.confirmRefund.sdtFullTimeErrorMessage);
-    } else {
-      super.handle(storage);
+    if(matchDetail.isSettleAbandonedMatchIBC && halfTime.checked && !fullTime.checked) {
+      storage.error(Language.confirmRefund.sdtHalfTimeErrorMessage);
+      return;
     }
+
+    if(matchDetail.isSettleAbandonedMatchIBC && halfTimeIsRunning && !halfTime.checked && fullTime.checked) {
+      storage.error(Language.confirmRefund.sdtFullTimeErrorMessage);
+      return;
+    }
+
+    super.handle(storage);
   }
-}
+} 

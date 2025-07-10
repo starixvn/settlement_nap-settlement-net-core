@@ -37,19 +37,19 @@ export class ScoreService {
               const resultDetails = [this.#storage.getHalfTimeResult(), this.#storage.getFullTimeResult()];
               resultDetails.forEach(resultDetail => {
                      if (resultDetail.settlementStatusId === SettlementStatusId.Calculated) {
-                            resultDetail.resultState = 'calculated';
+                            resultDetail.resultStatusState = 'calculated';
                             return;
                      }  
                      
                      if (resultDetail.settlementStatusId === SettlementStatusId.Running || isNull(resultDetail.settlementStatusId)) {
-                            resultDetail.resultState = '';
+                            resultDetail.resultStatusState = '';
                      } else {
-                            resultDetail.resultState = 'refunded';
+                            resultDetail.resultStatusState = 'refunded';
                             return;
                      }
        
                      if (resultDetail.isScoreMismatched || matchDetail.isScoreInconsistent) {
-                            resultDetail.resultState += ' mismatched';
+                            resultDetail.resultStatusState += ' mismatched';
                      }
               });
        

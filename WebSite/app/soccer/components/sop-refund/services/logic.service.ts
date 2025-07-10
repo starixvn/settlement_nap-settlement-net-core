@@ -46,7 +46,9 @@ export class LogicService {
     const { resultDetails, externalResults, permission } = this.#refundStorage.getMatch();
     const resourceConfirmed = externalResults.find(r => r.sourceId == ScoreSourceType.confirmRefundSource);
     resultDetails.forEach(r => {
-      if (r.settlementStatusId !== SettlementStatusId.Calculated && r.settlementStatusId !== SettlementStatusId.Abandoned1H) {
+      if (r.settlementStatusId !== SettlementStatusId.Calculated
+        && r.settlementStatusId !== SettlementStatusId.Abandoned1H
+        && r.settlementStatusId !== SettlementStatusId.Abandoned2H) {
         r.homeValue = "";
         r.awayValue = "";
       }
@@ -62,7 +64,7 @@ export class LogicService {
 
   autoSelect() {
     const { resultDetails, permission, matchDetail } = this.#refundStorage.getMatch();
-  
+
     if (permission.isLeader) {
       resultDetails.forEach(r => {
         const isMarkedRefundAll = matchDetail.isMarkedRefundAll && (r.settlementStatusId === SettlementStatusId.Running || r.settlementStatusId === SettlementStatusId.Calculated);
@@ -79,9 +81,9 @@ export class LogicService {
     const resourceConfirmed = externalResults.find(r => r.sourceId == ScoreSourceType.confirmRefundSource);
     const goalRecordConfirmed = resourceConfirmed?.resultDetails.find(r => r.resourceId == ResourceIds.goalRecord)
 
-    if(goalRecordConfirmed && permission.isLeader) {
+    if (goalRecordConfirmed && permission.isLeader) {
       matchDetail.goalRecord = goalRecordConfirmed.homeValue ?? "",
-      matchDetail.applyGoalRecord = true;
+        matchDetail.applyGoalRecord = true;
     }
 
     const settleDetermined = resultDetails.some(r => r.resultSettingData.isConfirmedRefundSdt);

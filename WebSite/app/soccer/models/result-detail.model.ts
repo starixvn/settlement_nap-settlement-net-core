@@ -25,7 +25,7 @@ export class ResultDetail extends GeneralResultDetail{
         iconHoldResult: ''
     };
     public isMismatch: boolean;
-    public resultState: string;
+    public resultStatusState: string;
     public isShow = true;
     public isEnabled = false;
     

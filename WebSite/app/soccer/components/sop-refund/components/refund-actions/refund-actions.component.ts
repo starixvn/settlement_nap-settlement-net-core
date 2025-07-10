@@ -100,8 +100,7 @@ export class RefundActionsComponent implements OnInit {
 
   refund() {
     this.#storage.clear();
-    const actionName = this.#logicService.getActionName();
-    this.#refundService.refund(actionName, this.matchDetail.isSettleDetermined);
+    this.#refundService.refund(this.matchDetail.isSettleDetermined);
   }
 
   onResultCheckedChange(): void {

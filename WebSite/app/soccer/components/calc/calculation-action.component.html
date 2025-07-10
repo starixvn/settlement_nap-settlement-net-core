@@ -54,12 +54,12 @@
         {{ result.ticketStatus }}
       </td>
       <!-- final -->
-      <td [ngClass]="result.resultState">
+      <td [ngClass]="result.resultStatusState">
         <input type="text" myOnlyInteger [ngClass]="{'warning': result.isResultWarning}"
           [disabled]="!permission.isLeader || (!result.checked || result.resultSettingData.isHoldResult)"
           [(ngModel)]="result.homeValue" (ngModelChange)="scoreChanged(result)" />
       </td>
-      <td [ngClass]="result.resultState">
+      <td [ngClass]="result.resultStatusState">
         <input type="text" myOnlyInteger [ngClass]="{'warning': result.isResultWarning}"
           [disabled]="!permission.isLeader || (!result.checked || result.resultSettingData.isHoldResult)"
           [(ngModel)]="result.awayValue" (ngModelChange)="scoreChanged(result)" />

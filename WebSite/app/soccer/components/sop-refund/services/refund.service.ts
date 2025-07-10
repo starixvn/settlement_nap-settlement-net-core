@@ -16,9 +16,8 @@ import { find } from "lodash";
 import { ChangeConfirmSettingHandler } from "../../../handlers/Refund/common/change-confirm-setting.handler";
 import { DoubleCheckConfirmRefundHandler, } from "../../../handlers/Refund/confirm-refund/double-check-confirm-refund.handler.handler";
 import { VerifyStateConfirmedHandler } from "../../../handlers/Refund/common/verify-state-confirmed.handler";
-import { SdtFtVerifyHandler } from "../../../handlers/Refund/full-time/sdt-ft-verify.handler";
-import { SdtHtVerifyHandler } from "../../../handlers/Refund/half-time/sdt-ht-verify.handler";
 import { MarkedRefundAllHandler } from "../../../handlers/Refund/common/marked-refund-all.handler";
+import { SdtVerifyHandler } from "../../../handlers/Refund/common/sdt-verify.handler";
 
 @Injectable({
   providedIn: 'root'
@@ -35,6 +34,7 @@ export class RefundService {
   constructor() {
     this.refundHandler = this.buildChain(
       new VerifyStateConfirmedHandler(),
+      new SdtVerifyHandler(),
       new VerifyMarkedTicketHandler(),
       new ConfirmBoxHandler(),
       new RefundHandler()
@@ -47,7 +47,7 @@ export class RefundService {
     
     this.verifyRefundHalfTimeChain = this.buildChain(
       new MarkedRefundAllHandler(),
-      new SdtHtVerifyHandler(),
+      new SdtVerifyHandler(),
       new VerifyStatusHandler(),
       new DoubleCheckConfirmRefundHandler(),
       new ChangeConfirmSettingHandler()
@@ -56,7 +56,7 @@ export class RefundService {
     this.verifyRefundFullTimeChain = this.buildChain(
       new MarkedRefundAllHandler(),
       new VerifyScoreFTHandler(),
-      new SdtFtVerifyHandler(),
+      new SdtVerifyHandler(),
       new VerifyGoalRecordFTHandler(),
       new VerifyStatusHandler(),
       new DoubleCheckConfirmRefundHandler(),
@@ -114,19 +114,7 @@ export class RefundService {
 
 
 
-  refund(actionName: string, settleDeterminableTickets: boolean) {;
-    if (actionName === CalculateAction.refundHalfTime) {
-      this.refundHalfTime();
-    } else {
-      this.refundFullTime(settleDeterminableTickets);
-    }
-  }
-
-  refundHalfTime() {
-    this.refundHandler.handle(this.#refundStorage);
-  }
-
-  refundFullTime(settleDeterminableTickets: boolean) {
+  refund(settleDeterminableTickets: boolean) {;
     const { matchDetail, betDaq, betFair } = this.#refundStorage.getMatch();
     matchDetail.isSettleAbandonedMatchIBC = settleDeterminableTickets || betDaq.settleDeterminedBetDaq || betFair.settleDeterminedBetFair;
 

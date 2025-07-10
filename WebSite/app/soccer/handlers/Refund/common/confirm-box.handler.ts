@@ -15,20 +15,15 @@ export class ConfirmBoxHandler extends AbstractHandler {
         const actionName = this.#logicService.getActionName();
         storage.setConfirmMessage(this.getMessageConfirm(actionName, match));
         this.#logicService.showConfirmMessage(() => {
-            this.mapResults(storage);
+            this.setMatchDetail(storage);
             super.handle(storage);
         });
     }
 
-    private mapResults(storage: RefundBaseStorage) {
-     const htResult = storage.getHalfTimeResult();
-     const ftResult = storage.getFullTimeResult();
+    private setMatchDetail(storage: RefundBaseStorage) {
      const { matchDetail } = storage.getMatch();
      if(matchDetail.isSettleAbandonedMatchIBC){
-        matchDetail.halfTimeAwayScore = htResult.awayValue;
-        matchDetail.halfTimeHomeScore = htResult.homeValue;
-        matchDetail.finalAwayScore = ftResult.awayValue;
-        matchDetail.finalHomeScore = ftResult.homeValue;
+       this.mapResult(storage);
      }
      else{
         matchDetail.halfTimeAwayScore = null;
@@ -37,6 +32,24 @@ export class ConfirmBoxHandler extends AbstractHandler {
         matchDetail.finalHomeScore = null;
      }
     }
+
+    private mapResult(storage: RefundBaseStorage) {
+        const htResult = storage.getHalfTimeResult();
+        const ftResult = storage.getFullTimeResult();
+        const action = this.#logicService.getActionName();
+        const { matchDetail } = storage.getMatch();
+
+        if(action === CalculateAction.refund){
+            matchDetail.halfTimeAwayScore = htResult.awayValue;
+            matchDetail.halfTimeHomeScore = htResult.homeValue;
+        } 
+
+        if(action === CalculateAction.refundFullTime){
+            matchDetail.finalAwayScore = ftResult.awayValue;
+            matchDetail.finalHomeScore = ftResult.homeValue;
+        }
+    }
+
     private getMessageConfirm(actionName: string, match: Match) {
         const isAbandonedMatch = match.matchDetail.isSettleAbandonedMatchIBC || match.betDaq.settleDeterminedBetDaq ||
             match.betFair.settleDeterminedBetFair;
