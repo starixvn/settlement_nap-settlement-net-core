@@ -19,7 +19,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="14.0.0" />
-    <PackageReference Include="MediatR" Version="12.5.0" />
+    <PackageReference Include="MediatR" Version="13.0.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Fanex.Settlement.ScaleOut\Fanex.Settlement.ScaleOut.csproj" />
