@@ -229,10 +229,10 @@
 			<Setting Key="NAP_Set_AutoPayout_WaitingSel_DBSITE03" SpName="NAP_Set_AutoPayout_WaitingSel" DbName="DBSITE03.bodb02.wsv_nap" TimeOut="60" />
 		</Function>
 		<Function Name="NAP_Admin_Settlement_Auto_1s_Push">
-			<Setting Key="NAP_Admin_Settlement_Auto_1s_Push_DBTXN" SpName="NAP_Admin_Settlement_Auto_1s_Push" DbName="DBTXN.bodb02.wsv_nap" />
-			<Setting Key="NAP_Admin_Settlement_Auto_1s_Push_DBSITE01" SpName="NAP_Admin_Settlement_Auto_1s_Push" DbName="DBSITE01.bodb02.wsv_nap" />
-			<Setting Key="NAP_Admin_Settlement_Auto_1s_Push_DBSITE02" SpName="NAP_Admin_Settlement_Auto_1s_Push" DbName="DBSITE02.bodb02.wsv_nap" />
-			<Setting Key="NAP_Admin_Settlement_Auto_1s_Push_DBSITE03" SpName="NAP_Admin_Settlement_Auto_1s_Push" DbName="DBSITE03.bodb02.wsv_nap" />
+			<Setting Key="NAP_Admin_Settlement_Auto_1s_Push_DBTXN" SpName="NAP_Admin_Settlement_Auto_1s_Push" DbName="DBTXN.bodb02.wsv_nap" TimeOut="60" />
+			<Setting Key="NAP_Admin_Settlement_Auto_1s_Push_DBSITE01" SpName="NAP_Admin_Settlement_Auto_1s_Push" DbName="DBSITE01.bodb02.wsv_nap" TimeOut="60" />
+			<Setting Key="NAP_Admin_Settlement_Auto_1s_Push_DBSITE02" SpName="NAP_Admin_Settlement_Auto_1s_Push" DbName="DBSITE02.bodb02.wsv_nap" TimeOut="60" />
+			<Setting Key="NAP_Admin_Settlement_Auto_1s_Push_DBSITE03" SpName="NAP_Admin_Settlement_Auto_1s_Push" DbName="DBSITE03.bodb02.wsv_nap" TimeOut="60" />
 		</Function>
 		<Function Name="NAP_Set_BetDaq_Checking">
 			<Setting Key="NAP_Set_BetDaq_Checking_DBTXN" SpName="NAP_Set_BetDaq_Checking" DbName="DBTXN.bodb02.wsv_nap" />

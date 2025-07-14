@@ -1,4 +1,3 @@
-using AutoMapper;
 using Fanex.Caching;
 using Fanex.Data.Repository;
 using Fanex.Logging;
@@ -7,7 +6,6 @@ using Fanex.RemotingRef;
 using Fanex.Settlement.Converter.Services;
 using Fanex.Settlement.ScaleOut;
 using Fanex.Settlement.ScaleOut.Services;
-using Mapster;
 using MassTransit;
 using MessagePack.AspNetCoreMvcFormatter;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -190,25 +188,21 @@ public static class WebSites
 
     public static void AddAutoMapper(this IServiceCollection services)
     {
-        var mapperConfig = new MapperConfiguration(mc =>
+        services.AddAutoMapper(cfg =>
         {
-            mc.AddProfile(typeof(SportsbookAioAutoMapperProfile));
-            mc.AddProfile(typeof(SportsbookMoveTicketAutoMapperProfile));
-            mc.AddProfile(typeof(OtherSportsAutoMapperProfile));
-            mc.AddProfile(typeof(SoccerAutoMapperProfile));
-            mc.AddProfile(typeof(LogAutoMapper));
-            mc.AddProfile(typeof(EventManagementAutoMapperProfile));
-            mc.AddProfile(typeof(FastMarketAutoMapperProfile));
-            mc.AddProfile(typeof(ThirdPartyProductsAutoMapperProfile));
-            mc.AddProfile(typeof(SettingAutoMapperProfile));
-            mc.AddProfile(typeof(GamingMapperProfile));
-            mc.AddProfile(typeof(ScaleOutMappingProfile));
-            mc.AddProfile(typeof(OutrightMapperProfile));
+            cfg.AddProfile<SportsbookAioAutoMapperProfile>();
+            cfg.AddProfile<SportsbookMoveTicketAutoMapperProfile>();
+            cfg.AddProfile<OtherSportsAutoMapperProfile>();
+            cfg.AddProfile<SoccerAutoMapperProfile>();
+            cfg.AddProfile<LogAutoMapper>();
+            cfg.AddProfile<EventManagementAutoMapperProfile>();
+            cfg.AddProfile<FastMarketAutoMapperProfile>();
+            cfg.AddProfile<ThirdPartyProductsAutoMapperProfile>();
+            cfg.AddProfile<SettingAutoMapperProfile>();
+            cfg.AddProfile<GamingMapperProfile>();
+            cfg.AddProfile<ScaleOutMappingProfile>();
+            cfg.AddProfile<OutrightMapperProfile>();
         });
-
-        var mapper = mapperConfig.CreateMapper();
-        services.AddSingleton(mapper);
-        services.AddMapster();
     }
 
     public static void AddMessagePack(this IServiceCollection services)

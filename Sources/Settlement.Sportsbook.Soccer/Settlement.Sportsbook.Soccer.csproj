@@ -22,7 +22,7 @@
     <PackageReference Include="Fanex.Settlement.MessageBridge" Version="1.0.8" />
     <PackageReference Include="Mapster" Version="7.4.0" />
     <PackageReference Include="Mapster.DependencyInjection" Version="1.0.1" />
-    <PackageReference Include="MassTransit" Version="8.5.0" />
+    <PackageReference Include="MassTransit" Version="8.5.1" />
     <PackageReference Include="MediatR" Version="13.0.0" />
   </ItemGroup>
   <ItemGroup>
