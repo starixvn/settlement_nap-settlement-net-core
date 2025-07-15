@@ -68,6 +68,8 @@ services.AddDataProtection().UseCryptographicAlgorithms(
         ValidationAlgorithm = ValidationAlgorithm.HMACSHA256
     });
 
+services.AddHealthChecks();
+
 var app = builder.Build();
 
 app.UseDeveloperExceptionPage();
@@ -79,6 +81,7 @@ app.UseMiddleware<ErrorHandler>();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
+app.MapHealthChecks("/healthz");
 
 app.MapControllerRoute(
         "default",

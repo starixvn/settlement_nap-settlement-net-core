@@ -28,7 +28,7 @@
     <PackageReference Include="AutoMapper" Version="14.0.0" />
     <PackageReference Include="Fanex.Caching.AspNetCore" Version="2.2.5" />
     <PackageReference Include="Fanex.Caching.Redis" Version="2.2.8" />
-    <PackageReference Include="Fanex.Data.ProxyClient" Version="1.0.5.2" />
+    <PackageReference Include="Fanex.Data.ProxyClient" Version="1.0.5.6" />
     <PackageReference Include="Fanex.Logging.Extensions.AspNetCore" Version="1.1.0" />
     <PackageReference Include="Fanex.Logging.Extensions.Database" Version="2.0.2.1" />
     <PackageReference Include="Fanex.Logging.Sentry.RavenClient" Version="2.0.2" />
@@ -38,17 +38,17 @@
     <PackageReference Include="Fanex.RemotingRef" Version="1.5.5.1" />
     <PackageReference Include="Fanex.Settlement.Converter" Version="1.0.0.1" />
     <PackageReference Include="Fanex.Settlement.MessageBridge" Version="1.0.8" />
-    <PackageReference Include="MediatR" Version="12.5.0" />
+    <PackageReference Include="MediatR" Version="13.0.0" />
     <PackageReference Include="MessagePack" Version="3.1.4" />
     <PackageReference Include="MessagePack.AspNetCoreMvcFormatter" Version="3.1.4" />
-    <PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="9.0.6" />
+    <PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="9.0.7" />
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="4.14.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="9.0.6" />
+    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="9.0.7" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="ONEbook.UM" Version="3.2.5" />
+    <PackageReference Include="ONEbook.UM" Version="3.2.6" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sources\Settlement.EventManagement\Settlement.EventManagement.csproj" />
