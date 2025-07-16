@@ -95,6 +95,7 @@ export class RefundService {
 
   private verifyRefund(actionName: string, settleDeterminableTickets: boolean): AbstractHandler{
      const { betDaq, betFair, matchDetail } = this.#refundStorage.getMatch();
+     matchDetail.isSettleDetermined = settleDeterminableTickets;
      matchDetail.isSettleAbandonedMatchIBC = settleDeterminableTickets || betDaq.settleDeterminedBetDaq || betFair.settleDeterminedBetFair;
       if (actionName === CalculateAction.refundHalfTime) {
         return this.verifyRefundHalfTimeChain;

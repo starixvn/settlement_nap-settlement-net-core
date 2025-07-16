@@ -11,12 +11,12 @@ export class SdtVerifyHandler extends AbstractHandler {
     const halfTime = storage.getHalfTimeResult() as ResultDetail;
     const halfTimeIsRunning = halfTime.resultStatusId != ResultStatusId.AutoCompleted && halfTime.resultStatusId != ResultStatusId.ManualCompleted;
     
-    if(matchDetail.isSettleAbandonedMatchIBC && halfTime.checked && !fullTime.checked) {
+    if(matchDetail.isSettleDetermined && halfTime.checked && !fullTime.checked) {
       storage.error(Language.confirmRefund.sdtHalfTimeErrorMessage);
       return;
     }
 
-    if(matchDetail.isSettleAbandonedMatchIBC && halfTimeIsRunning && !halfTime.checked && fullTime.checked) {
+    if(matchDetail.isSettleDetermined && halfTimeIsRunning && !halfTime.checked && fullTime.checked) {
       storage.error(Language.confirmRefund.sdtFullTimeErrorMessage);
       return;
     }
