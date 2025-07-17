@@ -1,5 +1,4 @@
 import { inject } from "@angular/core";
-import { MatchDetail } from "../../../components/refund/model/match.model";
 import { VerificationBaseService } from "../../../services/verification-base.service";
 import { RefundBaseStorage } from "../../../storage/storage.service.native";
 import { AbstractHandler } from "../../abstract.handler.native";

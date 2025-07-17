@@ -18,6 +18,7 @@ import { DoubleCheckConfirmRefundHandler, } from "../../../handlers/Refund/confi
 import { VerifyStateConfirmedHandler } from "../../../handlers/Refund/common/verify-state-confirmed.handler";
 import { MarkedRefundAllHandler } from "../../../handlers/Refund/common/marked-refund-all.handler";
 import { SdtVerifyHandler } from "../../../handlers/Refund/common/sdt-verify.handler";
+import { VerifyHTStatusHandler } from "../../../handlers/Refund/full-time/verify-ht-status.handler";
 
 @Injectable({
   providedIn: 'root'
@@ -74,6 +75,7 @@ export class RefundService {
     
     this.verifyRefundNotSdtChain = this.buildChain(
       new MarkedRefundAllHandler(),
+      new VerifyHTStatusHandler(),
       new VerifyStatusHandler(),
       new DoubleCheckConfirmRefundHandler(),
       new ChangeConfirmSettingHandler()
