@@ -50,7 +50,8 @@ const permission = {
     resultDetails: [],
     hedgeMatchDetail: null,
     betDaq,
-    betFair
+    betFair,
+    externalResults: []
   };
 
   const refundType = RefundType.refundAll;
@@ -66,7 +67,8 @@ const permission = {
     isSuccessful: true,
     childMatchIds:"",
     settledSessionId:"",
-    hasResultAmendment:false
+    hasResultAmendment:false,
+    isOrg:false
   };
   const unSuccessfulResult = {
       errCode: 1,
@@ -74,7 +76,8 @@ const permission = {
       isSuccessful: false,
       childMatchIds:"",
       settledSessionId:"",
-      hasResultAmendment:false
+      hasResultAmendment:false,
+      isOrg:false
   };
 
 

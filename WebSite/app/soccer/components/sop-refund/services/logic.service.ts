@@ -90,11 +90,12 @@ export class LogicService {
     matchDetail.isSettleDetermined = settleDetermined;
   }
 
-  settleDetermineUpdate(settleDeterminableTickets: boolean) {
+  settleDetermineUpdate() {
     const halfTime = this.#refundStorage.getHalfTimeResult() as ResultDetail;
     const fullTime = this.#refundStorage.getFullTimeResult() as ResultDetail;
+    const { matchDetail } = this.#refundStorage.getMatch();
 
-    if (!settleDeterminableTickets) {
+    if (!matchDetail.isSettleDetermined) {
       fullTime.isEnabled = false;
       halfTime.isEnabled = false;
       return;

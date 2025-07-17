@@ -21,7 +21,7 @@ describe('SpecificBettypeComponent', () => {
     }
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [SpecificBettypeComponent],
+            imports: [HttpClientModule, SpecificBettypeComponent],
             providers: [
                 RequestService,
                 HttpRequestService,
@@ -29,9 +29,6 @@ describe('SpecificBettypeComponent', () => {
                 MessageBoxService,
                 { provide: MatDialogRef, useValue: new MatDialogRefMock() },
                 { provide: MAT_DIALOG_DATA, useValue: data },
-            ],
-            imports: [
-                HttpClientModule,
             ]
         })
             .compileComponents();

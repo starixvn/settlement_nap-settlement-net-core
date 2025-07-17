@@ -8,6 +8,7 @@ import { ScoreSourceType, SettlementStatusId } from '../../../../shared/constant
 import { ResultDetail } from '../../../models';
 import { ToastrModule } from 'ngx-toastr';
 import { Language } from '../../../../shared/language.native';
+import { MatchDetail } from '../../refund/model/match.model';
 
 describe('Soccer - LogicService', () => {
     let service: LogicService;
@@ -362,12 +363,16 @@ describe('Soccer - LogicService', () => {
             // Arrange
             const halfTime = { isEnabled: true, checked: false } as ResultDetail;
             const fullTime = { isEnabled: true, checked: false } as ResultDetail;
+            const matchDetail = { isSettleDetermined: false } as MatchDetail;
 
             jest.spyOn(refundStorage, 'getHalfTimeResult').mockReturnValue(halfTime);
             jest.spyOn(refundStorage, 'getFullTimeResult').mockReturnValue(fullTime);
+            jest.spyOn(refundStorage, 'getMatch').mockReturnValue({
+                matchDetail
+            } as any);
 
             // Act
-            service.settleDetermineUpdate(false);
+            service.settleDetermineUpdate();
 
             // Assert
             expect(halfTime.isEnabled).toBe(false);
@@ -378,12 +383,16 @@ describe('Soccer - LogicService', () => {
             // Arrange
             const halfTime = { isEnabled: false, checked: true } as ResultDetail;
             const fullTime = { isEnabled: true, checked: true } as ResultDetail;
+            const matchDetail = { isSettleDetermined: true } as MatchDetail;
 
             jest.spyOn(refundStorage, 'getHalfTimeResult').mockReturnValue(halfTime);
             jest.spyOn(refundStorage, 'getFullTimeResult').mockReturnValue(fullTime);
+            jest.spyOn(refundStorage, 'getMatch').mockReturnValue({
+                matchDetail
+            } as any);
 
             // Act
-            service.settleDetermineUpdate(true);
+            service.settleDetermineUpdate();
 
             // Assert
             expect(halfTime.isEnabled).toBe(true);
@@ -394,12 +403,16 @@ describe('Soccer - LogicService', () => {
             // Arrange
             const halfTime = { isEnabled: true, checked: false } as ResultDetail;
             const fullTime = { isEnabled: false, checked: true } as ResultDetail;
+            const matchDetail = { isSettleDetermined: true } as MatchDetail;
 
             jest.spyOn(refundStorage, 'getHalfTimeResult').mockReturnValue(halfTime);
             jest.spyOn(refundStorage, 'getFullTimeResult').mockReturnValue(fullTime);
+            jest.spyOn(refundStorage, 'getMatch').mockReturnValue({
+                matchDetail
+            } as any);
 
             // Act
-            service.settleDetermineUpdate(true);
+            service.settleDetermineUpdate();
 
             // Assert
             expect(halfTime.isEnabled).toBe(false);

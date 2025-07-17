@@ -59,6 +59,8 @@ export class RefundActionsComponent implements OnInit {
     this.betDaq = this.#match.betDaq;
     this.betFair = this.#match.betFair;
     this.isExistedConfirmRefund = this.resultDetails.some(result => result.resultSettingData.isConfirmedRefund || result.resultSettingData.isConfirmedRefundSdt);
+    this.matchDetail.applyHedgeMatch = this.hedgeMatchDetail != null && !this.hedgeMatchDetail.isUndecided;
+    this.disableSettleDeterminedHedgeMatch = !this.matchDetail.applyHedgeMatch;
     this.#verifyService.verifyScore();
     this.onResultCheckedChange();
   }
@@ -88,7 +90,11 @@ export class RefundActionsComponent implements OnInit {
   }
 
   onSettleDeterminableTicketsChange() {
-    this.#logicService.settleDetermineUpdate(this.matchDetail.isSettleDetermined);
+    if(!this.matchDetail.isSettleDetermined ) {
+      this.betDaq && (this.betDaq.settleDeterminedBetDaq = false);
+      this.betFair && (this.betFair.settleDeterminedBetFair = false);
+    }
+    this.#logicService.settleDetermineUpdate();
   }
 
   goalRecordModelChange() {
@@ -106,7 +112,7 @@ export class RefundActionsComponent implements OnInit {
   onResultCheckedChange(): void {
     this.#storage.clear();
     this.enableAction = this.resultDetails.some(x => x.checked);
-    this.#logicService.settleDetermineUpdate(this.matchDetail.isSettleDetermined || this.betDaq.settleDeterminedBetDaq || this.betFair.settleDeterminedBetFair);
+    this.#logicService.settleDetermineUpdate();
   }
 
   confirmRefund() {

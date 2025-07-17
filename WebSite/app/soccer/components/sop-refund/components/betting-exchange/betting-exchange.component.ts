@@ -61,7 +61,11 @@ export class BettingExchangeComponent {
   }
 
   onSettleDeterminableTicketsChange(settleDeterminableTickets: boolean) {
-    this.#logicService.settleDetermineUpdate(settleDeterminableTickets);
+    if(settleDeterminableTickets) {
+     const {matchDetail} = this.#refundStorage.getMatch();
+     matchDetail.isSettleDetermined = true;
+    }
+    this.#logicService.settleDetermineUpdate();
   }
 
   async onRefundRunningThirdPartyTickets(isBetDaq : boolean){
