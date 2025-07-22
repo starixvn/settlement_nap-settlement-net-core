@@ -10,6 +10,8 @@ import * as _ from "lodash";
 import { Language } from "../../../../shared/language.native";
 import { ResultDetail } from "../../../models";
 import { ExternalResultDetail } from "../../../../shared/models/sportsbook-sop";
+import { MainRefundButtonStatus } from "../../refund/model/button-status.model";
+import { BetStatus, RefundType } from "../../../constants";
 
 @Injectable({
   providedIn: 'root'
@@ -90,6 +92,22 @@ export class LogicService {
     matchDetail.isSettleDetermined = settleDetermined;
   }
 
+  SaveOriginalScore() {
+    const halfTime = this.#refundStorage.getHalfTimeResult();
+    const fullTime = this.#refundStorage.getFullTimeResult();
+    if (halfTime.settlementStatusId === SettlementStatusId.Abandoned1H) {
+      halfTime.originalHomeValue = Number(halfTime.homeValue);
+      halfTime.originalAwayValue = Number(halfTime.awayValue);
+    }
+
+    if (fullTime.settlementStatusId === SettlementStatusId.Abandoned2H) {
+      fullTime.originalHomeValue = Number(fullTime.homeValue);
+      fullTime.originalAwayValue = Number(fullTime.awayValue);
+    }
+  }
+
+
+
   settleDetermineUpdate() {
     const halfTime = this.#refundStorage.getHalfTimeResult() as ResultDetail;
     const fullTime = this.#refundStorage.getFullTimeResult() as ResultDetail;
@@ -124,5 +142,94 @@ export class LogicService {
 
   getMarkRemainTicket(betTicket: string) {
     return Language.specificBetType.MarkRemainTicket.replace("{0}", betTicket);
+  }
+
+  setDisableRefund(matchDetail: MatchDetail): boolean[] {
+    const halfTimeStatusId = this.#refundStorage.getHalfTimeResult().settlementStatusId;
+    const fullTimeStatusId = this.#refundStorage.getFullTimeResult().settlementStatusId;
+    const betStatus = (matchDetail.betStatus ?? "").toLowerCase();
+
+    if (this.isRefundFulltime(betStatus, halfTimeStatusId, fullTimeStatusId)) {
+      return [true, false, true];
+    } else if (this.isRefundAll(betStatus, halfTimeStatusId, fullTimeStatusId)) {
+      return [true, true, false];
+    } else if (this.isRefundHalfTime(betStatus, halfTimeStatusId, fullTimeStatusId)) {
+      return [false, false, true];
+    } else if (this.isRefundHalfTimeAndFullTimeCalculated(betStatus, halfTimeStatusId, fullTimeStatusId)) {
+      return [false, true, true];
+    } else if (this.isRefundHalftimeFullTime(betStatus, halfTimeStatusId, fullTimeStatusId)) {
+      return [false, false, true];
+    } else if (matchDetail.isCalculated) {
+      return [true, true, true];
+    } else {
+      return [false, false, false];
+    }
+  }
+
+  private isRefundFulltime(betStatus: string, halfTimeStatusId: number, fullTimeStatusId: number) {
+    return _.isEqual(halfTimeStatusId, SettlementStatusId.Calculated) &&
+      ((_.includes(betStatus, BetStatus.abandoned2H) && _.isEqual(fullTimeStatusId, SettlementStatusId.Abandoned2H))
+        || (_.includes(betStatus, BetStatus.refundFT) && _.isEqual(fullTimeStatusId, SettlementStatusId.RefundFullTime)));
+  }
+
+  private isRefundAll(betStatus: string, halfTimeStatusId: number, fullTimeStatusId: number) {
+    return (_.includes(betStatus, `${BetStatus.refunded};`) && _.isEqual(halfTimeStatusId, SettlementStatusId.Refund)
+      && _.isEqual(fullTimeStatusId, SettlementStatusId.Refund))
+      || (_.includes(betStatus, BetStatus.abandoned1H)
+        && _.isEqual(halfTimeStatusId, SettlementStatusId.Abandoned1H)
+        && _.isEqual(fullTimeStatusId, SettlementStatusId.Abandoned1H));
+  }
+
+  private isRefundHalfTime(betStatus: string, halfTimeStatusId: number, fullTimeStatusId: number) {
+    return _.includes(betStatus, BetStatus.refundHT)
+      && _.isEqual(halfTimeStatusId, SettlementStatusId.RefundHalfTime)
+      && _.isEqual(fullTimeStatusId, SettlementStatusId.Running);
+  }
+
+  private isRefundHalfTimeAndFullTimeCalculated(betStatus: string, halfTimeStatusId: number, fullTimeStatusId: number) {
+    return _.includes(betStatus, BetStatus.refundHT)
+      && _.isEqual(halfTimeStatusId, SettlementStatusId.RefundHalfTime)
+      && _.isEqual(fullTimeStatusId, SettlementStatusId.Calculated);
+  }
+
+  private isRefundHalftimeFullTime(betStatus: string, halfTimeStatusId: number, fullTimeStatusId: number) {
+    return _.includes(betStatus, `${BetStatus.refunded};`) &&
+      ((_.isEqual(halfTimeStatusId, SettlementStatusId.RefundHalfTime) && _.isEqual(fullTimeStatusId, SettlementStatusId.Abandoned2H))
+        || (_.isEqual(halfTimeStatusId, SettlementStatusId.RefundHalfTime) && _.isEqual(fullTimeStatusId, SettlementStatusId.Refund)));
+  }
+
+
+  setDisableSubRefundFT(halfTimeStatusId: number, fullTimeStatusId: number) {
+    if (this.isRefundAllPos(halfTimeStatusId, fullTimeStatusId)) {
+      return RefundType.sdt
+    } else if (this.isRefundAllSus(halfTimeStatusId, fullTimeStatusId)) {
+      return RefundType.normal;
+    } else {
+      return "";
+    }
+  }
+
+  private isRefundAllPos(halfTimeStatusId: number, fullTimeStatusId: number) {
+    return (_.isEqual(halfTimeStatusId, SettlementStatusId.Calculated)
+      && _.isEqual(fullTimeStatusId, SettlementStatusId.RefundFullTime))
+      || (_.isEqual(halfTimeStatusId, SettlementStatusId.RefundHalfTime)
+        && _.isEqual(fullTimeStatusId, SettlementStatusId.Refund));
+  }
+
+  private isRefundAllSus(halfTimeStatusId: number, fullTimeStatusId: number) {
+    return _.isEqual(fullTimeStatusId, SettlementStatusId.Abandoned2H) &&
+      (_.isEqual(halfTimeStatusId, SettlementStatusId.Calculated)
+        || _.isEqual(halfTimeStatusId, SettlementStatusId.RefundHalfTime));
+  }
+
+  setDisableSubRefundAll(halfTimeStatusId: number, fullTimeStatusId: number) {
+    if (_.isEqual(halfTimeStatusId, SettlementStatusId.Refund) && _.isEqual(fullTimeStatusId, SettlementStatusId.Refund)) {
+      return RefundType.sdt;
+    } else if (_.isEqual(halfTimeStatusId, SettlementStatusId.Abandoned1H) &&
+      _.isEqual(fullTimeStatusId, SettlementStatusId.Abandoned1H)) {
+      return RefundType.normal;
+    } else {
+      return "";
+    }
   }
 }

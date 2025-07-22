@@ -19,6 +19,7 @@ import { VerifyStateConfirmedHandler } from "../../../handlers/Refund/common/ver
 import { MarkedRefundAllHandler } from "../../../handlers/Refund/common/marked-refund-all.handler";
 import { SdtVerifyHandler } from "../../../handlers/Refund/common/sdt-verify.handler";
 import { VerifyHTStatusHandler } from "../../../handlers/Refund/full-time/verify-ht-status.handler";
+import { VerifyScoreHandler } from "../../../handlers/Refund/confirm-refund/verify-score.handler";
 
 @Injectable({
   providedIn: 'root'
@@ -49,6 +50,7 @@ export class RefundService {
     this.verifyRefundHalfTimeChain = this.buildChain(
       new MarkedRefundAllHandler(),
       new SdtVerifyHandler(),
+      new VerifyScoreHandler(), 
       new VerifyStatusHandler(),
       new DoubleCheckConfirmRefundHandler(),
       new ChangeConfirmSettingHandler()
@@ -58,6 +60,7 @@ export class RefundService {
       new MarkedRefundAllHandler(),
       new VerifyScoreFTHandler(),
       new SdtVerifyHandler(),
+      new VerifyScoreHandler(), 
       new VerifyGoalRecordFTHandler(),
       new VerifyStatusHandler(),
       new DoubleCheckConfirmRefundHandler(),
@@ -67,6 +70,7 @@ export class RefundService {
     this.verifyRefundAllChain = this.buildChain(
       new MarkedRefundAllHandler(),
       new VerifyScoreHTHandler(),
+      new VerifyScoreHandler(), 
       new VerifyGoalRecordHTHandler(),
       new VerifyStatusHandler(),
       new DoubleCheckConfirmRefundHandler(),
@@ -76,6 +80,7 @@ export class RefundService {
     this.verifyRefundNotSdtChain = this.buildChain(
       new MarkedRefundAllHandler(),
       new VerifyHTStatusHandler(),
+      new VerifyScoreHandler(), 
       new VerifyStatusHandler(),
       new DoubleCheckConfirmRefundHandler(),
       new ChangeConfirmSettingHandler()

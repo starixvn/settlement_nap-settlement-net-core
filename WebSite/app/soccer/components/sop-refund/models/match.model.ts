@@ -39,6 +39,7 @@ export interface MatchDetail extends MatchDetailBase{
     isCalRefund: boolean;
     isSettleAbandonedMatchIBC: boolean;
     applyHedgeMatch: boolean;
+    isSettleDetermined: boolean;
 }
 
 export interface MatchMoveBet {

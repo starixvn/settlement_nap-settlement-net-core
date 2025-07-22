@@ -6,3 +6,4 @@ export * from './kick-off-time.native';
 export * from './bet-status.native';
 export * from './resourceIds.native';
 export * from './goal.native';
+export * from './refund-type.native';

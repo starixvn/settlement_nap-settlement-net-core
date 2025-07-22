@@ -28,5 +28,6 @@ export class ResultDetail extends GeneralResultDetail{
     public resultStatusState: string;
     public isShow = true;
     public isEnabled = false;
-    
+    public originalHomeValue: number;
+    public originalAwayValue: number;
 }

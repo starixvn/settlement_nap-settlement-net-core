@@ -215,6 +215,8 @@
     sdtHalfTimeErrorMessage: 'Failed: HT selected to Refund-SDT and FT has not been selected as well. Please re-check or select both HT and FT.',
     sdtFullTimeErrorMessage: 'Failed: FT selected to Refund-SDT and HT has not been settled. Please re-check or select settle HT first.',
     sdtHalfTimeAbandonedErrorMessage: 'Failed: HT has been Refunded SDT.',
+    scoreChanged: 'Failed: Must use original input Please re-enter the same value to continue.',
+    differentAction: 'Failed: Cannot proceed with different Refund action. Please Uncalculate first then try again.',
     markedRefundAllSDTErrorMessage: 'Failed: The match marked for Refund All. Please recheck or de-select Settle Determined Tickets.',
     markedRefundAllErrorMessage: 'Failed: The match marked for Refund All. Please recheck or select both HT and FT instead.',
     subsequenceIntervalsErrorMessage: 'Please select all subsequence intervals.'
