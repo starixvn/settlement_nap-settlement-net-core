@@ -11,7 +11,7 @@ export class VerifyStatusHandler extends AbstractHandler {
     const { matchDetail } = storage.getMatch();
     const actionName = this.#logicService.getActionName();
 
-    const response = await this.#requestService.checkNewStatus(matchDetail.matchId, actionName, matchDetail.isSettleAbandonedMatchIBC, true);
+    const response = await this.#requestService.checkNewStatus(matchDetail.matchId, actionName, matchDetail.isSettleAbandonedMatchIBC);
 
     if (response.isSuccessful) {
       super.handle(storage);

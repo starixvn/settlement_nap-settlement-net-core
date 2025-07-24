@@ -35,6 +35,7 @@ export class RefundService {
   
   constructor() {
     this.refundHandler = this.buildChain(
+      new MarkedRefundAllHandler(),
       new VerifyStateConfirmedHandler(),
       new SdtVerifyHandler(),
       new VerifyMarkedTicketHandler(),

@@ -35,7 +35,7 @@ export class VerifyStateConfirmedHandler extends AbstractHandler {
     if (confirmedScores) {
       return selectedResources.every(item => {
         const confirmedScore = confirmedScores.resultDetails.find(r => r.resourceId === item.resourceId);
-        return confirmedScore && confirmedScore.homeValue === item.homeValue && confirmedScore.awayValue === item.awayValue;
+        return Number(confirmedScore.homeValue) === Number(item.homeValue) && Number(confirmedScore.awayValue) === Number(item.awayValue);
       });
     }
     return false;

@@ -8,10 +8,10 @@ export class MarkedRefundAllHandler extends AbstractHandler {
     const { matchDetail } = storage.getMatch();
     const halfTime = storage.getHalfTimeResult() as ResultDetail;
     const fullTime = storage.getFullTimeResult() as ResultDetail;
-    if (matchDetail.isMarkedRefundAll && (!halfTime.checked || !fullTime.checked)) {
-        storage.error(Language.confirmRefund.markedRefundAllErrorMessage);
-      } else if(matchDetail.isMarkedRefundAll && matchDetail.isSettleDetermined) {
+    if (matchDetail.isMarkedRefundAll && matchDetail.isSettleDetermined) {
         storage.error(Language.confirmRefund.markedRefundAllSDTErrorMessage);
+      } else if (matchDetail.isMarkedRefundAll && (!halfTime.checked || !fullTime.checked)) {
+        storage.error(Language.confirmRefund.markedRefundAllErrorMessage);
       }
       else {
         super.handle(storage);

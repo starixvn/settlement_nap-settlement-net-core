@@ -1,6 +1,6 @@
 import { AbstractHandler } from "../../abstract.handler.native";
 import { RefundBaseStorage } from "../../../storage/storage.service.native";
-import { ResultStatusId, SettlementStatusId } from "../../../../shared/constants";
+import { ResultStatusId, SettlementStatusId, TicketStatusText } from "../../../../shared/constants";
 import { ResultDetail } from "../../../models";
 import { Language } from "../../../../shared/language.native";
 
@@ -21,7 +21,7 @@ export class SdtVerifyHandler extends AbstractHandler {
       return;
     }
 
-    if(halfTimeIsRunning && !halfTime.checked && fullTime.checked) {
+    if(halfTime.ticketStatus != TicketStatusText.noTicket && halfTimeIsRunning && !halfTime.checked && fullTime.checked) {
       storage.error(Language.confirmRefund.sdtFullTimeErrorMessage);
       return;
     }
