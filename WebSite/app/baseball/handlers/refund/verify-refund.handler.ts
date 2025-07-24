@@ -3,12 +3,10 @@ import { IRefundStorage } from './../../services/refund/refund.storage';
 import { NotifyService } from "../../services/notify.service";
 import { BaseHandler } from "../base.handler.native";
 import { inject } from "@angular/core";
-import { AioService } from "../../../shared/services";
 import { Language } from "../../../shared/language.native";
 
 export class VerifyRefundHandler implements BaseHandler {
   private nextHandler: BaseHandler;
-  readonly #aioService = inject(AioService);
   private readonly notifyService = inject(NotifyService);
 
   setNextHandler(handler: BaseHandler) {
@@ -20,8 +18,6 @@ export class VerifyRefundHandler implements BaseHandler {
       this.notifyService.error(Language.confirmRefund.refundResultNotConfirmed);
     } else if (this.inconsistencyBetweenConfirmAndRefund(storage) || this.isMisMatchSettleDetermine(storage) || this.isMisMatchMercy(storage)) {
       this.notifyService.error(Language.confirmRefund.sdtErrorMessage);
-    } else if(await this.isExistMarkedTicket(storage)) {
-      this.notifyService.error(Language.MarkedTicket);
     } else {
       this.nextHandler.handle(storage);
     }
@@ -68,15 +64,4 @@ export class VerifyRefundHandler implements BaseHandler {
   }
 
   isSettleSdtOrMercy = (storage: IRefundStorage) => storage.getResultChecked().some(item => item.resultSettingData.isConfirmedRefundSdt || item.resultSettingData.isConfirmedRefundMercy);
-  
-
-  async isExistMarkedTicket(storage: IRefundStorage) {
-    const paramsCheckingMarkedTickets = {
-      matchId: storage.getMatchDetail().matchId,
-      selectedResources: storage.getResultChecked()
-    };
-
-    const res = await this.#aioService.checkMarkedTickets(paramsCheckingMarkedTickets);
-    return res.isExistMarkedTicket
-  } 
 }

@@ -19,7 +19,6 @@ import { AioService } from "../../../shared/services";
 import { InvalidResultsHandler } from "../../handlers/early-settlement/invalid-results.handler";
 import { ConfirmRefundHandler } from "../../handlers/early-settlement/confirm-refund.handler";
 import { VerifyScoreSourceHandler } from "../../handlers/early-settlement/verify-score-source.handler";
-import { CheckMarkedTicketHandler } from "../../handlers/early-settlement/check-marked-ticket.handler";
 import { ResourceItem } from "../../../shared/models";
 
 @Injectable()
@@ -39,7 +38,6 @@ export class EarlySettlementService {
   readonly #saveScoreHandler = new SaveScoreHandler();
   readonly #calculateHandler = new CalculateHandler();
   readonly #confirmUncalculateHandler = new ConfirmUnCalculateHandler();
-  readonly #checkMarkedTicket = new CheckMarkedTicketHandler();
   readonly #checkConfirmRefundHandler = new ConfirmRefundHandler();
   readonly #saveScoreOnly = new SaveScoreHandler();
 
@@ -54,8 +52,7 @@ export class EarlySettlementService {
     this.#confirmCalculateHandler.setNextHandler(this.#saveScoreHandler);
     this.#saveScoreHandler.setNextHandler(this.#calculateHandler);
     this.#confirmUncalculateHandler.setNextHandler(this.#calculateHandler);
-    this.#checkConfirmRefundHandler.setNextHandler(this.#checkMarkedTicket);
-    this.#checkMarkedTicket.setNextHandler(this.#calculateHandler);
+    this.#checkConfirmRefundHandler.setNextHandler(this.#calculateHandler);
   }
 
   calculate() {

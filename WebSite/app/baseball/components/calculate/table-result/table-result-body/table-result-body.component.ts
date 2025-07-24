@@ -104,7 +104,7 @@ export class TableResultBodyComponent implements OnInit {
       }
     }
 
-    map.resultState = new ResultState(this.#resultRowState, map);
+    map.state = new ResultState(this.#resultRowState, map);
   }
 
   autoFillScoreOnLoad() {
@@ -162,10 +162,10 @@ export class TableResultBodyComponent implements OnInit {
 
   selectedOnMap(inning: ResultDetailBaseBall) {
     this.#storage.onChange();
-    inning.resultState = new ResultState(this.#resultRowState, inning);
+    inning.state = new ResultState(this.#resultRowState, inning);
 
     if (inning.resourceId === ResourceIds.extraInning) {
-      this.#storage.fulltimeResult.resultState = new ResultState(this.#resultRowState, this.#storage.fulltimeResult);
+      this.#storage.fulltimeResult.state = new ResultState(this.#resultRowState, this.#storage.fulltimeResult);
     }
   }
 
@@ -190,7 +190,7 @@ export class TableResultBodyComponent implements OnInit {
 
   private changeState() {
     this.innings.forEach((inning) => {
-      inning.resultState = new ResultState(this.#resultRowState, inning);
+      inning.state = new ResultState(this.#resultRowState, inning);
     });
   }
 }

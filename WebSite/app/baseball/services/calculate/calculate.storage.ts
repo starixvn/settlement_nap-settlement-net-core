@@ -164,7 +164,7 @@ export class CalculateStorage implements ICalculateStorage {
   };
   
   setResultState = (service: ResultRowStateService, inning: ResultDetailBaseBall) => { 
-    inning.resultState = new ResultState(service, inning);
+    inning.state = new ResultState(service, inning);
   }
 
   setResultsCheckedState = (service: ResultRowStateService) => {
@@ -175,8 +175,8 @@ export class CalculateStorage implements ICalculateStorage {
 
   setResultsWarningState = (resultDetails: ResultDetailBaseBall[]) => {
     resultDetails.forEach((item) => {
-      item.resultState.invalidHomeScore = true;
-      item.resultState.invalidAwayScore = true;
+      item.state.invalidHomeScore = true;
+      item.state.invalidAwayScore = true;
     })
   }
 
