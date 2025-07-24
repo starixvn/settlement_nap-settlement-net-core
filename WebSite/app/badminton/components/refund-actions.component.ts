@@ -113,18 +113,9 @@ export class RefundActionsComponent
   }
 
   public async refund() {
-    const paramsCheckingMarkedTickets = this.generateCheckMarkedTicketsQuery();
-    const res = await this.aioService.checkMarkedTickets(
-      paramsCheckingMarkedTickets
-    );
     this.toastrService.clear();
     if (this.existResultNotConfirmed()) {
       this.toastrService.error(Language.confirmRefund.refundResultNotConfirmed);
-      return;
-    }
-
-    if (res.isExistMarkedTicket) {
-      this.toastrService.error(Language.MarkedTicket);
       return;
     }
 
