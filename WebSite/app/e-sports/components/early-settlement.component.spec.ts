@@ -55,14 +55,6 @@ describe("E-sport - Early Settlement Component", () => {
     isSuccessful: false,
   };
 
-  const existMarkedTicket = {
-    isExistMarkedTicket: true,
-  };
-
-  const notExistMarkedTicket = {
-    isExistMarkedTicket: false,
-  };
-
   const resultSettingData = new ResultSettingModel();
   const resultDetail = new ResultDetail();
   resultDetail.resourceId = "H1";
@@ -204,9 +196,6 @@ describe("E-sport - Early Settlement Component", () => {
       resultDetail.resultSettingData.isConfirmedRefund = true;
       match.resultDetails = [resultDetail];
       component.match = match;
-      aioService.checkMarkedTickets = jest.fn().mockReturnValue(
-        Promise.resolve(notExistMarkedTicket)
-      );
       aioService.push = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
       messageBoxService.closePopup = jest.fn();
       toastrService.clear = jest.fn();
@@ -223,9 +212,6 @@ describe("E-sport - Early Settlement Component", () => {
     }));
 
     it("should return error message when fail to refund", fakeAsync(async () => {
-      aioService.checkMarkedTickets = jest.fn().mockReturnValue(
-        Promise.resolve(notExistMarkedTicket)
-      );
       aioService.push = jest.fn().mockReturnValue(Promise.resolve(unSuccessfulResult));
       toastrService.error = jest.fn();
 
@@ -238,19 +224,6 @@ describe("E-sport - Early Settlement Component", () => {
       tick();
 
       expect(toastrService.error).toHaveBeenCalledWith(errorMessage);
-    }));
-
-    it("should alert when exist marked ticket", fakeAsync(async () => {
-      aioService.checkMarkedTickets = jest.fn().mockReturnValue(
-        Promise.resolve(existMarkedTicket)
-      );
-      messageBoxService.alert = jest.fn();
-      toastrService.clear = jest.fn();
-      toastrService.error = jest.fn();
-
-      await component.refund();
-
-      expect(toastrService.error).toHaveBeenCalled();
     }));
 
     it("should show error message when exist result not confirm refund", fakeAsync(async () => {

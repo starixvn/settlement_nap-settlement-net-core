@@ -219,7 +219,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     public async refund() {
         this.toastrService.clear();
         if (this.allResultConfirmed()) {
-            this.checkMarkedTickets(this.selectedResources, () => this.createQueryRefundAndPush());
+            this.createQueryRefundAndPush();
         } else {
             this.toastrService.error(Language.confirmRefund.refundResultNotConfirmed);
         }

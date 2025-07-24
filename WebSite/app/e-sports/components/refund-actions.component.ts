@@ -53,14 +53,10 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
     }
 
     public async refund() {
-        const paramsCheckingMarkedTickets = this.generateCheckMarkedTicketsQuery();
-        const response = await this.aioService.checkMarkedTickets(paramsCheckingMarkedTickets);
         this.toastrService.clear();
         if ((![...LeagueGroupId.RedCat,...LeagueGroupId.Pingoal].includes(this.matchDetail.leagueGroupId)) 
             && this.existResultNotConfirmed()) {
             this.toastrService.error(Language.confirmRefund.refundResultNotConfirmed);
-        } else if (response.isExistMarkedTicket) {
-            this.toastrService.error(Language.MarkedTicket);
         } else {
             this.confirmationDialogMessage.message = Language.RefundConfirmMessage;
             this.messageBoxService.confirm(this.confirmationDialogMessage, () => {

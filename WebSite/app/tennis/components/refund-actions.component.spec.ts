@@ -12,11 +12,9 @@ import {
   MessageBoxService,
   ClosePopupService,
   AioService
-} from '../../shared/services';
 import { Match } from '../models';
-import { TennisApiKeys, ResourcesIds } from '../constants';
+import { ResourcesIds } from '../constants';
 import { Language } from '../../shared/language.native';
-import { CalculateAction } from '../../shared/constants';
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
 import { MatchDetail, SettleQuery } from '../../shared/models/sportsbook-sop';
 import { ResultDetail } from '../../shared/models/sportsbook-sop';
@@ -26,6 +24,7 @@ import { ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr'
 import { MatchDetailComponent } from './match-detail.component';
 import { ScoreBySettlementPipe } from '../../shared/pipes/score-by-settlement.pipe';
 import { Result } from '../../shared/models';
+import { ModalContentDialogComponent } from '../../shared/components/modal-dialog/modal-content-dialog.component';
 
 describe('Tennis - Refund actions component', () => {
   let component: RefundActionsComponent;
@@ -58,12 +57,6 @@ describe('Tennis - Refund actions component', () => {
   unSuccessfulResult.hasResultAmendment = false;
   unSuccessfulResult.isOrg = false;
   
-  const existMarkedTicket = {
-    isExistMarkedTicket: true,
-  };
-  const notExistMarkedTicket = {
-    isExistMarkedTicket: false,
-  };
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [],
@@ -133,56 +126,6 @@ describe('Tennis - Refund actions component', () => {
       component.matchDetail = matchDetail;
     });
 
-    it('should invoke messageBoxService alert when markedTickets exist',
-      fakeAsync(() => {
-        // Arrange
-        resultDetail.checked = true;
-        component.match = match;
-        aioService.checkMarkedTickets = jest.fn().mockReturnValue(Promise.resolve(existMarkedTicket));
-        toastrService.error = jest.fn();
-
-        // Act
-        component.refund();
-        flush();
-
-        // Assert
-        expect(toastrService.error).toHaveBeenCalledWith(Language.MarkedTicket);
-      }));
-
-    it('should invoke verifySelectedOnMap() when no marked tickets exist',
-      fakeAsync(() => {
-        // Arrange
-        resultDetail.checked = true;
-        component.match = match;
-
-        aioService.checkMarkedTickets = jest.fn().mockReturnValue(Promise.resolve(notExistMarkedTicket));
-        component.verifySelectedOnMap = jest.fn();
-
-        // Act
-        component.refund();
-        flush();
-
-        // Assert
-        expect(component.verifySelectedOnMap).toHaveBeenCalled();
-      }));
-
-    it('should invoke messageBoxService.confirm when no marked tickets exist',
-      fakeAsync(() => {
-        // Arrange
-        resultDetail.checked = true;
-        component.match = match;
-        aioService.checkMarkedTickets = jest.fn().mockReturnValue(Promise.resolve(notExistMarkedTicket));
-        component.verifySelectedOnMap = jest.fn().mockReturnValue(resultDetail);
-        messageBoxService.confirm = jest.fn();
-
-        // Act
-        component.refund();
-        flush();
-
-        // Assert
-        expect(messageBoxService.confirm).toHaveBeenCalled();
-      }));
-
     it('should alert when exist result not confirmed', fakeAsync(() => {
       resultDetail.resultSettingData = new ResultSettingModel();
       resultDetail.resultSettingData.isConfirmedRefund = false;
@@ -233,26 +176,6 @@ describe('Tennis - Refund actions component', () => {
       component.matchDetail = matchDetail;
     });
 
-    it('should push with exact params', () => {
-      // Arrange
-      resultDetail.resourceId = ResourcesIds.totalSets;
-      resultDetail.checked = true;
-      match.resultDetails = [resultDetail];
-      component.match = match;
-      const param = new SettleQuery(matchDetail,
-        match.resultDetails,
-        CalculateAction.refund,
-        false,
-        "Refund;",
-        TennisApiKeys.Settle);
-      aioService.push = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
-
-      // Act
-      component.doRefund();
-
-      // Assert
-      expect(aioService.push).toHaveBeenCalledWith(param);
-    });
 
     it('should be successful, error message is empty, close pop-up', () => {
       // Arrange

@@ -3,5 +3,4 @@
     Settle: "esport-settle",
     EarlyMatch: "esport-early",
     NormalMatch: "esport",
-    CheckingMarkedTicketsParlay: "MP-REFUND",
 };

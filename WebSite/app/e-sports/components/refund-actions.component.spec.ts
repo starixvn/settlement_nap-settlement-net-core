@@ -50,12 +50,7 @@ describe("E-sport - Refund Component", () => {
     errMsg: errorMessage,
     isSuccessful: false,
   };
-  const existMarkedTicket = {
-    isExistMarkedTicket: true,
-  };
-  const notExistMarkedTicket = {
-    isExistMarkedTicket: false,
-  };
+
   const resultSettingData = new ResultSettingModel();
   const permission = new Permission();
   permission.canCalculate = true;
@@ -151,7 +146,6 @@ describe("E-sport - Refund Component", () => {
     it("should pass all validation and successfully refund and there are no hedge match", fakeAsync(async () => {
       component.match = match;
       component.applyHedgeMatch = false;
-      aioService.checkMarkedTickets= jest.fn().mockReturnValue(Promise.resolve(notExistMarkedTicket));
       aioService.push= jest.fn().mockReturnValue(Promise.resolve(successfulResult));
       messageBoxService.closePopup= jest.fn();
 
@@ -174,7 +168,6 @@ describe("E-sport - Refund Component", () => {
       component.match = match;
       component.applyHedgeMatch = true;
       component.hedgeMatchDetail = match.hedgeMatchDetail;
-      aioService.checkMarkedTickets= jest.fn().mockReturnValue(Promise.resolve(notExistMarkedTicket));
       aioService.push= jest.fn().mockReturnValue(Promise.resolve(successfulResult));
       messageBoxService.closePopup= jest.fn();
 
@@ -193,7 +186,6 @@ describe("E-sport - Refund Component", () => {
 
     it("should show error message when unsuccessfully refund", fakeAsync(async () => {
       component.match = match;
-      aioService.checkMarkedTickets= jest.fn().mockReturnValue(Promise.resolve(notExistMarkedTicket));
       aioService.push= jest.fn().mockReturnValue(Promise.resolve(unSuccessfulResult));
 
       component.refund();
@@ -207,16 +199,6 @@ describe("E-sport - Refund Component", () => {
       expect(toastrService.error).toHaveBeenCalledWith(unSuccessfulResult.errMsg);
     }));
 
-    it("should show error message when exist marked ticket", fakeAsync(async () => {
-      component.match = match;
-      aioService.checkMarkedTickets= jest.fn().mockReturnValue(Promise.resolve(existMarkedTicket));
-
-      component.refund();
-      tick();
-
-      expect(toastrService.error).toHaveBeenCalledWith(Language.MarkedTicket);
-    }));
-
     it('should show error message when exist result not confirmed refund', fakeAsync(async () => {
       const result = new ResultDetail();
       result.resultSettingData = new ResultSettingModel();
@@ -224,7 +206,6 @@ describe("E-sport - Refund Component", () => {
       result.checked = true;
       component.match = match;
       component.resultDetails = [result];
-      aioService.checkMarkedTickets= jest.fn().mockReturnValue(Promise.resolve(notExistMarkedTicket));
 
       debugger;
       await component.refund();
@@ -244,7 +225,6 @@ describe("E-sport - Refund Component", () => {
       result.checked = true;
       component.match = match;
       component.resultDetails = [result];
-      aioService.checkMarkedTickets= jest.fn().mockReturnValue(Promise.resolve(notExistMarkedTicket));
       aioService.push= jest.fn().mockReturnValue(Promise.resolve(successfulResult));
       messageBoxService.closePopup= jest.fn();
 
