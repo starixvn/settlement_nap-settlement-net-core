@@ -12,6 +12,8 @@ public class CheckStatusCriteria : NonQueryCommand
 
     public bool IsEarly { get; set; }
 
+    public bool ConfirmRefund { get; set; }
+
     public int ErrCode { get; set; }
 
     public string ErrMsg { get; set; }

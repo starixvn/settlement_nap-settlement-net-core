@@ -9,11 +9,12 @@ import { MatchMoveBet } from "../models/match.model";
   providedIn: 'root'
 })
 export class RequestService extends RequestBaseService {
-  public checkNewStatus(matchId: number, actionName: string, isSettleAbandonedMatchIBC: boolean) {
+  public checkNewStatus(matchId: number, actionName: string, isSettleAbandonedMatchIBC: boolean, isConfirmRefund: boolean = false) {
     const query = {
       matchId,
       actionName,
-      isSettleAbandonedMatchIBC
+      isSettleAbandonedMatchIBC,
+      confirmRefund: isConfirmRefund
     };
 
     const request = this.httpRequestService.postJson<Result>(query, `${this.soccerApi}/check-status`);

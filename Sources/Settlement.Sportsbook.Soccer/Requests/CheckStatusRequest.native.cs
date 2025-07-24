@@ -13,4 +13,6 @@ public class CheckStatusRequest : IRequest<Result>
     public bool IsSettleDetermined { get; set; }
 
     public bool IsEarly { get; set; }
+
+    public bool ConfirmRefund { get; set; }
 }
