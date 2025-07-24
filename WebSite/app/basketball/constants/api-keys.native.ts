@@ -4,5 +4,4 @@ export const BasketballApiKeys = {
     earlyMatch: "basketball-early",
     normalMatch: "basketball",
     normalMatchRefund: "basketball-refund",
-    checkingMarkedTicketsParlay: "MP-REFUND",
 };

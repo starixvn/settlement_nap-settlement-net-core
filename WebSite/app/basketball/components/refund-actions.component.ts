@@ -110,19 +110,12 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
             return;
         }
 
-        const paramsCheckRefund = {
-            matchId: this.matchId,
-            selectedResources: this.selectedResources
-        };
-        const res = await this.aioService.checkMarkedTickets(paramsCheckRefund);
-        if (res.isExistMarkedTicket) {
-            this.toastrService.error(Language.MarkedTicket);
-        } else {
-            this.confirmationDialogMessage.message = this.isSDTSettle ? Language.RefundConfirmSdtMessage : Language.RefundConfirmMessage;
-            this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
-                this.doRefund();
-            });
-        }
+
+        this.confirmationDialogMessage.message = this.isSDTSettle ? Language.RefundConfirmSdtMessage : Language.RefundConfirmMessage;
+        this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
+            this.doRefund();
+        });
+
     }
 
     private isInputScoreEmpty(): boolean {
@@ -252,8 +245,8 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
         return this.isSDTSettle && resultDetail.checked && !this.isDirectly;
     }
 
-    
-  public get confirmRefundResources() {
-    return this.selectedResources.map((x) => ({...x,resourceName: this.resourceNamePipe.transform(x.resourceId)}))
-  }
+
+    public get confirmRefundResources() {
+        return this.selectedResources.map((x) => ({ ...x, resourceName: this.resourceNamePipe.transform(x.resourceId) }))
+    }
 }

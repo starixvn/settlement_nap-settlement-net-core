@@ -58,12 +58,8 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
 
     public async refund() {
         this.toastrService.clear();
-        const paramsCheckingMarkedTickets = this.generateCheckMarkedTicketsQuery();
-        const res = await this.aioService.checkMarkedTickets(paramsCheckingMarkedTickets);
         if (this.existResultNotConfirmed()) {
             this.toastrService.error(Language.confirmRefund.refundResultNotConfirmed);
-        } else if (res.isExistMarkedTicket) {
-            this.toastrService.error(Language.MarkedTicket);
         } else {
             this.confirmationDialogMessage.message = Language.RefundConfirmMessage;
             this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
