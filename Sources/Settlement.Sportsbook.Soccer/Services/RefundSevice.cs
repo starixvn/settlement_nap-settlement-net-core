@@ -1,6 +1,5 @@
 ﻿using Fanex.Caching;
 using Fanex.Settlement.MessageBridge.JackTime;
-using Fanex.Settlement.MessageBridge.JackTime.Constants;
 using Fanex.Settlement.MessageBridge.RefundEvents;
 using MassTransit;
 using Settlement.Core.Constants;
@@ -89,7 +88,6 @@ public class RefundServiceImp(
         var ticketCriteria = createCriteriaService.SoccerRefundGetTicketInfoCriteria(criteria, request.IsSettleAbandonedMatchIbc);
 
         await WriteLog(criteria, logCriteria);
-        await SendJackTimeTicketToCache(ticketCriteria);
         await ExecuteRefund(criteria);
 
         await publishEndpoint.Publish(
@@ -308,21 +306,5 @@ public class RefundServiceImp(
         await publishEndpoint.Publish(
             request,
             new CancellationTokenSource(TimeSpan.FromSeconds(3)).Token);
-    }
-
-    private async Task SendJackTimeTicketToCache(SoccerGetTicketInfoCriteria criteria)
-    {
-        var fetchTasks = appSettingsKey.Value.SiteDbServer.Select(async server =>
-        {
-            criteria.DbServer = server;
-
-            return await repository.FetchAsync<VoidBetInfo>(criteria);
-        });
-
-        var results = await Task.WhenAll(fetchTasks);
-        var listVoidBetInfo = results.SelectMany(voidBets => voidBets).ToList();
-
-        var cacheKey = $"{RedisJTKey.SoccerJT}-{criteria.MatchId}-{criteria.Action}";
-        await cacheService.SetAsync(cacheKey, listVoidBetInfo);
     }
 }

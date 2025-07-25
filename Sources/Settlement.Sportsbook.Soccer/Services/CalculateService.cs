@@ -1,6 +1,4 @@
-using Fanex.Caching;
 using Fanex.Settlement.MessageBridge.JackTime;
-using Fanex.Settlement.MessageBridge.JackTime.Constants;
 using Fanex.Settlement.MessageBridge.RefundEvents;
 using Fanex.Settlement.ScaleOut.Criteria.Update;
 using Mapster;
@@ -43,8 +41,7 @@ public class CalculateServiceImp(
     IPublishEndpoint publishEndpoint,
     INapSession napSession,
     IHttpContextAccessor accessor,
-    XmlConvertService xmlConvertService,
-    ICacheService cacheService) : ICalculateService
+    XmlConvertService xmlConvertService) : ICalculateService
 {
     public async Task<Result> Calculate(SettleRequest request)
     {
@@ -69,7 +66,6 @@ public class CalculateServiceImp(
         var ticketCriteria = createCriteriaService.SoccerGetTicketInfoCriteria(criteria);
 
         await WriteLog(match, logCriteria);
-        await SendJackTimeTicketToCache(ticketCriteria);
         await ExecuteAsync(criteria);
         await RefundChildMatches(criteria);
 
@@ -156,7 +152,6 @@ public class CalculateServiceImp(
         var ticketCriteria = createCriteriaService.SoccerGetTicketInfoCriteria(criteria);
 
         await WriteLog(match, logCriteria);
-        await SendJackTimeTicketToCache(ticketCriteria);
         await ExecuteAsync(criteria);
 
         if (request.IsApplyHedging)
@@ -183,7 +178,6 @@ public class CalculateServiceImp(
         var ticketCriteria = createCriteriaService.SoccerGetTicketInfoCriteria(criteria);
 
         await WriteLog(match, logCriteria);
-        await SendJackTimeTicketToCache(ticketCriteria);
         await ExecuteAsync(criteria);
 
         if (request.IsApplyHedging)
@@ -412,21 +406,5 @@ public class CalculateServiceImp(
     {
         var request = mapper.Map<SoccerGetTicketInfoCriteria, SoccerResult>(criteria);
         await publishEndpoint.Publish(request, new CancellationTokenSource(TimeSpan.FromSeconds(3)).Token);
-    }
-
-    private async Task SendJackTimeTicketToCache(SoccerGetTicketInfoCriteria criteria)
-    {
-        var fetchTasks = appSettingsKey.Value.SiteDbServer.Select(async server =>
-        {
-            criteria.DbServer = server;
-
-            return await repository.FetchAsync<VoidBetInfo>(criteria);
-        });
-
-        var results = await Task.WhenAll(fetchTasks);
-        var listVoidBetInfo = results.SelectMany(voidBets => voidBets).ToList();
-
-        var cacheKey = $"{RedisJTKey.SoccerJT}-{criteria.MatchId}-{criteria.Action}";
-        await cacheService.SetAsync(cacheKey, listVoidBetInfo);
     }
 }
