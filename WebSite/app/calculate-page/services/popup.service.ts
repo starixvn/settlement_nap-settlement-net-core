@@ -10,7 +10,6 @@ import { MatchDetail } from '../../fast-market/models';
 import { Icon } from '../../fast-market/constants';
 import { CalculationMatch, League } from '../models';
 import { HttpParams } from '@angular/common/http';
-import { AutoSettleSetting } from '../models/auto-settle-settings';
 import { Observable } from 'rxjs';
 
 @Injectable()
@@ -142,8 +141,6 @@ export class PopupService {
                 .set('typeObject', 'League')
                 .set('pageType', 'SoccerAutoSettings');
         }
-
-        // uriParams.set('pageType', 'SoccerAutoSettings');
 
         return uriParams;
     }

@@ -5,50 +5,74 @@ import { MatchDetailSoccer as MatchDetail } from "../../../components/calc/model
 import { Storage } from "../../../storage/storage.service.native";
 import { AbstractHandler } from "../../abstract.handler.native";
 import { Language } from '../../../../shared/language.native';
-import { ResultStatusId, ScoreSourceType } from '../../../../shared/constants';
+import { ResultStatusId } from '../../../../shared/constants';
 import { ResultDetail } from '../../../../shared/models/sportsbook-sop';
 import * as _ from 'lodash';
 import { inject } from '@angular/core';
 import { VerificationBaseService } from '../../../../core/services/verification-base.service';
-import { MessageBoxService } from '../../../../shared/services/message-box.service.native';
 
 
 export class VerifyScoreConfirmHandler extends AbstractHandler {
   #verificationService = inject(VerificationBaseService);
-  #messageBoxService = inject(MessageBoxService);
 
   async handle(storage: Storage) {
-    const { matchDetail, resultDetails, permission } = storage.getMatch();
+    const { matchDetail, resultDetails } = storage.getMatch();
     const calculateAction = storage.getCalculateAction();
-    const isHalfTime = calculateAction === CalculateAction.calculateHalfTime;
-    const isFullTime = calculateAction === CalculateAction.calculateFullTime;
-    const isCalculate = calculateAction === CalculateAction.calculate;
     const checkedResults = this.getCheckedResults(resultDetails);
     const halfTimeResult = storage.getHalfTimeResult();
 
-    if (this.halfTimeCompleted(halfTimeResult, isFullTime && !halfTimeResult.checked)) {
-      storage.error(Language.soccer.halfTimeNotSettleYet);
+    if (this.validateHalfTimeCompletion(storage, halfTimeResult, calculateAction)) {
       return;
     }
 
-    if ((isHalfTime && this.isDisableCalculateHalfTime(matchDetail)) ||
-      (isFullTime && this.isDisableFulltimeCalculate(matchDetail)) ||
-      (isCalculate && this.isDisableFulltimeCalculate(matchDetail))) {
-      storage.error(Language.soccer.scoreNotConfirmed.replaceAll('{0}', isHalfTime ? "HT" : "FT"));
+    if (this.validateScoreConfirmation(storage, matchDetail, calculateAction)) {
       return;
     }
 
-    if (!this.#verificationService.allMapHaveScreenshotSource(checkedResults)) {
-      storage.error(Language.sop.notScreenshot);
-      return;
-    }
-
-    if (this.#verificationService.isExistMismatchedScoreScreenshot(checkedResults)) {
-      storage.error(Language.sop.mismatchedScreenshot);
+    if (this.validateScreenshotSources(storage, checkedResults)) {
       return;
     }
 
     super.handle(storage);
+  }
+
+  private validateHalfTimeCompletion(storage: Storage, halfTimeResult: ResultDetail, calculateAction: string): boolean {
+    const isFullTime = calculateAction === CalculateAction.calculateFullTime;
+    if (this.halfTimeCompleted(halfTimeResult, isFullTime && !halfTimeResult.checked)) {
+      storage.error(Language.soccer.halfTimeNotSettleYet);
+      return true;
+    }
+    return false;
+  }
+
+  private validateScoreConfirmation(storage: Storage, matchDetail: MatchDetail, calculateAction: string): boolean {
+    const isHalfTime = calculateAction === CalculateAction.calculateHalfTime;
+    const isFullTime = calculateAction === CalculateAction.calculateFullTime;
+    const isCalculate = calculateAction === CalculateAction.calculate;
+
+    const isDisabled = (isHalfTime && this.isDisableCalculateHalfTime(matchDetail)) ||
+      (isFullTime && this.isDisableFulltimeCalculate(matchDetail)) ||
+      (isCalculate && this.isDisableFulltimeCalculate(matchDetail));
+
+    if (isDisabled) {
+      storage.error(Language.soccer.scoreNotConfirmed.replaceAll('{0}', isHalfTime ? "HT" : "FT"));
+      return true;
+    }
+    return false;
+  }
+
+  private validateScreenshotSources(storage: Storage, checkedResults: ResultDetail[]): boolean {
+    if (!this.#verificationService.allMapHaveScreenshotSource(checkedResults)) {
+      storage.error(Language.sop.notScreenshot);
+      return true;
+    }
+
+    if (this.#verificationService.isExistMismatchedScoreScreenshot(checkedResults)) {
+      storage.error(Language.sop.mismatchedScreenshot);
+      return true;
+    }
+
+    return false;
   }
 
   private halfTimeCompleted(halfTimeResult: ResultDetail, isFullTime: boolean) {

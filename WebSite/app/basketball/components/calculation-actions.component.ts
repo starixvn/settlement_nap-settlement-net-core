@@ -640,7 +640,7 @@ export class CalculationActionsComponent implements SportTemplate {
       return this.confirmCalculation();
     }
 
-    this.messageBoxService.confirm(
+    return this.messageBoxService.confirm(
       {
         ...this.confirmationDialogMessage,
         message: Language.recalculateNotification,

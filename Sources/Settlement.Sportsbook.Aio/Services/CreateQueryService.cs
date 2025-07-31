@@ -37,6 +37,10 @@ public class CreateQueryServiceImp(
     LogService logService)
     : ICreateQueryService
 {
+    private const string RefundRelatedName = "RefundRelated";
+
+    private const string CalcRelated = "CalcRelated";
+
     public SettleCriteria QuerySettle(SettleRequest request)
     {
         var resourcesResult = CreateResources(request.SelectedResources);
@@ -52,12 +56,12 @@ public class CreateQueryServiceImp(
     {
         var name = (request.SportType, request.ActionName, request.ParentId) switch
         {
-            (SportType.Tennis, SettleType.Calculate, 0) => "RefundRelated",
-            (SportType.Tennis, SettleType.Refund, 0) => "RefundRelated",
-            (SportType.TableTennis, SettleType.Calculate, 0) => "calcRelated",
-            (SportType.TableTennis, SettleType.Refund, 0) => "RefundRelated",
-            (SportType.BeachVolleyball, SettleType.Calculate, 0) => "calcRelated",
-            (SportType.BeachVolleyball, SettleType.Refund, 0) => "RefundRelated",
+            (SportType.Tennis, SettleType.Calculate, 0) => RefundRelatedName,
+            (SportType.Tennis, SettleType.Refund, 0) => RefundRelatedName,
+            (SportType.TableTennis, SettleType.Calculate, 0) => CalcRelated,
+            (SportType.TableTennis, SettleType.Refund, 0) => RefundRelatedName,
+            (SportType.BeachVolleyball, SettleType.Calculate, 0) => CalcRelated,
+            (SportType.BeachVolleyball, SettleType.Refund, 0) => RefundRelatedName,
             _ => string.Empty
         };
 

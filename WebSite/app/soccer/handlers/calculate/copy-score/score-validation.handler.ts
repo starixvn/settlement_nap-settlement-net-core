@@ -2,7 +2,6 @@ import { inject } from "@angular/core";
 import { VerifyScoreGoalService } from "../../../components/calc/services/verify-score-goal.service";
 import { Storage } from "../../../storage/storage.service.native";
 import { AbstractHandler } from "../../abstract.handler.native";
-import { MatchDetailSoccer as MatchDetail } from "../../../components/calc/models/match.model";
 import { Language } from "../../../../shared/language.native";
 import { ScoreService } from "../../../components/calc/services/score.service";
 import { CalculateAction, ScoreSourceType } from "../../../../shared/constants";
@@ -14,10 +13,10 @@ export class ScoreValidationHandler extends AbstractHandler {
     const ftResultDetail = storage.getFullTimeResult();
     const htResultDetail = storage.getHalfTimeResult();
 
-    const ftProviderScore = ftResultDetail.externalScores.find(e => e.sourceId == ScoreSourceType.Sbo)
+    const ftProviderScore = ftResultDetail.externalScores.find(e => e.sourceId === ScoreSourceType.Sbo)
     const isExtFTScoreValid = this.#verifyScoreGoalService.isScoresValid(ftProviderScore?.homeValue, ftProviderScore?.awayValue);
 
-    const htProviderScore = htResultDetail.externalScores.find(e => e.sourceId == ScoreSourceType.Sbo)
+    const htProviderScore = htResultDetail.externalScores.find(e => e.sourceId === ScoreSourceType.Sbo)
     const isExtHTScoreValid = this.#verifyScoreGoalService.isScoresValid(htProviderScore?.homeValue, htProviderScore?.awayValue);
 
     if (!isExtHTScoreValid && !isExtFTScoreValid) {

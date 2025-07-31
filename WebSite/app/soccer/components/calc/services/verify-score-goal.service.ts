@@ -3,8 +3,7 @@ import * as _ from "lodash";
 import { EventStatus, TicketStatusText } from "../../../../shared/constants";
 import { ChildMatch, FantasyRelatedMatch, MatchDetailSoccer as MatchDetail, Score } from '../models/match.model';
 import { VerificationBaseService } from "../../../services/verification-base.service";
-import { ResultDetail } from "../../../../shared/models/sportsbook-sop";
-import { ExternalResultDetail } from "../../../../shared/models/sportsbook-sop";
+import { ResultDetail, ExternalResultDetail } from "../../../../shared/models/sportsbook-sop";
 import { GeneralResultDetail } from "../../../../shared/models";
 
 @Injectable()

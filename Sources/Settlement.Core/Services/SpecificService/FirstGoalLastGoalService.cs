@@ -112,44 +112,38 @@ public class FirstGoalLastGoalServiceImp : FirstGoalLastGoalService
 
     public GoalModel GetHalftimeGoalByGoalRecord(string goalRecord)
     {
-        var indexSemicolon = goalRecord.IndexOf(';');
-        var goal = new GoalModel();
-
-        if (indexSemicolon <= -1)
+        if (string.IsNullOrEmpty(goalRecord))
         {
-            return goal;
+            return new GoalModel();
         }
 
-        var halfTimeGoalRecord = goalRecord[..indexSemicolon].ToLowerInvariant();
+        var halfTimeGoalRecord = ExtractHalfTimeGoalRecord(goalRecord);
+        return string.IsNullOrEmpty(halfTimeGoalRecord)
+            ? new GoalModel()
+            : ParseHalfTimeGoalPattern(halfTimeGoalRecord);
+    }
+
+    private static string ExtractHalfTimeGoalRecord(string goalRecord)
+    {
+        var semicolonIndex = goalRecord.IndexOf(';');
+        return semicolonIndex > 0 ? goalRecord[..semicolonIndex].ToLowerInvariant() : string.Empty;
+    }
+
+    private static GoalModel ParseHalfTimeGoalPattern(string halfTimeGoalRecord)
+    {
         var startsWithA = halfTimeGoalRecord.StartsWith(CharA);
         var startsWithH = halfTimeGoalRecord.StartsWith(CharH);
         var endsWithA = halfTimeGoalRecord.EndsWith(CharA);
         var endsWithH = halfTimeGoalRecord.EndsWith(CharH);
 
-        if (startsWithA && endsWithA)
+        return (startsWithA, startsWithH, endsWithA, endsWithH) switch
         {
-            goal.Away = HtFirstLastGoal;
-        }
-        else if (startsWithH && endsWithH)
-        {
-            goal.Home = HtFirstLastGoal;
-        }
-        else if (startsWithA && endsWithH)
-        {
-            goal.Away = HtFirstGoal;
-            goal.Home = HtLastGoal;
-        }
-        else if (startsWithH && endsWithA)
-        {
-            goal.Home = HtFirstGoal;
-            goal.Away = HtLastGoal;
-        }
-        else
-        {
-            return goal;
-        }
-
-        return goal;
+            (true, false, true, false) => new GoalModel { Away = HtFirstLastGoal },
+            (false, true, false, true) => new GoalModel { Home = HtFirstLastGoal },
+            (true, false, false, true) => new GoalModel { Home = HtLastGoal, Away = HtFirstGoal },
+            (false, true, true, false) => new GoalModel { Home = HtFirstGoal, Away = HtLastGoal },
+            _ => new GoalModel()
+        };
     }
 
     public GoalModel GetFullTimeGoalByGoalRecord(string goalRecord, bool isFinalScore)

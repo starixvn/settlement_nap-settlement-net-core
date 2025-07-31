@@ -1,11 +1,11 @@
 namespace Settlement.EventManagement.Services.MultiSports;
 
+using Constants;
 using Criteria;
 using Fanex.Data.Repository;
 using Requests;
 using Settlement.Core.Criteria;
 using Settlement.Core.Models;
-using Settlement.EventManagement.Constants;
 using Settlement.EventManagement.Models.MultiSports;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -47,7 +47,6 @@ public class MultiSportServiceImp(
         MatchFilterTuple matchTuple,
         SportsbookCriteria filterCriteria)
     {
-        var matchesOverStatus = matchTuple.MatchOverStatuses;
         var parentChildMatchFilters = matchTuple.ParentChildMatchFilters;
         var matchesInfo = matchTuple.Matches.Select(x => new MatchRequest
         {
@@ -59,7 +58,6 @@ public class MultiSportServiceImp(
             ConfirmHT = x.ConfirmHT,
             ParentId = x.ParentId
         });
-
 
         var criteria = new OSTicketInfoSelCriteria
         {
@@ -75,7 +73,6 @@ public class MultiSportServiceImp(
 
         return result;
     }
-
 
     private async Task<(Dictionary<int, List<ResourceTicketStatistic>>, Dictionary<int, List<MatchTicketStatistic>>)> GetTicketInfoAllDbSites(OSTicketInfoSelCriteria criteria)
     {
@@ -178,7 +175,6 @@ public class MultiSportServiceImp(
 
         var results = await Task.WhenAll(tasks);
         return results.SelectMany(matches => matches).ToList();
-
     }
 
     private static List<SportModel> GroupSport(List<Match> matches)
@@ -262,9 +258,11 @@ public class MultiSportServiceImp(
     private List<Match> ApplyFilterOverStatus(List<Match> matches, List<MatchOverStatus> matchOverStatuses, string overStatus)
     {
         if (matchOverStatuses.Count == 0)
+        {
             return matches
-                  .Where(match => match.MatchTicketStatistics.Count > 0)
-                  .ToList();
+                .Where(match => match.MatchTicketStatistics.Count > 0)
+                .ToList();
+        }
 
         return matches
             .Where(match => IsMatchExistsTicket(match, matchOverStatuses, overStatus)
@@ -291,7 +289,6 @@ public class MultiSportServiceImp(
         var isOther = (overStatusArray.Contains(OverStatuses.Over) || overStatusArray.Contains(OverStatuses.SettledWithRunningTicket))
             && matchOverStatuses.Exists(x => x.MatchId == match.MatchId && (x.OverStatus == OverStatuses.Over || x.OverStatus == OverStatuses.SettledWithRunningTicket));
 
-
         return IsMatchMainOrEarlyOver(overStatusArray, matchOverStatuses, match) || isOther;
     }
 
@@ -312,7 +309,7 @@ public class MultiSportServiceImp(
     {
         return match.ResourceTicketStatistics.Exists(x => x.IsEarly
             && x.TotalRunningTicket > 0
-            && matchOverStatuses.Exists(mo => mo.MatchId == x.MatchId && mo.ResourceId == x.ResourceId)); ;
+            && matchOverStatuses.Exists(mo => mo.MatchId == x.MatchId && mo.ResourceId == x.ResourceId));
     }
 
     private void SetIsExistsConfirmedEarly(List<Match> matches, List<MatchOverStatus> matchOverStatuses)

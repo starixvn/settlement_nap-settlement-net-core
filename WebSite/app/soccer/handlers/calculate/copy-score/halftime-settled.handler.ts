@@ -13,7 +13,7 @@ export class HalfTimeSettledHandler extends AbstractHandler {
   public handle(storage: Storage): void {
     const {matchDetail} = storage.getMatch();
     const ftResultDetail = storage.getFullTimeResult();
-    const providerScore = ftResultDetail.externalScores.find(e => e.sourceId == ScoreSourceType.Sbo)
+    const providerScore = ftResultDetail.externalScores.find(e => e.sourceId === ScoreSourceType.Sbo)
     const isExtFTScoreValid = this.#verifyScoreGoalService.isScoresValid(providerScore?.homeValue, providerScore?.awayValue);
 
     if (this.#verifyScoreGoalService.isHalfTimeSettled(matchDetail)) {

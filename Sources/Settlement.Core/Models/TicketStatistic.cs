@@ -18,8 +18,8 @@ public class ResourceTicketStatistic
 public class MatchTicketStatistic
 {
     public int MatchId { get; set; }
-    public string? SuspenderHalfTime { get; set; }
-    public string? SuspenderFullTime { get; set; }
+    public string SuspenderHalfTime { get; set; }
+    public string SuspenderFullTime { get; set; }
     public int? IsCalculatingSingle { get; set; }
     public int? IsCalculatingMP { get; set; }
     public bool IsExistEarlyBetTypes { get; set; }

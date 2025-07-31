@@ -27,7 +27,6 @@ public class UpdateSoccerSettingHandler(
         }
         else if (directSetting.Enabled)
         {
-            // TODO
             var result = await UpdateResultSetting(command, AutoSettleType.AutoDirect);
             await UpdateLeagueTimeSetting(command, AutoSettleType.AutoDirect);
             await WriteLog(command, AutoSettleType.AutoDirect, result);
@@ -47,7 +46,7 @@ public class UpdateSoccerSettingHandler(
     private async Task<Result> UpdateRefundSetting(UpdateAutoSettingsCommand command)
     {
         var result = await UpdateLeagueAutoSettleSource(command, AutoSettleType.AutoRefund);
-        await WriteLog(command, AutoSettleType.AutoRefund, result); //
+        await WriteLog(command, AutoSettleType.AutoRefund, result);
 
         return result;
     }

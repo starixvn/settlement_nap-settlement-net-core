@@ -1,6 +1,6 @@
 import { FormsModule } from '@angular/forms';
 import { Component, inject, OnInit } from '@angular/core';
-import { ExternalResult, ExternalResultDetail, ResultDetail } from '../../../shared/models/sportsbook-sop';
+import { ExternalResult, ExternalResultDetail, ResultDetail, Permission } from '../../../shared/models/sportsbook-sop';
 import { CommonModule } from '@angular/common';
 import { ResultSettingQuery } from '../../../shared/models';
 import { Language } from '../../../shared/language.native';
@@ -9,7 +9,6 @@ import { AioService, MessageBoxService } from '../../../shared/services';
 import * as _ from 'lodash';
 import { CalculateStorage } from '../../storage/calculate.storage';
 import { CalculateService } from './services/calculate.service';
-import { Permission } from '../../../shared/models/sportsbook-sop';
 import { GoalIconService } from './services/goal-icon.service';
 import { GoalRecordWithOutSemicolonService } from './services/goal-record-with-out-semicolon.service';
 import { OnlyGoalRecordDirective } from '../../directives/only-goal-record.directive.native';
@@ -21,14 +20,13 @@ import { ExternalLinkPipe } from '../../../score-source-setting/pipes';
 import { ExternalSourceNamePipe } from '../../../shared/pipes/external-source-name.pipe';
 import { VerificationBaseService } from '../../../core/services/verification-base.service';
 import { MatchDetailSoccer } from './models/match.model';
-import { VerificationBaseService as sopVerificationService } from '../../../core/services/verification-base.service';
 import { ResourceNamePipe } from '../../pipes/resource-name.pipe';
 
 @Component({
   selector: 'calculation-action',
   standalone: true,
   imports: [CommonModule, FormsModule, OnlyGoalRecordDirective, OnlyIntegerDirective, MatTooltipModule, ExternalLinkPipe, ExternalSourceNamePipe, ResourceNamePipe],
-  providers: [GoalIconService, GoalRecordWithOutSemicolonService, VerificationBaseService, sopVerificationService],
+  providers: [GoalIconService, GoalRecordWithOutSemicolonService, VerificationBaseService],
   templateUrl: './calculation-action.component.html',
 })
 export class CalculationActionComponent implements OnInit {
@@ -90,7 +88,7 @@ export class CalculationActionComponent implements OnInit {
   private getProviderCol(externalResults: ExternalResult[]) {
     const providers = _.filter(externalResults, (item: ExternalResult) =>
       item.sourceId !== ScoreSourceType.trader && item.sourceId < ScoreSourceType.screenshot).length
-    return providers > 3 ? 3 : providers == 0 ? 1 : providers;
+    return providers > 3 ? 3 : providers === 0 ? 1 : providers;
   }
 
 
