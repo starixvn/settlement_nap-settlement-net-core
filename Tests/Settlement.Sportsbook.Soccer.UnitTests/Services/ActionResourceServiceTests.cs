@@ -41,7 +41,7 @@ public class ActionResourceServiceTests
         var actual = service.HalftimeResources(goalAction);
 
         // Assert
-        Assert.True(actual.Count == 2);
+        Assert.Equal(2, actual.Count);
     }
 
     [Fact]
@@ -129,7 +129,7 @@ public class ActionResourceServiceTests
         var actual = service.FullTimeResources(goalAction);
 
         // Assert
-        Assert.True(actual.Count == 2);
+        Assert.Equal(2, actual.Count);
     }
 
     [Fact]

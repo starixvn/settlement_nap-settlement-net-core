@@ -7,7 +7,7 @@ namespace Settlement.Core.UnitTests.Services;
 
 public class AdjustEventStatusServiceTests
 {
-    private readonly AdjustEventStatusService service = new AdjustEventStatusServiceImp();
+    private readonly AdjustEventStatusServiceImp service = new AdjustEventStatusServiceImp();
 
     [Fact]
     public void AdjustEventStatusAbandoned_ReturnsCorrectStatus_AbandonedSDTInRound()

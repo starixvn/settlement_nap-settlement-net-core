@@ -7,7 +7,6 @@ using Models;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
-using Settlement.Core.Services.SpecificService;
 using MatchDetail = Models.MatchDetail;
 
 public interface MatchEarlyService

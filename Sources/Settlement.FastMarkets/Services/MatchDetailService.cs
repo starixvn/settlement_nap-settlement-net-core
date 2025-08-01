@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
-using Settlement.Core.Services.SpecificService;
 using Settlement.FastMarkets.Criteria;
 using Settlement.FastMarkets.Requests;
 using MatchDetail = Settlement.FastMarkets.Models.MatchDetail;

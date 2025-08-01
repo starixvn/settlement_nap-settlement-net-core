@@ -9,7 +9,6 @@ using Settlement.Core.Constants;
 using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
-using Settlement.Core.Services.SpecificService;
 using System.Threading.Tasks;
 using Match = Models.Match;
 using MatchDetail = Models.MatchDetail;

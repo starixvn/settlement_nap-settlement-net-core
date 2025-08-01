@@ -1,4 +1,4 @@
-﻿namespace Settlement.Core.Services.SpecificService;
+﻿namespace Settlement.Core.Services;
 
 using Models;
 

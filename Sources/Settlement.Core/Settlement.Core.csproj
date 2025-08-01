@@ -4,9 +4,6 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="Services\GoalIconService.cs" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Configurations\SettlementFunctionKeys.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>

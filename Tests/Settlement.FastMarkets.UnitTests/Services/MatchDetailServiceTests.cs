@@ -11,7 +11,6 @@ namespace Settlement.FastMarkets.UnitTests.Services;
 
 using Models.BetTypeModels;
 using NSubstitute;
-using Settlement.Core.Services.SpecificService;
 
 public class MatchDetailServiceTests
 {
