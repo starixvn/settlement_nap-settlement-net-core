@@ -10,9 +10,9 @@ using Settlement.Setting.Responses;
 namespace Settlement.Setting.Handlers;
 
 public class GetAutoSettleSettingsHandler(IDynamicRepository repository, IRefDataService refDataService)
-    : IRequestHandler<AutoSettleSettingsQuery, GetAutoSettleSettingsResponse>
+    : IRequestHandler<AutoSettleSettingRequest, GetAutoSettleSettingsResponse>
 {
-    public async Task<GetAutoSettleSettingsResponse> Handle(AutoSettleSettingsQuery query, CancellationToken cancellationToken)
+    public async Task<GetAutoSettleSettingsResponse> Handle(AutoSettleSettingRequest query, CancellationToken cancellationToken)
     {
         var payoutCriteria = CreateSettingsSelCriteria(query);
         var payoutSetting = await repository.GetAsync<AutoSettleSetting>(payoutCriteria);
@@ -45,7 +45,7 @@ public class GetAutoSettleSettingsHandler(IDynamicRepository repository, IRefDat
     }
 
     private GetAutoSettleSettingsResponse CreateGetSettingsResponse(
-        AutoSettleSettingsQuery query,
+        AutoSettleSettingRequest query,
         AutoSettleSetting payoutSetting,
         AutoSettleSetting refundSetting,
         int autoSettingBit,
@@ -98,7 +98,7 @@ public class GetAutoSettleSettingsHandler(IDynamicRepository repository, IRefDat
         };
     }
 
-    private static IGetSettingCriteria CreateSettingsSelCriteria(AutoSettleSettingsQuery query, byte AutoType = 6) => query.TypeObject == "League"
+    private static IGetSettingCriteria CreateSettingsSelCriteria(AutoSettleSettingRequest query, byte AutoType = 6) => query.TypeObject == "League"
            ? new AutoSettleLeagueSettingSelCriteria
            {
                LeagueId = query.LeagueId,

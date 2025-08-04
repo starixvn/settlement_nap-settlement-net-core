@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 import { VerificationService } from './verification.service';
 import { MessageBoxService } from '../../../shared/services';
 import { Language } from '../../../shared/language.native';
-import { League, ModalDialogMessage } from '../../../shared/models';
+import { ModalDialogMessage } from '../../../shared/models';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import { HalfTimeFullTimeService } from './halftime-fulltime.service';
 import { BackgroundColor, CalculateAction, SportType, TicketStatusText } from '../../../shared/constants';
@@ -44,6 +44,7 @@ export class HalfTimeFullTimeCalculationComponent implements SportTemplate {
   fullTimeOriginal: ResultDetail;
   isOTInvalid = false;
   private refResultStatus: number;
+  private readonly notConsistentClass = ' not-consistent';
 
   constructor(private readonly requestService: RequestService,
     private readonly verificationService: VerificationService,
@@ -191,13 +192,13 @@ export class HalfTimeFullTimeCalculationComponent implements SportTemplate {
       return resultDetail.className + " mismatched";
     }
     if (_.isEqual(resultDetail.resourceId, ResourcesIds.halfTime)) {
-      return resultDetail.className + (this.isScoreHTInconsistent ? ' not-consistent' : "");
+      return resultDetail.className + (this.isScoreHTInconsistent ? this.notConsistentClass : "");
     }
     if (_.isEqual(resultDetail.resourceId, ResourcesIds.fullTime)) {
-      return resultDetail.className + (this.isScoreFTInconsistent ? ' not-consistent' : "");
+      return resultDetail.className + (this.isScoreFTInconsistent ? this.notConsistentClass : "");
     }
     if (_.isEqual(resultDetail.resourceId, ResourcesIds.ot) && this.isOTInvalid) {
-      return resultDetail.className + ' not-consistent';
+      return resultDetail.className + this.notConsistentClass;
     }
     return resultDetail.className ?? "";
   }

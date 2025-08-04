@@ -11,7 +11,7 @@ public class AutoSettleSettingsController(IMediator mediator) : ControllerBase
 {
     [HttpGet]
     [Route("get-settings")]
-    public async Task<GetAutoSettleSettingsResponse> GetSettings([FromQuery] AutoSettleSettingsQuery query, CancellationToken cancellationToken)
+    public async Task<GetAutoSettleSettingsResponse> GetSettings([FromQuery] AutoSettleSettingRequest query, CancellationToken cancellationToken)
         => await mediator.Send(query, cancellationToken);
 
     [HttpPost]

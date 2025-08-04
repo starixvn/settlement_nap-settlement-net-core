@@ -13,7 +13,6 @@ namespace Settlement.Sportsbook.Soccer.UnitTests.Services.GetMatch;
 
 using Fanex.NAP.Client.Configuration;
 using Fanex.NAP.Client.Services;
-using Settlement.Core.Services.SpecificService;
 using Soccer.Services.GetMatch;
 
 public class MatchEarlyServiceTests

@@ -78,7 +78,7 @@ export class VerificationService extends VerificationBaseService  {
         const isExistsHold = childMatch.some(item => item.isHold);
         const isExistsConfirmRefund = childMatch.some(item => item.resultSettingData.isConfirmedRefund);
         
-        if(sportType == SportType.volleyBall) {
+        if(sportType === SportType.volleyBall) {
             return isExistsSettled || isExistsHold || isExistsConfirmRefund;
         } else {
             return isExistsConfirmRefund || isExistsHold;

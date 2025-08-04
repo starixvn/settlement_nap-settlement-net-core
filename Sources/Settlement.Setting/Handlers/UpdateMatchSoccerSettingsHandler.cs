@@ -9,35 +9,17 @@ using Settlement.Setting.Services;
 
 namespace Settlement.Setting.Handlers;
 
-public class UpdateMatchSoccerSettingsHandler
+public class UpdateMatchSoccerSettingsHandler(
+    SettingService settingService,
+    IDynamicRepository dynamicRepository,
+    LogService logService,
+    INapSession napSession)
 {
-    private readonly SettingService settingService;
-    private readonly IDynamicRepository dynamicRepository;
-    private readonly LogService logService;
-    private readonly INapSession napSession;
-
-    public UpdateMatchSoccerSettingsHandler(
-        SettingService settingService,
-        IDynamicRepository dynamicRepository,
-        LogService logService,
-        INapSession napSession)
-    {
-        this.settingService = settingService;
-        this.dynamicRepository = dynamicRepository;
-        this.logService = logService;
-        this.napSession = napSession;
-    }
-
     public async Task<Result> HandleAsync(UpdateAutoSettingsCommand command)
     {
-        var payoutSetting = command.ResultSettings.Find(x => x.SettleType == AutoSettleType.AutoPayoutSoccer);
         var directSetting = command.ResultSettings.Find(x => x.SettleType == AutoSettleType.AutoDirect);
-        if (payoutSetting.Enabled)
-        {
-            await UpdateResultSetting(command, AutoSettleType.AutoPayoutSoccer);
-            await WriteLog(command, AutoSettleType.AutoPayoutSoccer);
-        }
-        else if (directSetting.Enabled)
+
+        if (directSetting.Enabled)
         {
             await UpdateResultSetting(command, AutoSettleType.AutoDirect);
             await WriteLog(command, AutoSettleType.AutoDirect);
@@ -81,7 +63,6 @@ public class UpdateMatchSoccerSettingsHandler
             MatchId = command.MatchId,
             AutoType = (byte)settleType,
             Main_WaitingTime = null,
-            //Enable = settleType == AutoSettleType.AutoRefund ? settings.Enabled : null,
             Enable = settings.Enabled,
         };
 

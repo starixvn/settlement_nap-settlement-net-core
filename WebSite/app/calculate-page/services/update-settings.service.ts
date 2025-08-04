@@ -44,7 +44,7 @@ export class UpdateSettingsService {
         match.enabledAutoRefundMatch = this.getSettingValue(setting, AutoSettleType.AutoRefund, 'enabled') as boolean;
     }
 
-    private getSettingValue(setting: AutoSettleSetting, settleType: AutoSettleType, key: keyof ResultSetting): any {
+    private getSettingValue(setting: AutoSettleSetting, settleType: AutoSettleType, key: keyof ResultSetting) {
         return setting.resultSettings.find(x => x.settleType === settleType)?.[key];
     }
 

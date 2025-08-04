@@ -28,7 +28,7 @@ export class MatchesComponent extends MatchesBaseComponent implements OnChanges,
   private readonly period = 6000;
   private readonly intervalTimer = interval(this.period);
   private readonly autoSettingFailed = 3;
- 
+ private readonly providerReady = '(provider ready)';
   private readonly autoSettingsService = inject(AutoSettingsService);
 
   constructor(
@@ -140,25 +140,36 @@ export class MatchesComponent extends MatchesBaseComponent implements OnChanges,
 
     return '-';
   }
-  
+
   public getConfirmScore(match: CalculationMatch, isHalfTime: boolean) {
     const {halfTimeScore, finalScore} = match.moreScores;
 
+    if (isHalfTime) {
+      return this.getHalfTimeConfirmScore(match, halfTimeScore);
+    }
     
-    if(isHalfTime && (!halfTimeScore.isNotSettled || this.permission.isLeader)) {
+    return this.getFullTimeConfirmScore(match, finalScore);
+  }
+
+  private getHalfTimeConfirmScore(match: CalculationMatch, halfTimeScore: Score): string {
+    if (!halfTimeScore.isNotSettled || this.permission.isLeader) {
       return match.confirmHalfTimeScore;
     }
 
-    if(isHalfTime && halfTimeScore.isNotSettled && !this.permission.isLeader && match.confirmHalfTimeScore) {
-      return '(provider ready)';
+    if (halfTimeScore.isNotSettled && !this.permission.isLeader && match.confirmHalfTimeScore) {
+      return this.providerReady;
     }
-    
-    if(!finalScore.isNotSettled || this.permission.isLeader) {
+
+    return '';
+  }
+
+  private getFullTimeConfirmScore(match: CalculationMatch, finalScore: Score): string {
+    if (!finalScore.isNotSettled || this.permission.isLeader) {
       return match.confirmFullTimeScore;
     }
 
-    if(finalScore.isNotSettled && !this.permission.isLeader && match.confirmFullTimeScore) {
-      return '(provider ready)';
+    if (finalScore.isNotSettled && !this.permission.isLeader && match.confirmFullTimeScore) {
+      return this.providerReady;
     }
 
     return '';

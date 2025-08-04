@@ -5,7 +5,7 @@ import { Result } from "../../../shared/models";
 import { AutoSettleSettingRequest } from "../../../shared/models/settings";
 
 interface ISoccerAutoSettingsService {
-  updateSettings(command: any) : Promise<Result>;
+  updateSettings(command: AutoSettleSettingRequest) : Promise<Result>;
 }
 
 @Injectable()

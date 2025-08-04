@@ -2,7 +2,7 @@
 
 namespace Settlement.Setting.Requests;
 
-public class AutoSettleSettingsQuery : IRequest<GetAutoSettleSettingsResponse>
+public class AutoSettleSettingRequest : IRequest<GetAutoSettleSettingsResponse>
 {
     public int LeagueId { get; set; }
     public int MatchId { get; set; }

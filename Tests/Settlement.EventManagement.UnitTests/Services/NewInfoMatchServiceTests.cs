@@ -13,7 +13,6 @@ using Fanex.NAP.Client;
 using Fanex.NAP.Client.Configuration;
 using Fanex.NAP.Client.Services;
 using NSubstitute;
-using Settlement.Core.Services.SpecificService;
 
 public class NewInfoMatchServiceTests
 {

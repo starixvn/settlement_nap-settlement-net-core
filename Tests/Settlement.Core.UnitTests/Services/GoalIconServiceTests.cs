@@ -1,8 +1,9 @@
-﻿using Settlement.Core.Models;
+﻿using NSubstitute;
+using Settlement.Core.Models;
+using Settlement.Core.Services;
+using Xunit;
 
-namespace Settlement.Sportsbook.Soccer.UnitTests.Services;
-
-using Settlement.Core.Services.SpecificService;
+namespace Settlement.Core.UnitTests.Services;
 
 public class GoalIconServiceTests
 {

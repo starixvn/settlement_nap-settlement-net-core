@@ -24,8 +24,8 @@ export class AutoReFilterComponent implements OnDestroy, OnChanges {
   autoReFilterInterval = '';
   options = AutoReFilterOptions;
   countDownValue = 0;
-  private autoReFilterTimer: any = null;
-  private countdownTimer: any = null;
+  private autoReFilterTimer = null;
+  private countdownTimer = null;
 
   ngOnChanges(changes: SimpleChanges): void {
     if (!changes['disabled'].currentValue) {

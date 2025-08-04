@@ -5,7 +5,7 @@ import { Component, ViewChild, OnInit, inject } from '@angular/core';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import * as _ from 'lodash';
 import { MessageBoxService, AioService, IntervalCalculationService } from '../../shared/services';
-import { MatchResource, ModalDialogMessage, Result, Sport } from '../../shared/models';
+import { MatchResource, ModalDialogMessage, Result } from '../../shared/models';
 import { Language } from '../../shared/language.native';
 import { SettlementStatusId, CalculateAction, SportType, ResultStatusId, ScoreSourceType, TicketStatusText, ResultStatus, EventStatus } from '../../shared/constants';
 import { Match, HedgeMatchDetail, SettleQuery, ChildMatch, SettleChildMatchQuery } from '../models';
@@ -18,7 +18,6 @@ import { ResultPipe } from '../../shared/pipes/result.pipe';
 import { SourceIds } from '../../basketball/constants/source-ids';
 import { ChildMatchComponent } from './child-match/child-match.component';
 import { UpdateSettlementResultHistoryStatus } from '../../shared/models/update-settle-result-history-status';
-import { OverStatus } from '../../shared/constants/over-status.native';
 import { AutoSelectResultsService } from '../../shared/services/auto-select-results.service.native';
 
 @Component({
@@ -279,7 +278,7 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
 
     const existConsistentChildMatch = this.verificationService.verifyConsistentChildMatch(this.match.resultDetails, this.childMatchSelected);
 
-    if (existConsistentChildMatch && this.sportType == SportType.volleyBall) {
+    if (existConsistentChildMatch && this.sportType === SportType.volleyBall) {
       this.toastrService.error(Language.consistentRelatedMatch);
       return;
     }
@@ -289,7 +288,7 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
       return;
     }
 
-    if (this.sportType == SportType.volleyBall) {
+    if (this.sportType === SportType.volleyBall) {
       this.confirmationDialogMessage.message = Language.confirmChildMatch;
       this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
         this.verifyRunningOdds();
@@ -418,13 +417,13 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
   private confirmChildMatchCalculation(resultDetails: ResultDetail[]) {
     const { sportType } = this.match.matchDetail;
     const sportApplied = this.sportWithPassiveChildMatch.includes(sportType);
-    if (!sportApplied || this.childMatchSelected.length == 0 || !this.isSettleRelated) {
+    if (!sportApplied || this.childMatchSelected.length === 0 || !this.isSettleRelated) {
       this.confirmCalculation(resultDetails);
       return;
     }
 
     const existConsistentChildMatch = this.verificationService.verifyConsistentChildMatch(this.match.resultDetails, this.childMatchSelected);
-    const existCalculatedChildMatch = this.childMatchSelected.some(item => item.eventStatus.toLowerCase() == EventStatus.completed.toLowerCase());
+    const existCalculatedChildMatch = this.childMatchSelected.some(item => item.eventStatus.toLowerCase() === EventStatus.completed.toLowerCase());
     if (existConsistentChildMatch) {
       this.confirmationDialogMessage.message = Language.confirmOverwriteChildMatch;
       this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
@@ -814,7 +813,7 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
 
   private mapScoreChildMatch(validatedChildMatches: ChildMatch[]){
     validatedChildMatches.forEach(item => {
-      const relatedResource = this.match.resultDetails.filter(i => item.relatedResourceId == i.resourceId);
+      const relatedResource = this.match.resultDetails.filter(i => item.relatedResourceId === i.resourceId);
       item.homeValue = relatedResource[0].homeValue;
       item.awayValue = relatedResource[0].awayValue;
     })

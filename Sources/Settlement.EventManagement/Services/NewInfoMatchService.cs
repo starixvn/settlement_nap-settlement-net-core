@@ -4,7 +4,6 @@ using Criteria;
 using Models;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
-using Settlement.Core.Services.SpecificService;
 using System.Threading.Tasks;
 using Match = Models.Calculation.Match;
 using MultiSportMatch = Models.MultiSports.Match;
