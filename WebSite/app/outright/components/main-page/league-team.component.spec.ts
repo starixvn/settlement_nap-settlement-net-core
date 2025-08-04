@@ -1,10 +1,10 @@
 import { TeamSettle } from './../../models/team.model';
-import { LogPopupComponent } from './../popup/log-popup.component';
+import { LogPopupComponent } from './../popup/log-popup.component.native';
 import { CommonModule, DatePipe } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
-import { NgbCalendar, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { OutrightService } from '../../services';
 import { DatepickerComponent } from '../../../shared/components/date-picker/date-picker.component';
 import { BlockUIService, DialogBoxService, HttpRequestService, MessageBoxService, VerifyDateService } from '../../../shared/services';

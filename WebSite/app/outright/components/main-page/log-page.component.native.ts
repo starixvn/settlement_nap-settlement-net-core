@@ -6,7 +6,12 @@ import { LogRequest } from "../../models/log-request.model";
 import { OutrightService } from "../../services";
 import { DatepickerComponent } from "../../../shared/components/date-picker/date-picker.component";
 import { DynamicHeightDirective } from "../../../shared/directives";
-import { BlockUIService, HttpRequestService, MessageBoxService, VerifyDateService } from "../../../shared/services";
+import { 
+    BlockUIService, 
+    HttpRequestService, 
+    MessageBoxService, 
+    VerifyDateService 
+} from "../../../shared/services";
 import LogComponent from "../log.component";
 
 @Component({

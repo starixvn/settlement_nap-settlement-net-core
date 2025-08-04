@@ -2,7 +2,7 @@ import { BlockUIService } from './../../../shared/services/block-ui.service';
 import { MessageBoxService } from './../../../shared/services/message-box.service.native';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
-import { Component, Inject, Injector, OnInit, ViewChild, inject, input } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild, inject } from '@angular/core';
 import { MatDialog, MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
 import * as _ from 'lodash';
 import { OutrightService } from '../../services';

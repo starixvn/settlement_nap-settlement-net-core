@@ -1,7 +1,7 @@
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
-import { ComponentFixture, TestBed, tick, fakeAsync, flush } from '@angular/core/testing';
+import { ComponentFixture, TestBed, tick, fakeAsync, waitForAsync } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ToastContainerDirective, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
@@ -62,7 +62,8 @@ describe('UncalculatePopupComponent', () => {
     isSuccessful: true,
     childMatchIds: '',
     settledSessionId: '',
-    hasResultAmendment: false
+    hasResultAmendment: false,
+    isOrg: true
   };
 
   const ResultFailed: ResultOutright = {
@@ -72,7 +73,8 @@ describe('UncalculatePopupComponent', () => {
     isSuccessful: false,
     childMatchIds: '',
     settledSessionId: '',
-    hasResultAmendment: false
+    hasResultAmendment: false,
+    isOrg: false
   };
 
   beforeEach(async () => {
@@ -199,7 +201,7 @@ describe('UncalculatePopupComponent', () => {
       expect(component.dialogRef.close).toBeCalledWith('1');
     }));
 
-    it('should show error when settle failed', fakeAsync(() => {
+    it('should show error when settle failed', waitForAsync(() => {
       team.selected = true;
       const teamSecond = _.cloneDeep(team);
       teamSecond.orId = '2';
@@ -210,15 +212,18 @@ describe('UncalculatePopupComponent', () => {
       jest.spyOn(outrightService, 'uncalculate').mockReturnValue(Promise.resolve(ResultFailed));
       jest.spyOn(toastrService, 'error');
 
-      component.uncalculate().then(() => { 
-
+      component.uncalculate();
+      
+      setTimeout(() => {
         let buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
         buttonYes.click();
-  
-        expect(outrightService.uncalculate).toHaveBeenCalledWith('1,2', '100,200');
-        expect(toastrService.error).toHaveBeenCalledWith(ResultFailed.errMsg);
-        expect(component.teamJustSettled).toEqual('2');
-      });
+        
+        setTimeout(() => {
+          expect(outrightService.uncalculate).toHaveBeenCalledWith('1,2', '100,200');
+          expect(toastrService.error).toHaveBeenCalledWith(ResultFailed.errMsg);
+          expect(component.teamJustSettled).toEqual('2');
+        }, 100);
+      }, 100);
     }));
   });
 });

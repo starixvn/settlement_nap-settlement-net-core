@@ -35,3 +35,6 @@ reports/
 packages/
 node_modules/
 *.idea/
+
+# Test report files
+WebSite/app/test-report.xml

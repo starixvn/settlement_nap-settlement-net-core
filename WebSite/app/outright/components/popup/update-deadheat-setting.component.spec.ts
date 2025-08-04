@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { ToastContainerDirective, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
+import { ToastContainerDirective, ToastrModule, ToastrService } from 'ngx-toastr';
 import { FormsModule } from '@angular/forms';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
@@ -11,7 +11,7 @@ import { MessageBoxService } from '../../../shared/services/message-box.service.
 import { BlockUIService } from '../../../shared/services/block-ui.service';
 import { LeagueSettle, Team } from '../../models';
 import { Language } from '../../../shared/language.native';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 
 describe('UpdateDeadheatSettingComponent', () => {
   let component: UpdateDeadheatSettingComponent;

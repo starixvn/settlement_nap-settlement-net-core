@@ -1,7 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { Component, Injector, OnInit } from "@angular/core";
 import { Outright } from "../../models/outright.model";
-import { LogPopupComponent } from "../popup/log-popup.component";
+import { LogPopupComponent } from "../popup/log-popup.component.native";
 import { FilterComponent } from "./filter.component";
 import { LeagueTeamComponent } from "./league-team.component";
 import { FilterRequest } from "../../models/filter-request.model";

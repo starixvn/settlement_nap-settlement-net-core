@@ -3,7 +3,7 @@ import { BlockUIService } from '../../shared/services';
 import { FilterComponent } from './main-page/filter.component';
 import { LeagueTeamComponent } from './main-page/league-team.component';
 import { CommonModule } from '@angular/common';
-import { LogPopupComponent } from './popup/log-popup.component';
+import { LogPopupComponent } from './popup/log-popup.component.native';
 import MainPageComponent from './main-page/main-page.component';
 import { PageType } from '../../shared/constants';
 import { MatDialogModule } from '@angular/material/dialog';
