@@ -1,7 +1,7 @@
 import { inject } from "@angular/core";
 import { VerifyActionService } from "../../../components/calc/services/verify-action.service";
 import { AbstractHandler } from "../../abstract.handler.native";
-import { Storage } from "../../../storage/storage.service.native";
+import { CalculateBaseStorage } from "../../../storage/storage.service.native";
 import { Language } from "../../../../shared/language.native";
 import { MessageBoxService } from "../../../../shared/services";
 import { ResultStatusId } from "../../../../shared/constants";
@@ -10,7 +10,7 @@ export class ConfirmFullTimeHandler extends AbstractHandler {
   #verifyActionService = inject(VerifyActionService);
    #messageBoxService = inject(MessageBoxService);
 
-  public async handle(storage: Storage): Promise<void> {
+  public async handle(storage: CalculateBaseStorage): Promise<void> {
     const { matchDetail, childMatches } = storage.getMatch();
     const selectedChildMatches = childMatches.filter((childMatch) => childMatch.checked);
     const needConfirm = await this.#verifyActionService.isScoreChangedFullTime(matchDetail, storage.getIsResettleTicket(), storage.getFullTimeResult());
@@ -31,7 +31,7 @@ export class ConfirmFullTimeHandler extends AbstractHandler {
       });
   }
 
-  private autoCheckedReSettledTickets(storage: Storage) {
+  private autoCheckedReSettledTickets(storage: CalculateBaseStorage) {
     storage.setConfirmMessage(Language.recalculateNotification)
     this.#messageBoxService.confirm(storage.getConfirmMessage(), () => {
       storage.setIsResettleTicket(true);

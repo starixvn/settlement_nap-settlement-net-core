@@ -1,0 +1,60 @@
+@if (betDaq && betDaq.isMoveBetDaq) {
+<div>
+  <div class="clear-both"></div>
+  <hr class="thick-line" />
+  <div class="icon-refund"></div>
+  <div class="normal-tickets">Betdaq Tickets</div>
+  @if (betDaq.isExcludeBetDaq) {
+  <div class="action">
+    <input type="checkbox" [(ngModel)]="betDaq.excludeTicketsInRefund" id="isExcludeBetDaq" />&nbsp;<label
+      for="isExcludeBetDaq">Exclude Betdaq Tickets in Refund</label>
+  </div>
+  }
+  @if (betDaq.isSettleAbandonedMatchBetDaq) {
+  <div class="action">
+    <input type="checkbox" [(ngModel)]="betDaq.settleDeterminedBetDaq"
+      (ngModelChange)="onSettleDeterminableTicketsChange(betDaq.settleDeterminedBetDaq)"
+      id="isSettleAbandonedMatchBetDaq" />&nbsp;<label for="isSettleAbandonedMatchBetDaq">Settle determined Betdaq
+      tickets for</label>
+    <a class="specific-link" (click)="onOpenPopupSpecificBetTypes('BetFair', 'ALL')"> specific bet types.</a>
+  </div>
+  }
+  <button type="button" class="btn btn-primary" (click)="onOpenPopupMoveBet(true)">Move Betdaq Tickets</button>
+  &nbsp;
+  @if (betDaq.isRefundRunningBetDaq) {
+  <button type="button" class="btn btn-danger" (click)="onRefundRunningThirdPartyTickets(true)">Refund Running
+    Betdaq
+    Tickets</button>
+  }
+</div>
+}
+@if (betFair && betFair.isMoveBetFair) {
+<div>
+  <div class="clear-both"></div>
+  <hr class="thick-line" />
+  <div class="icon-refund"></div>
+  <div class="normal-tickets">BetFair Tickets</div>
+  @if (betFair.isExcludeBetFair) {
+  <div class="action">
+    <input type="checkbox" [(ngModel)]="betFair.excludeTicketsInRefund" id="isExcludeBetFair" />&nbsp;<label
+      for="isExcludeBetFair">Exclude BetFair Tickets in Refund</label>
+  </div>
+  }
+  @if (betFair.isSettleAbandonedMatchBetFair) {
+  <div class="action">
+    <input type="checkbox" [(ngModel)]="betFair.settleDeterminedBetFair"
+      (ngModelChange)="onSettleDeterminableTicketsChange(betFair.settleDeterminedBetFair)"
+      id="isSettleAbandonedMatchBetFair" />&nbsp;<label for="isSettleAbandonedMatchBetFair">Settle determined
+      BetFair tickets for</label>
+    <a class="specific-link" (click)="onOpenPopupSpecificBetTypes('BetFair', 'ALL')"> specific bet types.</a>
+  </div>
+  }
+  <button type="button" class="btn btn-primary" (click)="onOpenPopupMoveBet(false)">Move BetFair
+    Tickets</button> &nbsp;
+  @if (betFair.isRefundRunningBetFair) {
+  <button type="button" class="btn btn-danger" (click)="onRefundRunningThirdPartyTickets(false)">Refund Running
+    BetFair
+    Tickets</button>
+  }
+</div>
+}

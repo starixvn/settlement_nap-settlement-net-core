@@ -3,8 +3,8 @@
     </div>
     SOCCER - {{matchDetail.leagueName}}
     @if(pageType === pageTypeEnum.ReCalculate){
-    <button *ngIf="match.permission.canChangeScoreSource" class="button manage-outside"
-        (click)="manageOutSideSourcePopup()">
+    <button *ngIf="match.permission.canChangeScoreSource" style="float: right; margin-bottom: 5px;"
+        class="btn btn-primary" (click)="manageOutSideSourcePopup()">
         Manage Outside Source
     </button>
     }
@@ -21,7 +21,7 @@
             <th class="team">
                 Team
             </th>
-            @if(pageType !== pageTypeEnum.ReCalculate){
+            @if(pageType === pageTypeEnum.EarlySettlement){
             <th class="score">HT Score</th>
             <th class="score">Final Score</th>
             }
@@ -47,7 +47,7 @@
                 <span class="{{matchDetail.goalIcon.homeGoal}}"></span>
                 <span class="{{matchDetail.goalIcon.halfTimeHomeGoal}}"></span>
             </td>
-            @if(pageType !== pageTypeEnum.ReCalculate){
+            @if(pageType === pageTypeEnum.EarlySettlement){
             <td class="ht-score">{{matchDetail.halfTimeHomeScore | scoreBySettlement:0}}</td>
             <td class="final-score">{{matchDetail.finalHomeScore | scoreBySettlement:0}}</td>
             }
@@ -66,7 +66,7 @@
                 <span class="{{matchDetail.goalIcon.awayGoal}}"></span>
                 <span class="{{matchDetail.goalIcon.halfTimeAwayGoal}}"></span>
             </td>
-            @if(pageType !== pageTypeEnum.ReCalculate){
+            @if(pageType === pageTypeEnum.EarlySettlement){
             <td class="ht-score">{{matchDetail.halfTimeAwayScore | scoreBySettlement:0}}</td>
             <td class="final-score">{{matchDetail.finalAwayScore | scoreBySettlement:0}}</td>
             }

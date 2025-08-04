@@ -2,7 +2,7 @@ import { CalculateAction } from './../../../../shared/constants/calculate-action
 
 import { LeagueGroup, TimeMinute } from "../../../components/calc/models/constant.native";
 import { MatchDetailSoccer as MatchDetail } from "../../../components/calc/models/match.model";
-import { Storage } from "../../../storage/storage.service.native";
+import { CalculateBaseStorage } from "../../../storage/storage.service.native";
 import { AbstractHandler } from "../../abstract.handler.native";
 import { Language } from '../../../../shared/language.native';
 import { ResultStatusId } from '../../../../shared/constants';
@@ -15,7 +15,7 @@ import { VerificationBaseService } from '../../../../core/services/verification-
 export class VerifyScoreConfirmHandler extends AbstractHandler {
   #verificationService = inject(VerificationBaseService);
 
-  async handle(storage: Storage) {
+  async handle(storage: CalculateBaseStorage) {
     const { matchDetail, resultDetails } = storage.getMatch();
     const calculateAction = storage.getCalculateAction();
     const checkedResults = this.getCheckedResults(resultDetails);
@@ -36,7 +36,7 @@ export class VerifyScoreConfirmHandler extends AbstractHandler {
     super.handle(storage);
   }
 
-  private validateHalfTimeCompletion(storage: Storage, halfTimeResult: ResultDetail, calculateAction: string): boolean {
+  private validateHalfTimeCompletion(storage: CalculateBaseStorage, halfTimeResult: ResultDetail, calculateAction: string): boolean {
     const isFullTime = calculateAction === CalculateAction.calculateFullTime;
     if (this.halfTimeCompleted(halfTimeResult, isFullTime && !halfTimeResult.checked)) {
       storage.error(Language.soccer.halfTimeNotSettleYet);
@@ -45,7 +45,7 @@ export class VerifyScoreConfirmHandler extends AbstractHandler {
     return false;
   }
 
-  private validateScoreConfirmation(storage: Storage, matchDetail: MatchDetail, calculateAction: string): boolean {
+  private validateScoreConfirmation(storage: CalculateBaseStorage, matchDetail: MatchDetail, calculateAction: string): boolean {
     const isHalfTime = calculateAction === CalculateAction.calculateHalfTime;
     const isFullTime = calculateAction === CalculateAction.calculateFullTime;
     const isCalculate = calculateAction === CalculateAction.calculate;
@@ -61,7 +61,7 @@ export class VerifyScoreConfirmHandler extends AbstractHandler {
     return false;
   }
 
-  private validateScreenshotSources(storage: Storage, checkedResults: ResultDetail[]): boolean {
+  private validateScreenshotSources(storage: CalculateBaseStorage, checkedResults: ResultDetail[]): boolean {
     if (!this.#verificationService.allMapHaveScreenshotSource(checkedResults)) {
       storage.error(Language.sop.notScreenshot);
       return true;

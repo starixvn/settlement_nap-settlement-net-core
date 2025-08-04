@@ -3,19 +3,16 @@ import * as _ from 'lodash';
 import { Soccer } from './soccer.model';
 import { UrlHelper } from '../../helper';
 import { EarlySettlementComponent } from './early/early-settlement.component';
-import { BlockUIService, HttpRequestService, MessageBoxService, AioService, ClosePopupService } from '../../shared/services';
+import { BlockUIService, MessageBoxService, AioService, ClosePopupService } from '../../shared/services';
 import { CalculationComponent } from './calc/calculation.component';
 import { PageType } from '../../shared/constants';
 import { RefundComponent } from './refund/refund.component';
+import { RefundComponent as RefundComponentSop } from './sop-refund/components//refund/refund.component';
 
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
     providers: [
-        AioService,
-        BlockUIService,
-        HttpRequestService,
-        MessageBoxService,
         ClosePopupService,
     ],
 })
@@ -56,6 +53,8 @@ export class AppComponent implements OnInit {
                 return this.componentFactoryResolver.resolveComponentFactory(RefundComponent);
             case PageType.EarlySettlement:
                 return this.componentFactoryResolver.resolveComponentFactory(EarlySettlementComponent);
+            case "sop-refund":
+                return this.componentFactoryResolver.resolveComponentFactory(RefundComponentSop);
             default:
                 throw new Error('Not implemented yet');
         }

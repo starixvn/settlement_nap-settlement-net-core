@@ -22,8 +22,10 @@ export class SpecificBettypeComponent implements OnInit {
         }
 
     async ngOnInit(): Promise<void> {
-        this.listBettype = await this.requestService.getSpecificBetType(this.data.type, this.data.action).toPromise() as string[];
-        this.betTypeName = this.listBettype.join(', ');
+        this.requestService.getSpecificBetType(this.data.type, this.data.action).subscribe((res: string[]) => {
+            this.listBettype = res;
+            this.betTypeName = this.listBettype.join(', ');
+        });
     }
 
     public close() {

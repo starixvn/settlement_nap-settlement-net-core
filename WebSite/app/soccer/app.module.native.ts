@@ -12,7 +12,7 @@ import { GroupNameByIdPipe } from './pipes/group-name-by-id.pipe';
 import { PipesModule } from '../shared/pipes/pipes.module.native';
 import { MaterialModule } from '../shared/material-module';
 import { OnlyGoalRecordDirective } from './directives/only-goal-record.directive.native';
-import { ToastContainerModule, ToastNoAnimationModule } from 'ngx-toastr';
+import { ToastContainerModule, ToastNoAnimationModule, ToastrModule } from 'ngx-toastr';
 import { RefundComponent } from './components/refund/refund.component';
 import { SpecificBettypeComponent } from './components/refund/specific-bettype.component';
 import { ConfirmRefundComponent } from './components/refund/confirm-refund.component';
@@ -38,7 +38,7 @@ import { FilterResultStatusPipe } from './pipes/filter-result-status/filter-resu
     NgbModule,
     PipesModule,
     MaterialModule,
-    ToastNoAnimationModule.forRoot({
+    ToastrModule.forRoot({
         disableTimeOut: true,
         enableHtml: true,
         tapToDismiss: false,

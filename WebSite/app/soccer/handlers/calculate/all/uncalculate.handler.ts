@@ -1,14 +1,14 @@
 import { inject } from "@angular/core";
 import { Language } from "../../../../shared/language.native";
 import { MessageBoxService } from "../../../../shared/services";
-import { Storage } from "../../../storage/storage.service.native";
+import { CalculateBaseStorage } from "../../../storage/storage.service.native";
 import { AbstractHandler } from "../../abstract.handler.native";
 import { CalculateAction, ResultStatusId } from "../../../../shared/constants";
 
 export class UncalculateHandler extends AbstractHandler {
   #messageBoxService = inject(MessageBoxService);
 
-  async handle(storage: Storage) {
+  async handle(storage: CalculateBaseStorage) {
     storage.setConfirmMessage(Language.UncalculationConfirmMessage);
     this.#messageBoxService.confirm(storage.getConfirmMessage(), () => {
       storage.setConfirmMessage(Language.checkAgainUnSettleConfirmation);

@@ -1,5 +1,5 @@
 import { AbstractHandler } from "../abstract.handler.native";
-import { Storage } from "../../storage/storage.service.native";
+import { CalculateBaseStorage } from "../../storage/storage.service.native";
 import { ClosePopupService } from "../../../shared/services";
 import { inject } from "@angular/core";
 import { RequestService } from "../../components/calc/services/request.service";
@@ -15,7 +15,7 @@ export class CalculateHandler extends AbstractHandler {
   readonly #closePopupService = inject(ClosePopupService);
   readonly #requestService = inject(RequestService);
 
-  public async handle(storage: Storage): Promise<void> {
+  public async handle(storage: CalculateBaseStorage): Promise<void> {
     const actionName = storage.getCalculateAction();
     const { matchDetail, hedgeMatchDetail, childMatches, resultDetails } = storage.getMatch();
     const selectedChildMatchIds = childMatches.filter(x => x.checked).map(x => x.matchId).join(',');

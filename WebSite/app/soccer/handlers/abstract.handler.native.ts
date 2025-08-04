@@ -1,4 +1,4 @@
-import { Storage } from "../storage/storage.service.native";
+import { CalculateBaseStorage, RefundBaseStorage } from "../storage/storage.service.native";
 import { BaseHandler } from "./base.handler.native";
 
 export abstract class AbstractHandler implements BaseHandler {
@@ -9,7 +9,7 @@ export abstract class AbstractHandler implements BaseHandler {
     return handler;
   }
 
-  public handle(request: Storage): void {
+  public handle(request: CalculateBaseStorage | RefundBaseStorage): void {
     if (this.nextHandler) {
       this.nextHandler.handle(request);
     }

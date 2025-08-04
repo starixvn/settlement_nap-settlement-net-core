@@ -85,6 +85,10 @@ export class CalculationActionComponent implements OnInit {
       && !_.isEmpty(result.homeValue) && !_.isEmpty(result.awayValue);
   }
 
+  isConfirmRefund(result: ResultDetail) {
+    return this.permission.isLeader && (result.resultSettingData.isConfirmedRefund || result.resultSettingData.isConfirmedRefundSdt);
+  }
+
   private getProviderCol(externalResults: ExternalResult[]) {
     const providers = _.filter(externalResults, (item: ExternalResult) =>
       item.sourceId !== ScoreSourceType.trader && item.sourceId < ScoreSourceType.screenshot).length

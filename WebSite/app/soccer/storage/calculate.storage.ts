@@ -3,7 +3,7 @@ import { ModalDialogMessage } from "../../shared/models";
 import { Match, MatchDetailSoccer, UndoChecking } from "../components/calc/models/match.model";
 import { VerifyScoreGoalService } from "../components/calc/services/verify-score-goal.service";
 import { ToastContainerDirective, ToastrService } from "ngx-toastr";
-import { Storage } from "./storage.service.native";
+import { CalculateBaseStorage } from "./storage.service.native";
 import * as _ from "lodash";
 import { Language } from "../../shared/language.native";
 import { ResourceIds } from "../constants";
@@ -12,7 +12,7 @@ import {  ResultDetail } from "../../shared/models/sportsbook-sop";
 import { OverStatus } from "../../shared/constants/over-status.native";
 
 @Injectable()
-export class CalculateStorage implements Storage {
+export class CalculateStorage implements CalculateBaseStorage {
 
   private readonly verifyScoreGoalService = inject(VerifyScoreGoalService);
   private readonly toastrService = inject(ToastrService);

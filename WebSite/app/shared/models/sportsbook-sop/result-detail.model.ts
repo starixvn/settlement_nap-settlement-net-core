@@ -41,5 +41,5 @@ export class ResultDetail extends GeneralResultDetail {
     isSettleDeterminedOriginal: boolean;
     isInvalidSelectedProceed: boolean;
     isNotExistedValue: boolean;
-    resultState: string;
+    resultStatusState: string;
 }

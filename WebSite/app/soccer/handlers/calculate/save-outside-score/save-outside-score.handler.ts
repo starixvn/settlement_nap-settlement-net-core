@@ -1,6 +1,6 @@
 import { inject } from "@angular/core";
 import { AbstractHandler } from "../../abstract.handler.native";
-import { Storage } from "../../../storage/storage.service.native";
+import { CalculateBaseStorage } from "../../../storage/storage.service.native";
 import { VerificationBaseService } from "../../../../core/services/verification-base.service";
 import { SaveScoreQuery } from "../../../../shared/models/sportsbook-sop";
 import { RequestService } from "../../../components/calc/services/request.service";
@@ -12,7 +12,7 @@ export class SaveOutsideScoreHandler extends AbstractHandler {
     #requestService = inject(RequestService);
     #messageBoxService = inject(MessageBoxService);
 
-    async handle(storage: Storage) {
+    async handle(storage: CalculateBaseStorage) {
         const { resultDetails, originalResultDetail, matchDetail } = storage.getMatch();
         const scoresToSave = this.#verificationService.getChangedScores(resultDetails, originalResultDetail);
         const checkedScores = this.#verificationService.getOutsideScores(resultDetails);

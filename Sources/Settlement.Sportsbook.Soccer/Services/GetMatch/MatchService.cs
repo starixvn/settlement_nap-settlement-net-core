@@ -150,8 +150,10 @@ public class MatchServiceImp(
         var matchDetail = match.MatchDetail;
         var resultDetails = await GetResultDetail(request.MatchId);
 
+        SetNormalResults(matchDetail, resultDetails);
+
         matchDetail.RefDataService = refDataService;
-        SetExMatchScore(matchDetail, resultDetails);
+
         var goalIconQuery = GoalIconQuery(matchDetail);
         matchDetail.GoalIcon = goalIconService.GetGoalIcon(goalIconQuery);
 
@@ -168,17 +170,46 @@ public class MatchServiceImp(
         var betFairCriteria = new BetFairCheckingCriteria { MatchId = request.MatchId };
         var betFair = await fetchDataService.GetMultiServersBetFair(betFairCriteria);
 
+        var resultSorted = resultDetails
+            .Where(r => r.SourceId == SourceType.Normal && resourcesSoccer.Contains(r.ResourceId))
+            .OrderBy(r => resourcesSoccer.IndexOf(r.ResourceId));
+
+
+        var externalResults = await GetConfirmSource(request.MatchId);
+
         return new Match
         {
             MatchDetail = matchDetail,
-            ResultDetails = resultDetails,
+            ResultDetails = resultSorted,
             HedgeMatchDetail = hedgeMatchDetail,
             BetDaq = betDaq,
             BetFair = betFair,
-            Permission = permissionService.Permission
+            Permission = permissionService.Permission,
+            ExternalResults = externalResults
         };
     }
 
+    private async Task<List<ExternalResultModel>> GetConfirmSource(int matchId)
+    {
+        var confirmRefundCriteria = new GetResultConfirmRefundCriteria { MatchId = matchId };
+        var results = await repository.FetchAsync<ExternalResultDetailModel>(confirmRefundCriteria);
+        var listResult = results.ToList();
+        var externalResult = listResult.GroupBy(resultDetail => new { resultDetail.SourceId, resultDetail.SourceName, resultDetail.OrderNo, resultDetail.Remark })
+            .Select(resultDetail => new ExternalResultModel
+            {
+                SourceId = resultDetail.Key.SourceId,
+                SourceName = resultDetail.Key.SourceName,
+                OrderNo = resultDetail.Key.OrderNo,
+                Remark = resultDetail.Key.Remark,
+                ResultDetails = resultDetail.ToList()
+            })
+            .OrderBy(result => result.OrderNo)
+            .ThenBy(result => result.SourceName)
+            .ToList();
+
+        return externalResult;
+
+    }
 
     private static GoalIconQueryModel GoalIconQuery(MatchDetail match)
     {
@@ -227,28 +258,6 @@ public class MatchServiceImp(
         };
     }
 
-    private static void SetExMatchScore(MatchDetail match, List<ResultDetail> resultDetails)
-    {
-        //TODO: Should Remove after Refund Popup use ResultDetail instead of Table Match
-        var externalResultDetail = resultDetails.Where(result => result.SourceId == SourceType.Sbo).ToList();
-        var halfTimeResult = externalResultDetail.Find(result => result.ResourceId == ResourceType.Halftime);
-        var fullTimeResult = externalResultDetail.Find(result => result.ResourceId == ResourceType.Final);
-
-        if (halfTimeResult != null && !string.IsNullOrWhiteSpace(halfTimeResult.AwayValue) &&
-            !string.IsNullOrWhiteSpace(halfTimeResult.HomeValue))
-        {
-            match.ExHTAwayScore = halfTimeResult.AwayValue;
-            match.ExHTHomeScore = halfTimeResult.HomeValue;
-        }
-
-        if (fullTimeResult != null && !string.IsNullOrWhiteSpace(fullTimeResult.AwayValue) &&
-            !string.IsNullOrWhiteSpace(fullTimeResult.HomeValue))
-        {
-            match.ExFTAwayScore = fullTimeResult.AwayValue;
-            match.ExFTHomeScore = fullTimeResult.HomeValue;
-        }
-    }
-
     private static void SetNormalResults(MatchDetail match, List<ResultDetail> resultDetails)
     {
 
@@ -263,7 +272,7 @@ public class MatchServiceImp(
         }
         else
         {
-            resultDetails.Add(new ResultDetail { ResourceId = ResourceType.Halftime, SourceId = SourceType.Normal, TicketStatus = match.HtStatus });
+            resultDetails.Add(new ResultDetail { ResourceId = ResourceType.Halftime, SourceId = SourceType.Normal, TicketStatus = match.HtStatus, SettlementStatusId = SettlementStatus.Running });
         }
 
         if (fullTimeResult != null)
@@ -272,7 +281,7 @@ public class MatchServiceImp(
         }
         else
         {
-            resultDetails.Add(new ResultDetail { ResourceId = ResourceType.Final, SourceId = SourceType.Normal, TicketStatus = match.FtStatus });
+            resultDetails.Add(new ResultDetail { ResourceId = ResourceType.Final, SourceId = SourceType.Normal, TicketStatus = match.FtStatus, SettlementStatusId = SettlementStatus.Running });
         }
     }
 

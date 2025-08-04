@@ -47,18 +47,19 @@
 
 <ng-template #body>
   <tbody>
-    <tr *ngFor="let result of resultDetails; let i = index" [ngClass]="{ mismatched: result.isScoreMismatched}">
+    <tr *ngFor="let result of resultDetails; let i = index"
+      [ngClass]="{ mismatched: result.isScoreMismatched, 'confirmed-refund': isConfirmRefund(result)}">
       <td style="font-weight: bold;">{{ result.resourceId | resourceName }}</td>
       <td style="font-weight: bold;" [ngClass]="result.ticketStatus?.toLowerCase()" class="set-status">
         {{ result.ticketStatus }}
       </td>
       <!-- final -->
-      <td [ngClass]="result.resultState">
+      <td [ngClass]="result.resultStatusState">
         <input type="text" myOnlyInteger [ngClass]="{'warning': result.isResultWarning}"
           [disabled]="!permission.isLeader || (!result.checked || result.resultSettingData.isHoldResult)"
           [(ngModel)]="result.homeValue" (ngModelChange)="scoreChanged(result)" />
       </td>
-      <td [ngClass]="result.resultState">
+      <td [ngClass]="result.resultStatusState">
         <input type="text" myOnlyInteger [ngClass]="{'warning': result.isResultWarning}"
           [disabled]="!permission.isLeader || (!result.checked || result.resultSettingData.isHoldResult)"
           [(ngModel)]="result.awayValue" (ngModelChange)="scoreChanged(result)" />

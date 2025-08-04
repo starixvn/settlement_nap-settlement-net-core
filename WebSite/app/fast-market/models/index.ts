@@ -1,3 +1,4 @@
+
 export * from './fast-market-result.model';
 export * from './match-detail.model';
 export * from './fast-markets.model';

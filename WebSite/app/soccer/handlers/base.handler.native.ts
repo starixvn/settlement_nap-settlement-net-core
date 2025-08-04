@@ -1,7 +1,7 @@
-import { Storage } from '../storage/storage.service.native';
+import { CalculateBaseStorage, RefundBaseStorage } from '../storage/storage.service.native';
 export interface BaseHandler {
   setNextHandler(handler: BaseHandler): BaseHandler;
-  handle(storage: Storage): void ;
+  handle(storage: CalculateBaseStorage | RefundBaseStorage): void ;
 }
 
 export interface MatchDetailContext {

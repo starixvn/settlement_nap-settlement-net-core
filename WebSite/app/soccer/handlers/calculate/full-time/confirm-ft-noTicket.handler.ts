@@ -1,5 +1,5 @@
 import { AbstractHandler } from "../../abstract.handler.native";
-import { Storage } from "../../../storage/storage.service.native";
+import { CalculateBaseStorage } from "../../../storage/storage.service.native";
 import { Language } from "../../../../shared/language.native";
 import { MessageBoxService } from "../../../../shared/services";
 import { inject } from "@angular/core";
@@ -15,7 +15,7 @@ export class ConfirmFtNoTicketHandler extends AbstractHandler {
   readonly resultSettledStatusIds = [ResultStatusId.AutoCompleted, ResultStatusId.ManualCompleted];
   readonly sourceTypeIds = [ScoreSourceType.trader, ScoreSourceType.Sbo];
 
-  async handle(storage: Storage) {
+  async handle(storage: CalculateBaseStorage) {
     const { matchDetail, externalResults } = storage.getMatch();
     const halfTimeResult = storage.getHalfTimeResult();
     const fullTimeResult = storage.getFullTimeResult();
@@ -53,7 +53,7 @@ export class ConfirmFtNoTicketHandler extends AbstractHandler {
   }
 
 
-  private setValueHalfTime(storage: Storage) {
+  private setValueHalfTime(storage: CalculateBaseStorage) {
     const halfTimeResult = storage.getHalfTimeResult();
     halfTimeResult.homeValue = '0';
     halfTimeResult.awayValue = '0';

@@ -1,0 +1,50 @@
+table {
+  td {
+    font-weight: bold;
+  }
+
+  th {
+    width: 80px;
+    min-width: 80px;
+  }
+
+  .score {
+    width: 180px;
+    min-width: 180px;
+  }
+
+  width: fit-content;
+}
+
+.action-button {
+  padding: 5px 0;
+}
+
+.score-input {
+  width: 35px;
+}
+
+.sub-option-label {
+  padding-left: 10px;
+}
+
+.btn-primary.btn-disabled,
+.btn-warning.btn-disabled {
+  width: auto !important;
+  height: auto !important;
+  color: #fff;
+  border-color: silver;
+}
+
+.button-refund {
+  padding: 4px 8px;
+  margin: 2px 0;
+}
+
+.confirmed-refund {
+  background-color: #FFFF00 !important;
+}
+
+.goal-record-refund-input {
+  width: 150px;
+}

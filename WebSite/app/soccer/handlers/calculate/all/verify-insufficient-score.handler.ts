@@ -1,5 +1,5 @@
 import { AbstractHandler } from "../../abstract.handler.native";
-import { Storage } from "../../../storage/storage.service.native";
+import { CalculateBaseStorage } from "../../../storage/storage.service.native";
 import { inject } from "@angular/core";
 import { MessageBoxService } from "../../../../shared/services";
 import { ResourceIds, ScoreSourceType } from "../../../../shared/constants";
@@ -12,7 +12,7 @@ export class VerifyInsufficientScoreHandler extends AbstractHandler {
   #verificationService = inject(VerificationBaseService);
   #messageBoxService = inject(MessageBoxService);
   
-  async handle(storage: Storage) {
+  async handle(storage: CalculateBaseStorage) {
     const { permission, resultDetails } = storage.getMatch();
     const isIgnoreCheckHt = storage.getIsIgnoreCheckHt();
     const checkedResults = isIgnoreCheckHt

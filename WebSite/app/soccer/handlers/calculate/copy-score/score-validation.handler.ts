@@ -1,6 +1,6 @@
 import { inject } from "@angular/core";
 import { VerifyScoreGoalService } from "../../../components/calc/services/verify-score-goal.service";
-import { Storage } from "../../../storage/storage.service.native";
+import { CalculateBaseStorage } from "../../../storage/storage.service.native";
 import { AbstractHandler } from "../../abstract.handler.native";
 import { Language } from "../../../../shared/language.native";
 import { ScoreService } from "../../../components/calc/services/score.service";
@@ -9,7 +9,7 @@ import { CalculateAction, ScoreSourceType } from "../../../../shared/constants";
 export class ScoreValidationHandler extends AbstractHandler {
   readonly #verifyScoreGoalService = inject(VerifyScoreGoalService);
   readonly #scoreService = inject(ScoreService);
-  public handle(storage : Storage): void {
+  public handle(storage : CalculateBaseStorage): void {
     const ftResultDetail = storage.getFullTimeResult();
     const htResultDetail = storage.getHalfTimeResult();
 
