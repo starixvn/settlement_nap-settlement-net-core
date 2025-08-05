@@ -3,11 +3,11 @@ import { BlockUIService } from '../../shared/services';
 import { FilterComponent } from './main-page/filter.component';
 import { LeagueTeamComponent } from './main-page/league-team.component';
 import { CommonModule } from '@angular/common';
-import { LogPopupComponent } from './popup/log-popup.component.native';
-import MainPageComponent from './main-page/main-page.component';
+import { LogPopupComponent } from './popup/log-popup.component';
+import { MainPageComponent } from './main-page/main-page.component';
 import { PageType } from '../../shared/constants';
 import { MatDialogModule } from '@angular/material/dialog';
-import LogPageComponent from './main-page/log-page.component.native';
+import { LogPageComponent } from './main-page/log-page.component.native';
 
 @Component({
     selector: 'app-root',
@@ -16,7 +16,7 @@ import LogPageComponent from './main-page/log-page.component.native';
     imports: [CommonModule, FilterComponent, LeagueTeamComponent, LogPopupComponent, MainPageComponent, MatDialogModule, LogPageComponent],
     providers: [BlockUIService]
 })
-export default class AppComponent implements OnInit {
+export class AppComponent implements OnInit {
     public blockUI = false;
 
     @ViewChild('container', { read: ViewContainerRef, static: true }) container: ViewContainerRef;

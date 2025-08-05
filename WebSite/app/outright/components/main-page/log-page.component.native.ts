@@ -21,7 +21,7 @@ import LogComponent from "../log.component";
     imports: [CommonModule, FormsModule, DatepickerComponent, MatDialogModule, DynamicHeightDirective, LogComponent],
     providers: [VerifyDateService, OutrightService, HttpRequestService, MessageBoxService, BlockUIService],
 })
-export default class LogPageComponent implements OnInit {
+export class LogPageComponent implements OnInit {
     public request: LogRequest;
     ngOnInit() { }
 }

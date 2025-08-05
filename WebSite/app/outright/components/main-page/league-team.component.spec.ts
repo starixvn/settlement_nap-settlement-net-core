@@ -1,5 +1,5 @@
 import { TeamSettle } from './../../models/team.model';
-import { LogPopupComponent } from './../popup/log-popup.component.native';
+import { LogPopupComponent } from './../popup/log-popup.component';
 import { CommonModule, DatePipe } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
