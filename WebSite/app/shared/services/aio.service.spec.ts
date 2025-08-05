@@ -21,9 +21,6 @@ describe('AioService', () => {
   const resourceItem = new ResourceItem('resourceId', 'resourceName', 'resourceType', 'resourceValue')
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [
-       
-      ],
       providers: [
         DatePipe,
         AioService,

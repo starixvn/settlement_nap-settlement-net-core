@@ -51,7 +51,7 @@ public class ResultAmendmentServiceImp(
         }
     }
 
-    private async Task<bool> ProcessResultAmendment(SettleCriteria settleCriteria, List<ResourceItem> selectedResources)
+   private async Task<bool> ProcessResultAmendment(SettleCriteria settleCriteria, List<ResourceItem> selectedResources)
     {
         var criteria = new CheckReSettleCriteria
         {
@@ -84,6 +84,7 @@ public class ResultAmendmentServiceImp(
 
         return true;
     }
+
 
     private async Task<bool> PublishResultAmendment(SettleCriteria settleCriteria, List<ResourceItem> selectedResources, IEnumerable<ResultChanged> results)
     {

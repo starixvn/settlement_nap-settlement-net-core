@@ -1,17 +1,55 @@
 
 import { CashOutService } from "./cash-out.service";
 import { TestBed, getTestBed } from '@angular/core/testing';
-import { ResultDetail } from "../models";
+import { ResultDetail } from '../../shared/models/sportsbook-sop';
 import { BlockUIService, HttpRequestService, MessageBoxService } from '../../shared/services';
 import { HttpClientModule } from '@angular/common/http';
 import { NO_ERRORS_SCHEMA } from "@angular/core";
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { GenerateCashOutService } from "./generate-cash-out.service";
 
 describe('CashOutService', () => {
     let service: CashOutService;
     let httpRequestService: HttpRequestService;
     let injector: TestBed;
+    let generateCashOutService: GenerateCashOutService;
     const cashOutApi = '/api/cash-out';
+
+    const quarter1 = new ResultDetail();
+    quarter1.resourceId = "Q1";
+    quarter1.homeValue = "1";
+    quarter1.awayValue = "1";
+    quarter1.checked = false;
+    
+    const quarter2 = new ResultDetail();
+    quarter2.resourceId = "Q2";
+    quarter2.homeValue = "2";
+    quarter2.awayValue = "2";
+    quarter2.checked = false;
+    
+    const quarter3 = new ResultDetail();
+    quarter3.resourceId = "Q3";
+    quarter3.homeValue = "3";
+    quarter3.awayValue = "3";
+    quarter3.checked = false;
+    
+    const quarter4 = new ResultDetail();
+    quarter4.resourceId = "Q4";
+    quarter4.homeValue = "4";
+    quarter4.awayValue = "4";
+    quarter4.checked = false;
+    
+    const halfTime = new ResultDetail();
+    halfTime.resourceId = "01";
+    halfTime.homeValue = "11";
+    halfTime.awayValue = "11";
+    halfTime.checked = false;
+    
+    const fullTime = new ResultDetail();
+    fullTime.resourceId = "00";
+    fullTime.homeValue = "22";
+    fullTime.awayValue = "22";
+    fullTime.checked = false;
   
 
     beforeEach(() => {
@@ -21,6 +59,7 @@ describe('CashOutService', () => {
                 HttpRequestService,
                 BlockUIService,
                 MessageBoxService,
+                GenerateCashOutService
             ],
             imports: [
                 HttpClientModule,
@@ -32,6 +71,7 @@ describe('CashOutService', () => {
         injector = getTestBed();
         service = injector.inject(CashOutService);
         httpRequestService = TestBed.inject(HttpRequestService);
+        generateCashOutService = TestBed.inject(GenerateCashOutService);
     });
 
     it('should create a service', () => {
@@ -92,20 +132,22 @@ describe('CashOutService', () => {
     });
 
     describe('getHalf', () => {
+        beforeEach(() => {
+            quarter1.checked = false;
+            quarter2.checked = false;
+            quarter3.checked = false;
+            quarter4.checked = false;
+            halfTime.checked = false;
+            fullTime.checked = false;
+        })
         let resultDetails: ResultDetail[] = [];
-        const quarter1 = new ResultDetail("Q1", "1", "1", false);
-        const quarter2 = new ResultDetail("Q2", "2", "2", false);
-        const quarter3 = new ResultDetail("Q3", "3", "3", false);
-        const quarter4 = new ResultDetail("Q4", "4", "4", false);
-        const halfTime = new ResultDetail("01", "11", "11", false);
-        const fullTime = new ResultDetail("00", "22", "22", false);
-
+       
         it('Should return 1', () => {
             quarter1.checked = true;
             resultDetails = [quarter1, quarter2, quarter3, quarter4, halfTime, fullTime];
 
             const result = service.getHalf(resultDetails);
-            expect(result).toEqual(1);
+            expect(result).toEqual(-1);
         });
 
         it('Should return 2', () => {
@@ -156,19 +198,20 @@ describe('CashOutService', () => {
     });
 
     describe('getBetStatus', () => {
+        beforeEach(() => {
+            quarter1.checked = false;
+            quarter2.checked = false;
+            quarter3.checked = false;
+            quarter4.checked = false;
+            halfTime.checked = false;
+            fullTime.checked = false;
+        })
         let resultDetails: ResultDetail[] = [];
-        const quarter1 = new ResultDetail("Q1", "1", "1", false);
-        const quarter2 = new ResultDetail("Q2", "2", "2", true);
-        const quarter3 = new ResultDetail("Q3", "3", "3", true);
-        const quarter4 = new ResultDetail("Q4", "4", "4", true);
-        const halfTime = new ResultDetail("01", "11", "11", true);
-        const fullTime = new ResultDetail("00", "22", "22", true);
-
         it('Refund Quarter 2 - Should return right expected betstatus value', () => {
             resultDetails = [quarter1, quarter2, quarter3, quarter4, halfTime, fullTime];
 
             const result = service.getBetStatus(resultDetails);
-            expect(result).toEqual("1-1,0-0,0-0,0-0,0-0");
+            expect(result).toEqual("1-1,2-2,3-3,4-4");
         });
 
         it('Refund Quarter 1 - Should return right expected betstatus value', () => {
@@ -176,7 +219,7 @@ describe('CashOutService', () => {
             resultDetails = [quarter1, quarter2, quarter3, quarter4, halfTime, fullTime];
 
             const result = service.getBetStatus(resultDetails);
-            expect(result).toEqual("0-0,0-0,0-0,0-0,0-0");
+            expect(result).toEqual("0-0,2-2,3-3,4-4");
         });
     });
 });

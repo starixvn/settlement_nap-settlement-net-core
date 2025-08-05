@@ -1,3 +1,4 @@
+using Fanex.Settlement.MessageBridge.JackTime;
 using Fanex.Settlement.MessageBridge.RefundEvents;
 using Fanex.Settlement.ScaleOut.Criteria.Update;
 using Mapster;
@@ -45,11 +46,11 @@ public class CalculateServiceImp(
     public async Task<Result> Calculate(SettleRequest request)
     {
         var criteria = createCriteriaService.CreateCalculateCriteria(request);
-        var matchChecking = await ValidateBeforeExecute(criteria);
+        var validationResult = await ValidateBeforeExecute(criteria);
 
-        if (matchChecking.ErrCode > 0)
+        if (validationResult.ErrCode > 0)
         {
-            return matchChecking;
+            return validationResult;
         }
 
         await SaveOutsideScores(request);
@@ -61,32 +62,39 @@ public class CalculateServiceImp(
         }
 
         var match = CreatedMatch(criteria);
-        var insertLogCriteria = createCriteriaService.CreateCalculateLogCriteria(request);
+        var logCriteria = createCriteriaService.CreateCalculateLogCriteria(request);
+        var ticketCriteria = createCriteriaService.SoccerGetTicketInfoCriteria(criteria);
 
-        await WriteLog(match, insertLogCriteria);
-
+        await WriteLog(match, logCriteria);
         await ExecuteAsync(criteria);
-
-        await RefundChildMatch(criteria);
+        await RefundChildMatches(criteria);
 
         if (request.IsApplyHedging)
         {
-            criteria.MatchId = request.HedgeMatchId;
-            await ExecuteAsync(criteria);
+            await ExecuteHedging(criteria, request.HedgeMatchId);
         }
 
-        await publishEndpoint.Publish(new MatchCalculated(
-                request.MatchId,
-                request.ParentId,
-                request.SportType,
-                request.ChildMatchType,
-                request.HalfTimeHomeScore,
-                request.HalfTimeAwayScore,
-                request.FinalHomeScore,
-                request.FinalAwayScore,
-                request.ActionName), new CancellationTokenSource(TimeSpan.FromSeconds(2)).Token);
 
-        return matchChecking;
+        await publishEndpoint.Publish(new MatchCalculated(
+            request.MatchId,
+            request.ParentId,
+            request.SportType,
+            request.ChildMatchType,
+            request.HalfTimeHomeScore,
+            request.HalfTimeAwayScore,
+            request.FinalHomeScore,
+            request.FinalAwayScore,
+            request.ActionName), new CancellationTokenSource(TimeSpan.FromSeconds(2)).Token);
+        await PublishJackTimeRequest(ticketCriteria);
+
+
+        return validationResult;
+    }
+
+    private async Task ExecuteHedging(CalculateCriteria criteria, int hedgeMatchId)
+    {
+        criteria.MatchId = hedgeMatchId;
+        await ExecuteAsync(criteria);
     }
 
     private async Task SaveOutsideScores(SettleRequest request)
@@ -133,50 +141,53 @@ public class CalculateServiceImp(
     public async Task<Result> UncalculateFt(UncalculateFtRequest request)
     {
         var criteria = createCriteriaService.CreateUnCalculateFtCriteria(request);
-        var requestChecking = await ValidateBeforeExecute(criteria);
-        if (requestChecking.ErrCode > 0)
+        var validationResult = await ValidateBeforeExecute(criteria);
+        if (validationResult.ErrCode > 0)
         {
-            return requestChecking;
+            return validationResult;
         }
 
         var match = CreatedMatch(criteria, request.ResultDetails);
-        var insertLogCriteria = createCriteriaService.CreateUnCalculateFtLogCriteria(request);
-        await WriteLog(match, insertLogCriteria);
+        var logCriteria = createCriteriaService.CreateUnCalculateFtLogCriteria(request);
+        var ticketCriteria = createCriteriaService.SoccerGetTicketInfoCriteria(criteria);
 
+        await WriteLog(match, logCriteria);
         await ExecuteAsync(criteria);
 
         if (request.IsApplyHedging)
         {
-            criteria.MatchId = request.HedgeMatchId;
-            await ExecuteAsync(criteria);
+            await ExecuteHedging(criteria, request.HedgeMatchId);
         }
 
-        return requestChecking;
+        await PublishJackTimeRequest(ticketCriteria);
+
+        return validationResult;
     }
 
     public async Task<Result> UnCalculate(SettleRequest request)
     {
         var criteria = createCriteriaService.CreateUnCalculateCriteria(request);
-        var requestChecking = await ValidateBeforeExecute(criteria);
-        if (requestChecking.ErrCode > 0)
+        var validationResult = await ValidateBeforeExecute(criteria);
+        if (validationResult.ErrCode > 0)
         {
-            return requestChecking;
+            return validationResult;
         }
 
         var match = CreatedMatch(criteria);
-        var insertLogCriteria = createCriteriaService.CreateUnCalculateLogCriteria(request);
+        var logCriteria = createCriteriaService.CreateUnCalculateLogCriteria(request);
+        var ticketCriteria = createCriteriaService.SoccerGetTicketInfoCriteria(criteria);
 
-        await WriteLog(match, insertLogCriteria);
-
+        await WriteLog(match, logCriteria);
         await ExecuteAsync(criteria);
 
         if (request.IsApplyHedging)
         {
-            criteria.MatchId = request.HedgeMatchId;
-            await ExecuteAsync(criteria);
+            await ExecuteHedging(criteria, request.HedgeMatchId);
         }
 
-        return requestChecking;
+        await PublishJackTimeRequest(ticketCriteria);
+
+        return validationResult;
     }
 
     public async Task<Result> CheckStatus(CheckStatusRequest request)
@@ -237,11 +248,14 @@ public class CalculateServiceImp(
     private async Task ExecuteAsync(CalculateCriteria criteria)
     {
         await UpdateMatchInfo(criteria);
-        foreach (var server in appSettingsKey.Value.SiteDbServer)
+
+        var tasks = appSettingsKey.Value.SiteDbServer.Select(async server =>
         {
             criteria.DbServer = server;
             await repository.ExecuteAsync(criteria);
-        }
+        });
+
+        await Task.WhenAll(tasks);
     }
 
     private async Task WriteLog(Match match, InsertLogCriteria insertLogCriteria)
@@ -313,7 +327,7 @@ public class CalculateServiceImp(
         await scaleOutSettleService.UpdateMatchInfo(requestUpdateInfo);
     }
 
-    private async Task RefundChildMatch(CalculateCriteria criteria)
+    private async Task RefundChildMatches(CalculateCriteria criteria)
     {
         var requestRefundChildMatch = new RefundChildMatchRequest
         {
@@ -337,7 +351,7 @@ public class CalculateServiceImp(
         if (criteria.ErrCode == 0)
         {
             const int actionLog = 81059;
-            var message = createMessageSaveScore(request);
+            var message = CreateMessageSaveScore(request);
             await logService.ActionLog(request.MatchId, message, actionLog);
             await UpdateResult(criteria, request);
             return new Result();
@@ -381,10 +395,16 @@ public class CalculateServiceImp(
         await repository.ExecuteAsync(criteria);
     }
 
-    private string createMessageSaveScore(SaveScoreRequest request)
+    private static string CreateMessageSaveScore(SaveScoreRequest request)
     {
         var strings = request.ResultDetails.Select(r => $"{(r.ResourceId == ResourceType.Final ? "FT" : "HT")}({r.HomeValue}-{r.AwayValue})").ToList();
 
         return string.Join(",<br/>", strings);
+    }
+
+    private async Task PublishJackTimeRequest(SoccerGetTicketInfoCriteria criteria)
+    {
+        var request = mapper.Map<SoccerGetTicketInfoCriteria, SoccerResult>(criteria);
+        await publishEndpoint.Publish(request, new CancellationTokenSource(TimeSpan.FromSeconds(3)).Token);
     }
 }

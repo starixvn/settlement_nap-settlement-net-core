@@ -1,5 +1,5 @@
-﻿using MediatR;
-using Settlement.Core.Models;
+﻿using Fanex.Settlement.MessageBridge.JackTime;
+using MediatR;
 using ResourceItem = Settlement.ThirdPartyProducts.Models.ResourceItem;
 
 namespace Settlement.ThirdPartyProducts.Requests;

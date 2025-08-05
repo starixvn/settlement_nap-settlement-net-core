@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Fanex.Data.Repository;
+using Fanex.Settlement.MessageBridge.JackTime;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Settlement.Core.Constants;
@@ -7,13 +8,12 @@ using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Setting.Models.Notification;
 using Settlement.Setting.Services;
-using Settlement.ThirdPartyProducts.Constants;
 using Settlement.ThirdPartyProducts.Criteria;
-using Settlement.ThirdPartyProducts.Models;
 using Settlement.ThirdPartyProducts.Requests;
-using Settlement.ThirdPartyProducts.Requests.CashOut;
 using System.Text;
+using CashOutAction = Settlement.ThirdPartyProducts.Constants.CashOutAction;
 using ResourceItem = Settlement.ThirdPartyProducts.Models.ResourceItem;
+using VoidBetRequest = Settlement.ThirdPartyProducts.Requests.CashOut.VoidBetRequest;
 
 namespace Settlement.ThirdPartyProducts.Services;
 
@@ -50,11 +50,14 @@ public class VoidBetApiServiceImp(
 
     private async Task CallApiVoidBet(VoidBetRequest request, string cashOutApi)
     {
-        var actions = request.VoidBetInfos.GroupBy(m => m.Action).Select(m => m.Key);
+        var actions = request.VoidBetInfos
+            .GroupBy(m => m.Action)
+            .Select(m => m.Key);
+
         foreach (var action in actions)
         {
             var voidBetInfos = request.VoidBetInfos.Where(m => m.Action == action);
-            var actionApi = action.Equals(ActionType.UnCalculate, StringComparison.OrdinalIgnoreCase) ? CashOutAction.UndoVoidBet : CashOutAction.VoidBet;
+            var actionApi = GetActionApi(action);
             var apiUri = $"{cashOutApi}{actionApi}";
             var voidBetApiModel = new VoidBetApiModel
             {
@@ -63,6 +66,13 @@ public class VoidBetApiServiceImp(
             var response = await PostAsync(apiUri, voidBetApiModel);
             await HandleResponse(response, request, voidBetApiModel);
         }
+    }
+
+    private static string GetActionApi(string action)
+    {
+        return action.Equals(ActionType.UnCalculate, StringComparison.OrdinalIgnoreCase)
+            ? CashOutAction.UndoVoidBet
+            : CashOutAction.VoidBet;
     }
 
     public async Task PostResult(string action, object request)
@@ -98,14 +108,20 @@ public class VoidBetApiServiceImp(
     {
         if (!response.IsSuccessStatusCode)
         {
-            var mailModel = mapper.Map<VoidBetRequest, NotificationModel>(request);
-            mailModel.RefDataService = refDataService;
-            mailModel.Message = await response.Content.ReadAsStringAsync();
-            mailModel.Action = $"CO-{mailModel.Action}-JackTime";
-            mailModel.StartTime = DateTimeOffset.Now.DateTime;
-            mailModel.VoidBetInfos = model.VoidBetInfos;
+            var mailModel = CreateNotificationModel(request, model, await response.Content.ReadAsStringAsync());
             sendMailService.SendMail(mailModel);
         }
+    }
+
+    private NotificationModel CreateNotificationModel(VoidBetRequest request, VoidBetApiModel model, string message)
+    {
+        var mailModel = mapper.Map<VoidBetRequest, NotificationModel>(request);
+        mailModel.RefDataService = refDataService;
+        mailModel.Message = message;
+        mailModel.Action = $"CO-{mailModel.Action}-JackTime";
+        mailModel.StartTime = DateTimeOffset.Now.DateTime;
+        mailModel.VoidBetInfos = model.VoidBetInfos;
+        return mailModel;
     }
 
     public async Task<List<VoidBetInfo>> GetTicketInfo(GetTicketInfo request)
@@ -113,16 +129,14 @@ public class VoidBetApiServiceImp(
         var getTicketInfoCriteria = mapper.Map<GetTicketInfo, GetTicketInfoCriteria>(request);
         getTicketInfoCriteria.SelectedResources = CreateResources(request.SelectedResources);
 
-        var listVoidBetInfo = new List<VoidBetInfo>();
-
-        foreach (var server in appSettingsKey.SiteDbServer)
+        var tasks = appSettingsKey.SiteDbServer.Select(async server =>
         {
             getTicketInfoCriteria.DbServer = server;
-            var listVoidBet = (await repository.FetchAsync<VoidBetInfo>(getTicketInfoCriteria)).ToList();
-            listVoidBetInfo.AddRange(listVoidBet);
-        }
+            return await repository.FetchAsync<VoidBetInfo>(getTicketInfoCriteria);
+        });
 
-        return listVoidBetInfo;
+        var results = await Task.WhenAll(tasks);
+        return results.SelectMany(list => list).ToList();
     }
 
     private string CreateResources(IEnumerable<ResourceItem> selectedResources)

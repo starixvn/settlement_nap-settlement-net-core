@@ -36,6 +36,11 @@ public interface ICreateCriteriaService
     public EventTicketRequest CreateEventTicketRequest(CalculateCriteria criteria);
 
     public EventTicketRequest CreateEventTicketReturnRequest(RefundCriteria criteria);
+
+    public SoccerGetTicketInfoCriteria SoccerRefundGetTicketInfoCriteria(RefundCriteria criteria, bool isSettleAbandonedMatchIBC);
+
+    public SoccerGetTicketInfoCriteria SoccerGetTicketInfoCriteria(CalculateCriteria criteria);
+
 }
 
 public class CreateCriteriaServiceImp(
@@ -424,4 +429,29 @@ public class CreateCriteriaServiceImp(
             SelectedResources = CreateResources(resourceService.CreateResourceByAction(criteria.Action))
         };
     }
+
+    public SoccerGetTicketInfoCriteria SoccerRefundGetTicketInfoCriteria(RefundCriteria criteria, bool isSettleAbandonedMatchIBC)
+    {
+        var validResource = resourceService.CreateRefundJTResource(criteria, isSettleAbandonedMatchIBC);
+
+        return new SoccerGetTicketInfoCriteria
+        {
+            MatchId = criteria.MatchId,
+            Action = criteria.Action,
+            SelectedResources = CreateResources(validResource),
+            SDTRecord = criteria.SdtRecord
+        };
+    }
+
+    public SoccerGetTicketInfoCriteria SoccerGetTicketInfoCriteria(CalculateCriteria criteria)
+    {
+        var resources = resourceService.CreateJTResource(criteria);
+        return new SoccerGetTicketInfoCriteria
+        {
+            MatchId = criteria.MatchId,
+            SelectedResources = CreateResources(resources),
+            Action = criteria.Action
+        };
+    }
+
 }

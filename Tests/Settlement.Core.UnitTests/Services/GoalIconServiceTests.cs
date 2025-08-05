@@ -18,10 +18,15 @@ public class GoalIconServiceTests
     }
 
     [Theory]
-    [CombinatorialData]
+    [InlineData(null, null)]
+    [InlineData(null, "")]
+    [InlineData(null, " ")]
+    [InlineData("  ", null)]
+    [InlineData("  ", "")]
+    [InlineData("  ", " ")]
     public void GetGoalIcon_BetStatusAndGoalRecordAreNullOrWhitespace_AllScoreIsNull(
-        [CombinatorialValues(null, "  ")] string betStatus,
-        [CombinatorialValues(null, "", " ")] string goalRecord)
+        string betStatus,
+        string goalRecord)
     {
         // Arrange
         var query = new GoalIconQueryModel
@@ -39,10 +44,13 @@ public class GoalIconServiceTests
     }
 
     [Theory]
-    [CombinatorialData]
+    [InlineData(null, "H")]
+    [InlineData(null, "")]
+    [InlineData("A", "H")]
+    [InlineData("A", "")]
     public void GetGoalIcon_BetStatusOrGoalRecordNotNullOrWhitespaceAndIsNotExistHtFgLg_ReturnsHalfGoalIconIsNull(
-        [CombinatorialValues(null, "A")] string betStatus,
-        [CombinatorialValues("H", "")] string goalRecord)
+        string betStatus,
+        string goalRecord)
     {
         // Arrange
         var query = new GoalIconQueryModel
@@ -60,9 +68,10 @@ public class GoalIconServiceTests
     }
 
     [Theory]
-    [CombinatorialData]
+    [InlineData("A")]
+    [InlineData("1-2")]
     public void GetGoalIcon_BetStatusNotNullOrWhitespaceAndIsExistHtFgLg_ReturnsHalfGoalIconByBetStatus(
-        [CombinatorialValues("A", "1-2")] string betStatus)
+        string betStatus)
     {
         // Arrange
         const string homeFirstLastGoal = "Home First Last Goal";
@@ -86,10 +95,13 @@ public class GoalIconServiceTests
     }
 
     [Theory]
-    [CombinatorialData]
+    [InlineData(null, "A;H")]
+    [InlineData(null, "HA;")]
+    [InlineData("  ", "A;H")]
+    [InlineData("  ", "HA;")]
     public void GetGoalIconBetStatusGetGoalIconBetStatusNullOrWhitespaceAndGoalRecordNotNullOrWhitespaceAndIsExistHtFgLgReturnsHalfGoalIconByBetStatus(
-        [CombinatorialValues(null, "  ")] string betStatus,
-        [CombinatorialValues("A;H", "HA;")] string goalRecord)
+        string betStatus,
+        string goalRecord)
     {
         // Arrange
         const string homeFirstLastGoal = "Home First Last Goal";
@@ -114,10 +126,13 @@ public class GoalIconServiceTests
     }
 
     [Theory]
-    [CombinatorialData]
+    [InlineData(null, "H")]
+    [InlineData(null, "")]
+    [InlineData("A", "H")]
+    [InlineData("A", "")]
     public void GetGoalIcon_BetStatusOrGoalRecordNotNullOrWhitespaceAndIsNotExistFgLg_ReturnsHalfGoalIconIsNull(
-        [CombinatorialValues(null, "A")] string betStatus,
-        [CombinatorialValues("H", "")] string goalRecord)
+        string betStatus,
+        string goalRecord)
     {
         // Arrange
         var query = new GoalIconQueryModel
@@ -135,9 +150,10 @@ public class GoalIconServiceTests
     }
 
     [Theory]
-    [CombinatorialData]
+    [InlineData("A")]
+    [InlineData("1-2")]
     public void GetGoalIcon_BetStatusNotNullOrWhitespaceAndIsExistFgLg_ReturnsHalfGoalIconByBetStatus(
-        [CombinatorialValues("A", "1-2")] string betStatus)
+        string betStatus)
     {
         // Arrange
         const string homeFirstLastGoal = "Home First Last Goal";
@@ -161,10 +177,13 @@ public class GoalIconServiceTests
     }
 
     [Theory]
-    [CombinatorialData]
+    [InlineData(null, "A;H")]
+    [InlineData(null, "HA;")]
+    [InlineData("  ", "A;H")]
+    [InlineData("  ", "HA;")]
     public void GetGoalIconBetStatusGetBetStatusNullOrWhitespaceAndGoalRecordNotNullOrWhitespaceAndIsExistFgLgReturnsHalfGoalIconByBetStatus(
-        [CombinatorialValues(null, "  ")] string betStatus,
-        [CombinatorialValues("A;H", "HA;")] string goalRecord)
+        string betStatus,
+        string goalRecord)
     {
         // Arrange
         const string homeFirstLastGoal = "Home First Last Goal";

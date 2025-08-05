@@ -1,4 +1,6 @@
-﻿using Fanex.Data.Repository;
+﻿using AutoMapper;
+using Fanex.Caching;
+using Fanex.Data.Repository;
 using Fanex.Settlement.ScaleOut.Models;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
@@ -37,6 +39,9 @@ public class RefundServiceTests
         logService = Substitute.For<LogService>();
         var publishEndpoint = Substitute.For<IPublishEndpoint>();
 
+        var mapper = Substitute.For<IMapper>();
+        var cacheService = Substitute.For<ICacheService>();
+
         var context = new DefaultHttpContext
         {
             Connection =
@@ -47,7 +52,7 @@ public class RefundServiceTests
         accessor.HttpContext = context;
 
         var option = Options.Create(appSettings);
-        service = new RefundServiceImp(repository, accessor, option, createCriteriaService, scaleOutSettleService, logService, publishEndpoint);
+        service = new RefundServiceImp(repository, accessor, option, createCriteriaService, scaleOutSettleService, logService, publishEndpoint, cacheService, mapper);
     }
 
     [Theory]
@@ -104,7 +109,7 @@ public class RefundServiceTests
     [Theory]
     [InlineData(0, null, 3)]
     [InlineData(1, "Error", 0)]
-    public async Task MoveThirdPartyBetTickets_Always_ReturnsTrue(byte errorCode, string errorMsg, byte executeTime)
+    public async Task MoveThirdPartyBetTickets_Always_ReturnsTrue(byte errorCode, string? errorMsg, byte executeTime)
     {
         // Arrange
         var criteria = new MoveThirdPartyBetTicketCriteria
@@ -136,6 +141,8 @@ public class RefundServiceTests
         {
             Action = ActionType.RefundAll
         };
+
+        createCriteriaService.SoccerRefundGetTicketInfoCriteria(Arg.Any<RefundCriteria>(), Arg.Any<bool>()).Returns(new SoccerGetTicketInfoCriteria());
         createCriteriaService.CreateRefundCriteria(Arg.Any<RefundRequest>()).Returns(criteria);
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>())
             .Returns(new ResultMessage { ErrorCode = errorCode, ErrorMessage = errorMsg });
@@ -157,6 +164,8 @@ public class RefundServiceTests
         {
             Action = ActionType.CalculateAll
         };
+
+        createCriteriaService.SoccerRefundGetTicketInfoCriteria(Arg.Any<RefundCriteria>(), Arg.Any<bool>()).Returns(new SoccerGetTicketInfoCriteria());
         createCriteriaService.CreateRefundCriteria(Arg.Any<RefundRequest>()).Returns(criteria);
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
 
@@ -180,6 +189,8 @@ public class RefundServiceTests
         {
             Action = ActionType.CalculateAll
         };
+
+        createCriteriaService.SoccerRefundGetTicketInfoCriteria(Arg.Any<RefundCriteria>(), Arg.Any<bool>()).Returns(new SoccerGetTicketInfoCriteria());
         createCriteriaService.CreateRefundCriteria(Arg.Any<RefundRequest>()).Returns(criteria);
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
         await repository.ExecuteAsync(Arg.Any<RefundCriteria>());

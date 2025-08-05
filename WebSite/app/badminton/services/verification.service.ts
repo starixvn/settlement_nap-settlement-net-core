@@ -1,14 +1,13 @@
 import { Injectable } from "@angular/core";
-import { InputType, ResourcesIds, VolleyballBetTypes } from "../constants";
+import { InputType, ResourcesIds } from "../constants";
 import * as _ from 'lodash';
 import { ResultDetail } from "../../shared/models/sportsbook-sop";
-import { EventStatus, ResultStatusId, ScoreSourceType, SportType, TicketStatusText } from "../../shared/constants";
+import { EventStatus, ScoreSourceType, SportType, TicketStatusText } from "../../shared/constants";
 import { VerificationBaseService } from '../../core/services/verification-base.service';
 import { IntervalCalculationService } from "../../shared/services";
 import { ResultByTeamNamePipe } from '../../shared/pipes/result-by-team-name.pipe';
 import { Language } from "../../shared/language.native";
 import { ChildMatch } from "../models";
-import { Result } from "../../shared/models";
 
 @Injectable()
 export class VerificationService extends VerificationBaseService  {

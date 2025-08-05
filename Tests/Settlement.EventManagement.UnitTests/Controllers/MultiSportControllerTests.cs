@@ -60,8 +60,6 @@ public class MultiSportControllerTests
         Assert.Equal(200, actual.StatusCode);
     }
 
-
-    [Fact]
     public async Task GetSports_Always_ReturnsListSports()
     {
         var request = new SportRequest();

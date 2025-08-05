@@ -141,7 +141,7 @@ export class PopupService {
                 .set('typeObject', 'League')
                 .set('pageType', 'SoccerAutoSettings');
         }
-
+        
         return uriParams;
     }
 

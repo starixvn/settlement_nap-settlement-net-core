@@ -4,16 +4,15 @@ import { CalculateMatchDetailComponent } from './calculate-match-detail.componen
 import { ResourceHeaderPipe, ExternalHeaderPipe, ResourceNameByIdPipe } from '../pipes';
 import { HttpClientModule } from '@angular/common/http';
 import { Match } from '../models';
-import { TicketCountComponent } from '../../shared/components';
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
 import { MatchDetail } from '../../shared/models/sportsbook-sop';
 import { ManageLeagueComponent } from '../../score-source-setting/components';
 import { LeagueOutsideSource } from '../../score-source-setting/models';
 import { MatDialog } from '@angular/material/dialog';
 import { of } from 'rxjs';
-import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { MaterialModule } from '../../shared/material-module';
 import { AioService, BlockUIService, ClosePopupService, HttpRequestService, MessageBoxService } from '../../shared/services';
+import { TicketCountComponent } from '../../shared/components/ticket-count/ticket-count.component';
 
 describe('Tennis - Calculation Match Detail Component', () => {
   let component: CalculateMatchDetailComponent;
@@ -27,13 +26,7 @@ describe('Tennis - Calculation Match Detail Component', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [
-        CalculateMatchDetailComponent,
-        ManageLeagueComponent,
-        TicketCountComponent,
-        ResourceHeaderPipe,
         ExternalHeaderPipe,
-        ResourceNameByIdPipe,
-        IntervalBackgroundPipe,
       ],
       providers: [
         AioService,
@@ -44,6 +37,12 @@ describe('Tennis - Calculation Match Detail Component', () => {
         { provide: MessageBoxService, useClass: MessageBoxService },
       ],
       imports: [
+        CalculateMatchDetailComponent,
+        ManageLeagueComponent,
+        TicketCountComponent,
+        ResourceHeaderPipe,
+        ResourceNameByIdPipe,
+        IntervalBackgroundPipe,
         FormsModule,
         HttpClientModule,
         MaterialModule
@@ -55,7 +54,6 @@ describe('Tennis - Calculation Match Detail Component', () => {
         component = fixture.componentInstance;
         aioService = fixture.debugElement.injector.get(AioService);
         dialog = fixture.debugElement.injector.get(MatDialog);
-
       });
   }));
 
@@ -73,13 +71,13 @@ describe('Tennis - Calculation Match Detail Component', () => {
   it("manageOutSideSourcePopup - should call getLeagueSources from aioService.", () => {
     matchDetail.leagueId = 123;
     component.matchDetail = matchDetail;
-    spyOn(aioService, "getLeagueSources").and.returnValue(of(source));
-    spyOn(dialog, "open");
+
+    aioService.getLeagueSources = jest.fn().mockReturnValue(of(source));
+    dialog.open = jest.fn();
 
     component.manageOutSideSourcePopup();
 
     expect(aioService.getLeagueSources).toHaveBeenCalled();
     expect(dialog.open).toHaveBeenCalled();
   });
-
 });

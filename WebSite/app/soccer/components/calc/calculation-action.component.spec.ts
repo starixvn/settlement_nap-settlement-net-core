@@ -100,7 +100,7 @@ describe('CalculationActionComponent', () => {
 
       component.selectResult();
 
-      expect(component.enableAction).toBe(true);
+      expect(component.state.enableAction).toBe(true);
     });
 
     it('should set enableAction to false when both halfTimeResult and fullTimeResult are unchecked', () => {
@@ -109,7 +109,7 @@ describe('CalculationActionComponent', () => {
 
       component.selectResult();
 
-      expect(component.enableAction).toBe(false);
+      expect(component.state.enableAction).toBe(false);
     });
   });
 

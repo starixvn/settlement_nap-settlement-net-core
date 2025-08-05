@@ -152,8 +152,10 @@ public class MultipleServerAioServiceTests
             ErrorCode = 1,
             ErrorMessage = "Message"
         };
+
+        var criteria = new SettleCriteria { Action = "CAL" };
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(resultMessage);
-        createQueryService.QuerySettle(Arg.Any<SettleRequest>()).Returns(new SettleCriteria { Action = "CAL" });
+        createQueryService.QuerySettle(Arg.Any<SettleRequest>()).Returns(criteria);
 
         var actual = await service.Settle(new SettleRequest());
 

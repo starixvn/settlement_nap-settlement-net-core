@@ -17,6 +17,7 @@ import { Language } from '../../shared/language.native';
 import { TicketCountComponent } from '../../shared/components/ticket-count/ticket-count.component';
 import { ResettleCheckerComponent } from '../../shared/components/resettle-checker/resettle-checker.component';
 import { ModalContentDialogComponent } from '../../shared/components/modal-dialog/modal-content-dialog.component';
+import { VerificationFantasyMatchService } from '../services/verification-fantasy-match.service';
 
 describe('Basketball - Calculation Actions Component', () => {
     let component: CalculationActionsComponent;
@@ -28,6 +29,7 @@ describe('Basketball - Calculation Actions Component', () => {
     let betStatusService: BetStatusService;
     let toastrService: ToastrService;
     let cashOutService: CashOutService;
+    let verificationFantasyMatchService: VerificationFantasyMatchService;
     const resultDetail = new ResultDetail();
     resultDetail.resourceId = ResourcesIds.quarter1;
     resultDetail.ticketStatus = null;
@@ -46,6 +48,7 @@ describe('Basketball - Calculation Actions Component', () => {
 
     const matchDetail = new MatchDetail();
     matchDetail.matchId = 1;
+    matchDetail.isFantasy = false;
     const match = new Match(matchDetail);
     match.permission = new Permission();
     match.originalResultDetail = [originalResultDetail];
@@ -80,10 +83,6 @@ describe('Basketball - Calculation Actions Component', () => {
 
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
-            declarations: [
-                ModalDialogComponent,
-                ModalContentDialogComponent,
-            ],
             imports: [
                 HttpClientModule,
                 ToastNoAnimationModule.forRoot(),
@@ -92,7 +91,9 @@ describe('Basketball - Calculation Actions Component', () => {
                 ExternalSourceNamePipe,
                 TicketCountComponent,
                 ResettleCheckerComponent,
-                CalculationActionsComponent
+                CalculationActionsComponent,
+                ModalDialogComponent,
+                ModalContentDialogComponent,
             ]
         }) .compileComponents()
             .then(() => {
@@ -105,7 +106,15 @@ describe('Basketball - Calculation Actions Component', () => {
                 betStatusService = fixture.debugElement.injector.get(BetStatusService);
                 toastrService = fixture.debugElement.injector.get(ToastrService);
                 cashOutService = fixture.debugElement.injector.get(CashOutService);
+                verificationFantasyMatchService = fixture.debugElement.injector.get(VerificationFantasyMatchService);
                 component.initService();
+                component.match = match;
+                component.matchDetail = matchDetail;
+                component.match.fantasyMatch = { 
+                    fantasyMatchDetail: { fantasyHomeTeam: '', fantasyAwayTeam: '' },
+                    relatedMatches: [] 
+                };
+                component.fantasyMatch =component.match.fantasyMatch;
             });
     }));
 
@@ -500,281 +509,6 @@ describe('Basketball - Calculation Actions Component', () => {
         expect(component.getTextBoxMaxLength(ResourcesIds.quarter1)).toEqual(2);
     });
 
-    describe("calculate", () => {
-        beforeEach(() => {
-            messageBoxService.closePopup = jest.fn();
-            toastrService.error = jest.fn();
-        })
-        it('should alert when fail to verify selected maps and score', fakeAsync(() => {
-            component.match = match;
-            component.resultDetails = [];
-            aioService.verifyNoRunningOdds = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
-
-            component.calculate();
-            tick();
-
-            expect(toastrService.error).toHaveBeenCalled();
-        }));
-
-        it('should push twice and save score when all verifications passed', fakeAsync(() => {
-            component.match = match;
-            component.matchDetail = matchDetail;
-            resultDetail.checked = true;
-            resultDetail.homeValue = '1';
-            resultDetail.awayValue = '1';
-            component.resultDetails = [resultDetail];
-            component.match.hedgeMatchDetail = new HedgeMatchDetail();
-            component.match.hedgeMatchDetail.matchId = 12345;
-            component.isLeader = true;
-            component.applyHedgeMatch = true;
-            aioService.verifyNoRunningOdds = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
-            verificationService.isInputScoreInvalid = jest.fn().mockReturnValue(false);
-            verificationService.verifyIntervalsCalculated = jest.fn().mockReturnValue(false);
-            verificationService.isFtScoreLowerThanHtScore = jest.fn().mockReturnValue(false);
-            verificationService.allMapHaveScoreSources = jest.fn().mockReturnValue(true);
-            verificationService.isExistMismatchScore = jest.fn().mockReturnValue(false);
-            betStatusService.getBetStatus = jest.fn().mockReturnValue("");
-            verificationService.getOutsideScores = jest.fn().mockReturnValue([]);
-            verificationService.getChangedScores = jest.fn().mockReturnValue([]);
-            cashOutService.getTicketInfo = jest.fn().mockReturnValue(Promise.resolve([]));
-            aioService.saveScore = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
-            aioService.verifyChangedSettledTickets = jest.fn().mockReturnValue(Promise.resolve(false));
-            aioService.push = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
-
-            component.calculate();
-            tick();
-            let buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-            buttonYes.click();
-            tick();
-
-            expect(aioService.push).toHaveBeenCalledTimes(2);
-            expect(aioService.saveScore).toHaveBeenCalled();
-        }));
-
-        it('should generate determine type when setting SDT On', fakeAsync(() => {
-            component.match = match;
-            matchDetail.autoSetting = 2;
-            component.matchDetail = matchDetail;
-            component.isLeader = true;
-            component.applyHedgeMatch = false;
-            component.isReSettledTickets = true;
-            component.resultDetails = [resultDetail];
-            aioService.verifyNoRunningOdds = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
-            verificationService.isInputScoreInvalid = jest.fn().mockReturnValue(false);
-            verificationService.verifyIntervalsCalculated = jest.fn().mockReturnValue(false);
-            verificationService.isFtScoreLowerThanHtScore = jest.fn().mockReturnValue(false);
-            verificationService.allMapHaveScoreSources = jest.fn().mockReturnValue(true);
-            verificationService.isExistMismatchScore = jest.fn().mockReturnValue(false);
-            betStatusService.getBetStatus = jest.fn().mockReturnValue("");
-            aioService.push = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
-            
-            verificationService.getOutsideScores = jest.fn().mockReturnValue([]);
-            verificationService.getChangedScores = jest.fn().mockReturnValue([]);
-            cashOutService.getTicketInfo = jest.fn().mockReturnValue(Promise.resolve([]));
-            aioService.saveScore = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
-            aioService.generateDeterminedType = jest.fn();
-
-            component.calculate();
-            tick();
-            const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-            buttonYes.click();
-            tick();
-
-            expect(aioService.generateDeterminedType).toHaveBeenCalled();
-        }));
-
-        it('should not push hedge match when not apply for hedge match', fakeAsync(() => {
-            component.match = match;
-            component.matchDetail = matchDetail;
-            component.match.resultDetails = [new ResultDetail()];
-            component.isLeader = true;
-            component.applyHedgeMatch = false;
-            component.resultDetails = [resultDetail];
-            aioService.verifyNoRunningOdds = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
-            verificationService.isInputScoreInvalid = jest.fn().mockReturnValue(false);
-            verificationService.verifyIntervalsCalculated = jest.fn().mockReturnValue(false);
-            verificationService.isFtScoreLowerThanHtScore = jest.fn().mockReturnValue(false);
-            verificationService.allMapHaveScoreSources = jest.fn().mockReturnValue(true);
-            verificationService.isExistMismatchScore = jest.fn().mockReturnValue(false);
-            betStatusService.getBetStatus = jest.fn().mockReturnValue("");
-            aioService.push = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
-            verificationService.getOutsideScores = jest.fn().mockReturnValue([]);
-            verificationService.getChangedScores = jest.fn().mockReturnValue([]);
-            cashOutService.getTicketInfo = jest.fn().mockReturnValue(Promise.resolve([]));
-            aioService.saveScore = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
-            aioService.verifyChangedSettledTickets = jest.fn().mockReturnValue(Promise.resolve(false));
-
-            component.calculate();
-            tick();
-            const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-            buttonYes.click();
-            tick();
-
-            expect(aioService.push).toHaveBeenCalledTimes(1);
-        }));
-
-        it('should set error message when calculate unsuccessfully', fakeAsync(() => {
-            component.match = match;
-            component.matchDetail = matchDetail;
-            component.isLeader = true;
-            component.applyHedgeMatch = false;
-            component.isReSettledTickets = true;
-            component.resultDetails = [resultDetail];
-            aioService.verifyNoRunningOdds = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
-            verificationService.isInputScoreInvalid = jest.fn().mockReturnValue(false);
-            verificationService.verifyIntervalsCalculated = jest.fn().mockReturnValue(false);
-            verificationService.isFtScoreLowerThanHtScore = jest.fn().mockReturnValue(false);
-            verificationService.allMapHaveScoreSources = jest.fn().mockReturnValue(true);
-            verificationService.isExistMismatchScore = jest.fn().mockReturnValue(false);
-            betStatusService.getBetStatus = jest.fn().mockReturnValue("");
-            aioService.push = jest.fn().mockReturnValue(Promise.resolve(unSuccessfulResult));
-            verificationService.getOutsideScores = jest.fn().mockReturnValue([]);
-            verificationService.getChangedScores = jest.fn().mockReturnValue([]);
-            cashOutService.getTicketInfo = jest.fn().mockReturnValue(Promise.resolve([]));
-            aioService.saveScore = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
-
-            component.calculate();
-            tick();
-            const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-            buttonYes.click();
-            tick();
-
-            expect(toastrService.error).toHaveBeenCalledWith(unSuccessfulResult.errMsg);
-        }));
-
-        it('should call void bet  when calculate successfully and match exist ticket need to void', fakeAsync(() => {
-            component.match = match;
-            component.matchDetail = matchDetail;
-            component.isLeader = true;
-            component.applyHedgeMatch = false;
-            component.isReSettledTickets = true;
-            component.resultDetails = [resultDetail];
-            const voidBetInfo: VoidBetInfo = {
-                transId: '123',
-                custId: '123'
-            };
-            aioService.verifyNoRunningOdds = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
-            verificationService.isInputScoreInvalid = jest.fn().mockReturnValue(false);
-            verificationService.verifyIntervalsCalculated = jest.fn().mockReturnValue(false);
-            verificationService.isFtScoreLowerThanHtScore = jest.fn().mockReturnValue(false);
-            verificationService.allMapHaveScoreSources = jest.fn().mockReturnValue(true);
-            verificationService.isExistMismatchScore = jest.fn().mockReturnValue(false);
-            betStatusService.getBetStatus = jest.fn().mockReturnValue("");
-            aioService.push = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
-            verificationService.getOutsideScores = jest.fn().mockReturnValue([]);
-            verificationService.getChangedScores = jest.fn().mockReturnValue([]);
-            cashOutService.getTicketInfo = jest.fn().mockReturnValue(Promise.resolve([voidBetInfo]));
-            cashOutService.voidBet = jest.fn().mockReturnValue(Promise.resolve(""));
-            aioService.saveScore = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
-
-            component.calculate();
-            tick();
-            const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-            buttonYes.click();
-            tick();
-
-            expect(cashOutService.voidBet).toHaveBeenCalled();
-        }));
-
-        it('should set error message when save score unsuccessfully', fakeAsync(() => {
-            component.match = match;
-            component.matchDetail = matchDetail;
-            component.isLeader = true;
-            component.applyHedgeMatch = false;
-            component.isReSettledTickets = true;
-            component.resultDetails = [resultDetail];
-            aioService.verifyNoRunningOdds = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
-            verificationService.isInputScoreInvalid = jest.fn().mockReturnValue(false);
-            verificationService.verifyIntervalsCalculated = jest.fn().mockReturnValue(false);
-            verificationService.isFtScoreLowerThanHtScore = jest.fn().mockReturnValue(false);
-            verificationService.allMapHaveScoreSources = jest.fn().mockReturnValue(true);
-            verificationService.isExistMismatchScore = jest.fn().mockReturnValue(false);
-            betStatusService.getBetStatus = jest.fn().mockReturnValue("");
-            aioService.push = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
-            verificationService.getOutsideScores = jest.fn().mockReturnValue([]);
-            verificationService.getChangedScores = jest.fn().mockReturnValue([]);
-            aioService.saveScore = jest.fn().mockReturnValue(Promise.resolve(unSuccessfulResult));
-
-            component.calculate();
-            tick();
-            const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-            buttonYes.click();
-            tick();
-
-            expect(toastrService.error).toHaveBeenCalledWith(unSuccessfulResult.errMsg);
-        }));
-
-        it('should alert when missing score source for maps and user is not leader', fakeAsync(() => {
-            component.match = match;
-            component.matchDetail = matchDetail;
-            component.match.resultDetails = [new ResultDetail()];
-            component.isLeader = false;
-            component.isReSettledTickets = true;
-            component.resultDetails = [resultDetail];
-            aioService.verifyNoRunningOdds = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
-            verificationService.isInputScoreInvalid = jest.fn().mockReturnValue(false);
-            verificationService.verifyIntervalsCalculated = jest.fn().mockReturnValue(false);
-            verificationService.isFtScoreLowerThanHtScore = jest.fn().mockReturnValue(false);
-            verificationService.allMapHaveScoreSources = jest.fn().mockReturnValue(false);
-
-            component.calculate();
-            tick();
-
-            expect(toastrService.error).toHaveBeenCalledWith(Language.eSports.nonLeader.insufficientSources);
-        }));
-
-        it('should alert when score is mismatch and user is not leader', fakeAsync(() => {
-            component.match = match;
-            component.matchDetail = matchDetail;
-            component.match.resultDetails = [new ResultDetail()];
-            component.isLeader = false;
-            component.isReSettledTickets = true;
-            component.resultDetails = [resultDetail];
-            aioService.verifyNoRunningOdds = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
-            verificationService.isInputScoreInvalid = jest.fn().mockReturnValue(false);
-            verificationService.verifyIntervalsCalculated = jest.fn().mockReturnValue(false);
-            verificationService.isFtScoreLowerThanHtScore = jest.fn().mockReturnValue(false);
-            verificationService.allMapHaveScoreSources = jest.fn().mockReturnValue(true);
-            verificationService.isExistMismatchScore = jest.fn().mockReturnValue(true);
-
-            component.calculate();
-            tick();
-
-            expect(toastrService.error).toHaveBeenCalledWith(Language.eSports.nonLeader.mismatchedScore);
-        }));
-
-        it('should alert when pass validation and exist running odds', fakeAsync(() => {
-            component.match = match;
-            component.matchDetail = matchDetail;
-            component.match.resultDetails = [new ResultDetail()];
-            component.isLeader = false;
-            component.resultDetails = [resultDetail];
-            aioService.verifyNoRunningOdds = jest.fn().mockReturnValue(Promise.resolve(unSuccessfulResult));
-            verificationService.isInputScoreInvalid = jest.fn().mockReturnValue(false);
-            verificationService.verifyIntervalsCalculated = jest.fn().mockReturnValue(false);
-            verificationService.isFtScoreLowerThanHtScore = jest.fn().mockReturnValue(false);
-
-            component.calculate();
-            tick();
-
-            expect(toastrService.error).toHaveBeenCalledWith(errorMessage);
-        }));
-
-        it('should alert when exist result confirmed', fakeAsync(() => {
-            const result = new ResultDetail();
-            result.resultSettingData = new ResultSettingModel();
-            result.resultSettingData.isConfirmedRefund = true;
-            result.checked = true;
-            component.match = match;
-            component.match.resultDetails = [result];
-            component.resultDetails = [result];
-
-            component.calculate();
-
-            expect(toastrService.error).toHaveBeenCalledWith(Language.confirmRefund.calculateResultNotConfirmed);
-        }));
-    });
-
     describe("uncalculate", () => {
         it("Pass all validation and uncalculation is successful." +
             "Should error message is empty and  close popup.",
@@ -851,5 +585,349 @@ describe('Basketball - Calculation Actions Component', () => {
                 expect(toastrService.error).toHaveBeenCalledWith(errorMessage);
 
             }));
+    });
+
+    describe('calculate function', () => {
+        beforeEach(() => {
+            messageBoxService.closePopup = jest.fn();
+            toastrService.error = jest.fn();
+            toastrService.clear = jest.fn();
+        });
+
+        it('should show error when no resources are selected', fakeAsync(() => {
+            component.match = match;
+            component.resultDetails = [];
+
+            component.calculate();
+            tick();
+
+            expect(toastrService.error).toHaveBeenCalledWith(Language.NotSelectCalculationTypeMessage);
+        }));
+
+        it('should show error when there are confirmed results', fakeAsync(() => {
+            component.match = match;
+            component.resultDetails = [resultDetail];
+            resultDetail.checked = true;
+            resultDetail.resultSettingData = new ResultSettingModel();
+            resultDetail.resultSettingData.isConfirmedRefund = true;
+
+            component.calculate();
+            tick();
+
+            expect(toastrService.error).toHaveBeenCalledWith(Language.confirmRefund.calculateResultNotConfirmed);
+        }));
+
+        it('should show error when input scores are invalid for leader', fakeAsync(() => {
+            component.match = match;
+            component.match.isScoreDirect = true;
+            component.isLeader = true;
+            component.resultDetails = [resultDetail];
+            resultDetail.checked = true;
+            resultDetail.resultSettingData = new ResultSettingModel();
+            resultDetail.resultSettingData.isConfirmedRefund = false;
+            verificationService.isInputScoreInvalid = jest.fn().mockReturnValue(true);
+
+            component.calculate();
+            tick();
+
+            expect(toastrService.error).toHaveBeenCalledWith(Language.sop.leader.blankScore);
+        }));
+
+        it('should show error when input scores are invalid for non-leader', fakeAsync(() => {
+            component.match = match;
+            component.match.isScoreDirect = true;
+            component.isLeader = false;
+            component.resultDetails = [resultDetail];
+            resultDetail.checked = true;
+            resultDetail.resultSettingData = new ResultSettingModel();
+            resultDetail.resultSettingData.isConfirmedRefund = false;
+            verificationService.isInputScoreInvalid = jest.fn().mockReturnValue(true);
+
+            component.calculate();
+            tick();
+
+            expect(toastrService.error).toHaveBeenCalledWith(Language.sop.nonLeader.blankScore);
+        }));
+
+        it('should show error when full-time score is lower than half-time score', fakeAsync(() => {
+            component.match = match;
+            component.resultDetails = [resultDetail, halfTime, fullTime];
+            component.resultDetails.forEach(result => {
+                result.checked = true;
+                result.resultSettingData = new ResultSettingModel();
+                result.resultSettingData.isConfirmedRefund = false;
+            });
+            verificationService.isInputScoreInvalid = jest.fn().mockReturnValue(false);
+            verificationService.isFtScoreLowerThanHtScore = jest.fn().mockReturnValue(true);
+
+            component.calculate();
+            tick();
+
+            expect(toastrService.error).toHaveBeenCalledWith(Language.inconsistentValues);
+        }));
+
+        it('should show error when intervals are not calculated for half-time', fakeAsync(() => {
+            component.match = match;
+            component.resultDetails = [resultDetail, halfTime, fullTime];
+            component.resultDetails.forEach(result => {
+                result.checked = true;
+                result.resultSettingData = new ResultSettingModel();
+                result.resultSettingData.isConfirmedRefund = false;
+            });
+            verificationService.isInputScoreInvalid = jest.fn().mockReturnValue(false);
+            verificationService.isFtScoreLowerThanHtScore = jest.fn().mockReturnValue(false);
+            verificationService.verifyIntervalsCalculated = jest.fn().mockReturnValue(true);
+
+            component.calculate();
+            tick();
+
+            expect(toastrService.error).toHaveBeenCalledWith(Language.IntervalWarning);
+        }));
+
+        it('should show error when intervals are not calculated for full-time', fakeAsync(() => {
+            component.match = match;
+            component.resultDetails = [resultDetail, halfTime, fullTime];
+            component.resultDetails.forEach(result => {
+                result.checked = true;
+                result.resultSettingData = new ResultSettingModel();
+                result.resultSettingData.isConfirmedRefund = false;
+            });
+            verificationService.isInputScoreInvalid = jest.fn().mockReturnValue(false);
+            verificationService.isFtScoreLowerThanHtScore = jest.fn().mockReturnValue(false);
+            verificationService.verifyIntervalsCalculated = jest.fn()
+                .mockReturnValueOnce(false)
+                .mockReturnValueOnce(true);
+
+            component.calculate();
+            tick();
+
+            expect(toastrService.error).toHaveBeenCalledWith(Language.IntervalWarning);
+        }));
+
+        it('should show error when fantasy match related matches are not calculated', fakeAsync(() => {
+            component.matchDetail.isFantasy = true;
+            component.resultDetails = [resultDetail];
+            resultDetail.checked = true;
+            resultDetail.resultSettingData = new ResultSettingModel();
+            resultDetail.resultSettingData.isConfirmedRefund = false;
+            verificationService.isInputScoreInvalid = jest.fn().mockReturnValue(false);
+            verificationService.isFtScoreLowerThanHtScore = jest.fn().mockReturnValue(false);
+            verificationService.verifyIntervalsCalculated = jest.fn().mockReturnValue(false);
+            verificationFantasyMatchService.isResultRelatedMatchesNotCalc = jest.fn().mockReturnValue(true);
+
+            component.calculate();
+            tick();
+
+            expect(toastrService.error).toHaveBeenCalledWith(Language.fantasyMatch.relatedMatchesNotCalc);
+        }));
+
+        it('should show error when running odds verification fails', fakeAsync(() => {
+            component.match = match;
+            component.matchDetail = matchDetail;
+            component.resultDetails = [resultDetail];
+            resultDetail.checked = true;
+            resultDetail.resultSettingData = new ResultSettingModel();
+            resultDetail.resultSettingData.isConfirmedRefund = false;
+            verificationService.isInputScoreInvalid = jest.fn().mockReturnValue(false);
+            verificationService.isFtScoreLowerThanHtScore = jest.fn().mockReturnValue(false);
+            verificationService.verifyIntervalsCalculated = jest.fn().mockReturnValue(false);
+            verificationFantasyMatchService.isResultRelatedMatchesNotCalc = jest.fn().mockReturnValue(false);
+            aioService.checkingNoRunningOdds = jest.fn().mockReturnValue(Promise.resolve("Running odds error"));
+
+            component.calculate();
+            tick();
+
+            expect(toastrService.error).toHaveBeenCalledWith("Running odds error");
+        }));
+
+        it('should show error when screenshot source validation fails', fakeAsync(() => {
+            component.match = match;
+            component.matchDetail = matchDetail;
+            component.resultDetails = [resultDetail];
+            resultDetail.checked = true;
+            resultDetail.resultSettingData = new ResultSettingModel();
+            resultDetail.resultSettingData.isConfirmedRefund = false;
+            verificationService.isInputScoreInvalid = jest.fn().mockReturnValue(false);
+            verificationService.isFtScoreLowerThanHtScore = jest.fn().mockReturnValue(false);
+            verificationService.verifyIntervalsCalculated = jest.fn().mockReturnValue(false);
+            verificationFantasyMatchService.isResultRelatedMatchesNotCalc = jest.fn().mockReturnValue(false);
+            aioService.checkingNoRunningOdds = jest.fn().mockReturnValue(Promise.resolve(null));
+            verificationService.allMapHaveScreenshotSource = jest.fn().mockReturnValue(false);
+
+            component.calculate();
+            tick();
+
+            expect(toastrService.error).toHaveBeenCalledWith(Language.sop.notScreenshot);
+        }));
+
+        it('should show error when mismatched screenshot validation fails', fakeAsync(() => {
+            component.match = match;
+            component.matchDetail = matchDetail;
+            component.resultDetails = [resultDetail];
+            resultDetail.checked = true;
+            resultDetail.resultSettingData = new ResultSettingModel();
+            resultDetail.resultSettingData.isConfirmedRefund = false;
+            verificationService.isInputScoreInvalid = jest.fn().mockReturnValue(false);
+            verificationService.isFtScoreLowerThanHtScore = jest.fn().mockReturnValue(false);
+            verificationService.verifyIntervalsCalculated = jest.fn().mockReturnValue(false);
+            verificationFantasyMatchService.isResultRelatedMatchesNotCalc = jest.fn().mockReturnValue(false);
+            aioService.checkingNoRunningOdds = jest.fn().mockReturnValue(Promise.resolve(null));
+            verificationService.allMapHaveScreenshotSource = jest.fn().mockReturnValue(true);
+            verificationService.isExistMismatchedScoreScreenshot = jest.fn().mockReturnValue(true);
+
+            component.calculate();
+            tick();
+
+            expect(toastrService.error).toHaveBeenCalledWith(Language.sop.mismatchedScreenshot);
+        }));
+
+        it('should show error when score sources are insufficient for non-leader', fakeAsync(() => {
+            component.match = match;
+            component.matchDetail = matchDetail;
+            component.isLeader = false;
+            component.resultDetails = [resultDetail];
+            resultDetail.checked = true;
+            resultDetail.resultSettingData = new ResultSettingModel();
+            resultDetail.resultSettingData.isConfirmedRefund = false;
+            verificationService.isInputScoreInvalid = jest.fn().mockReturnValue(false);
+            verificationService.isFtScoreLowerThanHtScore = jest.fn().mockReturnValue(false);
+            verificationService.verifyIntervalsCalculated = jest.fn().mockReturnValue(false);
+            verificationFantasyMatchService.isResultRelatedMatchesNotCalc = jest.fn().mockReturnValue(false);
+            aioService.checkingNoRunningOdds = jest.fn().mockReturnValue(Promise.resolve(null));
+            verificationService.allMapHaveScreenshotSource = jest.fn().mockReturnValue(true);
+            verificationService.isExistMismatchedScoreScreenshot = jest.fn().mockReturnValue(false);
+            verificationService.allMapHaveScoreSources = jest.fn().mockReturnValue(false);
+
+            component.calculate();
+            tick();
+
+            expect(toastrService.error).toHaveBeenCalledWith(Language.eSports.nonLeader.insufficientSources);
+        }));
+
+        it('should show confirmation dialog when score sources are insufficient for leader', fakeAsync(() => {
+            component.match = match;
+            component.matchDetail = matchDetail;
+            component.isLeader = true;
+            component.resultDetails = [resultDetail];
+            resultDetail.checked = true;
+            resultDetail.resultSettingData = new ResultSettingModel();
+            resultDetail.resultSettingData.isConfirmedRefund = false;
+            verificationService.isInputScoreInvalid = jest.fn().mockReturnValue(false);
+            verificationService.isFtScoreLowerThanHtScore = jest.fn().mockReturnValue(false);
+            verificationService.verifyIntervalsCalculated = jest.fn().mockReturnValue(false);
+            verificationFantasyMatchService.isResultRelatedMatchesNotCalc = jest.fn().mockReturnValue(false);
+            aioService.checkingNoRunningOdds = jest.fn().mockReturnValue(Promise.resolve(null));
+            verificationService.allMapHaveScreenshotSource = jest.fn().mockReturnValue(true);
+            verificationService.isExistMismatchedScoreScreenshot = jest.fn().mockReturnValue(false);
+            verificationService.allMapHaveScoreSources = jest.fn().mockReturnValue(false);
+            messageBoxService.confirm = jest.fn();
+
+            component.calculate();
+            tick();
+
+            expect(messageBoxService.confirm).toHaveBeenCalled();
+        }));
+
+        it('should show error when mismatch scores exist for non-leader', fakeAsync(() => {
+            component.match = match;
+            component.matchDetail = matchDetail;
+            component.isLeader = false;
+            component.resultDetails = [resultDetail];
+            resultDetail.checked = true;
+            resultDetail.resultSettingData = new ResultSettingModel();
+            resultDetail.resultSettingData.isConfirmedRefund = false;
+            verificationService.isInputScoreInvalid = jest.fn().mockReturnValue(false);
+            verificationService.isFtScoreLowerThanHtScore = jest.fn().mockReturnValue(false);
+            verificationService.verifyIntervalsCalculated = jest.fn().mockReturnValue(false);
+            verificationFantasyMatchService.isResultRelatedMatchesNotCalc = jest.fn().mockReturnValue(false);
+            aioService.checkingNoRunningOdds = jest.fn().mockReturnValue(Promise.resolve(null));
+            verificationService.allMapHaveScreenshotSource = jest.fn().mockReturnValue(true);
+            verificationService.isExistMismatchedScoreScreenshot = jest.fn().mockReturnValue(false);
+            verificationService.allMapHaveScoreSources = jest.fn().mockReturnValue(true);
+            verificationService.isExistMismatchScore = jest.fn().mockReturnValue(true);
+
+            component.calculate();
+            tick();
+
+            expect(toastrService.error).toHaveBeenCalledWith(Language.eSports.nonLeader.mismatchedScore);
+        }));
+
+        it('should show confirmation dialog when mismatch scores exist for leader', fakeAsync(() => {
+            component.match = match;
+            component.matchDetail = matchDetail;
+            component.isLeader = true;
+            component.resultDetails = [resultDetail];
+            resultDetail.checked = true;
+            resultDetail.resultSettingData = new ResultSettingModel();
+            resultDetail.resultSettingData.isConfirmedRefund = false;
+            verificationService.isInputScoreInvalid = jest.fn().mockReturnValue(false);
+            verificationService.isFtScoreLowerThanHtScore = jest.fn().mockReturnValue(false);
+            verificationService.verifyIntervalsCalculated = jest.fn().mockReturnValue(false);
+            verificationFantasyMatchService.isResultRelatedMatchesNotCalc = jest.fn().mockReturnValue(false);
+            aioService.checkingNoRunningOdds = jest.fn().mockReturnValue(Promise.resolve(null));
+            verificationService.allMapHaveScreenshotSource = jest.fn().mockReturnValue(true);
+            verificationService.isExistMismatchedScoreScreenshot = jest.fn().mockReturnValue(false);
+            verificationService.allMapHaveScoreSources = jest.fn().mockReturnValue(true);
+            verificationService.isExistMismatchScore = jest.fn().mockReturnValue(true);
+            messageBoxService.confirm = jest.fn();
+
+            component.calculate();
+            tick();
+
+            expect(messageBoxService.confirm).toHaveBeenCalled();
+        }));
+
+        it('should show error when changed settled tickets verification fails', fakeAsync(() => {
+            component.match = match;
+            component.matchDetail = matchDetail;
+            component.isLeader = true;
+            component.resultDetails = [resultDetail];
+            resultDetail.checked = true;
+            resultDetail.resultSettingData = new ResultSettingModel();
+            resultDetail.resultSettingData.isConfirmedRefund = false;
+            verificationService.isInputScoreInvalid = jest.fn().mockReturnValue(false);
+            verificationService.isFtScoreLowerThanHtScore = jest.fn().mockReturnValue(false);
+            verificationService.verifyIntervalsCalculated = jest.fn().mockReturnValue(false);
+            verificationFantasyMatchService.isResultRelatedMatchesNotCalc = jest.fn().mockReturnValue(false);
+            aioService.checkingNoRunningOdds = jest.fn().mockReturnValue(Promise.resolve(null));
+            verificationService.allMapHaveScreenshotSource = jest.fn().mockReturnValue(true);
+            verificationService.isExistMismatchedScoreScreenshot = jest.fn().mockReturnValue(false);
+            verificationService.allMapHaveScoreSources = jest.fn().mockReturnValue(true);
+            verificationService.isExistMismatchScore = jest.fn().mockReturnValue(false);
+            aioService.verifyChangedSettledTickets = jest.fn().mockReturnValue(Promise.resolve(true));
+            verificationService.verifyRelatedResults = jest.fn().mockReturnValue([false, "Related results error"]);
+
+            component.calculate();
+            tick();
+
+            expect(toastrService.error).toHaveBeenCalledWith("Related results error");
+        }));
+
+        it('should show confirmation dialog when calculation is successful', fakeAsync(() => {
+            component.match = match;
+            component.matchDetail = matchDetail;
+            component.isLeader = true;
+            component.resultDetails = [resultDetail];
+            resultDetail.checked = true;
+            resultDetail.resultSettingData = new ResultSettingModel();
+            resultDetail.resultSettingData.isConfirmedRefund = false;
+            verificationService.isInputScoreInvalid = jest.fn().mockReturnValue(false);
+            verificationService.isFtScoreLowerThanHtScore = jest.fn().mockReturnValue(false);
+            verificationService.verifyIntervalsCalculated = jest.fn().mockReturnValue(false);
+            verificationFantasyMatchService.isResultRelatedMatchesNotCalc = jest.fn().mockReturnValue(false);
+            aioService.checkingNoRunningOdds = jest.fn().mockReturnValue(Promise.resolve(null));
+            verificationService.allMapHaveScreenshotSource = jest.fn().mockReturnValue(true);
+            verificationService.isExistMismatchedScoreScreenshot = jest.fn().mockReturnValue(false);
+            verificationService.allMapHaveScoreSources = jest.fn().mockReturnValue(true);
+            verificationService.isExistMismatchScore = jest.fn().mockReturnValue(false);
+            aioService.verifyChangedSettledTickets = jest.fn().mockReturnValue(Promise.resolve(false));
+            basketballService.confirmationMessage = jest.fn().mockReturnValue("Confirmation message");
+            messageBoxService.confirm = jest.fn();
+
+            component.calculate();
+            tick();
+
+            expect(messageBoxService.confirm).toHaveBeenCalled();
+        }));
     });
 });

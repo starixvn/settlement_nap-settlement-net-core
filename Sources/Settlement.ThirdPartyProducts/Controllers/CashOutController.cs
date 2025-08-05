@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Settlement.Core.ActionFilters;
 using Settlement.ThirdPartyProducts.Requests;
 using Settlement.ThirdPartyProducts.Requests.CashOut;
+using VoidBetRequest = Settlement.ThirdPartyProducts.Requests.CashOut.VoidBetRequest;
 
 namespace Settlement.ThirdPartyProducts.Controllers;
 

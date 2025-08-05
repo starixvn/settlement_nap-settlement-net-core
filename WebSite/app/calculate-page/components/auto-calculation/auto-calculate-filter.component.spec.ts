@@ -1,11 +1,9 @@
-import { Match } from './../../../tennis/models/match.model';
-import { FilterAutoQuery } from './../../models/filter-auto-query.model';
 import { Statuses } from '../../constants/status.native';
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
-
 import { AutoCalculateFilterComponent } from './auto-calculate-filter.component';
 import { DatepickerComponent } from '../../../shared/components/date-picker/date-picker.component';
-import { ModalDialogComponent, NewMultipleSelectComponent } from "../../../shared/components";
+import { ModalDialogComponent } from "../../../shared/components/modal-dialog/modal-dialog.component";
+import { NewMultipleSelectComponent } from "../../../shared/components/multiple-select/multiple-select.component";
 import { NgbDateStruct, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
@@ -16,9 +14,7 @@ import { MaterialModule } from '../../../shared/material-module';
 import { AutoCalculateService } from './auto-calculate.service';
 import { DateFilter, ItemsSelect, League } from '../../../shared/models';
 import { of } from 'rxjs';
-import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { Calculation } from '../../models';
-import { EPERM } from 'constants';
 
 describe('AutoCalculateFilterComponent', () => {
   let component: AutoCalculateFilterComponent;
@@ -29,10 +25,6 @@ describe('AutoCalculateFilterComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [AutoCalculateFilterComponent,
-        DatepickerComponent,
-        ModalDialogComponent,
-        NewMultipleSelectComponent],
       providers: [
         MessageBoxService,
         VerifyDateService,
@@ -44,10 +36,14 @@ describe('AutoCalculateFilterComponent', () => {
         AutoCalculateService
       ],
       imports: [
+        AutoCalculateFilterComponent,
         FormsModule,
         HttpClientModule,
         NgbModule,
-        MaterialModule
+        MaterialModule,
+        ModalDialogComponent,
+        NewMultipleSelectComponent,
+        DatepickerComponent
       ],
     })
       .compileComponents();

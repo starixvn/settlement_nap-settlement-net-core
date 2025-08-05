@@ -1,6 +1,6 @@
-﻿using System.Net;
-using AutoMapper;
+﻿using AutoMapper;
 using Fanex.Data.Repository;
+using Fanex.Settlement.MessageBridge.JackTime;
 using Microsoft.Extensions.Options;
 using Moq;
 using Moq.Protected;
@@ -10,7 +10,8 @@ using Settlement.Setting.Models.Notification;
 using Settlement.Setting.Services;
 using Settlement.ThirdPartyProducts.Criteria;
 using Settlement.ThirdPartyProducts.Requests;
-using Settlement.ThirdPartyProducts.Requests.CashOut;
+using System.Net;
+using VoidBetRequest = Settlement.ThirdPartyProducts.Requests.CashOut.VoidBetRequest;
 
 namespace Settlement.ThirdPartyProducts.UnitTests.Services;
 
@@ -20,7 +21,7 @@ public class CashOutServiceTests
 
     private readonly SendMailService sendMailService;
 
-    private readonly IVoidBetApiService service;
+    private readonly VoidBetApiServiceImp service;
 
     private readonly IHttpClientFactory httpClientFactory;
 
@@ -108,14 +109,17 @@ public class CashOutServiceTests
             VoidBetInfos = [new VoidBetInfo { TransId = "1234", Action = "Void" }]
         };
         var mockHttpMessageHandler = new Mock<HttpMessageHandler>();
+
         mockHttpMessageHandler.Protected()
             .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())
             .ReturnsAsync(new HttpResponseMessage { StatusCode = HttpStatusCode.BadGateway });
         var httpClient = new HttpClient(mockHttpMessageHandler.Object);
+
         httpClientFactory.CreateClient().Returns(httpClient);
 
         await service.VoidBet(request);
-        httpClientFactory.Received(1).CreateClient();
-        sendMailService.Received(1).SendMail(Arg.Any<NotificationModel>());
+
+        httpClientFactory.Received().CreateClient();
+        sendMailService.Received().SendMail(Arg.Any<NotificationModel>());
     }
 }
