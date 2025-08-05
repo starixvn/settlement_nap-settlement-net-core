@@ -128,7 +128,7 @@ public class MultipleServerAioServiceTests
     [InlineData(false, 2)]
     public async Task CheckMarkedTickets_Always_ReturnCorrectResult(bool result, byte executeTime)
     {
-        await repository.ExecuteAsync(Arg.Do<CheckMarkedTicketsCriteria>(x =>
+        await repository.ExecuteAsync(Arg.Do<CheckingMarkedTicketsCriteria>(x =>
         {
             x.IsExistMarkedTicket = result;
         }));
@@ -141,7 +141,7 @@ public class MultipleServerAioServiceTests
         var actual = await service.CheckMarkedTickets(request);
 
         Assert.Equal(result, actual.IsExistMarkedTicket);
-        await repository.Received(executeTime).ExecuteAsync(Arg.Any<CheckMarkedTicketsCriteria>());
+        await repository.Received(executeTime).ExecuteAsync(Arg.Any<CheckingMarkedTicketsCriteria>());
     }
 
     [Fact]

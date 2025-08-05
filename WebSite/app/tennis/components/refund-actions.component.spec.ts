@@ -1,4 +1,5 @@
 import { TestBed, waitForAsync, ComponentFixture, fakeAsync, tick } from '@angular/core/testing';
+import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
@@ -11,7 +12,8 @@ import {
   BlockUIService,
   MessageBoxService,
   ClosePopupService,
-  AioService
+  AioService,
+  IntervalCalculationService
 } from '../../shared/services';
 import { Match } from '../models';
 import { TennisApiKeys, ResourcesIds } from '../constants';
@@ -19,7 +21,7 @@ import { of } from 'rxjs';
 import { Language } from '../../shared/language.native';
 import { CalculateAction } from '../../shared/constants';
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
-import { MatchDetail, SettleQuery } from '../../shared/models/sportsbook-sop';
+import { MatchDetail, Permission, SettleQuery } from '../../shared/models/sportsbook-sop';
 import { ResultDetail } from '../../shared/models/sportsbook-sop';
 import { ResultSettingModel } from '../../shared/models';
 import { VerificationService } from '../services';
@@ -35,10 +37,6 @@ describe('Tennis - Refund actions component', () => {
   let closePopupService: ClosePopupService;
   let messageBoxService: MessageBoxService;
   let toastrService: ToastrService;
-
-  beforeEach(() => {
-    jest.useFakeTimers();
-  });
   const buttonName = "btn-danger";
   const matchDetail = new MatchDetail();
   matchDetail.matchId = 1;

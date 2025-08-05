@@ -1,5 +1,4 @@
-﻿using Fanex.Caching;
-using Fanex.Settlement.MessageBridge.JackTime;
+﻿using Fanex.Settlement.MessageBridge.JackTime;
 using Fanex.Settlement.MessageBridge.RefundEvents;
 using MassTransit;
 using Settlement.Core.Constants;
@@ -34,7 +33,6 @@ public class RefundServiceImp(
     ScaleOutSettleService scaleOutSettleService,
     LogService logService,
     IPublishEndpoint publishEndpoint,
-    ICacheService cacheService,
     IMapper mapper)
     : IRefundService
 {

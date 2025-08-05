@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Fanex.Caching;
 using Fanex.Data.Repository;
 using Fanex.NAP.Client;
 using Fanex.Settlement.ScaleOut.Models;
@@ -41,7 +40,6 @@ public class CalculateServiceTests
         var publishEndpoint = Substitute.For<IPublishEndpoint>();
 
         logService = Substitute.For<LogService>();
-        var publishEndPoint = Substitute.For<IPublishEndpoint>();
         var matchService = Substitute.For<IMatchService>();
 
         var mapperConfig = new MapperConfigurationExpression();
@@ -49,7 +47,6 @@ public class CalculateServiceTests
         var config = new MapperConfiguration(mapperConfig);
         var mapper = new Mapper(config);
 
-        var cacheService = Substitute.For<ICacheService>();
         var appSettings = new AppSettingsKey { SiteDbServer = ["DB01", "DB02", "DB03"] };
         var appSettingsOptions = Options.Create(appSettings);
         var accessor = Substitute.For<IHttpContextAccessor>();
@@ -62,7 +59,8 @@ public class CalculateServiceTests
         };
         accessor.HttpContext = context;
         service = new CalculateServiceImp(
-            mapper, repository, appSettingsOptions, createCriteriaService, scaleOutSettleService, logService, matchService, publishEndpoint, currentSession, accessor, xmlConvertService, cacheService);
+            mapper, repository, appSettingsOptions, createCriteriaService, scaleOutSettleService,
+            logService, matchService, publishEndpoint, currentSession, accessor, xmlConvertService);
     }
 
     [Theory]

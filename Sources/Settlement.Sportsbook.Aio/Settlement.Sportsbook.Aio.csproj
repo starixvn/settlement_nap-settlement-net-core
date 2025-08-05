@@ -26,7 +26,7 @@
     <PackageReference Include="Fanex.Settlement.Converter" Version="1.0.0.1" />
 		<PackageReference Include="MassTransit.RabbitMQ" Version="8.5.1" />
     <PackageReference Include="MediatR" Version="13.0.0" />
-    <PackageReference Include="StackExchange.Redis" Version="2.8.41" />
+    <PackageReference Include="StackExchange.Redis" Version="2.8.58" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Fanex.Settlement.ScaleOut\Fanex.Settlement.ScaleOut.csproj" />

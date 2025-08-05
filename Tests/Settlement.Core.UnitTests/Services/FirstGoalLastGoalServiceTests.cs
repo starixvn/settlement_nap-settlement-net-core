@@ -1,6 +1,7 @@
 ﻿using NSubstitute;
 using Settlement.Core.Models;
-using Xunit.Sdk;
+using Settlement.Core.Services;
+using Xunit;
 
 namespace Settlement.Core.UnitTests.Services;
 

@@ -2,6 +2,7 @@
 using Fanex.NAP.Client;
 using Microsoft.AspNetCore.Http;
 using Settlement.Core.Constants;
+using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Sportsbook.OtherSports.Criteria;
 using Settlement.Sportsbook.OtherSports.Models;
