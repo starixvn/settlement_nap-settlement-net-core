@@ -1,11 +1,11 @@
 import { CalculateCommonModule } from './../../shared/modules/calculate-common.module';
 import { CalculateMatchDetailComponent } from './calculate-match-detail.component';
-import { Component, inject, Injector, Input, ViewChild } from '@angular/core';
+import { Component, inject, Input, ViewChild } from '@angular/core';
 import * as _ from 'lodash';
 import { MessageBoxService, AioService, IntervalCalculationService, BlockUIService } from '../../shared/services';
 import { ModalDialogMessage, Result } from '../../shared/models';
 import { Language } from '../../shared/language.native';
-import { SettlementStatusId, CalculateAction, SportType, ResultStatusId, ScoreSourceType, TicketStatusText, ResultStatus } from '../../shared/constants';
+import { SettlementStatusId, CalculateAction, SportType, ScoreSourceType, TicketStatusText, ResultStatus } from '../../shared/constants';
 import { KickOffTime, Resources, ResourcesIds, TennisApiKeys } from '../constants';
 import { Match, SettleQuery } from '../models';
 import { TennisService, VerificationService } from '../services';

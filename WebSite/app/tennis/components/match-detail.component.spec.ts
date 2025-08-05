@@ -1,4 +1,5 @@
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
+import { jest } from '@jest/globals';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
@@ -33,9 +34,7 @@ describe('MatchDetailComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [
-        MatchDetailComponent,
-        ResourceHeaderPipe,
-        ScoreBySettlementPipe],
+      ],
       providers: [
         TennisService,
         AioService,
@@ -48,6 +47,9 @@ describe('MatchDetailComponent', () => {
 
       ],
       imports: [
+        MatchDetailComponent,
+        ResourceHeaderPipe,
+        ScoreBySettlementPipe,
         FormsModule,
         HttpClientModule,
         NgbModule,
@@ -58,7 +60,7 @@ describe('MatchDetailComponent', () => {
         fixture = TestBed.createComponent(MatchDetailComponent);
         component = fixture.componentInstance;
         tennisService = fixture.debugElement.injector.get(TennisService);
-        spyOn(tennisService, 'getResultDetail').and.returnValue(resultDetails);
+        jest.spyOn(tennisService, 'getResultDetail').mockReturnValue(resultDetails);
       });
   }));
 

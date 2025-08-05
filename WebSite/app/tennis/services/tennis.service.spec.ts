@@ -1,7 +1,5 @@
-import { TestBed, inject, fakeAsync, tick } from '@angular/core/testing';
+import { TestBed, inject } from '@angular/core/testing';
 import { TennisService } from './tennis.service';
-import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
-import { ModalDialogComponent, ModalContentDialogComponent } from '../../shared/components';
 import { BlockUIService, HttpRequestService, MessageBoxService } from '../../shared/services';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
@@ -13,12 +11,9 @@ import { ResourcesIds } from '../constants';
 describe('TennisService', () => {
   let service: TennisService = null;
   let intervalBackgroundPipe: IntervalBackgroundPipe = null;
+  
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [
-        ModalDialogComponent,
-        ModalContentDialogComponent,
-      ],
       providers: [
         TennisService,
         MessageBoxService,
@@ -30,7 +25,7 @@ describe('TennisService', () => {
         BlockUIService,
       ],
       imports: [
-        NgbModule
+        NgbModule,
       ],
     });
 
@@ -77,7 +72,7 @@ describe('TennisService', () => {
   });
 
   it('getIntervalBackground - should call pipes transform', () => {
-    spyOn(intervalBackgroundPipe, 'transform');
+    jest.spyOn(intervalBackgroundPipe, 'transform');
 
     service.getIntervalBackground(0);
 

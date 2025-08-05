@@ -7,14 +7,23 @@
       testPathIgnorePatterns: [
         "<rootDir>/node_modules"
       ],
-      globals: {
-        "ts-jest": {
-          "tsconfig": "<rootDir>/tsconfig.json"
-        }
+      transform: {
+        "^.+\\.(ts|js|mjs|html|svg)$": [
+          "jest-preset-angular",
+          {
+            tsconfig: "<rootDir>/tsconfig.spec.json",
+            stringifyContentPathRegex: "\\.(html|svg)$"
+          }
+        ]
       },
       collectCoverage: false,
       collectCoverageFrom: ['**/*.ts',],
       coveragePathIgnorePatterns: ['.spec.ts', '.module.ts', 'main.ts', 'model.ts', '.native.ts'],
       coverageDirectory: 'reports/coverage',
       coverageReporters: ['html', ['lcovonly', { 'projectRoot': '../../' }]],
+      testTimeout: 30000,
+      maxWorkers: 1,
+      verbose: true,
+      detectOpenHandles: true,
+      forceExit: true
 }

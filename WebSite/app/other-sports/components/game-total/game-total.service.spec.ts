@@ -1,4 +1,5 @@
 import { TestBed, inject } from '@angular/core/testing';
+import { jest } from '@jest/globals';
 import { HttpClient, HttpClientModule, HttpHandler } from '@angular/common/http';
 import { HttpRequestService, BlockUIService, MessageBoxService, ClosePopupService, AioService } from '../../../shared/services';
 import { IntervalBackgroundPipe } from '../../../shared/pipes/interval-background.pipe';
@@ -162,7 +163,7 @@ describe('GameTotalService', () => {
     it('getClass - return correct class name', () => {
         const totalPoints = _.cloneDeep(totalSet);
         totalPoints.resourceId = ResourcesIds.totalPoints;
-        spyOn(intervalBackgroundPipe, 'transform');
+        jest.spyOn(intervalBackgroundPipe, 'transform');
 
         totalPoints.className = service.getClass(totalPoints);
         totalSet.className = service.getClass(totalSet);

@@ -6,13 +6,11 @@ import { HttpClientModule } from '@angular/common/http';
 import { of } from 'rxjs';
 import { ResourceNameByIdPipe } from '../pipes';
 import { CalculateActionsComponent } from './';
-import {
-  ModalDialogComponent,
-  ModalContentDialogComponent,
-  ResettleCheckerComponent,
-  TicketCountComponent,
-  NotReadyMatchComponent
-} from '../../shared/components';
+import { ModalDialogComponent } from '../../shared/components/modal-dialog/modal-dialog.component';
+import { ModalContentDialogComponent } from '../../shared/components/modal-dialog/modal-content-dialog.component';
+import { ResettleCheckerComponent } from '../../shared/components/resettle-checker/resettle-checker.component';
+import { TicketCountComponent } from '../../shared/components/ticket-count/ticket-count.component';
+import { NotReadyMatchComponent } from '../../shared/components/not-ready-match/not-ready-match.component';
 import {
   HttpRequestService,
   BlockUIService,
