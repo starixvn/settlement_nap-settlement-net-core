@@ -21,16 +21,16 @@ export class VerifyStateConfirmedHandler extends AbstractHandler {
 
     if (matchDetail.isSettleDetermined) {
       const allConfirmed = selectedResources.every(item => item.resultSettingData.isConfirmedRefundSdt);
-      allConfirmed && this.verifyGoalRecord(storage, selectedResources) && this.verifyStateConfirmed(storage, selectedResources) ? super.handle(storage) : this.showAlert(storage, matchDetail.isSettleDetermined, allConfirmed);
+      allConfirmed && this.verifyGoalRecord(storage) && this.verifyStateConfirmed(storage, selectedResources) ? super.handle(storage) : this.showAlert(storage, matchDetail.isSettleDetermined);
     } else {
       const allConfirmed = selectedResources.every(item => item.resultSettingData.isConfirmedRefund);
-      allConfirmed && this.verifyGoalRecord(storage, selectedResources) ? super.handle(storage) : this.showAlert(storage, matchDetail.isSettleDetermined, allConfirmed);
+      allConfirmed && this.verifyGoalRecord(storage) ? super.handle(storage) : this.showAlert(storage, matchDetail.isSettleDetermined);
     }
   }
 
   private verifyStateConfirmed(storage: RefundBaseStorage, selectedResources: ResultDetail[]) {
     const { externalResults } = storage.getMatch();
-    const confirmedScores = externalResults.find(item => item.sourceId == 99);
+    const confirmedScores = externalResults.find(item => item.sourceId === 99);
     if (confirmedScores) {
       return selectedResources.every(item => {
         const confirmedScore = confirmedScores.resultDetails.find(r => r.resourceId === item.resourceId);
@@ -40,7 +40,7 @@ export class VerifyStateConfirmedHandler extends AbstractHandler {
     return false;
   }
 
-  private verifyGoalRecord(storage: RefundBaseStorage, selectedResources: ResultDetail[]) {
+  private verifyGoalRecord(storage: RefundBaseStorage) {
     const { matchDetail } = storage.getMatch();
     const { externalResults } = storage.getMatch();
     const confirmedResult = externalResults.find(item => item.sourceId == 99);
@@ -51,7 +51,7 @@ export class VerifyStateConfirmedHandler extends AbstractHandler {
     return true;
   }
 
-  private showAlert(storage: RefundBaseStorage, isSettleDetermined: boolean, allConfirmed: boolean) {
+  private showAlert(storage: RefundBaseStorage, isSettleDetermined: boolean) {
     if (isSettleDetermined) {
       storage.error(Language.confirmRefund.sdtErrorMessage);
     } else {

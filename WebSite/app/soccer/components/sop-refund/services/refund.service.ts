@@ -96,7 +96,7 @@ export class RefundService {
     if(existResultConfirmed) {
       this.undoConfirmChain.handle(this.#refundStorage);
     } else {
-       var chain = this.verifyRefund(actionName,isSettleDetermined) ;
+       const chain = this.verifyRefund(actionName,isSettleDetermined) ;
        chain.handle(this.#refundStorage);
     }
   }
@@ -105,13 +105,17 @@ export class RefundService {
      const { betDaq, betFair, matchDetail } = this.#refundStorage.getMatch();
      matchDetail.isSettleDetermined = settleDeterminableTickets;
      matchDetail.isSettleAbandonedMatchIBC = settleDeterminableTickets || betDaq.settleDeterminedBetDaq || betFair.settleDeterminedBetFair;
-      if (actionName === CalculateAction.refundHalfTime) {
-        return this.verifyRefundHalfTimeChain;
-      } else if (actionName === CalculateAction.refundFullTime) {
-        return settleDeterminableTickets ? this.verifyRefundFullTimeChain : this.verifyRefundNotSdtChain;
-      } else if (actionName === CalculateAction.refund) {
-        return settleDeterminableTickets ? this.verifyRefundAllChain : this.verifyRefundNotSdtChain;
-      }
+     
+     switch (actionName) {
+       case CalculateAction.refundHalfTime:
+         return this.verifyRefundHalfTimeChain;
+       case CalculateAction.refundFullTime:
+         return settleDeterminableTickets ? this.verifyRefundFullTimeChain : this.verifyRefundNotSdtChain;
+       case CalculateAction.refund:
+         return settleDeterminableTickets ? this.verifyRefundAllChain : this.verifyRefundNotSdtChain;
+       default:
+         return null;
+     }
   }
 
   private buildChain(...handlers: AbstractHandler[]): AbstractHandler {

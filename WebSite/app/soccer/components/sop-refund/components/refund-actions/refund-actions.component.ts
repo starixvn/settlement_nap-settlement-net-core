@@ -67,7 +67,7 @@ export class RefundActionsComponent implements OnInit {
 
   changeScore(result: ResultDetail) {
     this.#storage.clear();
-    if (result.resourceId == ResourceIds.halfTime) {
+    if (result.resourceId === ResourceIds.halfTime) {
       this.#storage.clearFullTimeResult();
     }
 

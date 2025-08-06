@@ -7,9 +7,9 @@ import { Language } from "../../../../shared/language.native";
 export class SdtVerifyHandler extends AbstractHandler {
   async handle(storage: RefundBaseStorage): Promise<void> {
     const { matchDetail } = storage.getMatch();
-    const fullTime = storage.getFullTimeResult() as ResultDetail;
-    const halfTime = storage.getHalfTimeResult() as ResultDetail;
-    const halfTimeIsRunning = halfTime.resultStatusId != ResultStatusId.AutoCompleted && halfTime.resultStatusId != ResultStatusId.ManualCompleted;
+    const fullTime = storage.getFullTimeResult();
+    const halfTime = storage.getHalfTimeResult();
+    const halfTimeIsRunning = this.isHalfTimeIsRunning(halfTime);
     
     if(!matchDetail.isSettleDetermined){
       super.handle(storage);
@@ -21,7 +21,7 @@ export class SdtVerifyHandler extends AbstractHandler {
       return;
     }
 
-    if(halfTime.ticketStatus != TicketStatusText.noTicket && halfTimeIsRunning && !halfTime.checked && fullTime.checked) {
+    if(halfTime.ticketStatus !== TicketStatusText.noTicket && halfTimeIsRunning && !halfTime.checked && fullTime.checked) {
       storage.error(Language.confirmRefund.sdtFullTimeErrorMessage);
       return;
     }
@@ -32,5 +32,9 @@ export class SdtVerifyHandler extends AbstractHandler {
     }
 
     super.handle(storage);
+  }
+
+  private isHalfTimeIsRunning(halfTime: ResultDetail): boolean {
+    return halfTime.resultStatusId !== ResultStatusId.AutoCompleted && halfTime.resultStatusId !== ResultStatusId.ManualCompleted;
   }
 } 

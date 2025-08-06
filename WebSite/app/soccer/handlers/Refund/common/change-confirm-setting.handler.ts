@@ -7,7 +7,6 @@ import { inject } from "@angular/core";
 import { AioService } from "../../../../shared/services/aio.service";
 import { LogicService } from "../../../components/sop-refund/services/logic.service";
 import { MatchDetailBase, ResultDetail } from "../../../models";
-import { MatchDetailSoccer } from "../../../components/calc/models/match.model";
 
 export class ChangeConfirmSettingHandler extends AbstractHandler {
     #aioService = inject(AioService);
@@ -35,7 +34,7 @@ export class ChangeConfirmSettingHandler extends AbstractHandler {
       }
     }
 
-    private async changeConfirmResult(selectedResources: any[], settingType: number, matchId: number, isEnabled: boolean, storage: RefundBaseStorage) {
+    private async changeConfirmResult(selectedResources: ResultDetail[], settingType: number, matchId: number, isEnabled: boolean, storage: RefundBaseStorage) {
       if (selectedResources.length > 0) {
         const match = storage.getMatch();
         const resourceIds = join(selectedResources.map(item => item.resourceId), ',');

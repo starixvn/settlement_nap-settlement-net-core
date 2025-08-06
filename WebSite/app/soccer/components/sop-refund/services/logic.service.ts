@@ -23,9 +23,16 @@ export class LogicService {
     const resultDetails = this.#refundStorage.getSelectedResource();
     const hasHT = resultDetails.some(x => x.resourceId === ResourceIds.halfTime);
     const hasFT = resultDetails.some(x => x.resourceId === ResourceIds.fullTime);
-    if (hasHT && hasFT) return CalculateAction.refund;
-    if (hasHT) return CalculateAction.refundHalfTime;
-    if (hasFT) return CalculateAction.refundFullTime;
+    if (hasHT && hasFT) {
+      return CalculateAction.refund;
+    }
+    if (hasHT) {
+      return CalculateAction.refundHalfTime;
+    }
+    if (hasFT) {
+      return CalculateAction.refundFullTime;
+    }
+    return "";
   }
 
   showConfirmMessage(func: () => void) {
@@ -44,7 +51,7 @@ export class LogicService {
 
   resetScore() {
     const { resultDetails, externalResults, permission } = this.#refundStorage.getMatch();
-    const resourceConfirmed = externalResults.find(r => r.sourceId == ScoreSourceType.confirmRefundSource);
+    const resourceConfirmed = externalResults.find(r => r.sourceId === ScoreSourceType.confirmRefundSource);
     resultDetails.forEach(r => {
       if (r.settlementStatusId !== SettlementStatusId.Calculated
         && r.settlementStatusId !== SettlementStatusId.Abandoned1H
@@ -78,8 +85,8 @@ export class LogicService {
 
   autoSelectGoalRecordAndSettleDetermined() {
     const { externalResults, permission, matchDetail, resultDetails } = this.#refundStorage.getMatch();
-    const resourceConfirmed = externalResults.find(r => r.sourceId == ScoreSourceType.confirmRefundSource);
-    const goalRecordConfirmed = resourceConfirmed?.resultDetails.find(r => r.resourceId == ResourceIds.goalRecord)
+    const resourceConfirmed = externalResults.find(r => r.sourceId === ScoreSourceType.confirmRefundSource);
+    const goalRecordConfirmed = resourceConfirmed?.resultDetails.find(r => r.resourceId === ResourceIds.goalRecord)
 
     if (goalRecordConfirmed && permission.isLeader) {
       matchDetail.goalRecord = goalRecordConfirmed.homeValue ?? "",

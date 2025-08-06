@@ -1,12 +1,11 @@
 import { AbstractHandler } from "../../abstract.handler.native";
 import { RefundBaseStorage } from "../../../storage/storage.service.native";
 import { Language } from "../../../../shared/language.native";
-import { ResultStatusId, TicketStatus, TicketStatusText } from "../../../../shared/constants";
-import { ResultDetail } from "../../../models/result-detail.model";
+import { ResultStatusId, TicketStatusText } from "../../../../shared/constants";
 
 export class VerifyHTStatusHandler extends AbstractHandler {
   public handle(storage: RefundBaseStorage): void {
-    const halfTime = storage.getHalfTimeResult() as ResultDetail;
+    const halfTime = storage.getHalfTimeResult() ;
 
     if (halfTime.checked 
       || halfTime.resultStatusId === ResultStatusId.AutoCompleted 

@@ -320,41 +320,51 @@ public class ResourceServiceImp(IActionResourceService actionResourceService, IG
 
     public List<ResourceItem> CreateRefundJTResource(RefundCriteria criteria, bool isSettleAbandonedMatchIBC)
     {
-        return AllEmptyResources()
-            .Where(r => criteria.Action == ActionType.RefundAll || (r.ResourceId == ResourceType.Final && criteria.Action == ActionType.RefundFullTime) ||
-                        (r.ResourceId == ResourceType.Halftime && criteria.Action == ActionType.RefundHalfTime))
-            .Select(r =>
-            {
-                if (isSettleAbandonedMatchIBC)
-                {
-                    if (r.ResourceId == ResourceType.Final)
-                    {
-                        r.HomeValue = criteria.FullTimeHome?.ToString() ?? string.Empty;
-                        r.AwayValue = criteria.FullTimeAway?.ToString() ?? string.Empty;
-                    }
-                    else
-                    {
-                        r.HomeValue = criteria.HalfTimeHome?.ToString() ?? string.Empty;
-                        r.AwayValue = criteria.HalfTimeAway?.ToString() ?? string.Empty;
-                    }
-                }
-                return r;
-            }).ToList();
+        var filteredResources = AllEmptyResources()
+                                .Where(r => ShouldIncludeResource(r, criteria.Action))
+                                .ToList();
+        return isSettleAbandonedMatchIBC ? filteredResources.Select(r => FillResourceValues(r, criteria)).ToList() : filteredResources;
+    }
 
+    private static bool ShouldIncludeResource(ResourceItem resource, string action)
+    {
+        var isRefundFullTime = resource.ResourceId == ResourceType.Final && action == ActionType.RefundFullTime;
+        var isRefundHalfTime = resource.ResourceId == ResourceType.Halftime && action == ActionType.RefundHalfTime;
+        return action == ActionType.RefundAll || isRefundFullTime || isRefundHalfTime;
+    }
+
+    private static ResourceItem FillResourceValues(ResourceItem resource, RefundCriteria criteria)
+    {
+        if (resource.ResourceId == ResourceType.Final)
+        {
+            resource.HomeValue = criteria.FullTimeHome?.ToString() ?? string.Empty;
+            resource.AwayValue = criteria.FullTimeAway?.ToString() ?? string.Empty;
+        }
+        else
+        {
+            resource.HomeValue = criteria.HalfTimeHome?.ToString() ?? string.Empty;
+            resource.AwayValue = criteria.HalfTimeAway?.ToString() ?? string.Empty;
+        }
+        return resource;
     }
 
     public List<ResourceItem> CreateJTResource(CalculateCriteria criteria)
     {
         var resources = AllEmptyResources()
-            .Where(r => criteria.Action == ActionType.CalculateAll || criteria.Action == ActionType.UnCalculate ||
-                        (r.ResourceId == ResourceType.Final && criteria.Action == ActionType.CalculateFullTime) ||
-                        (r.ResourceId == ResourceType.Halftime && criteria.Action == ActionType.CalculateHalfTime))
+            .Where(r => ShouldIncludeCalculateResource(r, criteria.Action))
             .ToList();
         var selectedResources = criteria.Action.Contains(ActionType.UnCalculate)
             ? resources
             : FillValueById(resources, criteria);
 
         return selectedResources;
+    }
+
+    private static bool ShouldIncludeCalculateResource(ResourceItem resource, string action)
+    {
+        var isCalculateFullTime = resource.ResourceId == ResourceType.Final && action == ActionType.CalculateFullTime;
+        var isCalculateHalfTime = resource.ResourceId == ResourceType.Halftime && action == ActionType.CalculateHalfTime;
+        return action == ActionType.CalculateAll || action == ActionType.UnCalculate || isCalculateFullTime || isCalculateHalfTime;
     }
 
     private List<ResourceItem> FillValueById(List<ResourceItem> resources, CalculateCriteria criteria)

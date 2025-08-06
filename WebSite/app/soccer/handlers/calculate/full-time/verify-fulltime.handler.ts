@@ -28,7 +28,7 @@ export class VerifyFulltimeHandler extends AbstractHandler {
 
   private async verifyFullTime(fulltime: ResultDetail, matchDetail: MatchDetail, selectedChildMatches: ChildMatch[], relatedMatches: FantasyRelatedMatch[]) {
     
-    if(fulltime.resultSettingData.isConfirmedRefundSdt || fulltime.resultSettingData.isConfirmedRefund) {
+    if(this.isConfirmedRefund(fulltime)) {
       return Language.confirmRefund.calculateResultNotConfirmed;
     }
     
@@ -64,6 +64,10 @@ export class VerifyFulltimeHandler extends AbstractHandler {
     }
     return this.#verifyActionService.checkNewStatus(matchDetail, CalculateAction.calculateFullTime);
 
+  }
+
+  private isConfirmedRefund(fulltime: ResultDetail) {
+    return fulltime.resultSettingData.isConfirmedRefundSdt || fulltime.resultSettingData.isConfirmedRefund;
   }
 
   private isNotRefundHalfTimeAndHasNotSemicolon(matchDetail: MatchDetail) {
