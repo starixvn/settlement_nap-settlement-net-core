@@ -16,7 +16,8 @@ import { HttpRequestService, BlockUIService, MessageBoxService, DialogBoxService
 import { SimpleChange } from '@angular/core';
 import { MaterialModule } from '../../../shared/material-module';
 import { of } from 'rxjs';
-import { ModalDialogComponent, ModalContentDialogComponent } from '../../../shared/components';
+import { ModalDialogComponent } from '../../../shared/components/modal-dialog/modal-dialog.component';
+import { ModalContentDialogComponent } from '../../../shared/components/modal-dialog/modal-content-dialog.component';
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { IntervalScorePipe } from '../../../shared/pipes/interval-score.pipe';
 import {
@@ -25,7 +26,8 @@ import {
   Score,
   LeagueMatch,
   Match,
-  Remark } from '../../../shared/models';
+  Remark,
+  Result } from '../../../shared/models';
 import { BackgroundColor, SportType } from '../../../shared/constants';
 
 describe('MoveTickets - LeagueComponent', () => {
@@ -37,6 +39,17 @@ describe('MoveTickets - LeagueComponent', () => {
   const match = new Match();
   match.matchId = '700000';
   match.sportType = SportType.eSports;
+  match.remark = new Remark();
+  match.remark.isMtdHold = false;
+  match.remark.isUndecided = false;
+  match.remark.isUnderSettle = false;
+  match.remark.isKeyHold = false;
+  match.moreScores = new MoreScore();
+  match.moreScores.finalScore = new Score('2', '1');
+  match.moreScores.halfTimeScore = new Score('1', '0');
+  match.earlySettleStatus = 'running';
+  match.eventStatus = 'completed';
+
   const buttonName = "btn-danger";
   const errorMessage = "Error message";
 
@@ -45,7 +58,8 @@ describe('MoveTickets - LeagueComponent', () => {
     matches: [match],
     name: 'mock league',
     collapse: false,
-    autoCalcSetting: null
+    autoCalcSetting: null,
+    enabledAutoRefund: false
   };
 
   const sport: SportMatch = {
@@ -61,24 +75,20 @@ describe('MoveTickets - LeagueComponent', () => {
     sports: [sport],
     isCheckedCalcMP: false,
   };
-  const successfulResult = {
-    errCode: 0,
-    errMsg: "",
-    isSuccessful: true,
-  };
-  const unsuccessfulResult = {
-    errCode: 1,
-    errMsg: errorMessage,
-    isSuccessful: false,
-  };
+  const successfulResult = new Result();
+  successfulResult.errCode = 0;
+  successfulResult.errMsg = "";
+  successfulResult.isSuccessful = true;
+  
+  const unsuccessfulResult = new Result();
+  unsuccessfulResult.errCode = 1;
+  unsuccessfulResult.errMsg = errorMessage;
+  unsuccessfulResult.isSuccessful = false;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [
         LeagueComponent,
-        ModalDialogComponent,
-        ModalContentDialogComponent,
-        IntervalScorePipe,
       ],
       providers: [
         NgbModal,
@@ -90,6 +100,9 @@ describe('MoveTickets - LeagueComponent', () => {
         MoveTicketsService
       ],
       imports: [
+        ModalDialogComponent,
+        ModalContentDialogComponent,
+        IntervalScorePipe,
         FormsModule,
         HttpClientModule,
         NgbModule,
@@ -122,7 +135,7 @@ describe('MoveTickets - LeagueComponent', () => {
 
   it('should set sports and permission when component has changes', () => {
     component.multiSport = multiSport;
-    spyOn(sportMatchService, 'getSportsWithIntervalScore');
+    jest.spyOn(sportMatchService, 'getSportsWithIntervalScore');
 
     component.ngOnChanges({ multiSport: new SimpleChange(null, multiSport, false) });
     fixture.detectChanges();
@@ -182,7 +195,7 @@ describe('MoveTickets - LeagueComponent', () => {
     });
 
     it('should return false when sport does not support early settlement', () => {
-      const sportType = SportType.baseBall;
+      const sportType = SportType.soccer; // soccer is not in autoSettleSupported
 
       const result = component.canAutoSettlemt(sportType);
 
@@ -220,9 +233,9 @@ describe('MoveTickets - LeagueComponent', () => {
   it('getLog - should call popupService', () => {
     const request = new MatchWaitingRequest('12345', '', '01/01/2020', '01/02/2020');
     component.request = request;
-    spyOn(moveTicketsService, 'popupLog');
+    jest.spyOn(moveTicketsService, 'popupLog');
 
-    component.getLog(12345);
+    component.getLog('12345');
 
     expect(moveTicketsService.popupLog).toHaveBeenCalled();
   });
@@ -256,9 +269,9 @@ describe('MoveTickets - LeagueComponent', () => {
     it('should refresh page when successfully move tickets', fakeAsync(() => {
         match.remark = new Remark();
         match.newEventStatus = "Running";
-        spyOn(moveTicketsService, 'moveTickets').and.returnValue(of(successfulResult));
-        spyOn(component.refreshAction, 'emit');
-        spyOn(messageBoxService, 'alert');
+        jest.spyOn(moveTicketsService, 'moveTickets').mockReturnValue(of(successfulResult));
+        jest.spyOn(component.refreshAction, 'emit');
+        jest.spyOn(messageBoxService, 'alert');
 
         component.moveTickets(match);
         const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
@@ -272,9 +285,9 @@ describe('MoveTickets - LeagueComponent', () => {
     it('should refresh page and alert when move tickets not successfully', fakeAsync(() => {
         match.remark = new Remark();
         match.newEventStatus = "Running";
-        spyOn(moveTicketsService, 'moveTickets').and.returnValue(of(unsuccessfulResult));
-        spyOn(component.refreshAction, 'emit');
-        spyOn(messageBoxService, 'alert');
+        jest.spyOn(moveTicketsService, 'moveTickets').mockReturnValue(of(unsuccessfulResult));
+        jest.spyOn(component.refreshAction, 'emit');
+        jest.spyOn(messageBoxService, 'alert');
 
         component.moveTickets(match);
         const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;

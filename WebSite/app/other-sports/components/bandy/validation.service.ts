@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { VerificationBaseService } from "../../../core/services/verification-base.service";
 import { ExternalResult, ExternalResultDetail, ResultDetail } from "../../../shared/models/sportsbook-sop";
 import * as _ from "lodash";
-import { ResourceID } from "./constant";
+import { ResourceID } from "../../constants";
 import { ResultByTeamNamePipe } from "../../../shared/pipes/result-by-team-name.pipe";
 import { GeneralResultDetail } from "../../../shared/models";
 import { ResultStatusId, SettlementStatusId } from "../../../shared/constants";

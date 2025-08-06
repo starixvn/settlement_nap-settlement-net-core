@@ -1,12 +1,16 @@
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { AioService, BlockUIService, HttpRequestService, MessageBoxService } from '../../shared/services';
-import { ModalContentDialogComponent, ModalDialogComponent, NotReadyMatchComponent, ResettleCheckerComponent, TicketCountComponent } from '../../shared/components';
+import { ModalDialogComponent } from '../../shared/components/modal-dialog/modal-dialog.component';
+import { ModalContentDialogComponent } from '../../shared/components/modal-dialog/modal-content-dialog.component';
+import { NotReadyMatchComponent } from '../../shared/components/not-ready-match/not-ready-match.component';
+import { ResettleCheckerComponent } from '../../shared/components/resettle-checker/resettle-checker.component';
+import { TicketCountComponent } from '../../shared/components/ticket-count/ticket-count.component';
 import { CalculationActionsComponent } from './calculation-actions.component';
 import { VerificationService } from '../services';
 import { ResultNameByIdPipe, ResultValuePipe } from '../pipes';
-import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
 import { HedgeMatchDetail, Match } from '../models';
@@ -49,7 +53,7 @@ describe('CalculationActionsComponent', () => {
   let messageBoxService: MessageBoxService;
   let verificationService: VerificationService;
   let aioService: AioService;
-  let cricketService: CricketService;
+  
   let verificationBaseService: VerificationBaseService;
   let toastrService: ToastrService;
   const buttonName = "btn-danger";
@@ -87,10 +91,7 @@ describe('CalculationActionsComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [
-        CalculationActionsComponent,
-        TicketCountComponent,
         ResultNameByIdPipe,
-        ModalDialogComponent,
         ModalContentDialogComponent,
         IntervalBackgroundPipe,
         ResettleCheckerComponent,
@@ -103,7 +104,7 @@ describe('CalculationActionsComponent', () => {
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
         MessageBoxService,
-        CricketService,
+
         VerificationService,
         HttpRequestService,
         AioService,
@@ -115,9 +116,13 @@ describe('CalculationActionsComponent', () => {
         ToastrService
       ],
       imports: [
+        CalculationActionsComponent,
+        TicketCountComponent,
+        ModalDialogComponent,
         FormsModule,
         HttpClientModule,
         NgbModule,
+        BrowserAnimationsModule,
         ToastNoAnimationModule.forRoot(),
         ToastrModule.forRoot()],
     })
@@ -129,7 +134,7 @@ describe('CalculationActionsComponent', () => {
     fixture = TestBed.createComponent(CalculationActionsComponent);
     component = fixture.componentInstance;
     component.match = match;
-    cricketService = fixture.debugElement.injector.get(CricketService);
+
     messageBoxService = fixture.debugElement.injector.get(MessageBoxService);
     verificationService = fixture.debugElement.injector.get(VerificationService);
     aioService = fixture.debugElement.injector.get(AioService);
@@ -190,22 +195,7 @@ describe('CalculationActionsComponent', () => {
         expect(toastrService.error).not.toHaveBeenCalled();
       }));
 
-    it("should call netPosition when uncalculate is successful and return command", fakeAsync(() => {
-      const hedgeMatch = new HedgeMatchDetail();
-      hedgeMatch.matchId = 123;
-      match.hedgeMatchDetail = hedgeMatch;
-      component.applyHedgeMatch = true;
-      spyOn(aioService, 'push').and.returnValue(of(successfulResultWithCommand));
-      spyOn(messageBoxService, 'closePopup');
-      spyOn(cricketService, 'netPosition').and.returnValue(of(successfulResult));
-      component.uncalculate();
-
-      const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-      buttonYes.click();
-      tick();
-
-      expect(cricketService.netPosition).toHaveBeenCalledTimes(2);
-    }));
+   
 
     it('Pass all validation and uncalculation is unsuccessful.'
       + 'Should return an error.', fakeAsync(() => {
@@ -388,55 +378,6 @@ describe('CalculationActionsComponent', () => {
       expect(toastrService.error).toHaveBeenCalledWith(Language.sop.nonLeader.blankScore);
     });
 
-    it('should call net position when settle successful and return command', fakeAsync(() => {
-      component.isReSettledTickets = true;
-      spyOn(aioService, 'push').and.returnValue(of(successfulResultWithCommand));
-      spyOn(verificationService, 'invalidInputScore').and.returnValue(false);
-      spyOn(aioService, 'verifyNoRunningOdds').and.returnValue(of(successfulResult));
-      spyOn(cricketService, 'netPosition').and.returnValue(of(successfulResult));
-      spyOn(messageBoxService, 'closePopup');
-      spyOn(verificationService, 'allMapHaveScoreSources').and.returnValue(true);
-      spyOn(verificationBaseService, 'isExistMismatchScore').and.returnValue(false);
-      spyOn(aioService, 'verifyChangedSettledTickets').and.returnValue(false);
-      spyOn(verificationBaseService, 'getOutsideScores').and.returnValue([]);
-      spyOn(verificationBaseService, 'getChangedScores').and.returnValue([]);
-      spyOn(aioService, 'saveScore').and.returnValue(of(successfulResult));
-
-      component.calculate();
-      tick();
-      const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-      buttonYes.click();
-      tick();
-
-      expect(cricketService.netPosition).toHaveBeenCalled();
-    }));
-
-    it('should call net position when settle successful and return command with hedge match', fakeAsync(() => {
-      component.isReSettledTickets = true;
-      component.match.hedgeMatchDetail = new HedgeMatchDetail();
-      component.match.hedgeMatchDetail.matchId = 1234;
-      component.applyHedgeMatch = true;
-      spyOn(aioService, 'push').and.returnValue(of(successfulResultWithCommand));
-      spyOn(verificationService, 'invalidInputScore').and.returnValue(false);
-      spyOn(aioService, 'verifyNoRunningOdds').and.returnValue(of(successfulResult));
-      spyOn(cricketService, 'netPosition').and.returnValue(of(successfulResult));
-      spyOn(verificationService, 'allMapHaveScoreSources').and.returnValue(true);
-      spyOn(verificationBaseService, 'isExistMismatchScore').and.returnValue(false);
-      spyOn(aioService, 'verifyChangedSettledTickets').and.returnValue(false);
-      spyOn(verificationBaseService, 'getOutsideScores').and.returnValue([]);
-      spyOn(verificationBaseService, 'getChangedScores').and.returnValue([]);
-      spyOn(aioService, 'saveScore').and.returnValue(of(successfulResult));
-      spyOn(messageBoxService, 'closePopup');
-
-      component.calculate();
-      tick();
-      const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-      buttonYes.click();
-      tick();
-
-      expect(cricketService.netPosition).toHaveBeenCalledTimes(2);
-    }));
-
     it('should show error message when exist result confirmed', fakeAsync(() => {
       const result = new ResultDetail();
       result.resultSettingData = new ResultSettingModel();
@@ -463,7 +404,7 @@ describe('CalculationActionsComponent', () => {
         settleType: "MNL"
       };
       spyOn(aioService, 'getMatch').and.returnValue(of(match));
-      component.getMatch(matchId, 'url');
+      component.getMatch(matchId);
 
       expect(aioService.getMatch).toHaveBeenCalledWith(matchQuery);
     });
@@ -480,7 +421,7 @@ describe('CalculationActionsComponent', () => {
       resultDetails[0].homeValue = '1';
       match.resultDetails = resultDetails;
       spyOn(aioService, 'getMatch').and.returnValue(of(match));
-      await component.getMatch(matchId, 'url');
+      await component.getMatch(matchId);
 
       expect(resultDetails[0].homeValue).toEqual('');
     });

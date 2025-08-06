@@ -62,7 +62,7 @@ export class EarlyConstraintService extends EarlyBaseService {
         });
     }
 
-    private static renderPlayersSelect(inputOptions: InputOption[], value: string) {
+    private renderPlayersSelect(inputOptions: InputOption[], value: string) {
         const options = [];
         inputOptions.forEach((item) => {
             const checked = value.includes(item.value);
@@ -88,7 +88,7 @@ export class EarlyConstraintService extends EarlyBaseService {
         resultDetails.forEach((result) => {
             if (result.inputOptions && result.inputOptions.length > 0) {
                 result.multipleResultSelect = this.createMultipleResultSelect();
-                result.multipleResultSelect.items = EarlyConstraintService.renderPlayersSelect(result.inputOptions, result.homeValue);
+                result.multipleResultSelect.items = this.renderPlayersSelect(result.inputOptions, result.homeValue);
                 result.multipleResultSelect.maxWidth = '160px';
 
                 this.generateExternalMultipleResultSelect(result.externalScores, result.inputOptions);
@@ -100,7 +100,7 @@ export class EarlyConstraintService extends EarlyBaseService {
         externalScores.forEach((externalScore) => {
             if (externalScore.sourceId >= 100) {
                 externalScore.multipleResultSelect = this.createMultipleResultSelect();
-                externalScore.multipleResultSelect.items = EarlyConstraintService.renderPlayersSelect(inputOptions, externalScore.homeValue);
+                externalScore.multipleResultSelect.items = this.renderPlayersSelect(inputOptions, externalScore.homeValue);
                 externalScore.multipleResultSelect.maxWidth = '70px';
             }
         });
@@ -135,7 +135,7 @@ export class EarlyConstraintService extends EarlyBaseService {
         });
     }
 
-    static autoFillItemSelect(resultDetail: ResultDetail, correctScore: ExternalResultDetail = null) {
+    autoFillItemSelect(resultDetail: ResultDetail, correctScore: ExternalResultDetail = null) {
         if (resultDetail.inputType === ResultControlGroup.PlayerMultipleSelect) {
             if (_.isNil(correctScore)) {
                 resultDetail.multipleResultSelect = _.cloneDeep(resultDetail.multipleResultSelect);
@@ -149,7 +149,7 @@ export class EarlyConstraintService extends EarlyBaseService {
         }
     }
 
-    private static createListOption(items) {
+    public createListOption(items) {
         const tickets = new Array<ItemsSelect>();
         items.forEach((item) => {
             const temp = new ItemsSelect(

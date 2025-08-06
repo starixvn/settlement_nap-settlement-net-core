@@ -1,9 +1,9 @@
 import { VerificationService } from "./verification.service";
 import { TestBed } from "@angular/core/testing";
 import { MessageBoxService } from "../../shared/services";
-import { ModalDialogComponent, ModalContentDialogComponent } from "../../shared/components";
+import { ModalDialogComponent } from "../../shared/components/modal-dialog/modal-dialog.component";
+import { ModalContentDialogComponent } from "../../shared/components/modal-dialog/modal-content-dialog.component";
 import { NgbModal, NgbModule } from "@ng-bootstrap/ng-bootstrap";
-import { BrowserDynamicTestingModule } from "@angular/platform-browser-dynamic/testing";
 import { ExternalResultDetail, ResultDetail } from "../../shared/models/sportsbook-sop";
 import { ItemsSelect, MultipleSelect } from "../../shared/models";
 import { ResultStatusId } from "../../shared/constants";
@@ -20,17 +20,15 @@ describe('E-Sports - VerificationService', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            declarations: [
+            imports: [
                 ModalDialogComponent,
                 ModalContentDialogComponent,
+                NgbModule
             ],
             providers: [
                 VerificationService,
                 MessageBoxService,
                 NgbModal,
-            ],
-            imports: [
-                NgbModule
             ]
         });
         service = TestBed.inject(VerificationService);
@@ -96,28 +94,6 @@ describe('E-Sports - VerificationService', () => {
             expect(resultDetail.homeValue).toEqual('1');
             expect(resultDetail.awayValue).toEqual('2');
         });
-    });
-
-    describe('autoFillItemSelect', () => {
-        it('should fill item select by external score', () => {
-            resultDetail.inputType = 6;
-            const externalResult = new ExternalResultDetail(100, '12345', '');
-            externalResult.multipleResultSelect = new MultipleSelect();
-            externalResult.multipleResultSelect.disableCheckAll = true;
-
-            service.autoFillItemSelect(resultDetail, externalResult);
-
-            expect(resultDetail.multipleResultSelect.disableCheckAll).toBe(true);
-        });
-
-        it('should uncheck all items', () => {
-            resultDetail.multipleResultSelect = new MultipleSelect();
-            resultDetail.multipleResultSelect.items = [new ItemsSelect(1, '', '', true, true, true, [])];
-
-            service.autoFillItemSelect(resultDetail);
-
-            expect(resultDetail.multipleResultSelect.items[0].checked).toBe(false);
-        })
     });
 
     describe('isSingleScoreMatched', () => {

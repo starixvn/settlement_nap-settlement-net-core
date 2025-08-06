@@ -2,7 +2,7 @@ import { TestBed, waitForAsync, ComponentFixture, tick, fakeAsync } from "@angul
 import { NgbModal, NgbModule } from "@ng-bootstrap/ng-bootstrap";
 import { FormsModule } from "@angular/forms";
 import { HttpClientModule } from "@angular/common/http";
-import { MatchDetailComponent } from ".";
+import { MatchDetailComponent } from "./match-detail.component";
 import {
   HttpRequestService,
   BlockUIService,
@@ -25,10 +25,7 @@ describe("E-sport - Refund Match Detail Component", () => {
   beforeEach(waitForAsync(() => {
 
     TestBed.configureTestingModule({
-      declarations: [
-        MatchDetailComponent,
-        ScoreBySettlementPipe,
-      ],
+      declarations: [],
       providers: [
         MessageBoxService,
         HttpRequestService,
@@ -36,7 +33,13 @@ describe("E-sport - Refund Match Detail Component", () => {
         IntervalBackgroundPipe,
         NgbModal,
       ],
-      imports: [FormsModule, HttpClientModule, NgbModule],
+      imports: [
+        MatchDetailComponent,
+        ScoreBySettlementPipe,
+        FormsModule,
+        HttpClientModule,
+        NgbModule,
+      ],
     })
       .compileComponents()
       .then(() => {

@@ -1,22 +1,20 @@
 import { TestBed, waitForAsync, ComponentFixture } from "@angular/core/testing";
-import "rxjs/add/observable/from";
+// Removed deprecated rxjs import
 import { ElementRef, NO_ERRORS_SCHEMA } from "@angular/core";
+import { UrlHelper } from "../../helper";
 import { BrowserModule } from "@angular/platform-browser";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { HttpClientModule } from "@angular/common/http";
+import { HttpClientTestingModule } from "@angular/common/http/testing";
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
-import {
-  AppComponent,
-  CalculationActionsComponent,
-  RefundActionsComponent,
-  MatchDetailComponent,
-  EarlySettlementComponent,
-} from "./index";
-import {
-  ResettleCheckerComponent,
-  TicketCountComponent,
-  NotReadyMatchComponent,
-} from "../../shared/components";
+import AppComponent from "./app.component";
+import { CalculationActionsComponent } from "./calculation-actions.component";
+import { RefundActionsComponent } from "./refund-actions.component";
+import { MatchDetailComponent } from "./match-detail.component";
+import { EarlySettlementComponent } from "./early-settlement.component";
+import { ResettleCheckerComponent } from "../../shared/components/resettle-checker/resettle-checker.component";
+import { TicketCountComponent } from "../../shared/components/ticket-count/ticket-count.component";
+import { NotReadyMatchComponent } from "../../shared/components/not-ready-match/not-ready-match.component";
 import { MaterialModule } from "../../shared/material-module";
 import { NewMultipleSelectComponent } from "../../shared/components/multiple-select/multiple-select.component";
 import { ExternalLinkPipe } from "../../score-source-setting/pipes";
@@ -31,8 +29,13 @@ describe("Component: App", () => {
   let elementRef: ElementRef<HTMLElement>;
 
   beforeEach(waitForAsync(() => {
+    // Mock UrlHelper.getUrlParameter to return a mock matchId
+    jest.spyOn(UrlHelper, 'getUrlParameter').mockReturnValue('12345');
+    
     TestBed.configureTestingModule({
-      declarations: [
+      declarations: [],
+      schemas: [NO_ERRORS_SCHEMA],
+      imports: [
         AppComponent,
         NotReadyMatchComponent,
         CalculationActionsComponent,
@@ -46,13 +49,10 @@ describe("Component: App", () => {
         ResultNameByIdPipe,
         ResultValuePipe,
         ResultByPlayerNamePipe,
-      ],
-      schemas: [NO_ERRORS_SCHEMA],
-      imports: [
         BrowserModule,
         FormsModule,
         ReactiveFormsModule,
-        HttpClientModule,
+        HttpClientTestingModule,
         MaterialModule,
         PipesModule,
         ToastNoAnimationModule.forRoot(),
@@ -71,23 +71,29 @@ describe("Component: App", () => {
     expect(component).toBeTruthy();
 });
 
-it('should render calculation-actions tag', () => {
+it('should render calculation-actions tag', async () => {
     elementRef.nativeElement.setAttribute("page-type", PageType.ReCalculate)
+    component.ngOnInit();
     fixture.detectChanges();
+    await fixture.whenStable();
     const compiled = fixture.debugElement.nativeElement;
     expect(compiled.querySelectorAll("calculation-actions").length).toBeGreaterThanOrEqual(1);
 });
 
-it('should render refund-actions tag', () => {
+it('should render refund-actions tag', async () => {
     elementRef.nativeElement.setAttribute("page-type", PageType.Refund)
+    component.ngOnInit();
     fixture.detectChanges();
+    await fixture.whenStable();
     const compiled = fixture.debugElement.nativeElement;
     expect(compiled.querySelectorAll("refund-actions").length).toBeGreaterThanOrEqual(1);
 });
 
-it('should render early-settlement tag', () => {
+it('should render early-settlement tag', async () => {
     elementRef.nativeElement.setAttribute("page-type", PageType.EarlySettlement)
+    component.ngOnInit();
     fixture.detectChanges();
+    await fixture.whenStable();
     const compiled = fixture.debugElement.nativeElement;
     expect(compiled.querySelectorAll("early-settlement").length).toBeGreaterThanOrEqual(1);
 });

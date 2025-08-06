@@ -10,13 +10,11 @@ import { NgbModal, NgbModule } from "@ng-bootstrap/ng-bootstrap";
 import { BrowserDynamicTestingModule } from "@angular/platform-browser-dynamic/testing";
 import { FormsModule } from "@angular/forms";
 import { HttpClientModule } from "@angular/common/http";
-import { EarlySettlementComponent } from ".";
-import {
-  ModalDialogComponent,
-  ModalContentDialogComponent,
-  ResettleCheckerComponent,
-  TicketCountComponent,
-} from "../../shared/components";
+import { EarlySettlementComponent } from "./early-settlement.component";
+import { ModalDialogComponent } from "../../shared/components/modal-dialog/modal-dialog.component";
+import { ModalContentDialogComponent } from "../../shared/components/modal-dialog/modal-content-dialog.component";
+import { ResettleCheckerComponent } from "../../shared/components/resettle-checker/resettle-checker.component";
+import { TicketCountComponent } from "../../shared/components/ticket-count/ticket-count.component";
 import {
   HttpRequestService,
   BlockUIService,
@@ -26,7 +24,7 @@ import {
 } from "../../shared/services";
 import { EarlyConstraintService, VerificationService } from "../services";
 import { Match } from "../models";
-import { Language } from "../../shared/language";
+import { Language } from "../../shared/language.native";
 import * as _ from "lodash";
 import { MaterialModule } from "../../shared/material-module";
 import { ResultSettingModel } from "../../shared/models";
@@ -600,9 +598,9 @@ describe("Cricket - Early Settlement Component", () => {
     homeAway.resultStatusId = ResultStatusId.RunningOne;
     component.match = new Match(new MatchDetail());
     component.resultDetails = [homeAway];
-    spyOn(verificationService, 'autoFillScore');
-    spyOn(verificationService, 'autoFillItemSelect');
-    spyOn(verificationService, 'isMismatchedWarning');
+    jest.spyOn(verificationService, 'autoFillScore');
+    jest.spyOn(earlyConstraintService, 'autoFillItemSelect');
+    jest.spyOn(verificationService, 'isMismatchedWarning');
 
     component.onTraderSelectPlayerResult([], homeAway, externalScores);
 
@@ -619,9 +617,9 @@ describe("Cricket - Early Settlement Component", () => {
     homeAway.resultStatusId = ResultStatusId.RunningOne;
     component.match = new Match(new MatchDetail());
     component.resultDetails = [homeAway];
-    spyOn(verificationService, 'autoFillScore');
-    spyOn(verificationService, 'autoFillItemSelect');
-    spyOn(verificationService, 'isMismatchedWarning');
+    jest.spyOn(verificationService, 'autoFillScore');
+    jest.spyOn(earlyConstraintService, 'autoFillItemSelect');
+    jest.spyOn(verificationService, 'isMismatchedWarning');
 
     component.onOutsideSelectPlayerResult([], homeAway, externalScores);
 

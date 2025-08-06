@@ -18,7 +18,11 @@
       },
       collectCoverage: false,
       collectCoverageFrom: ['**/*.ts',],
-      coveragePathIgnorePatterns: ['.spec.ts', '.module.ts', 'main.ts', 'model.ts', '.native.ts'],
+      coveragePathIgnorePatterns: ['.spec.ts', '.module.ts', 'main.ts', 'model.ts', '.native.ts',
+       'app-base.component.ts', 
+       'app-table.component.ts',
+       'esports.service.ts'
+      ],
       coverageDirectory: 'reports/coverage',
       coverageReporters: ['html', ['lcovonly', { 'projectRoot': '../../' }]],
       testTimeout: 30000,

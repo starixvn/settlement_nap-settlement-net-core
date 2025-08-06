@@ -5,9 +5,8 @@ import { ModalDialogMessage } from "../../../shared/models";
 import { AioService,BlockUIService,MessageBoxService } from "../../../shared/services";
 import { Language } from "../../../shared/language.native";
 import * as _ from "lodash";
-import { KickOffTime, LeagueType, RefResultStatus } from "../../constants";
+import { KickOffTime, LeagueType, RefResultStatus, ResourceID } from "../../constants";
 import { SportTemplate } from "../../../shared/models/sportsbook-sop/sport-template.model";
-import { ResourceID } from "./constant";
 import { UrlHelper } from "../../../helper/url-helper";
 import { IntervalBackgroundPipe } from "../../../shared/pipes/interval-background.pipe";
 
