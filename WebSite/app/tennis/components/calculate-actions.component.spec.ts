@@ -1,8 +1,7 @@
-import { TestBed, waitForAsync, ComponentFixture, fakeAsync, tick, discardPeriodicTasks } from '@angular/core/testing';
+import { TestBed, waitForAsync, ComponentFixture, fakeAsync, tick } from '@angular/core/testing';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-import { of } from 'rxjs';
 import { ResourceNameByIdPipe } from '../pipes';
 import { CalculateActionsComponent } from './calculate-actions.component';
 import { ModalDialogComponent } from '../../shared/components/modal-dialog/modal-dialog.component';
@@ -29,7 +28,6 @@ import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.p
 import { ToastContainerDirective, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { CalculateMatchDetailComponent } from './calculate-match-detail.component';
-import { Language } from '../../shared/language.native';
 import { Result } from '../../shared/models/result.model';
 
 describe('Tennis - Calculate actions component', () => {

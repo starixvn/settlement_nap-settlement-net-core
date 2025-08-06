@@ -1,5 +1,4 @@
-import { TestBed, waitForAsync, ComponentFixture, fakeAsync, tick } from '@angular/core/testing';
-import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
+import { TestBed, waitForAsync, ComponentFixture, fakeAsync, tick, flush } from '@angular/core/testing';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
@@ -12,16 +11,14 @@ import {
   BlockUIService,
   MessageBoxService,
   ClosePopupService,
-  AioService,
-  IntervalCalculationService
+  AioService
 } from '../../shared/services';
 import { Match } from '../models';
 import { TennisApiKeys, ResourcesIds } from '../constants';
-import { of } from 'rxjs';
 import { Language } from '../../shared/language.native';
 import { CalculateAction } from '../../shared/constants';
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
-import { MatchDetail, Permission, SettleQuery } from '../../shared/models/sportsbook-sop';
+import { MatchDetail, SettleQuery } from '../../shared/models/sportsbook-sop';
 import { ResultDetail } from '../../shared/models/sportsbook-sop';
 import { ResultSettingModel } from '../../shared/models';
 import { VerificationService } from '../services';
@@ -37,7 +34,6 @@ describe('Tennis - Refund actions component', () => {
   let closePopupService: ClosePopupService;
   let messageBoxService: MessageBoxService;
   let toastrService: ToastrService;
-  const buttonName = "btn-danger";
   const matchDetail = new MatchDetail();
   matchDetail.matchId = 1;
   const match = new Match(matchDetail);
@@ -147,11 +143,10 @@ describe('Tennis - Refund actions component', () => {
 
         // Act
         component.refund();
-        tick();
+        flush();
 
         // Assert
         expect(toastrService.error).toHaveBeenCalledWith(Language.MarkedTicket);
-        jest.runOnlyPendingTimers(); // flush any remaining timers
       }));
 
     it('should invoke verifySelectedOnMap() when no marked tickets exist',
@@ -165,7 +160,7 @@ describe('Tennis - Refund actions component', () => {
 
         // Act
         component.refund();
-        tick();
+        flush();
 
         // Assert
         expect(component.verifySelectedOnMap).toHaveBeenCalled();
@@ -182,13 +177,13 @@ describe('Tennis - Refund actions component', () => {
 
         // Act
         component.refund();
-        tick();
+        flush();
 
         // Assert
         expect(messageBoxService.confirm).toHaveBeenCalled();
       }));
 
-    it('should alert when exist result not confirmed', fakeAsync(async () => {
+    it('should alert when exist result not confirmed', fakeAsync(() => {
       resultDetail.resultSettingData = new ResultSettingModel();
       resultDetail.resultSettingData.isConfirmedRefund = false;
       resultDetail.checked = true;
@@ -197,9 +192,8 @@ describe('Tennis - Refund actions component', () => {
       jest.spyOn(aioService, 'checkMarkedTickets').mockReturnValue(Promise.resolve(notExistMarkedTicket));
       jest.spyOn(toastrService, 'error');
 
-      await component.refund();
-      tick();
-      jest.runOnlyPendingTimers(); // flush any remaining timers
+      component.refund();
+      flush();
 
       expect(toastrService.error).toHaveBeenCalledWith("WARNING! Cannot continue due to selected results are not confirmed to refund. Please confirm refund and try again.");
     }));
