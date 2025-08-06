@@ -9,3 +9,16 @@ export const Status = {
     hide: "hide",
     undo: "undo",
 }
+
+export const RunningStatus = [
+    Status.running,
+    Status.internal,
+    Status.closed,
+  ];
+
+export const CompletedStatus = [
+    Status.won,
+    Status.lose,
+    Status.refund,
+    Status.hide,
+  ];

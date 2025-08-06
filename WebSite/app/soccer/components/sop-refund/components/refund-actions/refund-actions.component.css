@@ -28,14 +28,6 @@ table {
   padding-left: 10px;
 }
 
-.btn-primary.btn-disabled,
-.btn-warning.btn-disabled {
-  width: auto !important;
-  height: auto !important;
-  color: #fff;
-  border-color: silver;
-}
-
 .button-refund {
   padding: 4px 8px;
   margin: 2px 0;

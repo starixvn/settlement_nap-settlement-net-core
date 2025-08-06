@@ -1,4 +1,5 @@
-<div mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragBoundary=".cdk-overlay-container" cdkDragHandle>
+<div mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragBoundary=".cdk-overlay-container"
+	cdkDragHandle>
 	<label class="title">
 		Outright Calculation
 	</label>
@@ -12,7 +13,8 @@
 	<div *ngIf="leagueSettle">
 		<div class="league">
 			<div class="icon"></div>
-			{{ data.eventDate | date: "mediumDate" }} - {{ leagueSettle.sportName | uppercase }} - {{ leagueSettle.leagueName }}
+			{{ data.eventDate | date: "mediumDate" }} - {{ leagueSettle.sportName | uppercase }} - {{ leagueSettle.leagueName
+			}}
 		</div>
 		<div class="header">
 			<ng-template *ngTemplateOutlet="header"></ng-template>
@@ -23,17 +25,19 @@
 		</div>
 
 		<div class="footer" *ngIf="teams.length > 0">
-			<button [ngClass]="{ button: true, 'button-disabled': disableCalculate() }" [disabled]="disableCalculate()" (click)="calculate()">
+			<button class="btn btn-primary " [ngClass]="{ 'btn-disabled': disableCalculate() }"
+				[disabled]="disableCalculate()" (click)="calculate()">
 				Calculate
 			</button>
 
-			<button
-				*ngIf="viewRecalculate"
-				[ngClass]="{ button: true, 'button-disabled': disableRecalculate }"
-				[disabled]="disableRecalculate"
-				(click)="calculate(false)"
-			>
+			<button class="btn btn-primary" *ngIf="viewRecalculate" [ngClass]="{ 'btn-disabled': disableRecalculate }"
+				[disabled]="disableRecalculate" (click)="calculate(false)">
 				Re-Calculate
+			</button>
+
+			<button style="float: right;" class="btn btn-danger" *ngIf="viewRecalculate"
+				[ngClass]="{ 'btn-disabled': disableRecalculate }" [disabled]="disableRecalculate" (click)="saveScore()">
+				Save Score
 			</button>
 		</div>
 	</div>
@@ -41,38 +45,44 @@
 	<ng-template #body>
 		<table>
 			<tbody>
-				<tr *ngIf="(teams | status: statusSelected).length == 0">
-					<td colspan="100%">There is no information available</td>
+				<tr *ngIf="(teams | status: statusSelected : screenshotSelected).length == 0">
+					<td [attr.colspan]="leagueSettle.permission.isLeader ? '8' : '6'">There is no information available</td>
 				</tr>
 
 				<tr
-					*ngFor="let team of teams | status: statusSelected | ticketStatusFilter: ticketStatusSelected; let i = index"
-					[ngClass]="{ 'won-color': team.status === 'WON', refund: team.status === 'REFUND' }"
-				>
+					*ngFor="let team of teams | status: statusSelected : screenshotSelected | ticketStatusFilter: ticketStatusSelected; let i = index"
+					[ngClass]="{ 'won-color': team.status === 'WON', refund: team.status === 'REFUND' }">
 					<td class="align-left" style="width: auto;">{{ team.teamName }}</td>
 					<td class="ticket-status" [ngClass]="(team | ticketStatus).toLowerCase().replace(' ', '-')">
 						{{ team | ticketStatus }}
 					</td>
 					<td class="status" [ngClass]="team.statusClass">
 						<select [(ngModel)]="team.status" [disabled]="!team.selected" (ngModelChange)="changeStatus(team)">
-							<option *ngFor="let status of teamStatus" [value]="status.text | uppercase" [hidden]="!status.isShow"> {{ status.text }}</option>
+							<option *ngFor="let status of teamStatus" [value]="status.text | uppercase" [hidden]="!status.isShow"> {{
+								status.text }}</option>
+						</select>
+					</td>
+					<td class="status" *ngIf="leagueSettle.permission.isLeader">
+						{{team.traderScore}}
+					</td>
+					<td class="code">
+						<input type="checkbox" [(ngModel)]="team.isDeadheat" [disabled]="team.disableDeadheat || !team.selected"
+							(click)="clearError()" />
+					</td>
+					<td class="code">
+						<ngbd-date-picker [date]="team.dateTime" [disabled]="!team.selected" (change)="onSelectDate($event, team)"
+							[minDate]="moveBetsDay" [maxDate]="today">
+						</ngbd-date-picker>
+					</td>
+					<td class="status" *ngIf="leagueSettle.permission.isLeader">
+						<select [(ngModel)]="team.screenshot" [disabled]="!team.selected" (ngModelChange)="changeScreenshot(team)">
+							<option *ngFor="let status of teamStatus" [value]="status.text | uppercase" [hidden]="!status.isShow"> {{
+								status.text }}</option>
 						</select>
 					</td>
 					<td class="code">
-						<input type="checkbox" [(ngModel)]="team.isDeadheat" [disabled]="team.disableDeadheat || !team.selected" (click)="clearError()" />
-					</td>
-					<td class="code">
-						<ngbd-date-picker
-							[date]="team.dateTime"
-							[disabled]="!team.selected"
-							(change)="onSelectDate($event, team)"
-							[minDate]="moveBetsDay"
-							[maxDate]="today"
-						>
-						</ngbd-date-picker>
-					</td>
-					<td class="code">
-						<input id="checkbox-map-{{ i + 1 }}" type="checkbox" [(ngModel)]="team.selected" (change)="onSelectTeam()" (click)="clearError()" />
+						<input id="checkbox-map-{{ i + 1 }}" type="checkbox" [(ngModel)]="team.selected" (change)="onSelectTeam()"
+							(click)="clearError()" />
 					</td>
 				</tr>
 			</tbody>
@@ -89,22 +99,34 @@
 					<th class="ticket-status">
 						Ticket Status
 						<div>
-							<new-multiple-select (formValue)="onSelectTicketsStatus($event)" [multipleSelect]="ticketsStatusSelect"></new-multiple-select>
+							<new-multiple-select (formValue)="onSelectTicketsStatus($event)"
+								[multipleSelect]="ticketsStatusSelect"></new-multiple-select>
 						</div>
 					</th>
 					<th class="status">
-						Status
+						Final Score
 						<select [(ngModel)]="statusSelected" (ngModelChange)="selectStatus()">
 							<option *ngFor="let status of filterStatuses" [value]="status | uppercase">
 								{{ status }}
 							</option>
 						</select>
 					</th>
+					<th class="status" *ngIf="leagueSettle.permission.isLeader">
+						Trader Score
+					</th>
 					<th class="code">
 						Dead Heat
 					</th>
 					<th class="code">
 						Settle Date
+					</th>
+					<th class="status" *ngIf="leagueSettle.permission.isLeader">
+						Screenshot
+						<select [(ngModel)]="screenshotSelected" (ngModelChange)="selectStatus()">
+							<option *ngFor="let status of filterStatuses" [value]="status | uppercase">
+								{{ status }}
+							</option>
+						</select>
 					</th>
 					<th class="code">
 						Select Team

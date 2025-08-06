@@ -2,7 +2,7 @@ import { Injectable, Pipe, PipeTransform } from "@angular/core";
 import * as _ from "lodash";
 import { FilterStatuses } from "../constants/options";
 import { Team } from "../models";
-import { Status } from "../constants";
+import { CompletedStatus, RunningStatus, Status } from "../constants";
 
 @Pipe({
   name: "status",
@@ -12,35 +12,31 @@ import { Status } from "../constants";
   providedIn: "root",
 })
 export class StatusPipe implements PipeTransform {
-  private readonly runningStatus = [
-    Status.running,
-    Status.internal,
-    Status.closed,
-  ];
-  private readonly completedStatus = [
-    Status.won,
-    Status.lose,
-    Status.refund,
-    Status.hide,
-  ];
-
-  public transform(teams: Team[], status: string) {
-    return _.isEqual(status.toLowerCase(), FilterStatuses[0].toLowerCase())
-      ? teams
-      : this.filterStatus(teams, status);
+  public transform(teams: Team[], status: string, screenShotStatus: string): Team[] {
+    const teamsFilteredByStatus = this.applyStatusFilter(teams, status, false);
+    
+    return this.applyStatusFilter(teamsFilteredByStatus, screenShotStatus, true);
   }
 
-  private filterStatus(teams: Team[], status: string) {
-    if (_.isEqual(status.toLowerCase(), Status.running)) {
-      return this.getTeamByStatus(this.runningStatus, teams);
+  private applyStatusFilter(teams: Team[], status: string, isScreenshot: boolean): Team[] {
+    if (_.isEqual(status.toLowerCase(), FilterStatuses[0].toLowerCase())) {
+      return teams;
     }
-    return this.getTeamByStatus(this.completedStatus, teams);
+    
+    return this.filterTeamsByStatus(teams, status, isScreenshot);
   }
 
-  private getTeamByStatus(statuses: string[], teams: Team[]): Team[] {
-    return _.filter(teams, (team) =>
-      _.includes(statuses, team.originalStatus.toLowerCase()));
+  private filterTeamsByStatus(teams: Team[], status: string, isScreenshot: boolean): Team[] {
+    const targetStatuses = _.isEqual(status.toLowerCase(), Status.running) ? RunningStatus : CompletedStatus;
+    
+    return this.filterTeamsByStatusList(teams, targetStatuses, isScreenshot ? 'screenshot' : 'originalStatus');
   }
 
+  private filterTeamsByStatusList(teams: Team[], statusList: string[], propertyName: 'originalStatus' | 'screenshot'): Team[] {
+    return _.filter(teams, (team) => {
+      const teamStatus = team[propertyName]?.toLowerCase();
+      return _.includes(statusList, teamStatus);
+    });
+  }
 }
 

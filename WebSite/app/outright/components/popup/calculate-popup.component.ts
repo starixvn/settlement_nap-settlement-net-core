@@ -8,7 +8,7 @@ import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import { FormsModule } from '@angular/forms';
 import { DatepickerComponent } from '../../../shared/components/date-picker/date-picker.component';
 import { CustomNgbDateParserFormatter } from '../../../shared/components/date-picker/custom-ngb-date-parser-formatter';
-import { FilterStatuses, TeamStatuses, StatusId, Status } from '../../constants';
+import { FilterStatuses, TeamStatuses, StatusId, Status, RunningStatus } from '../../constants';
 import * as _ from "lodash";
 import { StatusPipe } from '../../pipes/status-pipe';
 import { CalculateService } from '../../services';
@@ -55,6 +55,7 @@ export class CalculatePopupComponent implements OnInit {
     statusSelected = FilterStatuses[1].toUpperCase();
     ticketsStatusSelect = new MultipleSelect();
     ticketStatusSelected: string;
+    screenshotSelected = FilterStatuses[1].toUpperCase();
     readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
     private teamSettleWon: Team[];
     teamJustSettled: TeamSettle[] = [];
@@ -85,8 +86,10 @@ export class CalculatePopupComponent implements OnInit {
             team.eventDate = _.includes(this.statusRunning, team.oddsStatus.toLowerCase()) ? this.leagueSettle.today : team.eventDate;
             team.dateTime = this.verifyDateService.convertToDateStruct(team.eventDate);
             team.disableDeadheat = !_.isEqual(team.status, 'WON');
-            team.statusClass = this.makeBackgroundByStatus(team.status);
             team.originalStatus = team.status;
+            team.statusClass = this.makeBackgroundByStatus(team);
+            team.traderScore = team.traderScore || team.status;
+            team.screenshot = team.screenshot || team.status;
         });
         this.moveBetsDay = this.verifyDateService.convertToDateStruct(this.leagueSettle.moveBetsDay);
         this.today = this.verifyDateService.convertToDateStruct(this.leagueSettle.today);
@@ -127,6 +130,11 @@ export class CalculatePopupComponent implements OnInit {
         this.ticketStatusSelected = value.length > 0 ? value.map(item => item.value).join() : "";
     }
 
+    onSelectScreenShot(value: ItemsSelect[]) {
+        this.selectStatus();
+        this.screenshotSelected = value.length > 0 ? value.map(item => item.value).join() : "";
+    }
+
     changeStatus(team: Team) {
         this.clearError();
 
@@ -136,6 +144,40 @@ export class CalculatePopupComponent implements OnInit {
             return;
         }
         team.disableDeadheat = false;
+    }
+
+    makeBackgroundByStatus(team: Team) {
+        if (!RunningStatus.includes(team.originalStatus.toLocaleLowerCase())) {
+            return 'calculated';
+        }
+
+        const hasScreenshot = !_.isEmpty(team.screenshot);
+        const hasTraderScore = !_.isEmpty(team.traderScore);
+        const hasStatus = !_.isEmpty(team.status);
+
+        if (hasScreenshot && hasTraderScore && !_.isEqual(team.traderScore.toLocaleLowerCase(), team.screenshot.toLocaleLowerCase())) {
+            return 'status-mismatched';
+        }
+
+        if (hasScreenshot && hasStatus && !_.isEqual(team.status.toLocaleLowerCase(), team.screenshot.toLocaleLowerCase())) {
+            return 'status-mismatched';
+        }
+
+        if (hasTraderScore) {
+            return 'trader-confirm';
+        }
+
+        return '';
+    }
+
+    changeTraderScore(team: Team) {
+        this.clearError();
+        // Add any specific logic for trader score changes if needed
+    }
+
+    changeScreenshot(team: Team) {
+        this.clearError();
+        team.statusClass = this.makeBackgroundByStatus(team);
     }
 
     public async calculate(isCalc = true) {
@@ -161,7 +203,7 @@ export class CalculatePopupComponent implements OnInit {
     }
 
     fillteredTeam() {
-        const filterStatus = this.statusPipe.transform(this.teams, this.statusSelected);
+        const filterStatus = this.statusPipe.transform(this.teams, this.statusSelected, this.screenshotSelected);
         const filterTicketStatus = this.ticketStatusPipe.transform(filterStatus, this.ticketStatusSelected);
 
         return filterTicketStatus;
@@ -254,13 +296,6 @@ export class CalculatePopupComponent implements OnInit {
         this.toastrService.error(result.errMsg);
     }
 
-    makeBackgroundByStatus(status: string) {
-        if (_.isEqual(status.toLocaleLowerCase(), 'running')) {
-            return '';
-        }
-        return 'calculated';
-    }
-
     async VerifyHideStatus(teamHideSelected: Team[]) {
         for (const team of teamHideSelected) {
             const result = await this.checkVoidTicket(team);
@@ -274,5 +309,9 @@ export class CalculatePopupComponent implements OnInit {
     private async checkVoidTicket(teamHide: Team) {
         const result = await this.outrightService.checkVoidTickets(+teamHide.orId);
         return result;
+    }
+
+    saveScore() {
+        console.log('saveScore');
     }
 }

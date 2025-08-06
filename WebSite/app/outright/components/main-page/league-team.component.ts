@@ -109,7 +109,7 @@ export class LeagueTeamComponent implements OnChanges {
                 sportType: league.teams[0].sportType,
                 eventDate: league.eventDate
             },
-            width: '930px',
+            width: '1130px',
             height: '100%',
             disableClose: true,
             hasBackdrop: true
