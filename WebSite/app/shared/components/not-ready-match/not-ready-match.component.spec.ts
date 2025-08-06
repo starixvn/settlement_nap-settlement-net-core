@@ -1,23 +1,24 @@
-﻿import { TestBed, waitForAsync, ComponentFixture } from '@angular/core/testing';
-import { DebugElement } from "@angular/core";
-import { By } from '@angular/platform-browser';
+﻿import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { NotReadyMatchComponent } from './not-ready-match.component';
+import { By } from '@angular/platform-browser';
 
 describe('Component: NotReadyMatch', () => {
     let component: NotReadyMatchComponent;
     let fixture: ComponentFixture<NotReadyMatchComponent>;
-    let el: DebugElement;
+    let el: any;
 
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
-            declarations: [NotReadyMatchComponent],
+            imports: [NotReadyMatchComponent],
         })
-            .compileComponents()
-            .then(() => {
-                fixture = TestBed.createComponent(NotReadyMatchComponent);
-                component = fixture.componentInstance;
-            });
+            .compileComponents();
     }));
+
+    beforeEach(() => {
+        fixture = TestBed.createComponent(NotReadyMatchComponent);
+        component = fixture.componentInstance;
+        fixture.detectChanges();
+    });
 
     it('should create the app', waitForAsync(() => {
         expect(component).toBeTruthy();

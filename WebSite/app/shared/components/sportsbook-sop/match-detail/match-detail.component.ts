@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, input, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { AioService } from '../../../services';
 import { ManageLeagueComponent } from '../../../../score-source-setting/components';

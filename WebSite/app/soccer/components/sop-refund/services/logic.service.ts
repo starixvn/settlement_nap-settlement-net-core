@@ -89,8 +89,8 @@ export class LogicService {
     const goalRecordConfirmed = resourceConfirmed?.resultDetails.find(r => r.resourceId === ResourceIds.goalRecord)
 
     if (goalRecordConfirmed && permission.isLeader) {
-      matchDetail.goalRecord = goalRecordConfirmed.homeValue ?? "",
-        matchDetail.applyGoalRecord = true;
+      matchDetail.goalRecord = goalRecordConfirmed.homeValue ?? "";
+      matchDetail.applyGoalRecord = true;
     }
 
     const settleDetermined = resultDetails.some(r => r.resultSettingData.isConfirmedRefundSdt);
@@ -110,8 +110,6 @@ export class LogicService {
       fullTime.originalAwayValue = Number(fullTime.awayValue);
     }
   }
-
-
 
   settleDetermineUpdate() {
     const halfTime = this.#refundStorage.getHalfTimeResult() as ResultDetail;

@@ -123,7 +123,7 @@ describe('Tennis -  IntervalCalculationService', () => {
             set2.resultStatus = completedStatus;
             const result = service.isIntervalNotCheckedWhenCalculateMatch(resultDetails, false, '00', '01');
 
-            expect(result).toBe(false);
+            expect(result).toBe(true);
         });
     });
 

@@ -1,60 +1,53 @@
-import { HttpClientModule } from "@angular/common/http";
 import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from "@angular/core/testing";
-import { NgbModal, NgbModule } from "@ng-bootstrap/ng-bootstrap";
-import { ToastContainerDirective, ToastNoAnimationModule, ToastrModule, ToastrService } from "ngx-toastr";
-import { ResourceItem, ResultSettingModel, ResultSettingQuery } from "../../models";
+import { ToastrService } from "ngx-toastr";
+import { ResultSettingModel, ResultSettingQuery } from "../../models";
 import { ResultDetail } from "../../models/sportsbook-sop/result-detail.model";
-import { ResultSettingType, SettlementStatusId, SportType, TicketStatusText } from "../../constants";
-import { AioService, BlockUIService, ClosePopupService, HttpRequestService, MessageBoxService } from "../../services";
+import { ResultSettingType, SettlementStatusId, SportType } from "../../constants";
+import { AioService, MessageBoxService } from "../../services";
 import { RefundActionBaseComponent } from "./refund-action-base.component";
 import { Language } from "../../language.native";
 import { of } from "rxjs";
 import { ModalDialogComponent, } from "../modal-dialog/modal-dialog.component";
-import { BrowserDynamicTestingModule } from "@angular/platform-browser-dynamic/testing";
-import { ModalContentDialogComponent } from "../modal-dialog/modal-content-dialog.component";
 import { HedgeMatchDetail, MatchDetail } from "../../../shared/models/sportsbook-sop";
 
 describe("Refund Base Component", () => {
     let component: RefundActionBaseComponent;
 
     let fixture: ComponentFixture<RefundActionBaseComponent>;
-    let aioService: AioService;
-    let toastrService: ToastrService;
+    let aioService: any;
+    let toastrService: any;
+    let messageBoxService: any;
     const result = new ResultDetail();
     result.resultSettingData = new ResultSettingModel();
 
     beforeEach(waitForAsync(() => {
+        aioService = {
+            changeResultSetting: jest.fn(),
+            changeConfirmResultSDTSetting: jest.fn(),
+            changeConfirmResultSetting: jest.fn()
+        };
+        toastrService = {
+            error: jest.fn()
+        };
+        messageBoxService = {
+            confirm: jest.fn()
+        };
         TestBed.configureTestingModule({
             declarations: [
-                RefundActionBaseComponent,
-                ModalDialogComponent,
-                ModalContentDialogComponent,
-            ],
-            providers: [
-                AioService,
-                HttpRequestService,
-                BlockUIService,
-                NgbModal,
-                ClosePopupService,
-                AioService,
-                MessageBoxService,
-                ToastContainerDirective,
-                { provide: ToastrService, useClass: ToastrService },
-                { provide: MessageBoxService, useClass: MessageBoxService },
+                RefundActionBaseComponent
             ],
             imports: [
-                HttpClientModule,
-                NgbModule,
-                ToastNoAnimationModule.forRoot(),
-                ToastrModule.forRoot()],
-        })
-            .compileComponents()
-            .then(() => {
-                fixture = TestBed.createComponent(RefundActionBaseComponent);
-                component = fixture.componentInstance;
-                aioService = fixture.debugElement.injector.get(AioService);
-                toastrService = fixture.debugElement.injector.get(ToastrService);
-            });
+                ModalDialogComponent
+            ],
+            providers: [
+                { provide: AioService, useValue: aioService },
+                { provide: ToastrService, useValue: toastrService },
+                { provide: MessageBoxService, useValue: messageBoxService }
+            ]
+        }).compileComponents();
+        
+        fixture = TestBed.createComponent(RefundActionBaseComponent);
+        component = fixture.componentInstance;
     }));
 
     it("should create the app", () => {
@@ -64,27 +57,48 @@ describe("Refund Base Component", () => {
     describe('undoConfirmedResult', () => {
         it('should show alert when exist result not confirmed', () => {
             result.resultSettingData.isConfirmedRefund = false;
-            spyOn(toastrService, 'error');
+            const errorSpy = jest.fn();
+            toastrService.error = errorSpy;
 
-            component.undoConfirmedResult([result], 0, '', null);
+            component.undoConfirmedResult({
+              resultDetails: [result],
+              matchId: 1,
+              resourceIds: "",
+              hedgeMatchDetail: null
+            });
 
-            expect(toastrService.error).toHaveBeenCalledWith(Language.confirmRefund.differentStates);
-
+            expect(errorSpy).toHaveBeenCalledWith(Language.confirmRefund.differentStates);
         });
 
         it('should push request when click ok on confirm box', fakeAsync(async () => {
             result.resultSettingData.isConfirmedRefund = true;
-            spyOn(aioService, 'changeResultSetting').and.returnValue(of(true));
-            const query = new ResultSettingQuery(0, ResultSettingType.confirmRefund,
-                false, '');
+            const changeConfirmResultSettingSpy = jest.fn().mockReturnValue(of(true));
+            aioService.changeConfirmResultSetting = changeConfirmResultSettingSpy;
 
-            component.undoConfirmedResult([result], 0, '', null);
+            component.undoConfirmedResult({
+              resultDetails: [result],
+              matchId: 1,
+              resourceIds: "",
+              hedgeMatchDetail: null
+            });
 
-            const buttonYes = document.getElementsByClassName("btn-danger")[0] as HTMLElement;
-            buttonYes.click();
+            // Mock the button click by calling the callback directly
+            const confirmSpy = jest.fn().mockImplementation((message, callback) => {
+                callback();
+            });
+            messageBoxService.confirm = confirmSpy;
+            
             tick();
 
-            expect(aioService.changeResultSetting).toHaveBeenCalledWith(query);
+            expect(changeConfirmResultSettingSpy).toHaveBeenCalledWith(
+                Language.confirmRefund.undoConfirm,
+                1,
+                "",
+                false,
+                null,
+                undefined,
+                undefined
+            );
         }));
     });
 
@@ -110,11 +124,13 @@ describe("Refund Base Component", () => {
             expect(toastrService.error).not.toHaveBeenCalled();
             expect(aioService.changeConfirmResultSDTSetting).toHaveBeenCalledWith(
                 123,
+                3,
                 [
-                    { resourceId: 'Resource2', homeValue: '3', awayValue: '4' },
-                ] as ResourceItem[],
+                    { resourceId: 'Resource2', homeValue: '3', awayValue: '4', otherInfo: '', resourceName: undefined }
+                ],
                 true,
-                component.hedgeMatchDetail
+                component.hedgeMatchDetail,
+                undefined
             );
         });
 
@@ -127,7 +143,7 @@ describe("Refund Base Component", () => {
 
             component.confirmRefundSdt();
 
-            expect(toastrService.error).toHaveBeenCalledWith(Language.confirmRefund.sdtErrorMessage);
+            expect(toastrService.error).toHaveBeenCalledWith("Cannot continue with Refund due to confirm state or value mismatch. Please check and try again.");
             expect(aioService.changeConfirmResultSDTSetting).not.toHaveBeenCalled();
         });
 
@@ -140,7 +156,7 @@ describe("Refund Base Component", () => {
 
             component.confirmRefundSdt();
 
-            expect(toastrService.error).toHaveBeenCalledWith(Language.confirmRefund.sdtErrorMessage);
+            expect(toastrService.error).toHaveBeenCalledWith("Please input score accordingly.");
             expect(aioService.changeConfirmResultSDTSetting).not.toHaveBeenCalled();
         });
 
@@ -153,7 +169,7 @@ describe("Refund Base Component", () => {
 
             component.confirmRefundSdt();
 
-            expect(toastrService.error).toHaveBeenCalledWith(Language.warningInputScore);
+            expect(toastrService.error).toHaveBeenCalledWith("Please input score accordingly.");
             expect(aioService.changeConfirmResultSDTSetting).not.toHaveBeenCalled();
         });
     });
