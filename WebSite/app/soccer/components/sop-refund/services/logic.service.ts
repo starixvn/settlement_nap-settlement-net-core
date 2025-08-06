@@ -3,14 +3,12 @@ import { CalculateAction } from "../../../../shared/constants/calculate-action.n
 import { ResourceIds } from "../../../constants/resourceIds.native";
 import { RefundStorage } from "../../../storage/refund.storage";
 import { MessageBoxService } from "../../../../shared/services";
-import { EventStatus, ScoreSourceType, SettlementStatusId } from "../../../../shared/constants";
-import { BetDaq, BetFair, MatchDetail } from "../../refund/model/match.model";
+import {  ScoreSourceType, SettlementStatusId } from "../../../../shared/constants";
+import { BetDaq, BetFair, MatchDetail } from "../../sop-refund/models/match.model";
 
 import * as _ from "lodash";
 import { Language } from "../../../../shared/language.native";
 import { ResultDetail } from "../../../models";
-import { ExternalResultDetail } from "../../../../shared/models/sportsbook-sop";
-import { MainRefundButtonStatus } from "../../refund/model/button-status.model";
 import { BetStatus, RefundType } from "../../../constants";
 
 @Injectable({

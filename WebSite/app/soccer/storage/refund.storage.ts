@@ -1,6 +1,6 @@
 import { Injectable, signal, inject } from "@angular/core";
 import { ToastContainerDirective, ToastrService } from "ngx-toastr";
-import { Match } from "../components/refund/model/match.model";
+import { Match } from "../components/sop-refund/models/match.model";
 import * as _ from "lodash";
 import { ResourceIds } from "../constants/resourceIds.native";
 import { RefundBaseStorage } from "./storage.service.native";

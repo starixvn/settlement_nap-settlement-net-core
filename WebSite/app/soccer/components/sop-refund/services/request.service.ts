@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { RequestBaseService } from "../../../services/request-base.service";
 import { Result } from "../../../../shared/models";
 import { firstValueFrom } from "rxjs";
-import { RefundQuery } from "../../refund/model/query.model";
+import { RefundQuery } from "../../sop-refund/models/query.model";
 
 @Injectable({
   providedIn: 'root'

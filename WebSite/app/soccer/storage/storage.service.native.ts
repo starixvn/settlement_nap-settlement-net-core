@@ -2,7 +2,7 @@ import { GeneralResultDetail, ModalDialogMessage } from "../../shared/models";
 import { ExternalResultDetail } from "../../shared/models/sportsbook-sop";
 import { FantasyRelatedMatch, Match, UndoChecking } from "../components/calc/models/match.model";
 import { ResultDetail } from "../../shared/models/sportsbook-sop/result-detail.model";
-import { Match as RefundMatch } from "../components/refund/model/match.model";
+import { Match as RefundMatch } from "../components/sop-refund/models/match.model";
 import { ResultDetail as RefundResultDetail } from "../models";
 
 

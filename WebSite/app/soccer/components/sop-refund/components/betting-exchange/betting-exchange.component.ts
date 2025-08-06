@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { BetDaq, BetFair } from '../../../refund/model/match.model';
+import { BetDaq, BetFair } from '../../models/match.model';
 import { MatDialog } from '@angular/material/dialog';
 import { MoveBetComponent } from '../move-bet/move-bet.component';
 import { SpecificBettypeComponent } from '../specific-bettype/specific-bettype.component';

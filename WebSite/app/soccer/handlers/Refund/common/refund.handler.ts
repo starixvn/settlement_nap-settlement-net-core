@@ -1,6 +1,6 @@
 import { AbstractHandler } from "../../abstract.handler.native";
 import { RefundBaseStorage } from "../../../storage/storage.service.native";
-import { RefundQuery } from "../../../components/refund/model/query.model";
+import { RefundQuery } from "../../../components/sop-refund/models/query.model";
 import { inject } from "@angular/core";
 import { RequestService } from "../../../components/sop-refund/services/request.service";
 import { LogicService } from "../../../components/sop-refund/services/logic.service";

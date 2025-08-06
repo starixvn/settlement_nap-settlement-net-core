@@ -2,7 +2,7 @@ import { inject, Injectable } from "@angular/core";
 import { RefundStorage } from "../../../storage/refund.storage";
 import { VerificationBaseService } from "../../../services/verification-base.service";
 import { ResultDetail } from "../../../models";
-import { MatchDetail } from "../../refund/model/match.model";
+import { MatchDetail } from "../../sop-refund/models/match.model";
 import { EventStatus } from "../../../../shared/constants";
 import * as _ from "lodash";
 

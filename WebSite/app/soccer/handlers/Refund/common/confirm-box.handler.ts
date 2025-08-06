@@ -1,7 +1,7 @@
 import { Storage } from './../../../../baseball/services/storage.service';
 import { CalculateAction } from "../../../../shared/constants";
 import { Language } from "../../../../shared/language.native";
-import { Match } from "../../../components/refund/model/match.model";
+import { Match } from "../../../components/sop-refund/models/match.model";
 import { RefundBaseStorage } from "../../../storage/storage.service.native";
 import { AbstractHandler } from "../../abstract.handler.native";
 import { inject } from '@angular/core';

@@ -2,13 +2,12 @@ import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { ToastContainerDirective, ToastContainerModule } from 'ngx-toastr';
 import { Soccer } from '../../../soccer.model';
 import { MatchDetailComponent } from '../../../common/match-detail.component';
-import { BetDaq, BetFair, Match, MatchDetail } from '../../../refund/model/match.model';
+import { BetDaq, BetFair, Match, MatchDetail } from '../../models/match.model';
 import { RequestService } from '../../services/request.service';
 import { RefundStorage } from '../../../../storage/refund.storage';
 import { RefundActionsComponent } from '../refund-actions/refund-actions.component';
 import { LogicService } from '../../services/logic.service';
 import { BettingExchangeComponent } from '../betting-exchange/betting-exchange.component';
-import { BlockUIService } from '../../../../../shared/services';
 
 @Component({
   selector: 'refund',
