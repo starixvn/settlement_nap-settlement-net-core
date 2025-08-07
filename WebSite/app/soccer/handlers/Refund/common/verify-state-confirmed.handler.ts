@@ -2,14 +2,14 @@ import { AbstractHandler } from "../../abstract.handler.native";
 import { RefundBaseStorage } from "../../../storage/storage.service.native";
 import { ResultDetail } from "../../../models";
 import { Language } from "../../../../shared/language.native";
-import { ResourceIds } from "../../../../shared/constants";
+import { EventStatus, ResourceIds } from "../../../../shared/constants";
 
 
 export class VerifyStateConfirmedHandler extends AbstractHandler {
   public async handle(storage: RefundBaseStorage): Promise<void> {
     const { matchDetail } = storage.getMatch()
     const selectedResources = storage.getSelectedResource() as ResultDetail[];;
-    if(matchDetail.isMarkedRefundAll) {
+    if(matchDetail.isMarkedRefundAll || matchDetail.eventStatus.toLowerCase() == EventStatus.postponed.toLowerCase()) {
       super.handle(storage);
       return;
     }
@@ -25,7 +25,6 @@ export class VerifyStateConfirmedHandler extends AbstractHandler {
     } else {
       const allConfirmed = selectedResources.every(item => item.resultSettingData.isConfirmedRefund);
       allConfirmed && this.verifyGoalRecord(storage, selectedResources) ? super.handle(storage) : this.showAlert(storage, matchDetail.isSettleDetermined, allConfirmed);
-
     }
   }
 
@@ -44,10 +43,10 @@ export class VerifyStateConfirmedHandler extends AbstractHandler {
   private verifyGoalRecord(storage: RefundBaseStorage, selectedResources: ResultDetail[]) {
     const { matchDetail } = storage.getMatch();
     const { externalResults } = storage.getMatch();
-    const confirmedGoalRecord = externalResults.find(item => item.sourceId == 99);
-    if (matchDetail.applyGoalRecord && confirmedGoalRecord) {
-      const goalRecordConfirmed = confirmedGoalRecord.resultDetails.find(item => item.resourceId == ResourceIds.goalRecord);
-      return goalRecordConfirmed && goalRecordConfirmed.homeValue == matchDetail.goalRecord;
+    const confirmedResult = externalResults.find(item => item.sourceId == 99);
+    const goalRecordConfirmed = confirmedResult?.resultDetails.find(item => item.resourceId == ResourceIds.goalRecord);
+    if (goalRecordConfirmed) {  
+      return matchDetail.applyGoalRecord && goalRecordConfirmed.homeValue == matchDetail.goalRecord;
     }
     return true;
   }
