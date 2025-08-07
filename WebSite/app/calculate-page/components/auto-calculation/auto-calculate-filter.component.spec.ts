@@ -8,10 +8,11 @@ import { NgbDateStruct, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { HttpRequestService, BlockUIService, MessageBoxService, VerifyDateService } from '../../../shared/services';
-import { RequestService } from '../../services';
-import { BackGroundService, DetectChangesService } from './../../services';
+import { RequestService, BackGroundService, DetectChangesService } from '../../services';
+import { AutoSettingsService } from '../../services/auto-settings.service';
 import { MaterialModule } from '../../../shared/material-module';
-import { AutoCalculateService } from './auto-calculate.service';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { DatePipe } from '@angular/common';
 import { DateFilter, ItemsSelect, League } from '../../../shared/models';
 import { of } from 'rxjs';
 import { Calculation } from '../../models';
@@ -19,7 +20,7 @@ import { Calculation } from '../../models';
 describe('AutoCalculateFilterComponent', () => {
   let component: AutoCalculateFilterComponent;
   let fixture: ComponentFixture<AutoCalculateFilterComponent>;
-  let autoCalculateService: AutoCalculateService;
+  let autoSettingsService: AutoSettingsService;
   let requestService: RequestService;
   let verifyDateService: VerifyDateService;
 
@@ -33,7 +34,8 @@ describe('AutoCalculateFilterComponent', () => {
         BlockUIService,
         BackGroundService,
         DetectChangesService,
-        AutoCalculateService
+        AutoSettingsService,
+        DatePipe
       ],
       imports: [
         AutoCalculateFilterComponent,
@@ -43,8 +45,9 @@ describe('AutoCalculateFilterComponent', () => {
         MaterialModule,
         ModalDialogComponent,
         NewMultipleSelectComponent,
-        DatepickerComponent
-      ],
+        DatepickerComponent,
+        NoopAnimationsModule
+      ]
     })
       .compileComponents();
   });
@@ -52,7 +55,7 @@ describe('AutoCalculateFilterComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(AutoCalculateFilterComponent);
     component = fixture.componentInstance;
-    autoCalculateService = fixture.debugElement.injector.get(AutoCalculateService);
+    autoSettingsService = fixture.debugElement.injector.get(AutoSettingsService);
     requestService = fixture.debugElement.injector.get(RequestService);
     verifyDateService = fixture.debugElement.injector.get(VerifyDateService);
     fixture.detectChanges();
@@ -66,7 +69,7 @@ describe('AutoCalculateFilterComponent', () => {
   describe('ngOnInit', () => {
     it('should set default value for filter', () => {
       const item = new ItemsSelect(1, '1', 'text', false, false, false, []);
-      spyOn(autoCalculateService, 'createAutoPayoutFilter').and.returnValue([item]);
+      jest.spyOn(autoSettingsService, 'createAutoPayoutFilter').mockReturnValue([item]);
 
       component.ngOnInit();
 
@@ -83,8 +86,8 @@ describe('AutoCalculateFilterComponent', () => {
       };
 
       const leagues: League[] = [{ leagueId: 2, leagueName: "League", sportType: 1, sportName: "Soccer", group: "1" }];
-      spyOn(requestService, 'getDate').and.returnValue(of(dateServer));
-      spyOn(requestService, 'getLeague').and.returnValue(of(leagues));
+      jest.spyOn(requestService, 'getDate').mockResolvedValue(dateServer);
+      jest.spyOn(requestService, 'getLeague').mockResolvedValue(leagues);
       component.ngOnInit();
       tick();
 
@@ -106,8 +109,8 @@ describe('AutoCalculateFilterComponent', () => {
       league.leagueName = "mockName";
       const leagues: League[] = [league, league];
 
-      spyOn(requestService, 'getLeague').and.returnValue(of(leagues));
-      spyOn(verifyDateService, 'validDate').and.returnValue(true);
+      jest.spyOn(requestService, 'getLeague').mockResolvedValue(leagues);
+      jest.spyOn(verifyDateService, 'validDate').mockReturnValue(true);
       component.onSelectFromDate(fromDate);
       tick();
 
@@ -117,7 +120,7 @@ describe('AutoCalculateFilterComponent', () => {
     it('should return none League when date not valid.', fakeAsync(() => {
       const date = new Date();
       const fromDate: NgbDateStruct = { day: date.getUTCDay(), month: date.getUTCMonth(), year: date.getUTCFullYear() };
-      spyOn(verifyDateService, 'validDate').and.returnValue(false);
+      jest.spyOn(verifyDateService, 'validDate').mockReturnValue(false);
       component.onSelectFromDate(fromDate);
       tick();
 
@@ -135,8 +138,8 @@ describe('AutoCalculateFilterComponent', () => {
       league.leagueName = "mockName";
       const leagues: League[] = [league, league];
 
-      spyOn(requestService, 'getLeague').and.returnValue(of(leagues));
-      spyOn(verifyDateService, 'validDate').and.returnValue(true);
+      jest.spyOn(requestService, 'getLeague').mockResolvedValue(leagues);
+      jest.spyOn(verifyDateService, 'validDate').mockReturnValue(true);
       component.onSelectToDate(fromDate);
       tick();
 
@@ -146,7 +149,7 @@ describe('AutoCalculateFilterComponent', () => {
     it('should return none League when date not valid.', fakeAsync(() => {
       const date = new Date();
       const fromDate: NgbDateStruct = { day: date.getUTCDay(), month: date.getUTCMonth(), year: date.getUTCFullYear() };
-      spyOn(verifyDateService, 'validDate').and.returnValue(false);
+      jest.spyOn(verifyDateService, 'validDate').mockReturnValue(false);
       component.onSelectToDate(fromDate);
       tick();
 
@@ -159,8 +162,8 @@ describe('AutoCalculateFilterComponent', () => {
     const calculation = [new Calculation()];
     component.fromDate = { year: 2020, month: 6, day: 20};
     component.toDate = { year: 2020, month: 6, day: 20};
-    spyOn(requestService, 'searchAutoCalculation').and.returnValue(of(calculation));
-    spyOn(component.searchAction, 'emit');
+    jest.spyOn(requestService, 'searchAutoCalculation').mockResolvedValue(calculation as any);
+    jest.spyOn(component.searchAction, 'emit');
 
     component.search();
     tick();

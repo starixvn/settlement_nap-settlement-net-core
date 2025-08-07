@@ -9,7 +9,7 @@ import { GeneralResultDetail } from "../../shared/models";
 @Injectable()
 export class VerificationService  {
 
-    constructor(private earlyConstraintService: EarlyConstraintService) {}
+    constructor(private readonly earlyConstraintService: EarlyConstraintService) {}
 
     public invalidInputScore(resultDetails: ResultDetail[]) {
         const findMap = _.find(resultDetails, item => _.isEmpty(item.homeValue) && item.resourceId !== ResourcesIds.final);

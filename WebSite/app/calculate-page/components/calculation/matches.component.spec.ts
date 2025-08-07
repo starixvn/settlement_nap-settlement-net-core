@@ -1,15 +1,18 @@
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
-import { DialogBoxService, HttpRequestService, BlockUIService, MessageBoxService } from './../../../shared/services';
-import { RequestService, HandleActionsService, BackGroundService, DetectChangesService, PopupService } from './../../services';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { MatchesComponent } from './matches.component';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { MaterialModule } from '../../../shared/material-module';
-import { CalculationMatch, FilterQuery, } from '../../models';
-import { BackgroundColor, CalculationStatus, EventStatus } from '../../../shared/constants';
+import { BackGroundService, RequestService, PopupService, DetectChangesService, HandleActionsService } from '../../services';
+import { DialogBoxService, HttpRequestService, BlockUIService, MessageBoxService } from '../../../shared/services';
+import { AutoSettingsService } from '../../services/auto-settings.service';
+import { CalculationMatch, FilterQuery } from '../../models';
+import { BackgroundColor, EventStatus } from '../../../shared/constants';
 import { Permission } from '../../../shared/models/sportsbook-sop/permission.model';
 import { Remark } from '../../../shared/models/match-details/remark.model';
+import { of } from 'rxjs';
 
 
 describe('MatchesComponent', () => {
@@ -20,7 +23,14 @@ describe('MatchesComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [MatchesComponent],
+            imports: [
+                MatchesComponent,
+                FormsModule,
+                HttpClientModule,
+                HttpClientTestingModule,
+                NgbModule,
+                MaterialModule
+            ],
             providers: [
                 BackGroundService,
                 RequestService,
@@ -30,14 +40,9 @@ describe('MatchesComponent', () => {
                 HandleActionsService,
                 HttpRequestService,
                 MessageBoxService,
-                DetectChangesService
-            ],
-            imports: [
-                FormsModule,
-                HttpClientModule,
-                NgbModule,
-                MaterialModule
-            ],
+                DetectChangesService,
+                AutoSettingsService
+            ]
         })
             .compileComponents();
     });
@@ -50,7 +55,18 @@ describe('MatchesComponent', () => {
         requestService = fixture.debugElement.injector.get(RequestService);
         popupService = fixture.debugElement.injector.get(PopupService);
 
-
+        // Initialize component properties
+        component.filterQuery = {
+            fromDate: "2020/06/19 00:00:00",
+            toDate: "2020/06/20 00:00:00",
+            matchCode: "1",
+            leagueIds: "1",
+            filterOver: 1,
+            matchType: 2,
+            matchStatus: "0",
+            holdStatus: "0",
+            isIncludeTest: false
+        };
     });
 
     it('should create', () => {
@@ -58,9 +74,18 @@ describe('MatchesComponent', () => {
     });
 
     it('ngOnInit - should refresh matches', fakeAsync(() => {
-        component.leagues = [{ leagueId: 1, leagueName: "A", directWaitingTime: 1, instantWaitingTime: 2, autoCalcSetting: null, matches: [] }];
+        component.leagues = [{ 
+            leagueId: 1, 
+            name: "Test League",
+            refundWaitingTime: 1,
+            enabledAutoRefund: true,
+            directWaitingTime: 1, 
+            instantWaitingTime: 2, 
+            autoCalcSetting: null, 
+            matches: [] 
+        }];
         component.filterQuery = new FilterQuery();
-        spyOn(requestService, 'refreshMatches');
+        jest.spyOn(requestService, 'refreshMatches');
 
         component.ngOnInit();
         tick(6000);
@@ -165,41 +190,45 @@ describe('MatchesComponent', () => {
         });
     });
 
-    it('getLog - should call popupService', () => {
-        component.filterQuery = new FilterQuery();
-        spyOn(popupService, 'popupLog');
+    describe('getLog', () => {
+        it('getLog - should call popupService', () => {
+            jest.spyOn(popupService, 'popupLog');
 
-        component.getLog('12345');
+            component.getLog('12345');
 
-        expect(popupService.popupLog).toHaveBeenCalled();
+            expect(popupService.popupLog).toHaveBeenCalledWith('12345', '2020/06/19 00:00:00', '2020/06/20 00:00:00');
+        });
     });
 
-    it('popupEarly - should call popupService', () => {
-        const match: CalculationMatch = new CalculationMatch();
-        match.remark = new Remark();
-        const per = new Permission();
-        per.canRefund = true;
-        component.permission = per;
+    describe('popupEarly', () => {
+        it('popupEarly - should call popupService', () => {
+            const match = new CalculationMatch();
+            match.matchId = '12345';
+            const per = new Permission();
+            per.canCalculate = true;
+            component.permission = per;
 
-        spyOn(popupService, 'openAndHandlePopup');
+            jest.spyOn(popupService, 'openAndHandlePopup');
 
-        component.popupEarly(match);
+            component.popupEarly(match);
 
-        expect(popupService.openAndHandlePopup).toHaveBeenCalled();
+            expect(popupService.openAndHandlePopup).toHaveBeenCalled();
+        });
     });
 
-    it('popupFastMarkets - should call popupService', () => {
-        const match: CalculationMatch = new CalculationMatch();
-        match.remark = new Remark();
-        match.isCalculatingSingle = 2;
-        const per = new Permission();
-        per.canRefund = true;
-        component.permission = per;
+    describe('popupFastMarkets', () => {
+        it('popupFastMarkets - should call popupService', () => {
+            const match = new CalculationMatch();
+            match.matchId = '12345';
+            const per = new Permission();
+            per.canCalculate = true;
+            component.permission = per;
 
-        spyOn(popupService, 'popupFastMarkets');
+            jest.spyOn(popupService, 'popupFastMarkets');
 
-        component.popupFastMarkets(match);
+            component.popupFastMarkets(match);
 
-        expect(popupService.popupFastMarkets).toHaveBeenCalled();
+            expect(popupService.popupFastMarkets).toHaveBeenCalledWith(match);
+        });
     });
 });
