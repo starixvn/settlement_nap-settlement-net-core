@@ -28,8 +28,6 @@ describe('OutsideSourceComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [
-        ModalDialogComponent,
-        ModalContentDialogComponent,
       ],
       providers: [
         HttpRequestService,
@@ -45,6 +43,8 @@ describe('OutsideSourceComponent', () => {
         GameStatusPipe,
         SourceStatusPipe,
         OutsideSourceComponent,
+        ModalDialogComponent,
+        ModalContentDialogComponent,
         BrowserModule,
         FormsModule,
         MaterialModule,

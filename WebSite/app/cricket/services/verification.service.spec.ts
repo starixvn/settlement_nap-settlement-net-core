@@ -8,6 +8,15 @@ import { ExternalResultDetail, ResultDetail } from "../../shared/models/sportsbo
 import { ItemsSelect, MultipleSelect } from "../../shared/models";
 import { ResultStatusId } from "../../shared/constants";
 import { ResultControlGroup } from "../constants";
+import { EarlyConstraintService } from "./early-constraint.service";
+import { ResultValuePipe, ResultByPlayerNamePipe } from "../pipes";
+
+// Mock for EarlyConstraintService
+class MockEarlyConstraintService {
+  autoFillItemSelect() {
+    return Promise.resolve();
+  }
+}
 
 describe('E-Sports - VerificationService', () => {
     let service: VerificationService;
@@ -20,15 +29,20 @@ describe('E-Sports - VerificationService', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            imports: [
-                ModalDialogComponent,
-                ModalContentDialogComponent,
-                NgbModule
+            declarations: [
             ],
             providers: [
                 VerificationService,
                 MessageBoxService,
                 NgbModal,
+                EarlyConstraintService,
+                ResultValuePipe,
+                ResultByPlayerNamePipe,
+                { provide: EarlyConstraintService, useClass: MockEarlyConstraintService }
+            ],
+            imports: [
+                ModalContentDialogComponent,
+                NgbModule
             ]
         });
         service = TestBed.inject(VerificationService);

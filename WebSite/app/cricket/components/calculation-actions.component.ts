@@ -18,7 +18,7 @@ import { ApiKeys, KickOffTime, Resources, ResourcesIds } from '../constants';
 import { ResultDetail, SaveScoreQuery, SportTemplate } from '../../shared/models/sportsbook-sop';
 import { VerificationBaseService } from '../../core/services/verification-base.service';
 import { CalculateCommonModule } from '../../shared/modules/calculate-common.module';
-import { ResultByPlayerNamePipe, ResultNameByIdPipe, ResultValuePipe } from '../pipes';
+import { ResultNameByIdPipe, ResultValuePipe } from '../pipes';
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
 import { SettleChildMatchQuery } from '../../shared/models/settle-childmatch.model';
 import { UpdateSettlementResultHistoryStatus } from '../../shared/models/update-settle-result-history-status';
@@ -29,7 +29,7 @@ import { UrlHelper } from '../../helper';
     selector: 'calculation-actions',
     templateUrl: 'calculation-actions.component.html',
     standalone: true,
-    imports: [CommonModule, CalculateCommonModule, ResultByPlayerNamePipe, ResultValuePipe, ResultNameByIdPipe, IntervalBackgroundPipe, CalculationMatchDetailComponent],
+    imports: [CommonModule, CalculateCommonModule, ResultValuePipe, ResultNameByIdPipe, IntervalBackgroundPipe, CalculationMatchDetailComponent],
     providers: [ResultNameByIdPipe, VerificationService, VerificationBaseService]
 })
 export class CalculationActionsComponent implements SportTemplate {

@@ -41,6 +41,7 @@ import { ResultStatusPipe } from '../../shared/pipes/result-status.pipe';
 import { TicketStatusPipe } from '../../shared/pipes/ticket-status.pipe';
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
 import { ToastContainerDirective, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
+import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 
 describe("Cricket - Early Settlement Component", () => {
   let component: EarlySettlementComponent;
@@ -99,6 +100,11 @@ describe("Cricket - Early Settlement Component", () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [
+        TicketStatusPipe,
+        ResultStatusPipe,
+        ResultTypePipe,
+      ],
+      imports: [
         EarlySettlementComponent,
         ModalDialogComponent,
         ModalContentDialogComponent,
@@ -108,11 +114,15 @@ describe("Cricket - Early Settlement Component", () => {
         ExternalSourceNamePipe,
         ExternalLinkPipe,
         ResultValuePipe,
-        TicketStatusPipe,
-        ResultStatusPipe,
-        ResultTypePipe,
         ResultByTeamNamePipe,
         ResultByPlayerNamePipe,
+        FormsModule,
+        HttpClientModule,
+        NgbModule,
+        MaterialModule,
+        ToastNoAnimationModule.forRoot(),
+        ToastrModule.forRoot(),
+        NoopAnimationsModule
       ],
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
@@ -128,18 +138,8 @@ describe("Cricket - Early Settlement Component", () => {
         ExternalSourceNamePipe,
         ResultByTeamNamePipe,
         AioService,
-        ResultValuePipe,
-        ResultByPlayerNamePipe,
         ToastContainerDirective,
         ToastrService,
-      ],
-      imports: [
-        FormsModule,
-        HttpClientModule,
-        NgbModule,
-        MaterialModule,
-        ToastNoAnimationModule.forRoot(),
-        ToastrModule.forRoot()
       ],
     })
       

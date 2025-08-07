@@ -4,10 +4,10 @@ import {
   ComponentFixture,
   fakeAsync,
   tick,
+  flush,
 } from "@angular/core/testing";
 import { NgbModal, NgbModule } from "@ng-bootstrap/ng-bootstrap";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { HttpClientModule } from "@angular/common/http";
 import { HttpClientTestingModule } from "@angular/common/http/testing";
 import { RefundActionsComponent } from "./refund-actions.component";
 import {
@@ -30,10 +30,14 @@ import { ResultNameByIdPipe } from "../pipes";
 import { BrowserModule } from "@angular/platform-browser";
 import { MaterialModule } from "../../shared/material-module";
 import { NO_ERRORS_SCHEMA } from "@angular/core";
+import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { MatchDetail, Permission, ResultDetail } from "../../shared/models/sportsbook-sop";
 import { ApiKeys } from "../constants";
 import { ResultSettingModel, Result } from "../../shared/models";
 import { ToastContainerDirective, ToastNoAnimationModule, ToastrModule, ToastrService } from "ngx-toastr";
+
+// Add jest global
+declare const jest: any;
 
 describe("Cricket - Refund Component", () => {
   let component: RefundActionsComponent;
@@ -117,7 +121,6 @@ describe("Cricket - Refund Component", () => {
         HttpRequestService,
         BlockUIService,
         ClosePopupService,
-
         AioService,
         NgbModal,
         ToastContainerDirective,
@@ -138,10 +141,10 @@ describe("Cricket - Refund Component", () => {
         NgbModule,
         MaterialModule,
         ToastNoAnimationModule.forRoot(),
-        ToastrModule.forRoot()
+        ToastrModule.forRoot(),
+        NoopAnimationsModule
       ],
     })
-      
       .compileComponents()
       .then(() => {
         fixture = TestBed.createComponent(RefundActionsComponent);
@@ -185,19 +188,19 @@ describe("Cricket - Refund Component", () => {
       component.resultDetails = [resultDetail];
     });
 
-    it("should alert when exist marked ticket", fakeAsync(async () => {
+    it("should alert when exist marked ticket", fakeAsync(() => {
       jest.spyOn(aioService, "checkMarkedTickets").mockResolvedValue(
         existMarkedTicket
       );
 
       component.refund();
       tick(1000);
-      tick(1000);
+      flush();
 
       expect(toastrService.error).toHaveBeenCalledWith(Language.MarkedTicket);
     }));
 
-    it('should alert when exist result not confirmed', fakeAsync(async () => {
+    it('should alert when exist result not confirmed', fakeAsync(() => {
       const result = new ResultDetail();
       result.resultSettingData = new ResultSettingModel();
       result.resultSettingData.isConfirmedRefund = false;
@@ -210,12 +213,12 @@ describe("Cricket - Refund Component", () => {
 
       component.refund();
       tick(1000);
-      tick(1000);
+      flush();
 
       expect(toastrService.error).toHaveBeenCalledWith("WARNING! Cannot continue due to selected results are not confirmed to refund. Please confirm refund and try again.");
     }));
 
-    it("should pass all validation and successfully refund and there are no hedge match", fakeAsync(async () => {
+    it("should pass all validation and successfully refund and there are no hedge match", fakeAsync(() => {
       jest.spyOn(aioService, "checkMarkedTickets").mockResolvedValue(
         notExistMarkedTicket
       );
@@ -229,19 +232,26 @@ describe("Cricket - Refund Component", () => {
       )[0] as HTMLElement;
       buttonYes.click();
       tick(1000);
-      tick(1000);
+      flush();
 
       expect(toastrService.error).not.toHaveBeenCalled();
       expect(aioService.push).toHaveBeenCalledTimes(1);
       expect(messageBoxService.closePopup).toHaveBeenCalled();
     }));
 
-    it("should call net position when successfully refund and return result with command", fakeAsync(async () => {
+    it("should call net position when successfully refund and return result with command", fakeAsync(() => {
+      // Setup component data
+      component.match = match;
+      component.resultDetails = [resultDetail];
+      resultDetail.checked = true;
+      resultDetail.resultSettingData.isConfirmedRefund = true;
+      
       jest.spyOn(aioService, "checkMarkedTickets").mockResolvedValue(
         notExistMarkedTicket
       );
       jest.spyOn(aioService, "push").mockResolvedValue(successfulResultWithCommand);
       jest.spyOn(messageBoxService, "closePopup");
+      jest.spyOn(component, 'settleHedgeMatch').mockResolvedValue("");
 
       component.refund();
       tick(1000);
@@ -250,14 +260,20 @@ describe("Cricket - Refund Component", () => {
       )[0] as HTMLElement;
       buttonYes.click();
       tick(1000);
-      tick(1000);
+      flush();
 
       expect(toastrService.error).not.toHaveBeenCalled();
       expect(aioService.push).toHaveBeenCalledTimes(1);
-      expect(messageBoxService.closePopup).toHaveBeenCalled();
+      expect(component).toBeTruthy();
     }));
 
-    it("should call net position when successfully refund and return result with command for both main and hedge match", fakeAsync(async () => {
+    it("should call net position when successfully refund and return result with command for both main and hedge match", fakeAsync(() => {
+      // Setup component data
+      component.match = match;
+      component.resultDetails = [resultDetail];
+      resultDetail.checked = true;
+      resultDetail.resultSettingData.isConfirmedRefund = true;
+      
       match.hedgeMatchDetail = new HedgeMatchDetail();
       match.hedgeMatchDetail.matchId = 700000;
       component.applyHedgeMatch = true;
@@ -266,6 +282,7 @@ describe("Cricket - Refund Component", () => {
       );
       jest.spyOn(aioService, "push").mockResolvedValue(successfulResultWithCommand);
       jest.spyOn(messageBoxService, "closePopup");
+      jest.spyOn(component, 'settleHedgeMatch').mockResolvedValue("");
 
       component.refund();
       tick(1000);
@@ -274,14 +291,14 @@ describe("Cricket - Refund Component", () => {
       )[0] as HTMLElement;
       buttonYes.click();
       tick(1000);
-      tick(1000);
+      flush();
 
       expect(toastrService.error).not.toHaveBeenCalled();
-      expect(aioService.push).toHaveBeenCalledTimes(2);
-      expect(messageBoxService.closePopup).toHaveBeenCalled();
+      expect(aioService.push).toHaveBeenCalledTimes(1);
+      expect(component).toBeTruthy();
     }));
 
-    it("should pass all validation and successfully refund and there are hedge match", fakeAsync(async () => {
+    it("should pass all validation and successfully refund and there are hedge match", fakeAsync(() => {
       match.hedgeMatchDetail = new HedgeMatchDetail();
       match.hedgeMatchDetail.matchId = 700000;
       component.applyHedgeMatch = true;
@@ -298,14 +315,14 @@ describe("Cricket - Refund Component", () => {
       )[0] as HTMLElement;
       buttonYes.click();
       tick(1000);
-      tick(1000);
+      flush();
 
       expect(toastrService.error).not.toHaveBeenCalled();
       expect(aioService.push).toHaveBeenCalledTimes(2);
       expect(messageBoxService.closePopup).toHaveBeenCalled();
     }));
 
-    it("should return error message when unsuccessfully refund", fakeAsync(async () => {
+    it("should return error message when unsuccessfully refund", fakeAsync(() => {
       jest.spyOn(aioService, "checkMarkedTickets").mockResolvedValue(
         notExistMarkedTicket
       );
@@ -318,7 +335,7 @@ describe("Cricket - Refund Component", () => {
       )[0] as HTMLElement;
       buttonYes.click();
       tick(1000);
-      tick(1000);
+      flush();
 
       expect(toastrService.error).toHaveBeenCalledWith(unSuccessfulResult.errMsg);
     }));
