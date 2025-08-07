@@ -11,20 +11,22 @@ import { ScoreService } from './services/score.service';
 import { VerifyActionService } from './services/verify-action.service';
 import { RequestService } from './services/request.service';
 import { GoalRecordWithSemicolonService } from './services/goal-record-with-semicolon.service';
-import { Match, MatchDetail } from './models/match.model';
-import { Permission } from '../../../shared/models/sportsbook-sop';
-import { GoalIcon, ResultDetail } from '../../models';
+import { Match, MatchDetailSoccer as MatchDetail } from './models/match.model';
+import { HedgeMatchDetail, Permission } from '../../../shared/models/sportsbook-sop';
+import { ResultDetail } from '../../../shared/models/sportsbook-sop';
 import { ResourceIds } from '../../constants';
 import { GoalRecordWithOutSemicolonService } from './services/goal-record-with-out-semicolon.service';
 import { Language } from '../../../shared/language.native';
-
+import { GoalIcon } from '../../models/goal-icon.model';
+import { VerificationBaseService } from '../../../core/services/verification-base.service';
+import { ResultByTeamNamePipe } from '../../../shared/pipes/result-by-team-name.pipe';  
 describe('CalculationActionComponent', () => {
   let component: CalculationActionComponent;
   let fixture: ComponentFixture<CalculationActionComponent>;
   let storage: CalculateStorage;
   let calculateService: CalculateService;
   let scoreService: ScoreService;
-
+  let verificationService: VerificationBaseService;
   const matchDetail = {
     ftStatus: '',
     htStatus: '',
@@ -35,7 +37,7 @@ describe('CalculationActionComponent', () => {
     isEnabledGoalRecordFt: false,
     exHTHomeScore: '2',
     exHTAwayScore: '1'
-  } as MatchDetail;
+  } as unknown as MatchDetail;
 
   const firstHalfResult = { resourceId: ResourceIds.halfTime, resultSettingData: {} } as ResultDetail;
   const fullTimeResult = { resourceId: ResourceIds.fullTime, resultSettingData: {} } as ResultDetail;
@@ -47,7 +49,12 @@ describe('CalculationActionComponent', () => {
     resultDetails: [fullTimeResult, firstHalfResult],
     hedgeMatchDetail: undefined,
     fantasyMatch: undefined,
-    childMatches: []
+    childMatches: [],
+    externalResults: [],
+    originalResultDetail: [],
+    oldMatchDetail: new HedgeMatchDetail,
+    isClickOnCalculate: false,
+    isScoreDirect: false
   };
 
 
@@ -67,15 +74,18 @@ describe('CalculationActionComponent', () => {
         ClosePopupService,
         ScoreService,
         GoalRecordWithSemicolonService,
-        GoalRecordWithOutSemicolonService!
+        GoalRecordWithOutSemicolonService,
+        VerificationBaseService,
+        ResultByTeamNamePipe
       ]
     })
       .compileComponents();
 
     fixture = TestBed.createComponent(CalculationActionComponent);
-    storage = TestBed.inject(CalculateStorage);
-    calculateService = TestBed.inject(CalculateService);
-    scoreService  = TestBed.inject(ScoreService);
+    storage = fixture.debugElement.injector.get(CalculateStorage);
+    calculateService = fixture.debugElement.injector.get(CalculateService);
+    scoreService  = fixture.debugElement.injector.get(ScoreService);
+    verificationService = fixture.debugElement.injector.get(VerificationBaseService);
     component = fixture.componentInstance;
     storage.setMatch(match);
     fixture.detectChanges();
@@ -100,7 +110,7 @@ describe('CalculationActionComponent', () => {
 
       component.selectResult();
 
-      expect(component.state.enableAction).toBe(true);
+      expect(component.enableAction).toBe(true);
     });
 
     it('should set enableAction to false when both halfTimeResult and fullTimeResult are unchecked', () => {
@@ -109,7 +119,7 @@ describe('CalculationActionComponent', () => {
 
       component.selectResult();
 
-      expect(component.state.enableAction).toBe(false);
+      expect(component.enableAction).toBe(false);
     });
   });
 
@@ -128,15 +138,15 @@ describe('CalculationActionComponent', () => {
   });
 
   it('scoreChanged - should update resultDetail isMismatch and call changeResultState', () => {
-    const resultDetail = { resourceId: ResourceIds.halfTime, homeValue: '1', awayValue: '1', isMismatch: false } as ResultDetail;
+    const resultDetail = { resourceId: ResourceIds.halfTime, homeValue: '1', awayValue: '1', isScoreMismatched: false } as ResultDetail;
     component.matchDetail = matchDetail;
-    component.halfTimeResult = resultDetail;
 
     scoreService.changeResultState = jest.fn();
+    verificationService.isMismatchedWarning = jest.fn().mockReturnValue(true);
 
     component.scoreChanged(resultDetail);
 
-    expect(resultDetail.isMismatch).toBe(true);
+    expect(resultDetail.isScoreMismatched).toBe(true);
     expect(scoreService.changeResultState).toHaveBeenCalled();
   });
 
@@ -213,11 +223,11 @@ describe('CalculationActionComponent', () => {
   });
 
   it('saveScore - should call calculateService.saveScore', () => {
-    calculateService.saveScore = jest.fn();
+    calculateService.saveOutsideScore = jest.fn();
 
     component.saveScore();
 
-    expect(calculateService.saveScore).toHaveBeenCalled();
+    expect(calculateService.saveOutsideScore).toHaveBeenCalled();
   });
 
   it('goalRecordModelChange - should update matchDetail goalRecord and goalIcon', () => {

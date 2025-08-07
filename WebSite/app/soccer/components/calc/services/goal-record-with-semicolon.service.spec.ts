@@ -1,10 +1,10 @@
 import { GoalRecordWithSemicolonService } from './goal-record-with-semicolon.service';
 import { TestBed } from '@angular/core/testing';
-import { GoalNameIcon } from '../models/constant.native';
+import { GoalNameIcon } from '../models/constant.model';
 import { CreateDataTest } from './create-data-test.native';
 import { GoalIcon } from '../../../models/goal-icon.model';
 import { VerifyScoreGoalService } from "./verify-score-goal.service";
-import { ResultDetail } from '../../../models';
+import { ResultDetail } from '../../../../shared/models/sportsbook-sop';
 
 describe('Soccer - Verify Goal Record with semicolon', () => {
     let service: GoalRecordWithSemicolonService;

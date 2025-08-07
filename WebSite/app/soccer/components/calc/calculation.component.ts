@@ -21,7 +21,7 @@ import { NotReadyMatchComponent } from '../../../shared/components/not-ready-mat
 import { RefundChildMatchComponent } from './refund-child-match.component';
 import { MatchDetailComponent } from '../common/match-detail.component';
 import { MatTooltip } from '@angular/material/tooltip';
-import { SoccerTicketCountComponent } from './soccer-ticket-count.component';
+import { SoccerTicketCountComponent } from './soccer-ticket-count.component.native';
 import { CalculateService } from './services/calculate.service';
 import { ScoreService } from './services/score.service';
 import { GoalHistoryComponent } from './goal-history.component';

@@ -148,10 +148,10 @@ describe('Tennis - Calculate actions component', () => {
 
   describe('getMatch', () => {
     it('should load match data successfully', fakeAsync(async () => {
-      jest.spyOn(aioService, 'getMatch').mockReturnValue(Promise.resolve(match));
-      jest.spyOn(tennisService, 'getResultDetail').mockReturnValue([resultDetail, totalSets, totalGames]);
-      jest.spyOn(verificationService, 'generateExternalScores');
-      jest.spyOn(verificationService, 'isTicketOnGame').mockReturnValue(false);
+      aioService.getMatch = jest.fn().mockReturnValue(Promise.resolve(match));
+      tennisService.getResultDetail = jest.fn().mockReturnValue([resultDetail, totalSets, totalGames]);
+      verificationService.generateExternalScores = jest.fn();
+      verificationService.isTicketOnGame = jest.fn().mockReturnValue(false);
 
       await component.getMatch(1);
       tick();
@@ -170,8 +170,8 @@ describe('Tennis - Calculate actions component', () => {
       earlyMatch.resultDetails = [resultDetail, totalSets, totalGames]; // Add resultDetails
       earlyMatch.permission = new Permission(); // Add permission
       
-      jest.spyOn(aioService, 'getMatch').mockReturnValue(Promise.resolve(earlyMatch));
-      jest.spyOn(toastrService, 'error');
+      aioService.getMatch = jest.fn().mockReturnValue(Promise.resolve(earlyMatch));
+      toastrService.error = jest.fn();
 
       await component.getMatch(1);
       tick();
@@ -191,9 +191,9 @@ describe('Tennis - Calculate actions component', () => {
       resultDetail.checked = true;
       match.resultDetails = [resultDetail];
       component.match = match;
-      jest.spyOn(verificationService, 'invalidInputScore').mockReturnValue(true);
-      jest.spyOn(toastrService, 'error');
-      jest.spyOn(toastrService, 'clear');
+      verificationService.invalidInputScore = jest.fn().mockReturnValue(true);
+      toastrService.error = jest.fn();
+      toastrService.clear = jest.fn();
 
       component.calculate();
 
@@ -209,18 +209,18 @@ describe('Tennis - Calculate actions component', () => {
       resultDetail.resourceId = '00';
       component.match.resultDetails = [resultDetail];
       component.isLeader = true;
-      jest.spyOn(verificationService, 'invalidInputScore').mockReturnValue(false);
-      jest.spyOn(aioService, 'verifyNoRunningOdds').mockReturnValue(Promise.resolve(successfulResult));
-      jest.spyOn(verificationService, 'allMapHaveScoreSources').mockReturnValue(true);
-      jest.spyOn(verificationService, 'isExistMismatchScore').mockReturnValue(false);
-      jest.spyOn(aioService, 'push').mockReturnValue(Promise.resolve(successfulResult));
-      jest.spyOn(messageBoxService, 'closePopup');
-      jest.spyOn(verificationService, 'getOutsideScores').mockReturnValue([]);
-      jest.spyOn(verificationService, 'getChangedScores').mockReturnValue([]);
-      jest.spyOn(aioService, 'saveScore').mockReturnValue(Promise.resolve(successfulResult));
-      jest.spyOn(aioService, 'verifyChangedSettledTickets').mockReturnValue(Promise.resolve(false));
-      jest.spyOn(verificationService, 'verifyMatchScoreOnCalculation').mockReturnValue(false);
-      jest.spyOn(verificationService, 'verifyIntervalsOnCalculation').mockReturnValue('true');
+      verificationService.invalidInputScore = jest.fn().mockReturnValue(false);
+      aioService.verifyNoRunningOdds = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+      verificationService.allMapHaveScoreSources = jest.fn().mockReturnValue(true);
+      verificationService.isExistMismatchScore = jest.fn().mockReturnValue(false);
+      aioService.push = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+      messageBoxService.closePopup = jest.fn();
+      verificationService.getOutsideScores = jest.fn().mockReturnValue([]);
+      verificationService.getChangedScores = jest.fn().mockReturnValue([]);
+      aioService.saveScore = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+      aioService.verifyChangedSettledTickets = jest.fn().mockReturnValue(Promise.resolve(false));
+      verificationService.verifyMatchScoreOnCalculation = jest.fn().mockReturnValue(false);
+      verificationService.verifyIntervalsOnCalculation = jest.fn().mockReturnValue('true');
 
       component.calculate();
       tick();
@@ -236,9 +236,9 @@ describe('Tennis - Calculate actions component', () => {
       resultDetail.checked = true;
       match.resultDetails = resultDetails;
       component.match = match;
-      jest.spyOn(aioService, 'push').mockReturnValue(Promise.resolve(successfulResult));
-      jest.spyOn(messageBoxService, 'closePopup');
-      jest.spyOn(toastrService, 'error');
+      aioService.push = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+      messageBoxService.closePopup = jest.fn();
+      toastrService.error = jest.fn();
       
       component.uncalculate();
 
@@ -330,7 +330,7 @@ describe('Tennis - Calculate actions component', () => {
       match.resultDetails = resultDetails;
       component.match = match;
 
-      jest.spyOn(verificationService, 'isScoreConsecutive').mockReturnValue(true);
+      verificationService.isScoreConsecutive = jest.fn().mockReturnValue(true);
 
       component.changeScore();
 
@@ -346,7 +346,7 @@ describe('Tennis - Calculate actions component', () => {
       resultDetail.homeValue = '2';
       resultDetail.checked = true;
       component.match.resultDetails = resultDetails;
-      jest.spyOn(verificationService, 'isScoreConsecutive').mockReturnValue(false);
+      verificationService.isScoreConsecutive = jest.fn().mockReturnValue(false);
 
       component.changeScore();
 
@@ -367,8 +367,8 @@ describe('Tennis - Calculate actions component', () => {
       totalSets.awayValue = '1';
       match.resultDetails = [resultDetail, totalSets, totalGames];
       component.match = match;
-      jest.spyOn(verificationService, 'isMismatchedWarning').mockReturnValue(false);
-      jest.spyOn(verificationService, 'autoFillScore').mockImplementation(() => {});
+      verificationService.isMismatchedWarning = jest.fn().mockReturnValue(false);
+      verificationService.autoFillScore = jest.fn().mockImplementation(() => {});
 
       component.autoFillScoreOnLoad([resultDetail, totalSets, totalGames]);
 
@@ -382,9 +382,9 @@ describe('Tennis - Calculate actions component', () => {
       totalSets.awayValue = '1';
       match.resultDetails = [totalSets, totalGames]; // Add totalGames
       component.match = match;
-      jest.spyOn(verificationService, 'isMismatchedWarning').mockReturnValue(false);
-      jest.spyOn(verificationService, 'autoFillScore');
-      jest.spyOn(verificationService, 'sumTotalScores').mockImplementation(() => {});
+      verificationService.isMismatchedWarning = jest.fn().mockReturnValue(false);
+      verificationService.autoFillScore = jest.fn();
+      verificationService.sumTotalScores = jest.fn().mockImplementation(() => {});
 
       component.verifyAndAutoFillScore(totalSets);
 
@@ -411,7 +411,7 @@ describe('Tennis - Calculate actions component', () => {
       component.match = match;
       component.match.isScoreDirect = false;
       const map = new ResultDetail();
-      jest.spyOn(verificationService, 'isMismatchedWarning').mockReturnValue(false);
+      verificationService.isMismatchedWarning = jest.fn().mockReturnValue(false);
 
       component.checkMapIsMatched(map);
 
@@ -426,9 +426,9 @@ describe('Tennis - Calculate actions component', () => {
       const resultDetails: ResultDetail[] = [resultDetail, totalSets];
       component.match = match;
       component.match.resultDetails = resultDetails;
-      jest.spyOn(aioService, 'saveScore').mockReturnValue(Promise.resolve(successfulResult));
-      jest.spyOn(verificationService, 'getChangedScores').mockReturnValue([]);
-      jest.spyOn(verificationService, 'getOutsideScores').mockReturnValue([]);
+      aioService.saveScore = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+      verificationService.getChangedScores = jest.fn().mockReturnValue([]);
+      verificationService.getOutsideScores = jest.fn().mockReturnValue([]);
       component.match = match;
 
       component.saveScore();
@@ -456,8 +456,8 @@ describe('Tennis - Calculate actions component', () => {
     });
 
     it('should update correct outSide source for total games', () => {
-      jest.spyOn(verificationService, 'isScoreConsecutive').mockReturnValue(true);
-      jest.spyOn(verificationService, 'isMismatchedWarning').mockReturnValue(false);
+      verificationService.isScoreConsecutive = jest.fn().mockReturnValue(true);
+      verificationService.isMismatchedWarning = jest.fn().mockReturnValue(false);
 
       component.updateOutsideScore(1);
 
@@ -469,7 +469,7 @@ describe('Tennis - Calculate actions component', () => {
     });
 
     it('should update blank outSide source for total games when score is not consecutive', () => {
-      jest.spyOn(verificationService, 'isScoreConsecutive').mockReturnValue(false);
+      verificationService.isScoreConsecutive = jest.fn().mockReturnValue(false);
 
       component.updateOutsideScore(1);
 
@@ -506,7 +506,7 @@ describe('Tennis - Calculate actions component', () => {
       result.ticketStatus = 'Running';
       result.resultStatus = 'Running';
       result.isScoreMismatched = false;
-      jest.spyOn(verificationService, 'isValidTraderConfirmScore').mockReturnValue(true);
+      verificationService.isValidTraderConfirmScore = jest.fn().mockReturnValue(true);
 
       const canSettle = component.canSettleResult(result);
 

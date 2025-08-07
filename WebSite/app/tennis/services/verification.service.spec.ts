@@ -82,7 +82,7 @@ describe('Tennis', () => {
 
   it("verifyMatchScoreOnCalculation - should call service", () => {
     const intervalCalculationService = TestBed.inject(IntervalCalculationService);
-    jest.spyOn(intervalCalculationService, 'isMatchNotCheckedWhenChangingIntervals');
+    intervalCalculationService.isMatchNotCheckedWhenChangingIntervals = jest.fn();
     service.verifyMatchScoreOnCalculation(resultDetails);
 
     expect(intervalCalculationService.isMatchNotCheckedWhenChangingIntervals).toHaveBeenCalled();
@@ -91,7 +91,7 @@ describe('Tennis', () => {
   describe('verifyIntervalsOnCalculation', () => {
     it('should alert when first validation return true', () => {
       const intervalCalculationService = TestBed.inject(IntervalCalculationService);
-      jest.spyOn(intervalCalculationService, 'isIntervalNotCheckedWhenCalculateMatch').mockReturnValue(true);
+      intervalCalculationService.isIntervalNotCheckedWhenCalculateMatch = jest.fn().mockReturnValue(true);
       const actual = service.verifyIntervalsOnCalculation(resultDetails, false);
 
       expect(actual).toEqual("WARNING! Cannot continue due to related intervals are not selected or calculated.");
@@ -99,8 +99,8 @@ describe('Tennis', () => {
 
     it('should alert when second validation return true', () => {
       const intervalCalculationService = TestBed.inject(IntervalCalculationService);
-      jest.spyOn(intervalCalculationService, 'isIntervalNotCheckedWhenCalculateMatch').mockReturnValue(false);
-      jest.spyOn(intervalCalculationService, 'isNonCheckedIntervalsConsistent').mockReturnValue(true);
+      intervalCalculationService.isIntervalNotCheckedWhenCalculateMatch = jest.fn().mockReturnValue(false);
+      intervalCalculationService.isNonCheckedIntervalsConsistent = jest.fn().mockReturnValue(true);
       const actual = service.verifyIntervalsOnCalculation(resultDetails, false);
 
       expect(actual).toEqual("WARNING! Cannot continue due to selected intervals are inconsistent with Match/Full Time score.");
@@ -108,8 +108,8 @@ describe('Tennis', () => {
 
     it('should return true when both validations are passed', () => {
       const intervalCalculationService = TestBed.inject(IntervalCalculationService);
-      jest.spyOn(intervalCalculationService, 'isIntervalNotCheckedWhenCalculateMatch').mockReturnValue(false);
-      jest.spyOn(intervalCalculationService, 'isNonCheckedIntervalsConsistent').mockReturnValue(false);
+      intervalCalculationService.isIntervalNotCheckedWhenCalculateMatch = jest.fn().mockReturnValue(false);
+      intervalCalculationService.isNonCheckedIntervalsConsistent = jest.fn().mockReturnValue(false);
       const result = service.verifyIntervalsOnCalculation(resultDetails, false);
 
       expect(result).toEqual("");

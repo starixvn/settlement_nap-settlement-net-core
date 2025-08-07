@@ -7,8 +7,8 @@ import { BlockUIService, HttpRequestService, MessageBoxService } from '../../../
 import { HttpClientModule } from '@angular/common/http';
 import { CreateDataTest } from './create-data-test.native';
 import { TicketStatusText } from '../../../../shared/constants';
-import { ResultDetail } from '../../../models';
 import { ResourceIds } from '../../../constants';
+import { ResultDetail } from '../../../../shared/models/sportsbook-sop';
 describe('Soccer - verify action service', () => {
     let service: VerifyActionService;
     let verifyScoreGoalService: VerifyScoreGoalService;

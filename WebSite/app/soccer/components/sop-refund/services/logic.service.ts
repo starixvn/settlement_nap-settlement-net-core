@@ -3,7 +3,7 @@ import { CalculateAction } from "../../../../shared/constants/calculate-action.n
 import { ResourceIds } from "../../../constants/resourceIds.native";
 import { RefundStorage } from "../../../storage/refund.storage";
 import { MessageBoxService } from "../../../../shared/services";
-import {  ScoreSourceType, SettlementStatusId } from "../../../../shared/constants";
+import { ScoreSourceType, SettlementStatusId } from "../../../../shared/constants";
 import { BetDaq, BetFair, MatchDetail } from "../../sop-refund/models/match.model";
 
 import * as _ from "lodash";
@@ -112,8 +112,8 @@ export class LogicService {
   }
 
   settleDetermineUpdate() {
-    const halfTime = this.#refundStorage.getHalfTimeResult() as ResultDetail;
-    const fullTime = this.#refundStorage.getFullTimeResult() as ResultDetail;
+    const halfTime = this.#refundStorage.getHalfTimeResult();
+    const fullTime = this.#refundStorage.getFullTimeResult();
     const { matchDetail } = this.#refundStorage.getMatch();
 
     if (!matchDetail.isSettleDetermined) {

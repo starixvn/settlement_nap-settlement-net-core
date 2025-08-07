@@ -72,7 +72,7 @@ describe('TennisService', () => {
   });
 
   it('getIntervalBackground - should call pipes transform', () => {
-    jest.spyOn(intervalBackgroundPipe, 'transform');
+    intervalBackgroundPipe.transform = jest.fn();
 
     service.getIntervalBackground(0);
 

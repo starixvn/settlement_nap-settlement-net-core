@@ -1,6 +1,6 @@
 import { CalculateAction } from './../../../../shared/constants/calculate-action.native';
 
-import { LeagueGroup, TimeMinute } from "../../../components/calc/models/constant.native";
+import { LeagueGroup, TimeMinute } from "../../../components/calc/models/constant.model";
 import { MatchDetailSoccer as MatchDetail } from "../../../components/calc/models/match.model";
 import { CalculateBaseStorage } from "../../../storage/storage.service.native";
 import { AbstractHandler } from "../../abstract.handler.native";

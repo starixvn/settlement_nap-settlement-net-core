@@ -7,7 +7,7 @@ import { RefundStorage } from '../../../../storage/refund.storage';
 import { RequestService } from '../../services/request.service';
 import { LogicService } from '../../services/logic.service';
 import { RefundType } from '../../models/constant.model';
-import { BetDaq, BetFair } from '../../../refund/model/match.model';
+import { BetDaq, BetFair } from '../../../sop-refund/models/match.model';
 import { Result } from '../../../../../shared/models/result.model';
 
 describe('BettingExchangeComponent', () => {
@@ -212,7 +212,8 @@ describe('BettingExchangeComponent', () => {
       component.onSettleDeterminableTicketsChange(settleDeterminableTickets);
 
       // Assert
-      expect(logicService.settleDetermineUpdate).toHaveBeenCalledWith(settleDeterminableTickets);
+      expect(refundStorage.getMatch().matchDetail.isSettleDetermined).toBe(true);
+      expect(logicService.settleDetermineUpdate).toHaveBeenCalled();
     });
   });
 

@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import * as _ from "lodash";
 import { EventStatus } from "../../../../shared/constants";
 import { FantasyRelatedMatch, MatchDetailSoccer as MatchDetail } from '../models/match.model';
-import { TimeMinute, LeagueGroup } from '../models/constant.native';
+import { TimeMinute, LeagueGroup } from '../models/constant.model';
 
 @Injectable()
 export class VerifyMatchService {

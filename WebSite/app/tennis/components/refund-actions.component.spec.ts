@@ -103,7 +103,7 @@ describe('Tennis - Refund actions component', () => {
         closePopupService = fixture.debugElement.injector.get(ClosePopupService);
         messageBoxService = fixture.debugElement.injector.get(MessageBoxService);
         toastrService = fixture.debugElement.injector.get(ToastrService);
-        jest.spyOn(closePopupService, 'closePopup').mockImplementation(() => { });
+        closePopupService.closePopup = jest.fn().mockImplementation(() => { });
       });
   }));
 
@@ -138,8 +138,8 @@ describe('Tennis - Refund actions component', () => {
         // Arrange
         resultDetail.checked = true;
         component.match = match;
-        jest.spyOn(aioService, 'checkMarkedTickets').mockReturnValue(Promise.resolve(existMarkedTicket));
-        jest.spyOn(toastrService, 'error');
+        aioService.checkMarkedTickets = jest.fn().mockReturnValue(Promise.resolve(existMarkedTicket));
+        toastrService.error = jest.fn();
 
         // Act
         component.refund();
@@ -155,8 +155,8 @@ describe('Tennis - Refund actions component', () => {
         resultDetail.checked = true;
         component.match = match;
 
-        jest.spyOn(aioService, 'checkMarkedTickets').mockReturnValue(Promise.resolve(notExistMarkedTicket));
-        jest.spyOn(component, 'verifySelectedOnMap');
+        aioService.checkMarkedTickets = jest.fn().mockReturnValue(Promise.resolve(notExistMarkedTicket));
+        component.verifySelectedOnMap = jest.fn();
 
         // Act
         component.refund();
@@ -171,9 +171,9 @@ describe('Tennis - Refund actions component', () => {
         // Arrange
         resultDetail.checked = true;
         component.match = match;
-        jest.spyOn(aioService, 'checkMarkedTickets').mockReturnValue(Promise.resolve(notExistMarkedTicket));
-        jest.spyOn(component, 'verifySelectedOnMap').mockReturnValue(resultDetail);
-        jest.spyOn(messageBoxService, 'confirm');
+        aioService.checkMarkedTickets = jest.fn().mockReturnValue(Promise.resolve(notExistMarkedTicket));
+        component.verifySelectedOnMap = jest.fn().mockReturnValue(resultDetail);
+        messageBoxService.confirm = jest.fn();
 
         // Act
         component.refund();
@@ -189,8 +189,8 @@ describe('Tennis - Refund actions component', () => {
       resultDetail.checked = true;
       component.match = match;
       component.resultDetails = [resultDetail];
-      jest.spyOn(aioService, 'checkMarkedTickets').mockReturnValue(Promise.resolve(notExistMarkedTicket));
-      jest.spyOn(toastrService, 'error');
+      aioService.checkMarkedTickets = jest.fn().mockReturnValue(Promise.resolve(notExistMarkedTicket));
+      toastrService.error = jest.fn();
 
       component.refund();
       flush();
@@ -205,7 +205,7 @@ describe('Tennis - Refund actions component', () => {
       resultDetail.checked = false;
       match.resultDetails = [resultDetail];
       component.match = match;
-      jest.spyOn(toastrService, "error");
+      toastrService.error = jest.fn();
 
       // Act
       component.verifySelectedOnMap();
@@ -245,7 +245,7 @@ describe('Tennis - Refund actions component', () => {
         false,
         "Refund;",
         TennisApiKeys.Settle);
-      jest.spyOn(aioService, 'push').mockReturnValue(Promise.resolve(successfulResult));
+      aioService.push = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
 
       // Act
       component.doRefund();
@@ -259,8 +259,8 @@ describe('Tennis - Refund actions component', () => {
       resultDetail.resourceId = ResourcesIds.totalSets;
       resultDetail.checked = true;
       component.match = match;
-      jest.spyOn(aioService, 'push').mockReturnValue(Promise.resolve(successfulResult));
-      jest.spyOn(toastrService, 'error');
+      aioService.push = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+      toastrService.error = jest.fn();
 
       // Act
       component.doRefund();
@@ -274,8 +274,8 @@ describe('Tennis - Refund actions component', () => {
       resultDetail.resourceId = ResourcesIds.totalSets;
       resultDetail.checked = true;
       component.match = match;
-      jest.spyOn(aioService, 'push').mockReturnValue(Promise.resolve(unSuccessfulResult));
-      jest.spyOn(toastrService, 'error');
+      aioService.push = jest.fn().mockReturnValue(Promise.resolve(unSuccessfulResult));
+      toastrService.error = jest.fn();
 
       // Act
       await component.doRefund();

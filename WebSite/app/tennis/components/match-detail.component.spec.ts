@@ -60,7 +60,7 @@ describe('MatchDetailComponent', () => {
         fixture = TestBed.createComponent(MatchDetailComponent);
         component = fixture.componentInstance;
         tennisService = fixture.debugElement.injector.get(TennisService);
-        jest.spyOn(tennisService, 'getResultDetail').mockReturnValue(resultDetails);
+        tennisService.getResultDetail = jest.fn(() => resultDetails);
       });
   }));
 
