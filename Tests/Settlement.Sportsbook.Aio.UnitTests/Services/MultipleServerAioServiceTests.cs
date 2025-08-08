@@ -47,7 +47,18 @@ public class MultipleServerAioServiceTests
         logService = Substitute.For<LogService>();
         var resultAmendmentService = Substitute.For<ResultAmendmentService>();
 
-        service = new MultipleServerAioServiceImp(repository, option, scaleOutSettleService, createQueryService, mergeDataService, logService, mapper, resultAmendmentService);
+        service = new MultipleServerAioServiceImp(
+            repository,
+            option,
+            new MultipleServerAioServiceDependencies(
+                scaleOutSettleService,
+                createQueryService,
+                mergeDataService,
+                logService,
+                mapper,
+                resultAmendmentService
+            )
+        );
     }
 
     [Theory]

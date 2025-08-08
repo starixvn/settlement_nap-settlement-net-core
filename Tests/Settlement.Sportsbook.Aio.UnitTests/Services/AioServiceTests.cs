@@ -35,9 +35,19 @@ public class AioServiceTests
         var connectionMultiplexer = Substitute.For<IConnectionMultiplexer>();
         var mapperConfig = new MapperConfigurationExpression();
         mapperConfig.AddProfile<SportsbookAioAutoMapperProfile>();
-        service = new AioServiceImp(repository, refDataService,
-            mapperFactory, validateApiKeyService, createQueryService, multipleServerAioService,
-            basketballEventStatusService, connectionMultiplexer, null);
+        service = new AioServiceImp(
+            repository,
+            refDataService,
+            mapperFactory,
+            validateApiKeyService,
+            new AioServiceDependencies(
+                createQueryService,
+                multipleServerAioService,
+                basketballEventStatusService,
+                connectionMultiplexer,
+                null
+            )
+        );
     }
 
     [Fact]

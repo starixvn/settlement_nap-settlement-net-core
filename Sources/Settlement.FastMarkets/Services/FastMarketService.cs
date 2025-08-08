@@ -35,16 +35,17 @@ public interface IFastMarketService
 public class FastMarketServiceImp(
     IDynamicRepository repository,
     IMapper mapper,
-    MultipleServerFetcherService multipleServerFetcherService,
     IOptions<AppSettingsKey> appSettingsKey,
-    ScaleOutSettleService scaleOutSettleService,
-    GenerationService generationService,
-    ILogService logService,
-    IFastMarketResultAmendmentService fastMarketResultAmendmentService,
-    XmlConvertService xmlConvertService)
+    FastMarketServiceDependencies dependencies)
     : IFastMarketService
 {
     private readonly AppSettingsKey appSettingsKey = appSettingsKey.Value;
+    private readonly MultipleServerFetcherService multipleServerFetcherService = dependencies.MultipleServerFetcherService;
+    private readonly ScaleOutSettleService scaleOutSettleService = dependencies.ScaleOutSettleService;
+    private readonly GenerationService generationService = dependencies.GenerationService;
+    private readonly ILogService logService = dependencies.LogService;
+    private readonly IFastMarketResultAmendmentService fastMarketResultAmendmentService = dependencies.FastMarketResultAmendmentService;
+    private readonly XmlConvertService xmlConvertService = dependencies.XmlConvertService;
 
     public async Task<FastMarketModel> Query(int matchId)
     {
@@ -256,5 +257,31 @@ public class FastMarketServiceImp(
         var result = await repository.FetchAsync<TimeMachineResult>(criteria);
 
         return result.ToList();
+    }
+}
+
+public class FastMarketServiceDependencies
+{
+    public MultipleServerFetcherService MultipleServerFetcherService { get; }
+    public ScaleOutSettleService ScaleOutSettleService { get; }
+    public GenerationService GenerationService { get; }
+    public ILogService LogService { get; }
+    public IFastMarketResultAmendmentService FastMarketResultAmendmentService { get; }
+    public XmlConvertService XmlConvertService { get; }
+
+    public FastMarketServiceDependencies(
+        MultipleServerFetcherService multipleServerFetcherService,
+        ScaleOutSettleService scaleOutSettleService,
+        GenerationService generationService,
+        ILogService logService,
+        IFastMarketResultAmendmentService fastMarketResultAmendmentService,
+        XmlConvertService xmlConvertService)
+    {
+        MultipleServerFetcherService = multipleServerFetcherService;
+        ScaleOutSettleService = scaleOutSettleService;
+        GenerationService = generationService;
+        LogService = logService;
+        FastMarketResultAmendmentService = fastMarketResultAmendmentService;
+        XmlConvertService = xmlConvertService;
     }
 }

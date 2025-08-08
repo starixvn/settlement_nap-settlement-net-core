@@ -40,17 +40,17 @@ public class AioServiceImp(
     IRefDataService refDataService,
     IMapperFactory mapperFactory,
     IValidateApiKeyService validateApiKeyService,
-    ICreateQueryService createQueryService,
-    MultipleServerAioService multipleServerAioService,
-    AdjustEventStatusService adjustEventStatusService,
-    IConnectionMultiplexer connectionMultiplexer,
-    IPublishEndpoint publishEndpoint)
+    AioServiceDependencies dependencies)
     : IAioService
 {
     private const string KeyConfirmRefund = "SettlementConfirmRefund";
     private const int defaultRedisDb = 13;
 
-    private readonly IDatabase redisDb = connectionMultiplexer.GetDatabase(defaultRedisDb);
+    private readonly IDatabase redisDb = dependencies.ConnectionMultiplexer.GetDatabase(defaultRedisDb);
+    private readonly ICreateQueryService createQueryService = dependencies.CreateQueryService;
+    private readonly MultipleServerAioService multipleServerAioService = dependencies.MultipleServerAioService;
+    private readonly AdjustEventStatusService adjustEventStatusService = dependencies.AdjustEventStatusService;
+    private readonly IPublishEndpoint publishEndpoint = dependencies.PublishEndpoint;
 
     public async Task<AioMatch> GetMatch(GetMatchRequest request)
     {
@@ -91,7 +91,7 @@ public class AioServiceImp(
     private async Task<ResultTicket> GetResultTicket(GetMatchRequest request, string apiKey, Models.MatchDetail matchDetail)
     {
         var resultDetailCriteria = (GetResultDetailCriteria)validateApiKeyService.CriteriaName(request, $"{apiKey}-{ApiKeyConstant.ResultDetailKey}");
-        var (resultDetails, ticketCounts) = await multipleServerAioService.FetchResultDetails(resultDetailCriteria, matchDetail.SportType);
+        var (resultDetails, ticketCounts) = await dependencies.MultipleServerAioService.FetchResultDetails(resultDetailCriteria, matchDetail.SportType);
 
         var mapperService = mapperFactory.GetMapperService($"{apiKey}-{ApiKeyConstant.ResultDetailKey}");
         if (mapperService != null)
@@ -265,7 +265,7 @@ public class AioServiceImp(
 
     public async Task<List<ResultDetail>> GetRecalResult(GetRecalResultRequest request)
     {
-        var criteria = createQueryService.QueryRecalResult(request);
+        var criteria = dependencies.CreateQueryService.QueryRecalResult(request);
         var resultDetails = await repository.FetchAsync<ResultDetail>(criteria);
 
         return resultDetails.ToList();
@@ -273,7 +273,7 @@ public class AioServiceImp(
 
     public async Task<MarkedTickets> CheckMarkedTickets(CheckMarkedTicketsRequest request)
     {
-        return await multipleServerAioService.CheckMarkedTickets(request);
+        return await dependencies.MultipleServerAioService.CheckMarkedTickets(request);
     }
 
     public async Task<Result> Settle(SettleRequest request)
@@ -285,7 +285,7 @@ public class AioServiceImp(
             return validateFantasyMatchResult;
         }
 
-        return await multipleServerAioService.Settle(request);
+        return await dependencies.MultipleServerAioService.Settle(request);
     }
 
     private async Task<Result> ValidateFantasyMatch(SettleRequest request)
@@ -312,7 +312,7 @@ public class AioServiceImp(
             MatchId = request.MatchId,
             Action = request.Action,
             CheckType = request.SelectedResources.Count > 1,
-            SelectedResource = createQueryService.CreateResources(request.SelectedResources)
+            SelectedResource = dependencies.CreateQueryService.CreateResources(request.SelectedResources)
         };
 
         await repository.ExecuteAsync(criteria);
@@ -326,7 +326,7 @@ public class AioServiceImp(
 
     public async Task<Result> SaveScore(SaveScoreRequest request)
     {
-        var requestQuery = createQueryService.QuerySaveScore(request);
+        var requestQuery = dependencies.CreateQueryService.QuerySaveScore(request);
         var criteria = validateApiKeyService.CreateNonQueryCommand(requestQuery, $"{requestQuery.ApiKey}-{ApiKeyConstant.SaveScore}") as IReturnValue;
         await repository.ExecuteAsync((INonQueryCommand)criteria);
 
@@ -359,7 +359,7 @@ public class AioServiceImp(
 
     public async Task<bool> ResultSetting(ResultSettingRequest request)
     {
-        var criteria = createQueryService.QueryChangeSetting(request);
+        var criteria = dependencies.CreateQueryService.QueryChangeSetting(request);
         await repository.ExecuteAsync(criteria);
 
         int[] confirmRefund = [ResultSettingType.ConfirmRefund, ResultSettingType.ConfirmRefundSDT];
@@ -391,7 +391,7 @@ public class AioServiceImp(
                     GroupBetType = resource.GroupBetType
                 }).ToList();
 
-            await publishEndpoint.Publish(request.Type == ResultSettingType.ConfirmRefundSDT
+            await dependencies.PublishEndpoint.Publish(request.Type == ResultSettingType.ConfirmRefundSDT
                 ? new ResultsRefundConfirmedSdt(request.MatchId, request.SportType, request.ChildMatchType, selectedResources)
                 : new ResultsRefundConfirmed(request.MatchId, request.SportType, request.ChildMatchType, selectedResources),
                 new CancellationTokenSource(TimeSpan.FromSeconds(3)).Token);
@@ -434,7 +434,7 @@ public class AioServiceImp(
 
     public async Task<Result> SettleChildMatch(SettleChildMatchRequest request)
     {
-        return await multipleServerAioService.SettleChildMatch(request);
+        return await dependencies.MultipleServerAioService.SettleChildMatch(request);
     }
 
     private async Task<List<ResultDetail>> SetInterval(Models.MatchDetail matchDetail, List<ResultDetail> resultDetails)
@@ -530,5 +530,28 @@ public class AioServiceImp(
         {
             result.IntervalNo = indexes.Find(i => i.ResourceId == result.ResourceId).IntervalNo;
         }
+    }
+}
+
+public class AioServiceDependencies
+{
+    public ICreateQueryService CreateQueryService { get; }
+    public MultipleServerAioService MultipleServerAioService { get; }
+    public AdjustEventStatusService AdjustEventStatusService { get; }
+    public IConnectionMultiplexer ConnectionMultiplexer { get; }
+    public IPublishEndpoint PublishEndpoint { get; }
+
+    public AioServiceDependencies(
+        ICreateQueryService createQueryService,
+        MultipleServerAioService multipleServerAioService,
+        AdjustEventStatusService adjustEventStatusService,
+        IConnectionMultiplexer connectionMultiplexer,
+        IPublishEndpoint publishEndpoint)
+    {
+        CreateQueryService = createQueryService;
+        MultipleServerAioService = multipleServerAioService;
+        AdjustEventStatusService = adjustEventStatusService;
+        ConnectionMultiplexer = connectionMultiplexer;
+        PublishEndpoint = publishEndpoint;
     }
 }

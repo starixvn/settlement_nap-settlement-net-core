@@ -25,17 +25,39 @@ public interface IRefundService
     Task<Result> RefundRunningThirdPartyTickets(RefundRunningThirdPartyTicketRequest request);
 }
 
+public class RefundServiceDependencies
+{
+    public ScaleOutSettleService ScaleOutSettleService { get; }
+    public LogService LogService { get; }
+    public IPublishEndpoint PublishEndpoint { get; }
+    public IMapper Mapper { get; }
+
+    public RefundServiceDependencies(
+        ScaleOutSettleService scaleOutSettleService,
+        LogService logService,
+        IPublishEndpoint publishEndpoint,
+        IMapper mapper)
+    {
+        ScaleOutSettleService = scaleOutSettleService;
+        LogService = logService;
+        PublishEndpoint = publishEndpoint;
+        Mapper = mapper;
+    }
+}
+
 public class RefundServiceImp(
     IDynamicRepository repository,
     IHttpContextAccessor accessor,
     IOptions<AppSettingsKey> appSettingsKey,
     ICreateCriteriaService createCriteriaService,
-    ScaleOutSettleService scaleOutSettleService,
-    LogService logService,
-    IPublishEndpoint publishEndpoint,
-    IMapper mapper)
+    RefundServiceDependencies dependencies)
     : IRefundService
 {
+    private readonly ScaleOutSettleService scaleOutSettleService = dependencies.ScaleOutSettleService;
+    private readonly LogService logService = dependencies.LogService;
+    private readonly IPublishEndpoint publishEndpoint = dependencies.PublishEndpoint;
+    private readonly IMapper mapper = dependencies.Mapper;
+
     public async Task<MarkedTickets> CheckMarkedTickets(CheckingMarkedTicketsCriteria criteria)
     {
         foreach (var server in appSettingsKey.Value.SiteDbServer)

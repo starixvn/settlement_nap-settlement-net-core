@@ -12,6 +12,7 @@ public static class FastMarketsConfig
         services.AddTransient<IEventCounterResultService, EventCounterResultServiceImp>();
         services.AddTransient<IEventCounterService, EventCounterServiceImp>();
         services.AddTransient<IFastMarketResultService, FastMarketResultServiceImp>();
+        services.AddTransient<FastMarketServiceDependencies>();
         services.AddTransient<IFastMarketService, FastMarketServiceImp>();
         services.AddTransient<IMatchDetailService, MatchDetailServiceImp>();
         services.AddTransient<ResultLabelService, ResultLabelServiceImp>();

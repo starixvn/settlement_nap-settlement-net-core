@@ -35,14 +35,16 @@ public class CalculateServiceImp(
     IDynamicRepository repository,
     IOptions<AppSettingsKey> appSettingsKey,
     ICreateCriteriaService createCriteriaService,
-    ScaleOutSettleService scaleOutSettleService,
-    LogService logService,
-    IMatchService matchService,
-    IPublishEndpoint publishEndpoint,
-    INapSession napSession,
-    IHttpContextAccessor accessor,
-    XmlConvertService xmlConvertService) : ICalculateService
+    CalculateServiceDependencies dependencies) : ICalculateService
 {
+    private readonly ScaleOutSettleService scaleOutSettleService = dependencies.ScaleOutSettleService;
+    private readonly LogService logService = dependencies.LogService;
+    private readonly IMatchService matchService = dependencies.MatchService;
+    private readonly IPublishEndpoint publishEndpoint = dependencies.PublishEndpoint;
+    private readonly INapSession napSession = dependencies.NapSession;
+    private readonly IHttpContextAccessor accessor = dependencies.Accessor;
+    private readonly XmlConvertService xmlConvertService = dependencies.XmlConvertService;
+
     public async Task<Result> Calculate(SettleRequest request)
     {
         var criteria = createCriteriaService.CreateCalculateCriteria(request);
@@ -406,5 +408,34 @@ public class CalculateServiceImp(
     {
         var request = mapper.Map<SoccerGetTicketInfoCriteria, SoccerResult>(criteria);
         await publishEndpoint.Publish(request, new CancellationTokenSource(TimeSpan.FromSeconds(3)).Token);
+    }
+}
+
+public class CalculateServiceDependencies
+{
+    public ScaleOutSettleService ScaleOutSettleService { get; }
+    public LogService LogService { get; }
+    public IMatchService MatchService { get; }
+    public IPublishEndpoint PublishEndpoint { get; }
+    public INapSession NapSession { get; }
+    public IHttpContextAccessor Accessor { get; }
+    public XmlConvertService XmlConvertService { get; }
+
+    public CalculateServiceDependencies(
+        ScaleOutSettleService scaleOutSettleService,
+        LogService logService,
+        IMatchService matchService,
+        IPublishEndpoint publishEndpoint,
+        INapSession napSession,
+        IHttpContextAccessor accessor,
+        XmlConvertService xmlConvertService)
+    {
+        ScaleOutSettleService = scaleOutSettleService;
+        LogService = logService;
+        MatchService = matchService;
+        PublishEndpoint = publishEndpoint;
+        NapSession = napSession;
+        Accessor = accessor;
+        XmlConvertService = xmlConvertService;
     }
 }
