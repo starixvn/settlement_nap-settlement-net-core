@@ -1,4 +1,4 @@
-import { ResultStatusId, TicketStatusText } from "../../../../shared/constants";
+import { ResultStatusId } from "../../../../shared/constants";
 import { Language } from "../../../../shared/language.native";
 import { CalculateBaseStorage } from "../../../storage/storage.service.native";
 import { AbstractHandler } from "../../abstract.handler.native";

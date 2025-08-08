@@ -1,6 +1,10 @@
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { ResourceHeaderPipe, ScorePipe } from '../../pipes';
-import { ModalContentDialogComponent, ModalDialogComponent, NotReadyMatchComponent, ResettleCheckerComponent, TicketCountComponent } from '../../../shared/components';
+import { ModalContentDialogComponent } from '../../../shared/components/modal-dialog/modal-content-dialog.component';
+import { ModalDialogComponent } from '../../../shared/components/modal-dialog/modal-dialog.component';
+import { NotReadyMatchComponent } from '../../../shared/components/not-ready-match/not-ready-match.component';
+import { ResettleCheckerComponent } from '../../../shared/components/resettle-checker/resettle-checker.component';
+import { TicketCountComponent } from '../../../shared/components/ticket-count/ticket-count.component';
 import { HttpClientModule } from '@angular/common/http';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';

@@ -57,7 +57,8 @@ describe('HalfTimeFullTimeCalculationComponent', () => {
     isSuccessful: true,
     childMatchIds: '',
     settledSessionId: "",
-    hasResultAmendment: false
+    hasResultAmendment: false,
+    isOrg: false
   };
   const unSuccessfulResult = {
     errCode: 1,
@@ -65,7 +66,8 @@ describe('HalfTimeFullTimeCalculationComponent', () => {
     isSuccessful: false,
     childMatchIds: '',
     settledSessionId: "",
-    hasResultAmendment: false
+    hasResultAmendment: false,
+    isOrg: false
   };
 
   beforeEach(waitForAsync(() => {

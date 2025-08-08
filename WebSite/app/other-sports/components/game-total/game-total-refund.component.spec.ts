@@ -6,7 +6,8 @@ import { NgbModal, NgbModule } from "@ng-bootstrap/ng-bootstrap";
 import { MatchAio } from "../../models";
 import { IntervalBackgroundPipe } from "../../../shared/pipes/interval-background.pipe";
 import { ScoreBySettlementPipe } from "../../../shared/pipes/score-by-settlement.pipe";
-import { ModalContentDialogComponent, ModalDialogComponent } from "../../../shared/components";
+import { ModalContentDialogComponent } from "../../../shared/components/modal-dialog/modal-content-dialog.component";
+import { ModalDialogComponent } from "../../../shared/components/modal-dialog/modal-dialog.component";
 import { HedgeMatchDetail, MatchDetail, Permission, ResultDetail } from "../../../shared/models/sportsbook-sop";
 import { AioService, BlockUIService, ClosePopupService, HttpRequestService, MessageBoxService } from "../../../shared/services";
 import { GameTotalRefundComponent } from "./game-total-refund.component";
@@ -18,6 +19,7 @@ import { of } from "rxjs";
 import { ResourceHeaderPipe, ScoreByPermissionPipe } from "../../pipes";
 import { ResultSettingModel } from "../../../shared/models";
 import { ToastContainerDirective, ToastNoAnimationModule, ToastrModule, ToastrService } from "ngx-toastr";
+import { jest } from '@jest/globals';
 
 describe('GameTotalRefundComponent', () => {
     let component: GameTotalRefundComponent;
@@ -77,11 +79,7 @@ describe('GameTotalRefundComponent', () => {
         await TestBed.configureTestingModule({
             declarations: [
                 GameTotalRefundComponent,
-                ModalDialogComponent,
-                ModalContentDialogComponent,
-                IntervalBackgroundPipe,
                 ResourceHeaderPipe,
-                ScoreBySettlementPipe,
                 ScoreByPermissionPipe,
             ],
             imports: [
@@ -89,7 +87,11 @@ describe('GameTotalRefundComponent', () => {
                 NgbModule,
                 FormsModule,
                 ToastNoAnimationModule.forRoot(),
-                ToastrModule.forRoot()
+                ToastrModule.forRoot(),
+                ModalDialogComponent,
+                ModalContentDialogComponent,
+                IntervalBackgroundPipe,
+                ScoreBySettlementPipe
             ],
             providers: [
                 AioService,
@@ -119,8 +121,8 @@ describe('GameTotalRefundComponent', () => {
         gameTotalService = fixture.debugElement.injector.get(GameTotalService);
         closePopupService = fixture.debugElement.injector.get(ClosePopupService);
         toastrService = fixture.debugElement.injector.get(ToastrService);
-        spyOn(toastrService, 'clear');
-        spyOn(toastrService, 'error');
+        jest.spyOn(toastrService, 'clear');
+        jest.spyOn(toastrService, 'error');
         fixture.detectChanges();
 
     });
@@ -137,7 +139,7 @@ describe('GameTotalRefundComponent', () => {
                 apikey: ApiKeys.NormalMatch,
                 settleType: "MNL"
             };
-            spyOn(aioService, 'getMatch').and.returnValue(of(match));
+            jest.spyOn(aioService, 'getMatch').mockReturnValue(Promise.resolve(match));
             component.getMatch(matchId);
 
             expect(aioService.getMatch).toHaveBeenCalledWith(matchQuery);
@@ -146,10 +148,10 @@ describe('GameTotalRefundComponent', () => {
         it('should set correct value when get match success', async () => {
             match.resultDetails = [resultDetail, resultDetail];
             match.matchDetail.playTime = 0;
-            spyOn(gameTotalService, 'getResultDetail').and.returnValue(match.resultDetails);
-            spyOn(gameTotalService, 'getClass');
-            spyOn(aioService, 'getMatch').and.returnValue(of(match));
-            spyOn(gameTotalService, 'resetHomeAway');
+            jest.spyOn(gameTotalService, 'getResultDetail').mockReturnValue(match.resultDetails);
+            jest.spyOn(gameTotalService, 'getClass');
+            jest.spyOn(aioService, 'getMatch').mockReturnValue(Promise.resolve(match));
+            jest.spyOn(gameTotalService, 'resetHomeAway');
             await component.getMatch(1);
 
             expect(gameTotalService.getClass).toHaveBeenCalledTimes(2);
@@ -162,8 +164,8 @@ describe('GameTotalRefundComponent', () => {
     describe('Refund', () => {
         it('should show alert when match has marked ticket', async () => {
             component.match = match;
-            spyOn(aioService, 'checkMarkedTickets').and.returnValue(of(existMarkedTicket));
-            spyOn(messageBoxService, 'alert');
+            jest.spyOn(aioService, 'checkMarkedTickets').mockReturnValue(Promise.resolve(existMarkedTicket));
+            jest.spyOn(messageBoxService, 'alert');
 
             await component.refund();
 
@@ -172,8 +174,8 @@ describe('GameTotalRefundComponent', () => {
 
         it('should show confirm when match is normal', async () => {
             component.match = match;
-            spyOn(aioService, 'checkMarkedTickets').and.returnValue(of(notExistMarkedTicket));
-            spyOn(messageBoxService, 'confirm');
+            jest.spyOn(aioService, 'checkMarkedTickets').mockReturnValue(of(notExistMarkedTicket));
+            jest.spyOn(messageBoxService, 'confirm');
 
             await component.refund();
 
@@ -184,9 +186,9 @@ describe('GameTotalRefundComponent', () => {
             match.resultDetails = [resultDetail];
             component.match = match;
             component.matchDetail = matchDetail;
-            spyOn(aioService, 'checkMarkedTickets').and.returnValue(of(notExistMarkedTicket));
-            spyOn(aioService, 'push').and.returnValue(of(successfulResult));
-            spyOn(closePopupService, 'closePopup');
+            jest.spyOn(aioService, 'checkMarkedTickets').mockReturnValue(of(notExistMarkedTicket));
+            jest.spyOn(aioService, 'push').mockReturnValue(of(successfulResult));
+            jest.spyOn(closePopupService, 'closePopup');
 
             await component.refund();
             const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
@@ -199,8 +201,8 @@ describe('GameTotalRefundComponent', () => {
         it('should show error mrg when push is failed', fakeAsync(async () => {
             component.match = match;
             component.matchDetail = matchDetail;
-            spyOn(aioService, 'checkMarkedTickets').and.returnValue(of(notExistMarkedTicket));
-            spyOn(aioService, 'push').and.returnValue(of(unsuccessfulResult));
+            jest.spyOn(aioService, 'checkMarkedTickets').mockReturnValue(of(notExistMarkedTicket));
+            jest.spyOn(aioService, 'push').mockReturnValue(of(unsuccessfulResult));
 
             await component.refund();
             const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
@@ -216,7 +218,7 @@ describe('GameTotalRefundComponent', () => {
             totalSet.resultSettingData.isConfirmedRefund = false;
             match.resultDetails = [totalSet];
             component.match = match;
-            spyOn(aioService, 'confirmResult');
+            jest.spyOn(aioService, 'confirmResult');
 
             component.confirmRefund(new HedgeMatchDetail(), false);
 
@@ -227,7 +229,7 @@ describe('GameTotalRefundComponent', () => {
             totalSet.resultSettingData.isConfirmedRefund = true;
             match.resultDetails = [totalSet];
             component.match = match;
-            spyOn(aioService, 'undoConfirmedResult');
+            jest.spyOn(aioService, 'undoConfirmedResult');
 
             component.confirmRefund(new HedgeMatchDetail(), false);
 

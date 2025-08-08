@@ -1,8 +1,9 @@
 import { TestBed, inject, fakeAsync, tick } from '@angular/core/testing';
 import { HttpClientModule } from '@angular/common/http';
 import { HttpRequestService, BlockUIService, MessageBoxService } from '../../shared/services';
-import { RequestSettle } from '../models';
 import { RequestService } from './request.service';
+import { jest } from '@jest/globals';
+import { of } from 'rxjs';
 
 describe('RequestService', () => {
   let service: RequestService = null;
@@ -46,7 +47,7 @@ describe('RequestService', () => {
         };
 
         // Act
-        spyOn(httpRequestService, 'postJson');
+        jest.spyOn(httpRequestService, 'postJson').mockReturnValue(of({}));
         service.getMatch(query);
         tick();
 
@@ -54,60 +55,6 @@ describe('RequestService', () => {
         expect(httpRequestService.postJson).toHaveBeenCalledWith(query, url);
   }));
 
-  it('calculate - Call exact Url and param',
-    fakeAsync(
-      () => {
-        // Arrange
-        const matchId = 7000000;
-        const url = apiUrl + '/calculate';
-        const query = new RequestSettle(matchId, 'CAL', false, "", 0, 0);
-
-        // Act
-        spyOn(httpRequestService, 'postJson');
-        service.calculate(query);
-        tick();
-
-        // Assert
-        expect(httpRequestService.postJson).toHaveBeenCalledWith(query, url);
-  }));
-
-  it('refund - Call exact Url and param',
-    fakeAsync(
-      () => {
-        // Arrange
-        const matchId = 7000000;
-        const url = apiUrl + '/refund';
-        const query = new RequestSettle(matchId, 'REFUND', false, "", 0, 0);
-
-        // Act
-        spyOn(httpRequestService, 'postJson');
-        service.refund(query);
-        tick();
-
-        // Assert
-        expect(httpRequestService.postJson).toHaveBeenCalledWith(query, url);
-  }));
-
-  it('refundParlay - Call exact Url and param',
-    fakeAsync(
-      () => {
-        // Arrange
-        const matchId = 7000000;
-        const url = apiUrl + '/refund-parlay';
-        const query = {
-          matchId,
-          action: "REFUND",
-          settleAbandonedMatchIbcParlay: 0,
-        };
-
-        // Act
-        spyOn(httpRequestService, 'postJson');
-        service.refundParlay(query);
-        tick();
-
-        // Assert
-        expect(httpRequestService.postJson).toHaveBeenCalledWith(query, url);
-  }));
 
   it('checkMarkedTickets - Call exact Url and param',
     fakeAsync(
@@ -121,7 +68,7 @@ describe('RequestService', () => {
         };
 
         // Act
-        spyOn(httpRequestService, 'postJson');
+        jest.spyOn(httpRequestService, 'postJson').mockReturnValue(of({}));
         service.checkMarkedTickets(query);
         tick();
 

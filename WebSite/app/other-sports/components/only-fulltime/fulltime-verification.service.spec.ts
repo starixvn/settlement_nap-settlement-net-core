@@ -6,7 +6,8 @@ import { Match, MatchDetail} from '../../models';
 import { ModalDialogMessage } from '../../../shared/models';
 import { Language } from '../../../shared/language.native';
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
-import { ModalContentDialogComponent, ModalDialogComponent } from '../../../shared/components';
+import { ModalContentDialogComponent } from '../../../shared/components/modal-dialog/modal-content-dialog.component';
+import { ModalDialogComponent } from '../../../shared/components/modal-dialog/modal-dialog.component';
 import { of } from 'rxjs';
 import { RequestService } from '../..//services/request.service';
 

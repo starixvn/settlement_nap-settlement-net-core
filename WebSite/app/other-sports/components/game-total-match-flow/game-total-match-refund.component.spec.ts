@@ -7,7 +7,8 @@ import { ToastContainerDirective, ToastNoAnimationModule, ToastrModule, ToastrSe
 import { ScoreMatchByPermissionPipe } from '../../pipes';
 import { ResourceHeaderPipe } from '../../pipes/resource-header.pipe';
 import { RequestService } from '../../services/request.service';
-import { ModalContentDialogComponent, ModalDialogComponent } from '../../../shared/components';
+import { ModalContentDialogComponent } from '../../../shared/components/modal-dialog/modal-content-dialog.component';
+import { ModalDialogComponent } from '../../../shared/components/modal-dialog/modal-dialog.component';
 import { BlockUIService, HttpRequestService, MessageBoxService } from '../../../shared/services';
 
 import { GameTotalMatchRefundComponent } from './game-total-match-refund.component';

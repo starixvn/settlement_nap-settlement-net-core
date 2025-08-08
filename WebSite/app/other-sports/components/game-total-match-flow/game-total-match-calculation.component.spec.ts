@@ -6,7 +6,11 @@ import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ToastContainerDirective, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 import { ResourceHeaderPipe, ResourceNameByIdPipe, ResultPipe, ScorePipe } from '../../pipes';
 import { RequestService } from '../../services/request.service';
-import { ModalContentDialogComponent, ModalDialogComponent, NotReadyMatchComponent, ResettleCheckerComponent, TicketCountComponent } from '../../../shared/components';
+import { ModalContentDialogComponent } from '../../../shared/components/modal-dialog/modal-content-dialog.component';
+import { ModalDialogComponent } from '../../../shared/components/modal-dialog/modal-dialog.component';
+import { NotReadyMatchComponent } from '../../../shared/components/not-ready-match/not-ready-match.component';
+import { ResettleCheckerComponent } from '../../../shared/components/resettle-checker/resettle-checker.component';
+import { TicketCountComponent } from '../../../shared/components/ticket-count/ticket-count.component';
 import { IntervalBackgroundPipe } from '../../../shared/pipes/interval-background.pipe';
 import { BlockUIService, HttpRequestService, MessageBoxService } from '../../../shared/services';
 

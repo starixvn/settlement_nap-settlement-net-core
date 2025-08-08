@@ -2,7 +2,11 @@ import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FullTimeVerificationService } from './fulltime-verification.service';
-import { ModalContentDialogComponent, ModalDialogComponent, NotReadyMatchComponent, ResettleCheckerComponent, TicketCountComponent } from '../../../shared/components';
+import { ModalContentDialogComponent } from '../../../shared/components/modal-dialog/modal-content-dialog.component';
+import { ModalDialogComponent } from '../../../shared/components/modal-dialog/modal-dialog.component';
+import { NotReadyMatchComponent } from '../../../shared/components/not-ready-match/not-ready-match.component';
+import { ResettleCheckerComponent } from '../../../shared/components/resettle-checker/resettle-checker.component';
+import { TicketCountComponent } from '../../../shared/components/ticket-count/ticket-count.component';
 import { FullTimeCalculationComponent } from './fulltime-calculation.component';
 import { BlockUIService, HttpRequestService, MessageBoxService } from '../../../shared/services';
 import { FormsModule } from '@angular/forms';
@@ -246,7 +250,7 @@ describe('FullTimeCalculationComponent', () => {
 
     it('should close popup when settle successful', fakeAsync(async () => {
       component.matchDetail.sportType = 60;
-      spyOn(requestService, 'calculate').and.returnValue(of(successfulResult));
+      spyOn(requestService, 'sendRequest').and.returnValue(Promise.resolve(successfulResult));
       spyOn(verificationService, 'verifyChangedSettledTickets').and.returnValue(of(true));
       spyOn(verificationService, 'isScoreSourceInsufficient').and.returnValue(false);
       spyOn(verificationService, 'isScoreInconsistent').and.returnValue(false);
@@ -267,7 +271,7 @@ describe('FullTimeCalculationComponent', () => {
     }));
 
     it('should set messageError when settle unsuccessful', fakeAsync(async () => {
-      spyOn(requestService, 'calculate').and.returnValue(of(unsuccessfulResult));
+      spyOn(requestService, 'sendRequest').and.returnValue(Promise.resolve(unsuccessfulResult));
       spyOn(verificationService, 'verifyChangedSettledTickets').and.returnValue(of(false));
       spyOn(verificationService, 'isScoreSourceInsufficient').and.returnValue(false);
       spyOn(verificationService, 'isScoreInconsistent').and.returnValue(false);
@@ -295,7 +299,7 @@ describe('FullTimeCalculationComponent', () => {
     }));
 
     it('should confirm 1 more time and calculate when score inconsistent and user is leader', fakeAsync(async () => {
-      spyOn(requestService, 'calculate').and.returnValue(of(successfulResult));
+      spyOn(requestService, 'sendRequest').and.returnValue(Promise.resolve(successfulResult));
       spyOn(verificationService, 'checkScoreMuayThai').and.returnValue('');
       spyOn(verificationService, 'verifyChangedSettledTickets').and.returnValue(of(false));
       spyOn(verificationService, 'isScoreSourceInsufficient').and.returnValue(false);
@@ -334,7 +338,7 @@ describe('FullTimeCalculationComponent', () => {
     });
 
     it('should call popup when settle successful', fakeAsync(() => {
-      spyOn(requestService, 'calculate').and.returnValue(of(successfulResult));
+      spyOn(requestService, 'sendRequest').and.returnValue(Promise.resolve(successfulResult));
 
       component.uncalculation();
       let buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;

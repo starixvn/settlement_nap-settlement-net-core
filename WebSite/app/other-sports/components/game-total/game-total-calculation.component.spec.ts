@@ -6,7 +6,11 @@ import { GameTotalVerificationService } from "./game-total-verification.service"
 import { GameTotalService } from "./game-total.service";
 import { ExternalResult, ExternalResultDetail, HedgeMatchDetail, MatchDetail, Permission, ResultDetail } from "../../../shared/models/sportsbook-sop";
 import { MatchAio } from "../../models";
-import { ModalContentDialogComponent, ModalDialogComponent, NotReadyMatchComponent, ResettleCheckerComponent, TicketCountComponent } from "../../../shared/components";
+import { ModalContentDialogComponent } from "../../../shared/components/modal-dialog/modal-content-dialog.component";
+import { ModalDialogComponent } from "../../../shared/components/modal-dialog/modal-dialog.component";
+import { NotReadyMatchComponent } from "../../../shared/components/not-ready-match/not-ready-match.component";
+import { ResettleCheckerComponent } from "../../../shared/components/resettle-checker/resettle-checker.component";
+import { TicketCountComponent } from "../../../shared/components/ticket-count/ticket-count.component";
 import { HttpClientModule } from "@angular/common/http";
 import { NgbModal, NgbModule } from "@ng-bootstrap/ng-bootstrap";
 import { FormsModule } from "@angular/forms";
@@ -73,8 +77,6 @@ describe('GameTotalCalculationComponent', () => {
         await TestBed.configureTestingModule({
             declarations: [
                 GameTotalCalculationComponent,
-                ModalDialogComponent,
-                ModalContentDialogComponent,
                 TicketCountComponent,
                 ResettleCheckerComponent,
                 NotReadyMatchComponent,
@@ -88,7 +90,9 @@ describe('GameTotalCalculationComponent', () => {
                 NgbModule,
                 FormsModule,
                 ToastNoAnimationModule.forRoot(),
-                ToastrModule.forRoot()
+                ToastrModule.forRoot(),
+                ModalDialogComponent,
+                ModalContentDialogComponent
             ],
             providers: [
                 AioService,
@@ -562,7 +566,7 @@ describe('GameTotalCalculationComponent', () => {
         totalSet.resourceId = ResourcesIds.totalSets;
         match.isScoreDirect = true;
         component.resultDetails = [resultDetail, totalSet];
-        component.resultDetailOriginal = _.cloneDeep(component.resultDetails);
+        component.resultDetailsOriginal = _.cloneDeep(component.resultDetails);
         totalSet.homeValue = '3';
         component.match = match;
 
@@ -590,7 +594,7 @@ describe('GameTotalCalculationComponent', () => {
         spyOn(verificationService, 'verifyCopyScore').and.returnValue(true);
         spyOn(verificationService, 'isNotConsistent').and.returnValue(true);
         const externalResultDetail = new ExternalResultDetail(100, '00', 'SBO', '', '3', '4');
-        component.externalResult = externalResultDetail;
+        component.providerResultDetails = [externalResultDetail];
         match.matchDetail.exFTHomeScore = 3;
         match.matchDetail.exFTAwayScore = 4;
         totalSet = new ResultDetail();

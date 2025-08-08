@@ -1,13 +1,14 @@
-import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick, flush } from '@angular/core/testing';
 import { ResourceHeaderPipe, ScorePipe } from '../../pipes';
-import { ModalContentDialogComponent, ModalDialogComponent} from '../../../shared/components';
+import { ModalContentDialogComponent } from '../../../shared/components/modal-dialog/modal-content-dialog.component';
+import { ModalDialogComponent } from '../../../shared/components/modal-dialog/modal-dialog.component';
 import { HttpClientModule } from '@angular/common/http';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
 import { RequestService } from '../../services/request.service';
 import { BlockUIService, ClosePopupService, HttpRequestService, MessageBoxService } from '../../../shared/services';
-import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { ToastContainerDirective, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
+import { jest } from '@jest/globals';
 import { Match, MatchDetail, OtherSportsMatch, Permission, QueryMatch } from '../../models';
 import { HedgeMatchDetail } from '../../../shared/models/sportsbook-sop/hedge-match-detail.model';
 import { of } from 'rxjs';
@@ -15,6 +16,7 @@ import { Language } from '../../../shared/language.native';
 import { OtherRefundComponent } from './other-refund.component';
 import { OtherService } from './other.service';
 import { Result } from '../../../shared/models';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('OtherRefundComponent', () => {
     let component: OtherRefundComponent;
@@ -43,20 +45,25 @@ describe('OtherRefundComponent', () => {
         errCode: 0,
         errMsg: null,
         isSuccessful: true,
+        childMatchIds: "",
+        settledSessionId: "",
+        hasResultAmendment: false,
+        isOrg: false
     };
     const unSuccessfulResult: Result = {
         errCode: 1,
         errMsg: errorMessage,
         isSuccessful: false,
         childMatchIds: "",
+        settledSessionId: "",
+        hasResultAmendment: false,
+        isOrg: false
     };
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [
                 OtherRefundComponent,
-                ModalDialogComponent,
-                ModalContentDialogComponent,
                 ScorePipe,
                 ResourceHeaderPipe
             ],
@@ -64,8 +71,11 @@ describe('OtherRefundComponent', () => {
                 HttpClientModule,
                 NgbModule,
                 FormsModule,
+                NoopAnimationsModule,
                 ToastNoAnimationModule.forRoot(),
-                ToastrModule.forRoot()
+                ToastrModule.forRoot(),
+                ModalDialogComponent,
+                ModalContentDialogComponent
             ],
             providers: [
                 RequestService,
@@ -94,7 +104,7 @@ describe('OtherRefundComponent', () => {
     });
 
     it('getMatch - call function get match', fakeAsync(() => {
-        spyOn(requestService, 'getMatch').and.returnValue(of(otherSportsMatch));
+        jest.spyOn(requestService, 'getMatch').mockReturnValue(Promise.resolve(otherSportsMatch));
         const query = new QueryMatch(1, true);
 
         component.getMatch(1);
@@ -110,16 +120,17 @@ describe('OtherRefundComponent', () => {
             };
             matchDetail.matchId = 1234
             component.matchDetail = matchDetail;
-            spyOn(toastrService, 'clear');
-            spyOn(toastrService, 'error');
-            spyOn(requestService, 'checkMarkedTickets').and.returnValue(of(existMarkedTicket));
+            jest.spyOn(toastrService, 'clear');
+            jest.spyOn(toastrService, 'error');
+            jest.spyOn(requestService, 'checkMarkedTickets').mockReturnValue(Promise.resolve(existMarkedTicket));
 
-            component.refund("Refund", true);
+            component.refund("Refund");
             const params = {
                 matchId: 1234,
-                action: "MP-Refund",
+                ResourceIds: "01,00"
             };
             tick();
+            flush();
 
             expect(toastrService.clear).toHaveBeenCalled();
             expect(toastrService.error).toHaveBeenCalledWith(Language.MarkedTicket);
@@ -133,11 +144,11 @@ describe('OtherRefundComponent', () => {
             matchDetail.matchId = 1234
             component.matchDetail = matchDetail;
             component.hedgeMatchDetail = new HedgeMatchDetail();
-            spyOn(toastrService, 'error');
-            spyOn(requestService, 'checkMarkedTickets').and.returnValue(of(notExistMarkedTicket));
-            spyOn(requestService, 'refund').and.returnValue(of(unSuccessfulResult));
+            jest.spyOn(toastrService, 'error');
+            jest.spyOn(requestService, 'checkMarkedTickets').mockReturnValue(Promise.resolve(notExistMarkedTicket));
+            jest.spyOn(requestService, 'sendRequest').mockReturnValue(Promise.resolve(unSuccessfulResult));
 
-            component.refund("Refund", false);
+            component.refund("Refund");
             const params = {
                 matchId: 1234,
                 action: "Refund",
@@ -147,9 +158,13 @@ describe('OtherRefundComponent', () => {
             const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
             buttonYes.click();
             tick();
+            flush();
 
             expect(toastrService.error).toHaveBeenCalledWith(unSuccessfulResult.errMsg);
-            expect(requestService.checkMarkedTickets).toHaveBeenCalledWith(params)
+            expect(requestService.checkMarkedTickets).toHaveBeenCalledWith({
+                matchId: 1234,
+                ResourceIds: "01,00"
+            })
         }));
 
         it('should close popup when refund success', fakeAsync(() => {
@@ -159,11 +174,11 @@ describe('OtherRefundComponent', () => {
             matchDetail.matchId = 1234
             component.matchDetail = matchDetail;
             component.hedgeMatchDetail = new HedgeMatchDetail();
-            spyOn(closePopupService, 'closePopup');
-            spyOn(requestService, 'checkMarkedTickets').and.returnValue(of(notExistMarkedTicket));
-            spyOn(requestService, 'refund').and.returnValue(of(successfulResult));
+            jest.spyOn(closePopupService, 'closePopup');
+            jest.spyOn(requestService, 'checkMarkedTickets').mockReturnValue(Promise.resolve(notExistMarkedTicket));
+            jest.spyOn(requestService, 'sendRequest').mockReturnValue(Promise.resolve(successfulResult));
 
-            component.refund("Refund", false);
+            component.refund("Refund");
             const params = {
                 matchId: 1234,
                 action: "Refund",
@@ -173,8 +188,12 @@ describe('OtherRefundComponent', () => {
             const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
             buttonYes.click();
             tick();
+            flush();
 
-            expect(requestService.checkMarkedTickets).toHaveBeenCalledWith(params)
+            expect(requestService.checkMarkedTickets).toHaveBeenCalledWith({
+                matchId: 1234,
+                ResourceIds: "01,00"
+            })
         }));
     });
 });
