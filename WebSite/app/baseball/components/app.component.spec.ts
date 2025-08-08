@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AppComponent } from './app.component';
-import { ToastContainerModule, ToastNoAnimationModule, ToastrModule } from 'ngx-toastr';
+import { ToastNoAnimationModule, ToastrModule } from 'ngx-toastr';
 import { CommonModule } from '@angular/common';
 import { PageType } from '../../shared/constants';
 import { ElementRef, ViewContainerRef } from '@angular/core';
@@ -14,12 +14,11 @@ describe('AppComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AppComponent,
-        ToastContainerModule,  
-        ToastNoAnimationModule.forRoot(),
-        ToastrModule.forRoot(),
-        CommonModule
-      ],
+              imports: [AppComponent,
+          ToastNoAnimationModule.forRoot(),
+          ToastrModule.forRoot(),
+          CommonModule
+        ],
       providers: [CalculateStorage]
     }).compileComponents().then(() => {
       fixture = TestBed.createComponent(AppComponent);

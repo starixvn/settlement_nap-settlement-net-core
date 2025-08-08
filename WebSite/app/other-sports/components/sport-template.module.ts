@@ -26,7 +26,7 @@ import { HalfTimeFullTimeCalculationComponent } from './halftime-fulltime/halfti
 import { HalfTimeFullTimeRefundComponent } from './halftime-fulltime/halftime-fulltime-refund.component';
 import { RequestService } from '../services/request.service';
 import { VerificationService } from './halftime-fulltime/verification.service';
-import { ToastContainerModule, ToastNoAnimationModule } from 'ngx-toastr';
+import { ToastNoAnimationModule } from 'ngx-toastr';
 import { HalfTimeFullTimeService } from './halftime-fulltime/halftime-fulltime.service';
 import { GameTotalMatchCalculationComponent } from './game-total-match-flow/game-total-match-calculation.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -58,7 +58,7 @@ import { ResultByTeamNamePipe } from '../../shared/pipes/result-by-team-name.pip
             positionClass: 'inline',
             maxOpened: 1,
         }),
-        ToastContainerModule,
+
         ResettleCheckerComponent,
         NotReadyMatchComponent,
         TicketCountComponent,

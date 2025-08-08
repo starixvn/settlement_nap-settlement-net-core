@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
-import { ToastContainerDirective, ToastContainerModule } from 'ngx-toastr';
+import { ToastContainerDirective } from 'ngx-toastr';
 import { Soccer } from '../../../soccer.model';
 import { MatchDetailComponent } from '../../../common/match-detail.component';
 import { BetDaq, BetFair, Match, MatchDetail } from '../../models/match.model';
@@ -12,7 +12,7 @@ import { BettingExchangeComponent } from '../betting-exchange/betting-exchange.c
 @Component({
   selector: 'refund',
   standalone: true,
-  imports: [MatchDetailComponent, ToastContainerModule, RefundActionsComponent, BettingExchangeComponent],
+  imports: [MatchDetailComponent, RefundActionsComponent, BettingExchangeComponent],
   templateUrl: './refund.component.html',
   styleUrl: './refund.component.css'
 })

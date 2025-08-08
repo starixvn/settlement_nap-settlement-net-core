@@ -12,7 +12,7 @@ import { GroupNameByIdPipe } from './pipes/group-name-by-id.pipe';
 import { PipesModule } from '../shared/pipes/pipes.module.native';
 import { MaterialModule } from '../shared/material-module';
 import { OnlyGoalRecordDirective } from './directives/only-goal-record.directive.native';
-import { ToastContainerModule, ToastNoAnimationModule, ToastrModule } from 'ngx-toastr';
+import { ToastNoAnimationModule, ToastrModule } from 'ngx-toastr';
 import { TicketCountComponent } from '../shared/components/ticket-count/ticket-count.component';
 import { ResettleCheckerComponent } from '../shared/components/resettle-checker/resettle-checker.component';
 import { NotReadyMatchComponent } from '../shared/components/not-ready-match/not-ready-match.component';
@@ -40,7 +40,7 @@ import { FilterResultStatusPipe } from './pipes/filter-result-status/filter-resu
         positionClass: 'inline',
         maxOpened: 1,
     }),
-    ToastContainerModule,
+
     TicketCountComponent,
     ResettleCheckerComponent,
     NotReadyMatchComponent,

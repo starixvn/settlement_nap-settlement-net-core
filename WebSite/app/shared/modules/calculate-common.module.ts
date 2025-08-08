@@ -3,7 +3,6 @@ import { CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import {
-  ToastContainerModule,
   ToastNoAnimationModule,
   ToastrModule,
   ToastrService,
@@ -25,7 +24,6 @@ import { AutoSelectResultsService } from "../services/auto-select-results.servic
   exports: [
     FormsModule,
     CommonModule,
-    ToastContainerModule,
     ResettleCheckerComponent,
     TicketCountComponent,
     NotReadyMatchComponent,

@@ -1,6 +1,6 @@
 import { FormsModule } from '@angular/forms';
 import { Component, inject, ViewChild } from '@angular/core';
-import { ToastContainerDirective, ToastContainerModule, ToastrService } from 'ngx-toastr';
+import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import { ChildMatch, FantasyRelatedMatch, HedgeMatchDetail, Match, MatchDetailSoccer as MatchDetail, Score } from './models/match.model';
 import { Soccer } from '../soccer.model';
 import { RequestService } from './services/request.service';
@@ -44,7 +44,7 @@ import { VerificationBaseService as sopVerificationService } from '../../../core
         MatTooltip,
         CommonModule,
         FormsModule,
-        ToastContainerModule],
+        ],
     providers: [
         VerifyMatchService,
         HttpRequestService,
