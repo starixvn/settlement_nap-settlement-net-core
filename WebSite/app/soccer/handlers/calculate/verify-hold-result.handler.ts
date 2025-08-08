@@ -7,7 +7,7 @@ import { RequestService } from "../../components/calc/services/request.service";
 import { Language } from "../../../shared/language.native";
 
 export class VerifyHoldResultHandler extends AbstractHandler {
-  #requestService = inject(RequestService);
+  readonly #requestService = inject(RequestService);
 
   async handle(storage: CalculateBaseStorage) {
     const { matchDetail } = storage.getMatch();

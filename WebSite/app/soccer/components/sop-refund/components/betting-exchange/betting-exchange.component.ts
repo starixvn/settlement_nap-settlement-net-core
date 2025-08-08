@@ -21,10 +21,10 @@ export class BettingExchangeComponent {
   @Input() betDaq: BetDaq;
   @Input() betFair: BetFair;
 
-  #dialog = inject(MatDialog);
-  #refundStorage = inject(RefundStorage);
-  #requestService = inject(RequestService);
-  #logicService = inject(LogicService);
+  readonly #dialog = inject(MatDialog);
+  readonly #refundStorage = inject(RefundStorage);
+  readonly #requestService = inject(RequestService);
+  readonly #logicService = inject(LogicService);
 
   onOpenPopupSpecificBetTypes( type: string, action: string ) {
     this.#refundStorage.clear();

@@ -9,7 +9,8 @@ import { RefundType } from "../../../constants";
 import { MatchDetail } from "../../../components/sop-refund/models/match.model";
 
 export class VerifyScoreHandler extends AbstractHandler {
-  #logicService = inject(LogicService);
+  readonly #logicService = inject(LogicService);
+
   public handle(storage: RefundBaseStorage): void {
     const { matchDetail } = storage.getMatch();
     const actions = [CalculateAction.refundHalfTime, CalculateAction.refundFullTime, CalculateAction.refund];

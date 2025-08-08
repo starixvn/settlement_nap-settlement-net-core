@@ -5,7 +5,7 @@ import { RequestService } from "../../../components/sop-refund/services/request.
 import { RefundBaseStorage } from "../../../storage/storage.service.native";
 
 export class VerifyMarkedTicketHandler extends AbstractHandler {
-   #requestService = inject(RequestService);
+   readonly #requestService = inject(RequestService);
 
   async handle(storage: RefundBaseStorage): Promise<void> {
     const { matchDetail } = storage.getMatch();

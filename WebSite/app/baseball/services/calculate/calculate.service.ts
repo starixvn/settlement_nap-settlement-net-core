@@ -47,10 +47,10 @@ export class CalculateService {
   private readonly mercyValidateHandler = new MercyValidateHandler();
   private readonly multiMercyValidateHandler = new MultiMercyValidateHandler();
 
-  #storage = inject(CalculateStorage);
-  #notifyService = inject(NotifyService);
-  #aioService = inject(AioService);
-  #verificationService = inject(VerificationBaseService);
+  readonly #storage = inject(CalculateStorage);
+  readonly #notifyService = inject(NotifyService);
+  readonly #aioService = inject(AioService);
+  readonly #verificationService = inject(VerificationBaseService);
 
   constructor() {
     this.nonSelectedHandler.setNextHandler(this.resultConfirmedHandler);

@@ -10,8 +10,8 @@ import { ResultDetail } from "../../../../shared/models/sportsbook-sop";
 
 
 export class VerifyFirstHalfHandler extends AbstractHandler {
-  #verifyScoreGoalService = inject(VerifyScoreGoalService);
-  #verifyActionService = inject(VerifyActionService);
+  readonly #verifyScoreGoalService = inject(VerifyScoreGoalService);
+  readonly #verifyActionService = inject(VerifyActionService);
 
   public async handle(storage: CalculateBaseStorage) {
     const { matchDetail } = storage.getMatch();

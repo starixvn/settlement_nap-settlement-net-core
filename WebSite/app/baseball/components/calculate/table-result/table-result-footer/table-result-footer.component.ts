@@ -15,9 +15,10 @@ import { filter, isEqual } from "lodash";
   templateUrl: "./table-result-footer.component.html",
 })
 export class TableResultFooterComponent implements OnInit {
-  #storage = inject(CalculateStorage);
-  #notifyService = inject(NotifyService);
-  #calculateService = inject(CalculateService);
+  readonly #storage = inject(CalculateStorage);
+  readonly #notifyService = inject(NotifyService);
+  readonly #calculateService = inject(CalculateService);
+
   disableScoreDirect = false;
   isInputScoreDirect = false;
   canUncalculate = this.#storage.getPermission().canUncalculate;

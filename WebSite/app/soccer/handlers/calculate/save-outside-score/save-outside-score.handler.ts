@@ -8,9 +8,9 @@ import { Language } from "../../../../shared/language.native";
 import { MessageBoxService } from "../../../../shared/services";
 
 export class SaveOutsideScoreHandler extends AbstractHandler {
-    #verificationService = inject(VerificationBaseService);
-    #requestService = inject(RequestService);
-    #messageBoxService = inject(MessageBoxService);
+    readonly #verificationService = inject(VerificationBaseService);
+    readonly #requestService = inject(RequestService);
+    readonly #messageBoxService = inject(MessageBoxService);
 
     async handle(storage: CalculateBaseStorage) {
         const { resultDetails, originalResultDetail, matchDetail } = storage.getMatch();

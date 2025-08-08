@@ -8,16 +8,14 @@ import { BetDaq, BetFair, MatchDetail } from "../../sop-refund/models/match.mode
 
 import * as _ from "lodash";
 import { Language } from "../../../../shared/language.native";
-import { ResultDetail } from "../../../models";
 import { BetStatus, RefundType } from "../../../constants";
 
 @Injectable({
   providedIn: 'root'
 })
 export class LogicService {
-
-  #refundStorage = inject(RefundStorage);
-  #messageBoxService = inject(MessageBoxService);
+  readonly #refundStorage = inject(RefundStorage);
+  readonly #messageBoxService = inject(MessageBoxService);
 
   getActionName(): string {
     const resultDetails = this.#refundStorage.getSelectedResource();

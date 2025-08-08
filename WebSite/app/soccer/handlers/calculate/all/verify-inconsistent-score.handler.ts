@@ -5,13 +5,12 @@ import * as _ from 'lodash';
 import { inject } from '@angular/core';
 
 import { MessageBoxService } from '../../../../shared/services';
-import { ExternalResultDetail, ResultDetail } from "../../../../shared/models/sportsbook-sop";
 import { VerificationBaseService } from "../../../../core/services/verification-base.service";
 import { ResourceIds } from "../../../constants";
 
 export class VerifyInconsistentScoreHandler extends AbstractHandler {
-  #verificationService = inject(VerificationBaseService);
-  #messageBoxService = inject(MessageBoxService);
+  readonly #verificationService = inject(VerificationBaseService);
+  readonly #messageBoxService = inject(MessageBoxService);
 
   async handle(storage: CalculateBaseStorage) {
     const { permission, resultDetails } = storage.getMatch();

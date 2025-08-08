@@ -19,7 +19,7 @@ import { ConfirmRefundService } from "../../services/refund/confirm-refund.servi
   templateUrl: './refund.component.html'
 })
 export class RefundComponent implements SportTemplate{
-  #storage = inject(RefundStorage);
+  readonly #storage = inject(RefundStorage);
   match: Match;
   resultDetails: ResultDetail[];
   async getMatch(matchId: number) {

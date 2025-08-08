@@ -3,10 +3,10 @@ import { RefundBaseStorage } from "../../../storage/storage.service.native";
 import { inject } from "@angular/core";
 import { VerificationBaseService } from "../../../services/verification-base.service";
 import { Language } from "../../../../shared/language.native";
-import { SettlementStatusId } from "../../../../shared/constants";
 
 export class VerifyScoreHTHandler extends AbstractHandler {
-    #verificationBaseService = inject(VerificationBaseService);
+    readonly #verificationBaseService = inject(VerificationBaseService);
+    
     public handle(storage: RefundBaseStorage): void {
       const {matchDetail } = storage.getMatch();
         const halfTime = storage.getHalfTimeResult();

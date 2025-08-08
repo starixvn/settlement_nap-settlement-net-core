@@ -76,8 +76,8 @@ export class CalculationComponent implements Soccer {
 
     private readonly requestService = inject(RequestService);
     private readonly verifyMatchService = inject(VerifyMatchService);
-    #storage = inject(CalculateStorage);
-    #toastrService = inject(ToastrService);
+    readonly #storage = inject(CalculateStorage);
+    readonly #toastrService = inject(ToastrService);
 
     async getMatch(matchId: number, filterOver?: string) {
         this.#storage.setToastrOverlay(this.toastContainer);

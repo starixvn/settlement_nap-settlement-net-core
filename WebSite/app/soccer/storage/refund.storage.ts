@@ -11,12 +11,12 @@ import { ResultDetail } from "../models";
   providedIn: 'root'
 })
 export class RefundStorage implements RefundBaseStorage {
-  #toastrService = inject(ToastrService);
+  readonly #toastrService = inject(ToastrService);
   
-  #match = signal<Match>(null);
-  #dialogMessage = new ModalDialogMessage(Language.confirmationBox);
+  readonly #match = signal<Match>(null);
+  readonly #dialogMessage = new ModalDialogMessage(Language.confirmationBox);
 
-  match = this.#match.asReadonly();
+  readonly match = this.#match.asReadonly();
   #isDeterminedHedgeMatch = false;
 
   #halfTimeResult: ResultDetail;

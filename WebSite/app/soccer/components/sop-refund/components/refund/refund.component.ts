@@ -23,9 +23,9 @@ export class RefundComponent implements Soccer, OnInit {
   betDaq: BetDaq;
   betFair: BetFair;
 
-  #requestService = inject(RequestService);
-  #logicService = inject(LogicService);
-  #storage = inject(RefundStorage);
+  readonly #requestService = inject(RequestService);
+  readonly #logicService = inject(LogicService);
+  readonly #storage = inject(RefundStorage);
 
   async getMatch(matchId: number, filterOver?: string) {
     this.match = await this.#requestService.getMatch(matchId, true);

@@ -9,10 +9,11 @@ import { LogicService } from "../../../components/sop-refund/services/logic.serv
 import { MatchDetailBase, ResultDetail } from "../../../models";
 
 export class ChangeConfirmSettingHandler extends AbstractHandler {
-    #aioService = inject(AioService);
-    #logicService = inject(LogicService);
+    readonly #aioService = inject(AioService);
+    readonly #logicService = inject(LogicService);
+    
     public async handle(storage: RefundBaseStorage): Promise<void> {
-        const {matchDetail} = storage.getMatch();
+        const { matchDetail } = storage.getMatch();
         const selectedResources = storage.getSelectedResource() as ResultDetail[];
         this.addGoalRecord(matchDetail, selectedResources);
         const isEnable = selectedResources.every(item => !item.resultSettingData.isConfirmedRefundSdt && !item.resultSettingData.isConfirmedRefund);

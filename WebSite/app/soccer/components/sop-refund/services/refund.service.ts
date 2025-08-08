@@ -25,7 +25,7 @@ import { VerifyScoreHandler } from "../../../handlers/Refund/confirm-refund/veri
   providedIn: 'root'
 })
 export class RefundService {
-  #refundStorage = inject(RefundStorage);
+  readonly #refundStorage = inject(RefundStorage);
   refundHandler: AbstractHandler;
   undoConfirmChain: AbstractHandler;
   verifyRefundHalfTimeChain: AbstractHandler;

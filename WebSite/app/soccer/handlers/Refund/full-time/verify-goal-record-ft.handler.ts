@@ -4,12 +4,12 @@ import { inject } from "@angular/core";
 import { RefundBaseStorage } from "../../../storage/storage.service.native";
 import { VerificationBaseService } from "../../../services/verification-base.service";
 import { Language } from "../../../../shared/language.native";
-import { LogicService } from "../../../components/sop-refund/services/logic.service";
 import { VerifyService } from "../../../components/sop-refund/services/verify.service";
 
 export class VerifyGoalRecordFTHandler extends AbstractHandler {
-  #verifyService = inject(VerifyService);
-  #verificationBaseService = inject(VerificationBaseService);
+  readonly #verifyService = inject(VerifyService);
+  readonly #verificationBaseService = inject(VerificationBaseService);
+
   public handle(storage: RefundBaseStorage): void {
     const { matchDetail } = storage.getMatch();
     const isRefundHalfTimeBetStatus = this.#verifyService.isRefundHalfTimeBetStatus(matchDetail);

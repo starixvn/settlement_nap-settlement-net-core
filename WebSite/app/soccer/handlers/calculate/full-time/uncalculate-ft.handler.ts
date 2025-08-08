@@ -8,8 +8,8 @@ import { Language } from "../../../../shared/language.native";
 import { ResultStatusId } from "../../../../shared/constants";
 
 export class UncalculateFTHandler extends AbstractHandler {
-  #closePopupService = inject(ClosePopupService);
-  #requestService = inject(RequestService);
+  readonly #closePopupService = inject(ClosePopupService);
+  readonly #requestService = inject(RequestService);
 
   async handle(storage: CalculateBaseStorage): Promise<void> {
     const { matchDetail, resultDetails, hedgeMatchDetail } = storage.getMatch();

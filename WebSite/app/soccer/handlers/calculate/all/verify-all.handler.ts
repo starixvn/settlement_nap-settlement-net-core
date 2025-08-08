@@ -6,11 +6,10 @@ import { Language } from "../../../../shared/language.native";
 import { CalculateAction } from "../../../../shared/constants";
 import { VerifyActionService } from "../../../components/calc/services/verify-action.service";
 import { CalculateBaseStorage } from "../../../storage/storage.service.native";
-import { ResultDetail } from "../../../models";
 
 export class VerifyAllHandler extends AbstractHandler {
-  #verifyScoreGoalService = inject(VerifyScoreGoalService);
-  #verifyActionService = inject(VerifyActionService);
+  readonly #verifyScoreGoalService = inject(VerifyScoreGoalService);
+  readonly #verifyActionService = inject(VerifyActionService);
 
 
   async handle(storage: CalculateBaseStorage) {

@@ -7,7 +7,7 @@ import { find } from "lodash";
 import { ResultDetail } from "../../../models";
 
 export class DoubleCheckConfirmRefundHandler extends AbstractHandler {
-    #logicService = inject(LogicService); 
+    readonly #logicService = inject(LogicService); 
     public handle(storage: RefundBaseStorage): void {
         const selectedResources = storage.getSelectedResource() as ResultDetail[];
         const existResultConfirmed = find(selectedResources, item => 

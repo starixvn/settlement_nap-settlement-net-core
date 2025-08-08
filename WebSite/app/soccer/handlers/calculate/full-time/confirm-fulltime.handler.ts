@@ -4,11 +4,10 @@ import { AbstractHandler } from "../../abstract.handler.native";
 import { CalculateBaseStorage } from "../../../storage/storage.service.native";
 import { Language } from "../../../../shared/language.native";
 import { MessageBoxService } from "../../../../shared/services";
-import { ResultStatusId } from "../../../../shared/constants";
 
 export class ConfirmFullTimeHandler extends AbstractHandler {
-  #verifyActionService = inject(VerifyActionService);
-   #messageBoxService = inject(MessageBoxService);
+  readonly #verifyActionService = inject(VerifyActionService);
+  readonly #messageBoxService = inject(MessageBoxService);
 
   public async handle(storage: CalculateBaseStorage): Promise<void> {
     const { matchDetail, childMatches } = storage.getMatch();

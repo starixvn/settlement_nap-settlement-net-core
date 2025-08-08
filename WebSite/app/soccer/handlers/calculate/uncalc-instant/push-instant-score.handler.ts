@@ -8,9 +8,10 @@ import { RequestService } from "../../../components/calc/services/request.servic
 import { isEmpty } from "lodash";
 
 export class PushInstantScoreHandler extends AbstractHandler {
-  #messageBoxService = inject(MessageBoxService)
-  #requestService = inject(RequestService);
-  #closePopupService = inject(ClosePopupService);
+  readonly #messageBoxService = inject(MessageBoxService);
+  readonly #requestService = inject(RequestService);
+  readonly #closePopupService = inject(ClosePopupService);
+  
   async handle(storage: CalculateBaseStorage) {
     const scoreResult = storage.getInstantScore();
     const { matchDetail} = storage.getMatch();

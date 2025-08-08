@@ -8,8 +8,8 @@ import { CalculateAction } from "../../../../shared/constants";
 import { includes } from "lodash";
 
 export class RefundHandler extends AbstractHandler {
-  #requestService = inject(RequestService);
-  #logicService = inject(LogicService);
+  readonly #requestService = inject(RequestService);
+  readonly #logicService = inject(LogicService);
 
   async handle(storage: RefundBaseStorage): Promise<void> {
     const match= storage.getMatch();

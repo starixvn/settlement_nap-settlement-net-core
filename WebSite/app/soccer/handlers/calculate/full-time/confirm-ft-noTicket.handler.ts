@@ -4,14 +4,14 @@ import { Language } from "../../../../shared/language.native";
 import { MessageBoxService } from "../../../../shared/services";
 import { inject } from "@angular/core";
 import { RequestService } from "../../../components/calc/services/request.service";
-import { CalculateAction, ResourceIds, ResultStatusId, ScoreSourceType, } from "../../../../shared/constants";
+import { CalculateAction, ResultStatusId, ScoreSourceType, } from "../../../../shared/constants";
 import * as _ from "lodash";
 import { SourceIds } from "../../../../basketball/constants/source-ids";
 import { ExternalResult, ResultDetail } from "../../../../shared/models/sportsbook-sop";
 
 export class ConfirmFtNoTicketHandler extends AbstractHandler {
-  #messageBoxService = inject(MessageBoxService);
-  #requestService = inject(RequestService);
+  readonly #messageBoxService = inject(MessageBoxService);
+  readonly #requestService = inject(RequestService);
   readonly resultSettledStatusIds = [ResultStatusId.AutoCompleted, ResultStatusId.ManualCompleted];
   readonly sourceTypeIds = [ScoreSourceType.trader, ScoreSourceType.Sbo];
 

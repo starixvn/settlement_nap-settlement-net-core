@@ -30,14 +30,13 @@ export interface ICalculateStorage extends Storage  {
   }
 )
 export class CalculateStorage implements ICalculateStorage {
+  readonly #aioService = inject(AioService);
+  readonly #verificationBaseService = inject(VerificationBaseService);
+  readonly #autoSelectResultsService = inject(AutoSelectResultsService);
 
-  #aioService = inject(AioService);
-  #verificationBaseService = inject(VerificationBaseService);
-  #autoSelectResultsService = inject(AutoSelectResultsService);
-
-  #match = signal<Match>(null);
-  #isScoreDirect = signal<boolean>(false);
-  #isReSettledTickets = signal<boolean>(false);
+  readonly #match = signal<Match>(null);
+  readonly #isScoreDirect = signal<boolean>(false);
+  readonly #isReSettledTickets = signal<boolean>(false);
   isReSettledTickets = this.#isReSettledTickets.asReadonly();
   #isApplyHedgeMatch = signal<boolean>(false);
   readonly #isMatchSeries = signal<boolean>(false);

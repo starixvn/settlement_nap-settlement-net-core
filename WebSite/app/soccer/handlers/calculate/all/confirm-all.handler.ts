@@ -6,8 +6,8 @@ import { MessageBoxService } from "../../../../shared/services";
 import { Language } from "../../../../shared/language.native";
 
 export class ConfirmAllHandler extends AbstractHandler {
-  #verifyActionService = inject(VerifyActionService);
-  #messageBoxService = inject(MessageBoxService);
+  readonly #verifyActionService = inject(VerifyActionService);
+  readonly #messageBoxService = inject(MessageBoxService);
 
   async handle(storage: CalculateBaseStorage): Promise<void> {
     const { matchDetail, childMatches } = storage.getMatch();

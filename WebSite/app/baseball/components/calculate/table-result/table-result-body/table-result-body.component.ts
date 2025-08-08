@@ -23,11 +23,11 @@ import { OnlyIntegerDirective } from '../../../../../shared/directives';
   templateUrl: './table-result-body.component.html',
 })
 export class TableResultBodyComponent implements OnInit {
-  #storage = inject(CalculateStorage);
-  #resultRowState = inject(ResultRowStateService)
-  #verificationService = inject(VerificationBaseService);
-  #notifyService = inject(NotifyService);
-  #calculateService = inject(CalculateService);
+  readonly #storage = inject(CalculateStorage);
+  readonly #resultRowState = inject(ResultRowStateService)
+  readonly #verificationService = inject(VerificationBaseService);
+  readonly #notifyService = inject(NotifyService);
+  readonly #calculateService = inject(CalculateService);
   innings = this.#storage.getResultDetails();
   permission = this.#storage.getPermission();
   matchDetail = this.#storage.getMatchDetail();
@@ -161,7 +161,6 @@ export class TableResultBodyComponent implements OnInit {
   }
 
   selectedOnMap(inning: ResultDetailBaseBall) {
-    // this.#notifyService.clearError();
     this.#storage.onChange();
     inning.resultState = new ResultState(this.#resultRowState, inning);
 
@@ -192,9 +191,6 @@ export class TableResultBodyComponent implements OnInit {
   private changeState() {
     this.innings.forEach((inning) => {
       inning.resultState = new ResultState(this.#resultRowState, inning);
-      // if(modifySelectState && this.#storage.isScoreDirect()) {
-      //   inning.checked = inning.resourceId === ResourceIds.fullTime;
-      // }
     });
   }
 }

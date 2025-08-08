@@ -25,12 +25,13 @@ import { Permission } from '../../../../../shared/models/sportsbook-sop';
   styleUrl: './refund-actions.component.css'
 })
 export class RefundActionsComponent implements OnInit {
-  #storage = inject(RefundStorage);
-  #refundService = inject(RefundService);
-  #verifyService = inject(VerifyService);
-  #verificationService = inject(VerificationBaseService);
-  #logicService = inject(LogicService);
-  #resourceStatusPipe = inject(ResourceStatusPipe);
+  readonly #storage = inject(RefundStorage);
+  readonly #refundService = inject(RefundService);
+  readonly #verifyService = inject(VerifyService);
+  readonly #verificationService = inject(VerificationBaseService);
+  readonly #logicService = inject(LogicService);
+  readonly #resourceStatusPipe = inject(ResourceStatusPipe);
+  
   #match: Match;
   matchDetail: MatchDetail;
   hedgeMatchDetail: HedgeMatchDetail;

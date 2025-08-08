@@ -6,7 +6,8 @@ import { Language } from "../../../../shared/language.native";
 
 
 export class VerifyScoreFTHandler extends AbstractHandler {
-  #verificationBaseService = inject(VerificationBaseService);
+  readonly #verificationBaseService = inject(VerificationBaseService);
+
   public handle(storage: RefundBaseStorage): void {
     const fullTime = storage.getFullTimeResult();
     const { matchDetail } = storage.getMatch();

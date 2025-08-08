@@ -6,7 +6,8 @@ import { inject } from "@angular/core";
 import { VerificationBaseService } from "../../../services/verification-base.service";
 
 export class VerifyGoalRecordHTHandler extends AbstractHandler {
-    #verificationBaseService = inject(VerificationBaseService);
+    readonly #verificationBaseService = inject(VerificationBaseService);
+    
     public handle(storage: RefundBaseStorage): void {
         const { matchDetail } = storage.getMatch();
         if (this.#verificationBaseService.goalRecordExistSemicolon(matchDetail)) {

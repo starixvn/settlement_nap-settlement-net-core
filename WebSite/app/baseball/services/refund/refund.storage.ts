@@ -34,12 +34,12 @@ export class RefundStorage implements IRefundStorage {
   private readonly aioService = inject(AioService);
   private readonly resultPipe = inject(ResourceNamePipe);
   private readonly intervalBackgroundPipe = inject(IntervalBackgroundPipe);
-  #match = signal<Match>(null);
-  #isSdtSettle = signal<boolean>(false);
-  #isMercy = signal<boolean>(false);
-  #isAwayEnded = signal<boolean>(false);
-  #isApplyHedgeMatch = signal<boolean>(false);
-  #isMatchSeries = signal<boolean>(false);
+  readonly #match = signal<Match>(null);
+  readonly #isSdtSettle = signal<boolean>(false);
+  readonly #isMercy = signal<boolean>(false);
+  readonly #isAwayEnded = signal<boolean>(false);
+  readonly #isApplyHedgeMatch = signal<boolean>(false);
+  readonly #isMatchSeries = signal<boolean>(false);
 
   match = this.#match.asReadonly();
   isSdtSettle = this.#isSdtSettle.asReadonly();

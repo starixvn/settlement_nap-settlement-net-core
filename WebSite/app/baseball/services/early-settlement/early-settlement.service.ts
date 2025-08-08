@@ -25,9 +25,9 @@ import { ResourceItem } from "../../../shared/models";
 @Injectable()
 
 export class EarlySettlementService {
-  #storage = inject(EarlySettlementStorage);
-  #aioService = inject(AioService);
-  #notifyService = inject(NotifyService);
+  readonly #storage = inject(EarlySettlementStorage);
+  readonly #aioService = inject(AioService);
+  readonly #notifyService = inject(NotifyService);
 
   #resultConfirmedHandler = new ResultConfirmedHandler();
   #invalidResultsHandler = new InvalidResultsHandler();

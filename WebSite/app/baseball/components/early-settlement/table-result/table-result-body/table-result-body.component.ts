@@ -23,11 +23,12 @@ import { OnlyIntegerDirective } from '../../../../../shared/directives';
   templateUrl: './table-result-body.component.html',
 })
 export class TableResultBodyComponent  implements OnInit{
-  #storage = inject(EarlySettlementStorage);
-  #notifyService = inject(NotifyService);
-  #aioService = inject(AioService);
-  #earlySettlementService = inject(EarlySettlementService);
-  #verificationService = inject(VerificationBaseService);
+  readonly #storage = inject(EarlySettlementStorage);
+  readonly #notifyService = inject(NotifyService);
+  readonly #aioService = inject(AioService);
+  readonly #earlySettlementService = inject(EarlySettlementService);
+  readonly #verificationService = inject(VerificationBaseService);
+  
   permission = this.#storage.getPermission();
   match = this.#storage.match;
   groupMap = this.#storage.getGroupResultDetail();

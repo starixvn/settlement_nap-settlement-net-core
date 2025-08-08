@@ -5,8 +5,8 @@ import { RequestService } from "../../../components/sop-refund/services/request.
 import { LogicService } from "../../../components/sop-refund/services/logic.service";
 
 export class VerifyStatusHandler extends AbstractHandler {
-  #requestService = inject(RequestService);
-  #logicService = inject(LogicService);
+  readonly #requestService = inject(RequestService);
+  readonly #logicService = inject(LogicService);
   async handle(storage: RefundBaseStorage): Promise<void> {
     const { matchDetail } = storage.getMatch();
     const actionName = this.#logicService.getActionName();

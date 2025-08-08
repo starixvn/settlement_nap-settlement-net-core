@@ -9,8 +9,8 @@ import { VerifyActionService } from "../../../components/calc/services/verify-ac
 import { ResultDetail } from "../../../../shared/models/sportsbook-sop/result-detail.model";
 
 export class VerifyFulltimeHandler extends AbstractHandler {
-   #verifyScoreGoalService = inject(VerifyScoreGoalService);
-  #verifyActionService = inject(VerifyActionService);
+  readonly #verifyScoreGoalService = inject(VerifyScoreGoalService);
+  readonly #verifyActionService = inject(VerifyActionService);
 
    async handle(storage: CalculateBaseStorage) {
     const {matchDetail, childMatches, fantasyMatch} = storage.getMatch();

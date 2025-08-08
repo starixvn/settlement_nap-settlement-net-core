@@ -15,10 +15,10 @@ import { KickOffTime } from "../../constants/kick-off-time.constant";
 
 @Injectable()
 export class EarlySettlementStorage implements Storage {
-  #aioService = inject(AioService);
-  #resultPipe = inject(ResourceNamePipe);
-  #verificationService = inject(VerificationBaseService);
-  #intervalBackgroundPipe = inject(IntervalBackgroundPipe);
+  readonly #aioService = inject(AioService);
+  readonly #resultPipe = inject(ResourceNamePipe);
+  readonly #verificationService = inject(VerificationBaseService);
+  readonly #intervalBackgroundPipe = inject(IntervalBackgroundPipe);
 
   #match = signal<Match>(null);
   #disableAction = signal<boolean>(true);
