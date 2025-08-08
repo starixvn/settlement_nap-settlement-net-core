@@ -20,23 +20,23 @@ export class EarlySettlementStorage implements Storage {
   readonly #verificationService = inject(VerificationBaseService);
   readonly #intervalBackgroundPipe = inject(IntervalBackgroundPipe);
 
-  #match = signal<Match>(null);
-  #disableAction = signal<boolean>(true);
+  readonly #match = signal<Match>(null);
+  readonly #disableAction = signal<boolean>(true);
   #mainResults: ResultDetail[];
   #earlyResults: ResultDetail[];
   #earlyOriginalResults: ResultDetail[];
   #groupResultDetail: GroupMap[];
   #actionSubmit = '';
-  #resultType = signal<string>("");
-  #isReSettledTickets = signal<boolean>(false);
-  #ticketStatus = signal<string>("");
-  #resultStatus = signal<string>("");
+  readonly #resultType = signal<string>("");
+  readonly #isReSettledTickets = signal<boolean>(false);
+  readonly #ticketStatus = signal<string>("");
+  readonly #resultStatus = signal<string>("");
 
   match = this.#match.asReadonly();
-  resultType = this.#resultType.asReadonly();
-  ticketStatus = this.#ticketStatus.asReadonly();
-  resultStatus = this.#resultStatus.asReadonly();
-  disableAction = this.#disableAction.asReadonly();
+  readonly resultType = this.#resultType.asReadonly();
+  readonly ticketStatus = this.#ticketStatus.asReadonly();
+  readonly resultStatus = this.#resultStatus.asReadonly();
+  readonly disableAction = this.#disableAction.asReadonly();
   isReSettledTickets = this.#isReSettledTickets.asReadonly();
 
   async fetchMatch(matchId: number) {

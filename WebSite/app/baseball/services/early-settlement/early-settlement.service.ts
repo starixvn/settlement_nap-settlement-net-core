@@ -29,19 +29,19 @@ export class EarlySettlementService {
   readonly #aioService = inject(AioService);
   readonly #notifyService = inject(NotifyService);
 
-  #resultConfirmedHandler = new ResultConfirmedHandler();
-  #invalidResultsHandler = new InvalidResultsHandler();
-  #verifyRunningOddsHandler = new VerifyRunningOddsHandler();
-  #verifyScoreSourceHandler = new VerifyScoreSourceHandler();
-  #confirmMismatchScoreHandler = new ConfirmMismatchScoreHandler();
-  #confirmChangedResultHandler = new ConfirmChangedResultHandler();
-  #confirmCalculateHandler = new ConfirmCalculateHandler();
-  #saveScoreHandler = new SaveScoreHandler();
-  #calculateHandler = new CalculateHandler();
-  #confirmUncalculateHandler = new ConfirmUnCalculateHandler();
-  #checkMarkedTicket = new CheckMarkedTicketHandler();
-  #checkConfirmRefundHandler = new ConfirmRefundHandler();
-  #saveScoreOnly = new SaveScoreHandler();
+  readonly #resultConfirmedHandler = new ResultConfirmedHandler();
+  readonly #invalidResultsHandler = new InvalidResultsHandler();
+  readonly #verifyRunningOddsHandler = new VerifyRunningOddsHandler();
+  readonly #verifyScoreSourceHandler = new VerifyScoreSourceHandler();
+  readonly #confirmMismatchScoreHandler = new ConfirmMismatchScoreHandler();
+  readonly #confirmChangedResultHandler = new ConfirmChangedResultHandler();
+  readonly #confirmCalculateHandler = new ConfirmCalculateHandler();
+  readonly #saveScoreHandler = new SaveScoreHandler();
+  readonly #calculateHandler = new CalculateHandler();
+  readonly #confirmUncalculateHandler = new ConfirmUnCalculateHandler();
+  readonly #checkMarkedTicket = new CheckMarkedTicketHandler();
+  readonly #checkConfirmRefundHandler = new ConfirmRefundHandler();
+  readonly #saveScoreOnly = new SaveScoreHandler();
 
 
   constructor() {

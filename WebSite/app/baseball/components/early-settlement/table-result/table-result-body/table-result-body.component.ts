@@ -32,7 +32,7 @@ export class TableResultBodyComponent  implements OnInit{
   permission = this.#storage.getPermission();
   match = this.#storage.match;
   groupMap = this.#storage.getGroupResultDetail();
-  #matchId = this.#storage.match().matchDetail.matchId
+  readonly #matchId = this.#storage.match().matchDetail.matchId
   resultTypeSelected = this.#storage.resultType;
   ticketStatusSelected = this.#storage.ticketStatus;
   resultStatusSelected = this.#storage.resultStatus

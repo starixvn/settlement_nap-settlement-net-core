@@ -20,11 +20,12 @@ import { OnlyIntegerDirective } from '../../../../shared/directives';
   templateUrl: './table-result.component.html',
 })
 export class TableResultComponent implements OnInit {
-  #storage = inject(RefundStorage);
-  #confirmRefundService = inject(ConfirmRefundService);
-  #refundService = inject(RefundService);
-  #notifyService = inject(NotifyService);
-  #backgroundPipe = inject(IntervalBackgroundPipe);
+  readonly #storage = inject(RefundStorage);
+  readonly #confirmRefundService = inject(ConfirmRefundService);
+  readonly #refundService = inject(RefundService);
+  readonly #notifyService = inject(NotifyService);
+  readonly #backgroundPipe = inject(IntervalBackgroundPipe);
+  
   match = this.#storage.getMatch()
   externalResults = this.#storage.getExternalResults();
   selectedResources = this.#storage.getResultChecked();

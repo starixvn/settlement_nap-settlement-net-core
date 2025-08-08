@@ -12,8 +12,8 @@ import { CalculateAction, ResourceIds, SportType } from "../../../shared/constan
 
 export class RefundHandler implements BaseHandler {
   private nextHandler: BaseHandler;
-  #aioService = inject(AioService);
-  #notifyService = inject(NotifyService);
+  readonly #aioService = inject(AioService);
+  readonly #notifyService = inject(NotifyService);
 
   setNextHandler(handler: BaseHandler) {
     this.nextHandler = handler;

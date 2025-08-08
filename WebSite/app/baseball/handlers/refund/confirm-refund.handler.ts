@@ -11,7 +11,7 @@ import * as _ from "lodash";
 
 export class ConfirmRefundHandler implements BaseHandler {
   private nextHandler: BaseHandler;
-  #aioService = inject(AioService);
+  readonly #aioService = inject(AioService);
   private readonly notifyService = inject(NotifyService);
 
   setNextHandler(handler: BaseHandler) {

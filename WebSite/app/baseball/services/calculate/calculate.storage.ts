@@ -38,7 +38,7 @@ export class CalculateStorage implements ICalculateStorage {
   readonly #isScoreDirect = signal<boolean>(false);
   readonly #isReSettledTickets = signal<boolean>(false);
   isReSettledTickets = this.#isReSettledTickets.asReadonly();
-  #isApplyHedgeMatch = signal<boolean>(false);
+  readonly #isApplyHedgeMatch = signal<boolean>(false);
   readonly #isMatchSeries = signal<boolean>(false);
 
   #originalResultDetails: ResultDetailBaseBall[];

@@ -1,4 +1,3 @@
-import { Storage } from './../../../../baseball/services/storage.service';
 import { CalculateAction } from "../../../../shared/constants";
 import { Language } from "../../../../shared/language.native";
 import { Match } from "../../../components/sop-refund/models/match.model";
@@ -9,7 +8,8 @@ import { LogicService } from '../../../components/sop-refund/services/logic.serv
 import { isEqual } from "lodash";
 
 export class ConfirmBoxHandler extends AbstractHandler {
-    #logicService = inject(LogicService)
+    readonly #logicService = inject(LogicService)
+    
     public handle(storage: RefundBaseStorage): void {
         const match = storage.getMatch();
         const actionName = this.#logicService.getActionName();

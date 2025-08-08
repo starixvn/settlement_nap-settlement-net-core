@@ -12,7 +12,8 @@ import { ResultDetailBaseBall } from '../../../models';
   templateUrl: './table-settle-sdt.component.html',
 })
 export class TableSettleSdtComponent implements OnInit{
-  #storage = inject(RefundStorage);
+  readonly #storage = inject(RefundStorage);
+  
   isMatchSeries = this.#storage.isMatchSeries();
   isMercy: boolean;
   isAwayEnded: boolean;

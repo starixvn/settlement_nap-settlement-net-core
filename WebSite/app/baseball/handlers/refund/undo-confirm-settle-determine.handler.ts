@@ -10,7 +10,7 @@ import { ResourceIds, ResultSettingType } from "../../../shared/constants";
 import { NotifyService } from "../../services/notify.service";
 
 export class UndoConfirmSettleDetermineHandler implements BaseHandler {
-  #aioService = inject(AioService);
+  readonly #aioService = inject(AioService);
   private readonly notifyService = inject(NotifyService);
   setNextHandler() {}
 

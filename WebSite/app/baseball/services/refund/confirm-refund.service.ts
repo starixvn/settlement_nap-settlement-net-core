@@ -18,7 +18,7 @@ export class ConfirmRefundService {
   
   private readonly undoConfirmSettleDetermineHandler = new UndoConfirmSettleDetermineHandler();
   
-  #storage = inject(RefundStorage);
+  readonly #storage = inject(RefundStorage);
   
   constructor() {
     this.verifySettleDetermineAndMercy.setNextHandler(this.confirmMercyHandler);

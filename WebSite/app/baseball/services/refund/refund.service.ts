@@ -14,7 +14,8 @@ export class RefundService {
   private readonly verifyRefundHandler = new VerifyRefundHandler();
   private readonly refundHandler = new RefundHandler();
   
-  #storage = inject(RefundStorage);
+  readonly #storage = inject(RefundStorage);
+  
   constructor() {
     this.confirmMercyHandler.setNextHandler(this.confirmSettleDetermineHandler);
     this.confirmSettleDetermineHandler.setNextHandler(this.verifyRefundHandler);

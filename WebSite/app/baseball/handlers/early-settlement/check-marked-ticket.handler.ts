@@ -7,8 +7,8 @@ import { Language } from "../../../shared/language.native";
 
 export class CheckMarkedTicketHandler implements BaseHandler {
   private nextHandler: BaseHandler;
-  #aioService = inject(AioService);
-  #notifyService = inject(NotifyService);
+  readonly #aioService = inject(AioService);
+  readonly #notifyService = inject(NotifyService);
 
   setNextHandler(handler: BaseHandler) {
     this.nextHandler = handler;

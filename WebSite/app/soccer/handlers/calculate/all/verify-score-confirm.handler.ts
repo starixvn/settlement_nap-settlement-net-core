@@ -13,7 +13,7 @@ import { VerificationBaseService } from '../../../../core/services/verification-
 
 
 export class VerifyScoreConfirmHandler extends AbstractHandler {
-  #verificationService = inject(VerificationBaseService);
+  readonly #verificationService = inject(VerificationBaseService);
 
   async handle(storage: CalculateBaseStorage) {
     const { matchDetail, resultDetails } = storage.getMatch();
