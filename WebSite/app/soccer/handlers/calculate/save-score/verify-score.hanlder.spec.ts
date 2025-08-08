@@ -1,7 +1,6 @@
 import { VerifyTraderScoreHandler } from './verify-score.hanlder';
 import { VerifyScoreGoalService } from '../../../components/calc/services/verify-score-goal.service';
 import { Language } from '../../../../shared/language.native';
-import { ResultDetail } from '../../../models';
 import { TestBed } from '@angular/core/testing';
 import { CalculateStorage } from '../../../storage/calculate.storage';
 import { VerifyActionService } from '../../../components/calc/services/verify-action.service';
@@ -11,21 +10,27 @@ import { Permission } from '../../../../shared/models/sportsbook-sop/permission.
 import { Match } from '../../../components/calc/models/match.model';
 import { AbstractHandler } from '../../abstract.handler.native';
 import { HttpClientModule } from '@angular/common/http';
-
+import { HedgeMatchDetail, ResultDetail } from '../../../../shared/models/sportsbook-sop';
+import { ScoreSourceType } from '../../../../shared/constants';
 describe('VerifyScoreHandler', () => {
-  let verifyScoreHandler: VerifyTraderScoreHandler;
+  let handler: VerifyTraderScoreHandler;
   let verifyScoreGoalService: VerifyScoreGoalService;
   let storage: CalculateStorage;
 
-    const match: Match = {
-      matchDetail: undefined,
-      permission: new Permission,
-      ticketCounts: [],
-      resultDetails: [],
-      hedgeMatchDetail: undefined,
-      fantasyMatch: undefined,
-      childMatches: []
-    }
+  const match: Match = {
+    matchDetail: undefined,
+    permission: new Permission(),
+    ticketCounts: [],
+    resultDetails: [],
+    hedgeMatchDetail: undefined,
+    fantasyMatch: undefined,
+    childMatches: [],
+    externalResults: [],
+    originalResultDetail: [],
+    oldMatchDetail: new HedgeMatchDetail,
+    isClickOnCalculate: false,
+    isScoreDirect: false
+  };
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -40,57 +45,91 @@ describe('VerifyScoreHandler', () => {
       ]
     });
 
-    verifyScoreHandler = TestBed.inject(VerifyTraderScoreHandler);
+    handler = TestBed.inject(VerifyTraderScoreHandler);
     verifyScoreGoalService = TestBed.inject(VerifyScoreGoalService);
     storage = TestBed.inject(CalculateStorage);
+
+    // Reset to default values
+    match.resultDetails = [];
+    storage.getMatch = jest.fn().mockReturnValue(match);
+    storage.error = jest.fn();
+    verifyScoreGoalService.isEmptyScore = jest.fn().mockReturnValue(false);
   });
 
   it('should call storage.error if there are invalid scores', () => {
-    const resultDetails =  [
-      { checked: true, homeValue: '', awayValue: '1', isHomeValueWarning: false, isAwayValueWarning: false },
-      { checked: true, homeValue: '2', awayValue: '', isHomeValueWarning: false, isAwayValueWarning: false }
-    ];
+    // Arrange
+    const traderScore1 = { homeValue: '', awayValue: '1', sourceId: ScoreSourceType.trader, isHomeValueWarning: false, isAwayValueWarning: false };
+    const traderScore2 = { homeValue: '2', awayValue: '', sourceId: ScoreSourceType.trader, isHomeValueWarning: false, isAwayValueWarning: false };
+    
+    const resultDetails = [
+      { 
+        checked: true,
+        externalScores: [traderScore1]
+      },
+      { 
+        checked: true,
+        externalScores: [traderScore2]
+      }
+    ] as any;
 
-    match.resultDetails = resultDetails as ResultDetail[];
-    storage.getMatch = jest.fn().mockReturnValue(match);
-    jest.spyOn(verifyScoreGoalService, 'isEmptyScore').mockImplementation(value => value === '');
-    storage.error = jest.fn();
+    match.resultDetails = resultDetails;
+    verifyScoreGoalService.isEmptyScore = jest.fn().mockImplementation(value => value === '');
 
-    verifyScoreHandler.handle(storage);
+    // Act
+    handler.handle(storage);
 
+    // Assert
     expect(storage.error).toHaveBeenCalledWith(Language.warningInputScore);
   });
 
   it('should call super.handle if there are no invalid scores', () => {
+    // Arrange
+    const traderScore = { homeValue: '1', awayValue: '1', sourceId: ScoreSourceType.trader, isHomeValueWarning: false, isAwayValueWarning: false };
+    
     const resultDetails = [
-      { checked: true, homeValue: '1', awayValue: '1', isHomeValueWarning: false, isAwayValueWarning: false }
-    ];
-    match.resultDetails = resultDetails as ResultDetail[];
-    storage.getMatch = jest.fn().mockReturnValue(match);
-    jest.spyOn(verifyScoreGoalService, 'isEmptyScore').mockImplementation((value: string): value is '' => false);
-
+      { 
+        checked: true,
+        externalScores: [traderScore]
+      }
+    ] as any;
+    
+    match.resultDetails = resultDetails;
+    verifyScoreGoalService.isEmptyScore = jest.fn().mockReturnValue(false);
     const superHandleSpy = jest.spyOn(AbstractHandler.prototype, 'handle');
 
-    verifyScoreHandler.handle(storage);
+    // Act
+    handler.handle(storage);
 
+    // Assert
     expect(superHandleSpy).toHaveBeenCalledWith(storage);
   });
 
   it('should set isHomeValueWarning and isAwayValueWarning correctly', () => {
-    const resultDetails = [
-      { checked: true, homeValue: '', awayValue: '1', isHomeValueWarning: false, isAwayValueWarning: false } ,
-      { checked: true, homeValue: '2', awayValue: '', isHomeValueWarning: false, isAwayValueWarning: false }
-    ];
+    // Arrange
+    const traderScore1 = { homeValue: '', awayValue: '1', sourceId: ScoreSourceType.trader, isHomeValueWarning: false, isAwayValueWarning: false };
+    const traderScore2 = { homeValue: '2', awayValue: '', sourceId: ScoreSourceType.trader, isHomeValueWarning: false, isAwayValueWarning: false };
     
-    match.resultDetails = resultDetails as ResultDetail[];
-    storage.getMatch = jest.fn().mockReturnValue(match);
-    jest.spyOn(verifyScoreGoalService, 'isEmptyScore').mockImplementation(value => value === '');
+    const resultDetails = [
+      { 
+        checked: true,
+        externalScores: [traderScore1]
+      },
+      { 
+        checked: true,
+        externalScores: [traderScore2]
+      }
+    ] as any;
+    
+    match.resultDetails = resultDetails;
+    verifyScoreGoalService.isEmptyScore = jest.fn().mockImplementation(value => value === '');
 
-    verifyScoreHandler.handle(storage);
+    // Act
+    handler.handle(storage);
 
-    expect(resultDetails[0].isHomeValueWarning).toBe(true);
-    expect(resultDetails[0].isAwayValueWarning).toBe(false);
-    expect(resultDetails[1].isHomeValueWarning).toBe(false);
-    expect(resultDetails[1].isAwayValueWarning).toBe(true);
+    // Assert
+    expect(traderScore1.isHomeValueWarning).toBe(true);
+    expect(traderScore1.isAwayValueWarning).toBe(false);
+    expect(traderScore2.isHomeValueWarning).toBe(false);
+    expect(traderScore2.isAwayValueWarning).toBe(true);
   });
 });

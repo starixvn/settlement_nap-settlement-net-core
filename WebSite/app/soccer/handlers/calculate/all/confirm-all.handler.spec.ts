@@ -8,16 +8,17 @@ import { VerifyScoreGoalService } from "../../../components/calc/services/verify
 import { RequestService } from "../../../components/calc/services/request.service";
 import { HttpClientModule } from "@angular/common/http";
 import { ToastrModule, ToastrService } from "ngx-toastr";
-import { ChildMatch, Match, MatchDetail } from "../../../components/calc/models/match.model";
+import { ChildMatch, Match, MatchDetailSoccer } from "../../../components/calc/models/match.model";
 import { Permission } from "../../../../shared/models/sportsbook-sop/permission.model";
-import { Storage } from "../../../storage/storage.service.native";
 import { ResultDetail } from "../../../models";
+import { HedgeMatchDetail, MatchDetail } from "../../../../shared/models/sportsbook-sop";
+import { CalculateBaseStorage } from "../../../storage/storage.service.native";
 
 describe('ConfirmAllHandler', () => {
   let handler: ConfirmAllHandler;
   let verifyActionService: VerifyActionService;
   let messageBoxService: MessageBoxService;
-  let storage: Storage;
+  let storage: CalculateBaseStorage;
 
   const childMatch: ChildMatch = {
     matchId: 0,
@@ -35,13 +36,18 @@ describe('ConfirmAllHandler', () => {
   }
 
   const match : Match = {
-    matchDetail: {} as MatchDetail,
+    matchDetail: {} as MatchDetailSoccer,
     childMatches: [childMatch],
     permission: new Permission,
     ticketCounts: [],
     resultDetails: [],
     hedgeMatchDetail: undefined,
-    fantasyMatch: undefined
+    fantasyMatch: undefined,
+    externalResults: [],
+    originalResultDetail: [],
+    oldMatchDetail: new HedgeMatchDetail,
+    isClickOnCalculate: false,
+    isScoreDirect: false
   };
 
   beforeEach(() => {
@@ -61,17 +67,13 @@ describe('ConfirmAllHandler', () => {
     handler = TestBed.inject(ConfirmAllHandler);
     verifyActionService = TestBed.inject(VerifyActionService);
     messageBoxService = TestBed.inject(MessageBoxService);
-    storage = {
-          getMatch: jest.fn(),
-          setConfirmMessage: jest.fn(),
-          getConfirmMessage: jest.fn(),
-          getHalfTimeResult: jest.fn().mockReturnValue(new ResultDetail()),
-          getFullTimeResult: jest.fn().mockReturnValue(new ResultDetail())
-        } as unknown as Storage;
+    storage = TestBed.inject(CalculateStorage);
+    storage.setConfirmMessage = jest.fn();
+   
+    storage.getMatch = jest.fn().mockReturnValue(match);
   });
 
   it('should handle when score is changed', async () => {
-    storage.getMatch = jest.fn().mockReturnValue(match);
     storage.getIsResettleTicket = jest.fn().mockReturnValue(true);
     verifyActionService.isScoreChangedAll = jest.fn().mockResolvedValue(true);
     messageBoxService.confirm = jest.fn();
@@ -83,7 +85,6 @@ describe('ConfirmAllHandler', () => {
   });
 
   it('should handle when score is not changed and no child matches selected', async () => {
-    storage.getMatch = jest.fn().mockReturnValue(match);
     storage.getIsResettleTicket = jest.fn().mockReturnValue(false);
     verifyActionService.isScoreChangedAll = jest.fn().mockResolvedValue(false);
     messageBoxService.confirm = jest.fn();
@@ -96,7 +97,6 @@ describe('ConfirmAllHandler', () => {
 
   it('should handle when score is not changed and child matches selected', async () => {
     childMatch.checked = true;
-    storage.getMatch = jest.fn().mockReturnValue(match);
     storage.getIsResettleTicket = jest.fn().mockReturnValue(false);
     verifyActionService.isScoreChangedAll = jest.fn().mockResolvedValue(false);
     messageBoxService.confirm = jest.fn();

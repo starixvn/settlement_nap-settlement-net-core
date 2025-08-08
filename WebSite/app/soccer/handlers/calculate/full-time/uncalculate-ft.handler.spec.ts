@@ -2,16 +2,13 @@ import { TestBed } from '@angular/core/testing';
 import { UncalculateFTHandler } from './uncalculate-ft.handler';
 import { ClosePopupService, MessageBoxService } from '../../../../shared/services';
 import { RequestService } from '../../../components/calc/services/request.service';
-import { UncalculateFullTimeQuery } from '../../../components/calc/models/query.model';
 import { CalculateStorage } from '../../../storage/calculate.storage';
 import { VerifyScoreGoalService } from '../../../components/calc/services/verify-score-goal.service';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { HttpClientModule } from '@angular/common/http';
-import { HedgeMatchDetail, Match, MatchDetail } from '../../../components/calc/models/match.model';
+import {  HedgeMatchDetail, Match, MatchDetailSoccer } from '../../../components/calc/models/match.model';
 import { Permission } from '../../../../shared/models/sportsbook-sop/permission.model';
 import { Result } from '../../../../shared/models';
-import { ResultStatusId } from '../../../../shared/constants';
-import { Language } from '../../../../shared/language.native';
 
 describe('UncalculateFTHandler', () => {
   let handler: UncalculateFTHandler;
@@ -21,7 +18,7 @@ describe('UncalculateFTHandler', () => {
 
   const matchDetail = {
 
-  } as MatchDetail;
+  } as MatchDetailSoccer;
   
   const hedgeMatchDetail = {
     matchId: 0,
@@ -31,9 +28,14 @@ describe('UncalculateFTHandler', () => {
     permission: new Permission,
     ticketCounts: [],
     resultDetails: [],
-    hedgeMatchDetail: hedgeMatchDetail,
     fantasyMatch: undefined,
-    childMatches: []
+    childMatches: [],
+    externalResults: [],
+    originalResultDetail: [],
+    oldMatchDetail: undefined,
+    isClickOnCalculate: false,
+    isScoreDirect: false,
+    hedgeMatchDetail: hedgeMatchDetail
   }
 
   const result: Result = {
@@ -42,7 +44,8 @@ describe('UncalculateFTHandler', () => {
     errCode: 0,
     childMatchIds: '',
     settledSessionId: '',
-    hasResultAmendment: false
+    hasResultAmendment: false,
+    isOrg: false
   };
 
 

@@ -1,20 +1,36 @@
 import { CheckBetStatusHandler } from './check-betstatus.handler';
-import { Storage } from '../../../storage/storage.service.native';
+import { CalculateBaseStorage } from '../../../storage/storage.service.native';
 import { BetStatus, ResourceIds } from '../../../constants';
 import { SettlementStatusId } from '../../../../shared/constants';
 import { Language } from '../../../../shared/language.native';
 import { AbstractHandler } from '../../abstract.handler.native';
+import { TestBed } from '@angular/core/testing';
+import { CalculateStorage } from '../../../storage/calculate.storage';
+import { ToastrModule, ToastrService } from 'ngx-toastr';
+import { HttpClientModule } from '@angular/common/http';
+import { VerifyScoreGoalService } from '../../../components/calc/services/verify-score-goal.service';
+import { RequestService } from '../../../components/calc/services/request.service';
 
 describe('CheckBetStatusHandler', () => {
   let handler: CheckBetStatusHandler;
-  let storage: Storage;
+  let storage: CalculateBaseStorage;
 
   beforeEach(() => {
-    handler = new CheckBetStatusHandler();
-    storage = {
-      getMatch: jest.fn(),
-      error: jest.fn()
-    } as unknown as Storage;
+    TestBed.configureTestingModule({
+      imports: [HttpClientModule, ToastrModule.forRoot()],
+      providers: [
+        CheckBetStatusHandler,
+        CalculateStorage,
+        ToastrService,
+        VerifyScoreGoalService,
+        RequestService
+      ]
+    });
+
+    handler = TestBed.inject(CheckBetStatusHandler);
+    storage = TestBed.inject(CalculateStorage);
+    storage.getMatch = jest.fn();
+    storage.error = jest.fn();
   });
 
   it('should call storage.error when betStatus is abandoned1H', () => {
@@ -31,6 +47,7 @@ describe('CheckBetStatusHandler', () => {
     const matchDetail = { betStatus: `${BetStatus.refunded};` };
     const resultDetails = [{ resourceId: ResourceIds.halfTime, settlementStatusId: SettlementStatusId.Refund }];
     storage.getMatch = jest.fn().mockReturnValue({ matchDetail, resultDetails });
+    storage.getHalfTimeResult = jest.fn().mockReturnValue({ settlementStatusId: SettlementStatusId.Refund });
     handler.handle(storage);
 
     expect(storage.error).toHaveBeenCalledWith(Language.CannotUncalculateFTMessage);

@@ -3,13 +3,13 @@ import { MessageBoxService } from '../../../../shared/services';
 import { UncalculateHandler } from './uncalculate.handler';
 import { Language } from '../../../../shared/language.native';
 import { CalculateAction } from '../../../../shared/constants';
-import { Storage } from '../../../storage/storage.service.native';
 import { VerifyActionService } from '../../../components/calc/services/verify-action.service';
 import { VerifyScoreGoalService } from '../../../components/calc/services/verify-score-goal.service';
 import { RequestService } from '../../../components/calc/services/request.service';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { HttpClientModule } from '@angular/common/http';
 import { ModalDialogMessage } from '../../../../shared/models';
+import { CalculateStorage } from '../../../storage/calculate.storage';
 
 const mockConfirm = jest.fn(
   (
@@ -23,7 +23,7 @@ const mockConfirm = jest.fn(
 
 describe('UncalculateHandler', () => {
   let messageBoxService: MessageBoxService;
-  let storage: Storage;
+  let storage: CalculateStorage;
   let handler: UncalculateHandler;
 
   beforeEach(() => {
@@ -34,6 +34,7 @@ describe('UncalculateHandler', () => {
         VerifyActionService,
         VerifyScoreGoalService,
         RequestService,
+        CalculateStorage,
         ToastrService,
         {
           provide: MessageBoxService,
@@ -46,10 +47,9 @@ describe('UncalculateHandler', () => {
 
     handler = TestBed.inject(UncalculateHandler);
     messageBoxService = TestBed.inject(MessageBoxService);
-     storage = {
-              setCalculateAction: jest.fn(),
-              setConfirmMessage: jest.fn(),
-            } as unknown as Storage;
+    storage = TestBed.inject(CalculateStorage);
+    storage.setCalculateAction = jest.fn();
+    storage.setConfirmMessage = jest.fn();
   });
 
   it('should handle uncalculation process', fakeAsync(() => {

@@ -1,6 +1,5 @@
 import { TestBed } from '@angular/core/testing';
 import { MatchSettledHandler } from './match-settled.handler';
-import { Storage } from '../../../storage/storage.service.native';
 import { VerifyScoreGoalService } from '../../../components/calc/services/verify-score-goal.service';
 import { AbstractHandler } from '../../abstract.handler.native';
 import { Language } from '../../../../shared/language.native';
@@ -8,22 +7,28 @@ import { CalculateStorage } from '../../../storage/calculate.storage';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { RequestService } from '../../../components/calc/services/request.service';
 import { MessageBoxService } from '../../../../shared/services';
-import { Match, MatchDetail } from '../../../components/calc/models/match.model';
+import { Match, MatchDetailSoccer } from '../../../components/calc/models/match.model';
 import { Permission } from '../../../../shared/models/sportsbook-sop/permission.model';
 import { HttpClientModule } from '@angular/common/http';
+import { HedgeMatchDetail } from '../../../../shared/models/sportsbook-sop';
 
 describe('MatchSettledHandler', () => {
   let handler: MatchSettledHandler;
   let storage: CalculateStorage;
   let verifyScoreGoalService: VerifyScoreGoalService;
   const match: Match = {
-    matchDetail: {} as MatchDetail,
+    matchDetail: {} as MatchDetailSoccer,
     childMatches: [],
     permission: new Permission,
     ticketCounts: [],
     resultDetails: [],
     hedgeMatchDetail: undefined,
-    fantasyMatch: undefined
+    fantasyMatch: undefined,
+    externalResults: [],
+    originalResultDetail: [],
+    oldMatchDetail: new HedgeMatchDetail,
+    isClickOnCalculate: false,
+    isScoreDirect: false
   };
 
   beforeEach(() => {
