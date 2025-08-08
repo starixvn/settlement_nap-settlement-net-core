@@ -7,11 +7,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Controllers\**" />
-    <Compile Remove="Handlers\**" />
     <EmbeddedResource Remove="Controllers\**" />
-    <EmbeddedResource Remove="Handlers\**" />
     <None Remove="Controllers\**" />
-    <None Remove="Handlers\**" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Services\InstantServiceTests.cs" />

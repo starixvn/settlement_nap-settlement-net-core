@@ -30,7 +30,7 @@ public class GetAutoSettleSettingsHandler(IDynamicRepository repository, IRefDat
         return CreateGetSettingsResponse(query, payoutSetting, refundSetting, autoSettingBit, providers);
     }
 
-    private bool IsBitSet(int value, int position) => (value & (1 << position)) != 0;
+    private static bool IsBitSet(int value, int position) => (value & (1 << position)) != 0;
 
     private async Task<int> GetAutoSettingBit(int leagueId, int matchId)
     {
