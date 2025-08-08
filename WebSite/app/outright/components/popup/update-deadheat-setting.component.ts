@@ -11,7 +11,7 @@ import { DeadHeatOptions } from '../../constants/deadheat-setting';
 import { FormsModule } from '@angular/forms';
 import { StatusId } from '../../constants';
 import { LeagueSettle } from '../../models';
-import { ToastContainerDirective, ToastContainerModule, ToastrService } from 'ngx-toastr';
+import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import { Language } from '../../../shared/language.native';
 import { ModalDialogMessage } from '../../../shared/models';
 
@@ -19,7 +19,7 @@ import { ModalDialogMessage } from '../../../shared/models';
   selector: 'update-deadheat-setting',
   templateUrl: './update-deadheat-setting.component.html',
   standalone: true,
-  imports: [CommonModule, DragDropModule, MatDialogModule, FormsModule,ToastContainerModule],
+  imports: [CommonModule, DragDropModule, MatDialogModule, FormsModule],
   providers: [OutrightService, HttpRequestService, MessageBoxService, BlockUIService]
 })
 export class UpdateDeadheatSettingComponent implements OnInit {

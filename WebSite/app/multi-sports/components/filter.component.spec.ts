@@ -23,6 +23,7 @@ import { DatepickerComponent } from '../../shared/components/date-picker/date-pi
 import { NewMultipleSelectComponent } from '../../shared/components/multiple-select/multiple-select.component';
 import { MultiSportsStore } from '../services/multi-sports.store';
 import { filter } from 'rxjs';
+import { DatePipe } from '@angular/common';
 
 describe('MultiSport - FilterComponent', () => {
     let component: FilterComponent;
@@ -44,7 +45,8 @@ describe('MultiSport - FilterComponent', () => {
                 MultiSportService,
                 BlockUIService,
                 GenerateFilterService,
-                MultiSportsStore
+                MultiSportsStore,
+                DatePipe
             ],
             imports: [
                 BrowserModule,
@@ -208,7 +210,7 @@ describe('MultiSport - FilterComponent', () => {
         });
     });
 
-    it('onSelectToDate - should return right value sports correct date.', fakeAsync((done) => {
+    it('onSelectToDate - should return right value sports correct date.', fakeAsync(() => {
         const sport = new Sport();
         const date = new Date();
         const toDate: NgbDateStruct = { day: date.getUTCDay(), month: date.getUTCMonth(), year: date.getUTCFullYear() };
@@ -221,7 +223,7 @@ describe('MultiSport - FilterComponent', () => {
 
         component.sportOptions$.pipe(filter(x => x.items.length > 0)).subscribe(s =>{
             expect(s.items.length).toEqual(2);
-            done();
         });
+        tick();
     }));
 });

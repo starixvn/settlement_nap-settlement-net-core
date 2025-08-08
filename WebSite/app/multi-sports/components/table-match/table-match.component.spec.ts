@@ -1,5 +1,5 @@
 import { State } from './../../../fast-market/constants/settings.native';
-import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick, flush } from '@angular/core/testing';
 
 import { TableMatchComponent } from './table-match.component';
 import { MultiSportsStore } from '../../services/multi-sports.store';
@@ -51,6 +51,7 @@ describe('TableMatchComponent', () => {
       component.ngOnInit();
       tick(6000);
       component.ngOnDestroy();
+      flush();
 
       expect(refreshMatchesService.refreshMatches).toHaveBeenCalled();
     }));

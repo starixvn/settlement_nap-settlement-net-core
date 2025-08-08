@@ -33,8 +33,9 @@ describe('MatchStateService', () => {
     halfTimeAwayScore: 0,
     finalHomeScore: 0,
     finalAwayScore: 0,
-    eventStatus: "",
+    eventStatus: "running",
     newEventStatus: "",
+    originalEventStatus: "",
     suspenderHalfTime: "",
     suspenderFullTime: "",
     remark: new Remark,
@@ -73,7 +74,12 @@ describe('MatchStateService', () => {
     applyDirect: false,
     autoCalcSetting: new AutoSetting,
     refundWaitingTime: 0,
-    mercyAbandonedInfo: ""
+    mercyAbandonedInfo: "",
+    hasFailedResource: false,
+    hasProviderHT: false,
+    hasProviderFT: false,
+    resourceIdsHasTicket: [],
+    apGroup: null
   }
   beforeEach(() => {
     TestBed.configureTestingModule({

@@ -102,6 +102,9 @@ describe('UpdateDeadheatSettingComponent', () => {
       outrightService.getMatches = jest.fn().mockResolvedValue(leagueSettle);
       component.data = { deadHeatSetting: true, leagueId: 1, sportType: 1 };
       toastrService.overlayContainer = null;
+      
+      // Mock the toastContainer ViewChild
+      component.toastContainer = {} as ToastContainerDirective;
 
       component.ngOnInit();
 

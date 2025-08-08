@@ -14,7 +14,7 @@ import {
 import { MultiSportService, RefreshMatchService } from '../services';
 import { GenerateFilterService } from '../../shared/services';
 import { MaterialModule } from '../../shared/material-module';
-import { MultiSport, MatchWaitingRequest } from '../models';
+import { MultiSport, MatchRequest } from '../models';
 import { PipesModule } from '../../shared/pipes/pipes.module.native';
 import { NewMultipleSelectComponent } from '../../shared/components/multiple-select/multiple-select.component';
 import { ModalContentDialogComponent } from '../../shared/components/modal-dialog/modal-content-dialog.component';

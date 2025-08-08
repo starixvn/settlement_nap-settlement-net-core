@@ -2,7 +2,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { enableProdMode, importProvidersFrom } from '@angular/core';
 import { bootstrapApplication } from '@angular/platform-browser';
 import { environment } from '../environments/environment';
-import AppComponent from './components/app.component';
+import { AppComponent } from './components/app.component';
 import { ToastrModule } from 'ngx-toastr';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 

@@ -32,7 +32,11 @@ describe('LeagueComponent', () => {
     autoCalcSetting: autoSetting,
     sportType: 0,
     autoWaitingTime: 0,
-    autoRetryTime: 0
+    autoRetryTime: 0,
+    autoMainWaitingTime: 0,
+    autoEarlyWaitingTime: 0,
+    refundWaitingTime: 0,
+    apGroup: null
   };
 
   const mockResultSuccess = {
@@ -148,7 +152,7 @@ describe('LeagueComponent', () => {
       handleActionsService.handleAutoInstantForMatch = jest.fn();
 
       await component.updateInstantForLeague();
-      const buttonNo = document.getElementsByClassName('btn-default')[0] as HTMLElement;
+      const buttonNo = document.getElementsByClassName('btn-light')[0] as HTMLElement;
       buttonNo.click();
 
       await new Promise(resolve => setTimeout(resolve, 100));
@@ -166,7 +170,7 @@ describe('LeagueComponent', () => {
 
       component.updateInstantForLeague();
 
-      const buttonNo = document.getElementsByClassName('btn-default')[0] as HTMLElement;
+      const buttonNo = document.getElementsByClassName('btn-light')[0] as HTMLElement;
       buttonNo.click();
       await new Promise(resolve => setTimeout(resolve, 100));
 

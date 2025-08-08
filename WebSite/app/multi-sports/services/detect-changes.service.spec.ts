@@ -2,11 +2,12 @@ import { TestBed } from "@angular/core/testing";
 import { Match } from "../models";
 import { MoreScore, Remark } from "../../shared/models";
 import { DetectChangesService } from "./detect-changes.service";
+import { MatchWaiting } from "../models/match-waiting.model";
 
 describe('MultiSport - DetectChangesService', () => {
     let service: DetectChangesService;
     let oldMatch: Match;
-    let newMatch: Match;
+    let newMatch: MatchWaiting;
 
     beforeEach(() => {
         TestBed.configureTestingModule({
@@ -25,7 +26,8 @@ describe('MultiSport - DetectChangesService', () => {
     describe('detect', () => {
         beforeEach(() => {
             oldMatch = new Match();
-            newMatch = new Match();
+            newMatch = new MatchWaiting();
+            newMatch.failedAutoResourcesIds = [];
         });
 
         it('should return false when old match equals new match', () => {

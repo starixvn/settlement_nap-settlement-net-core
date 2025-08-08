@@ -48,7 +48,7 @@ describe('MultiSport - MultiSportService', () => {
     });
 
     it(`getSport - Call right Url and param`, () => {
-        const url = `api/multi-sports/getSport`;
+        const url = `/api/multi-sports/getSport`;
         const param = {
             apikey: ApiKeys.MultiSportGetCombobox,
         };
@@ -60,7 +60,7 @@ describe('MultiSport - MultiSportService', () => {
     });
 
     it(`getLeague - Call right Url and param`, () => {
-        const url = `api/multi-sports/getLeague`;
+        const url = `/api/multi-sports/getLeague`;
         const param = {
             apikey: ApiKeys.MultiSportGetCombobox,
         };
@@ -72,7 +72,7 @@ describe('MultiSport - MultiSportService', () => {
     });
 
     it('getDate - Call right Url', () => {
-        const url = "api/multi-sports/get-date";
+        const url = "/api/multi-sports/get-date";
         httpRequestService.getJson = jest.fn();
         service.getDate();
 
@@ -98,7 +98,7 @@ describe('MultiSport - MultiSportService', () => {
         service.filter(param);
 
         expect(httpRequestService.postMessagePack)
-            .toHaveBeenCalledWith(param, "api/multi-sports/filter");
+            .toHaveBeenCalledWith(param, "/api/multi-sports/filter");
     }
     );
 

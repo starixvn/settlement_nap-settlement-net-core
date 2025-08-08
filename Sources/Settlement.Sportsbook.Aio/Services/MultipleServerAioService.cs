@@ -288,7 +288,6 @@ public class MultipleServerAioServiceImp(
 
     private async Task<bool> HandleResultAmendment(SettleCriteria settleCriteria, List<ResourceItem> selectedResources)
     {
-
         if (SportGroup.SupportResultAmend.Contains(settleCriteria.SportType)
             && !settleCriteria.IsChildMatch
             && settleCriteria.Action != ActionType.UnCalculate)
@@ -392,28 +391,18 @@ public class MultipleServerAioServiceImp(
     }
 }
 
-public class MultipleServerAioServiceDependencies
+public class MultipleServerAioServiceDependencies(
+    ScaleOutSettleService scaleOutSettleService,
+    ICreateQueryService createQueryService,
+    MergeDataService mergeDataService,
+    LogService logService,
+    IMapper mapper,
+    ResultAmendmentService resultAmendmentService)
 {
-    public ScaleOutSettleService ScaleOutSettleService { get; }
-    public ICreateQueryService CreateQueryService { get; }
-    public MergeDataService MergeDataService { get; }
-    public LogService LogService { get; }
-    public IMapper Mapper { get; }
-    public ResultAmendmentService ResultAmendmentService { get; }
-
-    public MultipleServerAioServiceDependencies(
-        ScaleOutSettleService scaleOutSettleService,
-        ICreateQueryService createQueryService,
-        MergeDataService mergeDataService,
-        LogService logService,
-        IMapper mapper,
-        ResultAmendmentService resultAmendmentService)
-    {
-        ScaleOutSettleService = scaleOutSettleService;
-        CreateQueryService = createQueryService;
-        MergeDataService = mergeDataService;
-        LogService = logService;
-        Mapper = mapper;
-        ResultAmendmentService = resultAmendmentService;
-    }
+    public ScaleOutSettleService ScaleOutSettleService { get; } = scaleOutSettleService;
+    public ICreateQueryService CreateQueryService { get; } = createQueryService;
+    public MergeDataService MergeDataService { get; } = mergeDataService;
+    public LogService LogService { get; } = logService;
+    public IMapper Mapper { get; } = mapper;
+    public ResultAmendmentService ResultAmendmentService { get; } = resultAmendmentService;
 }
