@@ -7,7 +7,7 @@ import { BackgroundColor, CalculationStatus } from '../../../shared/constants';
 import { Language } from '../../../shared/language.native';
 import { MessageBoxService } from '../../../shared/services';
 import { AutoSettingLeagueQuery, AutoSettingMatchQuery, ModalDialogMessage, AutoSetting } from '../../../shared/models';
-import { AutoSettingType, InstantStatus } from '../../constants1';
+import { AutoSettingType, InstantStatus } from '../../constants';
 import { ISubscription } from 'rxjs-compat/Subscription';
 import { interval } from 'rxjs';
 import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';

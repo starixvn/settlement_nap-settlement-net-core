@@ -9,7 +9,7 @@ import { RequestService } from '../../services';
 import * as _ from 'lodash';
 import { ItemsSelect, League, MultipleSelect } from '../../../shared/models';
 import { FilterBaseComponent } from '../../../shared/components/gaming/filter-base.component';
-import { MatchType, OverStatus } from '../../constants1';
+import { MatchType, OverStatus } from '../../constants';
 import { _isNumberValue } from '@angular/cdk/coercion';
 import { Language } from '../../../shared/language.native';
 import { NewMultipleSelectComponent } from '../../../shared/components/multiple-select/multiple-select.component';

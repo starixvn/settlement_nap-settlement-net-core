@@ -13,7 +13,7 @@ import { Language } from '../../../shared/language.native';
 import { AutoSetting } from '../../../shared/models';
 import { of } from 'rxjs';
 import { ModalDialogComponent } from '../../../shared/components/modal-dialog/modal-dialog.component';
-import { AutoSettingType } from '../../constants1';
+import { AutoSettingType } from '../../constants';
 import { AutoSettingsService } from '../../services/auto-settings.service';
 import { UpdateSettingsService } from '../../services/update-settings.service';
 

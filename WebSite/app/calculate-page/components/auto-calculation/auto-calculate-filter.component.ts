@@ -7,7 +7,7 @@ import { FilterAutoQuery, LeagueQuery } from '../../models';
 import { RequestService } from '../../services';
 import * as _ from 'lodash';
 import { ItemsSelect, League, MultipleSelect } from '../../../shared/models';
-import { Statuses } from '../../constants1';
+import { Statuses } from '../../constants';
 import { FilterBaseComponent } from '../../../shared/components/gaming/filter-base.component';
 import { NewMultipleSelectComponent } from '../../../shared/components/multiple-select/multiple-select.component';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';

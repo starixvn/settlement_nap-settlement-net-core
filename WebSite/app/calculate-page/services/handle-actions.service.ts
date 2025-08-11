@@ -3,7 +3,7 @@ import { Match, ChangeSettingResult } from "../../shared/models";
 import * as _ from 'lodash';
 import { BackgroundColor, EventStatus } from '../../shared/constants';
 import { CalculationMatch, League } from '../models';
-import { InstantStatus } from '../constants1/instant-status.native';
+import { InstantStatus } from '../constants/instant-status.native';
 
 @Injectable()
 export class HandleActionsService {

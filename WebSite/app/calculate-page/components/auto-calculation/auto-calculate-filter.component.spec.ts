@@ -1,4 +1,4 @@
-import { Statuses } from '../../constants1/status.native';
+import { Statuses } from '../../constants/status.native';
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { AutoCalculateFilterComponent } from './auto-calculate-filter.component';
 import { DatepickerComponent } from '../../../shared/components/date-picker/date-picker.component';

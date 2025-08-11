@@ -1,4 +1,4 @@
-import { InstantCalculationType } from "../constants1";
+import { InstantCalculationType } from "../constants";
 import { CalculationMatch } from "./calculation-match.model";
 import * as _ from 'lodash';
 
