@@ -25,7 +25,6 @@ describe('Bet Builder - Filter Component', () => {
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             declarations: [
-                ModalDialogComponent,
                 FilterComponent
             ],
             providers: [
@@ -44,6 +43,7 @@ describe('Bet Builder - Filter Component', () => {
                 HttpClientModule,
                 NgbModule,
                 MaterialModule,
+                ModalDialogComponent,
             ],
         }).compileComponents()
             .then(() => {

@@ -225,13 +225,13 @@ describe('LeagueComponent', () => {
     it('Open new popup when exist permission and sport supported', () => {
       component.permission = new Permission();
       component.permission.canAutoPayout = true;
-      component.league = { ...league, sportType: SportNewAutoPayout[0] };
-      popupService.openUpdateNewPayoutForLeague = jest.fn();
+      component.league = { ...league, apGroup: 1 };
+      popupService.openAutoSettleSetting = jest.fn();
       popupService.openUpdatePayoutForLeague = jest.fn();
 
       component.changeAutoLeague();
 
-      expect(popupService.openUpdateNewPayoutForLeague).toHaveBeenCalled()
+      expect(popupService.openAutoSettleSetting).toHaveBeenCalled()
       expect(popupService.openUpdatePayoutForLeague).not.toHaveBeenCalled()
     });
 

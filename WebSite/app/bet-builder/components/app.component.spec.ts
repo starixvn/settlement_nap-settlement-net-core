@@ -32,8 +32,6 @@ describe('Component: App', () => {
                 MatchesComponent,
                 MatchDetailComponent,
                 CalculationComponent,
-                ModalDialogComponent,
-                ModalContentDialogComponent,
                 ResultStatusPipe,
                 SelectionPipe,
                 TicketStatusPipe,
@@ -52,6 +50,8 @@ describe('Component: App', () => {
                 HttpClientModule,
                 NgbModule,
                 MaterialModule,
+                ModalDialogComponent,
+                ModalContentDialogComponent,
             ],
         })
             .compileComponents()

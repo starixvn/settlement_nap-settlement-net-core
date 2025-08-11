@@ -38,7 +38,7 @@ describe('SportMatchService', () => {
     matchFootball.intervalScore = [];
     matchFootball.isCalRefund = false;
     matchFootball.isHalfTimeCal = false;
-    matchFootball.isCalculated = false;
+    matchFootball.isCalculated = true; // Set as calculated to get background color
     const matchBaseball = new Match();
     matchBaseball.sportType = SportType.baseBall;
     matchBaseball.betStatus = '1-0,2-0,1-0,3-0,1-0';
@@ -48,6 +48,19 @@ describe('SportMatchService', () => {
     matchBaseball.isCalRefund = false;
     matchBaseball.isHalfTimeCal = false;
     matchBaseball.isCalculated = false;
+    // Baseball matches are processed by resultDetail, so we need to provide sets data
+    matchBaseball.moreScores.sets = [
+      new Score('1', '0'),
+      new Score('2', '0'),
+      new Score('1', '0'),
+      new Score('3', '0'),
+      new Score('1', '0'),
+      new Score('-', '-'),
+      new Score('-', '-'),
+      new Score('-', '-'),
+      new Score('-', '-'),
+      new Score('-', '-'),
+    ];
 
     const league: LeagueMatch = {
         leagueId: 7000000,

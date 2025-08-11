@@ -63,11 +63,9 @@ describe('Bet Builder - Calculation Component', () => {
         TestBed.configureTestingModule({
             declarations: [
                 CalculationComponent,
-                ModalDialogComponent,
                 ResultStatusPipe,
                 SelectionPipe,
                 TicketStatusPipe,
-                ModalContentDialogComponent,
             ],
             providers: [
                 CalculationFilterService,
@@ -88,6 +86,8 @@ describe('Bet Builder - Calculation Component', () => {
                 FormsModule,
                 HttpClientModule,
                 NgbModule,
+                ModalDialogComponent,
+                ModalContentDialogComponent,
             ],
         })
             .compileComponents()

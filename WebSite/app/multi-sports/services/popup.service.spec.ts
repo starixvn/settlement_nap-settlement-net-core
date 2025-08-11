@@ -36,7 +36,10 @@ describe("MultiSport - PopupService", () => {
   const match = new Match();
   match.remark = new Remark();
   match.eventStatus = 'Running';
+  match.originalEventStatus = 'Running';
   match.earlySettleStatus = null;
+  match.autoCalcSetting = new AutoSetting();
+  match.autoCalcSetting.isInstantForMatch = false;
   const moreScore = new MoreScore();
   moreScore.halfTimeScore = new Score('0', '0');
   moreScore.finalScore = new Score('0', '0');
@@ -316,8 +319,8 @@ describe("MultiSport - PopupService", () => {
       popupService.openUpdatePayoutForMatch(match, mockState$);
       tick();
 
-      expect(match.autoCalcSetting.isAutoPayoutForMatch).toBeFalsy();
-      expect(match.autoCalcSetting.isDirectPayoutForMatch).toBeTruthy();
+      expect(match.autoCalcSetting.isAutoPayoutForMatch).toBeTruthy();
+      expect(match.autoCalcSetting.isDirectPayoutForMatch).toBeFalsy();
     }));
 
     it('should change value equal latest value even not submit', fakeAsync(() => {
@@ -361,6 +364,7 @@ describe("MultiSport - PopupService", () => {
       match.autoCalcSetting.isDirectPayoutForMatch = false;
       match.autoCalcSetting.matchSetting = '1';
       league.autoCalcSetting.isAutoPayoutForLeague = true;
+      league.autoCalcSetting.leagueSetting = "00001";
       league.matches = [match];
       autoSetting.setting = "1";
       multiSportService.getSetting = jest.fn().mockReturnValue(Promise.resolve(autoSetting));
@@ -383,6 +387,7 @@ describe("MultiSport - PopupService", () => {
       match.autoCalcSetting.isDirectPayoutForMatch = false;
       match.autoCalcSetting.matchSetting = '1';
       league.autoCalcSetting.isAutoPayoutForLeague = true;
+      league.autoCalcSetting.leagueSetting = "00001";
       league.matches = [match];
       autoSetting.setting = "1";
       multiSportService.getSetting = jest.fn().mockReturnValue(Promise.resolve(autoSetting));

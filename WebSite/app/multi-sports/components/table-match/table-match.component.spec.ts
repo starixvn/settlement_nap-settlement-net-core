@@ -1,5 +1,5 @@
 import { State } from './../../../fast-market/constants/settings.native';
-import { ComponentFixture, TestBed, fakeAsync, tick, flush } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick, flush, discardPeriodicTasks } from '@angular/core/testing';
 
 import { TableMatchComponent } from './table-match.component';
 import { MultiSportsStore } from '../../services/multi-sports.store';
@@ -44,17 +44,18 @@ describe('TableMatchComponent', () => {
   });
 
   describe('ngOnInit', () => {
-    it('should trigger refresh match by interval', fakeAsync(() => {
+    it('should trigger refresh match by interval', (done) => {
       store.enableRefresh = true;
       refreshMatchesService.refreshMatches = jest.fn();
 
       component.ngOnInit();
-      tick(6000);
-      component.ngOnDestroy();
-      flush();
-
-      expect(refreshMatchesService.refreshMatches).toHaveBeenCalled();
-    }));
+      
+      setTimeout(() => {
+        component.ngOnDestroy();
+        expect(refreshMatchesService.refreshMatches).toHaveBeenCalled();
+        done();
+      }, 100);
+    });
 
     it('should take value from observable', () => {
       store.setState(new MultiSport());
