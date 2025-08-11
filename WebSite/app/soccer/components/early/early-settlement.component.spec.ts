@@ -43,6 +43,9 @@ import { GeneralResultDetail, ResultSettingModel } from '../../../shared/models'
 import { MatchDetailComponent } from '../common/match-detail.component';
 import { ScoreBySettlementPipe } from '../../../shared/pipes/score-by-settlement.pipe';
 import { ToastContainerDirective, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
+import { NewMultipleSelectComponent } from '../../../shared/components/multiple-select/multiple-select.component';
+import { OnlyIntegerDirective } from '../../../shared/directives/only-integer.directive.native';
+import { OnlyFirstTenScoreDirective } from '../../../shared/directives/only-first-ten-score.directive.native';
 
 describe('Soccer - EarlySettlementComponent', () => {
     let component: EarlySettlementComponent;
@@ -157,7 +160,9 @@ describe('Soccer - EarlySettlementComponent', () => {
             .configureTestingModule({
                 declarations: [
                     EarlySettlementComponent,
-                    GroupNameByIdPipe],
+                    GroupNameByIdPipe,
+                    OnlyFirstTenScoreDirective
+                ],
                 providers: [
                     HttpClientModule,
                     AioService,
@@ -184,6 +189,8 @@ describe('Soccer - EarlySettlementComponent', () => {
                     ResettleCheckerComponent,
                     ModalDialogComponent,
                     ModalContentDialogComponent,
+                    NewMultipleSelectComponent,
+                    OnlyIntegerDirective,
                     FormsModule,
                     HttpClientModule,
                     NgbModule,
@@ -199,7 +206,7 @@ describe('Soccer - EarlySettlementComponent', () => {
                 match.permission = permission;
                 match.resultDetail = [resultDetail];
                 component.match = match;
-                fixture.detectChanges();
+                component.groupMap = [new GroupMap(1, [resultDetail])];
                 verifyCalculateService = fixture.debugElement.injector.get(VerifyCalculateService);
                 closePopupService = fixture.debugElement.injector.get(ClosePopupService);
                 messageBoxService = fixture.debugElement.injector.get(MessageBoxService);   
@@ -676,7 +683,7 @@ describe('Soccer - EarlySettlementComponent', () => {
     });
 
     describe('isChangeSetting.', () => {
-        beforeAll(() => {
+        beforeEach(() => {
             component.matchId = 70001;
         });
         it('always show confirm', () => {
@@ -706,7 +713,7 @@ describe('Soccer - EarlySettlementComponent', () => {
     });
 
     describe('changeSettingGroup', () => {
-        beforeAll(() => {
+        beforeEach(() => {
             component.matchId = 70001;
         });
         it('always show confirm', () => {

@@ -2,7 +2,7 @@ import { VerifyService } from './verify.service';
 import { TestBed } from '@angular/core/testing';
 import { RefundStorage } from '../../../storage/refund.storage';
 import { VerificationBaseService } from '../../../services/verification-base.service';
-import { MatchDetail } from '../../refund/model/match.model';
+import { MatchDetail } from '../models/match.model';
 import { EventStatus } from '../../../../shared/constants';
 import { ToastrModule } from 'ngx-toastr';
 

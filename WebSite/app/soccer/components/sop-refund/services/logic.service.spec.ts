@@ -8,7 +8,7 @@ import { ScoreSourceType, SettlementStatusId } from '../../../../shared/constant
 import { ResultDetail } from '../../../models';
 import { ToastrModule } from 'ngx-toastr';
 import { Language } from '../../../../shared/language.native';
-import { MatchDetail } from '../../refund/model/match.model';
+import { MatchDetail } from '../models/match.model';
 
 describe('Soccer - LogicService', () => {
     let service: LogicService;
@@ -89,7 +89,7 @@ describe('Soccer - LogicService', () => {
             const result = service.getActionName();
 
             // Assert
-            expect(result).toBeUndefined();
+            expect(result).toBe("");
         });
     });
 

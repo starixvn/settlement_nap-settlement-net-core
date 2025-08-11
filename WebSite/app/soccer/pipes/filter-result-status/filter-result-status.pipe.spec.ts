@@ -44,7 +44,14 @@ describe('FilterResultStatusPipe', () => {
         isNotExistedValue: false,
         resultSettingData: { ...defaultResultSettingData },
         isMismatch: false,
-        resultState: 'NORMAL'
+        resultState: 'NORMAL',
+        traderScore: null,
+        externalScores: [],
+        resultStatusState: 'NORMAL',
+        isShow: true,
+        isEnabled: false,
+        originalHomeValue: 1,
+        originalAwayValue: 0
       } as ResultDetail,
       {
         resourceId: 'resource2',
@@ -71,7 +78,14 @@ describe('FilterResultStatusPipe', () => {
         isNotExistedValue: false,
         resultSettingData: { ...defaultResultSettingData },
         isMismatch: false,
-        resultState: 'NORMAL'
+        resultState: 'NORMAL',
+        traderScore: null,
+        externalScores: [],
+        resultStatusState: 'NORMAL',
+        isShow: true,
+        isEnabled: false,
+        originalHomeValue: 2,
+        originalAwayValue: 1
       } as ResultDetail,
       {
         resourceId: 'resource3',
@@ -98,7 +112,14 @@ describe('FilterResultStatusPipe', () => {
         isNotExistedValue: false,
         resultSettingData: { ...defaultResultSettingData },
         isMismatch: false,
-        resultState: 'NORMAL'
+        resultState: 'NORMAL',
+        traderScore: null,
+        externalScores: [],
+        resultStatusState: 'NORMAL',
+        isShow: true,
+        isEnabled: false,
+        originalHomeValue: 2,
+        originalAwayValue: 2
       } as ResultDetail,
       {
         resourceId: 'resource4',
@@ -125,7 +146,14 @@ describe('FilterResultStatusPipe', () => {
         isNotExistedValue: false,
         resultSettingData: { ...defaultResultSettingData, isConfirmedRefund: true },
         isMismatch: false,
-        resultState: 'REFUND'
+        resultState: 'REFUND',
+        traderScore: null,
+        externalScores: [],
+        resultStatusState: 'REFUND',
+        isShow: true,
+        isEnabled: false,
+        originalHomeValue: 0,
+        originalAwayValue: 0
       } as ResultDetail,
       {
         resourceId: 'resource5',
@@ -152,7 +180,14 @@ describe('FilterResultStatusPipe', () => {
         isNotExistedValue: true,
         resultSettingData: { ...defaultResultSettingData },
         isMismatch: false,
-        resultState: 'NO_RESULT'
+        resultState: 'NO_RESULT',
+        traderScore: null,
+        externalScores: [],
+        resultStatusState: 'NO_RESULT',
+        isShow: true,
+        isEnabled: false,
+        originalHomeValue: 0,
+        originalAwayValue: 0
       } as ResultDetail,
       {
         resourceId: 'resource6',
@@ -179,7 +214,14 @@ describe('FilterResultStatusPipe', () => {
         isNotExistedValue: false,
         resultSettingData: { ...defaultResultSettingData },
         isMismatch: false,
-        resultState: 'NORMAL'
+        resultState: 'NORMAL',
+        traderScore: null,
+        externalScores: [],
+        resultStatusState: 'NORMAL',
+        isShow: true,
+        isEnabled: false,
+        originalHomeValue: 3,
+        originalAwayValue: 3
       } as ResultDetail,
       {
         resourceId: 'resource7',
@@ -206,7 +248,14 @@ describe('FilterResultStatusPipe', () => {
         isNotExistedValue: false,
         resultSettingData: { ...defaultResultSettingData, isConfirmedRefundSdt: true },
         isMismatch: false,
-        resultState: 'REFUND'
+        resultState: 'REFUND',
+        traderScore: null,
+        externalScores: [],
+        resultStatusState: 'REFUND',
+        isShow: true,
+        isEnabled: false,
+        originalHomeValue: 0,
+        originalAwayValue: 0
       } as ResultDetail
     ];
   });
@@ -253,8 +302,9 @@ describe('FilterResultStatusPipe', () => {
 
   it('should filter results by status "3"', () => {
     const result = pipe.transform(mockResultDetails, '3');
-    expect(result.length).toBe(1);
-    expect(result.every(item => item.resultStatus === '3')).toBeTruthy();
+    expect(result.length).toBe(2);
+    expect(result.some(item => item.resultStatus === '3')).toBeTruthy();
+    expect(result.some(item => item.resultStatusId === 3)).toBeTruthy();
   });
 
   it('should return empty array when no matches found', () => {

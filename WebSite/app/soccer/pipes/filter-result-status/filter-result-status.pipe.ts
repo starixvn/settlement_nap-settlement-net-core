@@ -9,7 +9,7 @@ import * as _ from "lodash";
 export class FilterResultStatusPipe implements PipeTransform {
   transform(resultDetails: ResultDetail[], args: string): ResultDetail[] {
  
-    const argsArray = args.split(",");
+    const argsArray = args ? args.split(",") : [];
     return resultDetails.filter(
       (item) => {
         const hasResultStatus = !args?.length || argsArray.includes(item.resultStatus) ||
