@@ -9,6 +9,7 @@ import { RemarkSettingComponent } from './remark-setting.component';
 import { UrlHelper } from '../../../helper';
 import { cloneDeep } from 'lodash';
 import * as exp from 'constants';
+import { of } from 'rxjs';
 
 describe('SettlementSettingComponent', () => {
   let component: RemarkSettingComponent;
@@ -50,9 +51,16 @@ describe('SettlementSettingComponent', () => {
       requestService = fixture.debugElement.injector.get(RequestService);
       component = fixture.componentInstance;
       jest.spyOn(requestService, 'getRemarkInfo').mockResolvedValue(mockRemarkedResult);
+      // Mock HTTP service to prevent injector destruction
+      const httpRequestService = fixture.debugElement.injector.get(HttpRequestService);
+      jest.spyOn(httpRequestService, 'postJson').mockReturnValue(of({}));
       fixture.detectChanges();
     });
-  }))
+  }));
+
+  afterEach(() => {
+    fixture.destroy();
+  });
 
   it('should create', () => {
     expect(component).toBeTruthy();

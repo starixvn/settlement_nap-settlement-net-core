@@ -1,13 +1,11 @@
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ElementRef } from "@angular/core";
 import { BlockUIService } from '../../shared/services';
-import  { 
-  AutoSettingComponent,
-  TimeSettingComponent,
-} from '.';
+import { AutoSettingComponent } from './auto-setting/auto-setting.component';
+import { TimeSettingComponent } from './time-setting/time-setting.component';
 import { RemarkSettingComponent } from './remark-setting/remark-setting.component';
 import { AppComponent } from './app.component';
-import { LeagueAutoSettingsComponent } from './league-auto-settings/league-auto-settings.component';
+import { SoccerAutoSettingsComponent } from './soccer-auto-settings/soccer-auto-settings.component';
 import { HttpClientModule } from '@angular/common/http';
 import { ToastNoAnimationModule, ToastrModule } from 'ngx-toastr';
 
@@ -24,12 +22,15 @@ describe('AppComponent', () => {
         AutoSettingComponent,
         TimeSettingComponent,
         RemarkSettingComponent,
-        LeagueAutoSettingsComponent,
+        SoccerAutoSettingsComponent,
         HttpClientModule,
         ToastNoAnimationModule.forRoot(),
         ToastrModule.forRoot()
+      ],
+      providers: [
         BlockUIService
       ]
+    })
     .compileComponents()
     .then(() => {
         fixture = TestBed.createComponent(AppComponent);
