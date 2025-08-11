@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { ResettleLogDetailComponent } from "./resettle-log-detail.component";
 import { FormsModule } from "@angular/forms";
 import { Match } from "../../models";
-import { ResultOtherSportService } from "../../services";
+import { ResultOtherSportService, ResultSoccerService } from "../../services";
 
 describe('Matches Component', () => {
     let component: ResettleLogDetailComponent;
@@ -27,7 +27,10 @@ describe('Matches Component', () => {
             declarations: [
                 ResettleLogDetailComponent,
             ],
-            providers: [],
+            providers: [
+                ResultSoccerService,
+                ResultOtherSportService,
+            ],
             imports: [
                 FormsModule,
             ],
@@ -36,6 +39,7 @@ describe('Matches Component', () => {
             .then(() => {
                 fixture = TestBed.createComponent(ResettleLogDetailComponent);
                 component = fixture.componentInstance;
+                resultOtherSportService = fixture.debugElement.injector.get(ResultOtherSportService);
             });
     }));
 

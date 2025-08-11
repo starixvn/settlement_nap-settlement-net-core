@@ -8,7 +8,6 @@ import { RequestService } from '../../services/request.service';
 import { RemarkSettingComponent } from './remark-setting.component';
 import { UrlHelper } from '../../../helper';
 import { cloneDeep } from 'lodash';
-import * as exp from 'constants';
 import { of } from 'rxjs';
 
 describe('SettlementSettingComponent', () => {
@@ -16,7 +15,6 @@ describe('SettlementSettingComponent', () => {
   let fixture: ComponentFixture<RemarkSettingComponent>;
   let requestService: RequestService;
   let messageBoxService : MessageBoxService;
-  const buttonName = 'btn-danger';
   const mockRemarkedResult: RemarkAndPermission = {
     match: new RemarkStatus(),
     permission: new Permission(),

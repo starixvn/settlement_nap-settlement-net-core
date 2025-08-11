@@ -16,7 +16,6 @@ describe('AutoSettingComponent', () => {
   let component: AutoSettingComponent;
   let fixture: ComponentFixture<AutoSettingComponent>;
   let requestService: RequestService;
-  let httpRequestService: HttpRequestService;
   let messageBoxService: MessageBoxService;
   const mockUrlParameter = '7000000';
   const stateId = {
@@ -37,12 +36,6 @@ describe('AutoSettingComponent', () => {
     settledSessionId: '',
     hasResultAmendment: false,
     isOrg: false
-  };
-
-  const mockFailResult = {
-    errCode: 1,
-    errMsg: "",
-    isSuccessful: false,
   };
 
 
@@ -73,7 +66,6 @@ describe('AutoSettingComponent', () => {
     fixture = TestBed.createComponent(AutoSettingComponent);
     component = fixture.componentInstance;
     requestService = fixture.debugElement.injector.get(RequestService);
-    httpRequestService = fixture.debugElement.injector.get(HttpRequestService);
     messageBoxService = fixture.debugElement.injector.get(MessageBoxService);
     messageBoxService.closePopup = jest.fn();
     jest.spyOn(UrlHelper, 'getUrlParameter').mockReturnValue(mockUrlParameter);

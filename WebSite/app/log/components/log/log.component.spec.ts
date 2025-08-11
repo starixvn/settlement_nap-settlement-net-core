@@ -2,7 +2,9 @@ import { TestBed, waitForAsync, ComponentFixture, tick, fakeAsync } from '@angul
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-import { BlockUIService, ReCheckInService } from '../../../shared/services';
+import { DatePipe } from '@angular/common';
+import { BlockUIService, ReCheckInService, VerifyDateService } from '../../../shared/services';
+import { SearchService } from '../../services/search.service';
 import { BrowserModule } from '@angular/platform-browser';
 import {
     LogComponent,
@@ -25,6 +27,9 @@ describe('Component: App', () => {
             providers: [
                 BlockUIService,
                 ReCheckInService,
+                VerifyDateService,
+                DatePipe,
+                SearchService,
             ],
             imports: [
                 BrowserModule,
