@@ -165,7 +165,7 @@ describe('EarlyConstraintService', () => {
         result4.homeValue = 'N';
         result4.betTypeName = 'Test Name';
         const resultByTeamNamePipe = TestBed.inject(ResultByTeamNamePipe);
-        spyOn(resultByTeamNamePipe, 'transform').and.returnValue('None');
+        jest.spyOn(resultByTeamNamePipe, 'transform').mockReturnValue('None');
 
         const message = service.getConfirmMessage([result1, result2, result3, result4], matchDetail);
 

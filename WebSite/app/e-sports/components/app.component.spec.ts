@@ -1,28 +1,22 @@
 import { TestBed, waitForAsync, ComponentFixture } from "@angular/core/testing";
-import "rxjs/add/observable/from";
 import { ElementRef } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { HttpClientModule } from "@angular/common/http";
-import {
-  AppComponent,
-  CalculationMatchDetailComponent,
-  CalculationActionsComponent,
-  RefundActionsComponent,
-  MatchDetailComponent,
-  EarlySettlementComponent,
-} from "./index";
+import { AppComponent } from "./app.component";
+import { CalculationMatchDetailComponent } from "./calculation-match-detail.component";
+import { CalculationActionsComponent } from "./calculation-actions.component";
+import { RefundActionsComponent } from "./refund-actions.component";
+import { MatchDetailComponent } from "./match-detail.component";
+import { EarlySettlementComponent } from "./early-settlement.component";
 import { ResourceNameByIdPipe} from "../pipes";
-import {
-  ResettleCheckerComponent,
-  TicketCountComponent,
-  NotReadyMatchComponent,
-} from "../../shared/components";
+import { ResettleCheckerComponent } from "../../shared/components/resettle-checker/resettle-checker.component";
+import { TicketCountComponent } from "../../shared/components/ticket-count/ticket-count.component";
+import { NotReadyMatchComponent } from "../../shared/components/not-ready-match/not-ready-match.component";
 import { MaterialModule } from "../../shared/material-module";
 import { NewMultipleSelectComponent } from "../../shared/components/multiple-select/multiple-select.component";
 import { ExternalLinkPipe } from "../../score-source-setting/pipes";
 import { PipesModule } from '../../shared/pipes/pipes.module.native';
-import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { ToastNoAnimationModule, ToastrModule } from "ngx-toastr";
 import { PageType } from '../../shared/constants';
 
@@ -34,11 +28,6 @@ describe("Component: App", () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [
-        AppComponent,
-        CalculationMatchDetailComponent,
-        NotReadyMatchComponent,
-        CalculationActionsComponent,
-        RefundActionsComponent,
         MatchDetailComponent,
         EarlySettlementComponent,
         NewMultipleSelectComponent,
@@ -55,7 +44,12 @@ describe("Component: App", () => {
         MaterialModule,
         PipesModule,
         ToastNoAnimationModule.forRoot(),
-        ToastrModule.forRoot()
+        ToastrModule.forRoot(),
+        AppComponent,
+        CalculationMatchDetailComponent,
+        NotReadyMatchComponent,
+        CalculationActionsComponent,
+        RefundActionsComponent
       ],
       })
       .compileComponents()

@@ -88,8 +88,6 @@ describe("E-sport - Early Settlement Component", () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [
-        ModalDialogComponent,
-        ModalContentDialogComponent,
       ],
       imports: [
         HttpClientModule,
@@ -106,6 +104,8 @@ describe("E-sport - Early Settlement Component", () => {
         ExternalLinkPipe,
         EarlySettlementComponent,
         ResourceNameByIdPipe,
+        ModalDialogComponent,
+        ModalContentDialogComponent,
       ]
     })
       
@@ -334,8 +334,11 @@ describe("E-sport - Early Settlement Component", () => {
   describe('canSettleResult', () => {
     it('should return true when result is running and score is match and exist inhouse result', () => {
       resultDetail.resultStatus = 'Running';
+      resultDetail.externalScores = [];
+      resultDetail.isScoreMismatched = false;
       earlyConstraintService.getBetTypeGroup= jest.fn().mockReturnValue(0);
       verificationService.isExistInhouseResult= jest.fn().mockReturnValue(true);
+      verificationService.isValidTraderConfirmScore= jest.fn().mockReturnValue(true);
 
       const result = component.canSettleResult(resultDetail);
 
@@ -376,6 +379,7 @@ describe("E-sport - Early Settlement Component", () => {
   });
 
   it('getMatch - should get match and init component info', async () => {
+    match.externalResults = [];
     aioService.getMatch= jest.fn().mockReturnValue(Promise.resolve(match));
     earlyConstraintService.getGroupMap= jest.fn().mockReturnValue([]);
     earlyConstraintService.renderResultStatus = jest.fn();
