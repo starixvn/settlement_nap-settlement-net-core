@@ -194,7 +194,7 @@ describe('GameTotalMatchVerificationService', () => {
                 homeValue: '1'
             } as ResultDetail;
 
-            expect(service.isScoreInvalid([set], false)).toEqual("Please input score!");
+            expect(service.isScoreInvalid([set], false)).toEqual("Please input score accordingly.");
         });
 
         it('should return error when total sets not consistent', () => {
@@ -299,18 +299,16 @@ describe('GameTotalMatchVerificationService', () => {
         match.matchDetail = lastMatchDetail;
         match.resultDetails = [lastestResultDetail];
 
-        it('should return false when no need to check for recalc tickets', () => {
+        it('should return false when no need to check for recalc tickets', async () => {
             let actualResult: boolean;
-            spyOn(requestService, 'getLastestResult').and.returnValue(of(match));
+            jest.spyOn(requestService, 'getLastestResult').mockReturnValue(of(match));
 
-            service.verifyChangedSettledTickets(123, [resultDetail], true).subscribe((result) => {
-                actualResult = result;
-            });
+            actualResult = await service.verifyChangedSettledTickets(123, [resultDetail], true);
 
             expect(actualResult).toBe(false);
         });
 
-        it('should return true when need to check for recalc tickets', () => {
+        it('should return true when need to check for recalc tickets', async () => {
             lastMatchDetail.ftStatus = 'Calculated';
             match.matchDetail = lastMatchDetail;
             const totalSet = {
@@ -320,11 +318,9 @@ describe('GameTotalMatchVerificationService', () => {
             } as ResultDetail;
             match.resultDetails = [lastestResultDetail, totalSet];
             let actualResult: boolean;
-            spyOn(requestService, 'getLastestResult').and.returnValue(of(match));
+            jest.spyOn(requestService, 'getLastestResult').mockReturnValue(of(match));
 
-            service.verifyChangedSettledTickets(123, [resultDetail, totalSet], false).subscribe((result) => {
-                actualResult = result;
-            });
+            actualResult = await service.verifyChangedSettledTickets(123, [resultDetail, totalSet], false);
 
             expect(actualResult).toBe(true);
         });

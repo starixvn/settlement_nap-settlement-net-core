@@ -1,5 +1,6 @@
 import { HttpClientModule } from "@angular/common/http";
-import { ComponentFixture, fakeAsync, TestBed, tick } from "@angular/core/testing";
+import { ComponentFixture, fakeAsync, TestBed, tick, flush } from "@angular/core/testing";
+import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { FormsModule } from "@angular/forms";
 import { BrowserDynamicTestingModule } from "@angular/platform-browser-dynamic/testing";
 import { NgbModal, NgbModule } from "@ng-bootstrap/ng-bootstrap";
@@ -64,12 +65,20 @@ describe('GameTotalRefundComponent', () => {
         errCode: 0,
         errMsg: "",
         isSuccessful: true,
+        childMatchIds: "",
+        settledSessionId: "",
+        hasResultAmendment: false,
+        isOrg: false,
     };
 
     const unsuccessfulResult = {
         errCode: 1,
         errMsg: "error message",
         isSuccessful: false,
+        childMatchIds: "",
+        settledSessionId: "",
+        hasResultAmendment: false,
+        isOrg: false,
     };
 
 
@@ -86,6 +95,7 @@ describe('GameTotalRefundComponent', () => {
                 HttpClientModule,
                 NgbModule,
                 FormsModule,
+                NoopAnimationsModule,
                 ToastNoAnimationModule.forRoot(),
                 ToastrModule.forRoot(),
                 ModalDialogComponent,
@@ -174,7 +184,7 @@ describe('GameTotalRefundComponent', () => {
 
         it('should show confirm when match is normal', async () => {
             component.match = match;
-            jest.spyOn(aioService, 'checkMarkedTickets').mockReturnValue(of(notExistMarkedTicket));
+            jest.spyOn(aioService, 'checkMarkedTickets').mockReturnValue(Promise.resolve(notExistMarkedTicket));
             jest.spyOn(messageBoxService, 'confirm');
 
             await component.refund();
@@ -186,8 +196,8 @@ describe('GameTotalRefundComponent', () => {
             match.resultDetails = [resultDetail];
             component.match = match;
             component.matchDetail = matchDetail;
-            jest.spyOn(aioService, 'checkMarkedTickets').mockReturnValue(of(notExistMarkedTicket));
-            jest.spyOn(aioService, 'push').mockReturnValue(of(successfulResult));
+            jest.spyOn(aioService, 'checkMarkedTickets').mockResolvedValue(notExistMarkedTicket);
+            jest.spyOn(aioService, 'push').mockResolvedValue(successfulResult);
             jest.spyOn(closePopupService, 'closePopup');
 
             await component.refund();
@@ -201,28 +211,29 @@ describe('GameTotalRefundComponent', () => {
         it('should show error mrg when push is failed', fakeAsync(async () => {
             component.match = match;
             component.matchDetail = matchDetail;
-            jest.spyOn(aioService, 'checkMarkedTickets').mockReturnValue(of(notExistMarkedTicket));
-            jest.spyOn(aioService, 'push').mockReturnValue(of(unsuccessfulResult));
+            jest.spyOn(aioService, 'checkMarkedTickets').mockResolvedValue(notExistMarkedTicket);
+            jest.spyOn(aioService, 'push').mockResolvedValue(unsuccessfulResult);
 
             await component.refund();
             const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
             buttonYes.click();
             tick();
+            flush();
 
             expect(toastrService.error).toHaveBeenCalledWith(unsuccessfulResult.errMsg);
         }));
     });
 
     describe('confirmRefund', () => {
-        it('call service confirmResult when total set is not confirmed', () => {
+        it('call service changeConfirmResultSetting when total set is not confirmed', () => {
             totalSet.resultSettingData.isConfirmedRefund = false;
             match.resultDetails = [totalSet];
             component.match = match;
-            jest.spyOn(aioService, 'confirmResult');
+            jest.spyOn(aioService, 'changeConfirmResultSetting');
 
             component.confirmRefund(new HedgeMatchDetail(), false);
 
-            expect(aioService.confirmResult).toHaveBeenCalled();
+            expect(aioService.changeConfirmResultSetting).toHaveBeenCalled();
         });
 
         it('call service undoConfirmedResult when total set is confirmed', () => {

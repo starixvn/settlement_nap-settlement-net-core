@@ -207,7 +207,7 @@ export class PopupService {
       Language.payout.titlePopupForLeague,
       frameSrc
     );
-    let subscribe = this.dialogBoxService
+    const subscribe = this.dialogBoxService
       .popupHasResponse(dialogData, "600px", "310px")
       .subscribe((result) => {
         if (!_.isUndefined(result)) {
@@ -235,7 +235,7 @@ export class PopupService {
     const title = typeObject === "Match" ? Language.payout.titlePopup : Language.payout.titlePopupForLeague;
     const dialogData = new DialogDataIframe(title, encodeURI(src));
 
-    let subscribe = this.dialogBoxService
+    const subscribe = this.dialogBoxService
         .popupHasResponse(dialogData, "780px", "350px")
         .subscribe((result) => {
           if(!result) {
@@ -285,7 +285,7 @@ export class PopupService {
       Language.payout.titlePopupForLeague,
       frameSrc
     );
-    let subscribe = this.dialogBoxService
+    const subscribe = this.dialogBoxService
       .popupHasResponse(dialogData, "500px", "270px")
       .subscribe((result) => {
         if (_.isNil(result)) {
@@ -320,7 +320,7 @@ export class PopupService {
       Language.payout.titlePopupForLeague,
       frameSrc
     );
-    let subscribe = this.dialogBoxService
+    const subscribe = this.dialogBoxService
       .popupHasResponse(dialogData, "500px", "930px")
       .subscribe((result) => {
         if (_.isNil(result)) {
@@ -376,7 +376,7 @@ export class PopupService {
       Language.payout.titlePopup,
       frameSrc
     );
-    let subscribe = this.dialogBoxService
+    const subscribe = this.dialogBoxService
       .popupHasResponse(dialogData, "500px", "270px")
       .subscribe((result) => {
         if (!_.isNil(result)) {

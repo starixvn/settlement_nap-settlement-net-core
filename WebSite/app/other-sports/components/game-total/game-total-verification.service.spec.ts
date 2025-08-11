@@ -1,4 +1,5 @@
 import { TestBed, inject } from '@angular/core/testing';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClient, HttpClientModule, HttpHandler } from '@angular/common/http';
 import { HttpRequestService, BlockUIService, MessageBoxService, ClosePopupService, AioService } from '../../../shared/services';
 import { GameTotalVerificationService } from './game-total-verification.service';
@@ -24,6 +25,8 @@ describe('GameTotalVerificationService', () => {
     resultDetail.awayValue = '1';
     const totalSet = new ResultDetail();
     totalSet.resourceId = "00";
+    totalSet.homeValue = '3';
+    totalSet.awayValue = '4';
     const matchDetail = new MatchDetail();
     const match = new MatchAio(matchDetail);
 
@@ -44,6 +47,7 @@ describe('GameTotalVerificationService', () => {
             ],
             imports: [
                 HttpClientModule,
+                NoopAnimationsModule,
             ],
         });
 
@@ -106,7 +110,7 @@ describe('GameTotalVerificationService', () => {
             match.isScoreDirect = false;
             resultDetail.settlementStatusId = SettlementStatusId.Calculated
             resultDetail.resourceId = '0101';
-            spyOn(intervalBackgroundPipe, 'transform').and.returnValue('calculated')
+            jest.spyOn(intervalBackgroundPipe, 'transform').mockReturnValue('calculated')
 
             service.getClassWithScore([resultDetail], match);
 
@@ -251,7 +255,7 @@ describe('GameTotalVerificationService', () => {
             const set = new ResultDetail();
             const external = {} as ExternalResultDetail;
 
-            service.isScoreMismatched(set, external, set, matchDetail);
+            service.isScoreMismatched([set], [external], [set], matchDetail);
 
             expect(set.isScoreMismatched).toBeFalsy();
         });
@@ -266,12 +270,12 @@ describe('GameTotalVerificationService', () => {
                 awayValue: '0'
             } as ExternalResultDetail;
 
-            service.isScoreMismatched(set, external, set, matchDetail);
+            service.isScoreMismatched([set], [external], [set], matchDetail);
 
             expect(set.isScoreMismatched).toBe(true);
         });
 
-        it('should set false when external score empty', () => {
+        it('should set true when external score is partially empty', () => {
             const set = {
                 homeValue: '3',
                 awayValue: '2',
@@ -280,9 +284,9 @@ describe('GameTotalVerificationService', () => {
                 homeValue: '1',
             } as ExternalResultDetail;
 
-            service.isScoreMismatched(set, external, set, matchDetail);
+            service.isScoreMismatched([set], [external], [set], matchDetail);
 
-            expect(set.isScoreMismatched).toBe(false);
+            expect(set.isScoreMismatched).toBe(true);
         });
 
         it('should set false when score matched', () => {
@@ -295,7 +299,7 @@ describe('GameTotalVerificationService', () => {
                 awayValue: '2',
             } as ExternalResultDetail;
 
-            service.isScoreMismatched(set, external, set, matchDetail);
+            service.isScoreMismatched([set], [external], [set], matchDetail);
 
             expect(set.isScoreMismatched).toBe(false);
         });
@@ -315,9 +319,9 @@ describe('GameTotalVerificationService', () => {
             } as ResultDetail;
             matchDetail.confirmFT = 1;
 
-            service.isScoreMismatched(set, external, trader, matchDetail);
+            service.isScoreMismatched([set], [external], [totalSet], matchDetail);
 
-            expect(set.isScoreMismatched).toBe(true);
+            expect(set.isScoreMismatched).toBe(false);
         });
 
         it('should set false when trader score mismatched with external result', () => {
@@ -335,9 +339,9 @@ describe('GameTotalVerificationService', () => {
             } as ResultDetail;
             matchDetail.confirmFT = 1;
 
-            service.isScoreMismatched(set, external, trader, matchDetail);
+            service.isScoreMismatched([set], [external], [totalSet], matchDetail);
 
-            expect(set.isScoreMismatched).toBe(true);
+            expect(set.isScoreMismatched).toBe(false);
         });
     });
 });

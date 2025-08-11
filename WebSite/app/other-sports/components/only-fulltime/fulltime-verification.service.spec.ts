@@ -1,15 +1,14 @@
-import { TestBed, inject, fakeAsync, tick } from '@angular/core/testing';
+import { TestBed, inject, fakeAsync } from '@angular/core/testing';
 import { HttpClient, HttpClientModule, HttpHandler } from '@angular/common/http';
 import { FullTimeVerificationService } from './fulltime-verification.service';
 import { HttpRequestService, BlockUIService, MessageBoxService } from '../../../shared/services';
 import { Match, MatchDetail} from '../../models';
 import { ModalDialogMessage } from '../../../shared/models';
 import { Language } from '../../../shared/language.native';
-import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
-import { ModalContentDialogComponent } from '../../../shared/components/modal-dialog/modal-content-dialog.component';
-import { ModalDialogComponent } from '../../../shared/components/modal-dialog/modal-dialog.component';
 import { of } from 'rxjs';
 import { RequestService } from '../..//services/request.service';
+import { ModalDialogComponent } from '../../../shared/components/modal-dialog/modal-dialog.component';
+import { ModalContentDialogComponent } from '../../../shared/components/modal-dialog/modal-content-dialog.component';
 
 describe('FullTimeVerificationService', () => {
     let service: FullTimeVerificationService = null;
@@ -27,10 +26,7 @@ describe('FullTimeVerificationService', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            declarations: [
-                ModalDialogComponent,
-                ModalContentDialogComponent,
-            ],
+            declarations: [],
             providers: [
                 FullTimeVerificationService,
                 BlockUIService,
@@ -42,6 +38,8 @@ describe('FullTimeVerificationService', () => {
             ],
             imports: [
                 HttpClientModule,
+                ModalDialogComponent,
+                ModalContentDialogComponent,
             ],
         });
 
@@ -129,26 +127,20 @@ describe('FullTimeVerificationService', () => {
         matchDetail.finalAwayScore = 3;
         match.matchDetail = lastMatchDetail;
 
-        it('should return false when no need to check for recalc tickets', fakeAsync(() => {
-            let actualResult: boolean;
-            spyOn(fullTimeRequestService, 'getLastestResult').and.returnValue(of(match));
+        it('should return false when no need to check for recalc tickets', fakeAsync(async () => {
+            jest.spyOn(fullTimeRequestService, 'getLastestResult').mockReturnValue(of(match));
 
-            service.verifyChangedSettledTickets(matchDetail, { matchId: 123 }).subscribe((result) => {
-                actualResult = result;
-            });
+            const actualResult = await service.verifyChangedSettledTickets(matchDetail, { matchId: 123 });
 
             expect(actualResult).toBe(false);
         }));
 
-        it('should return true when need to check for recalc tickets', fakeAsync(() => {
+        it('should return true when need to check for recalc tickets', fakeAsync(async () => {
             lastMatchDetail.ftStatus = 'Calculated';
             match.matchDetail = lastMatchDetail;
-            let actualResult: boolean;
-            spyOn(httpRequestService, 'postJson').and.returnValue(of(match));
+            jest.spyOn(httpRequestService, 'postJson').mockReturnValue(of(match));
 
-            service.verifyChangedSettledTickets(matchDetail, { matchId: 123 }).subscribe((result) => {
-                actualResult = result;
-            });
+            const actualResult = await service.verifyChangedSettledTickets(matchDetail, { matchId: 123 });
 
             expect(actualResult).toBe(true);
         }));

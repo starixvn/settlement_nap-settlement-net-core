@@ -1,5 +1,5 @@
 import { HttpClientModule } from '@angular/common/http';
-import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick, flush } from '@angular/core/testing';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FullTimeVerificationService } from './fulltime-verification.service';
 import { ModalContentDialogComponent } from '../../../shared/components/modal-dialog/modal-content-dialog.component';
@@ -12,9 +12,7 @@ import { BlockUIService, HttpRequestService, MessageBoxService } from '../../../
 import { FormsModule } from '@angular/forms';
 import { Match, MatchDetail, OtherSportsMatch, Permission, QueryMatch } from '../../models';
 import { TicketCount } from '../../../shared/models';
-import { of } from 'rxjs';
 import { Language } from '../../../shared/language.native';
-import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { ScorePipe } from '../../pipes';
 import { RequestService } from '../..//services/request.service';
 import { FullTimeService } from './fulltime.service';
@@ -86,20 +84,20 @@ describe('FullTimeCalculationComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [
         FullTimeCalculationComponent,
-        ModalDialogComponent,
-        ModalContentDialogComponent,
-        TicketCountComponent,
-        ResettleCheckerComponent,
-        NotReadyMatchComponent,
         ScorePipe,
       ],
-      imports: [
-        HttpClientModule,
-        NgbModule,
-        FormsModule,
-        ToastNoAnimationModule.forRoot(),
-        ToastrModule.forRoot()
-      ],
+              imports: [
+          HttpClientModule,
+          NgbModule,
+          FormsModule,
+          ToastNoAnimationModule.forRoot(),
+          ToastrModule.forRoot(),
+          ModalDialogComponent,
+          ModalContentDialogComponent,
+          TicketCountComponent,
+          ResettleCheckerComponent,
+          NotReadyMatchComponent
+        ],
       providers: [
         RequestService,
         BlockUIService,
@@ -123,7 +121,7 @@ describe('FullTimeCalculationComponent', () => {
     verificationService = fixture.debugElement.injector.get(FullTimeVerificationService);
     toastrService = fixture.debugElement.injector.get(ToastrService);
     fixture.detectChanges();
-    spyOn(messageBoxService, 'closePopup').and.callFake(() => { });
+    jest.spyOn(messageBoxService, 'closePopup').mockImplementation(() => { });
   });
 
   it('should create', () => {
@@ -134,7 +132,7 @@ describe('FullTimeCalculationComponent', () => {
     it('getMatch - should call getMatch function with correct param', () => {
       const matchId = 123;
       const query = new QueryMatch(matchId, false);
-      spyOn(requestService, 'getMatch').and.returnValue(of(otherSportsMatch));
+      jest.spyOn(requestService, 'getMatch').mockResolvedValue(otherSportsMatch);
       component.getMatch(matchId);
 
       expect(requestService.getMatch).toHaveBeenCalledWith(query);
@@ -145,7 +143,7 @@ describe('FullTimeCalculationComponent', () => {
       match.matchDetail.finalHomeScore = 1;
       match.matchDetail.finalAwayScore = null;
       otherSportsMatch.match.matchDetail.betStatus = 'Refund;';
-      spyOn(requestService, 'getMatch').and.returnValue(of(otherSportsMatch));
+      jest.spyOn(requestService, 'getMatch').mockResolvedValue(otherSportsMatch);
 
       await component.getMatch(matchId);
 
@@ -160,7 +158,7 @@ describe('FullTimeCalculationComponent', () => {
       match.matchDetail.finalAwayScore = 2;
       permission.isLeader = true;
       otherSportsMatch.match.matchDetail.betStatus = '';
-      spyOn(requestService, 'getMatch').and.returnValue(of(otherSportsMatch));
+      jest.spyOn(requestService, 'getMatch').mockResolvedValue(otherSportsMatch);
 
       await component.getMatch(matchId);
 
@@ -177,15 +175,15 @@ describe('FullTimeCalculationComponent', () => {
       component.match = match;
       component.matchDetail = matchDetail;
       component.permission = permission;
-      spyOn(toastrService, 'error');
+      jest.spyOn(toastrService, 'error');
     });
 
     it('should clear messageError', () => {
       component.isReSettledTickets = true;
-      spyOn(toastrService, 'clear');
-      spyOn(messageBoxService, 'confirm');
-      spyOn(verificationService, 'isScoreSourceInsufficient').and.returnValue(false);
-      spyOn(verificationService, 'isScoreInconsistent').and.returnValue(false);
+      jest.spyOn(toastrService, 'clear');
+      jest.spyOn(messageBoxService, 'confirm');
+      jest.spyOn(verificationService, 'isScoreSourceInsufficient').mockReturnValue(false);
+      jest.spyOn(verificationService, 'isScoreInconsistent').mockReturnValue(false);
 
       component.calculation();
 
@@ -195,19 +193,19 @@ describe('FullTimeCalculationComponent', () => {
       component.isReSettledTickets = true;
       matchDetail.finalAwayScore = null;
       component.matchDetail = matchDetail;
-      spyOn(verificationService, 'isScoreSourceInsufficient').and.returnValue(false);
-      spyOn(verificationService, 'isScoreInconsistent').and.returnValue(false);
+      jest.spyOn(verificationService, 'isScoreSourceInsufficient').mockReturnValue(false);
+      jest.spyOn(verificationService, 'isScoreInconsistent').mockReturnValue(false);
 
       component.calculation();
 
-      expect(toastrService.error).toHaveBeenCalledWith('Please input score!');
+      expect(toastrService.error).toHaveBeenCalledWith('Please input score accordingly.');
     });
 
     it('should invoke messageBoxService.confirm when final score is not empty', () => {
       component.isReSettledTickets = true;
-      spyOn(messageBoxService, 'confirm');
-      spyOn(verificationService, 'isScoreSourceInsufficient').and.returnValue(false);
-      spyOn(verificationService, 'isScoreInconsistent').and.returnValue(false);
+      jest.spyOn(messageBoxService, 'confirm');
+      jest.spyOn(verificationService, 'isScoreSourceInsufficient').mockReturnValue(false);
+      jest.spyOn(verificationService, 'isScoreInconsistent').mockReturnValue(false);
 
       component.calculation();
 
@@ -221,9 +219,9 @@ describe('FullTimeCalculationComponent', () => {
       matchDetail.finalHomeScore = 1;
       component.matchDetail = matchDetail;
       component.isReSettledTickets = true;
-      spyOn(messageBoxService, 'confirm');
-      spyOn(verificationService, 'isScoreSourceInsufficient').and.returnValue(false);
-      spyOn(verificationService, 'isScoreInconsistent').and.returnValue(false);
+      jest.spyOn(messageBoxService, 'confirm');
+      jest.spyOn(verificationService, 'isScoreSourceInsufficient').mockReturnValue(false);
+      jest.spyOn(verificationService, 'isScoreInconsistent').mockReturnValue(false);
 
       component.calculation();
 
@@ -238,9 +236,9 @@ describe('FullTimeCalculationComponent', () => {
       matchDetail.betStatus = '';
       component.matchDetail = matchDetail;
       component.isReSettledTickets = true;
-      spyOn(messageBoxService, 'confirm');
-      spyOn(verificationService, 'isScoreSourceInsufficient').and.returnValue(false);
-      spyOn(verificationService, 'isScoreInconsistent').and.returnValue(false);
+      jest.spyOn(messageBoxService, 'confirm');
+      jest.spyOn(verificationService, 'isScoreSourceInsufficient').mockReturnValue(false);
+      jest.spyOn(verificationService, 'isScoreInconsistent').mockReturnValue(false);
 
       component.calculation();
 
@@ -250,10 +248,10 @@ describe('FullTimeCalculationComponent', () => {
 
     it('should close popup when settle successful', fakeAsync(async () => {
       component.matchDetail.sportType = 60;
-      spyOn(requestService, 'sendRequest').and.returnValue(Promise.resolve(successfulResult));
-      spyOn(verificationService, 'verifyChangedSettledTickets').and.returnValue(of(true));
-      spyOn(verificationService, 'isScoreSourceInsufficient').and.returnValue(false);
-      spyOn(verificationService, 'isScoreInconsistent').and.returnValue(false);
+      jest.spyOn(requestService, 'sendRequest').mockResolvedValue(successfulResult as any);
+      jest.spyOn(verificationService, 'verifyChangedSettledTickets').mockResolvedValue(true);
+      jest.spyOn(verificationService, 'isScoreSourceInsufficient').mockReturnValue(false);
+      jest.spyOn(verificationService, 'isScoreInconsistent').mockReturnValue(false);
 
       await component.calculation();
       let buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
@@ -271,10 +269,10 @@ describe('FullTimeCalculationComponent', () => {
     }));
 
     it('should set messageError when settle unsuccessful', fakeAsync(async () => {
-      spyOn(requestService, 'sendRequest').and.returnValue(Promise.resolve(unsuccessfulResult));
-      spyOn(verificationService, 'verifyChangedSettledTickets').and.returnValue(of(false));
-      spyOn(verificationService, 'isScoreSourceInsufficient').and.returnValue(false);
-      spyOn(verificationService, 'isScoreInconsistent').and.returnValue(false);
+      jest.spyOn(requestService, 'sendRequest').mockResolvedValue(unsuccessfulResult as any);
+      jest.spyOn(verificationService, 'verifyChangedSettledTickets').mockResolvedValue(false);
+      jest.spyOn(verificationService, 'isScoreSourceInsufficient').mockReturnValue(false);
+      jest.spyOn(verificationService, 'isScoreInconsistent').mockReturnValue(false);
 
       await component.calculation();
       let buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
@@ -283,27 +281,29 @@ describe('FullTimeCalculationComponent', () => {
       buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
       buttonYes.click();
       tick();
+      flush();
 
       expect(toastrService.error).toHaveBeenCalledWith('abc');
     }));
 
     it('should alert when score inconsistent and user is not leader', fakeAsync(async () => {
-      spyOn(verificationService, 'verifyChangedSettledTickets').and.returnValue(of(false));
-      spyOn(verificationService, 'isScoreSourceInsufficient').and.returnValue(false);
-      spyOn(verificationService, 'isScoreInconsistent').and.returnValue(true);
+      jest.spyOn(verificationService, 'verifyChangedSettledTickets').mockResolvedValue(false);
+      jest.spyOn(verificationService, 'isScoreSourceInsufficient').mockReturnValue(false);
+      jest.spyOn(verificationService, 'isScoreInconsistent').mockReturnValue(true);
       permission.isLeader = false;
 
       await component.calculation();
+      flush();
 
       expect(toastrService.error).toHaveBeenCalledWith(Language.otherSports.warningCalculateInconsistent);
     }));
 
     it('should confirm 1 more time and calculate when score inconsistent and user is leader', fakeAsync(async () => {
-      spyOn(requestService, 'sendRequest').and.returnValue(Promise.resolve(successfulResult));
-      spyOn(verificationService, 'checkScoreMuayThai').and.returnValue('');
-      spyOn(verificationService, 'verifyChangedSettledTickets').and.returnValue(of(false));
-      spyOn(verificationService, 'isScoreSourceInsufficient').and.returnValue(false);
-      spyOn(verificationService, 'isScoreInconsistent').and.returnValue(true);
+      jest.spyOn(requestService, 'sendRequest').mockResolvedValue(successfulResult as any);
+      jest.spyOn(verificationService, 'checkScoreMuayThai').mockReturnValue('');
+      jest.spyOn(verificationService, 'verifyChangedSettledTickets').mockResolvedValue(false);
+      jest.spyOn(verificationService, 'isScoreSourceInsufficient').mockReturnValue(false);
+      jest.spyOn(verificationService, 'isScoreInconsistent').mockReturnValue(true);
       permission.isLeader = true;
 
       await component.calculation();
@@ -325,11 +325,11 @@ describe('FullTimeCalculationComponent', () => {
     beforeEach(() => {
       component.match = match;
       component.matchDetail = matchDetail;
-      spyOn(toastrService, 'error');
+      jest.spyOn(toastrService, 'error');
     });
     it('should clear messageError and show confirmbox', () => {
-      spyOn(messageBoxService, 'confirm');
-      spyOn(toastrService, 'clear');
+      jest.spyOn(messageBoxService, 'confirm');
+      jest.spyOn(toastrService, 'clear');
 
       component.uncalculation();
 
@@ -338,7 +338,7 @@ describe('FullTimeCalculationComponent', () => {
     });
 
     it('should call popup when settle successful', fakeAsync(() => {
-      spyOn(requestService, 'sendRequest').and.returnValue(Promise.resolve(successfulResult));
+      jest.spyOn(requestService, 'sendRequest').mockResolvedValue(successfulResult as any);
 
       component.uncalculation();
       let buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
@@ -352,7 +352,7 @@ describe('FullTimeCalculationComponent', () => {
     }));
 
     it('should ser messageError when settle unsuccessful', fakeAsync(() => {
-      spyOn(requestService, 'calculate').and.returnValue(of(unsuccessfulResult));
+      jest.spyOn(requestService, 'sendRequest').mockResolvedValue(unsuccessfulResult as any);
 
       component.uncalculation();
       let buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
@@ -361,13 +361,14 @@ describe('FullTimeCalculationComponent', () => {
       buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
       buttonYes.click();
       tick();
+      flush();
 
       expect(toastrService.error).toHaveBeenCalledWith('abc');
     }));
   });
 
   it('copyScore - should copy external score to match score', fakeAsync(() => {
-    spyOn(verificationService, 'verifyCopyScore').and.returnValue(true);
+    jest.spyOn(verificationService, 'verifyCopyScore').mockReturnValue('');
     match.matchDetail.exFTHomeScore = 3;
     match.matchDetail.exFTAwayScore = 4;
     component.match = match;
@@ -383,7 +384,7 @@ describe('FullTimeCalculationComponent', () => {
   }));
 
   it('isFinalScoreConfirmed should call service correctly', () => {
-    spyOn(verificationService, 'isFinalScoreConfirmed').and.returnValue(true);
+    jest.spyOn(verificationService, 'isFinalScoreConfirmed').mockReturnValue(true);
     component.matchDetail = matchDetail;
 
     const result = component.isFinalScoreConfirmed();
@@ -392,7 +393,7 @@ describe('FullTimeCalculationComponent', () => {
   });
 
   it('isScoreInconsistent should call service correctly', () => {
-    spyOn(verificationService, 'isScoreInconsistent').and.returnValue(true);
+    jest.spyOn(verificationService, 'isScoreInconsistent').mockReturnValue(true);
     component.matchDetail = matchDetail;
 
     const result = component.isScoreInconsistent;
