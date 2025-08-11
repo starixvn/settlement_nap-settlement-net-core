@@ -58,9 +58,12 @@ public class CalculateServiceTests
             }
         };
         accessor.HttpContext = context;
+        
+        var dependencies = new CalculateServiceDependencies(
+            scaleOutSettleService, logService, matchService, publishEndpoint, currentSession, accessor, xmlConvertService);
+            
         service = new CalculateServiceImp(
-            mapper, repository, appSettingsOptions, createCriteriaService, scaleOutSettleService,
-            logService, matchService, publishEndpoint, currentSession, accessor, xmlConvertService);
+            mapper, repository, appSettingsOptions, createCriteriaService, dependencies);
     }
 
     [Theory]

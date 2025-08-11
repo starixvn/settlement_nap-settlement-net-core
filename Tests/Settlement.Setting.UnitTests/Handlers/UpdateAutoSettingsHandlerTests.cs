@@ -22,8 +22,8 @@ namespace Settlement.Setting.UnitTests.Handlers
         {
             napSession.UserId.Returns(123);
             accessor.HttpContext.Returns(Substitute.For<HttpContext>());
-            accessor.HttpContext.Connection.Returns(Substitute.For<ConnectionInfo>());
-            accessor.HttpContext.Connection.RemoteIpAddress.Returns(System.Net.IPAddress.Loopback);
+            accessor.HttpContext?.Connection.Returns(Substitute.For<ConnectionInfo>());
+            accessor.HttpContext?.Connection.RemoteIpAddress.Returns(System.Net.IPAddress.Loopback);
             handler = new UpdateAutoSettingsHandler(repository, accessor, logService, napSession);
         }
 
@@ -47,7 +47,6 @@ namespace Settlement.Setting.UnitTests.Handlers
                         WaitingTime = 10,
                         IsTraderRequired = true,
                         MinProvider = 1,
-
                     },
                     new UpdateResultSettingItem
                     {
@@ -66,7 +65,6 @@ namespace Settlement.Setting.UnitTests.Handlers
                         WaitingTime = 5,
                         IsTraderRequired = false,
                         MinProvider = 1,
-
                     },
                     new UpdateResultSettingItem
                     {
@@ -109,7 +107,6 @@ namespace Settlement.Setting.UnitTests.Handlers
                             WaitingTime = 10,
                             IsTraderRequired = true,
                             MinProvider = 1
-
                         },
                         new UpdateResultSettingItem
                         {
@@ -140,7 +137,6 @@ namespace Settlement.Setting.UnitTests.Handlers
 
             await repository.ExecuteAsync(Arg.Any<UpdateLeagueAutoSettleSourceCriteria>());
             await logService.WriteLog(Arg.Any<LogCriteria>());
-
 
             // Act
             var result = await handler.Handle(command, CancellationToken.None);

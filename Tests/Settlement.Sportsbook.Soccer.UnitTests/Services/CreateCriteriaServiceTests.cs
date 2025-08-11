@@ -49,8 +49,10 @@ public class CreateCriteriaServiceTests
         var config = new MapperConfiguration(mapperConfig);
         var mapper = new Mapper(config);
 
-        service = new CreateCriteriaServiceImp(resourceService, accessor, soccerBetStatusService,
-            xmlConvertService, mapper, betStatusAllService, matchService, napSession);
+        var dependencies = new CreateCriteriaServiceDependencies(
+            soccerBetStatusService, xmlConvertService, mapper, betStatusAllService, matchService, napSession);
+
+        service = new CreateCriteriaServiceImp(resourceService, accessor, dependencies);
     }
 
     [Fact]

@@ -50,7 +50,11 @@ public class RefundServiceTests
         accessor.HttpContext = context;
 
         var option = Options.Create(appSettings);
-        service = new RefundServiceImp(repository, accessor, option, createCriteriaService, scaleOutSettleService, logService, publishEndpoint, mapper);
+        
+        var dependencies = new RefundServiceDependencies(
+            scaleOutSettleService, logService, publishEndpoint, mapper);
+            
+        service = new RefundServiceImp(repository, accessor, option, createCriteriaService, dependencies);
     }
 
     [Theory]

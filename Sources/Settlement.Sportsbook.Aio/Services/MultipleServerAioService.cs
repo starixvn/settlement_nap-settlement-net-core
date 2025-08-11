@@ -116,7 +116,7 @@ public class MultipleServerAioServiceImp(
             multipleTicketDetails.Add(ticketDetails);
         }
 
-        return dependencies.MergeDataService.MergeTicketDetails(multipleTicketDetails);
+        return mergeDataService.MergeTicketDetails(multipleTicketDetails);
     }
 
     private async Task<(List<Models.ResultDetail>, TicketCounts)> GetTicketDetailsByServer(GetTicketDetailsCriteria criteria, string server)
@@ -160,7 +160,7 @@ public class MultipleServerAioServiceImp(
 
     public async Task<Result> Settle(SettleRequest request)
     {
-        var criteria = dependencies.CreateQueryService.QuerySettle(request);
+        var criteria = createQueryService.QuerySettle(request);
         var result = await Execute(criteria, request.SelectedResources);
         result.SettledSessionId = criteria.BroadcastSessionId;
 
@@ -229,17 +229,17 @@ public class MultipleServerAioServiceImp(
         var actionToSetFlag = new List<string> { SettleType.Calculate, SettleType.Undo, SettleType.Refund };
         if (actionToSetFlag.Contains(criteria.Action) && selectedResources.Exists(resource => resource.ResourceId == ResourceType.Final))
         {
-            await dependencies.ScaleOutSettleService.UpdateUnderSettlementFlag(criteria.MatchId, criteria.AdminId, criteria.Action);
+            await scaleOutSettleService.UpdateUnderSettlementFlag(criteria.MatchId, criteria.AdminId, criteria.Action);
         }
     }
 
     private async Task WriteLog(SettleCriteria criteria)
     {
-        var insertLogCriteria = dependencies.Mapper.Map<InsertLogCriteria>(criteria);
-        await dependencies.LogService.WriteLog(insertLogCriteria);
+        var insertLogCriteria = mapper.Map<InsertLogCriteria>(criteria);
+        await logService.WriteLog(insertLogCriteria);
 
         var messageLog = $"NAP: Calculate {criteria.Action} for matchId: {criteria.MatchId} Result: {criteria.SelectedResources} <br/> BetStatus ({criteria.BetStatus})";
-        await dependencies.LogService.WriteLog(criteria.MatchId, messageLog);
+        await logService.WriteLog(criteria.MatchId, messageLog);
     }
 
     private async Task<Result> UpdateInfoAndSettle(SettleCriteria criteria, List<ResourceItem> selectedResources)
@@ -292,7 +292,7 @@ public class MultipleServerAioServiceImp(
             && !settleCriteria.IsChildMatch
             && settleCriteria.Action != ActionType.UnCalculate)
         {
-            return await dependencies.ResultAmendmentService.HandleResultAmendment(settleCriteria, selectedResources);
+            return await resultAmendmentService.HandleResultAmendment(settleCriteria, selectedResources);
         }
 
         return false;
@@ -363,22 +363,22 @@ public class MultipleServerAioServiceImp(
 
     public async Task<Result> SettleChildMatch(SettleChildMatchRequest request)
     {
-        var criteria = dependencies.CreateQueryService.QuerySettleChildMatch(request);
+        var criteria = createQueryService.QuerySettleChildMatch(request);
         if (request.ChildMatches?.Count > 0)
         {
             foreach (var match in request.ChildMatches)
             {
                 criteria.MatchId = match.MatchId;
-                criteria.SelectedResources = dependencies.CreateQueryService.CreateResourceChildMatch(match);
+                criteria.SelectedResources = createQueryService.CreateResourceChildMatch(match);
                 var result = await Execute(criteria, request.SelectedResources);
-                dependencies.CreateQueryService.WriteLogChildMatch(criteria, result);
+                createQueryService.WriteLogChildMatch(criteria, result);
             }
         }
         else
         {
             var listChildMatch = request.ChildMatchIds.Split(',').ToList();
 
-            criteria.SelectedResources = dependencies.CreateQueryService.CreateResources(request.SelectedResources);
+            criteria.SelectedResources = createQueryService.CreateResources(request.SelectedResources);
 
             foreach (var match in listChildMatch)
             {

@@ -84,11 +84,9 @@ namespace Settlement.Setting.UnitTests.Handlers
             var payoutSetting = new AutoSettleSetting();
             var refundSetting = new AutoSettleSetting();
             var autoSettingBit = 0;
-            var providers = new List<ProviderInfo>();
 
             repository.GetAsync<AutoSettleSetting>(Arg.Any<AutoSettleLeagueSettingSelCriteria>()).Returns(payoutSetting, refundSetting);
             repository.GetAsync<int?>(Arg.Any<GetSettingCriteria>()).Returns(autoSettingBit);
-            repository.FetchAsync<ProviderInfo>(Arg.Any<GetProviderInfoCriteria>()).Returns(providers);
             refDataService.GetLeagueName(Arg.Any<object>(), Arg.Any<bool>()).Returns("LeagueName");
 
             // Act
@@ -111,17 +109,15 @@ namespace Settlement.Setting.UnitTests.Handlers
                 TypeObject = "League"
             };
             var payoutSetting = new AutoSettleSetting();
-            AutoSettleSetting refundSetting = null;
+            AutoSettleSetting? refundSetting = null;
             var autoSettingBit = 0;
-            var providers = new List<ProviderInfo>();
 
-            repository.GetAsync<AutoSettleSetting>(Arg.Any<AutoSettleLeagueSettingSelCriteria>()).Returns(payoutSetting, refundSetting);
+            repository.GetAsync<AutoSettleSetting>(Arg.Any<AutoSettleLeagueSettingSelCriteria>())!.Returns(payoutSetting, refundSetting);
             repository.GetAsync<int?>(Arg.Any<GetSettingCriteria>()).Returns(autoSettingBit);
-            repository.FetchAsync<ProviderInfo>(Arg.Any<GetProviderInfoCriteria>()).Returns(providers);
             refDataService.GetLeagueName(Arg.Any<object>(), Arg.Any<bool>()).Returns("LeagueName");
 
             // Act & Assert
-            await Assert.ThrowsAsync<System.NullReferenceException>(() => handler.Handle(request, CancellationToken.None));
+            await Assert.ThrowsAsync<NullReferenceException>(() => handler.Handle(request, CancellationToken.None));
         }
     }
 }

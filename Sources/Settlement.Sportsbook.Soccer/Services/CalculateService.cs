@@ -76,7 +76,6 @@ public class CalculateServiceImp(
             await ExecuteHedging(criteria, request.HedgeMatchId);
         }
 
-
         await publishEndpoint.Publish(new MatchCalculated(
             request.MatchId,
             request.ParentId,
@@ -88,7 +87,6 @@ public class CalculateServiceImp(
             request.FinalAwayScore,
             request.ActionName), new CancellationTokenSource(TimeSpan.FromSeconds(2)).Token);
         await PublishJackTimeRequest(ticketCriteria);
-
 
         return validationResult;
     }
@@ -140,6 +138,7 @@ public class CalculateServiceImp(
         await repository.ExecuteAsync(criteria);
         return new Result(criteria.ErrCode, criteria.ErrMsg);
     }
+
     public async Task<Result> UncalculateFt(UncalculateFtRequest request)
     {
         var criteria = createCriteriaService.CreateUnCalculateFtCriteria(request);
@@ -411,31 +410,20 @@ public class CalculateServiceImp(
     }
 }
 
-public class CalculateServiceDependencies
+public class CalculateServiceDependencies(
+    ScaleOutSettleService scaleOutSettleService,
+    LogService logService,
+    IMatchService matchService,
+    IPublishEndpoint publishEndpoint,
+    INapSession napSession,
+    IHttpContextAccessor accessor,
+    XmlConvertService xmlConvertService)
 {
-    public ScaleOutSettleService ScaleOutSettleService { get; }
-    public LogService LogService { get; }
-    public IMatchService MatchService { get; }
-    public IPublishEndpoint PublishEndpoint { get; }
-    public INapSession NapSession { get; }
-    public IHttpContextAccessor Accessor { get; }
-    public XmlConvertService XmlConvertService { get; }
-
-    public CalculateServiceDependencies(
-        ScaleOutSettleService scaleOutSettleService,
-        LogService logService,
-        IMatchService matchService,
-        IPublishEndpoint publishEndpoint,
-        INapSession napSession,
-        IHttpContextAccessor accessor,
-        XmlConvertService xmlConvertService)
-    {
-        ScaleOutSettleService = scaleOutSettleService;
-        LogService = logService;
-        MatchService = matchService;
-        PublishEndpoint = publishEndpoint;
-        NapSession = napSession;
-        Accessor = accessor;
-        XmlConvertService = xmlConvertService;
-    }
+    public ScaleOutSettleService ScaleOutSettleService { get; } = scaleOutSettleService;
+    public LogService LogService { get; } = logService;
+    public IMatchService MatchService { get; } = matchService;
+    public IPublishEndpoint PublishEndpoint { get; } = publishEndpoint;
+    public INapSession NapSession { get; } = napSession;
+    public IHttpContextAccessor Accessor { get; } = accessor;
+    public XmlConvertService XmlConvertService { get; } = xmlConvertService;
 }

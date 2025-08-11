@@ -91,7 +91,7 @@ public class AioServiceImp(
     private async Task<ResultTicket> GetResultTicket(GetMatchRequest request, string apiKey, Models.MatchDetail matchDetail)
     {
         var resultDetailCriteria = (GetResultDetailCriteria)validateApiKeyService.CriteriaName(request, $"{apiKey}-{ApiKeyConstant.ResultDetailKey}");
-        var (resultDetails, ticketCounts) = await dependencies.MultipleServerAioService.FetchResultDetails(resultDetailCriteria, matchDetail.SportType);
+        var (resultDetails, ticketCounts) = await multipleServerAioService.FetchResultDetails(resultDetailCriteria, matchDetail.SportType);
 
         var mapperService = mapperFactory.GetMapperService($"{apiKey}-{ApiKeyConstant.ResultDetailKey}");
         if (mapperService != null)
@@ -265,7 +265,7 @@ public class AioServiceImp(
 
     public async Task<List<ResultDetail>> GetRecalResult(GetRecalResultRequest request)
     {
-        var criteria = dependencies.CreateQueryService.QueryRecalResult(request);
+        var criteria = createQueryService.QueryRecalResult(request);
         var resultDetails = await repository.FetchAsync<ResultDetail>(criteria);
 
         return resultDetails.ToList();
@@ -391,7 +391,7 @@ public class AioServiceImp(
                     GroupBetType = resource.GroupBetType
                 }).ToList();
 
-            await dependencies.PublishEndpoint.Publish(request.Type == ResultSettingType.ConfirmRefundSDT
+            await publishEndpoint.Publish(request.Type == ResultSettingType.ConfirmRefundSDT
                 ? new ResultsRefundConfirmedSdt(request.MatchId, request.SportType, request.ChildMatchType, selectedResources)
                 : new ResultsRefundConfirmed(request.MatchId, request.SportType, request.ChildMatchType, selectedResources),
                 new CancellationTokenSource(TimeSpan.FromSeconds(3)).Token);
