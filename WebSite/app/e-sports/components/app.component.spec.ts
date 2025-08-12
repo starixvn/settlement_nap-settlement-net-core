@@ -31,8 +31,6 @@ describe("Component: App", () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [
-      ],
       imports: [
         BrowserModule,
         FormsModule,
@@ -70,9 +68,6 @@ describe("Component: App", () => {
   });
 
   it('should render calculation-actions tag', () => {
-      fixture = TestBed.createComponent(AppComponent);
-      component = fixture.componentInstance;
-      elementRef = fixture.debugElement.injector.get(ElementRef);
       elementRef.nativeElement.setAttribute("page-type", PageType.ReCalculate);
       component.ngOnInit();
       fixture.detectChanges();
@@ -84,9 +79,6 @@ describe("Component: App", () => {
   });
 
   it('should render refund-actions tag', () => {
-      fixture = TestBed.createComponent(AppComponent);
-      component = fixture.componentInstance;
-      elementRef = fixture.debugElement.injector.get(ElementRef);
       elementRef.nativeElement.setAttribute("page-type", PageType.Refund);
       component.ngOnInit();
       fixture.detectChanges();
@@ -98,9 +90,6 @@ describe("Component: App", () => {
   });
 
   it('should render early-settlement tag', () => {
-      fixture = TestBed.createComponent(AppComponent);
-      component = fixture.componentInstance;
-      elementRef = fixture.debugElement.injector.get(ElementRef);
       elementRef.nativeElement.setAttribute("page-type", PageType.EarlySettlement);
       component.ngOnInit();
       fixture.detectChanges();
@@ -112,9 +101,6 @@ describe("Component: App", () => {
   });
 
   it('should throw exception: Not implemented yet', () => {
-      fixture = TestBed.createComponent(AppComponent);
-      component = fixture.componentInstance;
-      elementRef = fixture.debugElement.injector.get(ElementRef);
       elementRef.nativeElement.setAttribute("page-type", "");
       expect(() => {
           component.ngOnInit();

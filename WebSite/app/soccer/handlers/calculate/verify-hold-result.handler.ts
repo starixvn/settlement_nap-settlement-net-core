@@ -20,7 +20,7 @@ export class VerifyHoldResultHandler extends AbstractHandler {
 
     if(existResultHeld) {
       storage.error(Language.ResultHeld.replace('{0}', newestResultDetails.map((resultDetail) => resultDetail.resourceName).join(', ')));
-    } {
+    } else {
       super.handle(storage);
     }
   }

@@ -39,6 +39,7 @@ export interface MatchDetailSoccer extends MatchDetail, MatchDetailBase {
     hasInstantCompleted: boolean,
     isLive: boolean,
     offerLive: boolean,
+    isSettleDetermined: boolean
 }
 
 export interface FantasyMatch {

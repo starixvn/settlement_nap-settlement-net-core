@@ -1,25 +1,25 @@
 import { inject, Injectable } from "@angular/core";
 import { RefundStorage } from "../../../storage/refund.storage";
-import { VerifyMarkedTicketHandler } from "../../../handlers/Refund/common/verify-marked-ticket.handler";
-import { RefundHandler } from "../../../handlers/Refund/common/refund.handler";
+import { VerifyMarkedTicketHandler } from "../../../handlers/refund/common/verify-marked-ticket.handler";
+import { RefundHandler } from "../../../handlers/refund/common/refund.handler";
 
-import { VerifyStatusHandler } from "../../../handlers/Refund/common/verify-status.handler";
+import { VerifyStatusHandler } from "../../../handlers/refund/common/verify-status.handler";
 import { CalculateAction } from "../../../../shared/constants";
-import { ConfirmBoxHandler } from "../../../handlers/Refund/common/confirm-box.handler";
-import { VerifyScoreFTHandler } from "../../../handlers/Refund/full-time/verify-score-ft.handler";
-import { VerifyGoalRecordFTHandler } from "../../../handlers/Refund/full-time/verify-goal-record-ft.handler";
-import { VerifyGoalRecordHTHandler } from "../../../handlers/Refund/all/verify-goal-record-ht.handler";
-import { VerifyScoreHTHandler } from "../../../handlers/Refund/all/verify-score-ht.handler";
+import { ConfirmBoxHandler } from "../../../handlers/refund/common/confirm-box.handler";
+import { VerifyScoreFTHandler } from "../../../handlers/refund/full-time/verify-score-ft.handler";
+import { VerifyGoalRecordFTHandler } from "../../../handlers/refund/full-time/verify-goal-record-ft.handler";
+import { VerifyGoalRecordHTHandler } from "../../../handlers/refund/all/verify-goal-record-ht.handler";
+import { VerifyScoreHTHandler } from "../../../handlers/refund/all/verify-score-ht.handler";
 import { AbstractHandler } from "../../../handlers/abstract.handler.native";
-import { UndoConfirmHandler } from "../../../handlers/Refund/confirm-refund/undo-comfirm.handler.handler";
+import { UndoConfirmHandler } from "../../../handlers/refund/confirm-refund/undo-comfirm.handler.handler";
 import { find } from "lodash";
-import { ChangeConfirmSettingHandler } from "../../../handlers/Refund/common/change-confirm-setting.handler";
-import { DoubleCheckConfirmRefundHandler, } from "../../../handlers/Refund/confirm-refund/double-check-confirm-refund.handler.handler";
-import { VerifyStateConfirmedHandler } from "../../../handlers/Refund/common/verify-state-confirmed.handler";
-import { MarkedRefundAllHandler } from "../../../handlers/Refund/common/marked-refund-all.handler";
-import { SdtVerifyHandler } from "../../../handlers/Refund/common/sdt-verify.handler";
-import { VerifyHTStatusHandler } from "../../../handlers/Refund/full-time/verify-ht-status.handler";
-import { VerifyScoreHandler } from "../../../handlers/Refund/confirm-refund/verify-score.handler";
+import { ChangeConfirmSettingHandler } from "../../../handlers/refund/common/change-confirm-setting.handler";
+import { DoubleCheckConfirmRefundHandler, } from "../../../handlers/refund/confirm-refund/double-check-confirm-refund.handler.handler";
+import { VerifyStateConfirmedHandler } from "../../../handlers/refund/common/verify-state-confirmed.handler";
+import { MarkedRefundAllHandler } from "../../../handlers/refund/common/marked-refund-all.handler";
+import { SdtVerifyHandler } from "../../../handlers/refund/common/sdt-verify.handler";
+import { VerifyHTStatusHandler } from "../../../handlers/refund/full-time/verify-ht-status.handler";
+import { VerifyScoreHandler } from "../../../handlers/refund/confirm-refund/verify-score.handler";
 
 @Injectable({
   providedIn: 'root'
