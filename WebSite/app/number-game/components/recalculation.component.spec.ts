@@ -55,9 +55,7 @@ describe('NumberGame - Matches Component', () => {
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             declarations: [
-                ReCalculationComponent,
-                ModalDialogComponent,
-                ModalContentDialogComponent,
+                ReCalculationComponent
             ],
             providers: [
                 QueryService,
@@ -79,7 +77,9 @@ describe('NumberGame - Matches Component', () => {
                 MaterialModule,
                 NgbModule,
                 ToastNoAnimationModule.forRoot(),
-                ToastrModule.forRoot()
+                ToastrModule.forRoot(),
+                ModalDialogComponent,
+                ModalContentDialogComponent
             ],
         })
             .compileComponents()

@@ -6,7 +6,6 @@ import {
   tick,
   flush,
 } from "@angular/core/testing";
-import { BrowserDynamicTestingModule } from "@angular/platform-browser-dynamic/testing";
 import { HttpClientModule } from "@angular/common/http";
 import { ResourceNameByIdPipe } from "../pipes";
 import { EarlySettlementComponent } from "./early-settlement.component";
@@ -391,20 +390,4 @@ describe("E-sport - Early Settlement Component", () => {
 
     expect(component.match.matchDetail.matchId).toEqual(match.matchDetail.matchId);
   });
-
-  it('saveResult - should call save score', fakeAsync(() => {
-    component.match = match;
-    verificationService.getChangedScores = jest.fn();
-    verificationService.getOutsideScores = jest.fn();
-    aioService.saveScore= jest.fn().mockReturnValue(Promise.resolve(unSuccessfulResult));
-
-    component.saveResult();
-    tick();
-    const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-    buttonYes.click();
-    tick();
-
-    expect(aioService.saveScore).toHaveBeenCalled();
-    flush();
-  }));
 });

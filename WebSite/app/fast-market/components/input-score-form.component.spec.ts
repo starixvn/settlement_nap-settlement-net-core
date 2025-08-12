@@ -1,20 +1,17 @@
 import { HttpClientModule } from '@angular/common/http';
-import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TimeMachineResult } from '../models';
-import { ModalContentDialogComponent, ModalDialogComponent } from '../../shared/components';
+import { ModalContentDialogComponent } from '../../shared/components/modal-dialog/modal-content-dialog.component';
+import { ModalDialogComponent } from '../../shared/components/modal-dialog/modal-dialog.component';
 import { MaterialModule } from '../../shared/material-module';
 import { BlockUIService, HttpRequestService, MessageBoxService } from '../../shared/services';
 import { RequestService } from '../services';
-
 import { InputScoreFormComponent } from './input-score-form.component';
 import { Language } from '../../shared/language.native';
-import { of } from 'rxjs';
-import 'rxjs/add/operator/toPromise';
-import { observeOn } from 'rxjs/operators';
+
 import { ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 
 describe('InputScoreFormComponent', () => {
@@ -31,7 +28,7 @@ describe('InputScoreFormComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [InputScoreFormComponent, ModalDialogComponent, ModalContentDialogComponent],
+      declarations: [InputScoreFormComponent],
       providers: [RequestService,
         MessageBoxService,
         HttpRequestService,
@@ -46,7 +43,9 @@ describe('InputScoreFormComponent', () => {
         NgbModule,
         MaterialModule,
         ToastNoAnimationModule.forRoot(),
-        ToastrModule.forRoot()
+        ToastrModule.forRoot(),
+        ModalDialogComponent,
+        ModalContentDialogComponent,
       ],
     })
       .compileComponents();
@@ -70,7 +69,7 @@ describe('InputScoreFormComponent', () => {
     })
     it('should show alert when have at least one input is empty.', () => {
       component.newInterval.homeScore = '';
-      spyOn(toastrService, 'error');
+      jest.spyOn(toastrService, 'error');
 
       component.add();
 
@@ -84,7 +83,7 @@ describe('InputScoreFormComponent', () => {
       component.newInterval = interval;
       component.positionSelected = '1';
       component.intervals = [interval];
-      spyOn(toastrService, 'error');
+      jest.spyOn(toastrService, 'error');
 
       component.add();
 
@@ -98,7 +97,7 @@ describe('InputScoreFormComponent', () => {
       component.newInterval = interval;
       component.positionSelected = '1';
 
-      spyOn(toastrService, 'error');
+      jest.spyOn(toastrService, 'error');
 
       component.add();
 
@@ -121,7 +120,7 @@ describe('InputScoreFormComponent', () => {
   });
 
   it('pressOKButton - alway show confirm box.', () => {
-    spyOn(messageBoxService, 'confirm');
+    jest.spyOn(messageBoxService, 'confirm');
 
     component.pressOKButton();
 
@@ -131,7 +130,7 @@ describe('InputScoreFormComponent', () => {
   it('pressCancelButton - show confirm when interval has changed.', () => {
     component.originalInterval = [];
     component.intervals = [interval];
-    spyOn(messageBoxService, 'confirm');
+    jest.spyOn(messageBoxService, 'confirm');
 
     component.pressCancelButton();
 

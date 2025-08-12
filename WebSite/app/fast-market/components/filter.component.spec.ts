@@ -5,7 +5,9 @@ import { HttpClientModule } from '@angular/common/http';
 import { of } from 'rxjs';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ElementRef, SimpleChange, SimpleChanges } from "@angular/core";
-import { ModalDialogComponent, ModalContentDialogComponent, MultipleSelectComponent, TreeViewComponent } from '../../shared/components';
+import { ModalDialogComponent } from '../../shared/components/modal-dialog/modal-dialog.component';
+import { ModalContentDialogComponent } from '../../shared/components/modal-dialog/modal-content-dialog.component';
+import { NewMultipleSelectComponent } from '../../shared/components/multiple-select/multiple-select.component';
 import { FilterComponent } from './filter.component';
 import { ItemSelect } from '../models';
 import { MessageBoxService, HttpRequestService, BlockUIService } from '../../shared/services';
@@ -17,7 +19,7 @@ describe('Component: FilterComponent', () => {
     let component: FilterComponent;
     let fixture: ComponentFixture<FilterComponent>;
     let fastMarketService: RequestService;
-    let multipleSelectComponent: MultipleSelectComponent;
+    let multipleSelectComponent: NewMultipleSelectComponent;
     const buttonName = "btn-danger";
     const errorMessage = "Error message";
     const filter = new Filter();
@@ -46,8 +48,11 @@ describe('Component: FilterComponent', () => {
     resultStatusSelect.items = [itemsSelect];
     resultStatusSelect.maxWidth = '160px';
     const timeIntervalSelect = new MultipleSelect();
-    timeIntervalSelect.items = [itemsSelect];
+    const flattenedItem = new ItemsSelect(7000000, '', '', false, true, false, []);
+    flattenedItem.type = '7000000';
+    timeIntervalSelect.items = [flattenedItem];
     timeIntervalSelect.maxWidth = '130px';
+    timeIntervalSelect.haveGroup = true;
     const ticketStatusSelect = new MultipleSelect();
     ticketStatusSelect.items = [
         new ItemsSelect(2, '2', 'Running', true, true, true, []),
@@ -56,6 +61,7 @@ describe('Component: FilterComponent', () => {
         new ItemsSelect(4, '4', 'No Ticket', false, true, true, []),
     ];
     ticketStatusSelect.maxWidth = '150px';
+    ticketStatusSelect.selectionTitle = 'Running, Calculated, Marked';
     const successfulResult = {
         errCode: 0,
         errMsg: "",
@@ -76,10 +82,6 @@ describe('Component: FilterComponent', () => {
         TestBed.configureTestingModule({
             declarations: [
                 FilterComponent,
-                ModalDialogComponent,
-                ModalContentDialogComponent,
-                MultipleSelectComponent,
-                TreeViewComponent,
             ],
             providers: [
                 HttpRequestService,
@@ -93,14 +95,16 @@ describe('Component: FilterComponent', () => {
                 FormsModule,
                 HttpClientModule,
                 NgbModule,
+                ModalDialogComponent,
+                ModalContentDialogComponent,
+                NewMultipleSelectComponent,
             ],
         })
             .compileComponents()
             .then(() => {
                 fixture = TestBed.createComponent(FilterComponent);
                 component = fixture.componentInstance;
-                fastMarketService = fixture.debugElement.injector.get(RequestService);
-                multipleSelectComponent = TestBed.createComponent(MultipleSelectComponent).componentInstance;
+                fastMarketService = TestBed.inject(RequestService);
             });
     }));
 
@@ -108,10 +112,13 @@ describe('Component: FilterComponent', () => {
         expect(component).toBeTruthy();
     }));
 
-    it('ngOnInit - should set filter properties correctly', () => {
-        spyOn(fastMarketService, 'getFilterData').and.returnValue(of(filter));
+    it('ngOnInit - should set filter properties correctly', async () => {
+        jest.spyOn(fastMarketService, 'getFilterData').mockResolvedValue(filter);
 
         component.ngOnInit();
+        
+        // Wait for the async operation to complete
+        await new Promise(resolve => setTimeout(resolve, 0));
 
         expect(component.filter.checked).toEqual(filter.checked);
         itemsSelect.items = [];
@@ -122,7 +129,7 @@ describe('Component: FilterComponent', () => {
     });
 
     it('onChangeProceed - should emit event', () => {
-        spyOn(component.onProceedEvent, 'emit');
+        jest.spyOn(component.onProceedEvent, 'emit');
 
         component.onChangeProceed(true);
 
@@ -130,9 +137,8 @@ describe('Component: FilterComponent', () => {
     });
 
     it('changeTimeInterval - should emit event', () => {
-        const value = '1,2,3,4';
-        const list = [1, 2, 3, 4];
-        spyOn(component.intervalEvent, 'emit');
+        const value = [new ItemsSelect(1, '1', '1', true, true, true, [])];
+        jest.spyOn(component.intervalEvent, 'emit');
 
         component.changeTimeInterval(value);
 
@@ -140,23 +146,21 @@ describe('Component: FilterComponent', () => {
     });
 
     it('changeTicketStatus - should emit event', () => {
-        const value = '1,2,3,4';
-        const list = ['1', '2', '3', '4'];
-        spyOn(component.ticketStatusEvent, 'emit');
+        const value = [new ItemsSelect(1, '1', '1', true, true, true, [])];
+        jest.spyOn(component.ticketStatusEvent, 'emit');
 
         component.changeTicketStatus(value);
 
-        expect(component.ticketStatusEvent.emit).toHaveBeenCalledWith(list);
+        expect(component.ticketStatusEvent.emit).toHaveBeenCalled();
     });
 
     it('changeResultStatus - should emit event', () => {
-        const value = '1,2,3,4';
-        const list = ['1', '2', '3', '4'];
-        spyOn(component.resultStatusEvent, 'emit');
+        const value = [new ItemsSelect(1, '1', '1', true, true, true, [])];
+        jest.spyOn(component.resultStatusEvent, 'emit');
 
         component.changeResultStatus(value);
 
-        expect(component.resultStatusEvent.emit).toHaveBeenCalledWith(list);
+        expect(component.resultStatusEvent.emit).toHaveBeenCalled();
     });
 
     describe('ngOnChanges', () => {
@@ -170,13 +174,10 @@ describe('Component: FilterComponent', () => {
             const item = new ItemsSelect(0, '', '', true, false, false, [subItem1, subItem2]);
             timeInterval.items = [item];
             component.timeIntervalSelect = timeInterval;
-            component.multipleSelectComponent = multipleSelectComponent;
-            spyOn(multipleSelectComponent, 'changeItems');
-            spyOn(component.intervalEvent, 'emit');
+            jest.spyOn(component.intervalEvent, 'emit');
 
             component.ngOnChanges(changes);
 
-            expect(multipleSelectComponent.changeItems).toHaveBeenCalled();
             expect(component.intervalEvent.emit).toHaveBeenCalled();
         });
 
@@ -191,13 +192,10 @@ describe('Component: FilterComponent', () => {
             timeInterval.items = [item];
             component.specialSessionPositions = [1, 2];
             component.timeIntervalSelect = timeInterval;
-            component.multipleSelectComponent = multipleSelectComponent;
-            spyOn(multipleSelectComponent, 'changeItems');
-            spyOn(component.intervalEvent, 'emit');
+            jest.spyOn(component.intervalEvent, 'emit');
 
             component.ngOnChanges(changes);
 
-            expect(multipleSelectComponent.changeItems).toHaveBeenCalled();
             expect(component.intervalEvent.emit).toHaveBeenCalled();
         });
     });

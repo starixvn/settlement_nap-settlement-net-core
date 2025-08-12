@@ -348,70 +348,67 @@ describe('VerificationService', () => {
             finalAwayScore: 5,
             htStatus: 'Running',
             halfTimeHomeScore: 2,
-            halfTimeAwayScore: 3
+            halfTimeAwayScore: 3,
+            betStatus: 'Running'
         } as MatchDetail;
         match.matchDetail = lastestMatchDetail;
 
         const matchDetail = {
             finalHomeScore: 4,
-            finalAwayScore: 3
+            finalAwayScore: 3,
+            halfTimeHomeScore: 1,
+            halfTimeAwayScore: 2
         } as MatchDetail;
 
-        it('should return false when no need to check for recalc tickets on calculating FT', () => {
-            spyOn(requestService, 'getLastestResult').and.returnValue(of(match));
+        it('should return false when no need to check for recalc tickets on calculating FT', async () => {
+            jest.spyOn(requestService, 'getLastestResult').mockReturnValue(of(match));
 
-            service.verifyChangedSettledTickets(matchDetail, "CAL-FT").subscribe((result) => {
-                expect(result).toBe(false);
-            });
+            const result = await service.verifyChangedSettledTickets(matchDetail, "CAL-FT");
+            expect(result).toBe(false);
         });
 
-        it('should return true when need to check for recalc tickets on calculating FT', () => {
+        it('should return true when need to check for recalc tickets on calculating FT', async () => {
             lastestMatchDetail.ftStatus = 'Calculated';
             match.matchDetail = lastestMatchDetail;
-            spyOn(requestService, 'getLastestResult').and.returnValue(of(match));
+            jest.spyOn(requestService, 'getLastestResult').mockReturnValue(of(match));
 
-            service.verifyChangedSettledTickets(matchDetail, "CAL-FT").subscribe((result) => {
-                expect(result).toBe(true);
-            });
+            const result = await service.verifyChangedSettledTickets(matchDetail, "CAL-FT");
+            expect(result).toBe(true);
         });
 
-        it('should return true when need to check for recalc FT tickets on calculating all', () => {
+        it('should return true when need to check for recalc FT tickets on calculating all', async () => {
             lastestMatchDetail.ftStatus = 'Calculated';
             match.matchDetail = lastestMatchDetail;
-            spyOn(requestService, 'getLastestResult').and.returnValue(of(match));
+            jest.spyOn(requestService, 'getLastestResult').mockReturnValue(of(match));
 
-            service.verifyChangedSettledTickets(matchDetail, "CAL").subscribe((result) => {
-                expect(result).toBe(true);
-            });
+            const result = await service.verifyChangedSettledTickets(matchDetail, "CAL");
+            expect(result).toBe(true);
         });
 
-        it('should return false when no need to check for recalc tickets on calculating HT', () => {
-            spyOn(requestService, 'getLastestResult').and.returnValue(of(match));
+        it('should return false when no need to check for recalc tickets on calculating HT', async () => {
+            jest.spyOn(requestService, 'getLastestResult').mockReturnValue(of(match));
 
-            service.verifyChangedSettledTickets(matchDetail, "CAL-HT").subscribe((result) => {
-                expect(result).toBe(false);
-            });
+            const result = await service.verifyChangedSettledTickets(matchDetail, "CAL-HT");
+            expect(result).toBe(false);
         });
 
-        it('should return true when need to check for recalc tickets on calculating HT', () => {
+        it('should return true when need to check for recalc tickets on calculating HT', async () => {
             lastestMatchDetail.htStatus = 'Calculated';
             match.matchDetail = lastestMatchDetail;
-            spyOn(requestService, 'getLastestResult').and.returnValue(of(match));
+            jest.spyOn(requestService, 'getLastestResult').mockReturnValue(of(match));
 
-            service.verifyChangedSettledTickets(matchDetail, "CAL-HT").subscribe((result) => {
-                expect(result).toBe(true);
-            });
+            const result = await service.verifyChangedSettledTickets(matchDetail, "CAL-HT");
+            expect(result).toBe(true);
         });
 
-        it('should return true when need to check for recalc HT tickets on calculating all', () => {
+        it('should return true when need to check for recalc HT tickets on calculating all', async () => {
             lastestMatchDetail.ftStatus = 'Running';
             lastestMatchDetail.htStatus = 'Calculated';
             match.matchDetail = lastestMatchDetail;
-            spyOn(requestService, 'getLastestResult').and.returnValue(of(match));
+            jest.spyOn(requestService, 'getLastestResult').mockReturnValue(of(match));
 
-            service.verifyChangedSettledTickets(matchDetail, "CAL").subscribe((result) => {
-                expect(result).toBe(true);
-            });
+            const result = await service.verifyChangedSettledTickets(matchDetail, "CAL");
+            expect(result).toBe(true);
         });
     });
 });

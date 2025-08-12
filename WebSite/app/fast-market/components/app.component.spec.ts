@@ -1,21 +1,21 @@
 import { TestBed, waitForAsync, ComponentFixture} from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
-import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { HttpClientModule } from '@angular/common/http';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ElementRef } from "@angular/core";
-import { ModalDialogComponent, ModalContentDialogComponent, MultipleSelectComponent, TreeViewComponent } from '../../shared/components';
+import { ModalDialogComponent } from '../../shared/components/modal-dialog/modal-dialog.component';
+import { ModalContentDialogComponent } from '../../shared/components/modal-dialog/modal-content-dialog.component';
+import { NewMultipleSelectComponent } from '../../shared/components/multiple-select/multiple-select.component';
 import { AppComponent } from './app.component';
 import { MessageBoxService, HttpRequestService, BlockUIService, ClosePopupService } from '../../shared/services';
 import { MatchDetailComponent } from './match-detail.component';
 import { BetTypesComponent } from './bet-types.component';
 import { FilterComponent } from './filter.component';
 import { TicketStatusPipe, ResultStatusPipe, IntervalPipe, SpecialTimePipe, SpecialTimeEventCounterPipe } from '../pipes';
-import { OnlyIntegerDirective, FocusDirective } from '../../shared/directives';
 import { BrowserModule } from '@angular/platform-browser';
 import { MaterialModule } from '../../shared/material-module';
 import { SpecialSessionComponent } from './special-session.component';
-import { ToastContainerDirective, ToastNoAnimationModule, ToastrModule } from 'ngx-toastr';
+import { ToastNoAnimationModule } from 'ngx-toastr';
 
 describe('Component: AppComponent', () => {
     let component: AppComponent;
@@ -35,10 +35,6 @@ describe('Component: AppComponent', () => {
                 ResultStatusPipe,
                 TicketStatusPipe,
                 IntervalPipe,
-                MultipleSelectComponent,
-                TreeViewComponent,
-                ModalDialogComponent,
-                ModalContentDialogComponent,
                 SpecialSessionComponent,
                 SpecialTimePipe,
                 SpecialTimeEventCounterPipe,
@@ -58,6 +54,9 @@ describe('Component: AppComponent', () => {
                 NgbModule,
                 MaterialModule,
                 ToastNoAnimationModule.forRoot(),
+                ModalDialogComponent,
+                ModalContentDialogComponent,
+                NewMultipleSelectComponent,
             ],
         })
             .compileComponents()

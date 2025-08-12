@@ -64,14 +64,14 @@ describe('Component: RefundActionsComponent', () => {
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             declarations: [
-                ModalDialogComponent,
-                ModalContentDialogComponent,
             ],
             imports: [
                 HttpClientModule,
                 ToastNoAnimationModule.forRoot(),
                 ToastrModule.forRoot(),
-                RefundActionsComponent
+                RefundActionsComponent,
+                ModalDialogComponent,
+                ModalContentDialogComponent,
             ],
         }) .compileComponents()
             .then(() => {

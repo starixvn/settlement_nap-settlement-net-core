@@ -1,4 +1,5 @@
 import { ComponentFixture, fakeAsync, TestBed, tick, flush } from '@angular/core/testing';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { BlockUIService, ClosePopupService, HttpRequestService, MessageBoxService} from '../../../shared/services';
 import { FullTimeRefundComponent } from './fulltime-refund.component';
 import { HttpClientModule } from '@angular/common/http';
@@ -84,7 +85,8 @@ describe('RefundActionsComponent', () => {
         ToastNoAnimationModule.forRoot(),
         ToastrModule.forRoot(),
         ModalDialogComponent,
-        ModalContentDialogComponent
+        ModalContentDialogComponent,
+        NoopAnimationsModule
       ],
       providers: [
         RequestService,

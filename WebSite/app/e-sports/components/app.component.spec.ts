@@ -3,6 +3,7 @@ import { ElementRef } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { HttpClientModule } from "@angular/common/http";
+import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { AppComponent } from "./app.component";
 import { CalculationMatchDetailComponent } from "./calculation-match-detail.component";
 import { CalculationActionsComponent } from "./calculation-actions.component";
@@ -19,6 +20,9 @@ import { ExternalLinkPipe } from "../../score-source-setting/pipes";
 import { PipesModule } from '../../shared/pipes/pipes.module.native';
 import { ToastNoAnimationModule, ToastrModule } from "ngx-toastr";
 import { PageType } from '../../shared/constants';
+import { CalculationActionsComponent as CalculationESport } from "./calculation-actions.component";
+import { RefundActionsComponent as RefundESport } from "./refund-actions.component";
+import { EarlySettlementComponent as EarlyESport } from "./early-settlement.component";
 
 describe("Component: App", () => {
   let component: AppComponent;
@@ -28,13 +32,6 @@ describe("Component: App", () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [
-        MatchDetailComponent,
-        EarlySettlementComponent,
-        NewMultipleSelectComponent,
-        ResourceNameByIdPipe,
-        ResettleCheckerComponent,
-        TicketCountComponent,
-        ExternalLinkPipe,
       ],
       imports: [
         BrowserModule,
@@ -43,13 +40,21 @@ describe("Component: App", () => {
         HttpClientModule,
         MaterialModule,
         PipesModule,
+        NoopAnimationsModule,
         ToastNoAnimationModule.forRoot(),
         ToastrModule.forRoot(),
         AppComponent,
         CalculationMatchDetailComponent,
         NotReadyMatchComponent,
         CalculationActionsComponent,
-        RefundActionsComponent
+        RefundActionsComponent,
+        MatchDetailComponent,
+        EarlySettlementComponent,
+        NewMultipleSelectComponent,
+        ResettleCheckerComponent,
+        TicketCountComponent,
+        ResourceNameByIdPipe,
+        ExternalLinkPipe,
       ],
       })
       .compileComponents()
@@ -65,29 +70,54 @@ describe("Component: App", () => {
   });
 
   it('should render calculation-actions tag', () => {
-      elementRef.nativeElement.setAttribute("page-type", PageType.ReCalculate)
+      fixture = TestBed.createComponent(AppComponent);
+      component = fixture.componentInstance;
+      elementRef = fixture.debugElement.injector.get(ElementRef);
+      elementRef.nativeElement.setAttribute("page-type", PageType.ReCalculate);
+      component.ngOnInit();
       fixture.detectChanges();
-      const compiled = fixture.debugElement.nativeElement;
-      expect(compiled.querySelectorAll("calculation-actions").length).toBeGreaterThanOrEqual(1);
+      // Test that the component was created and ngOnInit was called
+      expect(component).toBeTruthy();
+      // Test that the correct component factory is returned
+      const factory = (component as any).getComponentFactory();
+      expect(factory).toBe(CalculationESport);
   });
 
   it('should render refund-actions tag', () => {
-      elementRef.nativeElement.setAttribute("page-type", PageType.Refund)
+      fixture = TestBed.createComponent(AppComponent);
+      component = fixture.componentInstance;
+      elementRef = fixture.debugElement.injector.get(ElementRef);
+      elementRef.nativeElement.setAttribute("page-type", PageType.Refund);
+      component.ngOnInit();
       fixture.detectChanges();
-      const compiled = fixture.debugElement.nativeElement;
-      expect(compiled.querySelectorAll("refund-actions").length).toBeGreaterThanOrEqual(1);
+      // Test that the component was created and ngOnInit was called
+      expect(component).toBeTruthy();
+      // Test that the correct component factory is returned
+      const factory = (component as any).getComponentFactory();
+      expect(factory).toBe(RefundESport);
   });
 
   it('should render early-settlement tag', () => {
-      elementRef.nativeElement.setAttribute("page-type", PageType.EarlySettlement)
+      fixture = TestBed.createComponent(AppComponent);
+      component = fixture.componentInstance;
+      elementRef = fixture.debugElement.injector.get(ElementRef);
+      elementRef.nativeElement.setAttribute("page-type", PageType.EarlySettlement);
+      component.ngOnInit();
       fixture.detectChanges();
-      const compiled = fixture.debugElement.nativeElement;
-      expect(compiled.querySelectorAll("early-settlement").length).toBeGreaterThanOrEqual(1);
+      // Test that the component was created and ngOnInit was called
+      expect(component).toBeTruthy();
+      // Test that the correct component factory is returned
+      const factory = (component as any).getComponentFactory();
+      expect(factory).toBe(EarlyESport);
   });
 
   it('should throw exception: Not implemented yet', () => {
-      elementRef.nativeElement.setAttribute("page-type", "")
+      fixture = TestBed.createComponent(AppComponent);
+      component = fixture.componentInstance;
+      elementRef = fixture.debugElement.injector.get(ElementRef);
+      elementRef.nativeElement.setAttribute("page-type", "");
       expect(() => {
+          component.ngOnInit();
           fixture.detectChanges();
       }).toThrow("Not implemented yet");
   });

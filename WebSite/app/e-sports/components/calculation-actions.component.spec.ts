@@ -5,15 +5,10 @@ import {
   fakeAsync,
   tick,
 } from "@angular/core/testing";
-import { of } from "rxjs";
-import { NgbModal, NgbModule } from "@ng-bootstrap/ng-bootstrap";
-import { BrowserDynamicTestingModule } from "@angular/platform-browser-dynamic/testing";
-import { FormsModule } from "@angular/forms";
 import { HttpClientModule } from "@angular/common/http";
+import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { ResourceNameByIdPipe } from "../pipes";
 import {
-  HttpRequestService,
-  BlockUIService,
   MessageBoxService,
   AioService,
 } from "../../shared/services";
@@ -21,15 +16,12 @@ import {
   Match,
 } from "../models";
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
-import { VerificationService, ESportsService } from "../services";
+import { VerificationService } from "../services";
 import { ExternalLinkPipe } from "../../score-source-setting/pipes";
 import { ExternalResultDetail, HedgeMatchDetail, MatchDetail, Permission, ResultDetail } from "../../shared/models/sportsbook-sop";
 import { ExternalSourceNamePipe } from '../../shared/pipes/external-source-name.pipe';
-import { ResultByTeamNamePipe } from '../../shared/pipes/result-by-team-name.pipe';
-import { MaterialModule } from "../../shared/material-module";
 import { ResultSettingModel } from "../../shared/models";
-import { ToastContainerDirective, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
-import { VerificationBaseService } from '../../core/services/verification-base.service';
+import { ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 import { Resources } from '../constants';
 import { Language } from '../../shared/language.native';
 import { CalculationActionsComponent } from "./calculation-actions.component";
@@ -93,12 +85,10 @@ describe("Esport - Calculation Actions Component", () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [
-        ModalDialogComponent,
-        ModalContentDialogComponent,
-    
       ],
       imports: [
         HttpClientModule,
+        NoopAnimationsModule,
         ToastNoAnimationModule.forRoot(),
         ToastrModule.forRoot(),
         ResettleCheckerComponent,
@@ -109,7 +99,10 @@ describe("Esport - Calculation Actions Component", () => {
         CalculationMatchDetailComponent,
         CalculationActionsComponent,
         TicketCountComponent,
-        ResourceNameByIdPipe,],
+        ResourceNameByIdPipe,
+        ModalDialogComponent,
+        ModalContentDialogComponent,
+      ],
     })
       
       .compileComponents()

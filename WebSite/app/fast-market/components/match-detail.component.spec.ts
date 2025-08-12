@@ -1,17 +1,19 @@
-import { TestBed, waitForAsync, ComponentFixture, inject, fakeAsync, tick } from '@angular/core/testing';
+import { TestBed, waitForAsync, ComponentFixture, fakeAsync, tick, flush } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
-import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { HttpClientModule } from '@angular/common/http';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { of } from 'rxjs';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ElementRef } from "@angular/core";
-import { ModalDialogComponent, ModalContentDialogComponent } from '../../shared/components';
+import { ModalDialogComponent } from '../../shared/components/modal-dialog/modal-dialog.component';
+import { ModalContentDialogComponent } from '../../shared/components/modal-dialog/modal-content-dialog.component';
 import { MatchDetailComponent } from './match-detail.component';
 import { MatchDetail, AutoSettingIcon } from '../models';
 import { MessageBoxService, HttpRequestService, BlockUIService } from '../../shared/services';
 import { RequestService } from '../services/request.service';
 import { UrlHelper } from '../../helper';
 import { ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
+import { MaterialModule } from '../../shared/material-module';
 
 describe('Component: MatchDetailComponent', () => {
     let component: MatchDetailComponent;
@@ -48,31 +50,32 @@ describe('Component: MatchDetailComponent', () => {
         TestBed.configureTestingModule({
             declarations: [
                 MatchDetailComponent,
-                ModalDialogComponent,
-                ModalContentDialogComponent,
             ],
             providers: [
                 HttpRequestService,
                 BlockUIService,
                 RequestService,
                 NgbModal,
-                ToastrService,
                 { provide: MessageBoxService, useClass: MessageBoxService },
-                { provide: ElementRef, useValue: new MockElementRef() },
+                { provide: ElementRef , useValue: new MockElementRef()} ,
             ],
             imports: [
                 FormsModule,
                 HttpClientModule,
                 NgbModule,
+                MaterialModule,
+                NoopAnimationsModule,
                 ToastNoAnimationModule.forRoot(),
-                ToastrModule.forRoot()
+                ToastrModule.forRoot(),
+                ModalDialogComponent,
+                ModalContentDialogComponent,
             ],
         })
             .compileComponents()
             .then(() => {
                 fixture = TestBed.createComponent(MatchDetailComponent);
                 component = fixture.componentInstance;
-                fastMarketService = fixture.debugElement.injector.get(RequestService);
+                fastMarketService = TestBed.inject(RequestService);
                 messageBoxService = fixture.debugElement.injector.get(MessageBoxService);
                 toastrService = fixture.debugElement.injector.get(ToastrService);
             });
@@ -83,8 +86,8 @@ describe('Component: MatchDetailComponent', () => {
     }));
 
     it('ngOnInit - should get match detail', fakeAsync(() => {
-        spyOn(UrlHelper, 'getUrlParameter').and.returnValue('700000');
-        spyOn(fastMarketService, 'getMatchDetail').and.returnValue(of(matchDetail));
+        jest.spyOn(UrlHelper, 'getUrlParameter').mockReturnValue('700000');
+        jest.spyOn(fastMarketService, 'getMatchDetail').mockReturnValue(of(matchDetail));
 
         component.ngOnInit();
         matchDetail.autoSettingIcon.match = '';
@@ -106,12 +109,15 @@ describe('Component: MatchDetailComponent', () => {
         it('should successfully update setting', fakeAsync(() => {
             matchDetail.autoSettingIcon.disabled = false;
             component.matchDetail = matchDetail;
-            spyOn(fastMarketService, 'updateMatchAutoSettle').and.returnValue(of(successfulResult));
-            spyOn(fastMarketService, 'getMatchDetail').and.returnValue(of(matchDetail));
+            jest.spyOn(fastMarketService, 'updateMatchAutoSettle').mockReturnValue(of(successfulResult));
+            jest.spyOn(fastMarketService, 'getMatchDetail').mockReturnValue(of(matchDetail));
+            let confirmCallback: Function;
+            jest.spyOn(messageBoxService, 'confirm').mockImplementation((message, callback) => {
+                confirmCallback = callback;
+            });
 
             component.confirmUpdateMatchAutoSettle();
-            const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-            buttonYes.click();
+            confirmCallback();
             tick();
 
             expect(component.matchDetail).toEqual(matchDetail);
@@ -121,13 +127,17 @@ describe('Component: MatchDetailComponent', () => {
             matchDetail.autoSettingIcon.disabled = false;
 
             component.matchDetail = matchDetail;
-            spyOn(fastMarketService, 'updateMatchAutoSettle').and.returnValue(of(unSuccessfulResult));
-            spyOn(toastrService, 'error');
+            jest.spyOn(fastMarketService, 'updateMatchAutoSettle').mockReturnValue(of(unSuccessfulResult));
+            jest.spyOn(toastrService, 'error');
+            let confirmCallback: Function;
+            jest.spyOn(messageBoxService, 'confirm').mockImplementation((message, callback) => {
+                confirmCallback = callback;
+            });
 
             component.confirmUpdateMatchAutoSettle();
-            const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-            buttonYes.click();
+            confirmCallback();
             tick();
+            flush();
 
             expect(toastrService.error).toHaveBeenCalled();
         }));
@@ -146,12 +156,15 @@ describe('Component: MatchDetailComponent', () => {
         it('should successfully update setting', fakeAsync(() => {
             matchDetail.autoSettingIcon.disabled = false;
             component.matchDetail = matchDetail;
-            spyOn(fastMarketService, 'updateLeagueAutoSettle').and.returnValue(of(successfulResult));
-            spyOn(fastMarketService, 'getMatchDetail').and.returnValue(of(matchDetail));
+            jest.spyOn(fastMarketService, 'updateLeagueAutoSettle').mockReturnValue(of(successfulResult));
+            jest.spyOn(fastMarketService, 'getMatchDetail').mockReturnValue(of(matchDetail));
+            let confirmCallback: Function;
+            jest.spyOn(messageBoxService, 'confirm').mockImplementation((message, callback) => {
+                confirmCallback = callback;
+            });
 
             component.confirmUpdateLeagueAutoSettle();
-            const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-            buttonYes.click();
+            confirmCallback();
             tick();
 
             expect(component.matchDetail).toEqual(matchDetail);
@@ -160,12 +173,17 @@ describe('Component: MatchDetailComponent', () => {
         it('should successfully update league setting only', fakeAsync(() => {
             matchDetail.autoSettingIcon.disabled = false;
             component.matchDetail = matchDetail;
-            spyOn(fastMarketService, 'updateLeagueAutoSettle').and.returnValue(of(successfulResult));
-            spyOn(fastMarketService, 'getMatchDetail').and.returnValue(of(matchDetail));
+            jest.spyOn(fastMarketService, 'updateLeagueAutoSettle').mockReturnValue(of(successfulResult));
+            jest.spyOn(fastMarketService, 'getMatchDetail').mockReturnValue(of(matchDetail));
+            let confirmCallback: Function;
+            let noCallback: Function;
+            jest.spyOn(messageBoxService, 'confirm').mockImplementation((message, callback, noBtnCallback) => {
+                confirmCallback = callback;
+                noCallback = noBtnCallback;
+            });
 
             component.confirmUpdateLeagueAutoSettle();
-            const buttonNo = document.getElementsByClassName('btn-default')[0] as HTMLElement;
-            buttonNo.click();
+            noCallback();
             tick();
 
             expect(component.matchDetail).toEqual(matchDetail);
@@ -175,13 +193,17 @@ describe('Component: MatchDetailComponent', () => {
             matchDetail.autoSettingIcon.disabled = false;
 
             component.matchDetail = matchDetail;
-            spyOn(fastMarketService, 'updateLeagueAutoSettle').and.returnValue(of(unSuccessfulResult));
-            spyOn(toastrService, 'error');
+            jest.spyOn(fastMarketService, 'updateLeagueAutoSettle').mockReturnValue(of(unSuccessfulResult));
+            jest.spyOn(toastrService, 'error');
+            let confirmCallback: Function;
+            jest.spyOn(messageBoxService, 'confirm').mockImplementation((message, callback) => {
+                confirmCallback = callback;
+            });
 
             component.confirmUpdateLeagueAutoSettle();
-            const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-            buttonYes.click();
+            confirmCallback();
             tick();
+            flush();
 
             expect(toastrService.error).toHaveBeenCalled();
         }));

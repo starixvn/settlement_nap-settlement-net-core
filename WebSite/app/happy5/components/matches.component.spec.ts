@@ -21,9 +21,7 @@ describe('Happy 5 - Matches Component', () => {
             declarations: [
                 MatchesComponent,
                 ReCalculationComponent,
-                RefundComponent,
-                ModalDialogComponent,
-                ModalContentDialogComponent
+                RefundComponent
             ],
             providers: [
                 NgbModal,
@@ -36,6 +34,8 @@ describe('Happy 5 - Matches Component', () => {
                 HttpClientModule,
                 NgbModule,
                 MaterialModule,
+                ModalDialogComponent,
+                ModalContentDialogComponent
             ],
         })
             .compileComponents()

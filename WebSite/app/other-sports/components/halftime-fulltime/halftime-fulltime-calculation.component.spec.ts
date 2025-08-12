@@ -1,4 +1,4 @@
-import { waitForAsync, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, fakeAsync, TestBed, tick, flush } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ResourceHeaderPipe, ScorePipe } from '../../pipes';
 import { ModalContentDialogComponent } from '../../../shared/components/modal-dialog/modal-content-dialog.component';
@@ -135,6 +135,7 @@ describe('HalfTimeFullTimeCalculationComponent', () => {
 
     component.getMatch(1);
     tick();
+    flush();
 
     expect(requestService.getMatch).toHaveBeenCalledWith(query);
     expect(halfTimeFullTimeService.processScore).toHaveBeenCalled();

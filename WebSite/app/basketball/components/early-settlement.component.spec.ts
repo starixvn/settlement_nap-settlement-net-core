@@ -74,8 +74,6 @@ describe('Component: EarlySettlementComponent', () => {
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             declarations: [
-                ModalDialogComponent,
-                ModalContentDialogComponent
             ],
             imports: [
                 HttpClientModule,
@@ -88,6 +86,8 @@ describe('Component: EarlySettlementComponent', () => {
                 ExternalLinkPipe,
                 ResultByTeamNamePipe,
                 ResettleCheckerComponent,
+                ModalDialogComponent,
+                ModalContentDialogComponent,
             ],
         })
             .compileComponents()

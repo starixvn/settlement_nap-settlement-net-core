@@ -1,5 +1,6 @@
 import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, fakeAsync, TestBed, tick, flush } from '@angular/core/testing';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FullTimeVerificationService } from './fulltime-verification.service';
 import { ModalContentDialogComponent } from '../../../shared/components/modal-dialog/modal-content-dialog.component';
@@ -96,7 +97,8 @@ describe('FullTimeCalculationComponent', () => {
           ModalContentDialogComponent,
           TicketCountComponent,
           ResettleCheckerComponent,
-          NotReadyMatchComponent
+          NotReadyMatchComponent,
+          NoopAnimationsModule
         ],
       providers: [
         RequestService,

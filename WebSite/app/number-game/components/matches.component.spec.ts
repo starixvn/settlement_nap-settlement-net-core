@@ -20,9 +20,7 @@ describe('NumberGame - Matches Component', () => {
             declarations: [
                 MatchesComponent,
                 ReCalculationComponent,
-                ModalDialogComponent,
-                BallsComponent,
-                ModalContentDialogComponent,
+                BallsComponent
             ],
             providers: [
                 PopupService , 
@@ -36,7 +34,9 @@ describe('NumberGame - Matches Component', () => {
                 NgbModule,
                 MaterialModule,
                 ToastNoAnimationModule.forRoot(),
-                ToastrModule.forRoot()
+                ToastrModule.forRoot(),
+                ModalDialogComponent,
+                ModalContentDialogComponent
             ],
         })
             .compileComponents()
