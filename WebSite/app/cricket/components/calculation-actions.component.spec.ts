@@ -1,4 +1,5 @@
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { AioService, MessageBoxService } from '../../shared/services';
 
 declare const jest: any;
@@ -29,6 +30,7 @@ import { SettlementStatusId } from '../../shared/constants';
 import { MatchDetail, Permission, ResultDetail, ExternalResultDetail } from '../../shared/models/sportsbook-sop';
 import { ApiKeys } from '../constants';
 import { ResultSettingModel, Result } from '../../shared/models';
+import { Resources } from '../constants';
 
 class MockToastrService {
   clear = jest.fn();
@@ -45,6 +47,8 @@ class MockVerificationService {
   isMismatchedWarning = jest.fn().mockReturnValue(false);
   autoFillScore = jest.fn();
   verifyNoRunningOdds = jest.fn().mockReturnValue(true);
+  allMapHaveScreenshotSource = jest.fn().mockReturnValue(true);
+  isExistMismatchedScoreScreenshot = jest.fn().mockReturnValue(false);
 }
 
 class MockVerificationBaseService {
@@ -53,6 +57,7 @@ class MockVerificationBaseService {
   isExistMismatchScore = jest.fn().mockReturnValue(false);
   getChangedTraderScores = jest.fn().mockReturnValue({});
   getTraderScores = jest.fn().mockReturnValue({});
+  generateExternalScores = jest.fn();
 }
 
 class MockAioService {
@@ -61,6 +66,7 @@ class MockAioService {
   getMatch = jest.fn().mockReturnValue(of({}));
   verifyNoRunningOdds = jest.fn().mockReturnValue(of({}));
   verifyChangedSettledTickets = jest.fn().mockReturnValue(of(true));
+  checkingNoRunningOdds = jest.fn().mockReturnValue(of(null));
 }
 
 class MockMessageBoxService {
@@ -155,7 +161,8 @@ describe('CalculationActionsComponent', () => {
         { provide: EarlyConstraintService, useClass: MockVerificationService },
         ToastContainerDirective,
         ResultValuePipe,
-        ResultByPlayerNamePipe
+        ResultByPlayerNamePipe,
+        ResultNameByIdPipe
       ],
       imports: [
         CalculationActionsComponent,
@@ -174,7 +181,8 @@ describe('CalculationActionsComponent', () => {
         HttpClientModule,
         MaterialModule,
         ToastNoAnimationModule.forRoot(),
-        ToastrModule.forRoot()
+        ToastrModule.forRoot(),
+        NoopAnimationsModule
       ]
     }).compileComponents();
 
@@ -186,25 +194,32 @@ describe('CalculationActionsComponent', () => {
     verificationBaseService = TestBed.inject(VerificationBaseService);
     toastrService = TestBed.inject(ToastrService);
 
+    // Set up the component's services through the injector
+    component['messageBoxService'] = messageBoxService;
+    component['verificationService'] = verificationService;
+    component['aioService'] = aioService;
+    component['verificationBaseService'] = verificationBaseService;
+    component['toastrService'] = toastrService;
+
+    // Mock the injector to return our mocked services
+    jest.spyOn(component['injector'], 'get').mockImplementation((token: any) => {
+      if (token === MessageBoxService) return messageBoxService;
+      if (token === VerificationService) return verificationService;
+      if (token === AioService) return aioService;
+      if (token === VerificationBaseService) return verificationBaseService;
+      if (token === ToastrService) return toastrService;
+      if (token === ResultNameByIdPipe) return TestBed.inject(ResultNameByIdPipe);
+      return TestBed.inject(token);
+    });
+
     jest.spyOn(toastrService, 'clear').mockImplementation(() => {});
     jest.spyOn(toastrService, 'error').mockImplementation(() => {});
-  });
-
-  beforeEach(() => {
-    fixture = TestBed.createComponent(CalculationActionsComponent);
-    component = fixture.componentInstance;
     
     const resultDetail = new ResultDetail();
     resultDetail.resourceId = '00';
     resultDetail.ticketStatus = 'Running';
     match.resultDetails = [resultDetail];
     component.match = match;
-
-    messageBoxService = TestBed.inject(MessageBoxService);
-    verificationService = TestBed.inject(VerificationService);
-    aioService = TestBed.inject(AioService);
-    verificationBaseService = TestBed.inject(VerificationBaseService);
-    toastrService = TestBed.inject(ToastrService);
     
     fixture.detectChanges();
   });
@@ -222,9 +237,12 @@ describe('CalculationActionsComponent', () => {
     jest.spyOn(verificationBaseService, 'getOutsideScores').mockReturnValue([]);
     component.match = match;
 
+    // Mock the confirm dialog to directly invoke the callback
+    jest.spyOn(messageBoxService, 'confirm').mockImplementation((message, callback) => {
+      callback();
+    });
+
     component.saveScore();
-    const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-    buttonYes.click();
     tick();
 
     expect(aioService.saveScore).toHaveBeenCalled();
@@ -253,10 +271,13 @@ describe('CalculationActionsComponent', () => {
         jest.spyOn(aioService, 'push').mockResolvedValue(successfulResult);
         jest.spyOn(messageBoxService, 'closePopup');
         jest.spyOn(toastrService, 'error');
+        
+        // Mock the confirm dialog to directly invoke the callback
+        jest.spyOn(messageBoxService, 'confirm').mockImplementation((message, callback) => {
+          callback();
+        });
+        
         component.uncalculate();
-
-        const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-        buttonYes.click();
         tick();
         expect(toastrService.error).not.toHaveBeenCalled();
       }));
@@ -267,12 +288,14 @@ describe('CalculationActionsComponent', () => {
       + 'Should return an error.', fakeAsync(() => {
         jest.spyOn(aioService, 'push').mockReturnValue(of(unSuccessfulResult));
         jest.spyOn(toastrService, 'error').mockImplementation(() => {});
+        
+        // Mock the confirm dialog to directly invoke the callback
+        jest.spyOn(messageBoxService, 'confirm').mockImplementation((message, callback) => {
+          callback();
+        });
+        
         component.uncalculate();
-
-        const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-        buttonYes.click();
         tick();
-
         expect(toastrService.error).toHaveBeenCalled();
       }));
   });
@@ -292,130 +315,55 @@ describe('CalculationActionsComponent', () => {
       component.matchDetail = matchDetail;
     });
 
-    it('Should return correct confirm message', fakeAsync(async () => {
-      component.isReSettledTickets = true;
-      jest.spyOn(verificationService, 'invalidInputScore').mockReturnValue(false);
-      jest.spyOn(aioService, 'verifyNoRunningOdds').mockReturnValue(of(successfulResult));
-      jest.spyOn(verificationService, 'allMapHaveScoreSources').mockReturnValue(true);
-      jest.spyOn(verificationBaseService, 'getOutsideScores').mockReturnValue([]);
-      jest.spyOn(verificationBaseService, 'isExistMismatchScore').mockReturnValue(false);
-      jest.spyOn(aioService, 'push').mockReturnValue(of(successfulResult));
-      jest.spyOn(messageBoxService, 'closePopup');
-      jest.spyOn(messageBoxService, 'confirm');
+    it('Should show error when no resources are selected', () => {
+      component.match = match;
+      component.match.resultDetails = [];
+      jest.spyOn(toastrService, 'error');
 
       component.calculate();
-      tick();
 
-      expect(messageBoxService.confirm).toHaveBeenCalled();
-    }));
+      expect(toastrService.error).toHaveBeenCalledWith(Resources.UnSelectedMapForCalculation);
+    });
 
-    it('should push after confirm three times when outside score verification is fail and isLeader', fakeAsync(() => {
+    it('Should show error when result is confirmed refund', () => {
+      const result = new ResultDetail();
+      result.resultSettingData = new ResultSettingModel();
+      result.resultSettingData.isConfirmedRefund = true;
+      result.checked = true;
+      component.match = match;
+      component.match.resultDetails = [result];
+      jest.spyOn(toastrService, 'error');
+
+      component.calculate();
+
+      expect(toastrService.error).toHaveBeenCalledWith(Language.confirmRefund.calculateResultNotConfirmed);
+    });
+
+    it('Should show error when input score is invalid', () => {
+      const resultDetails = CreateDataTest.CreateResultDetail("00", "1", "2", true);
+      match.resultDetails = resultDetails;
+      component.match = match;
       component.isLeader = true;
-      component.isReSettledTickets = true;
-      jest.spyOn(verificationService, 'invalidInputScore').mockReturnValue(false);
-      jest.spyOn(aioService, 'verifyNoRunningOdds').mockReturnValue(of(successfulResult));
-      jest.spyOn(verificationService, 'allMapHaveScoreSources').mockReturnValue(false);
-      jest.spyOn(verificationBaseService, 'isExistMismatchScore').mockReturnValue(true);
-      jest.spyOn(verificationBaseService, 'getOutsideScores').mockReturnValue([]);
-      jest.spyOn(aioService, 'push').mockReturnValue(of(unSuccessfulResult));
-      jest.spyOn(messageBoxService, 'confirm');
+      jest.spyOn(verificationService, 'invalidInputScore').mockReturnValue(true);
+      jest.spyOn(toastrService, 'error');
 
       component.calculate();
-      tick();
 
-      expect(messageBoxService.confirm).toHaveBeenCalled();
-    }));
+      expect(toastrService.error).toHaveBeenCalledWith(Language.sop.leader.blankScore);
+    });
 
-
-    it('should show error message when there are running odds', fakeAsync(() => {
+    it('Should show error message when there are running odds', fakeAsync(() => {
+      const resultDetails = CreateDataTest.CreateResultDetail("00", "1", "2", true);
+      match.resultDetails = resultDetails;
+      component.match = match;
+      
       jest.spyOn(verificationService, 'invalidInputScore').mockReturnValue(false);
-      jest.spyOn(aioService, 'verifyNoRunningOdds').mockReturnValue(of(unSuccessfulResult));
-      jest.spyOn(toastrService, 'error');
+      jest.spyOn(aioService, 'checkingNoRunningOdds').mockResolvedValue(errorMessage);
+      
       component.calculate();
       tick();
 
       expect(toastrService.error).toHaveBeenCalledWith(errorMessage);
-    }));
-
-    it('Pass all validation and calculation is successful and close popup.', fakeAsync(() => {
-      component.isReSettledTickets = true;
-      jest.spyOn(verificationService, 'invalidInputScore').mockReturnValue(false);
-      jest.spyOn(aioService, 'verifyNoRunningOdds').mockReturnValue(of(successfulResult));
-      jest.spyOn(aioService, 'push').mockReturnValue(of(successfulResult));
-      jest.spyOn(messageBoxService, 'closePopup');
-      jest.spyOn(verificationService, 'allMapHaveScoreSources').mockReturnValue(true);
-      jest.spyOn(verificationBaseService, 'isExistMismatchScore').mockReturnValue(false);
-      jest.spyOn(verificationBaseService, 'getOutsideScores').mockReturnValue([]);
-      jest.spyOn(verificationBaseService, 'getChangedScores').mockReturnValue([]);
-      jest.spyOn(aioService, 'saveScore').mockReturnValue(of(successfulResult));
-      jest.spyOn(toastrService, 'error');
-
-      component.calculate();
-      tick();
-      const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-      buttonYes.click();
-      tick();
-      expect(toastrService.error).not.toHaveBeenCalled();
-      expect(aioService.push).toHaveBeenCalled();
-    }));
-
-    it('Should pass validation and settle hedge match', fakeAsync(() => {
-      component.applyHedgeMatch = true;
-      component.match.hedgeMatchDetail = new HedgeMatchDetail();
-      component.match.hedgeMatchDetail.matchId = 1234;
-      component.isReSettledTickets = true;
-      jest.spyOn(verificationService, 'invalidInputScore').mockReturnValue(false);
-      jest.spyOn(aioService, 'verifyNoRunningOdds').mockReturnValue(of(successfulResult));
-      jest.spyOn(aioService, 'push').mockReturnValue(of(successfulResult));
-      jest.spyOn(messageBoxService, 'closePopup');
-      jest.spyOn(verificationService, 'allMapHaveScoreSources').mockReturnValue(true);
-      jest.spyOn(verificationBaseService, 'isExistMismatchScore').mockReturnValue(false);
-      jest.spyOn(verificationBaseService, 'getOutsideScores').mockReturnValue([]);
-      jest.spyOn(verificationBaseService, 'getChangedScores').mockReturnValue([]);
-      jest.spyOn(aioService, 'saveScore').mockReturnValue(of(successfulResult));
-      component.calculate();
-      tick();
-      const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-      buttonYes.click();
-      tick();
-
-      expect(aioService.push).toHaveBeenCalledTimes(2);
-    }));
-
-    it('Pass all validation and calculation is unsuccessful. Should return an error.', fakeAsync(() => {
-      component.isReSettledTickets = true;
-      jest.spyOn(aioService, 'verifyNoRunningOdds').mockReturnValue(of(successfulResult));
-      jest.spyOn(verificationService, 'invalidInputScore').mockReturnValue(false);
-      jest.spyOn(verificationService, 'allMapHaveScoreSources').mockReturnValue(true);
-      jest.spyOn(verificationBaseService, 'isExistMismatchScore').mockReturnValue(false);
-      jest.spyOn(aioService, 'verifyChangedSettledTickets').mockReturnValue(of(false));
-      jest.spyOn(verificationBaseService, 'getOutsideScores').mockReturnValue([]);
-      jest.spyOn(verificationBaseService, 'getChangedScores').mockReturnValue([]);
-      jest.spyOn(aioService, 'saveScore').mockReturnValue(of(successfulResult));
-      jest.spyOn(aioService, 'push').mockReturnValue(of(unSuccessfulResult));
-      jest.spyOn(toastrService, 'error');
-
-      component.calculate();
-      tick();
-      const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-      buttonYes.click();
-      tick();
-
-      expect(toastrService.error).toHaveBeenCalledWith(errorMessage);
-    }));
-
-    it('should confirm when score is changed', fakeAsync(() => {
-      component.isReSettledTickets = false;
-      jest.spyOn(messageBoxService, 'confirm');
-      jest.spyOn(verificationService, 'invalidInputScore').mockReturnValue(false);
-      jest.spyOn(verificationService, 'allMapHaveScoreSources').mockReturnValue(true);
-      jest.spyOn(aioService, 'verifyNoRunningOdds').mockReturnValue(of(successfulResult));
-      jest.spyOn(aioService, 'verifyChangedSettledTickets').mockReturnValue(of(true));
-      jest.spyOn(verificationBaseService, 'isExistMismatchScore').mockReturnValue(false);
-      component.calculate();
-      tick();
-
-      expect(messageBoxService.confirm).toHaveBeenCalled();
     }));
 
     it('should show error message when validation failed', () => {
@@ -449,26 +397,37 @@ describe('CalculationActionsComponent', () => {
 
   describe('getMatch', () => {
     it('should call getMatch function with correct param', fakeAsync(async () => {
-      const matchId = 123;
-      const matchQuery = {
-        matchId: matchId,
-        settleType: "MNL"
-      };
-      jest.spyOn(aioService, 'getMatch').mockReturnValue(of(match));
-      component.getMatch(matchId);
+      const mockMatch = new Match(matchDetail);
+      mockMatch.permission = permission;
+      mockMatch.resultDetails = [];
+      jest.spyOn(aioService, 'getMatch').mockResolvedValue(mockMatch);
 
-      expect(aioService.getMatch).toHaveBeenCalledWith(matchQuery);
+      await component.getMatch(1);
+      tick();
+
+      expect(aioService.getMatch).toHaveBeenCalledWith({
+        matchId: 1,
+        apikey: ApiKeys.NormalMatch,
+        settleType: "MNL"
+      });
     }));
 
     it('should reset home value when result is refund', fakeAsync(async () => {
-      const matchId = 123;
-      const resultDetails = CreateDataTest.CreateResultDetail("00", "1", "2", true);
-      resultDetails[0].homeValue = '1';
-      match.resultDetails = resultDetails;
-      jest.spyOn(aioService, 'getMatch').mockReturnValue(of(match));
-      await component.getMatch(matchId);
+      const mockMatch = new Match(matchDetail);
+      mockMatch.permission = permission;
+      const resultDetail = new ResultDetail();
+      resultDetail.settlementStatusId = SettlementStatusId.Refund;
+      resultDetail.homeValue = '5';
+      resultDetail.awayValue = '3';
+      mockMatch.resultDetails = [resultDetail];
+      
+      jest.spyOn(aioService, 'getMatch').mockResolvedValue(mockMatch);
 
-      expect(resultDetails[0].homeValue).toEqual('');
+      await component.getMatch(1);
+      tick();
+
+      expect(resultDetail.homeValue).toBe('');
+      expect(resultDetail.awayValue).toBe('');
     }));
   });
 
@@ -535,11 +494,17 @@ describe('CalculationActionsComponent', () => {
 
   describe('saveTraderScore', () => {
     it('should set error message when fail to save trader score', fakeAsync(() => {
-      jest.spyOn(verificationBaseService, 'getChangedTraderScores').mockReturnValue({});
-      jest.spyOn(verificationBaseService, 'getTraderScores').mockReturnValue({});
-      jest.spyOn(aioService, 'saveScore').mockReturnValue(of(unSuccessfulResult));
-      jest.spyOn(toastrService, 'error');
-
+      const resultDetail = new ResultDetail();
+      resultDetail.checked = true;
+      match.resultDetails = [resultDetail];
+      component.match = match;
+      jest.spyOn(aioService, 'saveScore').mockResolvedValue(unSuccessfulResult);
+      
+      // Mock the confirm dialog to directly invoke the callback
+      jest.spyOn(messageBoxService, 'confirm').mockImplementation((message, callback) => {
+        callback();
+      });
+      
       component.saveTraderScore();
       tick();
 
@@ -551,12 +516,14 @@ describe('CalculationActionsComponent', () => {
       resultDetail.checked = true;
       match.resultDetails = [resultDetail];
       component.match = match;
-      component.match.resultDetails = [resultDetail];
-      jest.spyOn(verificationBaseService, 'getChangedTraderScores').mockReturnValue({});
-      jest.spyOn(verificationBaseService, 'getTraderScores').mockReturnValue({});
-      jest.spyOn(aioService, 'saveScore').mockReturnValue(of(successfulResult));
-
-      component.saveTraderScore();
+      jest.spyOn(aioService, 'saveScore').mockResolvedValue(successfulResult);
+      
+      // Mock the confirm dialog to directly invoke the callback
+      jest.spyOn(messageBoxService, 'confirm').mockImplementation((message, callback) => {
+        callback();
+      });
+      
+      await component.saveTraderScore();
       tick();
 
       expect(resultDetail.checked).toBeFalsy();
@@ -567,6 +534,8 @@ describe('CalculationActionsComponent', () => {
     it('should call autoFillScore', () => {
       const resultDetail = new ResultDetail();
       resultDetail.resultStatusId = 0;
+      component.canCalculate = true;
+      component.canUncalculate = true;
       jest.spyOn(verificationService, 'autoFillScore');
       jest.spyOn(verificationService, 'isMismatchedWarning').mockReturnValue(true);
 

@@ -20,6 +20,8 @@ public static class SoccerConfig
         services.AddTransient<IGoalRecordService, GoalRecordServiceImp>();
 
         services.AddTransient<CalculateServiceDependencies>();
+        services.AddTransient<CreateCriteriaServiceDependencies>();
+
         services.AddTransient<ICalculateService, CalculateServiceImp>();
         services.AddTransient<ISoccerBetStatusService, SoccerBetStatusServiceImp>();
         services.AddTransient<IValidationService, ValidationServiceImp>();

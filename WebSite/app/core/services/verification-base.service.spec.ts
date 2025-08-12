@@ -74,7 +74,7 @@ describe('VerificationBaseService', () => {
 
         it('return true when exist result Match with special bettype', () => {
             resultDetail.ticketStatus = TicketStatusText.noTicket;
-            resultDetail.isSpecialBettype = true;
+            resultDetail.isSpecialBettype = 1;
             resultDetail.resourceId = "01"
 
             const actualResult = service.isTicketOnGame([resultDetail], '', '01');

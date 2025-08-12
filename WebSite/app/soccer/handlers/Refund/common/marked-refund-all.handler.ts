@@ -21,6 +21,6 @@ export class MarkedRefundAllHandler extends AbstractHandler {
 
 
   private mustRefundAll(matchDetail: MatchDetail) {
-    return matchDetail.eventStatus.toLowerCase() == EventStatus.postponed.toLowerCase() || matchDetail.isMarkedRefundAll;
+    return matchDetail.eventStatus.toLowerCase() === EventStatus.postponed.toLowerCase() || matchDetail.isMarkedRefundAll;
   }
 }

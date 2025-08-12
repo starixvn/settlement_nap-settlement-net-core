@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import { AbstractHandler } from "../../abstract.handler.native";
 import { RefundBaseStorage } from "../../../storage/storage.service.native";
 import { ResultDetail } from "../../../models";
@@ -9,7 +10,7 @@ export class VerifyStateConfirmedHandler extends AbstractHandler {
   public async handle(storage: RefundBaseStorage): Promise<void> {
     const { matchDetail } = storage.getMatch()
     const selectedResources = storage.getSelectedResource() as ResultDetail[];;
-    if(matchDetail.isMarkedRefundAll || matchDetail.eventStatus.toLowerCase() == EventStatus.postponed.toLowerCase()) {
+    if(matchDetail.isMarkedRefundAll || _.isEqual(matchDetail.eventStatus.toLowerCase(), EventStatus.postponed.toLowerCase())) {
       super.handle(storage);
       return;
     }
@@ -43,10 +44,10 @@ export class VerifyStateConfirmedHandler extends AbstractHandler {
   private verifyGoalRecord(storage: RefundBaseStorage) {
     const { matchDetail } = storage.getMatch();
     const { externalResults } = storage.getMatch();
-    const confirmedResult = externalResults.find(item => item.sourceId == 99);
-    const goalRecordConfirmed = confirmedResult?.resultDetails.find(item => item.resourceId == ResourceIds.goalRecord);
+    const confirmedResult = externalResults.find(item => item.sourceId === 99);
+    const goalRecordConfirmed = confirmedResult?.resultDetails.find(item => item.resourceId === ResourceIds.goalRecord);
     if (goalRecordConfirmed) {  
-      return matchDetail.applyGoalRecord && goalRecordConfirmed.homeValue == matchDetail.goalRecord;
+      return matchDetail.applyGoalRecord && goalRecordConfirmed.homeValue === matchDetail.goalRecord;
     }
     return true;
   }
