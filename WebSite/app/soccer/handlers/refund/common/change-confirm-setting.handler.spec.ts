@@ -6,7 +6,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { AioService } from '../../../../shared/services/aio.service';
 import { LogicService } from '../../../components/sop-refund/services/logic.service';
-import { Match, MatchDetailSoccer as MatchDetail } from '../../../components/calc/models/match.model';
+import { Match, MatchDetail } from '../../../components/sop-refund/models/match.model';
 import { Permission } from '../../../../shared/models/sportsbook-sop/permission.model';
 import { ResourceIds } from '../../../../shared/constants/resource-id.native';
 import { ResultSettingType } from '../../../../shared/constants/result-setting.native';
@@ -32,16 +32,11 @@ describe('ChangeConfirmSettingHandler', () => {
   const match: Match = {
     matchDetail: createMatchDetail(),
     permission: new Permission(),
-    ticketCounts: [],
     resultDetails: [],
     hedgeMatchDetail: null,
-    fantasyMatch: undefined,
-    childMatches: [],
     externalResults: [],
-    originalResultDetail: [],
-    oldMatchDetail: null,
-    isClickOnCalculate: false,
-    isScoreDirect: false
+    betDaq: null,
+    betFair: null
   };
 
   const createResult = (id: string, name: string, home: string, away: string, flags?: Partial<any>) => ({

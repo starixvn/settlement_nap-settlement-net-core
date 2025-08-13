@@ -63,7 +63,7 @@ export class CreateDataTest {
             isExistFgLg: false,
             isExistHtFgLg: false,
             isExistFgNg: false,
-            childMatchType: 0
+            childMatchType: 0,
         };
 
         return matchDetail;
