@@ -4,6 +4,10 @@
     setupFilesAfterEnv: [
         "<rootDir>/setup.jest.ts"
       ],
+       // Suppress specific console warnings
+      testEnvironmentOptions: {
+        suppressConsoleWarnings: true
+      },
       testPathIgnorePatterns: [
         "<rootDir>/node_modules"
       ],
