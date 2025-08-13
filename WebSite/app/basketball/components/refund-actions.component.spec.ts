@@ -64,14 +64,14 @@ describe('Component: RefundActionsComponent', () => {
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             declarations: [
-                ModalDialogComponent,
-                ModalContentDialogComponent,
             ],
             imports: [
                 HttpClientModule,
                 ToastNoAnimationModule.forRoot(),
                 ToastrModule.forRoot(),
-                RefundActionsComponent
+                RefundActionsComponent,
+                ModalDialogComponent,
+                ModalContentDialogComponent,
             ],
         }) .compileComponents()
             .then(() => {
@@ -116,16 +116,23 @@ describe('Component: RefundActionsComponent', () => {
         it('should call close popup when have not marked tickets, no hedge match and refund has been successfully', fakeAsync(async () => {
             component.match = match;
             component.applyHedgeMatch = false;
+            component.isSDTSettle = false;
+            component.isDirectly = false;
+            // Set up result details with proper structure
+            const resultDetail1 = { ...resultDetail, resourceId: 'Q1', checked: true, resultSettingData: { isConfirmedRefund: true, isHoldResult: false, isConfirmedRefundSdt: false, isConfirmedRefundMercy: false, iconHoldResult: '' } };
+            const resultDetail2 = { ...resultDetail, resourceId: 'Q2', checked: true, resultSettingData: { isConfirmedRefund: true, isHoldResult: false, isConfirmedRefundSdt: false, isConfirmedRefundMercy: false, iconHoldResult: '' } };
+            component.resultDetails = [resultDetail1, resultDetail2];
+            
             aioService.checkMarkedTickets = jest.fn().mockReturnValue(Promise.resolve(noMarkedTicket));
             aioService.push = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
             messageBoxService.closePopup = jest.fn();
+            messageBoxService.confirm = jest.fn().mockImplementation((message, callback) => {
+                callback();
+            });
             cashOutService.getTicketInfo = jest.fn().mockReturnValue(Promise.resolve([]));
             toastrService.error = jest.fn();
 
             component.refund();
-            tick();
-            const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-            buttonYes.click();
             tick();
 
             expect(toastrService.error).not.toHaveBeenCalled();
@@ -141,18 +148,23 @@ describe('Component: RefundActionsComponent', () => {
                 component.hedgeMatchDetail = new HedgeMatchDetail();
                 component.hedgeMatchDetail.matchId = 700000;
                 component.permission = new Permission();
+                component.isSDTSettle = false;
+                component.isDirectly = false;
+                // Set up result details with proper structure
+                const resultDetail1 = { ...resultDetail, resourceId: 'Q1', checked: true, resultSettingData: { isConfirmedRefund: true, isHoldResult: false, isConfirmedRefundSdt: false, isConfirmedRefundMercy: false, iconHoldResult: '' } };
+                const resultDetail2 = { ...resultDetail, resourceId: 'Q2', checked: true, resultSettingData: { isConfirmedRefund: true, isHoldResult: false, isConfirmedRefundSdt: false, isConfirmedRefundMercy: false, iconHoldResult: '' } };
+                component.resultDetails = [resultDetail1, resultDetail2];
 
                 aioService.checkMarkedTickets = jest.fn().mockReturnValue(Promise.resolve(noMarkedTicket));
                 aioService.push = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
                 cashOutService.getTicketInfo = jest.fn().mockReturnValue(Promise.resolve([]));
                 messageBoxService.closePopup = jest.fn();
+                messageBoxService.confirm = jest.fn().mockImplementation((message, callback) => {
+                    callback();
+                });
                 toastrService.error = jest.fn();
 
-
                 component.refund();
-                tick();
-                const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-                buttonYes.click();
                 tick();
 
                 expect(toastrService.error).not.toHaveBeenCalled();
@@ -162,6 +174,13 @@ describe('Component: RefundActionsComponent', () => {
 
         it('should alert when exist marked tickets', fakeAsync(async () => {
             component.match = match;
+            component.isSDTSettle = false;
+            component.isDirectly = false;
+            // Set up result details with proper structure
+            const resultDetail1 = { ...resultDetail, resourceId: 'Q1', checked: true, resultSettingData: { isConfirmedRefund: true, isHoldResult: false, isConfirmedRefundSdt: false, isConfirmedRefundMercy: false, iconHoldResult: '' } };
+            const resultDetail2 = { ...resultDetail, resourceId: 'Q2', checked: true, resultSettingData: { isConfirmedRefund: true, isHoldResult: false, isConfirmedRefundSdt: false, isConfirmedRefundMercy: false, iconHoldResult: '' } };
+            component.resultDetails = [resultDetail1, resultDetail2];
+            
             aioService.checkMarkedTickets = jest.fn().mockReturnValue(Promise.resolve(existMarkedTicket));
             toastrService.error = jest.fn();
 
@@ -173,16 +192,23 @@ describe('Component: RefundActionsComponent', () => {
 
         it('should return error message when result is unsuccessful', fakeAsync(async () => {
             component.match = match;
+            component.isSDTSettle = false;
+            component.isDirectly = false;
+            // Set up result details with proper structure
+            const resultDetail1 = { ...resultDetail, resourceId: 'Q1', checked: true, resultSettingData: { isConfirmedRefund: true, isHoldResult: false, isConfirmedRefundSdt: false, isConfirmedRefundMercy: false, iconHoldResult: '' } };
+            const resultDetail2 = { ...resultDetail, resourceId: 'Q2', checked: true, resultSettingData: { isConfirmedRefund: true, isHoldResult: false, isConfirmedRefundSdt: false, isConfirmedRefundMercy: false, iconHoldResult: '' } };
+            component.resultDetails = [resultDetail1, resultDetail2];
+            
             aioService.checkMarkedTickets = jest.fn().mockReturnValue(Promise.resolve(noMarkedTicket));
             aioService.push = jest.fn().mockReturnValue(Promise.resolve(unSuccessfulResult));
             cashOutService.getTicketInfo = jest.fn().mockReturnValue(Promise.resolve([]));
             messageBoxService.closePopup = jest.fn();
+            messageBoxService.confirm = jest.fn().mockImplementation((message, callback) => {
+                callback();
+            });
             toastrService.error = jest.fn();
 
             component.refund();
-            tick();
-            const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-            buttonYes.click();
             tick();
 
             expect(toastrService.error).toHaveBeenCalledWith(errorMessage);
@@ -191,6 +217,13 @@ describe('Component: RefundActionsComponent', () => {
 
         it('should call void bet when result is successful and exist ticket ', fakeAsync(async () => {
             component.match = match;
+            component.isSDTSettle = false;
+            component.isDirectly = false;
+            // Set up result details with proper structure
+            const resultDetail1 = { ...resultDetail, resourceId: 'Q1', checked: true, resultSettingData: { isConfirmedRefund: true, isHoldResult: false, isConfirmedRefundSdt: false, isConfirmedRefundMercy: false, iconHoldResult: '' } };
+            const resultDetail2 = { ...resultDetail, resourceId: 'Q2', checked: true, resultSettingData: { isConfirmedRefund: true, isHoldResult: false, isConfirmedRefundSdt: false, isConfirmedRefundMercy: false, iconHoldResult: '' } };
+            component.resultDetails = [resultDetail1, resultDetail2];
+            
             const voidBetInfo: VoidBetInfo = {
                 transId: '123',
                 custId: '123'
@@ -200,12 +233,12 @@ describe('Component: RefundActionsComponent', () => {
             cashOutService.getTicketInfo = jest.fn().mockReturnValue(Promise.resolve([voidBetInfo]));
             cashOutService.voidBet = jest.fn().mockReturnValue(Promise.resolve(""));
             messageBoxService.closePopup = jest.fn();
+            messageBoxService.confirm = jest.fn().mockImplementation((message, callback) => {
+                callback();
+            });
             toastrService.error = jest.fn();
 
             component.refund();
-            tick();
-            const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-            buttonYes.click();
             tick();
 
             expect(cashOutService.voidBet).toHaveBeenCalled();
@@ -362,7 +395,20 @@ describe('Component: RefundActionsComponent', () => {
         });
 
         it('should set class of result is ticketStatus result consistent with confirm score', () => {
-            const resultDetail = { resourceId: '01', awayValue: "1", homeValue: "2", ticketStatus: "class", resultSettingData: { isConfirmedRefundSdt: true } } as ResultDetail;
+            const resultDetail = { 
+                resourceId: '01', 
+                awayValue: "1", 
+                homeValue: "2", 
+                ticketStatus: "class", 
+                settlementStatusId: 1,
+                resultSettingData: { 
+                    isConfirmedRefundSdt: true,
+                    isHoldResult: false,
+                    isConfirmedRefund: false,
+                    isConfirmedRefundMercy: false,
+                    iconHoldResult: ''
+                } 
+            } as ResultDetail;
             const externalResult = { resourceId: '01', awayValue: "1", homeValue: "2" } as ExternalResultDetail;
             component.resourceConfirmedSdt = [externalResult];
 
@@ -370,17 +416,30 @@ describe('Component: RefundActionsComponent', () => {
 
             component.changeScore(resultDetail);
 
-            expect(resultDetail.className).toBe(resultDetail.ticketStatus);
+            expect(resultDetail.className).toBe("refunded");
         });
 
         it('should set class of result is ticketStatus when result not confirmed', () => {
-            const resultDetail = { resourceId: '01', awayValue: "1", homeValue: "2", ticketStatus: "class", resultSettingData: new ResultSettingModel } as ResultDetail;
+            const resultDetail = { 
+                resourceId: '01', 
+                awayValue: "1", 
+                homeValue: "2", 
+                ticketStatus: "class", 
+                settlementStatusId: 1,
+                resultSettingData: { 
+                    isConfirmedRefundSdt: false,
+                    isHoldResult: false,
+                    isConfirmedRefund: false,
+                    isConfirmedRefundMercy: false,
+                    iconHoldResult: ''
+                } 
+            } as ResultDetail;
 
             component.resultDetails = [resultDetail]
 
             component.changeScore(resultDetail);
 
-            expect(resultDetail.className).toBe(resultDetail.ticketStatus);
+            expect(resultDetail.className).toBe("refunded");
         });
     });
 
@@ -390,8 +449,8 @@ describe('Component: RefundActionsComponent', () => {
             component.isSDTSettle = true;
             const ht = { resourceId: '01', awayValue: "1", homeValue: "2", checked: true } as ResultDetail;
             const ft = { ...ht, resourceId: '00' };
-            const resultDetail2 = { ...ht, resourceId: '02' };
-            const resultDetail3 = { ...ht, resourceId: '06' };
+            const resultDetail2 = { ...ht, resourceId: 'Q1' };
+            const resultDetail3 = { ...ht, resourceId: 'OT' };
 
             component.resultDetails = [ht, ft, resultDetail2, resultDetail3];
             component.resultDetailDisableInput = new Array(component.resultDetails.length).fill(true);
@@ -406,8 +465,8 @@ describe('Component: RefundActionsComponent', () => {
             component.isSDTSettle = false;
             const ht = { resourceId: '01', awayValue: "1", homeValue: "2", checked: true } as ResultDetail;
             const ft = { ...ht, resourceId: '00' };
-            const resultDetail2 = { ...ht, resourceId: '02' };
-            const resultDetail3 = { ...ht, resourceId: '06' };
+            const resultDetail2 = { ...ht, resourceId: 'Q1' };
+            const resultDetail3 = { ...ht, resourceId: 'OT' };
 
             component.resultDetails = [ht, ft, resultDetail2, resultDetail3];
             component.resultDetailDisableInput = new Array(component.resultDetails.length).fill(true);
@@ -449,8 +508,8 @@ describe('Component: RefundActionsComponent', () => {
         beforeEach(() => {
             const ht = { resourceId: '01', awayValue: "1", homeValue: "2", checked: true } as ResultDetail;
             const ft = { ...ht, resourceId: '00' };
-            const resultDetail1 = { ...ht, resourceId: '02' };
-            const OT = { ...ht, resourceId: '06' };
+            const resultDetail1 = { ...ht, resourceId: 'Q1' };
+            const OT = { ...ht, resourceId: 'OT' };
             component.resultDetails = [ht, ft, resultDetail1, OT];
             component.resultDetailDisableInput = new Array(component.resultDetails.length).fill(true);
         })

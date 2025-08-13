@@ -33,9 +33,10 @@ describe('VerificationService', () => {
   const resultDetails: ResultDetail[] = [];
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [
+      imports: [
         ModalDialogComponent,
         ModalContentDialogComponent,
+        NgbModule
       ],
       providers: [
         IntervalBackgroundPipe,
@@ -43,9 +44,6 @@ describe('VerificationService', () => {
         NgbModule,
         ResultByTeamNamePipe,
         IntervalCalculationService,
-      ],
-      imports: [
-        NgbModule
       ],
     });
     service = TestBed.inject(VerificationService);

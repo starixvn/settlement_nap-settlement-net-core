@@ -3,31 +3,34 @@ import { CalculateAction } from "../../../../shared/constants/calculate-action.n
 import { ResourceIds } from "../../../constants/resourceIds.native";
 import { RefundStorage } from "../../../storage/refund.storage";
 import { MessageBoxService } from "../../../../shared/services";
-import { EventStatus, ScoreSourceType, SettlementStatusId } from "../../../../shared/constants";
-import { BetDaq, BetFair, MatchDetail } from "../../refund/model/match.model";
+import { ScoreSourceType, SettlementStatusId } from "../../../../shared/constants";
+import { BetDaq, BetFair, MatchDetail } from "../../sop-refund/models/match.model";
 
 import * as _ from "lodash";
 import { Language } from "../../../../shared/language.native";
-import { ResultDetail } from "../../../models";
-import { ExternalResultDetail } from "../../../../shared/models/sportsbook-sop";
-import { MainRefundButtonStatus } from "../../refund/model/button-status.model";
 import { BetStatus, RefundType } from "../../../constants";
 
 @Injectable({
   providedIn: 'root'
 })
 export class LogicService {
-
-  #refundStorage = inject(RefundStorage);
-  #messageBoxService = inject(MessageBoxService);
+  readonly #refundStorage = inject(RefundStorage);
+  readonly #messageBoxService = inject(MessageBoxService);
 
   getActionName(): string {
     const resultDetails = this.#refundStorage.getSelectedResource();
     const hasHT = resultDetails.some(x => x.resourceId === ResourceIds.halfTime);
     const hasFT = resultDetails.some(x => x.resourceId === ResourceIds.fullTime);
-    if (hasHT && hasFT) return CalculateAction.refund;
-    if (hasHT) return CalculateAction.refundHalfTime;
-    if (hasFT) return CalculateAction.refundFullTime;
+    if (hasHT && hasFT) {
+      return CalculateAction.refund;
+    }
+    if (hasHT) {
+      return CalculateAction.refundHalfTime;
+    }
+    if (hasFT) {
+      return CalculateAction.refundFullTime;
+    }
+    return "";
   }
 
   showConfirmMessage(func: () => void) {
@@ -46,7 +49,7 @@ export class LogicService {
 
   resetScore() {
     const { resultDetails, externalResults, permission } = this.#refundStorage.getMatch();
-    const resourceConfirmed = externalResults.find(r => r.sourceId == ScoreSourceType.confirmRefundSource);
+    const resourceConfirmed = externalResults.find(r => r.sourceId === ScoreSourceType.confirmRefundSource);
     resultDetails.forEach(r => {
       if (r.settlementStatusId !== SettlementStatusId.Calculated
         && r.settlementStatusId !== SettlementStatusId.Abandoned1H
@@ -80,12 +83,12 @@ export class LogicService {
 
   autoSelectGoalRecordAndSettleDetermined() {
     const { externalResults, permission, matchDetail, resultDetails } = this.#refundStorage.getMatch();
-    const resourceConfirmed = externalResults.find(r => r.sourceId == ScoreSourceType.confirmRefundSource);
-    const goalRecordConfirmed = resourceConfirmed?.resultDetails.find(r => r.resourceId == ResourceIds.goalRecord)
+    const resourceConfirmed = externalResults.find(r => r.sourceId === ScoreSourceType.confirmRefundSource);
+    const goalRecordConfirmed = resourceConfirmed?.resultDetails.find(r => r.resourceId === ResourceIds.goalRecord)
 
     if (goalRecordConfirmed && permission.isLeader) {
-      matchDetail.goalRecord = goalRecordConfirmed.homeValue ?? "",
-        matchDetail.applyGoalRecord = true;
+      matchDetail.goalRecord = goalRecordConfirmed.homeValue ?? "";
+      matchDetail.applyGoalRecord = true;
     }
 
     const settleDetermined = resultDetails.some(r => r.resultSettingData.isConfirmedRefundSdt);
@@ -106,11 +109,9 @@ export class LogicService {
     }
   }
 
-
-
   settleDetermineUpdate() {
-    const halfTime = this.#refundStorage.getHalfTimeResult() as ResultDetail;
-    const fullTime = this.#refundStorage.getFullTimeResult() as ResultDetail;
+    const halfTime = this.#refundStorage.getHalfTimeResult();
+    const fullTime = this.#refundStorage.getFullTimeResult();
     const { matchDetail } = this.#refundStorage.getMatch();
 
     if (!matchDetail.isSettleDetermined) {

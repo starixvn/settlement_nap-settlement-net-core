@@ -2,7 +2,7 @@ import { RequestService } from './request.service';
 import { TestBed } from '@angular/core/testing';
 import { RequestBaseService } from '../../../services/request-base.service';
 import { Result } from '../../../../shared/models';
-import { RefundQuery } from '../../refund/model/query.model';
+import { RefundQuery } from '../models/query.model';
 import { of } from 'rxjs';
 import { HttpClientModule } from '@angular/common/http';
 import { HttpRequestService } from '../../../../shared/services';

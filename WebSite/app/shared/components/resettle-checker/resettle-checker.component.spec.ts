@@ -2,17 +2,21 @@ import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ResettleCheckerComponent } from './resettle-checker.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { ReactiveFormsModule } from '@angular/forms';
 describe('ResettleCheckerComponent', () => {
   let component: ResettleCheckerComponent;
   let fixture: ComponentFixture<ResettleCheckerComponent>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ ResettleCheckerComponent ],
-      providers: [NgbModal],
       imports: [
+        ResettleCheckerComponent,
+        NgbModule,
         FormsModule,
-    ],
+        ReactiveFormsModule
+      ],
+      providers: [NgbModal]
     })
     .compileComponents();
   }));
@@ -28,10 +32,11 @@ describe('ResettleCheckerComponent', () => {
   });
 
   it('should emit on checkbox change', () => {
-    spyOn(component.proceedEvent, 'emit');
+    const emitSpy = jest.fn();
+    component.proceedEvent.emit = emitSpy;
 
     component.onCheckboxChange(true);
 
-    expect(component.proceedEvent.emit).toHaveBeenCalledWith(true);
+    expect(emitSpy).toHaveBeenCalledWith(true);
   });
 });

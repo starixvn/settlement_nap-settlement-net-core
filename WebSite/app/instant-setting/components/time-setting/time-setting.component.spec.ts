@@ -1,15 +1,13 @@
 import { waitForAsync, ComponentFixture, TestBed, tick, fakeAsync } from '@angular/core/testing';
 import { TimeSettingComponent } from './time-setting.component';
-import { RequestService } from '../services/request.service';
-import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
-import { MessageBoxService, HttpRequestService, BlockUIService, ClosePopupService } from '../../shared/services';
+import { RequestService } from '../../services/request.service';
+import { MessageBoxService, HttpRequestService, BlockUIService, ClosePopupService } from '../../../shared/services';
 import { FormsModule } from '@angular/forms';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { HttpClientModule } from '@angular/common/http';
-import { League } from '../models';
-import { UrlHelper } from '../../helper';
-import { Language } from '../../shared/language.native';
-import { AutoType } from '../constants/auto-type';
+import { League } from '../../models';
+import { UrlHelper } from '../../../helper';
+import { AutoType } from '../../constants/auto-type';
 
 describe('TimeSettingComponent', () => {
     let component: TimeSettingComponent;

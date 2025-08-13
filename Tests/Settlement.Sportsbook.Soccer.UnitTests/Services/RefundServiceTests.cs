@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Fanex.Caching;
 using Fanex.Data.Repository;
 using Fanex.Settlement.ScaleOut.Models;
 using Fanex.Settlement.ScaleOut.Request;
@@ -40,7 +39,6 @@ public class RefundServiceTests
         var publishEndpoint = Substitute.For<IPublishEndpoint>();
 
         var mapper = Substitute.For<IMapper>();
-        var cacheService = Substitute.For<ICacheService>();
 
         var context = new DefaultHttpContext
         {
@@ -52,7 +50,11 @@ public class RefundServiceTests
         accessor.HttpContext = context;
 
         var option = Options.Create(appSettings);
-        service = new RefundServiceImp(repository, accessor, option, createCriteriaService, scaleOutSettleService, logService, publishEndpoint, cacheService, mapper);
+        
+        var dependencies = new RefundServiceDependencies(
+            scaleOutSettleService, logService, publishEndpoint, mapper);
+            
+        service = new RefundServiceImp(repository, accessor, option, createCriteriaService, dependencies);
     }
 
     [Theory]

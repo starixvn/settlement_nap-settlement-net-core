@@ -26,8 +26,8 @@ import { ToastrService } from 'ngx-toastr';
   templateUrl: './calculate.component.html'
 })
 export class CalculateComponent implements SportTemplate {
-  #storage = inject(CalculateStorage);
-  #toastrService = inject(ToastrService);
+  readonly #storage = inject(CalculateStorage);
+  readonly #toastrService = inject(ToastrService);
 
   applyHedgeMatch: boolean;
   match: Match;

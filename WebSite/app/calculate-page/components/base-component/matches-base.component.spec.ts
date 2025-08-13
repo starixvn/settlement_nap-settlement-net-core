@@ -17,8 +17,11 @@ describe('MatchesBaseComponent', () => {
     let popupService: PopupService;
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [
-                MatchesBaseComponent],
+            imports: [
+                MatchesBaseComponent,
+                MaterialModule,
+                HttpClientModule
+            ],
             providers: [
                 PopupService,
                 RequestService,
@@ -29,10 +32,6 @@ describe('MatchesBaseComponent', () => {
                 BlockUIService,
                 MessageBoxService,
                 DetectChangesService
-            ],
-            imports: [
-                MaterialModule,
-                HttpClientModule
             ]
         }).compileComponents();
     });
@@ -52,21 +51,21 @@ describe('MatchesBaseComponent', () => {
     it('popupCalc - Open popup Calculation', () => {
         const match = new CalculationMatch();
         match.matchId = "123";
-        spyOn(popupService, 'openAndHandlePopup');
+        jest.spyOn(popupService, 'openAndHandlePopup');
 
         component.popupCalc(match);
 
-        expect(popupService.openAndHandlePopup).toHaveBeenCalledWith("apps/soccer-recalculate?matchId=123", Language.CalcPopupTitle, "800px", "800px", match);
+        expect(popupService.openAndHandlePopup).toHaveBeenCalledWith("/apps/soccer-recalculate?matchId=123&filterOver=undefined", Language.CalcPopupTitle, "800px", "800px", match);
     });
 
     it('popupRefund - Open popup refund', () => {
         const match = new CalculationMatch();
         match.matchId = "123";
-        spyOn(popupService, 'openAndHandlePopup');
+        jest.spyOn(popupService, 'openAndHandlePopup');
 
         component.popupRefund(match);
 
-        expect(popupService.openAndHandlePopup).toHaveBeenCalledWith("apps/soccer-refund?matchId=123", Language.RefundPopupTitle, "790px", "600px", match);
+        expect(popupService.openAndHandlePopup).toHaveBeenCalledWith("/apps/soccer-refund?matchId=123", Language.RefundPopupTitle, "790px", "700px", match);
     });
 
     describe('isChangeSetting', () => {
@@ -81,7 +80,7 @@ describe('MatchesBaseComponent', () => {
         ])('Not open popup when match in processing', (isCalculatingSingle: number, isCalculatingMP: number) => {
             match.isCalculatingSingle = isCalculatingSingle;
             match.isCalculatingMP = isCalculatingMP;
-            spyOn(popupService, 'popupChangeRemark');
+            jest.spyOn(popupService, 'popupChangeRemark');
 
             component.popupChangeRemarkSetting(match);
 
@@ -91,7 +90,7 @@ describe('MatchesBaseComponent', () => {
         it('should open popup when match not in process', () => {
             match.isCalculatingSingle = CalculationStatus.success;
             match.isCalculatingMP = CalculationStatus.manualFail;
-            spyOn(popupService, 'popupChangeRemark');
+            jest.spyOn(popupService, 'popupChangeRemark');
 
             component.popupChangeRemarkSetting(match);
 
@@ -129,7 +128,7 @@ describe('MatchesBaseComponent', () => {
         const permission = new Permission();
         permission.canCalculate = hasPermission;
         component.permission = permission;
-        spyOn(backGroundService, 'isShowLink').and.returnValue(isShow);
+        jest.spyOn(backGroundService, 'isShowLink').mockReturnValue(isShow);
 
         const actual = component.isShowCalculationLink(new CalculationMatch());
 
@@ -137,15 +136,15 @@ describe('MatchesBaseComponent', () => {
     });
 
     test.each([
-        [true, false, ""],
-        [false, true, ""],
-        [false, false, ""],
-        [true, true, BackgroundColor.codeLink]
-    ])('isShowRefundLink - enable link when has permission and can show link', (isShow: boolean, hasPermission: boolean, expected: string) => {
+        [true, true, BackgroundColor.codeLink],
+        [true, false, ''],
+        [false, true, ''],
+        [false, false, ''],
+    ])('isShowRefundLink - enable link when has permission and can show link', (hasPermission: boolean, isShow: boolean, expected: string) => {
         const permission = new Permission();
         permission.canRefund = hasPermission;
         component.permission = permission;
-        spyOn(backGroundService, 'isShowLink').and.returnValue(isShow);
+        jest.spyOn(backGroundService, 'isShowLink').mockReturnValue(isShow);
 
         const actual = component.isShowRefundLink(new CalculationMatch());
 

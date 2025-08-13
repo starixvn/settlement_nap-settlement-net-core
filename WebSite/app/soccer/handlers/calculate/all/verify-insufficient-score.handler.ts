@@ -2,15 +2,13 @@ import { AbstractHandler } from "../../abstract.handler.native";
 import { CalculateBaseStorage } from "../../../storage/storage.service.native";
 import { inject } from "@angular/core";
 import { MessageBoxService } from "../../../../shared/services";
-import { ResourceIds, ScoreSourceType } from "../../../../shared/constants";
-import { VerifyScoreGoalService } from "../../../components/calc/services/verify-score-goal.service";
+import { ResourceIds } from "../../../../shared/constants";
 import { Language } from "../../../../shared/language.native";
-import { ExternalResult, ExternalResultDetail, ResultDetail } from "../../../../shared/models/sportsbook-sop";
 import { VerificationBaseService } from "../../../../core/services/verification-base.service";
 
 export class VerifyInsufficientScoreHandler extends AbstractHandler {
-  #verificationService = inject(VerificationBaseService);
-  #messageBoxService = inject(MessageBoxService);
+  readonly #verificationService = inject(VerificationBaseService);
+  readonly #messageBoxService = inject(MessageBoxService);
   
   async handle(storage: CalculateBaseStorage) {
     const { permission, resultDetails } = storage.getMatch();

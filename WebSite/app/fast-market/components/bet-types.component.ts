@@ -34,7 +34,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { InputScoreFormComponent } from "./input-score-form.component";
 import { ToastContainerDirective, ToastrService } from "ngx-toastr";
 import { InputOuScoreComponent } from "./input-ou-score/input-ou-score.component";
-import { UpdateSettlementResultHistoryStatus } from "shared/models/update-settle-result-history-status";
+import { UpdateSettlementResultHistoryStatus } from "../../shared/models/update-settle-result-history-status";
 
 @Component({
   selector: "bet-types",

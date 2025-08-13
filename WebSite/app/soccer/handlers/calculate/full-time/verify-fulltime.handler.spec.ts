@@ -1,8 +1,7 @@
 import { VerifyFulltimeHandler } from "./verify-fulltime.handler";
 import { VerifyScoreGoalService } from "../../../components/calc/services/verify-score-goal.service";
 import { VerifyActionService } from "../../../components/calc/services/verify-action.service";
-import { Storage } from "../../../storage/storage.service.native";
-import { MatchDetail, ChildMatch, FantasyRelatedMatch, Match } from "../../../components/calc/models/match.model";
+import { MatchDetailSoccer, ChildMatch, FantasyRelatedMatch, Match } from "../../../components/calc/models/match.model";
 import { Language } from "../../../../shared/language.native";
 import { CalculateAction } from "../../../../shared/constants";
 import { TestBed } from "@angular/core/testing";
@@ -23,7 +22,7 @@ describe("VerifyFulltimeHandler", () => {
 
   const matchDetail = {
     isScoreInconsistent: false
-  } as MatchDetail;
+  } as MatchDetailSoccer;
   const match: Match = {
     matchDetail,
     permission: new Permission,
@@ -31,7 +30,12 @@ describe("VerifyFulltimeHandler", () => {
     resultDetails: [],
     hedgeMatchDetail: undefined,
     fantasyMatch: undefined,
-    childMatches: []
+    childMatches: [],
+    externalResults: [],
+    originalResultDetail: [],
+    oldMatchDetail: undefined,
+    isClickOnCalculate: false,
+    isScoreDirect: false
   }
 
 

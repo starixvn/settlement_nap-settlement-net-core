@@ -18,6 +18,10 @@ public static class SoccerConfig
         services.AddTransient<GoalIconService, GoalIconServiceImp>();
         services.AddTransient<IBetStatusAllService, BetStatusAllServiceImp>();
         services.AddTransient<IGoalRecordService, GoalRecordServiceImp>();
+
+        services.AddTransient<CalculateServiceDependencies>();
+        services.AddTransient<CreateCriteriaServiceDependencies>();
+
         services.AddTransient<ICalculateService, CalculateServiceImp>();
         services.AddTransient<ISoccerBetStatusService, SoccerBetStatusServiceImp>();
         services.AddTransient<IValidationService, ValidationServiceImp>();
@@ -36,6 +40,7 @@ public static class SoccerConfig
         services.AddTransient<InstantCalculateService, InstantCalculateServiceImp>();
         services.AddTransient<PushInstantCalculationService, PushInstantCalculationServiceImp>();
 
+        services.AddTransient<RefundServiceDependencies>();
         services.AddTransient<IRefundService, RefundServiceImp>();
         services.AddTransient<IFetchDataService, FetchDateServiceImp>();
         services.AddTransient<ICreateCriteriaService, CreateCriteriaServiceImp>();

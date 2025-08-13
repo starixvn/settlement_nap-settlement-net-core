@@ -80,8 +80,6 @@ describe("E-sport - Refund Component", () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [
-        ModalContentDialogComponent,
-        ModalDialogComponent,
       ],
       providers: [
         AioService,
@@ -103,7 +101,9 @@ describe("E-sport - Refund Component", () => {
         RefundActionsComponent,
         IntervalBackgroundPipe,
         CalculationMatchDetailComponent,
-        ResourceNameByIdPipe],
+        ResourceNameByIdPipe,
+        ModalContentDialogComponent,
+        ModalDialogComponent],
     })
      
       .compileComponents()

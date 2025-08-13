@@ -17,8 +17,9 @@ import { EarlySettlementStorage } from '../../../../services/early-settlement/ea
   templateUrl: './table-result-header.component.html',
 })
 export class TableResultHeaderComponent implements OnInit {
-  #storage = inject(EarlySettlementStorage);
-  #earlyBaseService = inject(EarlyBaseService)
+  readonly #storage = inject(EarlySettlementStorage);
+  readonly #earlyBaseService = inject(EarlyBaseService)
+  
   match = this.#storage.match;
   permission = this.#storage.getPermission();
   SOURCE_ID = ScoreSourceType;

@@ -1,9 +1,9 @@
 import { MessageBoxService, BlockUIService, HttpRequestService } from '../../../shared/services';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClientModule } from '@angular/common/http';
-import { Match } from '../early/models';
 import { ScoreBySettlementPipe } from '../../../shared/pipes/score-by-settlement.pipe';
 import { MatchDetailComponent } from './match-detail.component';
+import { Match, MatchDetail } from '../early/models';
 
 
 describe('Soccer - MatchDetailComponent', () => {
@@ -46,7 +46,7 @@ describe('Soccer - MatchDetailComponent', () => {
                     finalAwayScore: null,
                     finalHomeScore: null,
                     offerLive: false
-                };
+                } as MatchDetail;
                 fixture = TestBed.createComponent(MatchDetailComponent);
                 component = fixture.componentInstance;
                 const match = new Match();

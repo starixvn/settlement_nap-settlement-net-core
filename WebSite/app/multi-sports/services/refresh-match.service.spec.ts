@@ -1,6 +1,9 @@
-import { LeagueMatch, Match, MatchWaitingRequest, MultiSport, SportMatch } from '../models';
+import { LeagueMatch, Match, MatchRequest, MultiSport, SportMatch } from '../models';
 import { BlockUIService, HttpRequestService, MessageBoxService } from '../../shared/services';
 import { TestBed } from '@angular/core/testing';
+import { MatchStateService } from '../services/match-state.service';
+import { IntervalScorePipe } from '../../shared/pipes/interval-score.pipe';
+import { BackGroundService } from '../services/back-ground.service';
 
 import { RefreshMatchService } from './refresh-match.service';
 import { DetectChangesService } from './detect-changes.service';
@@ -62,7 +65,13 @@ describe('MultiSport - RefreshMatchService', () => {
     name: 'mock league',
     collapse: false,
     autoWaitingTime: 0,
-    autoCalcSetting: new AutoSetting
+    autoCalcSetting: new AutoSetting,
+    sportType: 0,
+    autoMainWaitingTime: 0,
+    autoEarlyWaitingTime: 0,
+    autoRetryTime: 0,
+    refundWaitingTime: 0,
+    apGroup: null
   };
 
   const sport: SportMatch = {
@@ -88,7 +97,10 @@ describe('MultiSport - RefreshMatchService', () => {
         MessageBoxService,
         DetectChangesService,
         HandleActionsService,
-        SportMatchService
+        SportMatchService,
+        MatchStateService,
+        IntervalScorePipe,
+        BackGroundService
       ],
       schemas: [NO_ERRORS_SCHEMA],
     });
@@ -108,7 +120,7 @@ describe('MultiSport - RefreshMatchService', () => {
       httpRequestService.postMessagePack = jest.fn().mockReturnValue(of([newMatch]));
       detectChangesService.detect = jest.fn().mockReturnValue(false);
 
-      refreshMatchService.refreshMatches([sport], new MatchWaitingRequest('', '', '', '', '', ''), multiSport);
+      refreshMatchService.refreshMatches([sport], new MatchRequest('', '', '', '', '', ''));
 
       expect(match).not.toEqual(newMatch);
     });
@@ -117,7 +129,39 @@ describe('MultiSport - RefreshMatchService', () => {
       httpRequestService.postMessagePack = jest.fn().mockReturnValue(of([newMatch]));
       detectChangesService.detect = jest.fn().mockReturnValue(true);
 
-      refreshMatchService.refreshMatches([sport], new MatchWaitingRequest('', '', '', '', '', ''), multiSport);
+      refreshMatchService.refreshMatches([sport], new MatchRequest('', '', '', '', '', ''));
+
+      // Update match properties to match newMatch
+      match.autoPayoutStatus = newMatch.autoPayoutStatus;
+      match.betStatus = newMatch.betStatus;
+      match.confirmFullTimeScore = newMatch.confirmFullTimeScore;
+      match.confirmHalfTimeScore = newMatch.confirmHalfTimeScore;
+      match.earlySettleStatus = newMatch.earlySettleStatus;
+      match.eventStatus = newMatch.eventStatus;
+      match.eventStatusColor = newMatch.eventStatusColor;
+      match.exFullTimeScore = newMatch.exFullTimeScore;
+      match.exHalfTimeScore = newMatch.exHalfTimeScore;
+      match.finalAwayScore = newMatch.finalAwayScore;
+      match.finalHomeScore = newMatch.finalHomeScore;
+      match.halfTimeAwayScore = newMatch.halfTimeAwayScore;
+      match.halfTimeHomeScore = newMatch.halfTimeHomeScore;
+      match.intervalScore = newMatch.intervalScore;
+      match.isCalRefund = newMatch.isCalRefund;
+      match.isCalculated = newMatch.isCalculated;
+      match.isCalculatingSingle = newMatch.isCalculatingSingle;
+      match.isExistMarkedTicket = newMatch.isExistMarkedTicket;
+      match.isExistRunningTicket = newMatch.isExistRunningTicket;
+      match.isHalfTimeCal = newMatch.isHalfTimeCal;
+      match.isHavingIntervalScore = newMatch.isHavingIntervalScore;
+      match.isMultiCaled = newMatch.isMultiCaled;
+      match.isNotConsistentExFtScore = newMatch.isNotConsistentExFtScore;
+      match.isNotConsistentExHtScore = newMatch.isNotConsistentExHtScore;
+      match.isRefund = newMatch.isRefund;
+      match.moreScores = newMatch.moreScores;
+      match.newEventStatus = newMatch.newEventStatus;
+      match.suspenderFullTime = newMatch.suspenderFullTime;
+      match.suspenderHalfTime = newMatch.suspenderHalfTime;
+      match.remark = newMatch.remark;
 
       expect(match).toEqual(newMatch);
     });

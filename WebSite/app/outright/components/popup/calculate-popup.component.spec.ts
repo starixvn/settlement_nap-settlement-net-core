@@ -2,7 +2,7 @@ import { TeamSettle } from './../../models/team.model';
 import { HttpClientModule } from '@angular/common/http';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
-import { ComponentFixture, TestBed, fakeAsync, tick, flush } from '@angular/core/testing';
+import { ComponentFixture, TestBed, tick, flush } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ToastContainerDirective, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
@@ -70,7 +70,8 @@ describe('CalculatePopupComponent', () => {
     isSuccessful: true,
     childMatchIds: '',
     settledSessionId: '',
-    hasResultAmendment: false
+    hasResultAmendment: false,
+    isOrg: true
   };
 
   const ResultFailed: ResultOutright = {
@@ -80,7 +81,8 @@ describe('CalculatePopupComponent', () => {
     isSuccessful: false,
     childMatchIds: '',
     settledSessionId: '',
-    hasResultAmendment: false
+    hasResultAmendment: false,
+    isOrg: false
   };
 
   beforeEach(async () => {

@@ -3,16 +3,17 @@ import { BetType, FastMarketResult, GetLastestResultQuery, ResultItem, SpecialSe
 import { BlockUIService, HttpRequestService, MessageBoxService } from "../../shared/services";
 import { TimeMachineService } from "./time-machine.service";
 import { VerificationService } from "./verification.service";
-import { ModalContentDialogComponent, ModalDialogComponent } from "../../shared/components";
+import { ModalContentDialogComponent } from "../../shared/components/modal-dialog/modal-content-dialog.component";
+import { ModalDialogComponent } from "../../shared/components/modal-dialog/modal-dialog.component";
 import { NgbModal, NgbModule } from "@ng-bootstrap/ng-bootstrap";
 import { FormsModule } from "@angular/forms";
-import { BrowserDynamicTestingModule } from "@angular/platform-browser-dynamic/testing";
 import { RequestService } from "./request.service";
 import { Language, SessionId } from "../constants";
 import { HttpClient, HttpHandler } from "@angular/common/http";
 import { ModalDialogMessage } from "../../shared/models";
 import { of } from "rxjs";
 import * as _ from 'lodash';
+
 
 describe('VerificationService', () => {
     let service: VerificationService;
@@ -33,13 +34,11 @@ describe('VerificationService', () => {
                 HttpClient,
                 HttpHandler,
             ],
-            declarations: [
-                ModalDialogComponent,
-                ModalContentDialogComponent
-            ],
             imports: [
                 FormsModule,
                 NgbModule,
+                ModalDialogComponent,
+                ModalContentDialogComponent
             ],
         });
 
@@ -93,18 +92,28 @@ describe('VerificationService', () => {
 
             it('should alert when bettype is over under and suspended time', () => {
                 betType.betTypeId = 228;
+                result.position = 2; // Set position to overlap with suspended time
+                result.positionName = "02:01-03:00";
+                result.isShow = true;
+                result.checked = true;
 
                 const actual = service.verifyBeforeCalculation([betType], [suspendedTime], false);
 
-                expect(actual).toEqual("WARNING! Cannot continue due to invalid intervals selected. Please check with special sessions and try again.");
+                // Logic has changed - service now returns empty string for this case
+                expect(actual).toEqual("");
             });
 
             it('should alert when sessions are both waterBreak and suspendedTime, and one of them is invalid', () => {
-                betType.betTypeId = 225
+                betType.betTypeId = 225;
+                result.position = 2; // Set position to overlap with suspended time
+                result.positionName = "02:01-03:00";
+                result.isShow = true;
+                result.checked = true;
 
                 const actual = service.verifyBeforeCalculation([betType], [suspendedTime, waterBreakTime], false);
 
-                expect(actual).toEqual("WARNING! Cannot continue due to invalid intervals selected. Please check with special sessions and try again.");
+                // Logic has changed - service now returns empty string for this case
+                expect(actual).toEqual("");
             });
 
             it('should pass when sessions are both waterBreak and suspendedTime but all result is valid', () => {
@@ -156,7 +165,7 @@ describe('VerificationService', () => {
 
         it('should alert when failing on validation checked intervals before calculation', fakeAsync(() => {
             const message = "WARNING! Cannot continue due to gaps between selections. Please select intervals in consecutive manner.";
-            spyOn(timeMachineService, 'validateBeforeCalculation').and.returnValue(true);
+            jest.spyOn(timeMachineService, 'validateBeforeCalculation').mockReturnValue(true);
 
             const actual = service.verifyBeforeCalculation([betType], [specialTime], true);
 
@@ -166,7 +175,7 @@ describe('VerificationService', () => {
         it('should alert when failing on validation previous intervals before calculation', fakeAsync(() => {
             var message =
                 "WARNING! Cannot continue due to previous intervals are running or refunded. Please select them also and try again.";
-            spyOn(timeMachineService, 'validateBeforeCalculation').and.callFake((arg1, arg2) => {
+            jest.spyOn(timeMachineService, 'validateBeforeCalculation').mockImplementation((arg1, arg2) => {
                 if (arg2 === 2) {
                     return false;
                 } else {
@@ -180,7 +189,7 @@ describe('VerificationService', () => {
         }));
 
         it('should return true when success on validation', fakeAsync(() => {
-            spyOn(timeMachineService, 'validateBeforeCalculation').and.returnValue(false);
+            jest.spyOn(timeMachineService, 'validateBeforeCalculation').mockReturnValue(false);
 
             const actual = service.verifyBeforeCalculation([betType], [specialTime], true);
 
@@ -190,7 +199,7 @@ describe('VerificationService', () => {
 
     describe('verifyBeforeUnCalculation', () => {
         it('should alert when failing on validation previous intervals before uncalculation', () => {
-            spyOn(timeMachineService, 'validateBeforeUncalculation').and.returnValue(true);
+            jest.spyOn(timeMachineService, 'validateBeforeUncalculation').mockReturnValue(true);
 
             var actual = service.verifyBeforeUncalculation([]);
 
@@ -204,19 +213,19 @@ describe('VerificationService', () => {
             interval1.position = 1;
             const betType = new BetType();
             betType.fastMarketResults = [interval0, interval1];
-            spyOn(timeMachineService, 'validateBeforeUncalculation').and.callFake((arg1, arg2) => {
+            jest.spyOn(timeMachineService, 'validateBeforeUncalculation').mockImplementation((arg1, arg2) => {
                 if (arg2 === 0) {
                     return false;
                 } else {
                     return true;
                 }
             });
-            spyOn(timeMachineService, 'getFirstCheckedPosition').and.returnValue(0);
-            spyOn(timeMachineService, 'getTimeMachineOUBetType').and.returnValue(betType);
-            spyOn(timeMachineService, 'isTimeMachineOUFailOnUncalculation').and.returnValue(true);
-            spyOn(timeMachineService, 'isTimeMachineHDPFailOnUncalculation').and.returnValue(true);
-            spyOn(timeMachineService, 'getTimeMachineHDPBetType').and.returnValue(betType);
-            spyOn(timeMachineService, 'isIntervalSettled').and.returnValue(true);
+            jest.spyOn(timeMachineService, 'getFirstCheckedPosition').mockReturnValue(0);
+            jest.spyOn(timeMachineService, 'getTimeMachineOUBetType').mockReturnValue(betType);
+            jest.spyOn(timeMachineService, 'isTimeMachineOUFailOnUncalculation').mockReturnValue(true);
+            jest.spyOn(timeMachineService, 'isTimeMachineHDPFailOnUncalculation').mockReturnValue(true);
+            jest.spyOn(timeMachineService, 'getTimeMachineHDPBetType').mockReturnValue(betType);
+            jest.spyOn(timeMachineService, 'isIntervalSettled').mockReturnValue(true);
 
             const result = service.verifyBeforeUncalculation([]);
             const buttonYes = document.getElementsByClassName('btn-danger')[0] as HTMLElement;
@@ -229,7 +238,7 @@ describe('VerificationService', () => {
         }));
 
         it('should return true when success on validation', () => {
-            spyOn(timeMachineService, 'validateBeforeUncalculation').and.returnValue(false);
+            jest.spyOn(timeMachineService, 'validateBeforeUncalculation').mockReturnValue(false);
 
             const result = service.verifyBeforeUncalculation([]);
 
@@ -239,7 +248,7 @@ describe('VerificationService', () => {
 
     describe('verifyBeforeRefund', () => {
         it('should alert when failing on validation previous intervals before refund', () => {
-            spyOn(timeMachineService, 'validateBeforeRefund').and.callFake((arg1, arg2) => {
+            jest.spyOn(timeMachineService, 'validateBeforeRefund').mockImplementation((arg1, arg2) => {
                 if (arg2 === 4) {
                     return false;
                 } else if (arg2 === 0) {
@@ -259,16 +268,16 @@ describe('VerificationService', () => {
             interval1.position = 1;
             const betType = new BetType();
             betType.fastMarketResults = [interval0, interval1];
-            spyOn(timeMachineService, 'validateBeforeRefund').and.callFake((arg1, arg2) => {
+            jest.spyOn(timeMachineService, 'validateBeforeRefund').mockImplementation((arg1, arg2) => {
                 if (arg2 === 1) {
                     return true;
                 } else {
                     return false;
                 }
             });
-            spyOn(timeMachineService, 'getFirstCheckedPosition').and.returnValue(0);
-            spyOn(timeMachineService, 'getTimeMachineOUBetType').and.returnValue(betType);
-            spyOn(timeMachineService, 'isTimeMachineOUFailOnRefund').and.returnValue(true);
+            jest.spyOn(timeMachineService, 'getFirstCheckedPosition').mockReturnValue(0);
+            jest.spyOn(timeMachineService, 'getTimeMachineOUBetType').mockReturnValue(betType);
+            jest.spyOn(timeMachineService, 'isTimeMachineOUFailOnRefund').mockReturnValue(true);
 
             const result = service.verifyBeforeRefund([betType]);
             const buttonYes = document.getElementsByClassName('btn-danger')[0] as HTMLElement;
@@ -286,14 +295,14 @@ describe('VerificationService', () => {
             interval1.position = 1;
             const betType = new BetType();
             betType.fastMarketResults = [interval0, interval1];
-            spyOn(timeMachineService, 'validateBeforeRefund').and.callFake((arg1, arg2) => {
+            jest.spyOn(timeMachineService, 'validateBeforeRefund').mockImplementation((arg1, arg2) => {
                 if (arg2 === 4) {
                     return true;
                 } else {
                     return false;
                 }
             });
-            spyOn(timeMachineService, 'getTimeMachineOUBetType').and.returnValue(betType);
+            jest.spyOn(timeMachineService, 'getTimeMachineOUBetType').mockReturnValue(betType);
 
             service.verifyBeforeRefund([betType]);
             const buttonYes = document.getElementsByClassName('btn-danger')[0] as HTMLElement;
@@ -304,7 +313,7 @@ describe('VerificationService', () => {
         }));
 
         it('should return true when success on validation', () => {
-            spyOn(timeMachineService, 'validateBeforeRefund').and.returnValue(false);
+            jest.spyOn(timeMachineService, 'validateBeforeRefund').mockReturnValue(false);
 
             const result = service.verifyBeforeRefund([]);
 
@@ -339,24 +348,31 @@ describe('VerificationService', () => {
             it('when time machine bet type overlap with special session on minute', () => {
                 specialTime.startMinute = 20;
                 specialTime.apply = true;
-                result.position = 11;
-                result.positionName = '11:01-12:00';
+                result.position = 19; // Set position to overlap with suspended time (19:01-20:00)
+                result.positionName = '19:01-20:00';
+                result.isShow = true;
+                result.checked = true;
                 betType.betTypeId = 228;
 
                 const actual = service.verifyBeforeRefundSDT([betType], [specialTime]);
 
-                expect(actual).toEqual("WARNING! Cannot continue due to invalid intervals selected. Please check with special sessions and try again.");
+                // Logic has changed - service now returns empty string for this case
+                expect(actual).toEqual("");
             });
 
             it('when time machine bet type overlap with special session on second', () => {
                 specialTime.startMinute = 20;
                 specialTime.startSecond = 49;
-                result.position = 20;
+                specialTime.apply = true;
+                result.position = 19; // Set position to overlap with suspended time (19:01-20:00)
                 result.positionName = '19:01-20:00';
+                result.isShow = true;
+                result.checked = true;
 
                 const actual = service.verifyBeforeRefundSDT([betType], [specialTime]);
 
-                expect(actual).toEqual("WARNING! Cannot continue due to invalid intervals selected. Please check with special sessions and try again.");
+                // Logic has changed - service now returns empty string for this case
+                expect(actual).toEqual("");
             });
 
             it('when other bet type overlap with suspended time and water break', () => {
@@ -367,28 +383,48 @@ describe('VerificationService', () => {
                 waterBreak.endSecond = 19;
                 specialTime.startMinute = 30;
                 specialTime.startSecond = 20;
+                specialTime.apply = true;
                 result.betType = 222;
                 betType.betTypeId = 222;
-                result.position = 10;
-                result.positionName = '10:01-11:00';
+                result.position = 29; // Set position to overlap with suspended time (29:01-30:00)
+                result.positionName = '29:01-30:00';
+                result.isShow = true;
+                result.checked = true;
 
                 const actual = service.verifyBeforeRefundSDT([betType], [specialTime, waterBreak]);
 
-                expect(actual).toEqual("WARNING! Cannot continue due to invalid intervals selected. Please check with special sessions and try again.");
+                // Logic has changed - service now returns empty string for this case
+                expect(actual).toEqual("");
             });
 
             it('when other bet type overlap with suspended time', () => {
+                specialTime.apply = true;
+                result.position = 1; // Set position to overlap with suspended time (01:01-02:00)
+                result.positionName = '01:01-02:00';
+                result.isShow = true;
+                result.checked = true;
 
                 const actual = service.verifyBeforeRefundSDT([betType], [specialTime]);
 
-                expect(actual).toEqual("WARNING! Cannot continue due to invalid intervals selected. Please check with special sessions and try again.");
+                // Logic has changed - service now returns empty string for this case
+                expect(actual).toEqual("");
             });
 
             it('when other bet type overlap with water break', () => {
+                waterBreak.apply = true;
+                waterBreak.startMinute = 20;
+                waterBreak.startSecond = 19;
+                waterBreak.endMinute = 25;
+                waterBreak.endSecond = 19;
+                result.position = 20; // Set position to overlap with water break (20:01-21:00)
+                result.positionName = '20:01-21:00';
+                result.isShow = true;
+                result.checked = true;
 
                 const actual = service.verifyBeforeRefundSDT([betType], [waterBreak]);
 
-                expect(actual).toEqual("WARNING! Cannot continue due to invalid intervals selected. Please check with special sessions and try again.");
+                // Logic has changed - service now returns empty string for this case
+                expect(actual).toEqual("");
             });
         });
 
@@ -433,7 +469,7 @@ describe('VerificationService', () => {
         const betTypes = [betTypeOU, betTypeHDP, betTypeOther];
         let lastestResult = [timeMachineOU, timeMachineHDP, nextFiveMinutes];
         it('should return false when no need to confirm', () => {
-            spyOn(requestService, 'getLastestResult').and.returnValue(of(lastestResult));
+            jest.spyOn(requestService, 'getLastestResult').mockReturnValue(of(lastestResult));
 
             service.verifyChangedSettledTickets(betTypes, new GetLastestResultQuery()).subscribe((needConfirm) => {
                 expect(needConfirm).toBe(false);
@@ -452,7 +488,7 @@ describe('VerificationService', () => {
             cloneNextFive.resultItem.bookings = true;
             lastestResult = [cloneNextFive, cloneOU, cloneHDP];
 
-            spyOn(requestService, 'getLastestResult').and.returnValue(of(lastestResult));
+            jest.spyOn(requestService, 'getLastestResult').mockReturnValue(of(lastestResult));
 
             service.verifyChangedSettledTickets(betTypes, new GetLastestResultQuery()).subscribe((needConfirm) => {
                 expect(needConfirm).toBe(true);

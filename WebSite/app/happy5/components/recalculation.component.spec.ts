@@ -53,9 +53,7 @@ describe('Recalculation Component', () => {
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             declarations: [
-                ReCalculationComponent,
-                ModalDialogComponent,
-                ModalContentDialogComponent,
+                ReCalculationComponent
             ],
             providers: [
                 QueryService,
@@ -76,7 +74,9 @@ describe('Recalculation Component', () => {
                 HttpClientModule,
                 NgbModule,
                 ToastNoAnimationModule.forRoot(),
-                ToastrModule.forRoot()
+                ToastrModule.forRoot(),
+                ModalDialogComponent,
+                ModalContentDialogComponent
             ],
         })
         .compileComponents()

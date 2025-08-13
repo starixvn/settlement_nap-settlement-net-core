@@ -7,7 +7,7 @@ import { AioService } from "../../../shared/services";
 
 export class ConfirmNormalHandler implements BaseHandler {
   private nextHandler: BaseHandler;
-  #aioService = inject(AioService);
+  readonly #aioService = inject(AioService);
 
   setNextHandler(handler: BaseHandler) {
     this.nextHandler = handler;

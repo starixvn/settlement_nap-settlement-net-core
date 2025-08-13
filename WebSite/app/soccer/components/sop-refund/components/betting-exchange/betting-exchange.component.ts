@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { BetDaq, BetFair } from '../../../refund/model/match.model';
+import { BetDaq, BetFair } from '../../models/match.model';
 import { MatDialog } from '@angular/material/dialog';
 import { MoveBetComponent } from '../move-bet/move-bet.component';
 import { SpecificBettypeComponent } from '../specific-bettype/specific-bettype.component';
@@ -21,10 +21,10 @@ export class BettingExchangeComponent {
   @Input() betDaq: BetDaq;
   @Input() betFair: BetFair;
 
-  #dialog = inject(MatDialog);
-  #refundStorage = inject(RefundStorage);
-  #requestService = inject(RequestService);
-  #logicService = inject(LogicService);
+  readonly #dialog = inject(MatDialog);
+  readonly #refundStorage = inject(RefundStorage);
+  readonly #requestService = inject(RequestService);
+  readonly #logicService = inject(LogicService);
 
   onOpenPopupSpecificBetTypes( type: string, action: string ) {
     this.#refundStorage.clear();

@@ -56,13 +56,11 @@ describe('Bet Builder - Matches Component', () => {
         TestBed.configureTestingModule({
             declarations: [
                 MatchesComponent,
-                ModalDialogComponent,
                 MatchDetailComponent,
                 CalculationComponent,
                 ResultStatusPipe,
                 TicketStatusPipe,
                 SelectionPipe,
-                ModalContentDialogComponent,
             ],
             providers: [
                 NgbModal,
@@ -85,7 +83,9 @@ describe('Bet Builder - Matches Component', () => {
                 FormsModule,
                 HttpClientModule,
                 NgbModule,
-                MaterialModule
+                MaterialModule,
+                ModalDialogComponent,
+                ModalContentDialogComponent
             ],
         }).compileComponents()
             .then(() => {

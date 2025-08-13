@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
-import { GoalNameIcon } from '../models/constant.native';
+import { GoalNameIcon } from '../models/constant.model';
 import { CreateDataTest } from './create-data-test.native';
 import { GoalIcon } from '../../../models/goal-icon.model';
 import { GoalIconService } from './goal-icon.service';
 import { GoalRecordWithOutSemicolonService } from './goal-record-with-out-semicolon.service';
 import { GoalRecordWithSemicolonService } from './goal-record-with-semicolon.service';
 import { VerifyScoreGoalService } from "./verify-score-goal.service";
-import { ResultDetail } from '../../../models';
+import { ResultDetail } from '../../../../shared/models/sportsbook-sop';
 describe('Soccer - Verify Goal Icon service', () => {
     let service: GoalIconService;
     let goalRecordWithOutSemicolonService: GoalRecordWithOutSemicolonService;
@@ -25,8 +25,8 @@ describe('Soccer - Verify Goal Icon service', () => {
 
     beforeEach(() => {
         service = TestBed.inject(GoalIconService);
-        goalRecordWithOutSemicolonService = TestBed.get(GoalRecordWithOutSemicolonService);
-        goalRecordWithSemicolonService = TestBed.get(GoalRecordWithSemicolonService);
+        goalRecordWithOutSemicolonService = TestBed.inject(GoalRecordWithOutSemicolonService);
+        goalRecordWithSemicolonService = TestBed.inject(GoalRecordWithSemicolonService);
     });
 
     it('should be created', () => {
@@ -45,7 +45,7 @@ describe('Soccer - Verify Goal Icon service', () => {
             const expectedGoalIcon = new GoalIcon(GoalNameIcon.firstGoal, "", "", "");
             matchDetail.isExistFgLg = true;
             matchDetail.goalRecord = "H";
-            jest.spyOn(goalRecordWithOutSemicolonService, 'oneCharacterGoalRecord').mockReturnValue(expectedGoalIcon);
+            goalRecordWithOutSemicolonService.oneCharacterGoalRecord = jest.fn().mockReturnValue(expectedGoalIcon);
             const actualGoalIcon = service.generateGoalIcon(matchDetail, firstHalf, fullTime);
             expect(goalRecordWithOutSemicolonService.oneCharacterGoalRecord).toHaveBeenCalled();
             expect(expectedGoalIcon).toEqual(actualGoalIcon);
@@ -55,7 +55,7 @@ describe('Soccer - Verify Goal Icon service', () => {
             const expectedGoalIcon = new GoalIcon(GoalNameIcon.firstLastGoal, "", "", "");
             matchDetail.isExistFgLg = true;
             matchDetail.goalRecord = "HHA";
-            jest.spyOn(goalRecordWithOutSemicolonService, 'manyCharacterGoalRecord').mockReturnValue(expectedGoalIcon);
+            goalRecordWithOutSemicolonService.manyCharacterGoalRecord = jest.fn().mockReturnValue(expectedGoalIcon);
             const actualGoalIcon = service.generateGoalIcon(matchDetail, firstHalf, fullTime);
             expect(goalRecordWithOutSemicolonService.manyCharacterGoalRecord).toHaveBeenCalled();
             expect(expectedGoalIcon).toEqual(actualGoalIcon);
@@ -77,7 +77,7 @@ describe('Soccer - Verify Goal Icon service', () => {
             matchDetail.goalRecord = "H;";
             firstHalf.homeValue = '1';
             firstHalf.awayValue = '0';
-            jest.spyOn(goalRecordWithSemicolonService, 'oneCharacterHalftimeGoalRecord').mockReturnValue(expectedGoalIcon);
+            goalRecordWithSemicolonService.oneCharacterHalftimeGoalRecord = jest.fn().mockReturnValue(expectedGoalIcon);
             const actualGoalIcon = service.generateGoalIcon(matchDetail, firstHalf, fullTime);
             expect(goalRecordWithSemicolonService.oneCharacterHalftimeGoalRecord).toHaveBeenCalled();
             expect(expectedGoalIcon).toEqual(actualGoalIcon);
@@ -89,7 +89,7 @@ describe('Soccer - Verify Goal Icon service', () => {
             matchDetail.goalRecord = "HH;";
             firstHalf.homeValue = '1';
             firstHalf.awayValue = '0';
-            jest.spyOn(goalRecordWithSemicolonService, 'manyCharacterHalftimeGoalRecord').mockReturnValue(expectedGoalIcon);
+            goalRecordWithSemicolonService.manyCharacterHalftimeGoalRecord = jest.fn().mockReturnValue(expectedGoalIcon);
             const actualGoalIcon = service.generateGoalIcon(matchDetail, firstHalf, fullTime);
             expect(goalRecordWithSemicolonService.manyCharacterHalftimeGoalRecord).toHaveBeenCalled();
             expect(expectedGoalIcon).toEqual(actualGoalIcon);
@@ -102,7 +102,7 @@ describe('Soccer - Verify Goal Icon service', () => {
             matchDetail.goalRecord = "H;H";
             firstHalf.homeValue = '1';
             firstHalf.awayValue = '0';
-            jest.spyOn(goalRecordWithSemicolonService, 'oneCharacterHalftimeGoalRecord').mockReturnValue(expectedGoalIcon);
+            goalRecordWithSemicolonService.oneCharacterHalftimeGoalRecord = jest.fn().mockReturnValue(expectedGoalIcon);
             const actualGoalIcon = service.generateGoalIcon(matchDetail, firstHalf, fullTime);
             expect(expectedGoalIcon).toEqual(actualGoalIcon);
         });
@@ -111,7 +111,7 @@ describe('Soccer - Verify Goal Icon service', () => {
             const expectedGoalIcon = new GoalIcon(GoalNameIcon.firstLastGoal, "", "" , "");
             matchDetail.isExistFgLg = true;
             matchDetail.goalRecord = ";H";
-            jest.spyOn(goalRecordWithSemicolonService, 'oneCharacterFulTimeGoalRecord').mockReturnValue(expectedGoalIcon);
+            goalRecordWithSemicolonService.oneCharacterFulTimeGoalRecord = jest.fn().mockReturnValue(expectedGoalIcon);
             const actualGoalIcon = service.generateGoalIcon(matchDetail, firstHalf, fullTime);
             expect(expectedGoalIcon).toEqual(actualGoalIcon);
         });
@@ -120,7 +120,7 @@ describe('Soccer - Verify Goal Icon service', () => {
             const expectedGoalIcon = new GoalIcon(GoalNameIcon.firstLastGoal, "", "" , "");
             matchDetail.isExistFgLg = true;
             matchDetail.goalRecord = ";AA";
-            jest.spyOn(goalRecordWithOutSemicolonService, 'manyCharacterGoalRecord').mockReturnValue(expectedGoalIcon);
+            goalRecordWithOutSemicolonService.manyCharacterGoalRecord = jest.fn().mockReturnValue(expectedGoalIcon);
             const actualGoalIcon = service.generateGoalIcon(matchDetail, firstHalf, fullTime);
             expect(expectedGoalIcon).toEqual(actualGoalIcon);
         });

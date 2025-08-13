@@ -2,8 +2,9 @@ import { TestBed } from '@angular/core/testing';
 import { VerifyAllHandler } from './verify-all.handler';
 import { VerifyScoreGoalService } from '../../../components/calc/services/verify-score-goal.service';
 import { VerifyActionService } from '../../../components/calc/services/verify-action.service';
-import { MatchDetail, ChildMatch, FantasyRelatedMatch, Match } from '../../../components/calc/models/match.model';
+import { Match, MatchDetailSoccer } from '../../../components/calc/models/match.model';
 import { Language } from '../../../../shared/language.native';
+import { HedgeMatchDetail } from '../../../../shared/models/sportsbook-sop';
 import { CalculateStorage } from '../../../storage/calculate.storage';
 import { RequestService } from '../../../components/calc/services/request.service';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
@@ -19,7 +20,7 @@ describe('VerifyAllHandler', () => {
 
   const matchDetail = {
     isScoreInconsistent : false
-  } as MatchDetail;
+  } as MatchDetailSoccer;
 
   const match: Match ={
     matchDetail,
@@ -28,7 +29,12 @@ describe('VerifyAllHandler', () => {
     resultDetails: [],
     hedgeMatchDetail: undefined,
     fantasyMatch: undefined,
-    childMatches: []
+    childMatches: [],
+    externalResults: [],
+    originalResultDetail: [],
+    oldMatchDetail: new HedgeMatchDetail,
+    isClickOnCalculate: false,
+    isScoreDirect: false
   }
 
   beforeEach(() => {

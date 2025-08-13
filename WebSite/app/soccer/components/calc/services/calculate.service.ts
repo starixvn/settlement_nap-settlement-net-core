@@ -30,55 +30,55 @@ import { SaveOutsideScoreHandler } from "../../../handlers/calculate/save-outsid
 @Injectable()
 
 export class CalculateService {
-  #matchSettledHandler = new MatchSettledHandler();
-  #halfTimeSettledHandler = new HalfTimeSettledHandler();
-  #scoreValidationHandler = new ScoreValidationHandler();
+  readonly #matchSettledHandler = new MatchSettledHandler();
+  readonly #halfTimeSettledHandler = new HalfTimeSettledHandler();
+  readonly #scoreValidationHandler = new ScoreValidationHandler();
 
   //calc-HT
-  #verifyHalfTimeHandler = new VerifyFirstHalfHandler();
-  #confirmHalfTimeHandler = new ConfirmHalfTimeHandler ();
-  #verifyScoreConfirmHalfTimeHandler = new VerifyScoreConfirmHandler();
-  #verifyHalfTimeInconsistentScoreHandler = new VerifyInconsistentScoreHandler();
-  #verifyHalfTimeInsufficientScoreHandler = new VerifyInsufficientScoreHandler();
+  readonly #verifyHalfTimeHandler = new VerifyFirstHalfHandler();
+  readonly #confirmHalfTimeHandler = new ConfirmHalfTimeHandler ();
+  readonly #verifyScoreConfirmHalfTimeHandler = new VerifyScoreConfirmHandler();
+  readonly #verifyHalfTimeInconsistentScoreHandler = new VerifyInconsistentScoreHandler();
+  readonly #verifyHalfTimeInsufficientScoreHandler = new VerifyInsufficientScoreHandler();
 
   //calc-FT
-  #verifyFullTimeHandler = new VerifyFulltimeHandler();
-  #confirmFullTimeHandler = new ConfirmFullTimeHandler();
-  #confirmFtNoTicketHandler = new ConfirmFtNoTicketHandler();
-  #verifyScoreConfirmFullTimeHandler = new VerifyScoreConfirmHandler();
-  #verifyFullTimeInconsistentScoreHandler = new VerifyInconsistentScoreHandler();
-  #verifyFullTimeInsufficientScoreHandler = new VerifyInsufficientScoreHandler();
+  readonly #verifyFullTimeHandler = new VerifyFulltimeHandler();
+  readonly #confirmFullTimeHandler = new ConfirmFullTimeHandler();
+  readonly #confirmFtNoTicketHandler = new ConfirmFtNoTicketHandler();
+  readonly #verifyScoreConfirmFullTimeHandler = new VerifyScoreConfirmHandler();
+  readonly #verifyFullTimeInconsistentScoreHandler = new VerifyInconsistentScoreHandler();
+  readonly #verifyFullTimeInsufficientScoreHandler = new VerifyInsufficientScoreHandler();
 
 
   //calc-ALL
-  #verifyAllHandler = new VerifyAllHandler();
-  #confirmAllHandler = new ConfirmAllHandler();
-  #verifyScoreConfirmHandler = new VerifyScoreConfirmHandler();
-  #verifyInconsistentScoreHandler = new VerifyInconsistentScoreHandler();
-  #verifyInsufficientScoreHandler = new VerifyInsufficientScoreHandler();
+  readonly #verifyAllHandler = new VerifyAllHandler();
+  readonly #confirmAllHandler = new ConfirmAllHandler();
+  readonly #verifyScoreConfirmHandler = new VerifyScoreConfirmHandler();
+  readonly #verifyInconsistentScoreHandler = new VerifyInconsistentScoreHandler();
+  readonly #verifyInsufficientScoreHandler = new VerifyInsufficientScoreHandler();
 
 
   //uncalc-ALL
-  #uncalculateHandler = new UncalculateHandler();
+  readonly #uncalculateHandler = new UncalculateHandler();
 
   //Uncalc-FT
-  #checkBetStatusHandler = new CheckBetStatusHandler();
-  #confirmUncalcFTHandler = new ConfirmUncalcFTHandler();
-  #uncalculateFTHandler = new UncalculateFTHandler();
+  readonly #checkBetStatusHandler = new CheckBetStatusHandler();
+  readonly #confirmUncalcFTHandler = new ConfirmUncalcFTHandler();
+  readonly #uncalculateFTHandler = new UncalculateFTHandler();
 
   //Save-Score
-  #verifySettledResultHandler = new VerifySettledResultHandler();
-  #verifyTraderScoreHandler = new VerifyTraderScoreHandler();
-  #saveScoreHandler = new SaveScoreHandler();
+  readonly #verifySettledResultHandler = new VerifySettledResultHandler();
+  readonly #verifyTraderScoreHandler = new VerifyTraderScoreHandler();
+  readonly #saveScoreHandler = new SaveScoreHandler();
 
-  #verifyScoreInstant = new VerifyScoreInstantHandler();
-  #pushInstantScore = new PushInstantScoreHandler();
+  readonly #verifyScoreInstant = new VerifyScoreInstantHandler();
+  readonly #pushInstantScore = new PushInstantScoreHandler();
 
   //Save-Outside-Score
-  #saveOutsideScoreHandler = new SaveOutsideScoreHandler();
+  readonly #saveOutsideScoreHandler = new SaveOutsideScoreHandler();
 
-  #calculateHandler = new CalculateHandler();
-  #storage = inject(CalculateStorage);
+  readonly #calculateHandler = new CalculateHandler();
+  readonly #storage = inject(CalculateStorage);
 
   
 

@@ -4,9 +4,7 @@ import { RequestService } from './services/request.service';
 import { VerifyMatchService } from './services/verify-match.service';
 import { CalculateStorage } from '../../storage/calculate.storage';
 import { ToastContainerDirective } from 'ngx-toastr';
-import { Match, MatchDetail, Score } from './models/match.model';
-import { Language } from '../../../shared/language.native';
-import { ModalDialogMessage } from '../../../shared/models';
+import { Match, MatchDetailSoccer, Score } from './models/match.model';
 import { HttpClientModule } from '@angular/common/http';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { ClosePopupService } from '../../../shared/services';
@@ -23,8 +21,8 @@ describe('CalculationComponent', () => {
     matchId: 123,
     eventStatus: 'COMPLETED',
     goalRecord: '1-0',
-    isFantasyMatch: false
-  } as MatchDetail;
+    isFantasyMatch: false 
+  } as MatchDetailSoccer;
 
   const match: Match = {
     matchDetail,
@@ -33,7 +31,12 @@ describe('CalculationComponent', () => {
     ticketCounts: [],
     resultDetails: [],
     hedgeMatchDetail: null,
-    fantasyMatch: null
+    fantasyMatch: null,
+    externalResults: [],
+    originalResultDetail: null,
+    oldMatchDetail: null,
+    isClickOnCalculate: false,
+    isScoreDirect: false
   };
 
   beforeEach(async () => {
@@ -77,7 +80,7 @@ describe('CalculationComponent', () => {
 
     expect(requestService.getMatch).toHaveBeenCalledWith(123);
     expect(storage.setToastrOverlay).toHaveBeenCalledWith(component.toastContainer);
-    expect(storage.setMatch).toHaveBeenCalledWith(match);
+    expect(storage.setMatch).toHaveBeenCalledWith(match, undefined);
     expect(component.matchDetail).toBe(match.matchDetail);
     expect(component.childMatches).toBe(match.childMatches);
     expect(component.hedgeMatchDetail).toBe(match.hedgeMatchDetail);

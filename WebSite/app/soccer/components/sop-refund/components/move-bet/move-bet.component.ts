@@ -1,9 +1,8 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import * as _ from 'lodash';
-import { ToastContainerDirective, ToastContainerModule, ToastrService } from 'ngx-toastr';
+import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import { RequestService } from '../../services/request.service';
-import { BlockUIService, HttpRequestService, MessageBoxService } from '../../../../../shared/services';
 import { MatchMoveBet } from '../../models/match.model';
 import { RefundType } from '../../models/constant.model';
 import { Language } from '../../../../../shared/language.native';
@@ -14,7 +13,7 @@ import { CommonModule, DatePipe } from '@angular/common';
   templateUrl: './move-bet.component.html',
   standalone: true,
   providers: [ToastrService],
-  imports: [CommonModule, FormsModule, MatDialogModule, DatePipe, ToastContainerModule]
+  imports: [CommonModule, FormsModule, MatDialogModule, DatePipe]
 })
 export class MoveBetComponent implements OnInit {
   @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;

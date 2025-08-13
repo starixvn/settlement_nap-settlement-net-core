@@ -43,7 +43,8 @@ describe('EarlySettlementComponent', () => {
     isSuccessful: true,
     settledSessionId: '',
     hasResultAmendment: false,
-    childMatchIds: ''
+    childMatchIds: '',
+    isOrg: false
   };
   const unSuccessfulResult: Result = {
     errCode: 1,
@@ -52,6 +53,7 @@ describe('EarlySettlementComponent', () => {
     childMatchIds: '',
     settledSessionId: '',
     hasResultAmendment: false,
+    isOrg: false
   };
   const existMarkedTicket: MarkedTicketsModel = {
     isExistMarkedTicket: true,
@@ -78,11 +80,9 @@ describe('EarlySettlementComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [
-        ModalDialogComponent,
-        ModalContentDialogComponent
-      ],
       imports: [
+        ModalDialogComponent,
+        ModalContentDialogComponent,
         EarlySettlementComponent,
         HttpClientModule,
         ToastNoAnimationModule.forRoot(),
@@ -162,7 +162,9 @@ describe('EarlySettlementComponent', () => {
   describe('canSettleResult', () => {
     it('should return true when result is running and score is match and exist inhouse result', () => {
       resultDetail.resultStatus = 'Running';
-      jest.spyOn(verificationService, 'isExistInhouseResult').mockReturnValue(externalResult);
+      resultDetail.ticketStatus = 'Running';
+      resultDetail.isScoreMismatched = false;
+      jest.spyOn(verificationService, 'isValidTraderConfirmScore').mockReturnValue(true);
 
       const result = component.canSettleResult(resultDetail);
 
@@ -171,7 +173,8 @@ describe('EarlySettlementComponent', () => {
 
     it('should return false when result is completed', () => {
       resultDetail.resultStatus = 'Completed';
-      jest.spyOn(verificationService, 'isExistInhouseResult').mockReturnValue(externalResult);
+      resultDetail.ticketStatus = 'Completed';
+      jest.spyOn(verificationService, 'isValidTraderConfirmScore').mockReturnValue(true);
 
       const result = component.canSettleResult(resultDetail);
 
@@ -283,6 +286,9 @@ describe('EarlySettlementComponent', () => {
       const permission = new Permission();
       permission.isLeader = true;
       component.permission = permission;
+      component.match = match;
+      component.matchDetail = matchDetail;
+      component.resultDetails = [resultDetail];
     });
 
     it('Pass all validation and calculation is successful. error should have not been involved', fakeAsync(async () => {
@@ -303,12 +309,11 @@ describe('EarlySettlementComponent', () => {
       jest.spyOn(aioService, 'saveScore').mockReturnValue(Promise.resolve(successfulResult));
       jest.spyOn(aioService, 'verifyChangedSettledTickets').mockReturnValue(Promise.resolve(false));
       jest.spyOn(aioService, 'push').mockReturnValue(Promise.resolve(successfulResult));
+      jest.spyOn(verificationService, 'allMapHaveScreenshotSource').mockReturnValue(true);
+      jest.spyOn(verificationService, 'isExistMismatchedScoreScreenshot').mockReturnValue(false);
       messageBoxService.closePopup = jest.fn();
+      
       await component.calculate();
-
-      tick();
-      const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-      buttonYes.click();
       tick();
 
       expect(toastrService.error).not.toHaveBeenCalled();
@@ -319,7 +324,6 @@ describe('EarlySettlementComponent', () => {
       jest.spyOn(earlyConstraintService, 'verifyBeforeCalculation').mockReturnValue(Promise.resolve(''));
       jest.spyOn(aioService, 'checkingNoRunningOdds').mockReturnValue(Promise.resolve(errorMessage));
 
-      fixture.detectChanges();
       await component.calculate();
       flush();
 
@@ -337,6 +341,8 @@ describe('EarlySettlementComponent', () => {
       jest.spyOn(verificationService, 'allResultsHaveScoreSources').mockReturnValue(true);
       jest.spyOn(verificationService, 'isExistMismatchScore').mockReturnValue(false);
       jest.spyOn(aioService, 'verifyChangedSettledTickets').mockReturnValue(Promise.resolve(true));
+      jest.spyOn(verificationService, 'allMapHaveScreenshotSource').mockReturnValue(true);
+      jest.spyOn(verificationService, 'isExistMismatchedScoreScreenshot').mockReturnValue(false);
 
       await component.calculate();
       tick();
@@ -364,13 +370,14 @@ describe('EarlySettlementComponent', () => {
       jest.spyOn(aioService, 'checkingNoRunningOdds').mockReturnValue(null);
       jest.spyOn(verificationService, 'allResultsHaveScoreSources').mockReturnValue(true);
       jest.spyOn(verificationService, 'isExistMismatchScore').mockReturnValue(false);
+      jest.spyOn(earlyConstraintService, 'getConfirmMessage').mockReturnValue('Test confirmation message');
+      jest.spyOn(verificationService, 'allMapHaveScreenshotSource').mockReturnValue(true);
+      jest.spyOn(verificationService, 'isExistMismatchedScoreScreenshot').mockReturnValue(false);
+      
       await component.calculate();
+      tick();
 
-      const expected = Language.CalculationConfirmMessageEarly + "<br/>"
-        + `Test bet type name: ${matchDetail.homeName}<br/>`
-        + `Test bet type name: ${matchDetail.awayName}<br/>`
-
-      expect(component.confirmationDialogMessage.message).toEqual(expected);
+      expect(component.confirmationDialogMessage.message).toEqual('Test confirmation message');
     }));
 
     it('should alert when result is invalid', async () => {
@@ -391,6 +398,8 @@ describe('EarlySettlementComponent', () => {
       jest.spyOn(earlyConstraintService, "verifyBeforeCalculation").mockReturnValue(Promise.resolve(''));
       jest.spyOn(verificationService, 'allResultsHaveScoreSources').mockReturnValue(true);
       jest.spyOn(verificationService, 'isExistMismatchScore').mockReturnValue(true);
+      jest.spyOn(verificationService, 'allMapHaveScreenshotSource').mockReturnValue(true);
+      jest.spyOn(verificationService, 'isExistMismatchedScoreScreenshot').mockReturnValue(false);
 
       await component.calculate();
 

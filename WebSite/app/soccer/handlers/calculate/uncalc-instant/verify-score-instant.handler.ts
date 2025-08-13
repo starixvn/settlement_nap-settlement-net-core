@@ -5,7 +5,7 @@ import { AbstractHandler } from "../../abstract.handler.native";
 import { isEmpty }from "lodash";
 
 export class VerifyScoreInstantHandler extends AbstractHandler {
-  #requestService = inject(RequestService);
+  readonly #requestService = inject(RequestService);
 
   async handle(storage: CalculateBaseStorage): Promise<void> {
     const { matchDetail } = storage.getMatch();

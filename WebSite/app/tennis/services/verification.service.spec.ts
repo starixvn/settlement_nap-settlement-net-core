@@ -2,10 +2,10 @@ import { TestBed, inject } from '@angular/core/testing';
 import { IntervalCalculationService } from '../../shared/services';
 import { ResultDetail } from '../../shared/models/sportsbook-sop';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { ModalContentDialogComponent, ModalDialogComponent } from '../../shared/components';
 import { VerificationService } from './verification.service';
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
 import { ResultByTeamNamePipe } from '../../shared/pipes/result-by-team-name.pipe';
+import { ResourcesIds } from '../constants';
 
 export class CreateDataTest {
   public static CreateResultDetail(
@@ -43,14 +43,20 @@ describe('Tennis', () => {
   resultDetail.originalAwayValue = '';
   resultDetail.isShow = true;
 
-  const resultDetails: ResultDetail[] = [];
+  // Create a match result with the correct resourceId
+  const matchResult = new ResultDetail();
+  matchResult.resourceId = ResourcesIds.totalSets; // This should match fullTimeId
+  matchResult.resultStatus = "Complete";
+  matchResult.checked = false;
+  matchResult.homeValue = "2";
+  matchResult.awayValue = "1";
+  matchResult.originalHomeValue = "2";
+  matchResult.originalAwayValue = "1";
+
+  const resultDetails: ResultDetail[] = [resultDetail, matchResult];
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [
-        ModalDialogComponent,
-        ModalContentDialogComponent,
-      ],
       providers: [
         IntervalBackgroundPipe,
         VerificationService,
@@ -59,7 +65,7 @@ describe('Tennis', () => {
         ResultByTeamNamePipe
       ],
       imports: [
-        NgbModule
+        NgbModule,
       ],
     });
 
@@ -76,7 +82,7 @@ describe('Tennis', () => {
 
   it("verifyMatchScoreOnCalculation - should call service", () => {
     const intervalCalculationService = TestBed.inject(IntervalCalculationService);
-    spyOn(intervalCalculationService, 'isMatchNotCheckedWhenChangingIntervals');
+    intervalCalculationService.isMatchNotCheckedWhenChangingIntervals = jest.fn();
     service.verifyMatchScoreOnCalculation(resultDetails);
 
     expect(intervalCalculationService.isMatchNotCheckedWhenChangingIntervals).toHaveBeenCalled();
@@ -85,7 +91,7 @@ describe('Tennis', () => {
   describe('verifyIntervalsOnCalculation', () => {
     it('should alert when first validation return true', () => {
       const intervalCalculationService = TestBed.inject(IntervalCalculationService);
-      spyOn(intervalCalculationService, 'isIntervalNotCheckedWhenCalculateMatch').and.returnValue(true);
+      intervalCalculationService.isIntervalNotCheckedWhenCalculateMatch = jest.fn().mockReturnValue(true);
       const actual = service.verifyIntervalsOnCalculation(resultDetails, false);
 
       expect(actual).toEqual("WARNING! Cannot continue due to related intervals are not selected or calculated.");
@@ -93,8 +99,8 @@ describe('Tennis', () => {
 
     it('should alert when second validation return true', () => {
       const intervalCalculationService = TestBed.inject(IntervalCalculationService);
-      spyOn(intervalCalculationService, 'isIntervalNotCheckedWhenCalculateMatch').and.returnValue(false);
-      spyOn(intervalCalculationService, 'isNonCheckedIntervalsConsistent').and.returnValue(true);
+      intervalCalculationService.isIntervalNotCheckedWhenCalculateMatch = jest.fn().mockReturnValue(false);
+      intervalCalculationService.isNonCheckedIntervalsConsistent = jest.fn().mockReturnValue(true);
       const actual = service.verifyIntervalsOnCalculation(resultDetails, false);
 
       expect(actual).toEqual("WARNING! Cannot continue due to selected intervals are inconsistent with Match/Full Time score.");
@@ -102,8 +108,8 @@ describe('Tennis', () => {
 
     it('should return true when both validations are passed', () => {
       const intervalCalculationService = TestBed.inject(IntervalCalculationService);
-      spyOn(intervalCalculationService, 'isIntervalNotCheckedWhenCalculateMatch').and.returnValue(false);
-      spyOn(intervalCalculationService, 'isNonCheckedIntervalsConsistent').and.returnValue(false);
+      intervalCalculationService.isIntervalNotCheckedWhenCalculateMatch = jest.fn().mockReturnValue(false);
+      intervalCalculationService.isNonCheckedIntervalsConsistent = jest.fn().mockReturnValue(false);
       const result = service.verifyIntervalsOnCalculation(resultDetails, false);
 
       expect(result).toEqual("");

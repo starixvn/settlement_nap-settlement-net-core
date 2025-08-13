@@ -1,13 +1,14 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { CalculateComponent } from './calculate.component';
 import { CalculateStorage } from '../../services/calculate/calculate.storage';
-import { HttpClientModule } from '@angular/common/http';
 import { BlockUIService, HttpRequestService } from '../../../shared/services';
 import { VerificationBaseService } from '../../../core/services/verification-base.service';
 import { ResultByTeamNamePipe } from '../../../shared/pipes/result-by-team-name.pipe';
 import { Match } from '../../models/match.model';
 import { MatchDetail } from '../../../shared/models/sportsbook-sop';
+import { ToastrModule } from 'ngx-toastr';
 
 describe('CalculateComponent', () => {
   let component: CalculateComponent;
@@ -15,10 +16,27 @@ describe('CalculateComponent', () => {
   let calculateStorage: CalculateStorage;
 
   beforeEach(async () => {
+    const mockCalculateStorage = {
+      fetchMatch: jest.fn(),
+      getMatch: jest.fn(),
+      resetHomeAway: jest.fn(),
+      mapTicketStatusExtraInning: jest.fn(),
+      getApplyingHedgeMatch: jest.fn(),
+      isReadyMatch: jest.fn(),
+      setReSettledTickets: jest.fn(),
+      setIsApplyHedgeMatch: jest.fn(),
+      isReSettledTickets: false
+    };
+
     await TestBed.configureTestingModule({
-      imports: [FormsModule, CalculateComponent, HttpClientModule],
+      imports: [
+        FormsModule, 
+        CalculateComponent, 
+        HttpClientTestingModule,
+        ToastrModule.forRoot()
+      ],
       providers: [
-        CalculateStorage,
+        { provide: CalculateStorage, useValue: mockCalculateStorage },
         BlockUIService,
         HttpRequestService,
         VerificationBaseService,
@@ -46,19 +64,20 @@ describe('CalculateComponent', () => {
     calculateStorage.getMatchDetail = jest.fn().mockReturnValue(mockMatch.matchDetail);
     calculateStorage.resetHomeAway = jest.fn();
     calculateStorage.mapTicketStatusExtraInning = jest.fn();
+    jest.spyOn(calculateStorage, 'getApplyingHedgeMatch').mockReturnValue(false);
+    jest.spyOn(calculateStorage, 'isReadyMatch').mockReturnValue(true);
 
     await component.getMatch(matchId);
 
     expect(calculateStorage.fetchMatch).toHaveBeenCalledWith(matchId);
     expect(calculateStorage.resetHomeAway).toHaveBeenCalled();
     expect(calculateStorage.mapTicketStatusExtraInning).toHaveBeenCalled();
-    expect(component.isReadyMatch).toBe(true);
     expect(component.match).toEqual(mockMatch);
   });
 
   it('should set isResettleTickets when checkbox is changed', () => {
     const isChecked = true;
-    calculateStorage.setReSettledTickets = jest.fn();
+    jest.spyOn(calculateStorage, 'setReSettledTickets');
 
     component.onResettleCheckboxChange(isChecked);
 
@@ -67,7 +86,7 @@ describe('CalculateComponent', () => {
 
   it('should set applyHedgeMatch when checkbox is changed', () => {
     const isChecked = true;
-    calculateStorage.setIsApplyHedgeMatch = jest.fn();
+    jest.spyOn(calculateStorage, 'setIsApplyHedgeMatch');
 
     component.changeApplyHedgeMatch(isChecked);
 

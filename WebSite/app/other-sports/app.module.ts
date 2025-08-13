@@ -7,7 +7,7 @@ import {
     AppComponent,
 } from './components/app.component';
 import { CustomHttpRequestInterceptor } from '../shared/custom-httprequest-interceptor.native';
-import { ToastContainerModule, ToastrModule } from 'ngx-toastr';
+import { ToastrModule } from 'ngx-toastr';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SportTemplateModule } from './components/sport-template.module';
 @NgModule({
@@ -27,7 +27,7 @@ import { SportTemplateModule } from './components/sport-template.module';
             positionClass: 'inline',
             maxOpened: 1,
         }),
-        ToastContainerModule
+
     ],
     declarations: [
         AppComponent,

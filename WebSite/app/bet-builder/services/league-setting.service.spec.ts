@@ -18,7 +18,8 @@ describe('BetBuilder - League setting Service', () => {
         isSuccessful: true,
         childMatchIds: '1,2',
         settledSessionId: "",
-        hasResultAmendment: false
+        hasResultAmendment: false,
+        isOrg: false
     };
 
     const unSuccessfulResult = {
@@ -27,7 +28,8 @@ describe('BetBuilder - League setting Service', () => {
         isSuccessful: false,
         childMatchIds: "",
         settledSessionId: "",
-        hasResultAmendment: false
+        hasResultAmendment: false,
+        isOrg: false
     };
 
     beforeEach(() => {

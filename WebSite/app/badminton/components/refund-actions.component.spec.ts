@@ -1,4 +1,4 @@
-import { TestBed, waitForAsync, ComponentFixture, fakeAsync, tick, flush } from '@angular/core/testing';
+import { TestBed, waitForAsync, ComponentFixture } from '@angular/core/testing';
 import { HttpClientModule } from '@angular/common/http';
 import { ResourceNameByIdPipe, ExcludeTotalPointPipe, ResourceHeaderPipe } from '../pipes';
 import {
@@ -41,7 +41,8 @@ describe('Badminton - Refund actions component', () => {
     isSuccessful: true,
     childMatchIds: '',
     settledSessionId: '',
-    hasResultAmendment: false
+    hasResultAmendment: false,
+    isOrg: false
   };
   const unSuccessfulResult: Result = {
     errCode: 1,
@@ -49,7 +50,8 @@ describe('Badminton - Refund actions component', () => {
     isSuccessful: false,
     childMatchIds: '',
     settledSessionId: '',
-    hasResultAmendment: false
+    hasResultAmendment: false,
+    isOrg: false
   };
   const existMarkedTicket = {
     isExistMarkedTicket: true,
@@ -59,11 +61,9 @@ describe('Badminton - Refund actions component', () => {
   };
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [
-        ModalDialogComponent,
-        ModalContentDialogComponent
-      ],
       imports: [
+        ModalDialogComponent,
+        ModalContentDialogComponent,
         RefundActionsComponent,
         MatchDetailComponent,
         HttpClientModule,

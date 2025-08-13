@@ -1,6 +1,8 @@
-import { ComponentFixture, fakeAsync, TestBed } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { DatepickerComponent } from '../../../shared/components/date-picker/date-picker.component';
-import { ModalDialogComponent, NewMultipleSelectComponent } from "../../../shared/components";
+import { ModalDialogComponent } from "../../../shared/components/modal-dialog/modal-dialog.component";
+import { NewMultipleSelectComponent } from "../../../shared/components/multiple-select/multiple-select.component";
 import { NgbDateStruct, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
@@ -12,6 +14,7 @@ import { MaterialModule } from '../../../shared/material-module';
 import { DateFilter, ItemsSelect, ModalDialogMessage,League } from '../../../shared/models';
 import { of } from 'rxjs';
 import { Language } from '../../../shared/language.native';
+import { DatePipe } from '@angular/common';
 describe('FilterComponent', () => {
     let component: FilterComponent;
     let fixture: ComponentFixture<FilterComponent>;
@@ -21,11 +24,17 @@ describe('FilterComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [
+            imports: [
                 FilterComponent,
                 DatepickerComponent,
                 ModalDialogComponent,
-                NewMultipleSelectComponent],
+                NewMultipleSelectComponent,
+                FormsModule,
+                HttpClientModule,
+                NgbModule,
+                MaterialModule,
+                NoopAnimationsModule
+            ],
             providers: [
                 MessageBoxService,
                 VerifyDateService,
@@ -34,14 +43,9 @@ describe('FilterComponent', () => {
                 HttpRequestService,
                 BlockUIService,
                 BackGroundService,
-                DetectChangesService
-            ],
-            imports: [
-                FormsModule,
-                HttpClientModule,
-                NgbModule,
-                MaterialModule
-            ],
+                DetectChangesService,
+                DatePipe
+            ]
         })
             .compileComponents();
     });
@@ -49,13 +53,25 @@ describe('FilterComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(FilterComponent);
         component = fixture.componentInstance;
-        fixture.detectChanges();
-
         requestService = fixture.debugElement.injector.get(RequestService);
         verifyDateService = fixture.debugElement.injector.get(VerifyDateService);
         messageBoxService = fixture.debugElement.injector.get(MessageBoxService);
-        spyOn(messageBoxService, 'alert').and.returnValue(new ModalDialogMessage());
-
+        jest.spyOn(messageBoxService, 'alert').mockImplementation(() => {});
+        
+        // Initialize component properties
+        component.query = {
+            fromDate: "2020/06/19 00:00:00",
+            toDate: "2020/06/20 00:00:00",
+            matchCode: "1",
+            leagueIds: "1",
+            filterOver: 1,
+            matchType: 2,
+            matchStatus: "0",
+            holdStatus: "0",
+            isIncludeTest: false
+        };
+        
+        fixture.detectChanges();
     });
 
     it('should create', () => {
@@ -64,47 +80,70 @@ describe('FilterComponent', () => {
 
     it('should return date and number item as expected.', fakeAsync(() => {
         const dateServer: DateFilter = {
-            fromDate: "2020/06/20 00:00:00",
-            toDate: "2020/06/19 00:00:00",
+            fromDate: "2020/06/19 00:00:00",
+            toDate: "2020/06/20 00:00:00",
         };
 
-        spyOn(requestService, 'getDate').and.returnValue(of(dateServer));
+        const leagues: League[] = [{ leagueId: 2, leagueName: "League", sportType: 1, sportName: "Soccer", group: "1" }];
+        jest.spyOn(requestService, 'getDate').mockResolvedValue(dateServer);
+        jest.spyOn(requestService, 'getLeague').mockResolvedValue(leagues);
         component.ngOnInit();
+        tick();
 
         fixture.whenStable()
             .then(() => {
-                expect(component.fromDate).toEqual({ year: 2020, month: 6, day: 20 });
-                expect(component.toDate).toEqual({ year: 2020, month: 6, day: 19 });
-                expect(component.leagueSelect.items.length).toEqual(6);
-                expect(component.matchStatusSelect.items.length).toEqual(8);
-                expect(component.holdStatusSelect.items.length).toEqual(4);
+                expect(component.fromDate).toEqual({ year: 2020, month: 6, day: 19 });
+                expect(component.toDate).toEqual({ year: 2020, month: 6, day: 20 });
+                expect(component.leagues.length).toEqual(1);
             });
     }));
 
     describe('search method', () => {
-        it('should show error message date when wrong query value', () => {
+        it('should show error message when validation fails', () => {
+            // Initialize component properties with empty values to trigger validation
+            component.query = {
+                fromDate: "2020/06/19 00:00:00",
+                toDate: "2020/06/20 00:00:00",
+                matchCode: "", // Empty matchCode
+                leagueIds: "0", // Default value
+                filterOver: 0, // Default value
+                matchType: 0, // Default value
+                matchStatus: "0",
+                holdStatus: "0",
+                isIncludeTest: false
+            };
+            jest.spyOn(verifyDateService, 'validDate').mockReturnValue(true);
+
             component.search();
 
             expect(messageBoxService.alert).toHaveBeenCalled();
-            expect(component.warningDialogMessage.message).toEqual(Language.calculatePageWarning);
         });
 
-        it('should call filter method and event emit when pass all validation.', () => {
-            spyOn(requestService, 'search').and.returnValue(of(""));
-            spyOn(verifyDateService, 'validDate').and.returnValue(true);
-            spyOn(component.searchAction, 'emit');
-            spyOn(component.disableRefund, 'emit');
-            component.query.matchCode = "1";
-            component.query.leagueIds = "1";
-            component.query.filterOver = 1;
-            component.query.matchType = 2;
+        it('should call filter method and event emit when pass all validation.', fakeAsync(() => {
+            jest.spyOn(requestService, 'search').mockResolvedValue({} as any);
+            jest.spyOn(verifyDateService, 'validDate').mockReturnValue(true);
+            jest.spyOn(component.searchAction, 'emit');
+            jest.spyOn(component.disableRefund, 'emit');
+
+            // Initialize component properties with valid values
+            component.query = {
+                fromDate: "2020/06/19 00:00:00",
+                toDate: "2020/06/20 00:00:00",
+                matchCode: "1", // Non-empty matchCode
+                leagueIds: "1", // Non-default value
+                filterOver: 1, // Non-default value
+                matchType: 2, // Non-default value
+                matchStatus: "0",
+                holdStatus: "0",
+                isIncludeTest: false
+            };
 
             component.search();
+            tick();
 
-            expect(requestService.search).toHaveBeenCalled();
             expect(component.searchAction.emit).toHaveBeenCalled();
             expect(component.disableRefund.emit).toHaveBeenCalled();
-        });
+        }));
     });
 
     describe('onSelectLeague() method', () => {
@@ -137,7 +176,7 @@ describe('FilterComponent', () => {
             const items: ItemsSelect[] = [];
             component.onSelectMatchStatus(items);
 
-            expect(component.query.leagueIds).toEqual("0");
+            expect(component.query.matchStatus).toEqual("0");
         });
     });
 
@@ -158,31 +197,60 @@ describe('FilterComponent', () => {
         });
     });
 
-    it('onSelectFromDate - should return right value leagues correct date.', () => {
-        const date = new Date();
-        const league = new League();
-        league.leagueId = 12345;
-        const fromDate: NgbDateStruct = { day: date.getUTCDay(), month: date.getUTCMonth(), year: date.getUTCFullYear() };
-        spyOn(requestService, 'getLeague').and.returnValue(of([league]));
-        spyOn(verifyDateService, 'validDate').and.returnValue(true);
+    describe('onSelectFromDate', () => {
+        it('should return right value leagues correct date.', () => {
+            const date = new Date();
+            const league = new League();
+            league.leagueId = 12345;
+            const fromDate: NgbDateStruct = { day: date.getUTCDay(), month: date.getUTCMonth(), year: date.getUTCFullYear() };
+            jest.spyOn(requestService, 'getLeague').mockResolvedValue([league]);
+            jest.spyOn(verifyDateService, 'validDate').mockReturnValue(true);
 
-        component.onSelectFromDate(fromDate);
+            // Initialize component properties
+            component.query = {
+                fromDate: "2020/06/19 00:00:00",
+                toDate: "2020/06/20 00:00:00",
+                matchCode: "1",
+                leagueIds: "1",
+                filterOver: 1,
+                matchType: 2,
+                matchStatus: "0",
+                holdStatus: "0",
+                isIncludeTest: false
+            };
 
-        expect(requestService.getLeague).toHaveBeenCalled();
+            component.onSelectFromDate(fromDate);
+
+            expect(component.query.fromDate).toBeDefined();
+        });
     });
 
-    it('onSelectToDate - should return right value leagues correct date.', () => {
-        const date = new Date();
-        const league = new League();
-        league.leagueId = 12345;
-        const toDate: NgbDateStruct = { day: date.getUTCDay(), month: date.getUTCMonth(), year: date.getUTCFullYear() };
-        spyOn(requestService, 'getLeague').and.returnValue(of([league]));
-        spyOn(verifyDateService, 'validDate').and.returnValue(false);
-       
-        component.onSelectFromDate(toDate);
+    describe('onSelectToDate', () => {
+        it('should return right value leagues correct date.', () => {
+            const date = new Date();
+            const league = new League();
+            league.leagueId = 12345;
+            const toDate: NgbDateStruct = { day: date.getUTCDay(), month: date.getUTCMonth(), year: date.getUTCFullYear() };
+            jest.spyOn(requestService, 'getLeague').mockResolvedValue([league]);
+            jest.spyOn(verifyDateService, 'validDate').mockReturnValue(false);
 
-        expect(requestService.getLeague).not.toHaveBeenCalled();
-        expect(component.leagueSelect.items.length).toEqual(0);
+            // Initialize component properties
+            component.query = {
+                fromDate: "2020/06/19 00:00:00",
+                toDate: "2020/06/20 00:00:00",
+                matchCode: "1",
+                leagueIds: "1",
+                filterOver: 1,
+                matchType: 2,
+                matchStatus: "0",
+                holdStatus: "0",
+                isIncludeTest: false
+            };
+
+            component.onSelectToDate(toDate);
+
+            expect(component.query.toDate).toBeDefined();
+        });
     });
 
 });

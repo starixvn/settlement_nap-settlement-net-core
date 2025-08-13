@@ -1,4 +1,4 @@
-import { FilterRequest, MoveTicketsRequest, GetChildMatchesRequest } from '../../models';
+import { FilterRequest, MoveTicketsRequest } from '../../models';
 import { BlockUIService, DialogBoxService, HttpRequestService, MessageBoxService } from '../../../shared/services';
 import { TestBed} from '@angular/core/testing';
 
@@ -46,7 +46,7 @@ describe('MoveTicketsService', () => {
     };
 
     // Act
-    spyOn(httpRequestService, 'postJson');
+    jest.spyOn(httpRequestService, 'postJson');
     moveTicketsService.getLeague(param);
 
     // Assert
@@ -55,10 +55,10 @@ describe('MoveTicketsService', () => {
 
   it('getDate - Call right Url', () => {
         // Arrange
-        const url = "api/multi-sports/get-date";
+        const url = "/api/multi-sports/get-date";
 
         // Act
-        spyOn(httpRequestService, 'getJson');
+        jest.spyOn(httpRequestService, 'getJson');
         moveTicketsService.getDate();
 
         // Assert
@@ -78,12 +78,12 @@ describe('MoveTicketsService', () => {
         };
 
         // Act
-        spyOn(httpRequestService, 'postJson');
+        jest.spyOn(httpRequestService, 'postJson');
         moveTicketsService.filter(param);
 
         // Assert
         expect(httpRequestService.postJson)
-          .toHaveBeenCalledWith(param, "api/moveticket/get-match");
+          .toHaveBeenCalledWith(param, "/api/moveticket/get-match");
     }
   );
 
@@ -94,32 +94,18 @@ describe('MoveTicketsService', () => {
     };
 
     // Act
-    spyOn(httpRequestService, 'postJson');
+    jest.spyOn(httpRequestService, 'postJson');
     moveTicketsService.moveTickets(param);
 
     // Assert
     expect(httpRequestService.postJson)
-      .toHaveBeenCalledWith(param, "api/moveticket/move-ticket");
+      .toHaveBeenCalledWith(param, "/api/moveticket/move-ticket");
   });
-
-  it('getChildMatches - Call right Url and param', () => {
-    // Arrange
-    const param = new GetChildMatchesRequest('12345');
-
-    // Act
-    spyOn(httpRequestService, 'postJson');
-    moveTicketsService.getChildMatches(param);
-
-    // Assert
-    expect(httpRequestService.postJson)
-      .toHaveBeenCalledWith(param, "api/moveticket/get-child-match");
-  });
-
 
   it('popupLog - should open dialog box', () => {
-    spyOn(dialogBoxService, 'popup');
+    jest.spyOn(dialogBoxService, 'popup');
 
-    moveTicketsService.popupLog(1, '', '');
+    moveTicketsService.popupLog('1', '', '');
 
     expect(dialogBoxService.popup).toHaveBeenCalled();
   });

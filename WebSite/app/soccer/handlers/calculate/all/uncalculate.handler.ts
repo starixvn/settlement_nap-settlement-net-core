@@ -3,10 +3,10 @@ import { Language } from "../../../../shared/language.native";
 import { MessageBoxService } from "../../../../shared/services";
 import { CalculateBaseStorage } from "../../../storage/storage.service.native";
 import { AbstractHandler } from "../../abstract.handler.native";
-import { CalculateAction, ResultStatusId } from "../../../../shared/constants";
+import { CalculateAction } from "../../../../shared/constants";
 
 export class UncalculateHandler extends AbstractHandler {
-  #messageBoxService = inject(MessageBoxService);
+  readonly #messageBoxService = inject(MessageBoxService);
 
   async handle(storage: CalculateBaseStorage) {
     storage.setConfirmMessage(Language.UncalculationConfirmMessage);

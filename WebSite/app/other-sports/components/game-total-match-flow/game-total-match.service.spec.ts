@@ -8,6 +8,7 @@ import { ResultDetail } from "../../../shared/models/sportsbook-sop";
 import { Result } from "../../../shared/models";
 import { of } from "rxjs";
 
+
 describe('GameTotalMatchService', () => {
     let service: GameTotalMatchService = null;
     let closePopupService: ClosePopupService;
@@ -83,6 +84,7 @@ describe('GameTotalMatchService', () => {
 
         it('should return false when match not ready', () => {
             matchDetail.playTime = 10;
+            matchDetail.parentId = 0;
 
             expect(service.isReadyMatch(matchDetail)).toBe(false);
         });
@@ -206,32 +208,49 @@ describe('GameTotalMatchService', () => {
             awayValue: '1',
         } as ResultDetail;
 
-        it('should return empty and call close popup when refund successfully',async () => {
-            spyOn(closePopupService, 'closePopup');
-            spyOn(requestService, 'refund').and.returnValue(of(successfulResult));
+        const matchDetail = {
+            matchId: 123,
+            sportType: 1,
+            sportName: 'Test Sport',
+            matchCode: 'TEST001',
+            kickOffTime: '2023-01-01T00:00:00',
+            leagueName: 'Test League',
+            homeName: 'Home Team',
+            awayName: 'Away Team',
+            playTime: 0,
+            betStatus: 'active',
+            isUnCalculate: false,
+            ftStatus: 'pending',
+            htStatus: 'pending',
+            isFullTimeSettled: false,
+            isHalfTimeSettled: false,
+            confirmHT: 0,
+            confirmFT: 0,
+            eventStatus: 'pending',
+            externalSourceName: 'test',
+            isCalculated: false,
+            isRefund: false,
+            isCalRefund: false,
+            isHalfTimeCal: false,
+            isScoreDirect: false,
+            leagueType: 1,
+            childMatchType: 1,
+            parentId: 0
+        } as MatchDetail;
 
-            expect(await service.refund(123, 456, totalSets)).toEqual('');
+        it('should return empty and call close popup when refund successfully',async () => {
+            const messageBoxService = TestBed.inject(MessageBoxService);
+            const closePopupSpy = jest.spyOn(messageBoxService, 'closePopup');
+            jest.spyOn(requestService, 'sendRequest').mockResolvedValue(successfulResult);
+
+            expect(await service.refund(matchDetail, 456, totalSets)).toEqual('');
+            expect(closePopupSpy).toHaveBeenCalled();
         });
 
         it('should return error message when refund fail', async () => {
-            spyOn(requestService, 'refund').and.returnValue(of(unsuccessfulResult));
+            jest.spyOn(requestService, 'sendRequest').mockResolvedValue(unsuccessfulResult);
 
-            expect(await service.refund(123, 456, totalSets)).toEqual(errorMessage);
-        });
-    });
-
-    describe('refundParlay', () => {
-        it('should return empty and call close popup when refund successfully',async () => {
-            spyOn(closePopupService, 'closePopup');
-            spyOn(requestService, 'refundParlay').and.returnValue(of(successfulResult));
-
-            expect(await service.refundParlay(123, 456)).toEqual('');
-        });
-
-        it('should return error message when refund fail', async () => {
-            spyOn(requestService, 'refundParlay').and.returnValue(of(unsuccessfulResult));
-
-            expect(await service.refundParlay(123, 456)).toEqual(errorMessage);
+            expect(await service.refund(matchDetail, 456, totalSets)).toEqual(errorMessage);
         });
     });
 });

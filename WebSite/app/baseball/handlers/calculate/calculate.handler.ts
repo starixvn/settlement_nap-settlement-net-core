@@ -10,8 +10,9 @@ import { SettleChildMatchQuery } from "../../../shared/models/settle-childmatch.
 
 export class CalculateHandler implements BaseHandler {
   #nextHandler: BaseHandler;
-  #aioService = inject(AioService);
-  #notifyService = inject(NotifyService);
+  readonly #aioService = inject(AioService);
+  readonly #notifyService = inject(NotifyService);
+  
   setNextHandler(handler: BaseHandler) {
     this.#nextHandler = handler;
   }

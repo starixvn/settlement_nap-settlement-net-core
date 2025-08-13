@@ -207,7 +207,7 @@ export class PopupService {
       Language.payout.titlePopupForLeague,
       frameSrc
     );
-    const subscribe = this.dialogBoxService
+    this.dialogBoxService
       .popupHasResponse(dialogData, "600px", "310px")
       .subscribe((result) => {
         if (!_.isUndefined(result)) {
@@ -216,7 +216,6 @@ export class PopupService {
           league.refundWaitingTime = Number(results[1]) ?? 0;
           triggerRerender();
         }
-        subscribe.unsubscribe();
       });
   }
 
@@ -235,11 +234,10 @@ export class PopupService {
     const title = typeObject === "Match" ? Language.payout.titlePopup : Language.payout.titlePopupForLeague;
     const dialogData = new DialogDataIframe(title, encodeURI(src));
 
-    const subscribe = this.dialogBoxService
+    this.dialogBoxService
         .popupHasResponse(dialogData, "780px", "350px")
         .subscribe((result) => {
           if(!result) {
-            subscribe.unsubscribe();
             return;
           }
 
@@ -285,7 +283,7 @@ export class PopupService {
       Language.payout.titlePopupForLeague,
       frameSrc
     );
-    const subscribe = this.dialogBoxService
+    this.dialogBoxService
       .popupHasResponse(dialogData, "500px", "270px")
       .subscribe((result) => {
         if (_.isNil(result)) {
@@ -301,7 +299,6 @@ export class PopupService {
           this.affectAutoPayoutForMatch(league);
           triggerRerender();
         }
-        subscribe.unsubscribe();
       }
       );
   }
@@ -320,7 +317,7 @@ export class PopupService {
       Language.payout.titlePopupForLeague,
       frameSrc
     );
-    const subscribe = this.dialogBoxService
+    this.dialogBoxService
       .popupHasResponse(dialogData, "500px", "930px")
       .subscribe((result) => {
         if (_.isNil(result)) {
@@ -341,8 +338,6 @@ export class PopupService {
           this.affectAutoPayoutForMatch(league);
           triggerRerender();
         }
-
-        subscribe.unsubscribe();
       }
       );
   }
@@ -376,14 +371,13 @@ export class PopupService {
       Language.payout.titlePopup,
       frameSrc
     );
-    const subscribe = this.dialogBoxService
+    this.dialogBoxService
       .popupHasResponse(dialogData, "500px", "270px")
       .subscribe((result) => {
         if (!_.isNil(result)) {
           this.applyNewSetting(match.autoCalcSetting, result, true, !isMultiSelect);
           this.refreshMatchService.refreshMatch(state$, match);
         }
-        subscribe.unsubscribe();
       });
   }
 

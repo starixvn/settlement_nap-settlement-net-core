@@ -38,4 +38,4 @@ export class LogPopupComponent implements OnInit {
     public close() {
         this.dialogRef.close();
     }
-}
+} 

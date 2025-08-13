@@ -43,5 +43,6 @@
   "editor.snippetSuggestions": "none",
   "jest.autoRun": {
     "onStartup": []
-}
+},
+"nxConsole.generateAiAgentRules": true
 }

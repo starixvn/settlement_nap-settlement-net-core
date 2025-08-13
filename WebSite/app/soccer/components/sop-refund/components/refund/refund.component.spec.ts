@@ -1,4 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpClientModule } from '@angular/common/http';
+import { ToastrModule } from 'ngx-toastr';
 
 import { RefundComponent } from './refund.component';
 
@@ -8,7 +10,7 @@ describe('RefundComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [RefundComponent]
+      imports: [RefundComponent, HttpClientModule, ToastrModule.forRoot()]
     })
     .compileComponents();
     

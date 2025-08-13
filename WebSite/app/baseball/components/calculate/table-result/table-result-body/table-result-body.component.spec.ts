@@ -23,10 +23,23 @@ describe("TableResultRowComponent", () => {
   let calculateService: CalculateService;
 
   beforeEach(async () => {
+    const mockCalculateStorage = {
+      getResultChecked: () => [],
+      getResultDetails: () => [],
+      getMatch: () => ({ resultDetails: [] }),
+      getPermission: () => ({ isLeader: false, canRefund: true, canCalculate: true }),
+      getMatchDetail: () => ({ homeName: 'Home', awayName: 'Away' }),
+      isLeader: () => false,
+      isMatchSeries: () => false,
+      getAllInnings: () => [],
+      isScoreDirect: () => false,
+      fulltimeResult: { externalScores: [] }
+    };
+
     await TestBed.configureTestingModule({
       imports: [TableResultBodyComponent,HttpClientModule, ToastrModule.forRoot()],
       providers: [
-        CalculateStorage,
+        { provide: CalculateStorage, useValue: mockCalculateStorage },
         ResultRowStateService,
         VerificationBaseService,
         NotifyService,

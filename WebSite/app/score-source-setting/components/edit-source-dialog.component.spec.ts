@@ -38,8 +38,6 @@ describe('EditSourceDialogComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [
-        ModalDialogComponent,
-        ModalContentDialogComponent
       ],
       providers: [
         HttpRequestService,
@@ -52,6 +50,8 @@ describe('EditSourceDialogComponent', () => {
       ],
       imports: [
         EditSourceDialogComponent,
+        ModalDialogComponent,
+        ModalContentDialogComponent,
         BrowserModule,
         FormsModule,
         MaterialModule,

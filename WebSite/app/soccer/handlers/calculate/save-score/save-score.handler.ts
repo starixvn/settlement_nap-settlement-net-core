@@ -8,8 +8,9 @@ import { Result } from "../../../../shared/models";
 import { ScoreSourceType } from "../../../../shared/constants";
 
 export class SaveScoreHandler extends AbstractHandler {
-  #requestService = inject(RequestService);
-  #messageBoxService = inject(MessageBoxService);
+  readonly #requestService = inject(RequestService);
+  readonly #messageBoxService = inject(MessageBoxService);
+  
   handle(storage: CalculateBaseStorage) {
     const { matchDetail, resultDetails } = storage.getMatch();
     const resultSelected = resultDetails.filter((resultDetail) => resultDetail.checked);

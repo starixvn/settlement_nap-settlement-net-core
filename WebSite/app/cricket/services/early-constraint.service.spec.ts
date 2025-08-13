@@ -77,7 +77,7 @@ describe('EarlyConstraintService', () => {
             result.inputType = 6;
             result.homeValue = "01,02";
             const resultByPlayerNamePipe = TestBed.inject(ResultByPlayerNamePipe);
-            spyOn(resultByPlayerNamePipe, 'transform').and.returnValue("Player Name");
+            jest.spyOn(resultByPlayerNamePipe, 'transform').mockReturnValue("Player Name");
 
             const actual = service.getPlayerResultName(result);
 
@@ -89,7 +89,7 @@ describe('EarlyConstraintService', () => {
         const result = new ResultDetail();
         result.homeValue = "C";
         const resultValuePipe = TestBed.inject(ResultValuePipe);
-        spyOn(resultValuePipe, 'transform').and.returnValue("Result Name");
+        jest.spyOn(resultValuePipe, 'transform').mockReturnValue("Result Name");
 
         const actual = service.getResultNameByValue(result);
 

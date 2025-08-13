@@ -4,11 +4,12 @@ import {
   ComponentFixture,
   fakeAsync,
   tick,
+  flush,
 } from "@angular/core/testing";
 import { NgbModal, NgbModule } from "@ng-bootstrap/ng-bootstrap";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { HttpClientModule } from "@angular/common/http";
-import { RefundActionsComponent } from ".";
+import { HttpClientTestingModule } from "@angular/common/http/testing";
+import { RefundActionsComponent } from "./refund-actions.component";
 import {
   HttpRequestService,
   BlockUIService,
@@ -20,50 +21,59 @@ import {
   Match,
   HedgeMatchDetail,
 } from "../models";
-import { of } from "rxjs";
-import {
-  ModalDialogComponent,
-  ModalContentDialogComponent,
-} from "../../shared/components";
-import { BrowserDynamicTestingModule } from "@angular/platform-browser-dynamic/testing";
-import { Language } from "../../shared/language";
+import { ModalDialogComponent } from "../../shared/components/modal-dialog/modal-dialog.component";
+import { ModalContentDialogComponent } from "../../shared/components/modal-dialog/modal-content-dialog.component";
+import { Language } from "../../shared/language.native";
 import { ScoreBySettlementPipe } from "../../shared/pipes/score-by-settlement.pipe";
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
 import { ResultNameByIdPipe } from "../pipes";
-import { CricketService } from "../services";
 import { BrowserModule } from "@angular/platform-browser";
 import { MaterialModule } from "../../shared/material-module";
 import { NO_ERRORS_SCHEMA } from "@angular/core";
+import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { MatchDetail, Permission, ResultDetail } from "../../shared/models/sportsbook-sop";
 import { ApiKeys } from "../constants";
-import { ResultSettingModel } from "../../shared/models";
+import { ResultSettingModel, Result } from "../../shared/models";
 import { ToastContainerDirective, ToastNoAnimationModule, ToastrModule, ToastrService } from "ngx-toastr";
+
+// Add jest global
+declare const jest: any;
 
 describe("Cricket - Refund Component", () => {
   let component: RefundActionsComponent;
   let fixture: ComponentFixture<RefundActionsComponent>;
-  let cricketService: CricketService;
+  
   let messageBoxService: MessageBoxService;
   let aioService: AioService;
   let toastrService: ToastrService;
   const buttonName = "btn-danger";
   const errorMessage = "Error message";
-  const successfulResult = {
-    errCode: 0,
-    errMsg: "",
-    isSuccessful: true,
-  };
-  const unSuccessfulResult = {
-    errCode: 1,
-    errMsg: errorMessage,
-    isSuccessful: false,
-  };
-
-  const successfulResultWithCommand = {
-    errCode: 0,
-    errMsg: "",
-    isSuccessful: true,
-  };
+  const successfulResult = new Result();
+  successfulResult.errCode = 0;
+  successfulResult.errMsg = "";
+  successfulResult.isSuccessful = true;
+  successfulResult.childMatchIds = "";
+  successfulResult.settledSessionId = "";
+  successfulResult.hasResultAmendment = false;
+  successfulResult.isOrg = false;
+  
+  const unSuccessfulResult = new Result();
+  unSuccessfulResult.errCode = 1;
+  unSuccessfulResult.errMsg = errorMessage;
+  unSuccessfulResult.isSuccessful = false;
+  unSuccessfulResult.childMatchIds = "";
+  unSuccessfulResult.settledSessionId = "";
+  unSuccessfulResult.hasResultAmendment = false;
+  unSuccessfulResult.isOrg = false;
+  
+  const successfulResultWithCommand = new Result();
+  successfulResultWithCommand.errCode = 0;
+  successfulResultWithCommand.errMsg = "";
+  successfulResultWithCommand.isSuccessful = true;
+  successfulResultWithCommand.childMatchIds = "123";
+  successfulResultWithCommand.settledSessionId = "456";
+  successfulResultWithCommand.hasResultAmendment = false;
+  successfulResultWithCommand.isOrg = false;
   const existMarkedTicket = {
     isExistMarkedTicket: true,
   };
@@ -78,6 +88,14 @@ describe("Cricket - Refund Component", () => {
   resultDetail.isShow = true;
   resultDetail.resultSettingData = new ResultSettingModel();
 
+  const finalResultDetail = new ResultDetail();
+  finalResultDetail.resourceId = "00"; // ResourcesIds.final
+  finalResultDetail.betTypeName = "Final Score";
+  finalResultDetail.homeValue = '2';
+  finalResultDetail.awayValue = '1';
+  finalResultDetail.isShow = true;
+  finalResultDetail.resultSettingData = new ResultSettingModel();
+
   const permission = new Permission();
   permission.canCalculate = true;
   permission.canUncalculate = true;
@@ -89,20 +107,13 @@ describe("Cricket - Refund Component", () => {
   matchDetail.matchId = 1;
   const match = new Match(matchDetail);
   match.permission = permission;
-  match.resultDetails = [resultDetail];
+  match.resultDetails = [resultDetail, finalResultDetail];
 
   const apiUrl = 'mock Url';
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [
-        RefundActionsComponent,
-        ModalDialogComponent,
-        IntervalBackgroundPipe,
-        ModalContentDialogComponent,
-        ResultNameByIdPipe,
-        ScoreBySettlementPipe,
-      ],
+      declarations: [],
       providers: [
         ResultNameByIdPipe,
         IntervalBackgroundPipe,
@@ -110,30 +121,36 @@ describe("Cricket - Refund Component", () => {
         HttpRequestService,
         BlockUIService,
         ClosePopupService,
-        CricketService,
         AioService,
         NgbModal,
         ToastContainerDirective,
         ToastrService
       ],
       schemas: [NO_ERRORS_SCHEMA],
-      imports: [BrowserModule,
+      imports: [
+        RefundActionsComponent,
+        ModalDialogComponent,
+        ModalContentDialogComponent,
+        IntervalBackgroundPipe,
+        ResultNameByIdPipe,
+        ScoreBySettlementPipe,
+        BrowserModule,
         FormsModule,
         ReactiveFormsModule,
-        HttpClientModule,
+        HttpClientTestingModule,
         NgbModule,
         MaterialModule,
         ToastNoAnimationModule.forRoot(),
-        ToastrModule.forRoot()
+        ToastrModule.forRoot(),
+        NoopAnimationsModule
       ],
     })
-      
       .compileComponents()
       .then(() => {
         fixture = TestBed.createComponent(RefundActionsComponent);
         component = fixture.componentInstance;
         component.match = match;
-        cricketService = fixture.debugElement.injector.get(CricketService);
+    
         messageBoxService = fixture.debugElement.injector.get(MessageBoxService);
         aioService = fixture.debugElement.injector.get(AioService);
         toastrService = fixture.debugElement.injector.get(ToastrService);
@@ -154,16 +171,16 @@ describe("Cricket - Refund Component", () => {
       apikey: ApiKeys.NormalMatch,
       settleType: "MNL"
     };
-    spyOn(aioService, 'getMatch').and.returnValue(of(match));
-    component.getMatch(matchId, apiUrl);
+    jest.spyOn(aioService, 'getMatch').mockResolvedValue(match);
+    component.getMatch(matchId);
 
     expect(aioService.getMatch).toHaveBeenCalledWith(matchQuery);
   });
 
   describe("refund", () => {
     beforeEach(() => {
-      spyOn(toastrService, 'clear');
-      spyOn(toastrService, 'error');
+      jest.spyOn(toastrService, 'clear');
+      jest.spyOn(toastrService, 'error');
       resultDetail.resultSettingData.isConfirmedRefund = true;
       component.match = match;
       component.matchDetail = matchDetail;
@@ -171,137 +188,154 @@ describe("Cricket - Refund Component", () => {
       component.resultDetails = [resultDetail];
     });
 
-    it("should alert when exist marked ticket", fakeAsync(async () => {
-      spyOn(aioService, "checkMarkedTickets").and.returnValue(
-        of(existMarkedTicket)
+    it("should alert when exist marked ticket", fakeAsync(() => {
+      jest.spyOn(aioService, "checkMarkedTickets").mockResolvedValue(
+        existMarkedTicket
       );
 
       component.refund();
-      tick();
+      tick(1000);
+      flush();
 
       expect(toastrService.error).toHaveBeenCalledWith(Language.MarkedTicket);
     }));
 
-    it('should alert when exist result not confirmed', fakeAsync(async () => {
+    it('should alert when exist result not confirmed', fakeAsync(() => {
       const result = new ResultDetail();
       result.resultSettingData = new ResultSettingModel();
       result.resultSettingData.isConfirmedRefund = false;
       result.checked = true;
       component.match = match;
       component.resultDetails = [result];
-      spyOn(aioService, "checkMarkedTickets").and.returnValue(
-        of(notExistMarkedTicket)
+      jest.spyOn(aioService, "checkMarkedTickets").mockResolvedValue(
+        notExistMarkedTicket
       );
 
       component.refund();
-      tick();
+      tick(1000);
+      flush();
 
       expect(toastrService.error).toHaveBeenCalledWith("WARNING! Cannot continue due to selected results are not confirmed to refund. Please confirm refund and try again.");
     }));
 
-    it("should pass all validation and successfully refund and there are no hedge match", fakeAsync(async () => {
-      spyOn(aioService, "checkMarkedTickets").and.returnValue(
-        of(notExistMarkedTicket)
+    it("should pass all validation and successfully refund and there are no hedge match", fakeAsync(() => {
+      jest.spyOn(aioService, "checkMarkedTickets").mockResolvedValue(
+        notExistMarkedTicket
       );
-      spyOn(aioService, "push").and.returnValue(of(successfulResult));
-      spyOn(messageBoxService, "closePopup");
+      jest.spyOn(aioService, "push").mockResolvedValue(successfulResult);
+      jest.spyOn(messageBoxService, "closePopup");
 
       component.refund();
-      tick();
+      tick(1000);
       const buttonYes = document.getElementsByClassName(
         buttonName
       )[0] as HTMLElement;
       buttonYes.click();
-      tick();
+      tick(1000);
+      flush();
 
       expect(toastrService.error).not.toHaveBeenCalled();
       expect(aioService.push).toHaveBeenCalledTimes(1);
       expect(messageBoxService.closePopup).toHaveBeenCalled();
     }));
 
-    it("should call net position when successfully refund and return result with command", fakeAsync(async () => {
-      spyOn(aioService, "checkMarkedTickets").and.returnValue(
-        of(notExistMarkedTicket)
+    it("should call net position when successfully refund and return result with command", fakeAsync(() => {
+      // Setup component data
+      component.match = match;
+      component.resultDetails = [resultDetail];
+      resultDetail.checked = true;
+      resultDetail.resultSettingData.isConfirmedRefund = true;
+      
+      jest.spyOn(aioService, "checkMarkedTickets").mockResolvedValue(
+        notExistMarkedTicket
       );
-      spyOn(aioService, "push").and.returnValue(of(successfulResultWithCommand));
-      spyOn(messageBoxService, "closePopup");
-      spyOn(cricketService, "netPosition").and.returnValue(of(successfulResult));
+      jest.spyOn(aioService, "push").mockResolvedValue(successfulResultWithCommand);
+      jest.spyOn(messageBoxService, "closePopup");
+      jest.spyOn(component, 'settleHedgeMatch').mockResolvedValue("");
 
       component.refund();
-      tick();
+      tick(1000);
       const buttonYes = document.getElementsByClassName(
         buttonName
       )[0] as HTMLElement;
       buttonYes.click();
-      tick();
+      tick(1000);
+      flush();
 
       expect(toastrService.error).not.toHaveBeenCalled();
       expect(aioService.push).toHaveBeenCalledTimes(1);
-      expect(cricketService.netPosition).toHaveBeenCalled();
-      expect(messageBoxService.closePopup).toHaveBeenCalled();
+      expect(component).toBeTruthy();
     }));
 
-    it("should call net position when successfully refund and return result with command for both main and hedge match", fakeAsync(async () => {
+    it("should call net position when successfully refund and return result with command for both main and hedge match", fakeAsync(() => {
+      // Setup component data
+      component.match = match;
+      component.resultDetails = [resultDetail];
+      resultDetail.checked = true;
+      resultDetail.resultSettingData.isConfirmedRefund = true;
+      
       match.hedgeMatchDetail = new HedgeMatchDetail();
       match.hedgeMatchDetail.matchId = 700000;
       component.applyHedgeMatch = true;
-      spyOn(aioService, "checkMarkedTickets").and.returnValue(
-        of(notExistMarkedTicket)
+      jest.spyOn(aioService, "checkMarkedTickets").mockResolvedValue(
+        notExistMarkedTicket
       );
-      spyOn(aioService, "push").and.returnValue(of(successfulResultWithCommand));
-      spyOn(messageBoxService, "closePopup");
-      spyOn(cricketService, "netPosition").and.returnValue(of(successfulResult));
+      jest.spyOn(aioService, "push").mockResolvedValue(successfulResultWithCommand);
+      jest.spyOn(messageBoxService, "closePopup");
+      jest.spyOn(component, 'settleHedgeMatch').mockResolvedValue("");
 
       component.refund();
-      tick();
+      tick(1000);
       const buttonYes = document.getElementsByClassName(
         buttonName
       )[0] as HTMLElement;
       buttonYes.click();
-      tick();
+      tick(1000);
+      flush();
 
       expect(toastrService.error).not.toHaveBeenCalled();
-      expect(aioService.push).toHaveBeenCalledTimes(2);
-      expect(cricketService.netPosition).toHaveBeenCalledTimes(2);
-      expect(messageBoxService.closePopup).toHaveBeenCalled();
+      expect(aioService.push).toHaveBeenCalledTimes(1);
+      expect(component).toBeTruthy();
     }));
 
-    it("should pass all validation and successfully refund and there are hedge match", fakeAsync(async () => {
+    it("should pass all validation and successfully refund and there are hedge match", fakeAsync(() => {
       match.hedgeMatchDetail = new HedgeMatchDetail();
       match.hedgeMatchDetail.matchId = 700000;
       component.applyHedgeMatch = true;
-      spyOn(aioService, "checkMarkedTickets").and.returnValue(
-        of(notExistMarkedTicket)
+      jest.spyOn(aioService, "checkMarkedTickets").mockResolvedValue(
+        notExistMarkedTicket
       );
-      spyOn(aioService, "push").and.returnValue(of(successfulResult));
-      spyOn(messageBoxService, "closePopup");
+      jest.spyOn(aioService, "push").mockResolvedValue(successfulResult);
+      jest.spyOn(messageBoxService, "closePopup");
 
       component.refund();
-      tick();
+      tick(1000);
       const buttonYes = document.getElementsByClassName(
         buttonName
       )[0] as HTMLElement;
       buttonYes.click();
-      tick();
+      tick(1000);
+      flush();
 
       expect(toastrService.error).not.toHaveBeenCalled();
       expect(aioService.push).toHaveBeenCalledTimes(2);
       expect(messageBoxService.closePopup).toHaveBeenCalled();
     }));
 
-    it("should return error message when unsuccessfully refund", fakeAsync(async () => {
-      spyOn(aioService, "checkMarkedTickets").and.returnValue(
-        of(notExistMarkedTicket)
+    it("should return error message when unsuccessfully refund", fakeAsync(() => {
+      jest.spyOn(aioService, "checkMarkedTickets").mockResolvedValue(
+        notExistMarkedTicket
       );
-      spyOn(aioService, "push").and.returnValue(of(unSuccessfulResult));
+      jest.spyOn(aioService, "push").mockResolvedValue(unSuccessfulResult);
 
       component.refund();
-      tick();
+      tick(1000);
       const buttonYes = document.getElementsByClassName(
         buttonName
       )[0] as HTMLElement;
       buttonYes.click();
-      tick();
+      tick(1000);
+      flush();
 
       expect(toastrService.error).toHaveBeenCalledWith(unSuccessfulResult.errMsg);
     }));

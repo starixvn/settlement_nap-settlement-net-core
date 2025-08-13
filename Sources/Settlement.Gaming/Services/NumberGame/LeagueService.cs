@@ -1,6 +1,6 @@
 ﻿using Settlement.Core.Services;
-using Settlement.Gaming.Requests;
 using Settlement.Gaming.Models.NumberGame;
+using Settlement.Gaming.Requests;
 
 namespace Settlement.Gaming.Services.NumberGame;
 

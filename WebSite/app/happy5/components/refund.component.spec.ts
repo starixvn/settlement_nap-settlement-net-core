@@ -51,9 +51,7 @@ describe('Refund Component', () => {
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             declarations: [
-                RefundComponent,
-                ModalDialogComponent,
-                ModalContentDialogComponent
+                RefundComponent
             ],
             providers: [
                 QueryService,
@@ -73,7 +71,9 @@ describe('Refund Component', () => {
                 BrowserAnimationsModule,
                 NoopAnimationsModule,
                 ToastNoAnimationModule.forRoot(),
-                ToastrModule.forRoot()
+                ToastrModule.forRoot(),
+                ModalDialogComponent,
+                ModalContentDialogComponent
             ],
         })
         .compileComponents()

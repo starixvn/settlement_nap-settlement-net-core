@@ -76,6 +76,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Settlement.Core", "Sources\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Settlement.Core.UnitTests", "Tests\Settlement.Core.UnitTests\Settlement.Core.UnitTests.csproj", "{2645CC85-218F-4892-8D76-69B4E8544A3D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Settlement.Gaming.UnitTests", "Tests\Settlement.Gaming.UnitTests\Settlement.Gaming.UnitTests.csproj", "{A1BBB836-E6CD-40EA-9200-8E96595DD62B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -190,6 +192,10 @@ Global
 		{2645CC85-218F-4892-8D76-69B4E8544A3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2645CC85-218F-4892-8D76-69B4E8544A3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2645CC85-218F-4892-8D76-69B4E8544A3D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A1BBB836-E6CD-40EA-9200-8E96595DD62B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1BBB836-E6CD-40EA-9200-8E96595DD62B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1BBB836-E6CD-40EA-9200-8E96595DD62B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1BBB836-E6CD-40EA-9200-8E96595DD62B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -224,6 +230,7 @@ Global
 		{D5CF43E2-66C7-461E-82A5-5FD63349DE14} = {0318FAF0-0F10-4D19-A03A-BA495310F4D4}
 		{B0416E5F-66D4-41C6-9567-FB3846CB4171} = {0318FAF0-0F10-4D19-A03A-BA495310F4D4}
 		{2645CC85-218F-4892-8D76-69B4E8544A3D} = {F6E96605-6144-461A-85E9-4FE6D3D49CC8}
+		{A1BBB836-E6CD-40EA-9200-8E96595DD62B} = {A1FCD18B-3CAA-4629-A10D-F9EDCEF84670}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F134C0FB-5844-4216-814B-BAE66FBB0195}

@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import * as _ from "lodash";
-import { GoalNameIcon } from '../models/constant.native';
+import { GoalNameIcon } from '../models/constant.model';
 import { GoalIcon } from '../../../models/goal-icon.model';
 import { VerifyScoreGoalService } from "./verify-score-goal.service";
 import { Goal } from "../../../constants";

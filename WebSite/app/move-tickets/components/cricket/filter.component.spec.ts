@@ -1,5 +1,6 @@
-import { DateFilter } from '../../models';
+import { DateFilter, MultiSport } from '../../models';
 import { waitForAsync, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { DatePipe } from '@angular/common';
 import { NgbModule, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
@@ -17,13 +18,11 @@ import {
     GenerateFilterService,
     DialogBoxService
 } from './../../../shared/services';
-import {
-    DatepickerComponent,
-    NewMultipleSelectComponent,
-    TreeViewComponent,
-    ModalContentDialogComponent,
-    ModalDialogComponent,
-} from '../../../shared/components';
+import { DatepickerComponent } from '../../../shared/components/date-picker/date-picker.component';
+import { NewMultipleSelectComponent } from '../../../shared/components/multiple-select/multiple-select.component';
+// TreeViewComponent not found - removing import
+import { ModalContentDialogComponent } from '../../../shared/components/modal-dialog/modal-content-dialog.component';
+import { ModalDialogComponent } from '../../../shared/components/modal-dialog/modal-dialog.component';
 import { of } from 'rxjs';
 import { MaterialModule } from '../../../shared/material-module';
 import { SportType } from '../../../shared/constants';
@@ -41,11 +40,6 @@ describe('FilterComponent', () => {
         TestBed.configureTestingModule({
             declarations: [
                 FilterComponent,
-                ModalDialogComponent,
-                ModalContentDialogComponent,
-                DatepickerComponent,
-                NewMultipleSelectComponent,
-                TreeViewComponent,
             ],
             providers: [
                 VerifyDateService,
@@ -55,8 +49,13 @@ describe('FilterComponent', () => {
                 BlockUIService,
                 GenerateFilterService,
                 DialogBoxService,
+                DatePipe,
             ],
             imports: [
+                ModalDialogComponent,
+                ModalContentDialogComponent,
+                DatepickerComponent,
+                NewMultipleSelectComponent,
                 BrowserModule,
                 FormsModule,
                 ReactiveFormsModule,
@@ -74,7 +73,7 @@ describe('FilterComponent', () => {
                 messageBoxService = fixture.debugElement.injector.get(MessageBoxService);
                 moveTicketsService = fixture.debugElement.injector.get(MoveTicketsService);
                 generateListService = fixture.debugElement.injector.get(GenerateFilterService);
-                spyOn(messageBoxService, 'alert').and.returnValue(new ModalDialogMessage());
+                jest.spyOn(messageBoxService, 'alert').mockReturnValue(undefined);
             });
     }));
 
@@ -88,7 +87,7 @@ describe('FilterComponent', () => {
             toDate: "2020/06/19 00:00:00",
         };
 
-        spyOn(moveTicketsService, 'getDate').and.returnValue(of(dateServer));
+        jest.spyOn(moveTicketsService, 'getDate').mockReturnValue(of(dateServer));
         component.ngOnInit();
 
         fixture.whenStable()
@@ -101,7 +100,7 @@ describe('FilterComponent', () => {
 
     describe('search method', () => {
         it('should show error message date when select wrong from date and to date.', () => {
-            spyOn(verifyDateService, 'validDate').and.returnValue(false);
+            jest.spyOn(verifyDateService, 'validDate').mockReturnValue(false);
             component.search();
 
             expect(messageBoxService.alert).toHaveBeenCalled();
@@ -109,7 +108,7 @@ describe('FilterComponent', () => {
         });
 
         it('should show error message select sport when have not selected any sport.', () => {
-            spyOn(verifyDateService, 'validDate').and.returnValue(true);
+            jest.spyOn(verifyDateService, 'validDate').mockReturnValue(true);
             component.sportTypesSelected = "";
             component.search();
 
@@ -118,7 +117,7 @@ describe('FilterComponent', () => {
         });
 
         it('should show error message select league when have not selected any league.', () => {
-            spyOn(verifyDateService, 'validDate').and.returnValue(true);
+            jest.spyOn(verifyDateService, 'validDate').mockReturnValue(true);
             component.sportTypesSelected = "2";
             component.leaguesSelected = "";
             component.search();
@@ -128,10 +127,10 @@ describe('FilterComponent', () => {
         });
 
         it('should call filter method and event emit when pass all validation.', () => {
-            spyOn(moveTicketsService, 'filter').and.returnValue(of(""));
-            spyOn(verifyDateService, 'validDate').and.returnValue(true);
-            spyOn(component.searchAction, 'emit');
-            spyOn(component.requestEmitter, 'emit');
+            jest.spyOn(moveTicketsService, 'filter').mockReturnValue(of({} as MultiSport));
+            jest.spyOn(verifyDateService, 'validDate').mockReturnValue(true);
+            jest.spyOn(component.searchAction, 'emit');
+            jest.spyOn(component.requestEmitter, 'emit');
             component.sportTypesSelected = "2";
             component.leaguesSelected = "1";
             component.search();
@@ -155,8 +154,8 @@ describe('FilterComponent', () => {
         const league = new League();
         league.leagueId = 12345;
         const fromDate: NgbDateStruct = { day: date.getUTCDay(), month: date.getUTCMonth(), year: date.getUTCFullYear() };
-        spyOn(moveTicketsService, 'getLeague').and.returnValue(of([league]));
-        spyOn(verifyDateService, 'validDate').and.returnValue(true);
+        jest.spyOn(moveTicketsService, 'getLeague').mockReturnValue(of([league]));
+        jest.spyOn(verifyDateService, 'validDate').mockReturnValue(true);
         component.onSelectFromDate(fromDate);
 
         expect(component.leagueSelect.items.length).toEqual(1);
@@ -167,8 +166,8 @@ describe('FilterComponent', () => {
         const league = new League();
         league.leagueId = 12345;
         const toDate: NgbDateStruct = { day: date.getUTCDay(), month: date.getUTCMonth(), year: date.getUTCFullYear() };
-        spyOn(moveTicketsService, 'getLeague').and.returnValue(of([league]));
-        spyOn(verifyDateService, 'validDate').and.returnValue(false);
+        jest.spyOn(moveTicketsService, 'getLeague').mockReturnValue(of([league]));
+        jest.spyOn(verifyDateService, 'validDate').mockReturnValue(false);
         component.onSelectFromDate(toDate);
 
         expect(component.leagueSelect.items.length).toEqual(0);

@@ -35,14 +35,16 @@ public class CalculateServiceImp(
     IDynamicRepository repository,
     IOptions<AppSettingsKey> appSettingsKey,
     ICreateCriteriaService createCriteriaService,
-    ScaleOutSettleService scaleOutSettleService,
-    LogService logService,
-    IMatchService matchService,
-    IPublishEndpoint publishEndpoint,
-    INapSession napSession,
-    IHttpContextAccessor accessor,
-    XmlConvertService xmlConvertService) : ICalculateService
+    CalculateServiceDependencies dependencies) : ICalculateService
 {
+    private readonly ScaleOutSettleService scaleOutSettleService = dependencies.ScaleOutSettleService;
+    private readonly LogService logService = dependencies.LogService;
+    private readonly IMatchService matchService = dependencies.MatchService;
+    private readonly IPublishEndpoint publishEndpoint = dependencies.PublishEndpoint;
+    private readonly INapSession napSession = dependencies.NapSession;
+    private readonly IHttpContextAccessor accessor = dependencies.Accessor;
+    private readonly XmlConvertService xmlConvertService = dependencies.XmlConvertService;
+
     public async Task<Result> Calculate(SettleRequest request)
     {
         var criteria = createCriteriaService.CreateCalculateCriteria(request);
@@ -74,7 +76,6 @@ public class CalculateServiceImp(
             await ExecuteHedging(criteria, request.HedgeMatchId);
         }
 
-
         await publishEndpoint.Publish(new MatchCalculated(
             request.MatchId,
             request.ParentId,
@@ -86,7 +87,6 @@ public class CalculateServiceImp(
             request.FinalAwayScore,
             request.ActionName), new CancellationTokenSource(TimeSpan.FromSeconds(2)).Token);
         await PublishJackTimeRequest(ticketCriteria);
-
 
         return validationResult;
     }
@@ -138,6 +138,7 @@ public class CalculateServiceImp(
         await repository.ExecuteAsync(criteria);
         return new Result(criteria.ErrCode, criteria.ErrMsg);
     }
+
     public async Task<Result> UncalculateFt(UncalculateFtRequest request)
     {
         var criteria = createCriteriaService.CreateUnCalculateFtCriteria(request);
@@ -407,4 +408,22 @@ public class CalculateServiceImp(
         var request = mapper.Map<SoccerGetTicketInfoCriteria, SoccerResult>(criteria);
         await publishEndpoint.Publish(request, new CancellationTokenSource(TimeSpan.FromSeconds(3)).Token);
     }
+}
+
+public class CalculateServiceDependencies(
+    ScaleOutSettleService scaleOutSettleService,
+    LogService logService,
+    IMatchService matchService,
+    IPublishEndpoint publishEndpoint,
+    INapSession napSession,
+    IHttpContextAccessor accessor,
+    XmlConvertService xmlConvertService)
+{
+    public ScaleOutSettleService ScaleOutSettleService { get; } = scaleOutSettleService;
+    public LogService LogService { get; } = logService;
+    public IMatchService MatchService { get; } = matchService;
+    public IPublishEndpoint PublishEndpoint { get; } = publishEndpoint;
+    public INapSession NapSession { get; } = napSession;
+    public IHttpContextAccessor Accessor { get; } = accessor;
+    public XmlConvertService XmlConvertService { get; } = xmlConvertService;
 }

@@ -66,11 +66,6 @@ public class AppsController(IConfiguration configuration) : Controller
         return SetView("Soccer - Refund", "sop-refund", ViewPath.Soccer);
     }
 
-    [HttpGet("soccer-sop-refund")]
-    public IActionResult SoccersopRefund()
-    {
-        return SetView("Soccer - Refund", "sop-refund", ViewPath.Soccer);
-    }
 
     [HttpGet("e-sports-early")]
     public IActionResult ESportsEarly()

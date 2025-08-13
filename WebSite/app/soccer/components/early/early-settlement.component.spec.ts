@@ -4,7 +4,7 @@ import { TestBed, waitForAsync, fakeAsync, ComponentFixture, tick } from '@angul
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ResultDetail, GroupMap } from '../../models';
 import { ExternalResultDetail } from '../../../shared/models/sportsbook-sop';
-import { Match } from './models';
+import { Match, MatchDetail } from './models';
 import {
     VerifyCalculateService, VerifyRefundService,
     GroupBetTypeService, AutoFillService, PenaltyShootoutService,
@@ -39,10 +39,13 @@ import {
     ResultValue
 } from '../../constants';
 import { Language } from '../../../shared/language.native';
-import { ResultSettingModel } from '../../../shared/models';
+import { GeneralResultDetail, ResultSettingModel } from '../../../shared/models';
 import { MatchDetailComponent } from '../common/match-detail.component';
 import { ScoreBySettlementPipe } from '../../../shared/pipes/score-by-settlement.pipe';
 import { ToastContainerDirective, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
+import { NewMultipleSelectComponent } from '../../../shared/components/multiple-select/multiple-select.component';
+import { OnlyIntegerDirective } from '../../../shared/directives/only-integer.directive.native';
+import { OnlyFirstTenScoreDirective } from '../../../shared/directives/only-first-ten-score.directive.native';
 
 describe('Soccer - EarlySettlementComponent', () => {
     let component: EarlySettlementComponent;
@@ -101,7 +104,7 @@ describe('Soccer - EarlySettlementComponent', () => {
         halfTimeHomeScore: null,
         finalAwayScore: null,
         finalHomeScore: null
-    };
+    } as MatchDetail;
 
     const resultSettingData = new ResultSettingModel();
     const resultDetail: ResultDetail = {
@@ -129,8 +132,14 @@ describe('Soccer - EarlySettlementComponent', () => {
         resultSettingData,
         sourceId: 0,
         isMismatch: false,
-        resultState: ''
-    };
+        traderScore: new GeneralResultDetail(),
+        externalScores: [],
+        resultStatusState: '',
+        isShow: false,
+        isEnabled: false,
+        originalHomeValue: 0,
+        originalAwayValue: 0
+    } ;
 
     const permission = {
         canCalculate: true,
@@ -151,7 +160,9 @@ describe('Soccer - EarlySettlementComponent', () => {
             .configureTestingModule({
                 declarations: [
                     EarlySettlementComponent,
-                    GroupNameByIdPipe],
+                    GroupNameByIdPipe,
+                    OnlyFirstTenScoreDirective
+                ],
                 providers: [
                     HttpClientModule,
                     AioService,
@@ -178,6 +189,8 @@ describe('Soccer - EarlySettlementComponent', () => {
                     ResettleCheckerComponent,
                     ModalDialogComponent,
                     ModalContentDialogComponent,
+                    NewMultipleSelectComponent,
+                    OnlyIntegerDirective,
                     FormsModule,
                     HttpClientModule,
                     NgbModule,
@@ -193,7 +206,7 @@ describe('Soccer - EarlySettlementComponent', () => {
                 match.permission = permission;
                 match.resultDetail = [resultDetail];
                 component.match = match;
-                fixture.detectChanges();
+                component.groupMap = [new GroupMap(1, [resultDetail])];
                 verifyCalculateService = fixture.debugElement.injector.get(VerifyCalculateService);
                 closePopupService = fixture.debugElement.injector.get(ClosePopupService);
                 messageBoxService = fixture.debugElement.injector.get(MessageBoxService);   
@@ -203,8 +216,8 @@ describe('Soccer - EarlySettlementComponent', () => {
                 helperService = fixture.debugElement.injector.get(HelperService);
                 toastrService = fixture.debugElement.injector.get(ToastrService);
                 aioService = fixture.debugElement.injector.get(AioService);
-                jest.spyOn(toastrService, 'clear');
-                jest.spyOn(toastrService, 'error');
+                toastrService.clear = jest.fn();
+                toastrService.error = jest.fn();
             });
     }));
 
@@ -218,7 +231,7 @@ describe('Soccer - EarlySettlementComponent', () => {
         matchDetail.matchId = 12345;
         match.matchDetail = matchDetail;
         match.resultDetail = [resultDetail];
-        jest.spyOn(helperService, 'getMatch').mockReturnValue(Promise.resolve(match));
+        helperService.getMatch = jest.fn().mockReturnValue(Promise.resolve(match));
         await component.getMatch(12345);
         expect(component.match.matchDetail.matchId).toEqual(12345);
     });
@@ -267,13 +280,13 @@ describe('Soccer - EarlySettlementComponent', () => {
             match.resultDetail = resultDetails;
             component.match = match;
             component.isReSettledTickets = false;
-            jest.spyOn(helperService, 'checkingStatus').mockReturnValue(Promise.resolve(successfulResult));
-            jest.spyOn(verifyCalculateService, 'verifyInputValue').mockReturnValue("");
-            jest.spyOn(verifyCalculateService, 'verifyPenaltyBettypeBeforeCalculation').mockReturnValue("");
-            jest.spyOn(verifyCalculateService, 'verifyCornerBettypeBeforeCalculation').mockReturnValue("");
-            jest.spyOn(aioService, 'getLastestMatchResult').mockReturnValue(Promise.resolve(resultDetails));
-            jest.spyOn(verifyCalculateService, 'isChangedScore').mockReturnValue(true);
-            jest.spyOn(messageBoxService, 'confirm');
+            helperService.checkingStatus = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+            verifyCalculateService.verifyInputValue = jest.fn().mockReturnValue("");
+            verifyCalculateService.verifyPenaltyBettypeBeforeCalculation = jest.fn().mockReturnValue("");
+            verifyCalculateService.verifyCornerBettypeBeforeCalculation = jest.fn().mockReturnValue("");
+            aioService.getLastestMatchResult = jest.fn().mockReturnValue(Promise.resolve(resultDetails));
+            verifyCalculateService.isChangedScore = jest.fn().mockReturnValue(true);
+            messageBoxService.confirm = jest.fn();
 
             await component.calculate();
             expect(component.confirmationDialogMessage.message).toEqual(Language.recalculateNotification);
@@ -285,7 +298,7 @@ describe('Soccer - EarlySettlementComponent', () => {
             match.matchDetail = matchDetail;
             match.resultDetail = resultDetails;
             component.match = match;
-            jest.spyOn(helperService, 'checkingStatus').mockReturnValue(Promise.resolve(unSuccessfulResult));
+            helperService.checkingStatus = jest.fn().mockReturnValue(Promise.resolve(unSuccessfulResult));
             await component.calculate();
 
             expect(toastrService.error).toHaveBeenCalledWith(errorMessage);
@@ -297,8 +310,8 @@ describe('Soccer - EarlySettlementComponent', () => {
             match.resultDetail = resultDetails;
             match.matchDetail = matchDetail;
             component.match = match;
-            jest.spyOn(helperService, 'checkingStatus').mockReturnValue(Promise.resolve(successfulResult));
-            jest.spyOn(verifyCalculateService, 'verifyInputValue').mockReturnValue(errorMessage);
+            helperService.checkingStatus = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+            verifyCalculateService.verifyInputValue = jest.fn().mockReturnValue(errorMessage);
             await component.calculate();
             expect(toastrService.error).toHaveBeenCalledWith(errorMessage);
         });
@@ -309,9 +322,9 @@ describe('Soccer - EarlySettlementComponent', () => {
             match.resultDetail = resultDetails;
             match.matchDetail = matchDetail;
             component.match = match;
-            jest.spyOn(helperService, 'checkingStatus').mockReturnValue(Promise.resolve(successfulResult));
-            jest.spyOn(verifyCalculateService, 'verifyInputValue').mockReturnValue("");
-            jest.spyOn(verifyCalculateService, 'verifyPenaltyBettypeBeforeCalculation').mockReturnValue(errorMessage);
+            helperService.checkingStatus = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+            verifyCalculateService.verifyInputValue = jest.fn().mockReturnValue("");
+            verifyCalculateService.verifyPenaltyBettypeBeforeCalculation = jest.fn().mockReturnValue(errorMessage);
             await component.calculate();
             expect(toastrService.error).toHaveBeenCalledWith(errorMessage);
         });
@@ -322,10 +335,10 @@ describe('Soccer - EarlySettlementComponent', () => {
             match.resultDetail = resultDetails;
             match.matchDetail = matchDetail;
             component.match = match;
-            jest.spyOn(helperService, 'checkingStatus').mockReturnValue(Promise.resolve(successfulResult));
-            jest.spyOn(verifyCalculateService, 'verifyInputValue').mockReturnValue("");
-            jest.spyOn(verifyCalculateService, 'verifyPenaltyBettypeBeforeCalculation').mockReturnValue("");
-            jest.spyOn(verifyCalculateService, 'verifyCornerBettypeBeforeCalculation').mockReturnValue(errorMessage);
+            helperService.checkingStatus = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+            verifyCalculateService.verifyInputValue = jest.fn().mockReturnValue("");
+            verifyCalculateService.verifyPenaltyBettypeBeforeCalculation = jest.fn().mockReturnValue("");
+            verifyCalculateService.verifyCornerBettypeBeforeCalculation = jest.fn().mockReturnValue(errorMessage);
             await component.calculate();
             expect(toastrService.error).toHaveBeenCalledWith(errorMessage);
         });
@@ -334,14 +347,15 @@ describe('Soccer - EarlySettlementComponent', () => {
     describe('uncalculate', () => {
         const resultDetails: ResultDetail[] = [resultDetail, resultDetail];
         const match = new Match();
+        match.matchDetail = matchDetail;
         match.resultDetail = resultDetails;
 
         it('should pass all validation and success', fakeAsync(() => {
             component.match = match;
             resultDetail.checked = true;
             resultDetail.resultStatusId = ResultStatusId.RunningOne;
-            jest.spyOn(helperService, 'settle').mockReturnValue(Promise.resolve(successfulResult));
-            jest.spyOn(closePopupService, 'closePopup');
+            helperService.settle = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+            closePopupService.closePopup = jest.fn();
 
             component.unCalculate();
             const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
@@ -356,7 +370,7 @@ describe('Soccer - EarlySettlementComponent', () => {
             component.match = match;
             resultDetail.checked = true;
             resultDetail.resultStatusId = ResultStatusId.AutoCompleted;
-            jest.spyOn(helperService, 'settle').mockReturnValue(Promise.resolve(unSuccessfulResult));
+            helperService.settle = jest.fn().mockReturnValue(Promise.resolve(unSuccessfulResult));
 
             component.unCalculate();
             const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
@@ -381,12 +395,12 @@ describe('Soccer - EarlySettlementComponent', () => {
         it('should pass all validation and refund successfully', async() => {
             component.match = match;
 
-            jest.spyOn(helperService, 'checkingStatus').mockReturnValue(Promise.resolve(successfulResult));
-            jest.spyOn(aioService, 'checkMarkedTickets').mockReturnValue(Promise.resolve(noMarkedTicket));
-            jest.spyOn(verifyCalculateService, 'verifyPenaltyBettypeBeforeRefund').mockReturnValue("");
+            helperService.checkingStatus = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+            aioService.checkMarkedTickets = jest.fn().mockReturnValue(Promise.resolve(noMarkedTicket));
+            verifyCalculateService.verifyPenaltyBettypeBeforeRefund = jest.fn().mockReturnValue("");
 
-            jest.spyOn(helperService, 'settle').mockReturnValue(Promise.resolve(successfulResult));
-            jest.spyOn(closePopupService, 'closePopup');
+            helperService.settle = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+            closePopupService.closePopup = jest.fn();
 
             await component.refund();
             const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
@@ -402,10 +416,10 @@ describe('Soccer - EarlySettlementComponent', () => {
 
             match.resultDetail = [resultDetail];
             component.match = match;
-            jest.spyOn(helperService, 'checkingStatus').mockReturnValue(Promise.resolve(successfulResult));
-            jest.spyOn(aioService, 'checkMarkedTickets').mockReturnValue(Promise.resolve(noMarkedTicket));
-            jest.spyOn(helperService, 'settle').mockReturnValue(Promise.resolve(unSuccessfulResult));
-            jest.spyOn(verifyCalculateService, 'verifyPenaltyBettypeBeforeRefund').mockReturnValue("");
+            helperService.checkingStatus = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+            aioService.checkMarkedTickets = jest.fn().mockReturnValue(Promise.resolve(noMarkedTicket));
+            helperService.settle = jest.fn().mockReturnValue(Promise.resolve(unSuccessfulResult));
+            verifyCalculateService.verifyPenaltyBettypeBeforeRefund = jest.fn().mockReturnValue("");
             await component.refund();
             
             const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
@@ -418,7 +432,7 @@ describe('Soccer - EarlySettlementComponent', () => {
         it('should show error message when checkingStatus is failed.', async() => {
             component.match = match;
 
-            jest.spyOn(helperService, 'checkingStatus').mockReturnValue(Promise.resolve(unSuccessfulResult));
+            helperService.checkingStatus = jest.fn().mockReturnValue(Promise.resolve(unSuccessfulResult));
             await component.refund();
 
             expect(toastrService.error).toHaveBeenCalledWith(errorMessage);
@@ -426,8 +440,8 @@ describe('Soccer - EarlySettlementComponent', () => {
 
         it('should show error message when there are marked tickets', async() => {
             component.match = match;
-            jest.spyOn(helperService, 'checkingStatus').mockReturnValue(Promise.resolve(successfulResult));
-            jest.spyOn(aioService, 'checkMarkedTickets').mockReturnValue(Promise.resolve(existMarkedTicket));
+            helperService.checkingStatus = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+            aioService.checkMarkedTickets = jest.fn().mockReturnValue(Promise.resolve(existMarkedTicket));
 
             await component.refund();
 
@@ -436,9 +450,9 @@ describe('Soccer - EarlySettlementComponent', () => {
 
         it('should show error message when there are not marked tickets but an error penalty', async() => {
             component.match = match;
-            jest.spyOn(helperService, 'checkingStatus').mockReturnValue(Promise.resolve(successfulResult));
-            jest.spyOn(aioService, 'checkMarkedTickets').mockReturnValue(Promise.resolve(noMarkedTicket));
-            jest.spyOn(verifyCalculateService, 'verifyPenaltyBettypeBeforeRefund').mockReturnValue(errorMessage);
+            helperService.checkingStatus = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+            aioService.checkMarkedTickets = jest.fn().mockReturnValue(Promise.resolve(noMarkedTicket));
+            verifyCalculateService.verifyPenaltyBettypeBeforeRefund = jest.fn().mockReturnValue(errorMessage);
 
             await component.refund();
 
@@ -543,7 +557,7 @@ describe('Soccer - EarlySettlementComponent', () => {
         const match = new Match();
         match.resultDetail = resultDetails;
         component.match = match;
-        jest.spyOn(autoFillService, 'autoFillResult');
+        autoFillService.autoFillResult = jest.fn();
 
         component.resultOnChange(resultDetail);
 
@@ -556,8 +570,8 @@ describe('Soccer - EarlySettlementComponent', () => {
         const match = new Match();
         match.resultDetail = resultDetails;
         component.match = match;
-        jest.spyOn(penaltyShootoutService, 'isSelectedNotTaken').mockReturnValue(true);
-        jest.spyOn(penaltyWoodWorkService, 'isInvalidResult').mockReturnValue(true);
+        penaltyShootoutService.isSelectedNotTaken = jest.fn().mockReturnValue(true);
+        penaltyWoodWorkService.isInvalidResult = jest.fn().mockReturnValue(true);
 
         component.woodworkOnChange(resultDetail);
 
@@ -647,7 +661,7 @@ describe('Soccer - EarlySettlementComponent', () => {
         const match = new Match();
         match.resultDetail = resultDetails;
         component.match = match;
-        jest.spyOn(autoFillService, 'changeValueOnPenaltyFirstTen');
+        autoFillService.changeValueOnPenaltyFirstTen = jest.fn();
 
         component.resultOnChangeFirstTen(resultDetail);
 
@@ -669,11 +683,11 @@ describe('Soccer - EarlySettlementComponent', () => {
     });
 
     describe('isChangeSetting.', () => {
-        beforeAll(() => {
+        beforeEach(() => {
             component.matchId = 70001;
         });
         it('always show confirm', () => {
-            jest.spyOn(messageBoxService, 'confirm');
+            messageBoxService.confirm = jest.fn();
 
             const map = new GroupMap(1, []);
 
@@ -685,7 +699,7 @@ describe('Soccer - EarlySettlementComponent', () => {
         it('should set correct value when aioService is successful', fakeAsync(() => {
             const map = new GroupMap(1, [resultDetail]);
             resultDetail.resultSettingData.isHoldResult = false;
-            jest.spyOn(aioService, 'changeResultSetting').mockReturnValue(Promise.resolve(true));
+            aioService.changeResultSetting = jest.fn().mockReturnValue(Promise.resolve(true));
 
             component.isChangeSetting(resultDetail, map);
             const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
@@ -699,11 +713,11 @@ describe('Soccer - EarlySettlementComponent', () => {
     });
 
     describe('changeSettingGroup', () => {
-        beforeAll(() => {
+        beforeEach(() => {
             component.matchId = 70001;
         });
         it('always show confirm', () => {
-            jest.spyOn(messageBoxService, 'confirm');
+            messageBoxService.confirm = jest.fn();
 
             const map = new GroupMap(1, []);
 
@@ -714,7 +728,7 @@ describe('Soccer - EarlySettlementComponent', () => {
 
         it('should set correct value when service successful', fakeAsync(() => {
             const map = new GroupMap(1, [resultDetail]);
-            jest.spyOn(aioService, 'changeResultSetting').mockReturnValue(Promise.resolve(true));
+            aioService.changeResultSetting = jest.fn().mockReturnValue(Promise.resolve(true));
 
             component.changeSettingGroup(map);
             const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;

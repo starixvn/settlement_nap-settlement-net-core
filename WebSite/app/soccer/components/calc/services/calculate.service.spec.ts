@@ -17,7 +17,9 @@ import { RequestService } from './request.service';
 import { ScoreService } from './score.service';
 import { VerifyActionService } from './verify-action.service';
 import { ClosePopupService } from '../../../../shared/services';
-import { Storage } from '../../../storage/storage.service.native';
+import { VerificationBaseService } from '../../../../core/services/verification-base.service';
+import { ResultByTeamNamePipe } from '../../../../shared/pipes/result-by-team-name.pipe';
+
 
 describe('CalculateService', () => {
     let service: CalculateService;
@@ -43,7 +45,9 @@ describe('CalculateService', () => {
                 RequestService,
                 ScoreService,
                 VerifyActionService,
-                ClosePopupService
+                ClosePopupService,
+                VerificationBaseService,
+                ResultByTeamNamePipe
             ]
         });
 

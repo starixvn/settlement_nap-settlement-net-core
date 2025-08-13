@@ -12,7 +12,7 @@ import { FilterRequest } from "../../models/filter-request.model";
     standalone: true,
     imports: [CommonModule, FilterComponent, LeagueTeamComponent, LogPopupComponent],
 })
-export default class MainPageComponent implements OnInit {
+export class MainPageComponent implements OnInit {
 
     public outright: Outright;
     public filterRequest: FilterRequest;

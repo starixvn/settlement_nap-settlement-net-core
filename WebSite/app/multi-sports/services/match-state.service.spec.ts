@@ -33,8 +33,9 @@ describe('MatchStateService', () => {
     halfTimeAwayScore: 0,
     finalHomeScore: 0,
     finalAwayScore: 0,
-    eventStatus: "",
+    eventStatus: "running",
     newEventStatus: "",
+    originalEventStatus: "",
     suspenderHalfTime: "",
     suspenderFullTime: "",
     remark: new Remark,
@@ -73,7 +74,12 @@ describe('MatchStateService', () => {
     applyDirect: false,
     autoCalcSetting: new AutoSetting,
     refundWaitingTime: 0,
-    mercyAbandonedInfo: ""
+    mercyAbandonedInfo: "",
+    hasFailedResource: false,
+    hasProviderHT: false,
+    hasProviderFT: false,
+    resourceIdsHasTicket: [],
+    apGroup: null
   }
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -969,7 +975,7 @@ describe('MatchStateService', () => {
 
   describe('getMercyAbandonedInfo', () => {
     it('should return default object when mercyAbandonedInfo is null', () => {
-      const match = { mercyAbandonedInfo: null } as Match;
+      const match = { mercyAbandonedInfo: null, eventStatus: 'Running' } as Match;
       const result = service.getMercyAbandonedInfo(match);
       
       expect(result).toEqual({
@@ -981,7 +987,7 @@ describe('MatchStateService', () => {
     });
 
     it('should return default object when mercyAbandonedInfo is empty', () => {
-      const match = { mercyAbandonedInfo: "" } as Match;
+      const match = { mercyAbandonedInfo: "", eventStatus: 'Running' } as Match;
       const result = service.getMercyAbandonedInfo(match);
       
       expect(result).toEqual({
@@ -993,19 +999,19 @@ describe('MatchStateService', () => {
     });
 
     it('should return mercy info when mercyAbandonedInfo contains mercy', () => {
-      const match = { mercyAbandonedInfo: "1:Mercy" } as Match;
+      const match = { mercyAbandonedInfo: "1:Mercy", eventStatus: 'Running' } as Match;
       const result = service.getMercyAbandonedInfo(match);
       
       expect(result).toEqual({
         isMercy: true,
         isAbandoned: false,
-        otherInfo: "M",
+        otherInfo: "Mercy",
         position: "1"
       });
     });
 
     it('should return abandoned info when mercyAbandonedInfo contains abandoned', () => {
-      const match = { mercyAbandonedInfo: "2:A" } as Match;
+      const match = { mercyAbandonedInfo: "2:A", eventStatus: 'Running' } as Match;
       const result = service.getMercyAbandonedInfo(match);
       
       expect(result).toEqual({
@@ -1017,7 +1023,7 @@ describe('MatchStateService', () => {
     });
 
     it('should handle other types of mercyAbandonedInfo', () => {
-      const match = { mercyAbandonedInfo: "3:X" } as Match;
+      const match = { mercyAbandonedInfo: "3:X", eventStatus: 'Running' } as Match;
       const result = service.getMercyAbandonedInfo(match);
       
       expect(result).toEqual({

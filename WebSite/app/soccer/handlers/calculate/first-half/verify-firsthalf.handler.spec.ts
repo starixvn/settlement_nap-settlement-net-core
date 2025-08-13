@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { VerifyFirstHalfHandler } from './verify-firsthalf.handler';
 import { VerifyScoreGoalService } from '../../../components/calc/services/verify-score-goal.service';
 import { VerifyActionService } from '../../../components/calc/services/verify-action.service';
-import { MatchDetail, Match } from '../../../components/calc/models/match.model';
+import { MatchDetailSoccer, Match } from '../../../components/calc/models/match.model';
 import { Language } from '../../../../shared/language.native';
 import { CalculateAction } from '../../../../shared/constants';
 import { Permission } from '../../../../shared/models/sportsbook-sop/permission.model';
@@ -11,6 +11,7 @@ import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { HttpClientModule } from '@angular/common/http';
 import { RequestService } from '../../../components/calc/services/request.service';
 import { ResultDetail } from '../../../models';
+import { HedgeMatchDetail } from '../../../../shared/models/sportsbook-sop';
 
 describe('VerifyFirstHalfHandler', () => {
   let handler: VerifyFirstHalfHandler;
@@ -20,7 +21,7 @@ describe('VerifyFirstHalfHandler', () => {
 
   const matchDetail = {
     isScoreInconsistent: false
-  } as MatchDetail;
+  } as MatchDetailSoccer;
   const match: Match = {
     matchDetail,
     permission: new Permission,
@@ -28,7 +29,12 @@ describe('VerifyFirstHalfHandler', () => {
     resultDetails: [],
     hedgeMatchDetail: undefined,
     fantasyMatch: undefined,
-    childMatches: []
+    childMatches: [],
+    externalResults: [],
+    originalResultDetail: [],
+    oldMatchDetail: new HedgeMatchDetail,
+    isClickOnCalculate: false,
+    isScoreDirect: false
   }
 
   beforeEach(() => {

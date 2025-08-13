@@ -3,7 +3,7 @@ import { SportTemplate } from '../../shared/models/sportsbook-sop';
 import { PageType } from '../../shared/constants';
 import { from, Observable } from 'rxjs';
 import { UrlHelper } from '../../helper';
-import { ToastContainerDirective, ToastContainerModule, ToastrService } from 'ngx-toastr';
+import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import { BlockUIService } from '../../shared/services';
 import { CommonModule } from '@angular/common';
 
@@ -16,7 +16,7 @@ import { CommonModule } from '@angular/common';
   <div *ngIf="blockUI" class="in modal-backdrop">
 	<div class="loading"></div>
   </div>`,
-  imports: [ToastContainerModule, CommonModule],
+  imports: [CommonModule],
   styleUrl: './app.component.less',
 })
 export class AppComponent implements OnInit {

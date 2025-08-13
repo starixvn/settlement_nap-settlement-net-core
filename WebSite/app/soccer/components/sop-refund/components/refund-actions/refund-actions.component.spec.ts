@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { By } from '@angular/platform-browser';
-
 import { RefundActionsComponent } from './refund-actions.component';
 import { RefundStorage } from '../../../../storage/refund.storage';
 import { RefundService } from '../../services/refund.service';
@@ -13,7 +12,7 @@ import { ResourceStatusPipe } from '../../../../pipes/resource-status.pipe';
 import { ResourceNamePipe } from '../../../../pipes/resource-name.pipe';
 import { OnlyGoalRecordDirective } from '../../../../directives/only-goal-record.directive.native';
 import { OnlyIntegerDirective } from '../../../../../shared/directives/only-integer.directive.native';
-import { Match, MatchDetail, HedgeMatchDetail, BetDaq, BetFair } from '../../../refund/model/match.model';
+import { Match, MatchDetail, HedgeMatchDetail, BetDaq, BetFair } from '../../models/match.model';
 import { ResultDetail } from '../../../../models';
 import { Permission } from '../../../../../shared/models/sportsbook-sop';
 import { ResourceIds } from '../../../../constants';
@@ -30,9 +29,18 @@ describe('RefundActionsComponent', () => {
   let logicService: LogicService;
   let resourceStatusPipe: ResourceStatusPipe;
 
-  const matchDetail = {} as MatchDetail;
-  const betFair = {} as BetFair;
-  const betDaq = {} as BetDaq;
+  const matchDetail = {
+    isWarningGoalRecord: false,
+    isScoreInconsistent: false,
+    isSettleDetermined: false,
+    applyHedgeMatch: false
+  } as MatchDetail;
+  const betFair = {
+    settleDeterminedBetFair: false
+  } as BetFair;
+  const betDaq = {
+    settleDeterminedBetDaq: false
+  } as BetDaq;
 
   const permission: Permission = {
     canCalculate: true,
@@ -69,7 +77,12 @@ describe('RefundActionsComponent', () => {
       ],
       providers: [
         ResourceStatusPipe,
-        { provide: ResourceNamePipe, useValue: { transform: jest.fn().mockReturnValue('Full Time') } }
+        { provide: ResourceNamePipe, useValue: { transform: jest.fn().mockReturnValue('Full Time') } },
+        RefundStorage,
+        RefundService,
+        VerifyService,
+        VerificationBaseService,
+        LogicService
       ]
     })
     .overrideDirective(OnlyGoalRecordDirective, {})
@@ -195,6 +208,10 @@ describe('RefundActionsComponent', () => {
   });
 
   describe('changeScore', () => {
+    beforeEach(() => {
+      component.ngOnInit();
+    });
+
     it('should clear storage and verify score', () => {
       const result = {} as ResultDetail;
 
@@ -216,6 +233,10 @@ describe('RefundActionsComponent', () => {
   });
 
   describe('changeApplyHedgeMatch', () => {
+    beforeEach(() => {
+      component.ngOnInit();
+    });
+
     it('should enable settle determined when applyHedgeMatch is true', () => {
       component.matchDetail.applyHedgeMatch = true;
 
@@ -246,6 +267,10 @@ describe('RefundActionsComponent', () => {
   });
 
   describe('onSettleDeterminableTicketsChange', () => {
+    beforeEach(() => {
+      component.ngOnInit();
+    });
+
     it('should reset settle determined flags when isSettleDetermined is false', () => {
       component.matchDetail.isSettleDetermined = false;
       component.betDaq.settleDeterminedBetDaq = true;
@@ -272,6 +297,7 @@ describe('RefundActionsComponent', () => {
 
   describe('goalRecordModelChange', () => {
     beforeEach(() => {
+      component.ngOnInit();
       jest.spyOn(refundStorage, 'getHalfTimeResult').mockReturnValue({ isEnabled: true } as ResultDetail);
       jest.spyOn(refundStorage, 'getFullTimeResult').mockReturnValue({ isEnabled: true } as ResultDetail);
     });
@@ -294,6 +320,10 @@ describe('RefundActionsComponent', () => {
   });
 
   describe('refund', () => {
+    beforeEach(() => {
+      component.ngOnInit();
+    });
+
     it('should clear storage and call refund service', () => {
       component.refund();
 
@@ -324,6 +354,10 @@ describe('RefundActionsComponent', () => {
   });
 
   describe('confirmRefund', () => {
+    beforeEach(() => {
+      component.ngOnInit();
+    });
+
     it('should clear storage and call confirm refund service', () => {
       component.confirmRefund();
 
@@ -337,6 +371,10 @@ describe('RefundActionsComponent', () => {
   });
 
   describe('getResultRowClass', () => {
+    beforeEach(() => {
+      component.ngOnInit();
+    });
+
     it('should return mismatched when score is inconsistent', () => {
       component.matchDetail.isScoreInconsistent = true;
 
@@ -345,6 +383,7 @@ describe('RefundActionsComponent', () => {
     });
 
     it('should return confirmed-refund when leader and result is confirmed', () => {
+      component.matchDetail.isScoreInconsistent = false;
       component.permission.isLeader = true;
       const resultWithConfirmed = {
         resultSettingData: {
@@ -362,9 +401,19 @@ describe('RefundActionsComponent', () => {
     });
 
     it('should return resource status when no special conditions', () => {
-      const result = component.getResultRowClass({ settlementStatusId: 1 } as ResultDetail);
-      expect(result).toBe('active');
-      expect(resourceStatusPipe.transform).toHaveBeenCalledWith(1);
+      component.matchDetail.isScoreInconsistent = false;
+      component.permission.isLeader = false;
+      const result = component.getResultRowClass({ 
+        settlementStatusId: 4, // Calculated status
+        resultSettingData: {
+          isHoldResult: false,
+          isConfirmedRefund: false,
+          isConfirmedRefundSdt: false,
+          isConfirmedRefundMercy: false,
+          iconHoldResult: ''
+        }
+      } as ResultDetail);
+      expect(result).toBe('calculated');
     });
   });
 
@@ -375,6 +424,22 @@ describe('RefundActionsComponent', () => {
     });
 
     it('should display hedge match checkbox when hedgeMatchDetail exists', () => {
+      const hedgeMatchDetail = {
+        matchId: 2,
+        matchCode: 'HEDGE001',
+        isDeterminedHedgeMatch: false,
+        isUndecided: false
+      } as HedgeMatchDetail;
+
+      const matchWithHedge = {
+        ...mockMatch,
+        hedgeMatchDetail
+      };
+      jest.spyOn(refundStorage, 'getMatch').mockReturnValue(matchWithHedge);
+      
+      component.ngOnInit();
+      fixture.detectChanges();
+
       const hedgeMatchElement = fixture.debugElement.query(By.css('.hedge-match'));
       expect(hedgeMatchElement).toBeTruthy();
     });
@@ -390,6 +455,12 @@ describe('RefundActionsComponent', () => {
     });
 
     it('should display confirm refund button when leader and no confirmed refund exists', () => {
+      // Ensure the component is properly initialized with leader permissions and no confirmed refund
+      component.permission.isLeader = true;
+      component.isExistedConfirmRefund = false;
+      component.enableAction = true;
+      fixture.detectChanges();
+      
       const confirmButton = fixture.debugElement.query(By.css('button[class*="btn-warning"]'));
       expect(confirmButton).toBeTruthy();
     });

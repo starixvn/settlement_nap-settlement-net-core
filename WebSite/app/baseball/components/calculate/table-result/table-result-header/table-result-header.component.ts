@@ -13,7 +13,8 @@ import { CalculateStorage } from '../../../../services/calculate/calculate.stora
   templateUrl: './table-result-header.component.html',
 })
 export class TableResultHeaderComponent{
-  #storage = inject(CalculateStorage);
+  readonly #storage = inject(CalculateStorage);
+  
   match = this.#storage.getMatch();
   SOURCE_ID = ScoreSourceType;
 

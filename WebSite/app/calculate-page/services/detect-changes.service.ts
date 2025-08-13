@@ -17,7 +17,6 @@ export class DetectChangesService {
         return !_.isEqual(oldMatch.eventStatus, newMatch.eventStatus)
             || !_.isEqual(oldMatch.earlySettleStatus, newMatch.earlySettleStatus)
             || !_.isEqual(oldMatch.betStatus, newMatch.betStatus)
-            //|| !_.isEqual(oldMatch.autoCalcSetting, newMatch.autoCalcSetting)
             || !_.isEqual(oldMatch.remark, newMatch.remark)
             || !_.isEqual(oldMatch.goalIcon, newMatch.goalIcon);
     }

@@ -12,6 +12,7 @@ import {
     DatepickerComponent,
 } from '../../../shared/components/date-picker/date-picker.component';
 import { Filter, LogQuery } from '../../models';
+import { DatePipe } from '@angular/common';
 describe('Filter component', () => {
     let component: FilterComponent;
     let fixture: ComponentFixture<FilterComponent>;
@@ -28,8 +29,7 @@ describe('Filter component', () => {
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             declarations: [
-                FilterComponent,
-                ModalDialogComponent
+                FilterComponent
             ],
             providers: [
                 BlockUIService,
@@ -37,6 +37,7 @@ describe('Filter component', () => {
                 MessageBoxService,
                 SearchService,
                 HttpRequestService,
+                DatePipe,
             ],
             imports: [
                 BrowserModule,
@@ -44,7 +45,8 @@ describe('Filter component', () => {
                 ReactiveFormsModule,
                 HttpClientModule,
                 NgbModule,
-                DatepickerComponent
+                DatepickerComponent,
+                ModalDialogComponent
             ],
         })
             .compileComponents()

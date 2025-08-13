@@ -14,6 +14,8 @@ import { AutoSetting } from '../../../shared/models';
 import { of } from 'rxjs';
 import { ModalDialogComponent } from '../../../shared/components/modal-dialog/modal-dialog.component';
 import { AutoSettingType } from '../../constants';
+import { AutoSettingsService } from '../../services/auto-settings.service';
+import { UpdateSettingsService } from '../../services/update-settings.service';
 
 describe('MatchesComponent', () => {
     let component: AutoCalculateMatchesComponent;
@@ -47,7 +49,9 @@ describe('MatchesComponent', () => {
                 HandleActionsService,
                 HttpRequestService,
                 MessageBoxService,
-                DetectChangesService
+                DetectChangesService,
+                AutoSettingsService,
+                UpdateSettingsService
             ],
             imports: [
                 AutoCalculateMatchesComponent,
@@ -200,7 +204,7 @@ describe('MatchesComponent', () => {
             handleActionsService.handleAutoInstantForMatch = jest.fn();
             component.updateInstantForLeague(setting, league);
 
-            const buttonNo = document.getElementsByClassName('btn-default')[0] as HTMLElement;
+            const buttonNo = document.getElementsByClassName('btn-light')[0] as HTMLElement;
             buttonNo.click();
             tick();
 
@@ -217,7 +221,7 @@ describe('MatchesComponent', () => {
             messageBoxService.alert = jest.fn();
             component.updateInstantForLeague(setting, league);
 
-            const buttonNo = document.getElementsByClassName('btn-default')[0] as HTMLElement;
+            const buttonNo = document.getElementsByClassName('btn-light')[0] as HTMLElement;
             buttonNo.click();
             tick();
 

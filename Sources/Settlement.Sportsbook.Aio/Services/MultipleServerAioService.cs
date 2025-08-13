@@ -26,13 +26,15 @@ public interface MultipleServerAioService
 public class MultipleServerAioServiceImp(
     IDynamicRepository repository,
     IOptions<AppSettingsKey> appSettingsKey,
-    ScaleOutSettleService scaleOutSettleService,
-    ICreateQueryService createQueryService,
-    MergeDataService mergeDataService,
-    LogService logService,
-    IMapper mapper,
-    ResultAmendmentService resultAmendmentService) : MultipleServerAioService
+    MultipleServerAioServiceDependencies dependencies) : MultipleServerAioService
 {
+    private readonly ScaleOutSettleService scaleOutSettleService = dependencies.ScaleOutSettleService;
+    private readonly ICreateQueryService createQueryService = dependencies.CreateQueryService;
+    private readonly MergeDataService mergeDataService = dependencies.MergeDataService;
+    private readonly LogService logService = dependencies.LogService;
+    private readonly IMapper mapper = dependencies.Mapper;
+    private readonly ResultAmendmentService resultAmendmentService = dependencies.ResultAmendmentService;
+
     public async Task<(List<Models.ResultDetail>, TicketCounts)> FetchResultDetails(GetResultDetailCriteria criteria, int sportType)
     {
         criteria.SportType = sportType;
@@ -286,7 +288,6 @@ public class MultipleServerAioServiceImp(
 
     private async Task<bool> HandleResultAmendment(SettleCriteria settleCriteria, List<ResourceItem> selectedResources)
     {
-
         if (SportGroup.SupportResultAmend.Contains(settleCriteria.SportType)
             && !settleCriteria.IsChildMatch
             && settleCriteria.Action != ActionType.UnCalculate)
@@ -318,7 +319,7 @@ public class MultipleServerAioServiceImp(
             Mode = ActionKey.ActionDictionary[criteria.Action],
             SelectedResources = criteria.SelectedResources
         };
-        var resultMessage = await scaleOutSettleService.ValidateEventAndTicket(request);
+        var resultMessage = await dependencies.ScaleOutSettleService.ValidateEventAndTicket(request);
         return new Result
         {
             ErrCode = resultMessage.ErrorCode,
@@ -338,7 +339,7 @@ public class MultipleServerAioServiceImp(
             DeterminedType = criteria.DeterminedType
         };
 
-        await scaleOutSettleService.UpdateMatchInfo(requestUpdateInfo);
+        await dependencies.ScaleOutSettleService.UpdateMatchInfo(requestUpdateInfo);
     }
 
     private async Task<string> GetChildMatchIds(int matchId, string actionName, string selectedResources)
@@ -388,4 +389,20 @@ public class MultipleServerAioServiceImp(
 
         return new Result();
     }
+}
+
+public class MultipleServerAioServiceDependencies(
+    ScaleOutSettleService scaleOutSettleService,
+    ICreateQueryService createQueryService,
+    MergeDataService mergeDataService,
+    LogService logService,
+    IMapper mapper,
+    ResultAmendmentService resultAmendmentService)
+{
+    public ScaleOutSettleService ScaleOutSettleService { get; } = scaleOutSettleService;
+    public ICreateQueryService CreateQueryService { get; } = createQueryService;
+    public MergeDataService MergeDataService { get; } = mergeDataService;
+    public LogService LogService { get; } = logService;
+    public IMapper Mapper { get; } = mapper;
+    public ResultAmendmentService ResultAmendmentService { get; } = resultAmendmentService;
 }

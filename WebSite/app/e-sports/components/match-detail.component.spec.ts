@@ -29,8 +29,6 @@ describe("E-sport - Refund Match Detail Component", () => {
 
     TestBed.configureTestingModule({
       declarations: [
-        ModalDialogComponent,
-        ModalContentDialogComponent
       ],
       providers: [
         MessageBoxService,
@@ -46,7 +44,9 @@ describe("E-sport - Refund Match Detail Component", () => {
         HttpClientModule,
         MatchDetailComponent,
         ResourceNameByIdPipe,
-        ScoreBySettlementPipe,],
+        ScoreBySettlementPipe,
+        ModalDialogComponent,
+        ModalContentDialogComponent],
     })
       .compileComponents()
       .then(() => {

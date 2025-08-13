@@ -1,6 +1,6 @@
 import { ConfirmUncalcFTHandler } from './confirm-uncalcFT.handler';
 import { AbstractHandler } from '../../abstract.handler.native';
-import { Storage } from '../../../storage/storage.service.native';
+import { CalculateBaseStorage } from '../../../storage/storage.service.native';
 import { Language } from '../../../../shared/language.native';
 import { MessageBoxService } from '../../../../shared/services';
 import { HttpClientModule } from '@angular/common/http';
@@ -14,7 +14,7 @@ import { ResultStatusId } from '../../../../shared/constants';
 
 describe('ConfirmUncalcFTHandler', () => {
   let handler: ConfirmUncalcFTHandler;
-  let storage: Storage;
+  let storage: CalculateBaseStorage;
   let messageBoxService: MessageBoxService;
   const message = new ModalDialogMessage();
 

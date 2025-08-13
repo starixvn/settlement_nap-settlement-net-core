@@ -30,14 +30,14 @@ import { ResourceNamePipe } from '../../pipes/resource-name.pipe';
   templateUrl: './calculation-action.component.html',
 })
 export class CalculationActionComponent implements OnInit {
-  #calculateService = inject(CalculateService);
-  #messageBoxService = inject(MessageBoxService);
-  #goalIconService = inject(GoalIconService);
-  #aioService = inject(AioService);
-  #scoreService = inject(ScoreService);
-  #storage = inject(CalculateStorage);
-  #verifyScoreGoalService = inject(VerifyScoreGoalService);
-  #verificationService = inject(VerificationBaseService);
+  readonly #calculateService = inject(CalculateService);
+  readonly #messageBoxService = inject(MessageBoxService);
+  readonly #goalIconService = inject(GoalIconService);
+  readonly #aioService = inject(AioService);
+  readonly #scoreService = inject(ScoreService);
+  readonly #storage = inject(CalculateStorage);
+  readonly #verifyScoreGoalService = inject(VerifyScoreGoalService);
+  readonly #verificationService = inject(VerificationBaseService);
 
   SOURCE_ID = ScoreSourceType;
   matchDetail: MatchDetailSoccer;

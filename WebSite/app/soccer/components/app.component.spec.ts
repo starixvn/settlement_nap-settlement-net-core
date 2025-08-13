@@ -6,7 +6,7 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ElementRef } from "@angular/core";
 import { PageType } from '../../shared/constants';
 import { CalculationComponent } from './calc/calculation.component'
-import { RefundComponent } from './refund/refund.component'
+import { RefundComponent } from './sop-refund/components/refund/refund.component'
 import { EarlySettlementComponent } from './early/early-settlement.component'
 import { ToastNoAnimationModule, ToastrModule } from 'ngx-toastr';
 import { BrowserModule } from '@angular/platform-browser';
@@ -31,11 +31,11 @@ describe(`Soccer - AppComponent`, () => {
                 MaterialModule,
                 ToastNoAnimationModule.forRoot(),
                 ToastrModule.forRoot(),
-                CalculationComponent
+                CalculationComponent,
+                RefundComponent
             ],
             declarations: [
                 AppComponent,
-                RefundComponent,
                 EarlySettlementComponent,
                 GroupNameByIdPipe,
             ],

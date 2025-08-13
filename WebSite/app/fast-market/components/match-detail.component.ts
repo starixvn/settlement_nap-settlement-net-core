@@ -1,10 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
 import * as _ from 'lodash';
 import { MessageBoxService } from '../../shared/services';
-import { ModalDialogMessage, AutoSettingMatchQuery, AutoSettingLeagueQuery } from '../../shared/models';
+import { ModalDialogMessage, AutoSettingMatchQuery, AutoSettingLeagueQuery, Result } from '../../shared/models';
 import { UrlHelper } from '../../helper';
 import { RequestService } from '../services/request.service';
-import { MatchDetail, Result } from '../models';
+import { MatchDetail } from '../models';
 import { Language, Icon, State } from '../constants';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 

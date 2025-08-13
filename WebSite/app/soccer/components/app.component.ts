@@ -6,8 +6,7 @@ import { EarlySettlementComponent } from './early/early-settlement.component';
 import { BlockUIService, MessageBoxService, AioService, ClosePopupService } from '../../shared/services';
 import { CalculationComponent } from './calc/calculation.component';
 import { PageType } from '../../shared/constants';
-import { RefundComponent } from './refund/refund.component';
-import { RefundComponent as RefundComponentSop } from './sop-refund/components//refund/refund.component';
+import { RefundComponent as RefundComponentSop } from './sop-refund/components/refund/refund.component';
 
 @Component({
     selector: 'app-root',
@@ -50,11 +49,9 @@ export class AppComponent implements OnInit {
             case PageType.ReCalculate:
                 return this.componentFactoryResolver.resolveComponentFactory(CalculationComponent);
             case PageType.Refund:
-                return this.componentFactoryResolver.resolveComponentFactory(RefundComponent);
+                return this.componentFactoryResolver.resolveComponentFactory(RefundComponentSop);
             case PageType.EarlySettlement:
                 return this.componentFactoryResolver.resolveComponentFactory(EarlySettlementComponent);
-            case "sop-refund":
-                return this.componentFactoryResolver.resolveComponentFactory(RefundComponentSop);
             default:
                 throw new Error('Not implemented yet');
         }

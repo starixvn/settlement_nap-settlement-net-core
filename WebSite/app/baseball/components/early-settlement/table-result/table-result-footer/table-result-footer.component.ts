@@ -18,9 +18,10 @@ import { EarlySettlementStorage } from '../../../../services/early-settlement/ea
 })
 export class TableResultFooterComponent {
   permission = input<Permission>();
-  #storage = inject(EarlySettlementStorage);
-  #notifyService = inject(NotifyService);
-  #earlySettlementService = inject(EarlySettlementService);
+  readonly #storage = inject(EarlySettlementStorage);
+  readonly #notifyService = inject(NotifyService);
+  readonly #earlySettlementService = inject(EarlySettlementService);
+  
   isDisableAction = this.#storage.disableAction;
   isShowRefundButton = false;
   isReadyMatch = this.#storage.isReadyMatch();

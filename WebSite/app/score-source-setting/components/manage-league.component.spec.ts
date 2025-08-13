@@ -64,8 +64,6 @@ describe('ManageLeagueComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [
-        ModalDialogComponent,
-        ModalContentDialogComponent,
       ],
       providers: [
         MessageBoxService,
@@ -80,6 +78,8 @@ describe('ManageLeagueComponent', () => {
       ],
       imports: [
         ManageLeagueComponent,
+        ModalDialogComponent,
+        ModalContentDialogComponent,
         FormsModule, HttpClientModule, NgbModule],
     })
       .compileComponents()

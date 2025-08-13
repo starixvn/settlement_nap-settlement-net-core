@@ -9,7 +9,8 @@ import { AppBaseComponent } from '../../shared/components/sportsbook-sop/app-bas
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
-    standalone: true
+    standalone: true,
+    imports: [CalculationESport, RefundESport, EarlyESport]
 })
 
 export class AppComponent extends AppBaseComponent implements OnInit {

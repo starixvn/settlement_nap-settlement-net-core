@@ -32,8 +32,6 @@ describe('ProviderSourceComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [
-        ModalDialogComponent,
-        ModalContentDialogComponent
       ],
       providers: [
         HttpRequestService,
@@ -44,6 +42,8 @@ describe('ProviderSourceComponent', () => {
       ],
       imports: [
         ProviderSourceComponent,
+        ModalDialogComponent,
+        ModalContentDialogComponent,
         NgbModule,
         FormsModule,
         HttpClientModule,

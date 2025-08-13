@@ -2,9 +2,10 @@ import { TestBed } from '@angular/core/testing';
 import { CreateDataTest } from './create-data-test.native';
 import { VerifyScoreGoalService } from './verify-score-goal.service';
 import * as _ from "lodash";
-import { GoalIcon, ResultDetail } from '../../../models';
-import { ChildMatch, FantasyRelatedMatch, MatchDetail } from '../models/match.model';
+import { GoalIcon } from '../../../models/goal-icon.model';
+import { ChildMatch, FantasyRelatedMatch } from '../models/match.model';
 import { ResourceIds } from '../../../constants';
+import { ResultDetail } from '../../../../shared/models/sportsbook-sop';
 
 describe('Soccer - verify score goal', () => {
     let service: VerifyScoreGoalService;
@@ -369,63 +370,32 @@ describe('Soccer - verify score goal', () => {
 
     describe('verifyScoreForChildMatch', () => {
         it('should return false when not exist child match selected', () => {
-            expect(service.verifyScoreForChildMatch(matchDetail, [])).toBeFalsy();
+            expect(service.verifyScoreForChildMatch(fulltime, [])).toBeFalsy();
         });
 
         it('should return true when home score equal away score', () => {
-            matchDetail.finalAwayScore = '1';
-            matchDetail.finalHomeScore = '1';
+            fulltime.homeValue = '1';
+            fulltime.awayValue = '1';
 
-            expect(service.verifyScoreForChildMatch(matchDetail, [childMatch])).toBeTruthy();
+            expect(service.verifyScoreForChildMatch(fulltime, [childMatch])).toBeTruthy();
         });
 
     });
 
     describe('verifyScore', () => {
-        it('should return true and set warnings for half time when home score is empty', () => {
-            const resultDetail = { homeValue: '', awayValue: '1' } as ResultDetail;
-
-            const actual = service.verifyScore(resultDetail, matchDetail, true);
-
-            expect(actual).toBeTruthy();
-            expect(matchDetail.isWarningHalfTimeHomeScore).toBeTruthy();
-            expect(matchDetail.isWarningHalfTimeAwayScore).toBeFalsy();
-        });
-
-        it('should return true and set warnings for half time when away score is empty', () => {
-            const resultDetail = { homeValue: '1', awayValue: '' } as ResultDetail;
-
-            const actual = service.verifyScore(resultDetail, matchDetail, true);
-
-            expect(actual).toBeTruthy();
-            expect(matchDetail.isWarningHalfTimeHomeScore).toBeFalsy();
-            expect(matchDetail.isWarningHalfTimeAwayScore).toBeTruthy();
-        });
-
-        it('should return true and set warnings for full time when home score is empty', () => {
-            const resultDetail = { homeValue: '', awayValue: '1' } as ResultDetail;
-
-            const actual = service.verifyScore(resultDetail, matchDetail, false);
-
-            expect(actual).toBeTruthy();
-            expect(matchDetail.isWarningFinalHomeScore).toBeTruthy();
-            expect(matchDetail.isWarningFinalAwayScore).toBeFalsy();
-        });
-
         it('should return true and set warnings for full time when away score is empty', () => {
             const resultDetail = { homeValue: '1', awayValue: '' } as ResultDetail;
 
-            const actual = service.verifyScore(resultDetail, matchDetail, false);
+            const actual = service.verifyScore(resultDetail);
 
             expect(actual).toBeTruthy();
-            expect(matchDetail.isWarningFinalHomeScore).toBeFalsy();
-            expect(matchDetail.isWarningFinalAwayScore).toBeTruthy();
+            expect(resultDetail.isResultWarning).toBeTruthy();
         });
 
         it('should return false when both scores are not empty', () => {
             const resultDetail = { homeValue: '1', awayValue: '1' } as ResultDetail;
 
-            const actual = service.verifyScore(resultDetail, matchDetail);
+            const actual = service.verifyScore(resultDetail);
 
             expect(actual).toBeFalsy();
         });

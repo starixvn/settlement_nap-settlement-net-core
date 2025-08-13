@@ -6,7 +6,9 @@ import { HttpClientModule } from '@angular/common/http';
 import { BrowserModule } from '@angular/platform-browser';
 import { ComponentFactoryResolver, ElementRef } from '@angular/core';
 import { BlockUIService, ClosePopupService, HttpRequestService, MessageBoxService } from '../../shared/services';
-import { NotReadyMatchComponent, ResettleCheckerComponent, TicketCountComponent } from '../../shared/components';
+import { NotReadyMatchComponent } from '../../shared/components/not-ready-match/not-ready-match.component';
+import { ResettleCheckerComponent } from '../../shared/components/resettle-checker/resettle-checker.component';
+import { TicketCountComponent } from '../../shared/components/ticket-count/ticket-count.component';
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { ScorePipe } from '../pipes';
 import { FullTimeCalculationComponent } from './only-fulltime/fulltime-calculation.component';
@@ -28,9 +30,6 @@ describe('Component: App', () => {
                 AppComponent,
                 FullTimeCalculationComponent,
                 FullTimeRefundComponent,
-                TicketCountComponent,
-                ResettleCheckerComponent,
-                NotReadyMatchComponent,
                 ScorePipe,
             ],
             imports: [
@@ -38,6 +37,9 @@ describe('Component: App', () => {
                 FormsModule,
                 HttpClientModule,
                 NgbModule,
+                TicketCountComponent,
+                ResettleCheckerComponent,
+                NotReadyMatchComponent,
             ],
             providers: [
                 BlockUIService,

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, input, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { AioService } from '../../../services';
 import { ManageLeagueComponent } from '../../../../score-source-setting/components';
@@ -19,8 +19,8 @@ export class MatchDetailComponent {
   matchDetail = input<MatchDetail>();
   permission = input<Permission>();
   resultDetail = input<ResultDetail[]>([]);
-  #aioService = inject(AioService);
-  #dialog = inject(MatDialog);
+  readonly #aioService = inject(AioService);
+  readonly #dialog = inject(MatDialog);
 
   public manageOutSideSourcePopup() {
     this.#aioService.getLeagueSources(this.matchDetail().leagueId).subscribe((source: LeagueOutsideSource) => {

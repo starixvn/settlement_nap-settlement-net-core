@@ -17,7 +17,7 @@ export class CalculateStorage implements CalculateBaseStorage {
   private readonly verifyScoreGoalService = inject(VerifyScoreGoalService);
   private readonly toastrService = inject(ToastrService);
   
-  #match = signal<Match>(null);
+  readonly #match = signal<Match>(null);
 
   #matchDetail: MatchDetailSoccer;
   #isResettleTicket = false;

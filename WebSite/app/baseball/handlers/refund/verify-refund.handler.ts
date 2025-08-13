@@ -8,7 +8,7 @@ import { Language } from "../../../shared/language.native";
 
 export class VerifyRefundHandler implements BaseHandler {
   private nextHandler: BaseHandler;
-  #aioService = inject(AioService);
+  readonly #aioService = inject(AioService);
   private readonly notifyService = inject(NotifyService);
 
   setNextHandler(handler: BaseHandler) {

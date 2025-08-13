@@ -24,8 +24,7 @@ describe('Happy 5 - Filter Component', () => {
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             declarations: [
-                FilterComponent,
-                ModalDialogComponent,
+                FilterComponent
             ],
             providers: [
                 QueryService,
@@ -40,6 +39,7 @@ describe('Happy 5 - Filter Component', () => {
                 FormsModule,
                 HttpClientModule,
                 NgbModule,
+                ModalDialogComponent
             ],
         })
             .compileComponents()

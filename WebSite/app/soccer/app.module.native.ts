@@ -12,12 +12,7 @@ import { GroupNameByIdPipe } from './pipes/group-name-by-id.pipe';
 import { PipesModule } from '../shared/pipes/pipes.module.native';
 import { MaterialModule } from '../shared/material-module';
 import { OnlyGoalRecordDirective } from './directives/only-goal-record.directive.native';
-import { ToastContainerModule, ToastNoAnimationModule, ToastrModule } from 'ngx-toastr';
-import { RefundComponent } from './components/refund/refund.component';
-import { SpecificBettypeComponent } from './components/refund/specific-bettype.component';
-import { ConfirmRefundComponent } from './components/refund/confirm-refund.component';
-import { ConfirmScoreComponent } from './components/refund/confirm-score.component';
-import { MoveBetComponent } from './components/refund/move-bet.component';
+import { ToastNoAnimationModule, ToastrModule } from 'ngx-toastr';
 import { TicketCountComponent } from '../shared/components/ticket-count/ticket-count.component';
 import { ResettleCheckerComponent } from '../shared/components/resettle-checker/resettle-checker.component';
 import { NotReadyMatchComponent } from '../shared/components/not-ready-match/not-ready-match.component';
@@ -45,7 +40,7 @@ import { FilterResultStatusPipe } from './pipes/filter-result-status/filter-resu
         positionClass: 'inline',
         maxOpened: 1,
     }),
-    ToastContainerModule,
+
     TicketCountComponent,
     ResettleCheckerComponent,
     NotReadyMatchComponent,
@@ -61,11 +56,6 @@ import { FilterResultStatusPipe } from './pipes/filter-result-status/filter-resu
         OnlyFirstTenScoreDirective,
         EarlySettlementComponent,
         GroupNameByIdPipe,
-        RefundComponent,
-        SpecificBettypeComponent,
-        ConfirmRefundComponent,
-        ConfirmScoreComponent,
-        MoveBetComponent,
         FilterResultTypePipe,
         FilterTicketStatusPipe,
         FilterResultStatusPipe

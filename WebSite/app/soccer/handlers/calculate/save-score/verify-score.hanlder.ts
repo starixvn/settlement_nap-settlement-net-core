@@ -7,7 +7,7 @@ import { ScoreSourceType } from '../../../../shared/constants';
 import { ExternalResultDetail, ResultDetail } from '../../../../shared/models/sportsbook-sop';
 
 export class VerifyTraderScoreHandler extends AbstractHandler {
-  #verifyScoreGoalService = inject(VerifyScoreGoalService);
+  readonly #verifyScoreGoalService = inject(VerifyScoreGoalService);
 
   handle(storage: CalculateBaseStorage) {
     const { resultDetails } = storage.getMatch();

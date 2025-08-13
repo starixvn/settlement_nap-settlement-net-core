@@ -57,6 +57,10 @@ describe('ConfirmHalfTimeHandler', () => {
 
   it('should confirm and set resettle ticket if score changed in first half', async () => {
     storage.getMatch = jest.fn().mockReturnValue({ matchDetail: {} });
+    storage.getFullTimeResult = jest.fn().mockReturnValue({ 
+      settlementStatusId: 1, 
+      checked: true 
+    });
     storage.getIsResettleTicket = jest.fn().mockReturnValue(false);
     verifyActionService.isScoreChangedFirstHalf = jest.fn().mockResolvedValue(true);
     storage.getConfirmMessage = jest.fn().mockReturnValue(modalDialog);
@@ -75,6 +79,10 @@ describe('ConfirmHalfTimeHandler', () => {
 
   it('should double check and handle if score not changed in first half', async () => {
     storage.getMatch = jest.fn().mockReturnValue({ matchDetail: {} });
+    storage.getFullTimeResult = jest.fn().mockReturnValue({ 
+      settlementStatusId: 1, 
+      checked: true 
+    });
     storage.getIsResettleTicket = jest.fn().mockReturnValue(false);
     verifyActionService.isScoreChangedFirstHalf = jest.fn().mockResolvedValue(false);
     storage.getConfirmMessage = jest.fn().mockReturnValue(modalDialog);

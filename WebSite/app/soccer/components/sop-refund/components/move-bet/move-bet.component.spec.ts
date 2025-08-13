@@ -4,14 +4,14 @@ import { FormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 import { of } from 'rxjs';
-import { Language } from '../../../shared/language.native';
-import { MaterialModule } from '../../../shared/material-module';
-import { BlockUIService, HttpRequestService, MessageBoxService } from '../../../shared/services';
-import { RefundType } from './model/constant.model';
-import { MatchMoveBet } from './model/match.model';
+import { Language } from '../../../../../shared/language.native';
+import { MaterialModule } from '../../../../../shared/material-module';
+import { BlockUIService, HttpRequestService, MessageBoxService } from '../../../../../shared/services';
+import { RefundType } from '../../models/constant.model';
+import { MatchMoveBet } from '../../models/match.model';
 
 import { MoveBetComponent } from './move-bet.component';
-import { RequestService } from './services/request.service';
+import { RequestService } from '../../services/request.service';
 
 export class MatDialogRefMock {
   close(value: object) {
@@ -37,12 +37,20 @@ describe('MoveBetComponent', () => {
     isSuccessful: true,
     childMatchIds:"",
     settledSessionId:"",
-    hasResultAmendment:false
+    hasResultAmendment:false,
+    isOrg: false
   }
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [MoveBetComponent],
+      imports: [
+        MoveBetComponent,
+        HttpClientModule,
+        MaterialModule,
+        FormsModule,
+        ToastNoAnimationModule.forRoot(),
+        ToastrModule.forRoot(),
+      ],
       providers: [
         RequestService,
         HttpRequestService,
@@ -52,13 +60,6 @@ describe('MoveBetComponent', () => {
         { provide: ToastrService, useClass: ToastrService },
         { provide: MatDialogRef, useValue: new MatDialogRefMock() },
         { provide: MAT_DIALOG_DATA, useValue: data },
-      ],
-      imports: [
-        HttpClientModule,
-        MaterialModule,
-        FormsModule,
-        ToastNoAnimationModule.forRoot(),
-        ToastrModule.forRoot(),
       ]
     })
       .compileComponents();

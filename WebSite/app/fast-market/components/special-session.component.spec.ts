@@ -3,13 +3,13 @@ import { FormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ResultDetail, SpecialSession } from '../models';
 import { MaterialModule } from '../../shared/material-module';
-
 import { SpecialSessionComponent } from './special-session.component';
 import { RequestService } from '../services';
 import { BlockUIService, HttpRequestService, MessageBoxService } from '../../shared/services';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
-import { ModalContentDialogComponent, ModalDialogComponent } from '../../shared/components';
+import { ModalContentDialogComponent } from '../../shared/components/modal-dialog/modal-content-dialog.component';
+import { ModalDialogComponent } from '../../shared/components/modal-dialog/modal-dialog.component';
 import { Result } from '../../shared/models';
 import { of } from 'rxjs';
 import { SessionId } from '../constants';
@@ -28,8 +28,6 @@ describe('SpecialSessionComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [
         SpecialSessionComponent,
-        ModalDialogComponent,
-        ModalContentDialogComponent,
       ],
       providers: [
         RequestService,
@@ -44,7 +42,9 @@ describe('SpecialSessionComponent', () => {
         MaterialModule,
         HttpClientModule,
         ToastNoAnimationModule.forRoot(),
-        ToastrModule.forRoot()
+        ToastrModule.forRoot(),
+        ModalDialogComponent,
+        ModalContentDialogComponent,
       ],
     })
       .compileComponents();
@@ -58,6 +58,9 @@ describe('SpecialSessionComponent', () => {
     toastrService = fixture.debugElement.injector.get(ToastrService);
     component.resultDetail = [resultDetail];
     fixture.detectChanges();
+    
+    // Initialize originalSuspendedTime to prevent undefined errors
+    component.originalSuspendedTime = new SpecialSession(SessionId.suspendedTime);
   });
 
   it('should create', waitForAsync(() => {
@@ -125,8 +128,8 @@ describe('SpecialSessionComponent', () => {
       component.originalWaterBreakOne = _.cloneDeep(waterBreak);
       component.originalWaterBreakOne.apply = true;
       successfulResult.isSuccessful = true;
-      spyOn(requestService, 'updateWaterBreakSetting').and.returnValue(of(successfulResult));
-      spyOn(component.waterBreakFilter, 'emit');
+      jest.spyOn(requestService, 'updateWaterBreakSetting').mockReturnValue(of(successfulResult));
+      jest.spyOn(component.waterBreakFilter, 'emit');
 
       component.saveAndSelectWaterBreak(waterBreak);
       const buttonYes = document.getElementsByClassName('btn-danger')[0] as HTMLElement;
@@ -138,7 +141,7 @@ describe('SpecialSessionComponent', () => {
 
     it('should alert when no change was made', () => {
       component.originalWaterBreakOne = _.cloneDeep(waterBreak);
-      spyOn(toastrService, 'error');
+      jest.spyOn(toastrService, 'error');
 
       component.saveAndSelectWaterBreak(waterBreak);
 
@@ -149,7 +152,7 @@ describe('SpecialSessionComponent', () => {
       waterBreak.apply = true;
       waterBreak.resultStatusId = 5;
       component.originalWaterBreakOne = _.cloneDeep(waterBreak);
-      spyOn(component.waterBreakFilter, 'emit');
+      jest.spyOn(component.waterBreakFilter, 'emit');
 
       component.saveAndSelectWaterBreak(waterBreak);
       const buttonYes = document.getElementsByClassName('btn-danger')[0] as HTMLElement;
@@ -164,8 +167,8 @@ describe('SpecialSessionComponent', () => {
       const successfulResult = new Result();
       component.originalWaterBreakOne = _.cloneDeep(waterBreak);
       successfulResult.isSuccessful = true;
-      spyOn(requestService, 'updateWaterBreakSetting').and.returnValue(of(successfulResult));
-      spyOn(component.waterBreakFilter, 'emit');
+      jest.spyOn(requestService, 'updateWaterBreakSetting').mockReturnValue(of(successfulResult));
+      jest.spyOn(component.waterBreakFilter, 'emit');
 
       component.saveAndSelectWaterBreak(waterBreak);
       const buttonYes = document.getElementsByClassName('btn-danger')[0] as HTMLElement;
@@ -178,7 +181,7 @@ describe('SpecialSessionComponent', () => {
     it('should alert when fail on verifying before action', () => {
       waterBreak = new SpecialSession('1234');
       waterBreak.apply = true;
-      spyOn(toastrService, 'error');
+      jest.spyOn(toastrService, 'error');
 
       component.saveAndSelectWaterBreak(waterBreak);
 

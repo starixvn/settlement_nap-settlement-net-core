@@ -1,5 +1,6 @@
 import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from "@angular/core/testing";
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { Calculation } from 'calculate-page/models';
 import { of } from 'rxjs';
 import { BlockUIService, ReCheckInService } from "../../../shared/services";
@@ -13,15 +14,14 @@ describe('MultiSport - AppComponent', () => {
 
     beforeEach(async () => {
         TestBed.configureTestingModule({
-            declarations: [
+            imports: [
                 PageBaseComponent,
+                HttpClientModule,
+                HttpClientTestingModule,
             ],
             providers: [
                 BlockUIService,
                 ReCheckInService,
-            ],
-            imports:[
-                HttpClientModule,
             ]
         })
             .compileComponents()
@@ -38,8 +38,7 @@ describe('MultiSport - AppComponent', () => {
     });
 
     it('ngOnInit - should start reCheckin interval', fakeAsync(() => {
-        spyOn(blockUIService, 'blockUIEvent').and.returnValue(of(true));
-        spyOn(reCheckInService, 'reCheckin');
+        jest.spyOn(reCheckInService, 'reCheckin');
 
         component.ngOnInit();
         tick(60000);

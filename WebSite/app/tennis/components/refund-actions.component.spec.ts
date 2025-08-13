@@ -1,35 +1,31 @@
-import { TestBed, waitForAsync, ComponentFixture, fakeAsync, tick } from '@angular/core/testing';
-import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
+import { TestBed, waitForAsync, ComponentFixture, fakeAsync, tick, flush } from '@angular/core/testing';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { ResourceNameByIdPipe, ExcludeTotalPointPipe, ResourceHeaderPipe } from '../pipes';
 import { RefundActionsComponent } from './';
-import {
-  ModalDialogComponent,
-  ModalContentDialogComponent,
-} from '../../shared/components';
+import { ModalDialogComponent } from '../../shared/components/modal-dialog/modal-dialog.component';
+import { ModalContentDialogComponent } from '../../shared/components/modal-dialog/modal-content-dialog.component';
 import {
   HttpRequestService,
   BlockUIService,
   MessageBoxService,
   ClosePopupService,
-  AioService,
-  IntervalCalculationService
+  AioService
 } from '../../shared/services';
 import { Match } from '../models';
 import { TennisApiKeys, ResourcesIds } from '../constants';
-import { of } from 'rxjs';
 import { Language } from '../../shared/language.native';
 import { CalculateAction } from '../../shared/constants';
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
-import { MatchDetail, Permission, SettleQuery } from '../../shared/models/sportsbook-sop';
+import { MatchDetail, SettleQuery } from '../../shared/models/sportsbook-sop';
 import { ResultDetail } from '../../shared/models/sportsbook-sop';
 import { ResultSettingModel } from '../../shared/models';
 import { VerificationService } from '../services';
 import { ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 import { MatchDetailComponent } from './match-detail.component';
 import { ScoreBySettlementPipe } from '../../shared/pipes/score-by-settlement.pipe';
+import { Result } from '../../shared/models';
 
 describe('Tennis - Refund actions component', () => {
   let component: RefundActionsComponent;
@@ -38,23 +34,30 @@ describe('Tennis - Refund actions component', () => {
   let closePopupService: ClosePopupService;
   let messageBoxService: MessageBoxService;
   let toastrService: ToastrService;
-  const buttonName = "btn-danger";
   const matchDetail = new MatchDetail();
   matchDetail.matchId = 1;
   const match = new Match(matchDetail);
   const resultDetail = new ResultDetail();
   match.resultDetails = [resultDetail, resultDetail];
   const errorMessage = "Error message";
-  const successfulResult = {
-    errCode: 0,
-    errMsg: "",
-    isSuccessful: true,
-  };
-  const unSuccessfulResult = {
-    errcomponentCode: 1,
-    errMsg: errorMessage,
-    isSuccessful: false,
-  };
+  const successfulResult = new Result();
+  successfulResult.errCode = 0;
+  successfulResult.errMsg = "";
+  successfulResult.isSuccessful = true;
+  successfulResult.childMatchIds = "";
+  successfulResult.settledSessionId = "";
+  successfulResult.hasResultAmendment = false;
+  successfulResult.isOrg = false;
+  
+  const unSuccessfulResult = new Result();
+  unSuccessfulResult.errCode = 1;
+  unSuccessfulResult.errMsg = errorMessage;
+  unSuccessfulResult.isSuccessful = false;
+  unSuccessfulResult.childMatchIds = "";
+  unSuccessfulResult.settledSessionId = "";
+  unSuccessfulResult.hasResultAmendment = false;
+  unSuccessfulResult.isOrg = false;
+  
   const existMarkedTicket = {
     isExistMarkedTicket: true,
   };
@@ -63,17 +66,7 @@ describe('Tennis - Refund actions component', () => {
   };
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [
-        RefundActionsComponent,
-        ResourceNameByIdPipe,
-        ModalDialogComponent,
-        ModalContentDialogComponent,
-        ExcludeTotalPointPipe,
-        IntervalBackgroundPipe,
-        MatchDetailComponent,
-        ResourceHeaderPipe,
-        ScoreBySettlementPipe
-      ],
+      declarations: [],
       providers: [
         MessageBoxService,
         HttpRequestService,
@@ -90,7 +83,16 @@ describe('Tennis - Refund actions component', () => {
         HttpClientModule,
         NgbModule,
         ToastNoAnimationModule.forRoot(),
-        ToastrModule.forRoot()
+        ToastrModule.forRoot(),
+        RefundActionsComponent,
+        ModalDialogComponent,
+        ModalContentDialogComponent,
+        MatchDetailComponent,
+        ResourceNameByIdPipe,
+        ExcludeTotalPointPipe,
+        IntervalBackgroundPipe,
+        ResourceHeaderPipe,
+        ScoreBySettlementPipe
       ],
     })
       .compileComponents()
@@ -101,7 +103,7 @@ describe('Tennis - Refund actions component', () => {
         closePopupService = fixture.debugElement.injector.get(ClosePopupService);
         messageBoxService = fixture.debugElement.injector.get(MessageBoxService);
         toastrService = fixture.debugElement.injector.get(ToastrService);
-        spyOn(closePopupService, 'closePopup').and.callFake(() => { });
+        closePopupService.closePopup = jest.fn().mockImplementation(() => { });
       });
   }));
 
@@ -136,12 +138,12 @@ describe('Tennis - Refund actions component', () => {
         // Arrange
         resultDetail.checked = true;
         component.match = match;
-        spyOn(aioService, 'checkMarkedTickets').and.returnValue(of(existMarkedTicket));
-        spyOn(toastrService, 'error');
+        aioService.checkMarkedTickets = jest.fn().mockReturnValue(Promise.resolve(existMarkedTicket));
+        toastrService.error = jest.fn();
 
         // Act
         component.refund();
-        tick();
+        flush();
 
         // Assert
         expect(toastrService.error).toHaveBeenCalledWith(Language.MarkedTicket);
@@ -153,12 +155,12 @@ describe('Tennis - Refund actions component', () => {
         resultDetail.checked = true;
         component.match = match;
 
-        spyOn(aioService, 'checkMarkedTickets').and.returnValue(of(notExistMarkedTicket));
-        spyOn(component, 'verifySelectedOnMap');
+        aioService.checkMarkedTickets = jest.fn().mockReturnValue(Promise.resolve(notExistMarkedTicket));
+        component.verifySelectedOnMap = jest.fn();
 
         // Act
         component.refund();
-        tick();
+        flush();
 
         // Assert
         expect(component.verifySelectedOnMap).toHaveBeenCalled();
@@ -169,28 +171,29 @@ describe('Tennis - Refund actions component', () => {
         // Arrange
         resultDetail.checked = true;
         component.match = match;
-        spyOn(aioService, 'checkMarkedTickets').and.returnValue(of(notExistMarkedTicket));
-        spyOn(component, 'verifySelectedOnMap').and.returnValue(match.resultDetails);
-        spyOn(messageBoxService, 'confirm');
+        aioService.checkMarkedTickets = jest.fn().mockReturnValue(Promise.resolve(notExistMarkedTicket));
+        component.verifySelectedOnMap = jest.fn().mockReturnValue(resultDetail);
+        messageBoxService.confirm = jest.fn();
 
         // Act
         component.refund();
-        tick();
+        flush();
 
         // Assert
         expect(messageBoxService.confirm).toHaveBeenCalled();
       }));
 
-    it('should alert when exist result not confirmed', fakeAsync(async () => {
+    it('should alert when exist result not confirmed', fakeAsync(() => {
       resultDetail.resultSettingData = new ResultSettingModel();
       resultDetail.resultSettingData.isConfirmedRefund = false;
       resultDetail.checked = true;
       component.match = match;
       component.resultDetails = [resultDetail];
-      spyOn(aioService, 'checkMarkedTickets').and.returnValue(of(notExistMarkedTicket));
-      spyOn(toastrService, 'error');
+      aioService.checkMarkedTickets = jest.fn().mockReturnValue(Promise.resolve(notExistMarkedTicket));
+      toastrService.error = jest.fn();
 
-      await component.refund();
+      component.refund();
+      flush();
 
       expect(toastrService.error).toHaveBeenCalledWith("WARNING! Cannot continue due to selected results are not confirmed to refund. Please confirm refund and try again.");
     }));
@@ -202,7 +205,7 @@ describe('Tennis - Refund actions component', () => {
       resultDetail.checked = false;
       match.resultDetails = [resultDetail];
       component.match = match;
-      spyOn(toastrService, "error");
+      toastrService.error = jest.fn();
 
       // Act
       component.verifySelectedOnMap();
@@ -236,13 +239,13 @@ describe('Tennis - Refund actions component', () => {
       resultDetail.checked = true;
       match.resultDetails = [resultDetail];
       component.match = match;
-      const param = new SettleQuery(matchDetail.matchId,
+      const param = new SettleQuery(matchDetail,
         match.resultDetails,
         CalculateAction.refund,
         false,
         "Refund;",
         TennisApiKeys.Settle);
-      spyOn(aioService, 'push').and.returnValue(of(successfulResult));
+      aioService.push = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
 
       // Act
       component.doRefund();
@@ -256,8 +259,8 @@ describe('Tennis - Refund actions component', () => {
       resultDetail.resourceId = ResourcesIds.totalSets;
       resultDetail.checked = true;
       component.match = match;
-      spyOn(aioService, 'push').and.returnValue(of(successfulResult));
-      spyOn(toastrService, 'error');
+      aioService.push = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+      toastrService.error = jest.fn();
 
       // Act
       component.doRefund();
@@ -271,8 +274,8 @@ describe('Tennis - Refund actions component', () => {
       resultDetail.resourceId = ResourcesIds.totalSets;
       resultDetail.checked = true;
       component.match = match;
-      spyOn(aioService, 'push').and.returnValue(of(unSuccessfulResult));
-      spyOn(toastrService, 'error');
+      aioService.push = jest.fn().mockReturnValue(Promise.resolve(unSuccessfulResult));
+      toastrService.error = jest.fn();
 
       // Act
       await component.doRefund();

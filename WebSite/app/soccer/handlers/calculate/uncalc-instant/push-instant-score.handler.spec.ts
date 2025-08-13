@@ -2,7 +2,6 @@ import { TestBed } from '@angular/core/testing';
 import { MessageBoxService } from '../../../../shared/services';
 import { RequestService } from '../../../components/calc/services/request.service';
 import { ClosePopupService } from '../../../../shared/services';
-import { Storage } from '../../../storage/storage.service.native';
 import { InstantCalculationQuery } from '../../../components/calc/models/query.model';
 import { CalculateStorage } from '../../../storage/calculate.storage';
 import { HttpClientModule } from '@angular/common/http';

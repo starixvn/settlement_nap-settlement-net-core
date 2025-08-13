@@ -1,6 +1,6 @@
 import { FormsModule } from '@angular/forms';
 import { Component, inject, ViewChild } from '@angular/core';
-import { ToastContainerDirective, ToastContainerModule, ToastrService } from 'ngx-toastr';
+import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import { ChildMatch, FantasyRelatedMatch, HedgeMatchDetail, Match, MatchDetailSoccer as MatchDetail, Score } from './models/match.model';
 import { Soccer } from '../soccer.model';
 import { RequestService } from './services/request.service';
@@ -21,7 +21,7 @@ import { NotReadyMatchComponent } from '../../../shared/components/not-ready-mat
 import { RefundChildMatchComponent } from './refund-child-match.component';
 import { MatchDetailComponent } from '../common/match-detail.component';
 import { MatTooltip } from '@angular/material/tooltip';
-import { SoccerTicketCountComponent } from './soccer-ticket-count.component';
+import { SoccerTicketCountComponent } from './soccer-ticket-count.component.native';
 import { CalculateService } from './services/calculate.service';
 import { ScoreService } from './services/score.service';
 import { GoalHistoryComponent } from './goal-history.component';
@@ -44,7 +44,7 @@ import { VerificationBaseService as sopVerificationService } from '../../../core
         MatTooltip,
         CommonModule,
         FormsModule,
-        ToastContainerModule],
+        ],
     providers: [
         VerifyMatchService,
         HttpRequestService,
@@ -76,8 +76,8 @@ export class CalculationComponent implements Soccer {
 
     private readonly requestService = inject(RequestService);
     private readonly verifyMatchService = inject(VerifyMatchService);
-    #storage = inject(CalculateStorage);
-    #toastrService = inject(ToastrService);
+    readonly #storage = inject(CalculateStorage);
+    readonly #toastrService = inject(ToastrService);
 
     async getMatch(matchId: number, filterOver?: string) {
         this.#storage.setToastrOverlay(this.toastContainer);

@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, ViewContainerRef, Type, Injector } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewContainerRef, Type } from '@angular/core';
 import { CalculateActionsComponent } from './calculate-actions.component';
 import { RefundActionsComponent } from './refund-actions.component';
 import { EarlySettlementComponent } from './early-settlement.component';

@@ -9,6 +9,8 @@ import { GeneralResultDetail } from "../../shared/models";
 @Injectable()
 export class VerificationService  {
 
+    constructor(private readonly earlyConstraintService: EarlyConstraintService) {}
+
     public invalidInputScore(resultDetails: ResultDetail[]) {
         const findMap = _.find(resultDetails, item => _.isEmpty(item.homeValue) && item.resourceId !== ResourcesIds.final);
         const final = _.find(resultDetails, item => (_.isEmpty(item.homeValue) || _.isEmpty(item.awayValue))
@@ -71,12 +73,12 @@ export class VerificationService  {
                 if (!map.isScoreMismatched) {
                     map.homeValue = correctScore.homeValue;
                     map.awayValue = coupleScores ? correctScore.awayValue : '';
-                    EarlyConstraintService.autoFillItemSelect(map, correctScore);
+                    this.earlyConstraintService.autoFillItemSelect(map, correctScore);
                 }
             } else {
                 map.homeValue = '';
                 map.awayValue = '';
-                EarlyConstraintService.autoFillItemSelect(map);
+                this.earlyConstraintService.autoFillItemSelect(map);
             }
         }
     }

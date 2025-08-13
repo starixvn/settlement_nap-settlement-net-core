@@ -2,7 +2,7 @@ import { BlockUIService } from './../../../shared/services/block-ui.service';
 import { MessageBoxService } from './../../../shared/services/message-box.service.native';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
-import { Component, Inject, Injector, OnInit, ViewChild, inject, input } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild, inject } from '@angular/core';
 import { MatDialog, MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
 import * as _ from 'lodash';
 import { OutrightService } from '../../services';
@@ -11,7 +11,7 @@ import { DeadHeatOptions } from '../../constants/deadheat-setting';
 import { FormsModule } from '@angular/forms';
 import { StatusId } from '../../constants';
 import { LeagueSettle } from '../../models';
-import { ToastContainerDirective, ToastContainerModule, ToastrService } from 'ngx-toastr';
+import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import { Language } from '../../../shared/language.native';
 import { ModalDialogMessage } from '../../../shared/models';
 
@@ -19,7 +19,7 @@ import { ModalDialogMessage } from '../../../shared/models';
   selector: 'update-deadheat-setting',
   templateUrl: './update-deadheat-setting.component.html',
   standalone: true,
-  imports: [CommonModule, DragDropModule, MatDialogModule, FormsModule,ToastContainerModule],
+  imports: [CommonModule, DragDropModule, MatDialogModule, FormsModule],
   providers: [OutrightService, HttpRequestService, MessageBoxService, BlockUIService]
 })
 export class UpdateDeadheatSettingComponent implements OnInit {

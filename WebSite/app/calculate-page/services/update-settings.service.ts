@@ -57,6 +57,6 @@ export class UpdateSettingsService {
 
 
     private isChildMatchApplicable(setting: AutoSettleSetting, settleType: AutoSettleType): boolean {
-        return this.getSettingValue(setting, settleType, 'isApplyChildMatches');
+        return Boolean(this.getSettingValue(setting, settleType, 'isApplyChildMatches'));
     }
 }

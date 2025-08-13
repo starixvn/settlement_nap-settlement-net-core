@@ -46,13 +46,15 @@ public class FastMarketServiceTests
         service = new FastMarketServiceImp(
             repository,
             mapper,
-            multipleServerFetcherService,
             option,
-            scaleOutSettleService,
-            generationService,
-            logService,
-            fastMarketResultAmendmentService, // Pass the required parameter
-            xmlConvertService // Pass the required parameter
+            new FastMarketServiceDependencies(
+                multipleServerFetcherService,
+                scaleOutSettleService,
+                generationService,
+                logService,
+                fastMarketResultAmendmentService,
+                xmlConvertService
+            )
         );
     }
 

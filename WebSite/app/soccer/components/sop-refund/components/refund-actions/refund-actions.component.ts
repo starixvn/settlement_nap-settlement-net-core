@@ -1,5 +1,5 @@
 import { Component, inject, Input, OnInit } from '@angular/core';
-import { BetDaq, BetFair, HedgeMatchDetail, Match, MatchDetail } from '../../../refund/model/match.model';
+import { BetDaq, BetFair, HedgeMatchDetail, Match, MatchDetail } from '../../models/match.model';
 import { RefundStorage } from '../../../../storage/refund.storage';
 import { CommonModule } from '@angular/common';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -15,7 +15,6 @@ import { LogicService } from '../../services/logic.service';
 import { ResourceNamePipe } from "../../../../pipes/resource-name.pipe";
 import { ResourceStatusPipe } from '../../../../pipes/resource-status.pipe';
 import { Permission } from '../../../../../shared/models/sportsbook-sop';
-import { find, isNil } from 'lodash';
 
 @Component({
   selector: 'refund-actions',
@@ -26,12 +25,13 @@ import { find, isNil } from 'lodash';
   styleUrl: './refund-actions.component.css'
 })
 export class RefundActionsComponent implements OnInit {
-  #storage = inject(RefundStorage);
-  #refundService = inject(RefundService);
-  #verifyService = inject(VerifyService);
-  #verificationService = inject(VerificationBaseService);
-  #logicService = inject(LogicService);
-  #resourceStatusPipe = inject(ResourceStatusPipe);
+  readonly #storage = inject(RefundStorage);
+  readonly #refundService = inject(RefundService);
+  readonly #verifyService = inject(VerifyService);
+  readonly #verificationService = inject(VerificationBaseService);
+  readonly #logicService = inject(LogicService);
+  readonly #resourceStatusPipe = inject(ResourceStatusPipe);
+  
   #match: Match;
   matchDetail: MatchDetail;
   hedgeMatchDetail: HedgeMatchDetail;
@@ -68,7 +68,7 @@ export class RefundActionsComponent implements OnInit {
 
   changeScore(result: ResultDetail) {
     this.#storage.clear();
-    if (result.resourceId == ResourceIds.halfTime) {
+    if (result.resourceId === ResourceIds.halfTime) {
       this.#storage.clearFullTimeResult();
     }
 

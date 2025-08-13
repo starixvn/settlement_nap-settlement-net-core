@@ -1,11 +1,13 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppComponent } from './app.component';
 import { AutoCalculatePageComponent } from './auto-calculation/auto-calculate-page.component';
 import { AutoCalculateFilterComponent } from './auto-calculation/auto-calculate-filter.component';
 import { AutoCalculateMatchesComponent } from './auto-calculation/auto-calculate-matches.component';
 import { DatepickerComponent } from '../../shared/components/date-picker/date-picker.component';
-import { ModalDialogComponent, NewMultipleSelectComponent } from "../../shared/components";
+import { ModalDialogComponent } from "../../shared/components/modal-dialog/modal-dialog.component";
+import { NewMultipleSelectComponent } from "../../shared/components/multiple-select/multiple-select.component";
 import { MatchesBaseComponent, PageBaseComponent } from './base-component';
 import { PageComponent} from './calculation/page.component'
 import { FilterComponent} from './calculation/filter.component'
@@ -23,7 +25,7 @@ describe('AppComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ 
+      imports: [ 
         AppComponent,
         PageComponent,
         AutoCalculatePageComponent,
@@ -35,18 +37,17 @@ describe('AppComponent', () => {
         ModalDialogComponent,
         NewMultipleSelectComponent,
         MatchesBaseComponent, 
-        PageBaseComponent 
-       ],
+        PageBaseComponent,
+        BrowserModule,
+        FormsModule,
+        ReactiveFormsModule,
+        HttpClientModule,
+        NgbModule,
+        MaterialModule,
+        NoopAnimationsModule,
+      ],
       providers: [
-      ],
-      imports: [
-          BrowserModule,
-          FormsModule,
-          ReactiveFormsModule,
-          HttpClientModule,
-          NgbModule,
-          MaterialModule,
-      ],
+      ]
       })
       .compileComponents();
   });

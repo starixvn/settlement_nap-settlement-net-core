@@ -2,7 +2,8 @@ import { VerificationService } from "./verification.service";
 import { TestBed } from "@angular/core/testing";
 import { ResultDetail, ExternalResultDetail } from "../../shared/models/sportsbook-sop";
 import { MessageBoxService } from "../../shared/services";
-import { ModalDialogComponent, ModalContentDialogComponent } from "../../shared/components";
+import { ModalDialogComponent } from "../../shared/components/modal-dialog/modal-dialog.component";
+import { ModalContentDialogComponent } from "../../shared/components/modal-dialog/modal-content-dialog.component";
 import { NgbModal, NgbModule } from "@ng-bootstrap/ng-bootstrap";
 import { BrowserDynamicTestingModule } from "@angular/platform-browser-dynamic/testing";
 import { EarlyConstraintService } from "./early-constraint.service";
@@ -20,8 +21,6 @@ describe('E-Sports - VerificationService', () => {
     beforeEach(() => {
         TestBed.configureTestingModule({
             declarations: [
-                ModalDialogComponent,
-                ModalContentDialogComponent,
             ],
             providers: [
                 VerificationService,
@@ -31,7 +30,9 @@ describe('E-Sports - VerificationService', () => {
                 ResultByTeamNamePipe
             ],
             imports: [
-                NgbModule
+                NgbModule,
+                ModalDialogComponent,
+                ModalContentDialogComponent
             ]
         });
 

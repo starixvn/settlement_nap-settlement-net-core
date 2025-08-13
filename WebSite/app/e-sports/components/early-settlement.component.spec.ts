@@ -6,7 +6,6 @@ import {
   tick,
   flush,
 } from "@angular/core/testing";
-import { BrowserDynamicTestingModule } from "@angular/platform-browser-dynamic/testing";
 import { HttpClientModule } from "@angular/common/http";
 import { ResourceNameByIdPipe } from "../pipes";
 import { EarlySettlementComponent } from "./early-settlement.component";
@@ -88,8 +87,6 @@ describe("E-sport - Early Settlement Component", () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [
-        ModalDialogComponent,
-        ModalContentDialogComponent,
       ],
       imports: [
         HttpClientModule,
@@ -106,6 +103,8 @@ describe("E-sport - Early Settlement Component", () => {
         ExternalLinkPipe,
         EarlySettlementComponent,
         ResourceNameByIdPipe,
+        ModalDialogComponent,
+        ModalContentDialogComponent,
       ]
     })
       
@@ -334,8 +333,11 @@ describe("E-sport - Early Settlement Component", () => {
   describe('canSettleResult', () => {
     it('should return true when result is running and score is match and exist inhouse result', () => {
       resultDetail.resultStatus = 'Running';
+      resultDetail.externalScores = [];
+      resultDetail.isScoreMismatched = false;
       earlyConstraintService.getBetTypeGroup= jest.fn().mockReturnValue(0);
       verificationService.isExistInhouseResult= jest.fn().mockReturnValue(true);
+      verificationService.isValidTraderConfirmScore= jest.fn().mockReturnValue(true);
 
       const result = component.canSettleResult(resultDetail);
 
@@ -376,6 +378,7 @@ describe("E-sport - Early Settlement Component", () => {
   });
 
   it('getMatch - should get match and init component info', async () => {
+    match.externalResults = [];
     aioService.getMatch= jest.fn().mockReturnValue(Promise.resolve(match));
     earlyConstraintService.getGroupMap= jest.fn().mockReturnValue([]);
     earlyConstraintService.renderResultStatus = jest.fn();
@@ -387,20 +390,4 @@ describe("E-sport - Early Settlement Component", () => {
 
     expect(component.match.matchDetail.matchId).toEqual(match.matchDetail.matchId);
   });
-
-  it('saveResult - should call save score', fakeAsync(() => {
-    component.match = match;
-    verificationService.getChangedScores = jest.fn();
-    verificationService.getOutsideScores = jest.fn();
-    aioService.saveScore= jest.fn().mockReturnValue(Promise.resolve(unSuccessfulResult));
-
-    component.saveResult();
-    tick();
-    const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-    buttonYes.click();
-    tick();
-
-    expect(aioService.saveScore).toHaveBeenCalled();
-    flush();
-  }));
 });

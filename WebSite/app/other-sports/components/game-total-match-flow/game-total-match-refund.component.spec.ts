@@ -1,20 +1,19 @@
 import { HttpClientModule } from '@angular/common/http';
-import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick, flush } from '@angular/core/testing';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
-import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ToastContainerDirective, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 import { ScoreMatchByPermissionPipe } from '../../pipes';
 import { ResourceHeaderPipe } from '../../pipes/resource-header.pipe';
 import { RequestService } from '../../services/request.service';
-import { ModalContentDialogComponent, ModalDialogComponent } from '../../../shared/components';
+import { ModalContentDialogComponent } from '../../../shared/components/modal-dialog/modal-content-dialog.component';
+import { ModalDialogComponent } from '../../../shared/components/modal-dialog/modal-dialog.component';
 import { BlockUIService, HttpRequestService, MessageBoxService } from '../../../shared/services';
-
 import { GameTotalMatchRefundComponent } from './game-total-match-refund.component';
 import { GameTotalMatchVerificationService } from './game-total-match-verification.service';
 import { GameTotalMatchService } from './game-total-match.service';
 import { Match, MatchDetail, OtherSportsMatch } from '../../models';
-import { of } from 'rxjs';
 import { MarkedTicketsModel } from '../../../shared/models';
 import { HedgeMatchDetail, ResultDetail } from '../../../shared/models/sportsbook-sop';
 
@@ -33,23 +32,10 @@ describe('GameTotalMatchRefundComponent', () => {
   };
   const buttonName = "btn-danger";
   const errorMessage = "error";
-  const successfulResult = {
-    errCode: 0,
-    errMsg: null,
-    isSuccessful: true,
-  };
-
-const unsuccessfulResult = {
-    errCode: 1,
-    errMsg: errorMessage,
-    isSuccessful: false,
-  };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [ GameTotalMatchRefundComponent,
-        ModalDialogComponent,
-        ModalContentDialogComponent,
         ResourceHeaderPipe,
         ScoreMatchByPermissionPipe,
        ],
@@ -57,8 +43,11 @@ const unsuccessfulResult = {
           HttpClientModule,
           NgbModule,
           FormsModule,
+          NoopAnimationsModule,
           ToastNoAnimationModule.forRoot(),
-          ToastrModule.forRoot()
+          ToastrModule.forRoot(),
+          ModalDialogComponent,
+          ModalContentDialogComponent
         ],
         providers: [
           GameTotalMatchService,
@@ -82,8 +71,8 @@ const unsuccessfulResult = {
     gameTotalMatchService = fixture.debugElement.injector.get(GameTotalMatchService);
     requestService = fixture.debugElement.injector.get(RequestService);
     toastrService = fixture.debugElement.injector.get(ToastrService);
-    spyOn(toastrService, 'clear');
-    spyOn(toastrService, 'error');
+    jest.spyOn(toastrService, 'clear');
+    jest.spyOn(toastrService, 'error');
     fixture.detectChanges();
   });
 
@@ -100,8 +89,8 @@ const unsuccessfulResult = {
         resultDetails: []
       } as Match
     } as OtherSportsMatch;
-    spyOn(requestService, 'getMatch').and.returnValue(of(otherSportMatch));
-    spyOn(gameTotalMatchService, 'getResultDetail').and.returnValue([]);
+    jest.spyOn(requestService, 'getMatch').mockResolvedValue(otherSportMatch);
+    jest.spyOn(gameTotalMatchService, 'getResultDetail').mockReturnValue([]);
 
     await component.getMatch(12345);
 
@@ -116,8 +105,8 @@ const unsuccessfulResult = {
         awayValue: '1'
       } as ResultDetail];
       component.matchDetail = new MatchDetail();
-      spyOn(requestService, 'checkMarkedTickets').and.returnValue(of(noMarkedTicket));
-      spyOn(requestService, 'refund').and.returnValue(of(successfulResult));
+      jest.spyOn(requestService, 'checkMarkedTickets').mockResolvedValue(noMarkedTicket);
+      jest.spyOn(gameTotalMatchService, 'refund').mockResolvedValue('');
 
       component.refund();
       tick();
@@ -130,9 +119,11 @@ const unsuccessfulResult = {
 
     it('should raise error when exist marked ticket',fakeAsync( async () => {
         component.matchDetail = new MatchDetail();
-        spyOn(requestService, 'checkMarkedTickets').and.returnValue(of(markedTicket));
+        jest.spyOn(requestService, 'checkMarkedTickets').mockResolvedValue(markedTicket);
   
         await component.refund();
+        tick();
+        flush();
   
         expect(toastrService.error).toHaveBeenCalledWith("ERROR! Cannot proceed due to marked tickets. Please unmark them and try again.");
       }));
@@ -148,56 +139,15 @@ const unsuccessfulResult = {
         matchId: 123
       } as HedgeMatchDetail;
       component.applyHedgeMatch = true;
-      spyOn(requestService, 'checkMarkedTickets').and.returnValue(of(noMarkedTicket));
-      spyOn(requestService, 'refund').and.returnValue(of(unsuccessfulResult));
+      jest.spyOn(requestService, 'checkMarkedTickets').mockResolvedValue(noMarkedTicket);
+      jest.spyOn(gameTotalMatchService, 'refund').mockResolvedValue(errorMessage);
 
       await component.refund();
       tick();
       const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
       buttonYes.click();
       tick();
-
-      expect(toastrService.error).toHaveBeenCalledWith('error');
-    }));
-  });
-
-  describe('refundParlay', () => {
-    it('no error has been raised when refund successfully', fakeAsync( async () => {
-      component.matchDetail = new MatchDetail();
-      spyOn(requestService, 'checkMarkedTickets').and.returnValue(of(noMarkedTicket));
-      spyOn(requestService, 'refundParlay').and.returnValue(of(successfulResult));
-
-      await component.refundParlay();
-      tick();
-      const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-      buttonYes.click();
-      tick();
-
-      expect(toastrService.error).not.toHaveBeenCalled();
-    }));
-
-    it('should raise error when exist marked ticket', fakeAsync(async () => {
-        component.matchDetail = new MatchDetail();
-        spyOn(requestService, 'checkMarkedTickets').and.returnValue(of(markedTicket));
-  
-        await component.refundParlay();
-  
-        expect(toastrService.error).toHaveBeenCalledWith("ERROR! Cannot proceed due to marked tickets. Please unmark them and try again.");
-      }));
-
-    it('should raise error when refund unsuccessfully', fakeAsync( async () => {
-      component.matchDetail = new MatchDetail();
-      component.hedgeMatchDetail = {
-        matchId: 123
-      } as HedgeMatchDetail;
-      component.applyHedgeMatch = true;
-      spyOn(requestService, 'checkMarkedTickets').and.returnValue(of(noMarkedTicket));
-      spyOn(requestService, 'refundParlay').and.returnValue(of(unsuccessfulResult));
-
-      await component.refundParlay();
-      const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-      buttonYes.click();
-      tick();
+      flush();
 
       expect(toastrService.error).toHaveBeenCalledWith('error');
     }));

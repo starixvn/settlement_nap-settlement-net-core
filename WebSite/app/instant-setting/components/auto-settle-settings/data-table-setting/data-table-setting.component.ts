@@ -3,7 +3,6 @@ import { OnlyIntegerDirective } from "../../../../shared/directives";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import {
     ToastContainerDirective,
-    ToastContainerModule,
     ToastrService,
 } from "ngx-toastr";
 import { ZeroFallbackDirective } from "../../../../shared/directives/zero-fall-back.directive.native";
@@ -37,7 +36,6 @@ import {SwitchComponent} from "../../../../shared/components/switch/switch.compo
     imports: [
         OnlyIntegerDirective,
         ReactiveFormsModule,
-        ToastContainerModule,
         ZeroFallbackDirective,
         NgClass,
         NgStyle,

@@ -48,7 +48,8 @@ describe('matchComponent', () => {
     autoRetryTime: 0,
     autoMainWaitingTime: 0,
     autoEarlyWaitingTime: 0,
-    refundWaitingTime: 0
+    refundWaitingTime: 0,
+    apGroup: null
   };
 
   const sport: SportMatch = {

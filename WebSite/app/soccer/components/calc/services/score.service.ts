@@ -8,9 +8,9 @@ import { VerificationBaseService } from "../../../../core/services/verification-
 
 @Injectable()
 export class ScoreService {
-       #storage = inject(CalculateStorage);
-       #messageBoxService = inject(MessageBoxService);
-       #verificationService = inject(VerificationBaseService);
+  readonly #storage = inject(CalculateStorage);
+  readonly #messageBoxService = inject(MessageBoxService);
+  readonly #verificationService = inject(VerificationBaseService);
 
        confirmCopyScore(message: string, type: string) {
               this.#storage.dialogMessage.message = message;

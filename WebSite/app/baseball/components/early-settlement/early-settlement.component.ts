@@ -22,8 +22,8 @@ import { ToastrService } from 'ngx-toastr';
   templateUrl: './early-settlement.component.html',
 })
 export class EarlySettlementComponent implements SportTemplate{
-  storage = inject(EarlySettlementStorage);
-  #toastrService = inject(ToastrService);
+  private readonly storage = inject(EarlySettlementStorage);
+  readonly #toastrService = inject(ToastrService);
 
   match = this.storage.match;
   mainResult: ResultDetail[];

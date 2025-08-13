@@ -189,43 +189,31 @@ describe('VerificationService', () => {
     });
 
     describe('VerifyChangedSettledTickets', () => {
-        it('should call function check score half time  when action is half time calc', () => {
-            spyOn(requestService, 'getLastestResult').and.returnValue(of(new Match()));
-            spyOn(halfTimeFullTimeService, 'compareHalfTimeScore').and.returnValue(true);
-            let actualResult = false;
+        it('should call function check score half time  when action is half time calc', async () => {
+            jest.spyOn(requestService, 'getLastestResult').mockReturnValue(of(new Match()));
+            jest.spyOn(halfTimeFullTimeService, 'compareHalfTimeScore').mockReturnValue(true);
 
-            service.VerifyChangedSettledTickets(1, [resultDetail], false, "CAL-HT", 1).subscribe((result) => {
-                actualResult = result;
-            });
-
+            const actualResult = await service.VerifyChangedSettledTickets(1, [resultDetail], false, "CAL-HT", 1);
 
             expect(halfTimeFullTimeService.compareHalfTimeScore).toHaveBeenCalled();
             expect(actualResult).toBeTruthy();
         });
 
-        it('should call function check score half time  when action is Full time calc', () => {
-            spyOn(requestService, 'getLastestResult').and.returnValue(of(new Match()));
-            spyOn(halfTimeFullTimeService, 'compareFullTimeScore').and.returnValue(true);
-            let actualResult = false;
+        it('should call function check score half time  when action is Full time calc', async () => {
+            jest.spyOn(requestService, 'getLastestResult').mockReturnValue(of(new Match()));
+            jest.spyOn(halfTimeFullTimeService, 'compareFullTimeScore').mockReturnValue(true);
 
-            service.VerifyChangedSettledTickets(1, [resultDetail], false, "CAL-FT", 1).subscribe((result) => {
-                actualResult = result;
-            });
-
+            const actualResult = await service.VerifyChangedSettledTickets(1, [resultDetail], false, "CAL-FT", 1);
 
             expect(halfTimeFullTimeService.compareFullTimeScore).toHaveBeenCalled();
             expect(actualResult).toBeTruthy();
         });
 
-        it('should call function check score half time  when action is all calc', () => {
-            spyOn(requestService, 'getLastestResult').and.returnValue(of(new Match()));
-            spyOn(halfTimeFullTimeService, 'compareAllScore').and.returnValue(true);
-            let actualResult = false;
+        it('should call function check score half time  when action is all calc', async () => {
+            jest.spyOn(requestService, 'getLastestResult').mockReturnValue(of(new Match()));
+            jest.spyOn(halfTimeFullTimeService, 'compareAllScore').mockReturnValue(true);
 
-            service.VerifyChangedSettledTickets(1, [resultDetail], false, "CAL", 1).subscribe((result) => {
-                actualResult = result;
-            });
-
+            const actualResult = await service.VerifyChangedSettledTickets(1, [resultDetail], false, "CAL", 1);
 
             expect(halfTimeFullTimeService.compareAllScore).toHaveBeenCalled();
             expect(actualResult).toBeTruthy();
@@ -235,8 +223,12 @@ describe('VerificationService', () => {
     describe('isScoreMismatched', () => {
         it('should not call half time function when half time null', () => {
             const matchDetail = new MatchDetail();
-            spyOn(halfTimeFullTimeService, 'isScoreMismatchHalfTime');
-            spyOn(halfTimeFullTimeService, 'isScoreMismatchFullTime');
+            matchDetail.exHTHomeScore = 1;
+            matchDetail.exFTHomeScore = 2;
+            matchDetail.exHTAwayScore = 1;
+            matchDetail.exFTAwayScore = 2;
+            jest.spyOn(halfTimeFullTimeService, 'isScoreMismatchHalfTime');
+            jest.spyOn(halfTimeFullTimeService, 'isScoreMismatchFullTime');
             service.isScoreMismatched(null, fullTime, matchDetail, resultDetail, resultDetail);
 
             expect(halfTimeFullTimeService.isScoreMismatchHalfTime).not.toHaveBeenCalled();
@@ -245,8 +237,12 @@ describe('VerificationService', () => {
 
         it('should call half time function when half time exist ', () => {
             const matchDetail = new MatchDetail();
-            spyOn(halfTimeFullTimeService, 'isScoreMismatchHalfTime');
-            spyOn(halfTimeFullTimeService, 'isScoreMismatchFullTime');
+            matchDetail.exHTHomeScore = 1;
+            matchDetail.exFTHomeScore = 2;
+            matchDetail.exHTAwayScore = 1;
+            matchDetail.exFTAwayScore = 2;
+            jest.spyOn(halfTimeFullTimeService, 'isScoreMismatchHalfTime');
+            jest.spyOn(halfTimeFullTimeService, 'isScoreMismatchFullTime');
             service.isScoreMismatched(halfTime, fullTime, matchDetail, resultDetail, resultDetail);
 
             expect(halfTimeFullTimeService.isScoreMismatchHalfTime).toHaveBeenCalled();
@@ -256,7 +252,7 @@ describe('VerificationService', () => {
 
     describe('isSourceSufficient', () => {
         it('should return true when exist provider result ', () => {
-            spyOn(halfTimeFullTimeService, 'isExistProviderScore').and.returnValue(true);
+            jest.spyOn(halfTimeFullTimeService, 'isExistProviderScore').mockReturnValue(true);
 
             const result = service.isSourceSufficient("CAL-HT", new MatchDetail(),halfTime, fullTime);
             const resultFullTime = service.isSourceSufficient("CAL-FT", new MatchDetail(),halfTime, fullTime);
@@ -265,8 +261,8 @@ describe('VerificationService', () => {
             expect(resultFullTime).toBeTruthy();
         });
         it('should return true when exist confirmed result', () => {
-            spyOn(halfTimeFullTimeService, 'isExistProviderScore').and.returnValue(false);
-            spyOn(halfTimeFullTimeService, 'isScoreConfirmed').and.returnValue(true);
+            jest.spyOn(halfTimeFullTimeService, 'isExistProviderScore').mockReturnValue(false);
+            jest.spyOn(halfTimeFullTimeService, 'isScoreConfirmed').mockReturnValue(true);
 
             const result = service.isSourceSufficient("CAL-HT", new MatchDetail(),halfTime, fullTime);
             const resultFullTime = service.isSourceSufficient("CAL-FT", new MatchDetail(),halfTime, fullTime);
@@ -276,8 +272,8 @@ describe('VerificationService', () => {
         });
 
         it('should return false when not exist external result ', () => {
-            spyOn(halfTimeFullTimeService, 'isExistProviderScore').and.returnValue(false);
-            spyOn(halfTimeFullTimeService, 'isScoreConfirmed').and.returnValue(false);
+            jest.spyOn(halfTimeFullTimeService, 'isExistProviderScore').mockReturnValue(false);
+            jest.spyOn(halfTimeFullTimeService, 'isScoreConfirmed').mockReturnValue(false);
 
             const result = service.isSourceSufficient("CAL-HT", new MatchDetail(),halfTime, fullTime);
             const resultFullTime = service.isSourceSufficient("CAL-FT", new MatchDetail(),halfTime, fullTime);

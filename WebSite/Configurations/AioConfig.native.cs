@@ -9,6 +9,7 @@ public static class AioConfig
 {
     public static void ConfigAioServices(this IServiceCollection services)
     {
+        services.AddTransient<AioServiceDependencies>();
         services.AddTransient<IAioService, AioServiceImp>();
         services.AddTransient<IMapperFactory, MapperFactoryBase>();
         services.AddTransient<IMapperFactory, MapperFactoryImp>();
@@ -20,6 +21,7 @@ public static class AioConfig
         services.AddTransient<ResultAmendmentService, ResultAmendmentServiceImp>();
         services.AddTransient<ResultDetailService, ResultDetailServiceImp>();
 
+        services.AddTransient<MultipleServerAioServiceDependencies>();
         services.AddTransient<MultipleServerAioService, MultipleServerAioServiceImp>();
     }
 

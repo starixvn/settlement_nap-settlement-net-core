@@ -5,6 +5,7 @@ import { HttpRequestService, BlockUIService, MessageBoxService } from '../../sha
 import { SettleQuery, BetType, CheckingMarkedTicketsQuery, EventCounter,  UpdateWaterBreakQuery } from '../models';
 import { AutoSettingLeagueQuery, AutoSettingMatchQuery } from '../../shared/models';
 
+
 describe('FastMarketService', () => {
   let service: RequestService = null;
   let httpRequestService: HttpRequestService;
@@ -22,8 +23,8 @@ describe('FastMarketService', () => {
 
     service = TestBed.inject(RequestService);
     httpRequestService = TestBed.inject(HttpRequestService);
-    spyOn(httpRequestService, 'postJson');
-    spyOn(httpRequestService, 'getJson');
+    jest.spyOn(httpRequestService, 'postJson');
+    jest.spyOn(httpRequestService, 'getJson');
   });
 
   it('should create a service', () => {

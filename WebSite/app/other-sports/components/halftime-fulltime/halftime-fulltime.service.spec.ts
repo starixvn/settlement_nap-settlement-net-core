@@ -42,10 +42,6 @@ describe('HalfTimeFullTimeService', () => {
                 HttpClientModule,
                 NgbModule,
                 FormsModule,
-            ],
-            declarations: [
-                ModalDialogComponent,
-                ModalContentDialogComponent
             ]
         });
 

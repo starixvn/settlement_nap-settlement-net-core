@@ -17,7 +17,8 @@ describe('BetBuilder - Match setting Service', () => {
         isSuccessful: true,
          childMatchIds: "",
         settledSessionId: "",
-        hasResultAmendment: false
+        hasResultAmendment: false,
+        isOrg: false
     };
 
     const unSuccessfulResult = {
@@ -26,7 +27,8 @@ describe('BetBuilder - Match setting Service', () => {
         isSuccessful: false,
         childMatchIds: "",
         settledSessionId: "",
-        hasResultAmendment: false
+        hasResultAmendment: false,
+        isOrg: false
     };
 
     const mockMatch = new MatchDetail();

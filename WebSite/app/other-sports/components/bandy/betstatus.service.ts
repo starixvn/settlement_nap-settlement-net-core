@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { ResultDetail } from "../../../shared/models/sportsbook-sop";
-import { ResourceID } from "./constant";
+import { ResourceID } from "../../constants";
 import * as _ from "lodash";
 import { SettlementStatusId } from "../../../shared/constants";
 

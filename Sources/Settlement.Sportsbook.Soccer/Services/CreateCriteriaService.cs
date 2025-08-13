@@ -43,17 +43,45 @@ public interface ICreateCriteriaService
 
 }
 
+public class CreateCriteriaServiceDependencies
+{
+    public ISoccerBetStatusService SoccerBetStatusService { get; }
+    public XmlConvertService XmlConvertService { get; }
+    public IMapper Mapper { get; }
+    public IBetStatusAllService BetStatusAllService { get; }
+    public IMatchService MatchService { get; }
+    public INapSession Session { get; }
+
+    public CreateCriteriaServiceDependencies(
+        ISoccerBetStatusService soccerBetStatusService,
+        XmlConvertService xmlConvertService,
+        IMapper mapper,
+        IBetStatusAllService betStatusAllService,
+        IMatchService matchService,
+        INapSession session)
+    {
+        SoccerBetStatusService = soccerBetStatusService;
+        XmlConvertService = xmlConvertService;
+        Mapper = mapper;
+        BetStatusAllService = betStatusAllService;
+        MatchService = matchService;
+        Session = session;
+    }
+}
+
 public class CreateCriteriaServiceImp(
     IResourceService resourceService,
     IHttpContextAccessor accessor,
-    ISoccerBetStatusService soccerBetStatusService,
-    XmlConvertService xmlConvertService,
-    IMapper mapper,
-    IBetStatusAllService betStatusAllService,
-    IMatchService matchService,
-    INapSession session)
+    CreateCriteriaServiceDependencies dependencies)
     : ICreateCriteriaService
 {
+    private readonly ISoccerBetStatusService soccerBetStatusService = dependencies.SoccerBetStatusService;
+    private readonly XmlConvertService xmlConvertService = dependencies.XmlConvertService;
+    private readonly IMapper mapper = dependencies.Mapper;
+    private readonly IBetStatusAllService betStatusAllService = dependencies.BetStatusAllService;
+    private readonly IMatchService matchService = dependencies.MatchService;
+    private readonly INapSession session = dependencies.Session;
+
     public CalculateCriteria CreateCalculateCriteria(SettleRequest request)
     {
         var resources = GetResourcesCalculate(request);

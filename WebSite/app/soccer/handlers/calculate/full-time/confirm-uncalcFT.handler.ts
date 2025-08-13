@@ -6,7 +6,7 @@ import { MessageBoxService } from "../../../../shared/services";
 import { ResultStatusId } from "../../../../shared/constants";
 
 export class ConfirmUncalcFTHandler extends AbstractHandler {
-  #messageBoxService = inject(MessageBoxService);
+  readonly #messageBoxService = inject(MessageBoxService);
 
   handle(storage: CalculateBaseStorage): void {
     const halfTimeResult = storage.getHalfTimeResult();

@@ -1,6 +1,6 @@
 import { RefundCommonModule } from './../../shared/modules/refund-common.module';
 import { ExcludeTotalPointPipe, ResourceNameByIdPipe } from '../pipes';
-import { Component, Injector, Input, ViewChild, inject } from '@angular/core';
+import { Component, Input, ViewChild, inject } from '@angular/core';
 import * as _ from 'lodash';
 import { ModalDialogMessage, Result } from '../../shared/models';
 import { CalculateAction, EventStatus } from '../../shared/constants';

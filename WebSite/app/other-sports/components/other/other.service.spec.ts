@@ -7,7 +7,7 @@ import { OtherService } from "./other.service";
 import { Language } from "../../../shared/language.native";
 import { HedgeMatchDetail } from "../../../shared/models/sportsbook-sop";
 import { Result } from "../../../shared/models";
-import { of } from "rxjs";
+import { jest } from '@jest/globals';
 
 describe('OtherService', () => {
     let service: OtherService = null;
@@ -52,15 +52,11 @@ describe('OtherService', () => {
     });
 
     it('getMessageConfirmRefund - return correct message', () => {
-        const messageParlayAll = service.getMessageConfirmRefund(true, "REFUND");
-        const messageParlayFT = service.getMessageConfirmRefund(true, "REFUND-FT");
-        const messageFT = service.getMessageConfirmRefund(false, "REFUND-FT");
-        const messageAll = service.getMessageConfirmRefund(false, "REFUND");
+        const messageRefund = service.getMessageConfirmRefund("REFUND");
+        const messageRefundFT = service.getMessageConfirmRefund("REFUND-FT");
 
-        expect(messageParlayAll).toEqual(Language.RefundParlayConfirmMessage);
-        expect(messageParlayFT).toEqual(Language.RefundParlayFullTime);
-        expect(messageFT).toEqual(Language.RefundFullMessage);
-        expect(messageAll).toEqual(Language.RefundConfirmMessage);
+        expect(messageRefund).toEqual(Language.RefundConfirmMessage);
+        expect(messageRefundFT).toEqual(Language.RefundFullMessage);
     });
 
     describe('sendRequest', () => {
@@ -68,32 +64,34 @@ describe('OtherService', () => {
         const hedgeMatchDetail = new HedgeMatchDetail();
         hedgeMatchDetail.matchId = 456;
         matchDetail.betStatus = "";
-        it('should call refund parlay when action is parlay', fakeAsync(() => {
+        it('should call sendRequest when action is parlay', fakeAsync(() => {
             const param = {
                 matchId: matchDetail.matchId,
                 action: "MP-REFUND",
                 hedgeMatchId: hedgeMatchDetail.matchId,
-                betStatus: ""
+                betStatus: "",
+                sportType: matchDetail.sportType
             }
-            spyOn(requestService, 'refundParlay').and.returnValue(of(new Result()));
+            jest.spyOn(requestService, 'sendRequest').mockReturnValue(Promise.resolve(new Result()));
             tick();
-            service.sendRequest(matchDetail, hedgeMatchDetail, "MP-REFUND", true);
+            service.sendRequest(matchDetail, hedgeMatchDetail, "MP-REFUND");
 
-            expect(requestService.refundParlay).toHaveBeenCalledWith(param);
+            expect(requestService.sendRequest).toHaveBeenCalledWith(param);
         }));
 
-        it('should call refund when action is not parlay', fakeAsync(() => {
+        it('should call sendRequest when action is not parlay', fakeAsync(() => {
             const param = {
                 matchId: matchDetail.matchId,
                 action: "REFUND",
                 hedgeMatchId: hedgeMatchDetail.matchId,
-                betStatus: ""
+                betStatus: "",
+                sportType: matchDetail.sportType
             }
-            spyOn(requestService, 'refund').and.returnValue(of(new Result()));
+            jest.spyOn(requestService, 'sendRequest').mockReturnValue(Promise.resolve(new Result()));
             tick();
-            service.sendRequest(matchDetail, hedgeMatchDetail, "REFUND", false);
+            service.sendRequest(matchDetail, hedgeMatchDetail, "REFUND");
 
-            expect(requestService.refund).toHaveBeenCalledWith(param);
+            expect(requestService.sendRequest).toHaveBeenCalledWith(param);
         }));
     });
 
@@ -244,11 +242,11 @@ describe('OtherService', () => {
             isApplyHedging: false
         } as RequestSettle;
 
-        spyOn(requestService, 'calculate').and.returnValue(of({}));
+        jest.spyOn(requestService, 'sendRequest').mockReturnValue(Promise.resolve(new Result()));
 
         service.settle('CAL', true, match);
 
-        expect(requestService.calculate).toHaveBeenCalledWith(query);
+        expect(requestService.sendRequest).toHaveBeenCalledWith(query);
     });
 
     it('copyScores - should copy HT and Final scores', () => {

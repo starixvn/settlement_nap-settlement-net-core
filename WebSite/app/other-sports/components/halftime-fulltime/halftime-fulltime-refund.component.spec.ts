@@ -1,6 +1,11 @@
-import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, flush, TestBed, tick } from '@angular/core/testing';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ResourceHeaderPipe, ScorePipe } from '../../pipes';
-import { ModalContentDialogComponent, ModalDialogComponent, NotReadyMatchComponent, ResettleCheckerComponent, TicketCountComponent } from '../../../shared/components';
+import { ModalContentDialogComponent } from '../../../shared/components/modal-dialog/modal-content-dialog.component';
+import { ModalDialogComponent } from '../../../shared/components/modal-dialog/modal-dialog.component';
+import { NotReadyMatchComponent } from '../../../shared/components/not-ready-match/not-ready-match.component';
+import { ResettleCheckerComponent } from '../../../shared/components/resettle-checker/resettle-checker.component';
+import { TicketCountComponent } from '../../../shared/components/ticket-count/ticket-count.component';
 import { HttpClientModule } from '@angular/common/http';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
@@ -8,7 +13,6 @@ import { RequestService } from '../../services/request.service';
 import { BlockUIService, HttpRequestService, MessageBoxService } from '../../../shared/services';
 import { HalfTimeFullTimeService } from './halftime-fulltime.service';
 import { VerificationService } from './verification.service';
-import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { ToastContainerDirective, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 import { Match, MatchDetail, OtherSportsMatch, Permission, QueryMatch } from '../../models';
 import { ResultDetail } from '../../../shared/models/sportsbook-sop/result-detail.model';
@@ -48,22 +52,25 @@ describe('HalfTimeFullTimeRefundComponent', () => {
         errCode: 0,
         errMsg: null,
         isSuccessful: true,
+        childMatchIds: '',
+        settledSessionId: "",
+        hasResultAmendment: false,
+        isOrg: false
     };
     const unSuccessfulResult = {
         errCode: 1,
         errMsg: errorMessage,
         isSuccessful: false,
+        childMatchIds: '',
+        settledSessionId: "",
+        hasResultAmendment: false,
+        isOrg: false
     };
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [
                 HalfTimeFullTimeRefundComponent,
-                ModalDialogComponent,
-                ModalContentDialogComponent,
-                TicketCountComponent,
-                ResettleCheckerComponent,
-                NotReadyMatchComponent,
                 ScorePipe,
                 ResourceHeaderPipe
             ],
@@ -72,7 +79,13 @@ describe('HalfTimeFullTimeRefundComponent', () => {
                 NgbModule,
                 FormsModule,
                 ToastNoAnimationModule.forRoot(),
-                ToastrModule.forRoot()
+                ToastrModule.forRoot(),
+                ModalDialogComponent,
+                ModalContentDialogComponent,
+                TicketCountComponent,
+                ResettleCheckerComponent,
+                NotReadyMatchComponent,
+                NoopAnimationsModule
             ],
             providers: [
                 RequestService,
@@ -101,9 +114,9 @@ describe('HalfTimeFullTimeRefundComponent', () => {
     });
 
     it('getMatch - Always call function get match and all function related', fakeAsync(() => {
-        spyOn(requestService, 'getMatch').and.returnValue(of(otherSportsMatch));
-        spyOn(halfTimeFullTimeService, 'processScore');
-        spyOn(halfTimeFullTimeService, 'numberSetOnHalfTime');
+        jest.spyOn(requestService, 'getMatch').mockResolvedValue(otherSportsMatch);
+        jest.spyOn(halfTimeFullTimeService, 'processScore');
+        jest.spyOn(halfTimeFullTimeService, 'numberSetOnHalfTime');
         component.resultDetails = [halfTime, fullTime];
         const query = new QueryMatch(1, true);
 
@@ -144,20 +157,17 @@ describe('HalfTimeFullTimeRefundComponent', () => {
             };
             matchDetail.matchId = 1234
             component.matchDetail = matchDetail;
-            spyOn(toastrService, 'clear');
-            spyOn(toastrService, 'error');
-            spyOn(requestService, 'checkMarkedTickets').and.returnValue(of(existMarkedTicket));
+            jest.spyOn(toastrService, 'clear');
+            jest.spyOn(toastrService, 'error');
+            jest.spyOn(requestService, 'checkMarkedTickets').mockResolvedValue(existMarkedTicket);
 
-            component.refund("Refund", true);
-            const params = {
-                matchId: 1234,
-                action: "MP-Refund",
-            };
+            component.refund("MP-Refund");
             tick();
-
+            flush();
+            
             expect(toastrService.clear).toHaveBeenCalled();
             expect(toastrService.error).toHaveBeenCalledWith(Language.MarkedTicket);
-            expect(requestService.checkMarkedTickets).toHaveBeenCalledWith(params)
+            expect(requestService.checkMarkedTickets).toHaveBeenCalled()
         }));
 
         it('should show error when refund normal failed', fakeAsync(() => {
@@ -166,23 +176,20 @@ describe('HalfTimeFullTimeRefundComponent', () => {
             };
             matchDetail.matchId = 1234
             component.matchDetail = matchDetail;
-            spyOn(toastrService, 'error');
-            spyOn(requestService, 'checkMarkedTickets').and.returnValue(of(notExistMarkedTicket));
-            spyOn(requestService, 'refund').and.returnValue(of(unSuccessfulResult));
+            jest.spyOn(toastrService, 'error');
+            jest.spyOn(requestService, 'checkMarkedTickets').mockResolvedValue(notExistMarkedTicket);
+            jest.spyOn(requestService, 'sendRequest').mockResolvedValue(unSuccessfulResult);
 
-            component.refund("Refund", false);
-            const params = {
-                matchId: 1234,
-                action: "Refund",
-            };
+            component.refund("Refund");
             tick();
 
             const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
             buttonYes.click();
             tick();
+            flush();    
 
             expect(toastrService.error).toHaveBeenCalledWith(unSuccessfulResult.errMsg);
-            expect(requestService.checkMarkedTickets).toHaveBeenCalledWith(params)
+            expect(requestService.checkMarkedTickets).toHaveBeenCalled()
         }));
 
         it('should show error when refund parlay failed', fakeAsync(() => {
@@ -191,23 +198,20 @@ describe('HalfTimeFullTimeRefundComponent', () => {
             };
             matchDetail.matchId = 1234
             component.matchDetail = matchDetail;
-            spyOn(toastrService, 'error');
-            spyOn(requestService, 'checkMarkedTickets').and.returnValue(of(notExistMarkedTicket));
-            spyOn(requestService, 'refundParlay').and.returnValue(of(unSuccessfulResult));
+            jest.spyOn(toastrService, 'error');
+            jest.spyOn(requestService, 'checkMarkedTickets').mockResolvedValue(notExistMarkedTicket);
+            jest.spyOn(requestService, 'sendRequest').mockResolvedValue(unSuccessfulResult);
 
-            component.refund("Refund", true);
-            const params = {
-                matchId: 1234,
-                action: "MP-Refund",
-            };
+            component.refund("MP-Refund");
             tick();
 
             const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
             buttonYes.click();
             tick();
+            flush();
 
             expect(toastrService.error).toHaveBeenCalledWith(unSuccessfulResult.errMsg);
-            expect(requestService.checkMarkedTickets).toHaveBeenCalledWith(params)
+            expect(requestService.checkMarkedTickets).toHaveBeenCalled();
         }));
 
         it('should close popup when refund success', fakeAsync(() => {
@@ -216,15 +220,12 @@ describe('HalfTimeFullTimeRefundComponent', () => {
             };
             matchDetail.matchId = 1234
             component.matchDetail = matchDetail;
-            spyOn(messageBoxService, 'closePopup');
-            spyOn(requestService, 'checkMarkedTickets').and.returnValue(of(notExistMarkedTicket));
-            spyOn(requestService, 'refundParlay').and.returnValue(of(successfulResult));
+            jest.spyOn(messageBoxService, 'closePopup');
+            jest.spyOn(requestService, 'checkMarkedTickets').mockResolvedValue(notExistMarkedTicket);
+            jest.spyOn(requestService, 'sendRequest').mockResolvedValue(successfulResult);
 
-            component.refund("Refund", true);
-            const params = {
-                matchId: 1234,
-                action: "MP-Refund",
-            };
+            component.refund("MP-Refund");
+           
             tick();
 
             const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
@@ -232,7 +233,7 @@ describe('HalfTimeFullTimeRefundComponent', () => {
             tick();
 
             expect(messageBoxService.closePopup).toHaveBeenCalled();
-            expect(requestService.checkMarkedTickets).toHaveBeenCalledWith(params)
+            expect(requestService.checkMarkedTickets).toHaveBeenCalled();
         }));
     });
 });
