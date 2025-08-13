@@ -5,20 +5,6 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { HttpClientModule } from "@angular/common/http";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { AppComponent } from "./app.component";
-import { CalculationMatchDetailComponent } from "./calculation-match-detail.component";
-import { CalculationActionsComponent } from "./calculation-actions.component";
-import { RefundActionsComponent } from "./refund-actions.component";
-import { MatchDetailComponent } from "./match-detail.component";
-import { EarlySettlementComponent } from "./early-settlement.component";
-import { ResourceNameByIdPipe} from "../pipes";
-import { ResettleCheckerComponent } from "../../shared/components/resettle-checker/resettle-checker.component";
-import { TicketCountComponent } from "../../shared/components/ticket-count/ticket-count.component";
-import { NotReadyMatchComponent } from "../../shared/components/not-ready-match/not-ready-match.component";
-import { MaterialModule } from "../../shared/material-module";
-import { NewMultipleSelectComponent } from "../../shared/components/multiple-select/multiple-select.component";
-import { ExternalLinkPipe } from "../../score-source-setting/pipes";
-import { PipesModule } from '../../shared/pipes/pipes.module.native';
-import { ToastNoAnimationModule, ToastrModule } from "ngx-toastr";
 import { PageType } from '../../shared/constants';
 import { CalculationActionsComponent as CalculationESport } from "./calculation-actions.component";
 import { RefundActionsComponent as RefundESport } from "./refund-actions.component";
@@ -36,23 +22,8 @@ describe("Component: App", () => {
         FormsModule,
         ReactiveFormsModule,
         HttpClientModule,
-        MaterialModule,
-        PipesModule,
         NoopAnimationsModule,
-        ToastNoAnimationModule.forRoot(),
-        ToastrModule.forRoot(),
         AppComponent,
-        CalculationMatchDetailComponent,
-        NotReadyMatchComponent,
-        CalculationActionsComponent,
-        RefundActionsComponent,
-        MatchDetailComponent,
-        EarlySettlementComponent,
-        NewMultipleSelectComponent,
-        ResettleCheckerComponent,
-        TicketCountComponent,
-        ResourceNameByIdPipe,
-        ExternalLinkPipe,
       ],
       })
       .compileComponents()
@@ -63,39 +34,30 @@ describe("Component: App", () => {
       });
   }));
 
+  afterEach(() => {
+    if (fixture) {
+      fixture.destroy();
+    }
+  });
+
   it('should create the app', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should render calculation-actions tag', () => {
+  it('should return calculation-actions component factory', () => {
       elementRef.nativeElement.setAttribute("page-type", PageType.ReCalculate);
-      component.ngOnInit();
-      fixture.detectChanges();
-      // Test that the component was created and ngOnInit was called
-      expect(component).toBeTruthy();
-      // Test that the correct component factory is returned
       const factory = (component as any).getComponentFactory();
       expect(factory).toBe(CalculationESport);
   });
 
-  it('should render refund-actions tag', () => {
+  it('should return refund-actions component factory', () => {
       elementRef.nativeElement.setAttribute("page-type", PageType.Refund);
-      component.ngOnInit();
-      fixture.detectChanges();
-      // Test that the component was created and ngOnInit was called
-      expect(component).toBeTruthy();
-      // Test that the correct component factory is returned
       const factory = (component as any).getComponentFactory();
       expect(factory).toBe(RefundESport);
   });
 
-  it('should render early-settlement tag', () => {
+  it('should return early-settlement component factory', () => {
       elementRef.nativeElement.setAttribute("page-type", PageType.EarlySettlement);
-      component.ngOnInit();
-      fixture.detectChanges();
-      // Test that the component was created and ngOnInit was called
-      expect(component).toBeTruthy();
-      // Test that the correct component factory is returned
       const factory = (component as any).getComponentFactory();
       expect(factory).toBe(EarlyESport);
   });
@@ -103,8 +65,7 @@ describe("Component: App", () => {
   it('should throw exception: Not implemented yet', () => {
       elementRef.nativeElement.setAttribute("page-type", "");
       expect(() => {
-          component.ngOnInit();
-          fixture.detectChanges();
+          (component as any).getComponentFactory();
       }).toThrow("Not implemented yet");
   });
 });

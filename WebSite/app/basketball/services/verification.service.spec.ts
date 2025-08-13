@@ -47,9 +47,7 @@ describe('Basketball - Verify Service', () => {
     match.ticketCounts = ticketCounts;
     beforeEach(() => {
         TestBed.configureTestingModule({
-            declarations: [
-                ModalDialogComponent,
-            ],
+            declarations: [],
             providers: [
                 VerificationService,
                 MessageBoxService,
@@ -58,6 +56,7 @@ describe('Basketball - Verify Service', () => {
             ],
             imports: [
                 NgbModule,
+                ModalDialogComponent,
             ]
         }).compileComponents();
 
@@ -280,10 +279,10 @@ describe('Basketball - Verify Service', () => {
         it('should return true when all maps have score source', () => {
             const ot = CreateDataTest.CreateResultDetail('OT', '2', '1', true);
             const otProvider = new ExternalResultDetail(100, 'OT', '', '', '2', '1');
-            const otOutside = new ExternalResultDetail(1005, 'OT', '', '', '2', '1');
+            const otOutside = new ExternalResultDetail(1001, 'OT', '', '', '2', '1');
             ot.externalScores = [otProvider, otOutside];
             const quarterProvider = new ExternalResultDetail(100, 'Q1', '', '', '1', '1');
-            const quarterOutside = new ExternalResultDetail(1005, 'Q1', '', '', '1', '1');
+            const quarterOutside = new ExternalResultDetail(1001, 'Q1', '', '', '1', '1');
             resultDetail.externalScores = [quarterProvider, quarterOutside];
 
             const result = service.allMapHaveScoreSources([resultDetail, ot]);
