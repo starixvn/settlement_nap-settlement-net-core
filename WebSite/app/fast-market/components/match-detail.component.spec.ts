@@ -6,7 +6,6 @@ import { of } from 'rxjs';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ElementRef } from "@angular/core";
 import { ModalDialogComponent } from '../../shared/components/modal-dialog/modal-dialog.component';
-import { ModalContentDialogComponent } from '../../shared/components/modal-dialog/modal-content-dialog.component';
 import { MatchDetailComponent } from './match-detail.component';
 import { MatchDetail, AutoSettingIcon } from '../models';
 import { MessageBoxService, HttpRequestService, BlockUIService } from '../../shared/services';
@@ -22,7 +21,6 @@ describe('Component: MatchDetailComponent', () => {
     let fastMarketService: RequestService;
     let messageBoxService: MessageBoxService;
     let toastrService: ToastrService;
-    const buttonName = "btn-danger";
     const errorMessage = "Error message";
     const matchDetail = new MatchDetail();
     matchDetail.matchId = 700000;

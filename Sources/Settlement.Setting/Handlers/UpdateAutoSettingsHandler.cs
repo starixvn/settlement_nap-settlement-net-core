@@ -19,6 +19,8 @@ public class UpdateAutoSettingsHandler(
 {
     private const string League = "League";
 
+    private const string Match = "Match";
+
     public async Task<Result> Handle(UpdateAutoSettingsCommand command, CancellationToken cancellationToken)
     {
         var results = new List<Result>();
@@ -96,7 +98,7 @@ public class UpdateAutoSettingsHandler(
     private async Task WriteLogUpdateSetting(UpdateAutoSettingsCommand command, UpdateResultSettingItem item, Result result)
     {
         var oldItem = command.OldResultSettings
-            .FirstOrDefault(x => x.ResourceType == item.ResourceType && x.SettleType == item.SettleType);
+            .Find(x => x.ResourceType == item.ResourceType && x.SettleType == item.SettleType);
 
         if (oldItem is null)
         {
@@ -121,7 +123,7 @@ public class UpdateAutoSettingsHandler(
 
     private string BuildLogMessage(UpdateAutoSettingsCommand command, UpdateResultSettingItem item, Result result, string differences)
     {
-        var objectInfo = string.Equals(command.TypeObject, "League")
+        var objectInfo = string.Equals(command.TypeObject, League)
             ? $"League({command.LeagueId})"
             : $"Match({command.MatchId})";
 
@@ -138,8 +140,8 @@ public class UpdateAutoSettingsHandler(
     {
         return (typeObject) switch
         {
-            ("League") => ActionId.AutoPayoutSettingLeague,
-            ("Match") => ActionId.AutoPayoutSettingMatch,
+            (League) => ActionId.AutoPayoutSettingLeague,
+            (Match) => ActionId.AutoPayoutSettingMatch,
             _ => 0
         };
     }
@@ -172,8 +174,8 @@ public class UpdateAutoSettingsHandler(
     {
         SettingSourceCriteriaStrategy strategy = command.TypeObject switch
         {
-            "League" => new LeagueSettingSourceCriteriaStrategy(),
-            "Match" => new MatchCriteriaStrategy(),
+            League => new LeagueSettingSourceCriteriaStrategy(),
+            Match => new MatchCriteriaStrategy(),
             _ => throw new ArgumentException("Invalid TypeObject")
         };
 
