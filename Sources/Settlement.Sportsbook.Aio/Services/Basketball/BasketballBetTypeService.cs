@@ -24,6 +24,7 @@ public class BasketballBetTypeServiceImp(
 
     public ResultDetail GetBetTypeNameAndGroup(ResultDetail item)
     {
+        //TODO
         var resourceId = item.ResourceId;
         (item.BetType, item.BetTypeName) = resourceNameService.GetResourceName(resourceId, KeyConstants.BasketballKey);
         GroupBasketballBetType(item);

@@ -20,6 +20,7 @@ public class ResultDetailMapperServiceImp : IMapperService
     {
         if (obj is List<ResultDetail> list)
         {
+            // TODO
             const int maxLengthResourceId = 2;
             var listEarly = list.Where(x => x.ResourceId.Length > maxLengthResourceId).ToList();
             var listQuarter = list.Where(x => x.ResourceId.Length == maxLengthResourceId).ToList();
