@@ -33,7 +33,10 @@ public class AutoMoveStatusServiceImp(ICacheService cacheService) : AutoMoveStat
 
     public async Task<bool> UpdateAutoMoveStatus(bool isAutoMoveTicketsEnabled)
     {
-        await cacheService.SetAsync(CacheSettings.AutoMoveStatusKey, isAutoMoveTicketsEnabled);
+        await cacheService.SetAsync(
+            CacheSettings.AutoMoveStatusKey,
+            isAutoMoveTicketsEnabled,
+            new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromDays(1)));
         return await GetAutoMoveStatus();
     }
 }
