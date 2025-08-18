@@ -9,7 +9,6 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
 import { CustomNgbDateParserFormatter } from '../../../shared/components/date-picker/custom-ngb-date-parser-formatter';
 import { DialogBoxService } from '../../../shared/services';
-import { DynamicHeightDirective } from '../../../shared/directives';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { LogPopupComponent } from '../popup/log-popup.component';
 import { LeagueMatch } from '../../models/league-match.model';
@@ -23,7 +22,7 @@ import { DeadHeatButton } from '../../constants/deatheat-button';
     templateUrl: './league-team.component.html',
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [CommonModule, MatDialogModule, DynamicHeightDirective],
+    imports: [CommonModule, MatDialogModule],
     providers: [DatePipe, DialogBoxService,
         { provide: NgbDateParserFormatter, useFactory: () => new CustomNgbDateParserFormatter('MMM dd, y') }],
 

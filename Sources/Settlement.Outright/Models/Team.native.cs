@@ -4,6 +4,7 @@ namespace Settlement.Outright.Models;
 
 public class Team
 {
+    private string screenShot = "Running";
     public IRefDataService RefDataService { get; set; }
 
     public int OrId { get; set; }
@@ -38,4 +39,6 @@ public class Team
 
     public string OddsStatus { get; set; }
     public int BetCount { get; set; }
+
+    public string ScreenShot { get; set; }
 }

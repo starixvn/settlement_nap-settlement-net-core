@@ -37,7 +37,7 @@ export class CalculatePopupComponent implements OnInit {
     private readonly outrightService = inject(OutrightService);
     private readonly verifyDateService = inject(VerifyDateService);
     private readonly calculateService = inject(CalculateService);
-    public readonly dialogRef = inject(MatDialogRef<CalculatePopupComponent>);
+    readonly dialogRef = inject(MatDialogRef<CalculatePopupComponent>);
     private readonly dialog = inject(MatDialog);
     private readonly blockUIService = inject(BlockUIService);
     private readonly messageBoxService = inject(MessageBoxService);
@@ -55,7 +55,7 @@ export class CalculatePopupComponent implements OnInit {
     statusSelected = FilterStatuses[1].toUpperCase();
     ticketsStatusSelect = new MultipleSelect();
     ticketStatusSelected: string;
-    screenshotSelected = FilterStatuses[1].toUpperCase();
+    screenshotSelected = FilterStatuses[0].toUpperCase();
     readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
     private teamSettleWon: Team[];
     teamJustSettled: TeamSettle[] = [];
@@ -87,9 +87,9 @@ export class CalculatePopupComponent implements OnInit {
             team.dateTime = this.verifyDateService.convertToDateStruct(team.eventDate);
             team.disableDeadheat = !_.isEqual(team.status, 'WON');
             team.originalStatus = team.status;
+            team.screenShot = team.screenShot || team.status;
+            team.originalScreenshot = team.screenShot;
             team.statusClass = this.makeBackgroundByStatus(team);
-            team.traderScore = team.traderScore || team.status;
-            team.screenshot = team.screenshot || team.status;
         });
         this.moveBetsDay = this.verifyDateService.convertToDateStruct(this.leagueSettle.moveBetsDay);
         this.today = this.verifyDateService.convertToDateStruct(this.leagueSettle.today);
@@ -144,6 +144,7 @@ export class CalculatePopupComponent implements OnInit {
             return;
         }
         team.disableDeadheat = false;
+        team.statusClass = this.makeBackgroundByStatus(team);
     }
 
     makeBackgroundByStatus(team: Team) {
@@ -151,28 +152,11 @@ export class CalculatePopupComponent implements OnInit {
             return 'calculated';
         }
 
-        const hasScreenshot = !_.isEmpty(team.screenshot);
-        const hasTraderScore = !_.isEmpty(team.traderScore);
-        const hasStatus = !_.isEmpty(team.status);
-
-        if (hasScreenshot && hasTraderScore && !_.isEqual(team.traderScore.toLocaleLowerCase(), team.screenshot.toLocaleLowerCase())) {
+        if (!_.isEmpty(team.screenShot) && !_.isEmpty(team.status) && !_.isEqual(team.status.toLocaleLowerCase(), team.screenShot.toLocaleLowerCase())) {
             return 'status-mismatched';
-        }
-
-        if (hasScreenshot && hasStatus && !_.isEqual(team.status.toLocaleLowerCase(), team.screenshot.toLocaleLowerCase())) {
-            return 'status-mismatched';
-        }
-
-        if (hasTraderScore) {
-            return 'trader-confirm';
         }
 
         return '';
-    }
-
-    changeTraderScore(team: Team) {
-        this.clearError();
-        // Add any specific logic for trader score changes if needed
     }
 
     changeScreenshot(team: Team) {
@@ -180,7 +164,7 @@ export class CalculatePopupComponent implements OnInit {
         team.statusClass = this.makeBackgroundByStatus(team);
     }
 
-    public async calculate(isCalc = true) {
+    async calculate(isCalc = true) {
         this.clearError();
         await this.getLatestData();
         const teamWonSelected = _.filter(this.teamSelected, team => _.isEqual(team.status.toLowerCase(), Status.won));
@@ -194,15 +178,15 @@ export class CalculatePopupComponent implements OnInit {
         team.eventDate = this.verifyDateService.format(value);
     }
 
-    public onSelectAllTeam(e: boolean) {
-        const filteredTeams = this.fillteredTeam()
+    onSelectAllTeam(e: boolean) {
+        const filteredTeams = this.filteredTeam()
         this.teams.forEach(team => {
             const isShowed = filteredTeams.some(value => value.orId === team.orId);
             team.selected = isShowed ? e : false;
         });
     }
 
-    fillteredTeam() {
+    filteredTeam() {
         const filterStatus = this.statusPipe.transform(this.teams, this.statusSelected, this.screenshotSelected);
         const filterTicketStatus = this.ticketStatusPipe.transform(filterStatus, this.ticketStatusSelected);
 
@@ -210,7 +194,7 @@ export class CalculatePopupComponent implements OnInit {
     }
 
     onSelectTeam() {
-        const filteredTeams = this.fillteredTeam()
+        const filteredTeams = this.filteredTeam()
         const selectedTeams = filteredTeams.every(team => team.selected);
         this.selectAllTeam = selectedTeams;
 
@@ -220,12 +204,22 @@ export class CalculatePopupComponent implements OnInit {
         if (isCalc && CalculateService.VerifySettledSelected(this.teamSelected, this.originalTeam)) {
             this.toastrService.error(Language.Outright.existTeamSettled);
         } else if (CalculateService.ExistRunningStatus(this.teamSelected)) {
-            this.toastrService.error(Language.Outright.existRunning);
+            this.toastrService.error(Language.eSports.leader.blankScore);
+        } else if (this.verifyScreenshot()) {
+            this.toastrService.error(Language.Outright.screenshotMismatch);
         } else if (CalculateService.VerifyOnlyOneTeamWon(teamWonSelected, teamWonSettled)) {
             this.toastrService.error(Language.Outright.atLeastTwoDeadHeat);
         } else {
             this.verifyDeadHead(teamWonSettled, teamWonSelected, teamHideSelected);
         }
+    }
+
+    private verifyScreenshot() {
+        return this.teamSelected.some(team => {
+            if (!_.isEmpty(team.screenShot) && !_.isEmpty(team.status) && !_.isEqual(team.status.toLocaleLowerCase(), team.screenShot.toLocaleLowerCase())) {
+                return true;
+            }
+        });
     }
 
     private async verifyDeadHead(teamWonSettled: Team[], teamWonSelected: Team[], teamHideSelected: Team[]) {
@@ -312,6 +306,11 @@ export class CalculatePopupComponent implements OnInit {
     }
 
     saveScore() {
-        console.log('saveScore');
+        this.toastrService.clear();
+        this.confirmationDialogMessage.message = Language.eSports.saveScore;
+        this.messageBoxService.confirm(this.confirmationDialogMessage, async () => {
+            await this.outrightService.saveScore(this.teamSelected);
+            this.dialogRef.close();
+        });
     }
 }

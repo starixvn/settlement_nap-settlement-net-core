@@ -62,9 +62,6 @@
 								status.text }}</option>
 						</select>
 					</td>
-					<td class="status" *ngIf="leagueSettle.permission.isLeader">
-						{{team.traderScore}}
-					</td>
 					<td class="code">
 						<input type="checkbox" [(ngModel)]="team.isDeadheat" [disabled]="team.disableDeadheat || !team.selected"
 							(click)="clearError()" />
@@ -75,7 +72,7 @@
 						</ngbd-date-picker>
 					</td>
 					<td class="status" *ngIf="leagueSettle.permission.isLeader">
-						<select [(ngModel)]="team.screenshot" [disabled]="!team.selected" (ngModelChange)="changeScreenshot(team)">
+						<select [(ngModel)]="team.screenShot" [disabled]="!team.selected" (ngModelChange)="changeScreenshot(team)">
 							<option *ngFor="let status of teamStatus" [value]="status.text | uppercase" [hidden]="!status.isShow"> {{
 								status.text }}</option>
 						</select>
@@ -110,9 +107,6 @@
 								{{ status }}
 							</option>
 						</select>
-					</th>
-					<th class="status" *ngIf="leagueSettle.permission.isLeader">
-						Trader Score
 					</th>
 					<th class="code">
 						Dead Heat

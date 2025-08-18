@@ -29,10 +29,10 @@ export class StatusPipe implements PipeTransform {
   private filterTeamsByStatus(teams: Team[], status: string, isScreenshot: boolean): Team[] {
     const targetStatuses = _.isEqual(status.toLowerCase(), Status.running) ? RunningStatus : CompletedStatus;
     
-    return this.filterTeamsByStatusList(teams, targetStatuses, isScreenshot ? 'screenshot' : 'originalStatus');
+    return this.filterTeamsByStatusList(teams, targetStatuses, isScreenshot ? 'originalScreenshot' : 'originalStatus');
   }
 
-  private filterTeamsByStatusList(teams: Team[], statusList: string[], propertyName: 'originalStatus' | 'screenshot'): Team[] {
+  private filterTeamsByStatusList(teams: Team[], statusList: string[], propertyName: 'originalStatus' | 'originalScreenshot'): Team[] {
     return _.filter(teams, (team) => {
       const teamStatus = team[propertyName]?.toLowerCase();
       return _.includes(statusList, teamStatus);

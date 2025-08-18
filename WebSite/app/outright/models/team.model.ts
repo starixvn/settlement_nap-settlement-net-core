@@ -13,8 +13,9 @@ export class Team extends Match {
     totalRunning: number;
     totalHide: number;
     originalStatus: string;
-    traderScore: string;
-    screenshot: string;
+    originalScreenshot: string;
+    screenShot: string;
+    confirmBy: string;
 }
 
 export class TeamSettle {

@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Settlement.Core.Models;
+using Settlement.Outright.Requests;
 using Settlement.Outright.Services;
 
 namespace Settlement.Outright.Handlers;
@@ -19,7 +20,8 @@ public class OutrightHandler(
         IRequestHandler<OutrightCalculateRequest, Result>,
         IRequestHandler<CheckOutrightVoidTicketRequest, bool>,
         IRequestHandler<UpdateDeadHeatSettingRequest, Unit>,
-        IRequestHandler<GetDeadHeadLeagueSettingRequest, byte?>
+        IRequestHandler<GetDeadHeadLeagueSettingRequest, byte?>,
+        IRequestHandler<SaveScoreRequest, Result>
 
 {
     public async Task<SportLeague> Handle(SportLeagueRequest request, CancellationToken cancellationToken) => await getDataFilterService.GetSportLeague(request);
@@ -58,4 +60,6 @@ public class OutrightHandler(
 
     public async Task<byte?> Handle(GetDeadHeadLeagueSettingRequest request, CancellationToken cancellationToken)
         => await settleService.GetDeadHeadLeagueSetting(request);
+
+    public async Task<Result> Handle(SaveScoreRequest request, CancellationToken cancellationToken) => await settleService.SaveScore(request);
 }

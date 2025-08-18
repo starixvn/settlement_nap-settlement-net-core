@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Fanex.Data.Repository;
 using Fanex.NAP.Client;
+using Fanex.Settlement.Converter.Services;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
@@ -19,6 +20,8 @@ public interface OutrightSettleService
     Task UpdateDeadHeatSetting(UpdateDeadHeatSettingRequest request);
 
     Task<byte?> GetDeadHeadLeagueSetting(GetDeadHeadLeagueSettingRequest request);
+
+    Task<Result> SaveScore(SaveScoreRequest request);
 }
 
 public class OutrightSettleServiceImp(
@@ -28,7 +31,8 @@ public class OutrightSettleServiceImp(
     OutrightSettleProcessService outrightSettleProcessService,
     INapSession currentSession,
     IBalanceUpService balanceUpService,
-    OutrightTicketService outrightTicketService)
+    OutrightTicketService outrightTicketService,
+    XmlConvertService xmlConvertService)
     : OutrightSettleService
 {
     private const string SpName = "NAP_Admin_Settlement_Outright";
@@ -211,5 +215,37 @@ public class OutrightSettleServiceImp(
     private IEnumerable<Team> SortTeam(IEnumerable<Team> teams)
     {
         return teams.OrderByDescending(t => runningStatus.Exists(s => s == t.OddsStatus.ToLowerInvariant())).ThenBy(t => t.TeamName);
+    }
+
+    public async Task<Result> SaveScore(SaveScoreRequest request)
+    {
+        var criteria = new SaveScoreCriteria()
+        {
+            LeagueId = request.Teams.First().LeagueId,
+            UserId = currentSession.UserId
+        };
+
+        var resources = request.Teams.Select(t => new ResourcesOutright
+        {
+            OrId = t.OrId,
+            TeamId = t.TeamId,
+            Result = t.ScreenShot
+        });
+
+        criteria.SelectedResources = CreateScoreResources(resources.ToList());
+
+        await repository.ExecuteAsync(criteria);
+
+        return new Result { ErrMsg = criteria.ErrMsg, ErrCode = criteria.ErrCode };
+    }
+
+    private string CreateScoreResources(List<ResourcesOutright> selectedResources)
+    {
+        var resources = new Resources<ResourcesOutright>
+        {
+            ResourceItems = selectedResources
+        };
+
+        return xmlConvertService.Serialize(resources);
     }
 }
