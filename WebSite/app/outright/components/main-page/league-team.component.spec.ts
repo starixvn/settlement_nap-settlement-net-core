@@ -50,7 +50,10 @@ describe('LeagueTeamComponent', () => {
             totalCal: 0,
             totalRunning: 0,
             totalHide: 0,
-            originalStatus: ''
+            originalStatus: '',
+            originalScreenshot: '',
+            screenShot: '',
+            confirmBy: ''
         }],
         collapsed: false,
         eventDate: '',
@@ -108,7 +111,7 @@ describe('LeagueTeamComponent', () => {
 
     })
 
-    describe('calculatePopup', () => {
+    describe('unCalculatePopup', () => {
         it('should open popup called when call function unCalculatePopup', () => {
             const data = { "data": { "leagueId": 1, "sportType": 1 }, "disableClose": true, "hasBackdrop": true, "height": "550px", "width": "800px" }
             component.uncalculatePopup(leagueMatch);
@@ -128,7 +131,7 @@ describe('LeagueTeamComponent', () => {
 
     describe('calculatePopup', () => {
         it('should open popup called when call function calculatePopup', () => {
-            const data = { "data": { "eventDate": "", "leagueId": 1, "sportType": 1 }, "disableClose": true, "hasBackdrop": true, "height": "100%", "width": "930px" };
+            const data = { "data": { "eventDate": "", "leagueId": 1, "sportType": 1 }, "disableClose": true, "hasBackdrop": true, "height": "100%", "width": "1130px" };
             component.calculatePopup(leagueMatch);
 
             expect(dialog.open).toHaveBeenCalledWith(CalculatePopupComponent, data);

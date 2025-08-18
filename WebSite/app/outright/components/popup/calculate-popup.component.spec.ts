@@ -16,6 +16,10 @@ import { Language } from '../../../shared/language.native';
 import { ResultOutright } from '../../models/result-outright.model';
 import * as _ from "lodash";
 import { DeadHeatSettings } from '../../constants/deadheat-setting';
+import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
+import { ItemsSelect } from '../../../shared/models';
+import { TicketStatusFilterPipe } from '../../pipes/ticket-status-filter-pipe';
+import { Status, RunningStatus } from '../../constants';
 
 describe('CalculatePopupComponent', () => {
   let component: CalculatePopupComponent;
@@ -24,6 +28,9 @@ describe('CalculatePopupComponent', () => {
   let toastrService: ToastrService;
   let dialogRef: MatDialogRef<CalculatePopupComponent>;
   let calculateService: CalculateService;
+  let statusPipe: StatusPipe;
+  let ticketStatusFilterPipe: TicketStatusFilterPipe;
+  let messageBoxService: MessageBoxService;
 
   const team: Team = {
     isDeadheat: false,
@@ -46,7 +53,10 @@ describe('CalculatePopupComponent', () => {
     totalCal: 0,
     totalRunning: 0,
     totalHide: 0,
-    originalStatus: ''
+    originalStatus: '',
+    originalScreenshot: '',
+    screenShot: '',
+    confirmBy: ''
   }
   const leagueSettle: LeagueSettle = {
     leagueName: '',
@@ -106,6 +116,8 @@ describe('CalculatePopupComponent', () => {
         MessageBoxService,
         VerifyDateService,
         CalculateService,
+        StatusPipe,
+        TicketStatusFilterPipe,
         { provide: MatDialogRef, useValue: dialogMock },
         { provide: MAT_DIALOG_DATA, useValue: {} },
         { provide: ToastrService, useClass: ToastrService },
@@ -122,7 +134,10 @@ describe('CalculatePopupComponent', () => {
     outrightService = fixture.debugElement.injector.get(OutrightService);
     toastrService = fixture.debugElement.injector.get(ToastrService);
     calculateService = fixture.debugElement.injector.get(CalculateService);
+    statusPipe = fixture.debugElement.injector.get(StatusPipe);
+    ticketStatusFilterPipe = fixture.debugElement.injector.get(TicketStatusFilterPipe);
     dialogRef = fixture.debugElement.injector.get(MatDialogRef<CalculatePopupComponent>);
+    messageBoxService = fixture.debugElement.injector.get(MessageBoxService);
     fixture.detectChanges();
     component.leagueSettle = leagueSettle;
   });
@@ -131,38 +146,34 @@ describe('CalculatePopupComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  describe('NgOnInit', () => {
+    it('should GetMatches', () => {
+      outrightService.getMatches = jest.fn().mockReturnValue(Promise.resolve(leagueSettle));
 
+      component.ngOnInit();
 
-  describe('NgOnInit',
-    () => {
-      it('should GetMatches', () => {
-        outrightService.getMatches = jest.fn().mockReturnValue(Promise.resolve(leagueSettle));
-
-        component.ngOnInit();
-
-        expect(outrightService.getMatches).toHaveBeenCalled();
-      });
-
-
-      test.each([
-        ["Running", "Running", "2023-10-3", true],
-        ["Completed", "Won", "2023-10-2", false]])('Adjust value When Match exist - OddsStatus: %p', async (oddStatus: string, status: string, eventDate: string, disableDeadHeat: boolean) => {
-          team.status = status;
-          team.oddsStatus = oddStatus;
-          team.eventDate = "2023-10-2";
-          leagueSettle.today = "2023-10-3";
-          leagueSettle.teams = [team];
-          outrightService.getMatches = jest.fn().mockReturnValue(Promise.resolve(leagueSettle));
-          calculateService.renderTicketStatus = jest.fn();
-
-          component.ngOnInit().then(() => {
-            const actualTeam = component.teams[0];
-            expect(actualTeam.status).toEqual(status.toUpperCase());
-            expect(actualTeam.eventDate).toEqual(eventDate);
-            expect(actualTeam.disableDeadheat).toEqual(disableDeadHeat);
-          });
-        });
+      expect(outrightService.getMatches).toHaveBeenCalled();
     });
+
+    test.each([
+      ["Running", "Running", "2023-10-3", true],
+      ["Completed", "Won", "2023-10-2", false]])('Adjust value When Match exist - OddsStatus: %p', async (oddStatus: string, status: string, eventDate: string, disableDeadHeat: boolean) => {
+        team.status = status;
+        team.oddsStatus = oddStatus;
+        team.eventDate = "2023-10-2";
+        leagueSettle.today = "2023-10-3";
+        leagueSettle.teams = [team];
+        outrightService.getMatches = jest.fn().mockReturnValue(Promise.resolve(leagueSettle));
+        calculateService.renderTicketStatus = jest.fn();
+
+        component.ngOnInit().then(() => {
+          const actualTeam = component.teams[0];
+          expect(actualTeam.status).toEqual(status.toUpperCase());
+          expect(actualTeam.eventDate).toEqual(eventDate);
+          expect(actualTeam.disableDeadheat).toEqual(disableDeadHeat);
+        });
+      });
+  });
 
   describe("close", () => {
     it('return value settled When have match settled', () => {
@@ -182,6 +193,16 @@ describe('CalculatePopupComponent', () => {
       component.close();
 
       expect(dialogRef.close).toHaveBeenCalledWith();
+    });
+  });
+
+  describe("clearError", () => {
+    it('should clear toastr messages', () => {
+      toastrService.clear = jest.fn();
+
+      component.clearError();
+
+      expect(toastrService.clear).toHaveBeenCalled();
     });
   });
 
@@ -214,6 +235,56 @@ describe('CalculatePopupComponent', () => {
     });
   });
 
+  describe("viewRecalculate", () => {
+    it('should return true when user is leader', () => {
+      leagueSettle.permission.isLeader = true;
+
+      const actual = component.viewRecalculate;
+
+      expect(actual).toBeTruthy();
+    });
+
+    it('should return false when user is not leader', () => {
+      leagueSettle.permission.isLeader = false;
+
+      const actual = component.viewRecalculate;
+
+      expect(actual).toBeFalsy();
+    });
+  });
+
+  describe("disableRecalculate", () => {
+    it('should return true when no teams selected', () => {
+      team.selected = false;
+      component.teams = [team];
+
+      const actual = component.disableRecalculate;
+
+      expect(actual).toBeTruthy();
+    });
+
+    it('should return false when teams are selected', () => {
+      team.selected = true;
+      component.teams = [team];
+
+      const actual = component.disableRecalculate;
+
+      expect(actual).toBeFalsy();
+    });
+  });
+
+  describe("teamSelected", () => {
+    it('should return only selected teams', () => {
+      const team1 = { ...team, selected: true };
+      const team2 = { ...team, selected: false };
+      component.teams = [team1, team2];
+
+      const actual = component.teamSelected;
+
+      expect(actual).toEqual([team1]);
+    });
+  });
+
   it('selectStatus - should unselect all match', () => {
     team.selected = true;
     component.teams = [team];
@@ -221,6 +292,50 @@ describe('CalculatePopupComponent', () => {
     component.selectStatus();
 
     expect(team.selected).toBeFalsy();
+  });
+
+  describe("onSelectTicketsStatus", () => {
+    it('should set ticketStatusSelected and call selectStatus', () => {
+      const items: ItemsSelect[] = [new ItemsSelect(1, 'running', 'Running', false, false, true, [])];
+      component.selectStatus = jest.fn();
+
+      component.onSelectTicketsStatus(items);
+
+      expect(component.ticketStatusSelected).toBe('running');
+      expect(component.selectStatus).toHaveBeenCalled();
+    });
+
+    it('should set empty string when no items selected', () => {
+      const items: ItemsSelect[] = [];
+      component.selectStatus = jest.fn();
+
+      component.onSelectTicketsStatus(items);
+
+      expect(component.ticketStatusSelected).toBe('');
+      expect(component.selectStatus).toHaveBeenCalled();
+    });
+  });
+
+  describe("onSelectScreenShot", () => {
+    it('should set screenshotSelected and call selectStatus', () => {
+      const items: ItemsSelect[] = [new ItemsSelect(1, 'WON', 'Won', false, false, true, [])];
+      component.selectStatus = jest.fn();
+
+      component.onSelectScreenShot(items);
+
+      expect(component.screenshotSelected).toBe('WON');
+      expect(component.selectStatus).toHaveBeenCalled();
+    });
+
+    it('should set empty string when no items selected', () => {
+      const items: ItemsSelect[] = [];
+      component.selectStatus = jest.fn();
+
+      component.onSelectScreenShot(items);
+
+      expect(component.screenshotSelected).toBe('');
+      expect(component.selectStatus).toHaveBeenCalled();
+    });
   });
 
   describe("changeStatus", () => {
@@ -245,6 +360,126 @@ describe('CalculatePopupComponent', () => {
     });
   });
 
+  describe("makeBackgroundByStatus", () => {
+    it('should return calculated when team is not running status', () => {
+      team.originalStatus = 'COMPLETED';
+
+      const actual = component.makeBackgroundByStatus(team);
+
+      expect(actual).toBe('calculated');
+    });
+
+    it('should return status-mismatched when status and screenshot do not match', () => {
+      team.originalStatus = 'RUNNING';
+      team.status = 'WON';
+      team.screenShot = 'LOSE';
+
+      const actual = component.makeBackgroundByStatus(team);
+
+      expect(actual).toBe('status-mismatched');
+    });
+
+    it('should return empty string when status and screenshot match', () => {
+      team.originalStatus = 'RUNNING';
+      team.status = 'WON';
+      team.screenShot = 'WON';
+
+      const actual = component.makeBackgroundByStatus(team);
+
+      expect(actual).toBe('');
+    });
+  });
+
+  describe("changeScreenshot", () => {
+    it('should clear error and update status class', () => {
+      toastrService.clear = jest.fn();
+      component.makeBackgroundByStatus = jest.fn().mockReturnValue('status-mismatched');
+
+      component.changeScreenshot(team);
+
+      expect(toastrService.clear).toHaveBeenCalled();
+      expect(component.makeBackgroundByStatus).toHaveBeenCalledWith(team);
+      expect(team.statusClass).toBe('status-mismatched');
+    });
+  });
+
+  describe("onSelectDate", () => {
+    it('should update team event date', () => {
+      const date: NgbDateStruct = { year: 2023, month: 10, day: 15 };
+      const verifyDateService = fixture.debugElement.injector.get(VerifyDateService);
+      verifyDateService.format = jest.fn().mockReturnValue('2023-10-15');
+
+      component.onSelectDate(date, team);
+
+      expect(verifyDateService.format).toHaveBeenCalledWith(date);
+      expect(team.eventDate).toBe('2023-10-15');
+    });
+  });
+
+  describe("onSelectAllTeam", () => {
+    it('should select all filtered teams when true', () => {
+      const team1 = { ...team, orId: '1', selected: false };
+      const team2 = { ...team, orId: '2', selected: false };
+      component.teams = [team1, team2];
+      component.filteredTeam = jest.fn().mockReturnValue([team1]);
+
+      component.onSelectAllTeam(true);
+
+      expect(team1.selected).toBeTruthy();
+      expect(team2.selected).toBeFalsy();
+    });
+
+    it('should unselect all teams when false', () => {
+      const team1 = { ...team, orId: '1', selected: true };
+      const team2 = { ...team, orId: '2', selected: true };
+      component.teams = [team1, team2];
+      component.filteredTeam = jest.fn().mockReturnValue([team1]);
+
+      component.onSelectAllTeam(false);
+
+      expect(team1.selected).toBeFalsy();
+      expect(team2.selected).toBeFalsy();
+    });
+  });
+
+  describe("filteredTeam", () => {
+    it('should return filtered teams using pipes', () => {
+      const teams = [team];
+      const filteredByStatus = [team];
+      const filteredByTicketStatus = [team];
+      component.teams = teams;
+      statusPipe.transform = jest.fn().mockReturnValue(filteredByStatus);
+      ticketStatusFilterPipe.transform = jest.fn().mockReturnValue(filteredByTicketStatus);
+
+      const actual = component.filteredTeam();
+
+      expect(statusPipe.transform).toHaveBeenCalledWith(teams, component.statusSelected, component.screenshotSelected);
+      expect(ticketStatusFilterPipe.transform).toHaveBeenCalledWith(filteredByStatus, component.ticketStatusSelected);
+      expect(actual).toEqual(filteredByTicketStatus);
+    });
+  });
+
+  describe("onSelectTeam", () => {
+    it('should set selectAllTeam to true when all filtered teams are selected', () => {
+      const team1 = { ...team, selected: true };
+      const team2 = { ...team, selected: true };
+      component.filteredTeam = jest.fn().mockReturnValue([team1, team2]);
+
+      component.onSelectTeam();
+
+      expect(component.selectAllTeam).toBeTruthy();
+    });
+
+    it('should set selectAllTeam to false when not all filtered teams are selected', () => {
+      const team1 = { ...team, selected: true };
+      const team2 = { ...team, selected: false };
+      component.filteredTeam = jest.fn().mockReturnValue([team1, team2]);
+
+      component.onSelectTeam();
+
+      expect(component.selectAllTeam).toBeFalsy();
+    });
+  });
 
   describe("Calculate", () => {
     it('should get Lastest data to check', () => {
@@ -267,7 +502,7 @@ describe('CalculatePopupComponent', () => {
 
       component.calculate().then(() => {
         expect(toastrService.clear).toHaveBeenCalled();
-        expect(toastrService.error).toHaveBeenCalledWith(Language.Outright.existRunning);
+        expect(toastrService.error).toHaveBeenCalledWith(Language.eSports.leader.blankScore);
       });
     });
 
@@ -388,6 +623,26 @@ describe('CalculatePopupComponent', () => {
         expect(toastrService.error).toHaveBeenCalledWith(ResultFailed.errMsg);
         expect(component.teamJustSettled.length).toEqual(1);
       });
+    });
+  });
+
+  describe("saveScore", () => {
+    it('should show confirmation and save score when confirmed', () => {
+      const mockConfirm = jest.fn();
+      messageBoxService.confirm = mockConfirm;
+      outrightService.saveScore = jest.fn().mockReturnValue(Promise.resolve());
+      dialogRef.close = jest.fn();
+      toastrService.clear = jest.fn();
+
+      component.saveScore();
+
+      expect(toastrService.clear).toHaveBeenCalled();
+      expect(messageBoxService.confirm).toHaveBeenCalled();
+
+      const confirmCallback = mockConfirm.mock.calls[0][1];
+      confirmCallback();
+
+      expect(outrightService.saveScore).toHaveBeenCalledWith(component.teamSelected);
     });
   });
 });

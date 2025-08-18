@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Fanex.Data.Repository;
 using Fanex.NAP.Client;
-using Fanex.Settlement.Converter.Services;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
@@ -31,8 +30,7 @@ public class OutrightSettleServiceImp(
     OutrightSettleProcessService outrightSettleProcessService,
     INapSession currentSession,
     IBalanceUpService balanceUpService,
-    OutrightTicketService outrightTicketService,
-    XmlConvertService xmlConvertService)
+    OutrightTicketService outrightTicketService)
     : OutrightSettleService
 {
     private const string SpName = "NAP_Admin_Settlement_Outright";
@@ -219,33 +217,15 @@ public class OutrightSettleServiceImp(
 
     public async Task<Result> SaveScore(SaveScoreRequest request)
     {
-        var criteria = new SaveScoreCriteria()
+        var criteria = new SaveScoreCriteria
         {
             LeagueId = request.Teams.First().LeagueId,
-            UserId = currentSession.UserId
+            UserId = currentSession.UserId,
+            SelectedResources = outrightSettleProcessService.CreateScoreResources(request.Teams)
         };
-
-        var resources = request.Teams.Select(t => new ResourcesOutright
-        {
-            OrId = t.OrId,
-            TeamId = t.TeamId,
-            Result = t.ScreenShot
-        });
-
-        criteria.SelectedResources = CreateScoreResources(resources.ToList());
 
         await repository.ExecuteAsync(criteria);
 
         return new Result { ErrMsg = criteria.ErrMsg, ErrCode = criteria.ErrCode };
-    }
-
-    private string CreateScoreResources(List<ResourcesOutright> selectedResources)
-    {
-        var resources = new Resources<ResourcesOutright>
-        {
-            ResourceItems = selectedResources
-        };
-
-        return xmlConvertService.Serialize(resources);
     }
 }

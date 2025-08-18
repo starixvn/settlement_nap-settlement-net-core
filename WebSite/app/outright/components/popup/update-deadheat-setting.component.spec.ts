@@ -51,7 +51,10 @@ describe('UpdateDeadheatSettingComponent', () => {
     leagueName: '',
     teamId: 0,
     teamName: '',
-    betCount: 0
+    betCount: 0,
+    originalScreenshot: '',
+    screenShot: '',
+    confirmBy: ''
   }
 
   const dialogMock = {

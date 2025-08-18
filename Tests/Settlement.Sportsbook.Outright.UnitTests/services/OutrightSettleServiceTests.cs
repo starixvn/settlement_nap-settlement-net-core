@@ -133,4 +133,30 @@ public class OutrightSettleServiceTests
         Assert.False(actual.IsSuccessful);
         Assert.Equal("TeamName: test<br/>TeamName: test<br/>", actual.ErrMsg);
     }
+
+    [Fact]
+    public async Task SaveScore_ValidRequest_ReturnResultWithCriteria()
+    {
+        // Arrange
+        var request = new SaveScoreRequest
+        {
+            Teams = new List<TeamExternalResult>
+            {
+                new() { OrId = 1, TeamId = 101, LeagueId = 201, ScreenShot = "screenshot1" },
+                new() { OrId = 2, TeamId = 102, LeagueId = 201, ScreenShot = "screenshot2" }
+            }
+        };
+
+        var expectedResources = "<Resources><Resource OrId=\"1\" TeamId=\"101\" Result=\"screenshot1\" /><Resource OrId=\"2\" TeamId=\"102\" Result=\"screenshot2\" /></Resources>";
+        outrightSettleProcessService.CreateScoreResources(Arg.Any<IEnumerable<TeamExternalResult>>()).Returns(expectedResources);
+
+        // Act
+        var actual = await service.SaveScore(request);
+
+        // Assert
+        Assert.True(actual.IsSuccessful);
+        await repository.Received(1).ExecuteAsync(Arg.Is<SaveScoreCriteria>(c =>
+            c.LeagueId == 201 &&
+            c.SelectedResources == expectedResources));
+    }
 }

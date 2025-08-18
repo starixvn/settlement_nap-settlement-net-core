@@ -4,7 +4,7 @@ import { Component, Inject, OnInit, ViewChild, inject } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { BlockUIService, HttpRequestService, MessageBoxService, VerifyDateService } from '../../../shared/services';
 import { LeagueSettle, Team, TeamSettle } from '../../models';
-import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
+import { ToastContainerDirective, ToastContainerModule, ToastrModule, ToastrService } from 'ngx-toastr';
 import { FormsModule } from '@angular/forms';
 import { DatepickerComponent } from '../../../shared/components/date-picker/date-picker.component';
 import { CustomNgbDateParserFormatter } from '../../../shared/components/date-picker/custom-ngb-date-parser-formatter';
@@ -17,7 +17,6 @@ import { ItemsSelect, ModalDialogMessage, MultipleSelect } from '../../../shared
 import { MatDialog, MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { ResultOutright } from '../../models/result-outright.model';
-import { DynamicHeightDirective } from '../../../shared/directives';
 import { DeadHeatSettings } from '../../constants/deadheat-setting';
 import { NewMultipleSelectComponent } from '../../../shared/components/multiple-select/multiple-select.component';
 import { TicketStatusPipe } from '../../pipes/ticket-status-pipe';
@@ -27,8 +26,8 @@ import { TicketStatusFilterPipe } from '../../pipes/ticket-status-filter-pipe';
     selector: 'calculate-popup',
     templateUrl: './calculate-popup.component.html',
     standalone: true,
-    imports: [CommonModule, DynamicHeightDirective, FormsModule, DatepickerComponent, StatusPipe, TicketStatusPipe, TicketStatusFilterPipe, MatDialogModule, DragDropModule, NewMultipleSelectComponent],
-    providers: [DatePipe, OutrightService, HttpRequestService, BlockUIService, MessageBoxService, VerifyDateService, CalculateService, StatusPipe, TicketStatusFilterPipe,
+    imports: [ToastContainerModule, CommonModule, FormsModule, DatepickerComponent, StatusPipe, TicketStatusPipe, TicketStatusFilterPipe, MatDialogModule, DragDropModule, NewMultipleSelectComponent],
+    providers: [DatePipe, OutrightService, HttpRequestService, BlockUIService, MessageBoxService, VerifyDateService, CalculateService, StatusPipe, TicketStatusFilterPipe, ToastrService,
         { provide: NgbDateParserFormatter, useFactory: () => new CustomNgbDateParserFormatter('MMM dd, y') }],
 })
 export class CalculatePopupComponent implements OnInit {
@@ -69,8 +68,8 @@ export class CalculatePopupComponent implements OnInit {
     }
 
     async ngOnInit(): Promise<void> {
-        this.blockUIService.blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
         this.toastrService.overlayContainer = this.toastContainer;
+        this.blockUIService.blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
         await this.getMatches();
         this.ticketsStatusSelect.items = this.calculateService.renderTicketStatus();
     }
@@ -137,14 +136,13 @@ export class CalculatePopupComponent implements OnInit {
 
     changeStatus(team: Team) {
         this.clearError();
-
+        team.statusClass = this.makeBackgroundByStatus(team);
         if (!_.isEqual(team.status, 'WON')) {
             team.isDeadheat = false;
             team.disableDeadheat = true;
             return;
         }
         team.disableDeadheat = false;
-        team.statusClass = this.makeBackgroundByStatus(team);
     }
 
     makeBackgroundByStatus(team: Team) {
@@ -215,11 +213,11 @@ export class CalculatePopupComponent implements OnInit {
     }
 
     private verifyScreenshot() {
-        return this.teamSelected.some(team => {
-            if (!_.isEmpty(team.screenShot) && !_.isEmpty(team.status) && !_.isEqual(team.status.toLocaleLowerCase(), team.screenShot.toLocaleLowerCase())) {
-                return true;
-            }
-        });
+        return this.teamSelected.some(team => 
+            !_.isEmpty(team.screenShot) && 
+            !_.isEmpty(team.status) && 
+            !_.isEqual(team.status.toLowerCase(), team.screenShot.toLowerCase())
+        );
     }
 
     private async verifyDeadHead(teamWonSettled: Team[], teamWonSelected: Team[], teamHideSelected: Team[]) {
