@@ -4,7 +4,7 @@ import { Component, Inject, OnInit, ViewChild, inject } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { BlockUIService, HttpRequestService, MessageBoxService, VerifyDateService } from '../../../shared/services';
 import { LeagueSettle, Team, TeamSettle } from '../../models';
-import { ToastContainerDirective, ToastContainerModule, ToastrModule, ToastrService } from 'ngx-toastr';
+import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import { FormsModule } from '@angular/forms';
 import { DatepickerComponent } from '../../../shared/components/date-picker/date-picker.component';
 import { CustomNgbDateParserFormatter } from '../../../shared/components/date-picker/custom-ngb-date-parser-formatter';
@@ -26,7 +26,7 @@ import { TicketStatusFilterPipe } from '../../pipes/ticket-status-filter-pipe';
     selector: 'calculate-popup',
     templateUrl: './calculate-popup.component.html',
     standalone: true,
-    imports: [ToastContainerModule, CommonModule, FormsModule, DatepickerComponent, StatusPipe, TicketStatusPipe, TicketStatusFilterPipe, MatDialogModule, DragDropModule, NewMultipleSelectComponent],
+    imports: [ToastContainerDirective ,CommonModule, FormsModule, DatepickerComponent, StatusPipe, TicketStatusPipe, TicketStatusFilterPipe, MatDialogModule, DragDropModule, NewMultipleSelectComponent],
     providers: [DatePipe, OutrightService, HttpRequestService, BlockUIService, MessageBoxService, VerifyDateService, CalculateService, StatusPipe, TicketStatusFilterPipe, ToastrService,
         { provide: NgbDateParserFormatter, useFactory: () => new CustomNgbDateParserFormatter('MMM dd, y') }],
 })
@@ -159,6 +159,7 @@ export class CalculatePopupComponent implements OnInit {
 
     changeScreenshot(team: Team) {
         this.clearError();
+        team.status = team.screenShot;
         team.statusClass = this.makeBackgroundByStatus(team);
     }
 
@@ -195,7 +196,6 @@ export class CalculatePopupComponent implements OnInit {
         const filteredTeams = this.filteredTeam()
         const selectedTeams = filteredTeams.every(team => team.selected);
         this.selectAllTeam = selectedTeams;
-
     }
 
     private async validateBeforePush(teamWonSettled: Team[], teamWonSelected: Team[], teamHideSelected: Team[], isCalc = true) {
@@ -269,6 +269,7 @@ export class CalculatePopupComponent implements OnInit {
         this.confirmationDialogMessage.message = Language.Outright.confirmCalculate;
         this.messageBoxService.confirm(this.confirmationDialogMessage, async () => {
             const teams = this.teamSelected.map(team => new TeamSettle(team.orId, team.teamId.toString(), team.isDeadheat, team.status, team.eventDate));
+            await this.outrightService.saveScore(this.teamSelected);
             const result = await this.outrightService.calculate(teams, deadHeat);
             if (result.isSuccessful) {
                 const listMatchIdJustSettled = teams.map(t => t.matchId);

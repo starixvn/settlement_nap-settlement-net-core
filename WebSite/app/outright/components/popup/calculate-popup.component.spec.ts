@@ -19,7 +19,6 @@ import { DeadHeatSettings } from '../../constants/deadheat-setting';
 import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { ItemsSelect } from '../../../shared/models';
 import { TicketStatusFilterPipe } from '../../pipes/ticket-status-filter-pipe';
-import { Status, RunningStatus } from '../../constants';
 
 describe('CalculatePopupComponent', () => {
   let component: CalculatePopupComponent;
@@ -542,6 +541,7 @@ describe('CalculatePopupComponent', () => {
       CalculateService.VerifyOnlyOneTeamWon = jest.fn().mockReturnValue(false);
       CalculateService.VerifySettledSelected = jest.fn().mockReturnValue(false);
       toastrService.clear = jest.fn();
+      outrightService.saveScore = jest.fn().mockReturnValue(Promise.resolve());
       outrightService.calculate = jest.fn().mockReturnValue(Promise.resolve(ResultSuccessful));
       dialogRef.close = jest.fn();
 
@@ -549,6 +549,7 @@ describe('CalculatePopupComponent', () => {
         let buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
         buttonYes.click();
         expect(toastrService.clear).toHaveBeenCalled();
+        expect(outrightService.saveScore).toHaveBeenCalledWith(component.teamSelected);
         expect(outrightService.calculate).toHaveBeenCalled();
         expect(dialogRef.close).toHaveBeenCalled();
 
@@ -573,6 +574,7 @@ describe('CalculatePopupComponent', () => {
       CalculateService.VerifyDeadHeatNoSetting = jest.fn().mockReturnValue("");
       CalculateService.ConfirmDeadHeatNoSetting = jest.fn().mockReturnValue(true);
       toastrService.clear = jest.fn();
+      outrightService.saveScore = jest.fn().mockReturnValue(Promise.resolve());
       outrightService.calculate = jest.fn().mockReturnValue(Promise.resolve(ResultSuccessful));
       dialogRef.close = jest.fn();
 
@@ -586,6 +588,7 @@ describe('CalculatePopupComponent', () => {
         flush();
 
         expect(toastrService.clear).toHaveBeenCalled();
+        expect(outrightService.saveScore).toHaveBeenCalledWith(component.teamSelected);
         expect(outrightService.calculate).toHaveBeenCalled();
         expect(dialogRef.close).toHaveBeenCalled();
       });
@@ -608,6 +611,7 @@ describe('CalculatePopupComponent', () => {
       CalculateService.ConfirmDeadHeatNoSetting = jest.fn().mockReturnValue(false);
       toastrService.clear = jest.fn();
       toastrService.error = jest.fn();
+      outrightService.saveScore = jest.fn().mockReturnValue(Promise.resolve());
       outrightService.calculate = jest.fn().mockReturnValue(Promise.resolve(ResultFailed));
       dialogRef.close = jest.fn();
 
@@ -619,6 +623,7 @@ describe('CalculatePopupComponent', () => {
         flush();
 
         expect(toastrService.clear).toHaveBeenCalled();
+        expect(outrightService.saveScore).toHaveBeenCalledWith(component.teamSelected);
         expect(outrightService.calculate).toHaveBeenCalled();
         expect(toastrService.error).toHaveBeenCalledWith(ResultFailed.errMsg);
         expect(component.teamJustSettled.length).toEqual(1);
