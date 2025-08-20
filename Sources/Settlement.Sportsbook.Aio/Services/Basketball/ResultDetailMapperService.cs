@@ -13,19 +13,20 @@ public class ResultDetailMapperServiceImp : IMapperService
     {
         var resourceNameService = new ResourceNameService(new MapperFactoryBase());
         var groupBetTypeService = new GroupBetTypeServiceImp();
-        basketballBetTypeService = new BasketballBetTypeServiceImp(groupBetTypeService, resourceNameService);
+        var dynamicRepository = new DynamicRepository();
+        var inputTypeService = new InputTypeService();
+        basketballBetTypeService = new BasketballBetTypeServiceImp(groupBetTypeService, resourceNameService, dynamicRepository, inputTypeService);
     }
 
-    public void Decorate(dynamic obj)
+    public async Task Decorate(dynamic obj)
     {
         if (obj is List<ResultDetail> list)
         {
-            // TODO
             const int maxLengthResourceId = 2;
             var listEarly = list.Where(x => x.ResourceId.Length > maxLengthResourceId).ToList();
             var listQuarter = list.Where(x => x.ResourceId.Length == maxLengthResourceId).ToList();
             listQuarter.ForEach(x => basketballBetTypeService.CheckValue(x));
-            listEarly.ForEach(x => basketballBetTypeService.GetBetTypeNameAndGroup(x));
+            await basketballBetTypeService.GetBetTypeNameAndGroupAsync(listEarly);
         }
     }
 }

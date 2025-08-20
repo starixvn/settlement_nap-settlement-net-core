@@ -2,5 +2,5 @@
 
 public interface IMapperService
 {
-    void Decorate(dynamic obj);
+    Task Decorate(dynamic obj);
 }

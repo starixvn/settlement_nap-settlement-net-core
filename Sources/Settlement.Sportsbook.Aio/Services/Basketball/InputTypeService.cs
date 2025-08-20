@@ -1,12 +1,28 @@
-﻿namespace Settlement.Sportsbook.Aio.Services.Basketball;
+﻿using Settlement.Sportsbook.Aio.Constants.Basketball;
 
-enum InputType
+namespace Settlement.Sportsbook.Aio.Services.Basketball;
+
+public enum InputType
 {
     SingleScore,
     YesNoNone,
     PlayerNone
 }
 
-public class InputTypeService
+public interface IInputTypeService
 {
+    InputType GetInputType(int resourceId);
+}
+
+public class InputTypeService : IInputTypeService
+{
+    public InputType GetInputType(int resourceId)
+    {
+        return resourceId switch
+        {
+            var _ when GroupBetType.TextBoxType.Contains(resourceId) => InputType.SingleScore,
+            var _ when GroupBetType.YesNoNoneType.Contains(resourceId) => InputType.YesNoNone,
+            _ => InputType.PlayerNone,
+        };
+    }
 }

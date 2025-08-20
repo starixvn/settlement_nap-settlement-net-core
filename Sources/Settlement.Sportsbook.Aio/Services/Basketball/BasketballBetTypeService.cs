@@ -1,6 +1,8 @@
-﻿using Settlement.ResourceInfos.Constants;
+﻿using Settlement.Core.Constants;
+using Settlement.ResourceInfos.Constants;
 using Settlement.ResourceInfos.Services;
 using Settlement.Sportsbook.Aio.Constants.Basketball;
+using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.Models;
 using ResultDetail = Settlement.Sportsbook.Aio.Models.ResultDetail;
 
@@ -8,28 +10,48 @@ namespace Settlement.Sportsbook.Aio.Services.Basketball;
 
 public interface IBasketballBetTypeService
 {
-    ResultDetail GetBetTypeNameAndGroup(ResultDetail item);
+    Task GetBetTypeNameAndGroupAsync(IList<ResultDetail> items);
 
     ResultDetail CheckValue(ResultDetail item);
 }
 
 public class BasketballBetTypeServiceImp(
     IGroupBetTypeService groupBetTypeService,
-    IResourceNameService resourceNameService)
+    IResourceNameService resourceNameService,
+    IDynamicRepository dynamicRepository,
+    IInputTypeService inputTypeService)
     : IBasketballBetTypeService
 {
     private const int HalfBetTypeLength = 5;
     private const int BetTypeIndexLength = 2;
     private const int QuarterBetTypeLength = 7;
 
-    public ResultDetail GetBetTypeNameAndGroup(ResultDetail item)
+    public async Task GetBetTypeNameAndGroupAsync(IList<ResultDetail> items)
     {
-        //TODO
+        if (!items.Any())
+        {
+            return;
+        }
+
+        var players = await GetPlayer(items.First().MatchId);
+        foreach (var item in items)
+        {
+            GroupResultDetail(item, players.ToDictionary(x => x.PlayerOrder, x => x.PlayerName));
+        }
+    }
+
+    private void GroupResultDetail(ResultDetail item, IDictionary<int, string> players)
+    {
         var resourceId = item.ResourceId;
         (item.BetType, item.BetTypeName) = resourceNameService.GetResourceName(resourceId, KeyConstants.BasketballKey);
-        GroupBasketballBetType(item);
-
-        return item;
+        if (resourceId.Length >= 3 && GroupBetType.Player.Contains(Convert.ToInt32(resourceId.Substring(0, 3))))
+        {
+            GroupPlayerBetType(item, players);
+        }
+        else
+        {
+            GroupBasketballBetType(item);
+        }
     }
 
     private void GroupBasketballBetType(ResultDetail resultDetail)
@@ -98,5 +120,25 @@ public class BasketballBetTypeServiceImp(
     private static int SplitBetType(string resourceId, int startIndex, int length)
     {
         return Convert.ToInt32(resourceId.Substring(startIndex, length));
+    }
+
+    private async Task<IEnumerable<PlayerModel>> GetPlayer(int matchId)
+    {
+        var criteria = new GetPlayerInfoCriteria
+        {
+            MatchId = matchId,
+            SportType = SportType.BasketBall
+        };
+        return new List<PlayerModel>();
+        // return await dynamicRepository.FetchAsync<PlayerModel>(criteria);
+    }
+
+    private void GroupPlayerBetType(ResultDetail resultDetail, IDictionary<int, string> players)
+    {
+        var group = groupBetTypeService.GroupPlayerBetType(resultDetail.ResourceId, players);
+        var betType = Convert.ToInt32(resultDetail.ResourceId.Substring(0, 3));
+        resultDetail.GroupName = group.GroupName;
+        resultDetail.GroupId = group.GroupId;
+        resultDetail.InputType = (int)inputTypeService.GetInputType(betType);
     }
 }

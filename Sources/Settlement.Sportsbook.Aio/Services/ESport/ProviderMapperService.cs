@@ -5,12 +5,13 @@ namespace Settlement.Sportsbook.Aio.Services.ESport;
 
 public class ProviderMapperService : IMapperService
 {
-    public void Decorate(dynamic obj)
+    public Task Decorate(dynamic obj)
     {
         var (externalResultDetails, externalResultModel) = (Tuple<List<ExternalResultDetailModel>, List<ExternalResultModel>>)obj;
         var externalResults = new List<ExternalResultModel>();
         externalResults.AddRange(GroupExternalResults(externalResultDetails));
         externalResultModel.AddRange(externalResults);
+        return Task.CompletedTask;
     }
 
     private List<ExternalResultModel> GroupExternalResults(IEnumerable<ExternalResultDetailModel> resultDetails)

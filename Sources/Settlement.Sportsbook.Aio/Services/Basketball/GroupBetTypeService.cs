@@ -10,6 +10,8 @@ public interface IGroupBetTypeService
     GroupNameModel GroupHalfBetType(int resourceId);
 
     GroupNameModel GroupQuarterBetType(int resourceId);
+
+    GroupNameModel GroupPlayerBetType(string resourceId, IDictionary<int, string> players);
 }
 
 public class GroupBetTypeServiceImp : IGroupBetTypeService
@@ -39,6 +41,27 @@ public class GroupBetTypeServiceImp : IGroupBetTypeService
                 GroupName = GroupBetType.OtherName
             }
             : new GroupNameModel();
+    }
+
+    public GroupNameModel GroupPlayerBetType(string resourceId, IDictionary<int, string> players)
+    {
+        var playerOrder = Convert.ToInt32(resourceId.Substring(3, 5));
+
+
+        if (players.TryGetValue(playerOrder, out var playerName))
+        {
+            return new GroupNameModel
+            {
+                GroupId = playerOrder + 100,
+                GroupName = playerName
+            };
+        }
+
+        return new GroupNameModel
+        {
+            GroupId = 0,
+            GroupName = string.Empty
+        };
     }
 
     public GroupNameModel GroupQuarterBetType(int resourceId)

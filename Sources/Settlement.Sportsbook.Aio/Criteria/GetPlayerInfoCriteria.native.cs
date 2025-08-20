@@ -1,8 +1,10 @@
-﻿namespace Settlement.Sportsbook.Aio.Criteria.Cricket;
+﻿namespace Settlement.Sportsbook.Aio.Criteria;
 
 public class GetPlayerInfoCriteria : CriteriaBase
 {
     public int MatchId { get; set; }
+
+    public int SportType { get; set; }
 
     public override string GetSettingKey()
     {

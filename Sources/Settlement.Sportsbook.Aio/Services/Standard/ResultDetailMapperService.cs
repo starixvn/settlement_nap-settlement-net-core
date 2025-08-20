@@ -9,7 +9,7 @@ namespace Settlement.Sportsbook.Aio.Services.Standard;
 
 public class ResultDetailMapperServiceImp : IMapperService
 {
-    public void Decorate(dynamic obj)
+    public Task Decorate(dynamic obj)
     {
         const string prefixEarlyBaseball = "88";
         var resourceNameService = new ResourceNameService(new MapperFactoryBase());
@@ -22,6 +22,8 @@ public class ResultDetailMapperServiceImp : IMapperService
                 x.InputType = GetInputType(x.BetType);
             });
         }
+
+        return Task.CompletedTask;
     }
 
     private static int GetInputType(string betType)
