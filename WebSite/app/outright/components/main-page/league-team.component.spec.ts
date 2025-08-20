@@ -53,12 +53,16 @@ describe('LeagueTeamComponent', () => {
             originalStatus: '',
             originalScreenshot: '',
             screenShot: '',
-            confirmBy: ''
+            confirmBy: '',
+            mismatchClass: ''
         }],
         collapsed: false,
         eventDate: '',
         deadHeat: false,
-        deadHeatClass: ''
+        deadHeatClass: '',
+        hasPotentialDeadHeatIssue: false,
+        deadHeatTeam: 0,
+        isCompleted: false
     }
 
     beforeEach(async () => {

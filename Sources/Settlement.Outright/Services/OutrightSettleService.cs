@@ -43,6 +43,7 @@ public class OutrightSettleServiceImp(
 
         var listTeam = (await repository.FetchAsync<Team>(criteria)).ToList();
 
+
         await GetTicketInfo(listTeam);
 
         return new LeagueInfo
@@ -220,12 +221,12 @@ public class OutrightSettleServiceImp(
         var criteria = new SaveScoreCriteria
         {
             LeagueId = request.Teams.First().LeagueId,
-            UserId = currentSession.UserId,
-            SelectedResources = outrightSettleProcessService.CreateScoreResources(request.Teams)
+            SourceId = SourceType.Screenshot,
+            Resources = outrightSettleProcessService.CreateScoreResources(request.Teams)
         };
 
         await repository.ExecuteAsync(criteria);
 
-        return new Result { ErrMsg = criteria.ErrMsg, ErrCode = criteria.ErrCode };
+        return new Result();
     }
 }

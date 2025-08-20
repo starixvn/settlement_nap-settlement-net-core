@@ -157,6 +157,6 @@ public class OutrightSettleServiceTests
         Assert.True(actual.IsSuccessful);
         await repository.Received(1).ExecuteAsync(Arg.Is<SaveScoreCriteria>(c =>
             c.LeagueId == 201 &&
-            c.SelectedResources == expectedResources));
+            c.Resources == expectedResources));
     }
 }

@@ -27,7 +27,8 @@ describe('VerifyDeadHeatService', () => {
     originalStatus: '',
     originalScreenshot: '',
     screenShot: '',
-    confirmBy: ''
+    confirmBy: '',
+    mismatchClass: ''
   }
 
   const deadheatMatch = _.cloneDeep(team);

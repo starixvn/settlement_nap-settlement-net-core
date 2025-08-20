@@ -67,7 +67,7 @@ public class FilterServiceImp(
     public async Task<SportOutright> Filter(FilterRequest request)
     {
         var criteria = mapper.Map<FilterRequest, GetOutrightDetailCriteria>(request);
-        var (deadHeatSettings, teams) = await repository.FetchMultipleAsync<DeadHeatSetting, Team>(criteria);
+        var (deadHeatSettings, teams, deadHeatInfos) = await repository.FetchMultipleAsync<DeadHeatSetting, Team, DeadHeatInfo>(criteria);
         var listTeams = teams.ToList();
         var groupTeam = await outrightTicketService.GetTeamsTicketCount(listTeams);
 
@@ -80,7 +80,7 @@ public class FilterServiceImp(
             item => item.SportType == SportType.OtherSports,
             item => PopularSport.IndexOf(item.SportType) > -1);
 
-        var leagues = GroupLeague(sortedTeams, deadHeatSettings);
+        var leagues = GroupLeague(sortedTeams, deadHeatSettings, deadHeatInfos);
 
         return new SportOutright
         {
@@ -127,7 +127,7 @@ public class FilterServiceImp(
         }
     }
 
-    private IEnumerable<LeagueMatch> GroupLeague(IEnumerable<Team> teams, IEnumerable<DeadHeatSetting> deadHeatSettings)
+    private IEnumerable<LeagueMatch> GroupLeague(IEnumerable<Team> teams, IEnumerable<DeadHeatSetting> deadHeatSettings, IEnumerable<DeadHeatInfo> deadHeatInfos)
     {
         var currentLeague = 0;
         var listLeague = new List<LeagueMatch>();
@@ -157,10 +157,17 @@ public class FilterServiceImp(
         listLeague.ForEach(l =>
         {
             var value = deadHeatSettings.FirstOrDefault(item => item.LeagueId == l.LeagueId);
-            if (value != null)
+            if (value is not null)
             {
                 l.DeadHeat = value.DeadHeat;
                 l.EventDate = value.EventDate;
+            }
+
+            var leagueInfo = deadHeatInfos.FirstOrDefault(item => item.LeagueId == l.LeagueId);
+            if (leagueInfo is not null)
+            {
+                l.IsCompleted = leagueInfo.IsCompleted;
+                l.DeadHeatTeam = leagueInfo.DeadHeatTeam;
             }
         });
 

@@ -89,6 +89,7 @@ export class CalculatePopupComponent implements OnInit {
             team.screenShot = team.screenShot || team.status;
             team.originalScreenshot = team.screenShot;
             team.statusClass = this.makeBackgroundByStatus(team);
+            team.mismatchClass = this.mismatchClass(team);
         });
         this.moveBetsDay = this.verifyDateService.convertToDateStruct(this.leagueSettle.moveBetsDay);
         this.today = this.verifyDateService.convertToDateStruct(this.leagueSettle.today);
@@ -137,6 +138,7 @@ export class CalculatePopupComponent implements OnInit {
     changeStatus(team: Team) {
         this.clearError();
         team.statusClass = this.makeBackgroundByStatus(team);
+        team.mismatchClass = this.mismatchClass(team);
         if (!_.isEqual(team.status, 'WON')) {
             team.isDeadheat = false;
             team.disableDeadheat = true;
@@ -150,17 +152,21 @@ export class CalculatePopupComponent implements OnInit {
             return 'calculated';
         }
 
-        if (!_.isEmpty(team.screenShot) && !_.isEmpty(team.status) && !_.isEqual(team.status.toLocaleLowerCase(), team.screenShot.toLocaleLowerCase())) {
+        return this.mismatchClass(team);
+    }
+
+    private mismatchClass(team: Team) {
+        if(!_.isEmpty(team.screenShot) && !_.isEmpty(team.status) && !_.isEqual(team.status.toLocaleLowerCase(), team.screenShot.toLocaleLowerCase())) {
             return 'status-mismatched';
         }
-
         return '';
     }
 
     changeScreenshot(team: Team) {
         this.clearError();
         team.status = team.screenShot;
-        team.statusClass = this.makeBackgroundByStatus(team);
+        this.changeStatus(team);
+       
     }
 
     async calculate(isCalc = true) {

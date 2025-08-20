@@ -10,6 +10,10 @@ public class LeagueMatch
 
     public bool? DeadHeat { get; set; }
 
+    public bool IsCompleted { get; set; }
+
+    public int DeadHeatTeam { get; set; }
+
     public DateTime EventDate { get; set; }
 
     public string SportName { get; set; }

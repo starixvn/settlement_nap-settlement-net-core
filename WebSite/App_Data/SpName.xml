@@ -93,7 +93,7 @@
 		<Setting Key="NAP_Admin_Outright_Update" SpName="NAP_Admin_Outright_Update" DbName="DBPRO.bodb02.wsv_nap" />
 		<Setting Key="NAP_Set_DeadHeatLeagueUpd" SpName="NAP_Set_DeadHeatLeagueUpd" DbName="DBPRO.bodb02.wsv_nap" />
 		<Setting Key="NAP_Set_DeadHeatLeagueSel" SpName="NAP_Set_DeadHeatLeagueSel" DbName="DBPRO.bodb02.wsv_nap" />
-		<Setting Key="NAP_Set_OutrightResultDetailUpd" SpName="NAP_Set_OutrightResultDetailUpd" DbName="DBPRO.bodb02.wsv_nap" />
+		<Setting Key="NAP_Set_ProviderResultDetailOutrightIns" SpName="NAP_Set_ProviderResultDetailOutrightIns" DbName="DBPRO.bodb02.wsv_nap" />
 	</Funtion>
 	<Function Name="MultiSport">
 		<Setting Key="NAP_Set_OtherSportsSel" SpName="NAP_Set_OtherSportsSel" DbName="DBPRO.bodb02.wsv_nap" TimeOut="120" />

@@ -35,8 +35,8 @@
 				Re-Calculate
 			</button>
 
-			<button style="float: right;" class="btn btn-danger" *ngIf="viewRecalculate"
-				[ngClass]="{ 'btn-disabled': disableRecalculate }" [disabled]="disableRecalculate" (click)="saveScore()">
+			<button style="float: right;" class="btn btn-danger" [ngClass]="{ 'btn-disabled': disableRecalculate }"
+				[disabled]="disableRecalculate" (click)="saveScore()">
 				Save Score
 			</button>
 		</div>
@@ -57,7 +57,8 @@
 						{{ team | ticketStatus }}
 					</td>
 					<td class="status" [ngClass]="team.statusClass">
-						<select [(ngModel)]="team.status" [disabled]="!team.selected" (ngModelChange)="changeStatus(team)">
+						<select [(ngModel)]="team.status" [disabled]="!team.selected || !leagueSettle.permission.isLeader"
+							(ngModelChange)="changeStatus(team)">
 							<option *ngFor="let status of teamStatus" [value]="status.text | uppercase" [hidden]="!status.isShow"> {{
 								status.text }}</option>
 						</select>
@@ -71,7 +72,7 @@
 							[minDate]="moveBetsDay" [maxDate]="today">
 						</ngbd-date-picker>
 					</td>
-					<td class="status" *ngIf="leagueSettle.permission.isLeader">
+					<td class="status" [ngClass]="team.mismatchClass">
 						<select [(ngModel)]="team.screenShot" [disabled]="!team.selected" (ngModelChange)="changeScreenshot(team)">
 							<option *ngFor="let status of teamStatus" [value]="status.text | uppercase" [hidden]="!status.isShow"> {{
 								status.text }}</option>
@@ -114,7 +115,7 @@
 					<th class="code">
 						Settle Date
 					</th>
-					<th class="status" *ngIf="leagueSettle.permission.isLeader">
+					<th class="status">
 						Screenshot
 						<select [(ngModel)]="screenshotSelected" (ngModelChange)="selectStatus()">
 							<option *ngFor="let status of filterStatuses" [value]="status | uppercase">

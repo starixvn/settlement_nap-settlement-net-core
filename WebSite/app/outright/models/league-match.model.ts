@@ -1,11 +1,15 @@
 import { Team } from "./team.model";
 export class LeagueMatch {
-    public leagueId: number;
-    public leagueName: string;
-    public teams: Team[];
-    public collapsed: boolean;
-    public eventDate: string;
-    public deadHeat: boolean | null;
-    public deadHeatClass: string;
+    leagueId: number;
+    leagueName: string;
+    teams: Team[];
+    collapsed: boolean;
+    eventDate: string;
+    deadHeat: boolean | null;
+    deadHeatTeam: number;
+    isCompleted: boolean;
+    deadHeatClass: string;
+    hasPotentialDeadHeatIssue: boolean;
+
 }
 

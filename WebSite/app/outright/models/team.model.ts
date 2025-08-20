@@ -15,6 +15,7 @@ export class Team extends Match {
     originalStatus: string;
     originalScreenshot: string;
     screenShot: string;
+    mismatchClass: string;
     confirmBy: string;
 }
 
