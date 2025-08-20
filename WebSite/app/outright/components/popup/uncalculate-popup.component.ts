@@ -17,8 +17,8 @@ import { ResultOutright } from '../../models/result-outright.model';
   selector: 'uncalculate-popup',
   templateUrl: './uncalculate-popup.component.html',
   standalone: true,
-  imports: [CommonModule,  MatDialogModule, DragDropModule, FormsModule],
-  providers: [OutrightService, HttpRequestService, BlockUIService, MessageBoxService],
+  imports: [CommonModule,  MatDialogModule, DragDropModule, FormsModule, ToastContainerDirective],
+  providers: [OutrightService, HttpRequestService, BlockUIService, MessageBoxService, ToastrService],
 })
 export class UncalculatePopupComponent implements OnInit {
   @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
