@@ -17,8 +17,8 @@ public class CachingMatchesServiceTests
     }
 
     [Theory]
-    [InlineData("123", CacheSettings.Keys.WaitingBetBuilderCacheKey + "-123")]
-    [InlineData("1234,567", CacheSettings.Keys.WaitingBetBuilderCacheKey + "-1234,567")]
+    [InlineData("123", CacheSettings.WaitingBetBuilderCacheKey + "-123")]
+    [InlineData("1234,567", CacheSettings.WaitingBetBuilderCacheKey + "-1234,567")]
     public void SetToCache_Always_SetLongAndShortCache(string leagueIds, string logKey)
     {
         service.SetToCache(leagueIds, []);
@@ -28,8 +28,8 @@ public class CachingMatchesServiceTests
     }
 
     [Theory]
-    [InlineData("123", CacheSettings.Keys.WaitingBetBuilderCacheKey + "-123")]
-    [InlineData("1234,567", CacheSettings.Keys.WaitingBetBuilderCacheKey + "-1234,567")]
+    [InlineData("123", CacheSettings.WaitingBetBuilderCacheKey + "-123")]
+    [InlineData("1234,567", CacheSettings.WaitingBetBuilderCacheKey + "-1234,567")]
     public void GetShortCache_Always_CallServiceWithCorrectParams(string leagueId, string logKey)
     {
         service.MatchesOnShortCaching(leagueId);
@@ -38,8 +38,8 @@ public class CachingMatchesServiceTests
     }
 
     [Theory]
-    [InlineData("123", CacheSettings.Keys.WaitingBetBuilderCacheKey + "-123-long")]
-    [InlineData("1234,567", CacheSettings.Keys.WaitingBetBuilderCacheKey + "-1234,567-long")]
+    [InlineData("123", CacheSettings.WaitingBetBuilderCacheKey + "-123-long")]
+    [InlineData("1234,567", CacheSettings.WaitingBetBuilderCacheKey + "-1234,567-long")]
     public void GetLongCache_Always_CallServiceWithCorrectParams(string leagueId, string logKey)
     {
         service.MatchesOnLongCaching(leagueId);

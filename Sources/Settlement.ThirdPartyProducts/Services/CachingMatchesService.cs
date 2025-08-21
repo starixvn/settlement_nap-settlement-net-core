@@ -33,11 +33,11 @@ public class CachingMatchesServiceImp(IMemoryCache cacheService) : CachingMatche
         var shortCachingKey = ShortCachingKey(leagueIds);
         var longCachingKey = LongCachingKey(leagueIds);
 
-        cacheService.Set(shortCachingKey, matches, new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(CacheSettings.Expiration.ShortCallRefreshTimerSeconds)));
-        cacheService.Set(longCachingKey, matches, new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(CacheSettings.Expiration.LongCallRefreshTimerMinutes)));
+        cacheService.Set(shortCachingKey, matches, new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(Expiration.ShortCallRefreshTimerSeconds)));
+        cacheService.Set(longCachingKey, matches, new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(Expiration.LongCallRefreshTimerMinutes)));
     }
 
-    private static string ShortCachingKey(string leagueIds) => $"{CacheSettings.Keys.WaitingBetBuilderCacheKey}-{leagueIds}";
+    private static string ShortCachingKey(string leagueIds) => $"{CacheSettings.WaitingBetBuilderCacheKey}-{leagueIds}";
 
     private static string LongCachingKey(string leagueIds) => $"{ShortCachingKey(leagueIds)}-long";
 }

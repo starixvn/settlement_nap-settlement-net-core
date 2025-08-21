@@ -28,6 +28,8 @@ export class FilterComponent implements OnInit {
     @Output() public searchAction = new EventEmitter();
     @Output() public requestEmitter = new EventEmitter();
     public readonly warningDialogMessage = new ModalDialogMessage();
+    public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
+  
     public matchCode = "";
     public fromDate: NgbDateStruct;
     public toDate: NgbDateStruct;
@@ -35,6 +37,7 @@ export class FilterComponent implements OnInit {
     public leaguesSelected: string;
     public matchStatusSelected: string;
     public isIncludeTestMatch = false;
+    public isAutoMoveTicketsEnabled = false;
     public leagueSelect = new MultipleSelect();
     public readonly matchStatusSelect = new MultipleSelect();
 
@@ -46,11 +49,13 @@ export class FilterComponent implements OnInit {
     }
 
     public ngOnInit() {
+        this.confirmationDialogMessage.title = Language.confirmationBox;
         this.sportTypesSelected = SportType.baseBall.toString();
         this.initiateData();
+       
     }
 
-    private initiateData() {
+    private async initiateData() {
         this.moveTicketsService.getDate()
             .subscribe((date: DateFilter) => {
                 this.fromDate = this.verifyDateService.convertToDateStruct(date.fromDate);
@@ -61,6 +66,8 @@ export class FilterComponent implements OnInit {
         this.matchStatusSelect.items = this.generateFilterService.renderMatchStatusGroupSelect();
         this.matchStatusSelect.haveGroup = true;
         this.matchStatusSelect.maxWidth = '200px';
+
+        this.isAutoMoveTicketsEnabled = await  this.moveTicketsService.getAutoMoveTicketsStatus();
     }
 
     public search() {
@@ -161,5 +168,18 @@ export class FilterComponent implements OnInit {
         this.leagueSelect.maxWidth = '450px';
         this.leagueSelect.enableSearchBox = true;
         this.leagueSelect.disableCheckAll = true;
+    }
+
+    public toggleAutoMoveTicketsStatus() {
+        this.confirmationDialogMessage.message = this.getAutoMoveTicketsStatusTooltip();
+        this.messageBoxService.confirm(this.confirmationDialogMessage, async () => {
+           this.isAutoMoveTicketsEnabled = await  this.moveTicketsService.updateAutoMoveTicketsStatus(this.isAutoMoveTicketsEnabled)
+        });
+        
+    }
+
+    public getAutoMoveTicketsStatusTooltip() {
+        const status = this.isAutoMoveTicketsEnabled ? 'OFF' : 'ON';
+        return `Are you sure you want to turn ${status} auto move tickets service?`;
     }
 }
