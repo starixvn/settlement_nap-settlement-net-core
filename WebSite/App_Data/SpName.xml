@@ -217,10 +217,10 @@
 			<Setting Key="NAP_Set_WaitingSel_DBSITE03" SpName="NAP_Set_WaitingSel" DbName="DBSITE03.bodb02.wsv_nap" TimeOut="60" />
 		</Function>
 		<Function Name="NAP_Set_AutoPayout_MatchSel">
-			<Setting Key="NAP_Set_AutoPayout_MatchSel_DBTXN" SpName="NAP_Set_AutoPayout_MatchSel_xtest" DbName="DBTXN.bodb02.wsv_nap" TimeOut="120" />
-			<Setting Key="NAP_Set_AutoPayout_MatchSel_DBSITE01" SpName="NAP_Set_AutoPayout_MatchSel_xtest" DbName="DBSITE01.bodb02.wsv_nap" TimeOut="120" />
-			<Setting Key="NAP_Set_AutoPayout_MatchSel_DBSITE02" SpName="NAP_Set_AutoPayout_MatchSel_xtest" DbName="DBSITE02.bodb02.wsv_nap" TimeOut="120" />
-			<Setting Key="NAP_Set_AutoPayout_MatchSel_DBSITE03" SpName="NAP_Set_AutoPayout_MatchSel_xtest" DbName="DBSITE03.bodb02.wsv_nap" TimeOut="120" />
+			<Setting Key="NAP_Set_AutoPayout_MatchSel_DBTXN" SpName="NAP_Set_AutoPayout_MatchSel" DbName="DBTXN.bodb02.wsv_nap" TimeOut="120" />
+			<Setting Key="NAP_Set_AutoPayout_MatchSel_DBSITE01" SpName="NAP_Set_AutoPayout_MatchSel" DbName="DBSITE01.bodb02.wsv_nap" TimeOut="120" />
+			<Setting Key="NAP_Set_AutoPayout_MatchSel_DBSITE02" SpName="NAP_Set_AutoPayout_MatchSel" DbName="DBSITE02.bodb02.wsv_nap" TimeOut="120" />
+			<Setting Key="NAP_Set_AutoPayout_MatchSel_DBSITE03" SpName="NAP_Set_AutoPayout_MatchSel" DbName="DBSITE03.bodb02.wsv_nap" TimeOut="120" />
 		</Function>
 		<Function Name="NAP_Set_AutoPayout_WaitingSel">
 			<Setting Key="NAP_Set_AutoPayout_WaitingSel_DBTXN" SpName="NAP_Set_AutoPayout_WaitingSel" DbName="DBTXN.bodb02.wsv_nap" TimeOut="60" />
