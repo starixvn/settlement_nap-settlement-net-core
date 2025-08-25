@@ -39,6 +39,7 @@ export class AutoCalculateFilterComponent extends FilterBaseComponent implements
     private readonly completedWithRunningTicket = "16";
     public readonly query = new FilterAutoQuery();
     public payoutSelect = new MultipleSelect();
+    public instantSelect = new MultipleSelect();
     countdown = signal(0);
     previousQuery: FilterAutoQuery | null = null;
     disableAutoReFilter = true;
@@ -63,6 +64,7 @@ export class AutoCalculateFilterComponent extends FilterBaseComponent implements
         this.query.statusId = Number(this.statuses[0].value);
         this.query.leagueId = '0';
         this.payoutSelect.items = this.autoSettingsService.createAutoPayoutFilter();
+        this.instantSelect.items = this.autoSettingsService.createInstantFilter();
         this.statuses = this.statuses.filter(status => status.value !== this.completedWithRunningTicket);
     }
 
@@ -105,7 +107,8 @@ export class AutoCalculateFilterComponent extends FilterBaseComponent implements
     public async search() {
         this.query.fromDate = this.verifyDateService.dateFormat(this.fromDate);
         this.query.toDate = this.verifyDateService.dateFormat(this.toDate);
-
+        this.query.isInstant = this.autoSettingsService.mapInstantToBoolean(this.query.instant);
+        
         this.filter(this.query);
         this.previousQuery = { ...this.query };
         this.disableAutoReFilter = false;
@@ -121,6 +124,10 @@ export class AutoCalculateFilterComponent extends FilterBaseComponent implements
 
     public onSelectPayout(value: ItemsSelect[]) {
         this.query.autoSetting = value.length > 0 && value.length < this.payoutSelect.items.length ? value.map(item => Number(item.value)).join() : '';
+    }
+
+    public onSelectInstant(values: ItemsSelect[]) {
+        this.query.instant = values.length > 0 && values.length < this.instantSelect.items.length ? values.map(item => Number(item.value)).join() : '';
     }
 
     refilter() {

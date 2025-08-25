@@ -11,8 +11,9 @@ export class FilterAutoQuery {
     leagueId: string;
     statusId: number;
     isUnCalculate: boolean;
-    isInstant: boolean;
+    isInstant: boolean | null;
     isHtOverOnly: boolean;
     isOverOnly: boolean;
     autoSetting: string;
+    instant: string;
 }
