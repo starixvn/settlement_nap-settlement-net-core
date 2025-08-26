@@ -11,12 +11,12 @@ public enum InputType
 
 public interface IInputTypeService
 {
-    InputType GetInputType(int resourceId);
+    InputType GetInputType(string resourceId);
 }
 
 public class InputTypeService : IInputTypeService
 {
-    public InputType GetInputType(int resourceId)
+    public InputType GetInputType(string resourceId)
     {
         return resourceId switch
         {

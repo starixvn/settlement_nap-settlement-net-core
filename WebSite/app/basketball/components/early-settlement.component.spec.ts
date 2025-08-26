@@ -98,8 +98,6 @@ describe('Component: EarlySettlementComponent', () => {
                 aioService = fixture.debugElement.injector.get(AioService);
                 verificationService = fixture.debugElement.injector.get(VerificationService);
                 toastrService = fixture.debugElement.injector.get(ToastrService);
-                
-                // Initialize the services properly
                 component.initService();
             });
     }));
@@ -112,7 +110,6 @@ describe('Component: EarlySettlementComponent', () => {
         component.match = match;
         component.matchId = match.matchDetail.matchId;
         component.resultDetails = match.resultDetails;
-        // Mock the init method to avoid the MatchDetailComponent error
         component.init = jest.fn();
         component.init();
 

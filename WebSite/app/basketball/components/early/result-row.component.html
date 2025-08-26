@@ -1,0 +1,28 @@
+<td class="align-left bettype-name">{{item.betTypeName}}</td>
+<td class="ticket-status" [ngClass]="item.ticketStatus.toLowerCase()">{{item.ticketStatus}}</td>
+<td class="final-result-content">
+  <ng-container [ngComponentOutlet]="inputComponent"
+    [ngComponentOutletInputs]="{item: item, enable: item.checked}"></ng-container>
+</td>
+
+<ng-container *ngFor="let result of item.externalScores; let x=index">
+  <td *ngIf="x < (maxProviderCol()+1) && permission().isLeader" class="map">
+    <div class="outside-source-text" [matTooltip]="getTextTooltip(result.homeName, 13)" matTooltipPosition="above">
+      {{result.homeValue | resultByTeamName: matchDetail(): 0}}
+    </div>
+  </td>
+  <ng-container *ngIf="x >= (maxProviderCol()+1)">
+    <td class="map out-side-content" [ngClass]="{'striped': x % 2 === 0, 'can-settle': canSettleResult(item)}">
+      <ng-container [ngComponentOutlet]="inputOutSideComponent"
+        [ngComponentOutletInputs]="{externalResult: result, resultDetail: item, enable: item.checked}"></ng-container>
+    </td>
+  </ng-container>
+</ng-container>
+<td [ngClass]="item.resultStatusColor" class="result">{{item.resultStatus}}</td>
+<td class="select-proceed">
+  <input type="checkbox" [disabled]="item.resultSettingData.isHoldResult" [(ngModel)]="item.checked"
+    (change)="onChangeBetType(item, map);" />
+</td>
+<td class="hold-result">
+  <div [ngClass]="getResultSettingIcon(item.resultSettingData.isHoldResult)" (click)="isChangeSetting(item, map)"></div>
+</td>

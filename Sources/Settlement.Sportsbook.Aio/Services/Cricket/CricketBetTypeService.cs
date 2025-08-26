@@ -1,5 +1,4 @@
 ﻿using Settlement.ResourceInfos.Constants;
-using Settlement.Sportsbook.Aio.Criteria.Cricket;
 using Settlement.Sportsbook.Aio.Models;
 
 namespace Settlement.Sportsbook.Aio.Services.Cricket;

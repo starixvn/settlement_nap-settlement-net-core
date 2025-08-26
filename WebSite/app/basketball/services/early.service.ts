@@ -1,11 +1,11 @@
 ﻿import { Injectable } from '@angular/core';
 import { EarlyBaseService } from '../../core/services/early-base.service';
 import * as _ from 'lodash';
-import { ResultDetail, GroupMap } from '../../shared/models/sportsbook-sop';
+import { ResultDetail, GroupMap, MatchDetail } from '../../shared/models/sportsbook-sop';
 
 @Injectable()
 export class EarlyService extends EarlyBaseService {
-    public getGroupMap(resultDetail: ResultDetail[]) {
+    public getGroupMap(resultDetail: ResultDetail[], matchDetail: MatchDetail) {
         const list = _.uniqBy(resultDetail, (item) => item.groupName);
         const maps: GroupMap[] = [];
 
@@ -15,8 +15,27 @@ export class EarlyService extends EarlyBaseService {
         });
         maps.forEach(item => {
             item.isHoldResult = item.resultDetail.every(i => i.resultSettingData.isHoldResult);
+            item.groupName = this.ReplaceTeamName(item.groupName, matchDetail);
+            item.resultDetail.forEach(i => {
+                i.groupName = item.groupName;
+            });
         });
 
         return maps;
+    }
+
+
+    private ReplaceTeamName(groupName: string, matchDetail: MatchDetail) {
+        const teamNamePattern = /@teamName-(\d+)/;
+        const match = groupName.match(teamNamePattern);
+
+        if (match) {
+            const teamId = parseInt(match[1]);
+            return teamId === matchDetail.homeId
+                ? groupName.replace(teamNamePattern, matchDetail.homeName)
+                : groupName.replace(teamNamePattern, matchDetail.awayName);
+        }
+
+        return groupName;
     }
 }

@@ -11,11 +11,14 @@ public interface IGroupBetTypeService
 
     GroupNameModel GroupQuarterBetType(int resourceId);
 
-    GroupNameModel GroupPlayerBetType(string resourceId, IDictionary<int, string> players);
+    GroupNameModel GroupPlayerBetType(ResultDetail resultDetail, IList<OddFlexModel> oddFlexs);
 }
 
 public class GroupBetTypeServiceImp : IGroupBetTypeService
 {
+    private const string DefaultPlayerGroupName = "Other";
+    private const int PlayerGroupIdOffset = 100;
+
     public GroupNameModel GroupHalfBetType(int resourceId)
     {
         return GroupBetType.FirstHalf.Contains(resourceId)
@@ -43,24 +46,33 @@ public class GroupBetTypeServiceImp : IGroupBetTypeService
             : new GroupNameModel();
     }
 
-    public GroupNameModel GroupPlayerBetType(string resourceId, IDictionary<int, string> players)
+    public GroupNameModel GroupPlayerBetType(ResultDetail resultDetail, IList<OddFlexModel> oddFlexs)
     {
-        var playerOrder = Convert.ToInt32(resourceId.Substring(3, 5));
-
-
-        if (players.TryGetValue(playerOrder, out var playerName))
+        resultDetail.OddFlex = oddFlexs.Where(x => x.ResourceId == resultDetail.ResourceId).ToList();
+        if (GroupBetType.PlayerSelectionType.Contains(resultDetail.BetType))
         {
             return new GroupNameModel
             {
-                GroupId = playerOrder + 100,
-                GroupName = playerName
+                GroupId = PlayerGroupIdOffset,
+                GroupName = DefaultPlayerGroupName
+            };
+        }
+
+        var matchingOddFlex = resultDetail.OddFlex.FirstOrDefault();
+
+        if (matchingOddFlex != null)
+        {
+            return new GroupNameModel
+            {
+                GroupId = matchingOddFlex.Info.PlayerId + PlayerGroupIdOffset,
+                GroupName = $"@teamName-{matchingOddFlex.Info.TeamId} {matchingOddFlex.Info.PlayerName}"
             };
         }
 
         return new GroupNameModel
         {
-            GroupId = 0,
-            GroupName = string.Empty
+            GroupId = PlayerGroupIdOffset,
+            GroupName = DefaultPlayerGroupName
         };
     }
 

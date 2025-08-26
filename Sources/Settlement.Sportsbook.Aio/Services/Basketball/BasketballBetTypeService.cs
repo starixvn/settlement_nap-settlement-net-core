@@ -1,4 +1,5 @@
-﻿using Settlement.Core.Constants;
+﻿using Newtonsoft.Json;
+using Settlement.Core.Constants;
 using Settlement.ResourceInfos.Constants;
 using Settlement.ResourceInfos.Services;
 using Settlement.Sportsbook.Aio.Constants.Basketball;
@@ -10,7 +11,7 @@ namespace Settlement.Sportsbook.Aio.Services.Basketball;
 
 public interface IBasketballBetTypeService
 {
-    Task GetBetTypeNameAndGroupAsync(IList<ResultDetail> items);
+    Task GetBetTypeNameAndGroup(IList<ResultDetail> items);
 
     ResultDetail CheckValue(ResultDetail item);
 }
@@ -25,26 +26,27 @@ public class BasketballBetTypeServiceImp(
     private const int HalfBetTypeLength = 5;
     private const int BetTypeIndexLength = 2;
     private const int QuarterBetTypeLength = 7;
+    private const int MinResourceIdLength = 3;
 
-    public async Task GetBetTypeNameAndGroupAsync(IList<ResultDetail> items)
+    public async Task GetBetTypeNameAndGroup(IList<ResultDetail> items)
     {
         if (!items.Any())
         {
             return;
         }
 
-        var players = await GetPlayer(items.First().MatchId);
+        var players = (await GetOddFlex(items[0].MatchId)).ToList();
         foreach (var item in items)
         {
-            GroupResultDetail(item, players.ToDictionary(x => x.PlayerOrder, x => x.PlayerName));
+            GroupResultDetail(item, players);
         }
     }
 
-    private void GroupResultDetail(ResultDetail item, IDictionary<int, string> players)
+    private void GroupResultDetail(ResultDetail item, IList<OddFlexModel> players)
     {
         var resourceId = item.ResourceId;
         (item.BetType, item.BetTypeName) = resourceNameService.GetResourceName(resourceId, KeyConstants.BasketballKey);
-        if (resourceId.Length >= 3 && GroupBetType.Player.Contains(Convert.ToInt32(resourceId.Substring(0, 3))))
+        if (resourceId.Length >= MinResourceIdLength && GroupBetType.Player.Contains(Convert.ToInt32(resourceId.Substring(0, MinResourceIdLength))))
         {
             GroupPlayerBetType(item, players);
         }
@@ -122,23 +124,28 @@ public class BasketballBetTypeServiceImp(
         return Convert.ToInt32(resourceId.Substring(startIndex, length));
     }
 
-    private async Task<IEnumerable<PlayerModel>> GetPlayer(int matchId)
+    private async Task<IEnumerable<OddFlexModel>> GetOddFlex(int matchId)
     {
         var criteria = new GetPlayerInfoCriteria
         {
             MatchId = matchId,
             SportType = SportType.BasketBall
         };
-        return new List<PlayerModel>();
-        // return await dynamicRepository.FetchAsync<PlayerModel>(criteria);
+
+        var oddFlex = (await dynamicRepository.FetchAsync<OddFlexModel>(criteria)).ToList();
+
+        Parallel.ForEach(oddFlex, playerModel =>
+            {
+                playerModel.Info = JsonConvert.DeserializeObject<OddsInfoModel>(playerModel.OddsInfo);
+            });
+        return oddFlex;
     }
 
-    private void GroupPlayerBetType(ResultDetail resultDetail, IDictionary<int, string> players)
+    private void GroupPlayerBetType(ResultDetail resultDetail, IList<OddFlexModel> players)
     {
-        var group = groupBetTypeService.GroupPlayerBetType(resultDetail.ResourceId, players);
-        var betType = Convert.ToInt32(resultDetail.ResourceId.Substring(0, 3));
+        var group = groupBetTypeService.GroupPlayerBetType(resultDetail, players);
         resultDetail.GroupName = group.GroupName;
         resultDetail.GroupId = group.GroupId;
-        resultDetail.InputType = (int)inputTypeService.GetInputType(betType);
+        resultDetail.InputType = (int)inputTypeService.GetInputType(resultDetail.BetType);
     }
 }

@@ -72,6 +72,8 @@ public sealed class ResultDetail
 
     public int BetRefundedCount { get; set; }
 
+    public IList<OddFlexModel> OddFlex { get; set; } = [];
+
     public override bool Equals(object obj)
     {
         return obj is ResultDetail result && result.ResourceId == ResourceId;

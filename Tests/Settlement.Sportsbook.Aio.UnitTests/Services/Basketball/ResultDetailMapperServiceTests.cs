@@ -7,7 +7,7 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services.Basketball;
 public class ResultDetailMapperServiceTests
 {
     [Fact]
-    public void Decorate_CallsCheckValue_OnQuarterListItems()
+    public async Task Decorate_CallsCheckValue_OnQuarterListItems()
     {
         var service = new ResultDetailMapperServiceImp();
 
@@ -22,7 +22,7 @@ public class ResultDetailMapperServiceTests
         };
 
         // Act
-        service.Decorate(resultDetails);
+        await service.Decorate(resultDetails);
 
         Assert.Equal(JsonConvert.SerializeObject(resultDetails), JsonConvert.SerializeObject(expectedResultDetails));
     }

@@ -26,7 +26,7 @@ public class ResultDetailMapperServiceImp : IMapperService
             var listEarly = list.Where(x => x.ResourceId.Length > maxLengthResourceId).ToList();
             var listQuarter = list.Where(x => x.ResourceId.Length == maxLengthResourceId).ToList();
             listQuarter.ForEach(x => basketballBetTypeService.CheckValue(x));
-            await basketballBetTypeService.GetBetTypeNameAndGroupAsync(listEarly);
+            await basketballBetTypeService.GetBetTypeNameAndGroup(listEarly);
         }
     }
 }

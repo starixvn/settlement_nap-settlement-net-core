@@ -2,7 +2,7 @@
 import { ExternalSourceNamePipe } from './../../shared/pipes/external-source-name.pipe';
 import * as _ from 'lodash';
 import { CalculateAction, ScoreSourceType, SettlementStatusId, SportType, TicketStatusText } from '../../shared/constants';
-import { Component, Injector, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Injector, ViewChild } from '@angular/core';
 import { ToastContainerDirective } from 'ngx-toastr';
 import { BasketballApiKeys, EarlyResourcesIds, KickOffTime, ResultStatus } from '../constants';
 import { BasketballService, BetStatusService, EarlyService, VerificationService } from '../services';
@@ -14,13 +14,17 @@ import { EarlyBaseComponent } from '../../shared/components/sportsbook-sop/early
 import { MatchDetailComponent } from './match-detail.component';
 import { NewMultipleSelectComponent } from '../../shared/components/multiple-select/multiple-select.component';
 import { ResourceNameByIdPipe } from '../pipes/resource-name-by-id.pipe';
+import { EarlyStore } from '../store/early.store';
+import { ResultRowComponent } from './early/result-row.component';
 
 @Component({
     selector: 'early-settlement',
     templateUrl: './early-settlement.component.html',
     standalone: true,
-    imports: [EarlyCommonModule, MatchDetailComponent, NewMultipleSelectComponent, ExternalSourceNamePipe],
-    providers: [EarlyService, VerificationService, BasketballService, ResourceNameByIdPipe, BetStatusService]
+    imports: [EarlyCommonModule, MatchDetailComponent, NewMultipleSelectComponent, ExternalSourceNamePipe, ResultRowComponent],
+    providers: [EarlyService, VerificationService, BasketballService, ResourceNameByIdPipe, BetStatusService],
+    changeDetection: ChangeDetectionStrategy.OnPush
+
 })
 export class EarlySettlementComponent extends EarlyBaseComponent implements SportTemplate {
     @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
@@ -31,7 +35,9 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     public isReadyMatch: boolean;
     constructor(
         protected injector: Injector,
-        protected verificationService: VerificationService) {
+        protected verificationService: VerificationService,
+        private readonly earlyStore: EarlyStore,
+        private readonly  cdr: ChangeDetectorRef) {
         super(injector, verificationService);
     }
 
@@ -48,6 +54,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         this.isReadyMatch = this.match.matchDetail.playTime >= KickOffTime.playTime;
         this.permission = this.match.permission;
         this.init();
+        this.cdr.markForCheck();
     }
     
       public get outSideCount() {
@@ -72,10 +79,12 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         this.verificationService.generateExternalScores(this.match, this.resultDetails, SportType.basketBall, this.maxProviderCol);
         this.resetResult(this.resultDetails);
         this.autoFillResultOnLoad(this.resultDetails);
-        this.groupMap = this.earlyService.getGroupMap(this.resultDetails);
+        this.groupMap = this.earlyService.getGroupMap(this.resultDetails, this.matchDetail);
         this.match.originalResultDetail = _.cloneDeep(this.resultDetails);
         this.hideTicketWaiting(this.groupMap);
         this.renderFilterSelect();
+        this.setIndicateColor()
+        this.earlyStore.setState(this.matchDetail, this.permission, this.maxProviderCol);
 
         if (!this.isReadyMatch) {
             this.toastrService.error(Language.minimumPlayTimeNotReached);
@@ -93,6 +102,13 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         this.resultTypeSelect.maxWidth = '150px';
         this.ticketsStatusSelect.maxWidth = '92px';
         this.resultStatusSelect.maxWidth = '120px';
+    }
+
+    private setIndicateColor() {
+        this.resultDetails.forEach(item => {
+            item.resultStatusColor = this.isCompleted(item.resultStatusId, item.settlementStatusId) ? 'completed' 
+            : this.isRefunded(item.resultStatusId, item.settlementStatusId) ? 'refunded' : '';
+        });
     }
 
     private resetResult(resultDetails: ResultDetail[]) {

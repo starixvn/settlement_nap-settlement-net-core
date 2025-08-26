@@ -52,7 +52,7 @@ describe('FilterResultStatusPipe', () => {
         isEnabled: false,
         originalHomeValue: 1,
         originalAwayValue: 0
-      } as ResultDetail,
+      } as unknown as ResultDetail,
       {
         resourceId: 'resource2',
         resourceName: 'Resource 2',
@@ -86,7 +86,7 @@ describe('FilterResultStatusPipe', () => {
         isEnabled: false,
         originalHomeValue: 2,
         originalAwayValue: 1
-      } as ResultDetail,
+      } as unknown as ResultDetail,
       {
         resourceId: 'resource3',
         resourceName: 'Resource 3',
@@ -119,8 +119,8 @@ describe('FilterResultStatusPipe', () => {
         isShow: true,
         isEnabled: false,
         originalHomeValue: 2,
-        originalAwayValue: 2
-      } as ResultDetail,
+        originalAwayValue: 2,
+      } as unknown as ResultDetail,
       {
         resourceId: 'resource4',
         resourceName: 'Resource 4',
@@ -154,7 +154,7 @@ describe('FilterResultStatusPipe', () => {
         isEnabled: false,
         originalHomeValue: 0,
         originalAwayValue: 0
-      } as ResultDetail,
+      } as unknown as ResultDetail,
       {
         resourceId: 'resource5',
         resourceName: 'Resource 5',
@@ -188,7 +188,7 @@ describe('FilterResultStatusPipe', () => {
         isEnabled: false,
         originalHomeValue: 0,
         originalAwayValue: 0
-      } as ResultDetail,
+      } as unknown as ResultDetail,
       {
         resourceId: 'resource6',
         resourceName: 'Resource 6',
@@ -222,7 +222,7 @@ describe('FilterResultStatusPipe', () => {
         isEnabled: false,
         originalHomeValue: 3,
         originalAwayValue: 3
-      } as ResultDetail,
+      } as unknown as ResultDetail,
       {
         resourceId: 'resource7',
         resourceName: 'Resource 7',
@@ -256,7 +256,7 @@ describe('FilterResultStatusPipe', () => {
         isEnabled: false,
         originalHomeValue: 0,
         originalAwayValue: 0
-      } as ResultDetail
+      } as unknown as ResultDetail
     ];
   });
 
