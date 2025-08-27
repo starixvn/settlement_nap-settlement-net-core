@@ -12,29 +12,30 @@ namespace Settlement.WebSites.Configurations;
 
 public static class EventManagementConfig
 {
-	public static void ConfigEventManagementServices(this IServiceCollection services)
-	{
-		services.AddTransient<IMultiSportService, MultiSportServiceImp>();
-		services.AddTransient<ScoreTennisService, ScoreTennisServiceImp>();
-		services.AddTransient<IExternalScoreService, ExternalScoreServiceImp>();
-		services.AddTransient<IMatchResultDetailService, MatchResultDetailServiceImp>();
-		services.AddTransient<IMatchService, MatchServiceImp>();
-		services.AddTransient<MatchService, EventManagement.Services.Calculation.MatchServiceImp>();
-		services.AddTransient<LeagueService, LeagueServiceImp>();
-		services.AddTransient<CompareMatchService, CompareMatchServiceImp>();
-		services.AddTransient<MergeDataService, MergeDataServiceImp>();
-		services.AddTransient<NewInfoMatchService, NewInfoMatchServiceImp>();
-		services.AddTransient<SiteMatchService, SiteMatchServiceImp>();
-		services.AddTransient<ScoreService, ScoreServiceImp>();
-		services.AddTransient<CachingMatchesService, CachingMatchesServiceImp>();
-		services.AddTransient<CompareMultiSportMatchService, CompareMultiSportMatchServiceImp>();
-		services.AddTransient<GetDataFilterService, GetDataFilterServiceImp>();
-		services.AddTransient<EventStatusService, EventStatusServiceImp>();
-	}
+    public static void ConfigEventManagementServices(this IServiceCollection services)
+    {
+        services.AddTransient<IMultiSportService, MultiSportServiceImp>();
+        services.AddTransient<ScoreTennisService, ScoreTennisServiceImp>();
+        services.AddTransient<IExternalScoreService, ExternalScoreServiceImp>();
+        services.AddTransient<IMatchResultDetailService, MatchResultDetailServiceImp>();
+        services.AddTransient<IMatchService, MatchServiceImp>();
+        services.AddTransient<MatchService, EventManagement.Services.Calculation.MatchServiceImp>();
+        services.AddTransient<LeagueService, LeagueServiceImp>();
+        services.AddTransient<CompareMatchService, CompareMatchServiceImp>();
+        services.AddTransient<MergeDataService, MergeDataServiceImp>();
+        services.AddTransient<NewInfoMatchService, NewInfoMatchServiceImp>();
+        services.AddTransient<SiteMatchService, SiteMatchServiceImp>();
+        services.AddTransient<ScoreService, ScoreServiceImp>();
+        services.AddTransient<CachingMatchesService, CachingMatchesServiceImp>();
+        services.AddTransient<CompareMultiSportMatchService, CompareMultiSportMatchServiceImp>();
+        services.AddTransient<GetDataFilterService, GetDataFilterServiceImp>();
+        services.AddTransient<EventStatusService, EventStatusServiceImp>();
+        services.AddTransient<MuayThaiHelperService, MuayThaiHelperServiceImp>();
+    }
 
-	public static void ConfigEventManagementMediator(this IServiceCollection services)
-	{
-		services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CalculationController).Assembly));
-		services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(MultiSportController).Assembly));
-	}
+    public static void ConfigEventManagementMediator(this IServiceCollection services)
+    {
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CalculationController).Assembly));
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(MultiSportController).Assembly));
+    }
 }
