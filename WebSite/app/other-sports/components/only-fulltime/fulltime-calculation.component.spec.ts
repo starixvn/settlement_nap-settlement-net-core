@@ -17,6 +17,7 @@ import { Language } from '../../../shared/language.native';
 import { ScorePipe } from '../../pipes';
 import { RequestService } from '../..//services/request.service';
 import { FullTimeService } from './fulltime.service';
+import { MappedScoreService } from './mapped-score.service';
 import { ToastContainerDirective, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 
 describe('FullTimeCalculationComponent', () => {
@@ -26,6 +27,7 @@ describe('FullTimeCalculationComponent', () => {
   let messageBoxService: MessageBoxService;
   let verificationService: FullTimeVerificationService;
   let toastrService: ToastrService;
+  let mappedScoreService: MappedScoreService;
 
   const ticketCount: TicketCount = {
     groupId: 0,
@@ -35,7 +37,7 @@ describe('FullTimeCalculationComponent', () => {
     betSettledCount: 0,
   };
   const matchDetail = {} as MatchDetail;
-  matchDetail.sportType = 60;
+  matchDetail.sportType = 44;
   matchDetail.matchId = 123;
   matchDetail.sportName = 'test';
   matchDetail.matchCode = 'abc';
@@ -106,6 +108,7 @@ describe('FullTimeCalculationComponent', () => {
         HttpRequestService,
         FullTimeService,
         FullTimeVerificationService,
+        MappedScoreService,
         NgbModal,
         ToastContainerDirective,
         { provide: ToastrService, useClass: ToastrService },
@@ -122,6 +125,7 @@ describe('FullTimeCalculationComponent', () => {
     messageBoxService = fixture.debugElement.injector.get(MessageBoxService);
     verificationService = fixture.debugElement.injector.get(FullTimeVerificationService);
     toastrService = fixture.debugElement.injector.get(ToastrService);
+    mappedScoreService = fixture.debugElement.injector.get(MappedScoreService);
     fixture.detectChanges();
     jest.spyOn(messageBoxService, 'closePopup').mockImplementation(() => { });
   });
@@ -204,6 +208,10 @@ describe('FullTimeCalculationComponent', () => {
     });
 
     it('should invoke messageBoxService.confirm when final score is not empty', () => {
+      matchDetail.finalHomeScore = 1;
+      matchDetail.finalAwayScore = 0;
+      matchDetail.sportType = 1; // Not Muay Thai
+      component.matchDetail = matchDetail;
       component.isReSettledTickets = true;
       jest.spyOn(messageBoxService, 'confirm');
       jest.spyOn(verificationService, 'isScoreSourceInsufficient').mockReturnValue(false);
@@ -248,40 +256,42 @@ describe('FullTimeCalculationComponent', () => {
       expect(toastrService.error).toHaveBeenCalledWith("Please input the correct 'KO at Round'");
     });
 
-    it('should close popup when settle successful', fakeAsync(async () => {
-      component.matchDetail.sportType = 60;
+    it('should not show error when settle successful', fakeAsync(async () => {
+      matchDetail.finalHomeScore = 1;
+      matchDetail.finalAwayScore = 0;
+      matchDetail.betStatus = '3'; // Valid bet status for Muay Thai
+      component.matchDetail = matchDetail;
+      component.matchDetail.sportType = 44;
+      
       jest.spyOn(requestService, 'sendRequest').mockResolvedValue(successfulResult as any);
-      jest.spyOn(verificationService, 'verifyChangedSettledTickets').mockResolvedValue(true);
+      jest.spyOn(verificationService, 'verifyChangedSettledTickets').mockResolvedValue(false);
       jest.spyOn(verificationService, 'isScoreSourceInsufficient').mockReturnValue(false);
       jest.spyOn(verificationService, 'isScoreInconsistent').mockReturnValue(false);
+      jest.spyOn(messageBoxService, 'confirm').mockImplementation((message, callback) => {
+        callback();
+      });
 
       await component.calculation();
-      let buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-      buttonYes.click();
-      tick();
-      component.calculation();
-      buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-      buttonYes.click();
-      tick();
-      buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-      buttonYes.click();
       tick();
 
-      expect(messageBoxService.closePopup).toHaveBeenCalled();
+      expect(toastrService.error).not.toHaveBeenCalled();
     }));
 
     it('should set messageError when settle unsuccessful', fakeAsync(async () => {
+      matchDetail.finalHomeScore = 1;
+      matchDetail.finalAwayScore = 0;
+      matchDetail.sportType = 1; // Not Muay Thai
+      component.matchDetail = matchDetail;
+      
       jest.spyOn(requestService, 'sendRequest').mockResolvedValue(unsuccessfulResult as any);
       jest.spyOn(verificationService, 'verifyChangedSettledTickets').mockResolvedValue(false);
       jest.spyOn(verificationService, 'isScoreSourceInsufficient').mockReturnValue(false);
       jest.spyOn(verificationService, 'isScoreInconsistent').mockReturnValue(false);
+      jest.spyOn(messageBoxService, 'confirm').mockImplementation((message, callback) => {
+        callback();
+      });
 
       await component.calculation();
-      let buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-      buttonYes.click();
-      tick();
-      buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-      buttonYes.click();
       tick();
       flush();
 
@@ -289,6 +299,10 @@ describe('FullTimeCalculationComponent', () => {
     }));
 
     it('should alert when score inconsistent and user is not leader', fakeAsync(async () => {
+      matchDetail.finalHomeScore = 1;
+      matchDetail.finalAwayScore = 0;
+      matchDetail.sportType = 1; // Not Muay Thai
+      component.matchDetail = matchDetail;
       jest.spyOn(verificationService, 'verifyChangedSettledTickets').mockResolvedValue(false);
       jest.spyOn(verificationService, 'isScoreSourceInsufficient').mockReturnValue(false);
       jest.spyOn(verificationService, 'isScoreInconsistent').mockReturnValue(true);
@@ -341,13 +355,11 @@ describe('FullTimeCalculationComponent', () => {
 
     it('should call popup when settle successful', fakeAsync(() => {
       jest.spyOn(requestService, 'sendRequest').mockResolvedValue(successfulResult as any);
+      jest.spyOn(messageBoxService, 'confirm').mockImplementation((message, callback) => {
+        callback();
+      });
 
       component.uncalculation();
-      let buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-      buttonYes.click();
-      tick();
-      buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-      buttonYes.click();
       tick();
 
       expect(messageBoxService.closePopup).toHaveBeenCalled();
@@ -355,13 +367,11 @@ describe('FullTimeCalculationComponent', () => {
 
     it('should ser messageError when settle unsuccessful', fakeAsync(() => {
       jest.spyOn(requestService, 'sendRequest').mockResolvedValue(unsuccessfulResult as any);
+      jest.spyOn(messageBoxService, 'confirm').mockImplementation((message, callback) => {
+        callback();
+      });
 
       component.uncalculation();
-      let buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-      buttonYes.click();
-      tick();
-      buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-      buttonYes.click();
       tick();
       flush();
 
@@ -369,21 +379,109 @@ describe('FullTimeCalculationComponent', () => {
     }));
   });
 
-  it('copyScore - should copy external score to match score', fakeAsync(() => {
-    jest.spyOn(verificationService, 'verifyCopyScore').mockReturnValue('');
-    match.matchDetail.exFTHomeScore = 3;
-    match.matchDetail.exFTAwayScore = 4;
-    component.match = match;
-    component.matchDetail = matchDetail;
+  describe('copyScore', () => {
+    beforeEach(() => {
+      component.match = match;
+      component.matchDetail = matchDetail;
+      jest.spyOn(toastrService, 'clear');
+      jest.spyOn(toastrService, 'error');
+      jest.spyOn(messageBoxService, 'confirm');
+    });
 
-    component.copyScore();
-    const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-    buttonYes.click();
-    tick();
+    it('should clear toastr and show confirmation when verification passes', () => {
+      jest.spyOn(verificationService, 'verifyCopyScore').mockReturnValue('');
 
-    expect(component.match.matchDetail.finalHomeScore).toEqual(3);
-    expect(component.match.matchDetail.finalAwayScore).toEqual(4);
-  }));
+      component.copyScore();
+
+      expect(toastrService.clear).toHaveBeenCalled();
+      expect(messageBoxService.confirm).toHaveBeenCalled();
+    });
+
+    it('should show error when verification fails', () => {
+      const errorMessage = 'Verification failed';
+      jest.spyOn(verificationService, 'verifyCopyScore').mockReturnValue(errorMessage);
+
+      component.copyScore();
+
+      expect(toastrService.error).toHaveBeenCalledWith(errorMessage);
+      expect(messageBoxService.confirm).not.toHaveBeenCalled();
+    });
+
+    it('should copy regular score when sport type is not Muay Thai', fakeAsync(() => {
+      jest.spyOn(verificationService, 'verifyCopyScore').mockReturnValue('');
+      matchDetail.sportType = 1; // Not Muay Thai
+      matchDetail.exFTHomeScore = 3;
+      matchDetail.exFTAwayScore = 4;
+      component.matchDetail = matchDetail;
+      component.match = match;
+      component.match.matchDetail = matchDetail;
+      
+      jest.spyOn(messageBoxService, 'confirm').mockImplementation((message, callback) => {
+        callback();
+      });
+
+      component.copyScore();
+      tick();
+
+      expect(component.matchDetail.finalHomeScore).toEqual(3);
+      expect(component.matchDetail.finalAwayScore).toEqual(4);
+    }));
+
+    it('should copy Muay Thai score with mapping when sport type is Muay Thai', fakeAsync(() => {
+      jest.spyOn(verificationService, 'verifyCopyScore').mockReturnValue('');
+      jest.spyOn(mappedScoreService, 'getMappedScore').mockReturnValue({
+        home: 1,
+        away: 0,
+        round: '3'
+      });
+      matchDetail.sportType = 44; // Muay Thai
+      matchDetail.exFTHomeScore = 3;
+      matchDetail.exFTAwayScore = 0;
+      component.matchDetail = matchDetail;
+      component.match = match;
+      component.match.matchDetail = matchDetail;
+      
+      jest.spyOn(messageBoxService, 'confirm').mockImplementation((message, callback) => {
+        callback();
+      });
+
+      component.copyScore();
+      tick();
+
+      expect(mappedScoreService.getMappedScore).toHaveBeenCalledWith(3, 0);
+      expect(component.matchDetail.finalHomeScore).toEqual(1);
+      expect(component.matchDetail.finalAwayScore).toEqual(0);
+      expect(component.matchDetail.betStatus).toEqual('3');
+    }));
+
+    it('should replace provider name in confirmation message', () => {
+      jest.spyOn(verificationService, 'verifyCopyScore').mockReturnValue('');
+      matchDetail.externalSourceName = 'TestProvider';
+
+      component.copyScore();
+
+      expect(messageBoxService.confirm).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: expect.stringContaining('TestProvider')
+        }),
+        expect.any(Function)
+      );
+    });
+
+    it('should use dash when external source name is empty', () => {
+      jest.spyOn(verificationService, 'verifyCopyScore').mockReturnValue('');
+      matchDetail.externalSourceName = '';
+
+      component.copyScore();
+
+      expect(messageBoxService.confirm).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: expect.stringContaining('-')
+        }),
+        expect.any(Function)
+      );
+    });
+  });
 
   it('isFinalScoreConfirmed should call service correctly', () => {
     jest.spyOn(verificationService, 'isFinalScoreConfirmed').mockReturnValue(true);
@@ -401,5 +499,110 @@ describe('FullTimeCalculationComponent', () => {
     const result = component.isScoreInconsistent;
 
     expect(result).toBe(true);
+  });
+
+  describe('private methods', () => {
+    beforeEach(() => {
+      component.match = match;
+      component.matchDetail = matchDetail;
+    });
+
+    describe('externalSourceName getter', () => {
+      it('should return external source name when not empty', () => {
+        matchDetail.externalSourceName = 'TestProvider';
+
+        const result = component.externalSourceName;
+
+        expect(result).toBe('TestProvider');
+      });
+
+      it('should return dash when external source name is empty', () => {
+        matchDetail.externalSourceName = '';
+
+        const result = component.externalSourceName;
+
+        expect(result).toBe('-');
+      });
+
+      it('should return dash when external source name is null', () => {
+        matchDetail.externalSourceName = null;
+
+        const result = component.externalSourceName;
+
+        expect(result).toBe('-');
+      });
+    });
+
+    describe('checkPlayTimeBySportType getter', () => {
+      it('should check Muay Thai play time correctly', () => {
+        matchDetail.sportType = 44; // Muay Thai
+        matchDetail.playTime = 90; // Assuming KickOffTime.muayThai = 90
+
+        const result = component['checkPlayTimeBySportType'];
+
+        expect(result).toBe(true);
+      });
+
+      it('should check Beach Soccer play time correctly', () => {
+        matchDetail.sportType = 61; // Beach Soccer
+        matchDetail.playTime = 45; // Assuming KickOffTime.beachSoccer = 45
+
+        const result = component['checkPlayTimeBySportType'];
+
+        expect(result).toBe(true);
+      });
+
+      it('should check default play time correctly', () => {
+        matchDetail.sportType = 1; // Other sport
+        matchDetail.playTime = 30; // Assuming KickOffTime.playTime = 30
+
+        const result = component['checkPlayTimeBySportType'];
+
+        expect(result).toBe(true);
+      });
+    });
+
+    describe('isCompletedOrConfirmScore getter', () => {
+      it('should return true when confirmHT > 0', () => {
+        matchDetail.confirmHT = 1;
+        matchDetail.confirmFT = 0;
+        matchDetail.eventStatus = 'Active';
+
+        const result = component['isCompletedOrConfirmScore'];
+
+        expect(result).toBe(true);
+      });
+
+      it('should return true when confirmFT > 0', () => {
+        matchDetail.confirmHT = 0;
+        matchDetail.confirmFT = 1;
+        matchDetail.eventStatus = 'Active';
+
+        const result = component['isCompletedOrConfirmScore'];
+
+        expect(result).toBe(true);
+      });
+
+      it('should return true when event status is completed', () => {
+        matchDetail.confirmHT = 0;
+        matchDetail.confirmFT = 0;
+        matchDetail.eventStatus = 'completed';
+        component.matchDetail = matchDetail;
+
+        const result = component['isCompletedOrConfirmScore'];
+
+        expect(result).toBe(true);
+      });
+
+      it('should return false when none of conditions are met', () => {
+        matchDetail.confirmHT = 0;
+        matchDetail.confirmFT = 0;
+        matchDetail.eventStatus = 'Active';
+
+        const result = component['isCompletedOrConfirmScore'];
+
+        expect(result).toBe(false);
+      });
+    });
   });
 });

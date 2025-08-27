@@ -39,11 +39,9 @@ import { OtherCalculationComponent } from './other/other-calculation.component';
 import { TicketCountComponent } from '../../shared/components/ticket-count/ticket-count.component';
 import { ResettleCheckerComponent } from '../../shared/components/resettle-checker/resettle-checker.component';
 import { NotReadyMatchComponent } from '../../shared/components/not-ready-match/not-ready-match.component';
-import { BandyCalculationComponent } from './bandy/calculation.component';
-import { MatchInfoCompoment } from './bandy/match-info.compoment';
 import { ResultDetailsService } from './bandy/resultdetails.service';
 import { ValidationService } from './bandy/validation.service';
-import { ResultByTeamNamePipe } from '../../shared/pipes/result-by-team-name.pipe';
+import { MappedScoreService } from './only-fulltime/mapped-score.service';
 @NgModule({
     imports: [
         BrowserModule,
@@ -108,7 +106,8 @@ import { ResultByTeamNamePipe } from '../../shared/pipes/result-by-team-name.pip
         GameTotalMatchService,
         OtherService,
         ResultDetailsService,
-        ValidationService
+        ValidationService,
+        MappedScoreService
     ]
 })
 
