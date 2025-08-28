@@ -8,7 +8,7 @@ import { InputFinalBaseComponent, InputOutSideBaseComponent } from "../input-bas
   imports: [CommonModule, FormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-  <select [disabled]="!enable" [value]="item.homeValue">
+  <select [disabled]="!enable" [(ngModel)]="item.homeValue" (ngModelChange)="checkResultIsMatched(item)">
     <option value="Y">Yes</option>
     <option value="N">No</option>
     <option value="None">None</option>
@@ -23,7 +23,7 @@ export class YesNoNoneComponent extends InputFinalBaseComponent {
   imports: [CommonModule, FormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-  <select [disabled]="!enable" [value]="externalResult.homeValue">
+  <select [disabled]="!enable" [(ngModel)]="externalResult.homeValue" (ngModelChange)="checkResultIsMatched(resultDetail)">
     <option value="Y">Yes</option>
     <option value="N">No</option>
     <option value="None">None</option>

@@ -20,7 +20,8 @@ public class BasketballBetTypeServiceImp(
     IGroupBetTypeService groupBetTypeService,
     IResourceNameService resourceNameService,
     IDynamicRepository dynamicRepository,
-    IInputTypeService inputTypeService)
+    IInputTypeService inputTypeService,
+    IGenerateBetTypeNameService generateBetTypeNameService)
     : IBasketballBetTypeService
 {
     private const int HalfBetTypeLength = 5;
@@ -49,6 +50,7 @@ public class BasketballBetTypeServiceImp(
         if (resourceId.Length >= MinResourceIdLength && GroupBetType.Player.Contains(Convert.ToInt32(resourceId.Substring(0, MinResourceIdLength))))
         {
             GroupPlayerBetType(item, players);
+            item.BetTypeName = generateBetTypeNameService.GenerateBetTypeName(item);
         }
         else
         {
@@ -134,10 +136,7 @@ public class BasketballBetTypeServiceImp(
 
         var oddFlex = (await dynamicRepository.FetchAsync<OddFlexModel>(criteria)).ToList();
 
-        Parallel.ForEach(oddFlex, playerModel =>
-            {
-                playerModel.Info = JsonConvert.DeserializeObject<OddsInfoModel>(playerModel.OddsInfo);
-            });
+        Parallel.ForEach(oddFlex, playerModel => playerModel.Info = JsonConvert.DeserializeObject<OddsInfoModel>(playerModel.OddsInfo));
         return oddFlex;
     }
 

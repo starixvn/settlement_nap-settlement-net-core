@@ -11,7 +11,7 @@ import { CommonModule } from '@angular/common';
   imports: [ FormsModule, CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-   <select [disabled]="!enable" [(ngModel)]="item.homeValue">
+   <select [disabled]="!enable" [(ngModel)]="item.homeValue" (ngModelChange)="checkResultIsMatched(item)">
     <option *ngFor="let selection of playerSelections" [value]="selection.betChoice">{{selection.playerName}}</option>
     <option value="none">None</option>
   </select>
@@ -37,7 +37,7 @@ export class PlayerSelectionComponent extends InputFinalBaseComponent implements
   imports: [ FormsModule, CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-   <select [disabled]="!enable" [(ngModel)]="externalResult.homeValue">
+   <select [disabled]="!enable" [(ngModel)]="externalResult.homeValue" (ngModelChange)="checkResultIsMatched(resultDetail)">
     <option *ngFor="let selection of playerSelections" [value]="selection.betChoice">{{selection.playerName}}</option>
    </select>
   `

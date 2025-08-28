@@ -49,7 +49,7 @@ public class GroupBetTypeServiceImp : IGroupBetTypeService
     public GroupNameModel GroupPlayerBetType(ResultDetail resultDetail, IList<OddFlexModel> oddFlexs)
     {
         resultDetail.OddFlex = oddFlexs.Where(x => x.ResourceId == resultDetail.ResourceId).ToList();
-        if (GroupBetType.PlayerSelectionType.Contains(resultDetail.BetType))
+        if (GroupBetType.MostPointsType.Contains(resultDetail.BetType))
         {
             return new GroupNameModel
             {

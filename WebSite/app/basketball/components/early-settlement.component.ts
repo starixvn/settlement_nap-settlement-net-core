@@ -3,7 +3,7 @@ import { ExternalSourceNamePipe } from './../../shared/pipes/external-source-nam
 import * as _ from 'lodash';
 import { CalculateAction, ScoreSourceType, SettlementStatusId, SportType, TicketStatusText } from '../../shared/constants';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Injector, ViewChild, ViewChildren, QueryList, AfterViewInit } from '@angular/core';
-import { ToastContainerDirective } from 'ngx-toastr';
+import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import { BasketballApiKeys, EarlyResourcesIds, KickOffTime, ResultStatus } from '../constants';
 import { BasketballService, BetStatusService, EarlyService, VerificationService } from '../services';
 import { Language } from '../../shared/language.native';
@@ -21,8 +21,8 @@ import { ResultRowComponent } from './early/result-row.component';
     selector: 'early-settlement',
     templateUrl: './early-settlement.component.html',
     standalone: true,
-    imports: [EarlyCommonModule, MatchDetailComponent, NewMultipleSelectComponent, ExternalSourceNamePipe, ResultRowComponent],
-    providers: [EarlyService, VerificationService, BasketballService, ResourceNameByIdPipe, BetStatusService],
+    imports: [EarlyCommonModule, MatchDetailComponent, NewMultipleSelectComponent, ExternalSourceNamePipe, ResultRowComponent, ToastContainerDirective],
+    providers: [EarlyService, VerificationService, BasketballService, ResourceNameByIdPipe, BetStatusService, ToastrService],
 
 })
 export class EarlySettlementComponent extends EarlyBaseComponent implements SportTemplate {

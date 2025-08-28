@@ -34,10 +34,6 @@ export class TeamSelectionComponent extends InputFinalBaseComponent {
   permission = this.earlyStore.permission();
   homeTeam = this.earlyStore.getHomeTeam();
   awayTeam = this.earlyStore.getAwayTeam();
-
-  checkResultIsMatched(resultDetail: ResultDetail) {
-    resultDetail.isScoreMismatched = this.verificationBaseService.isEarlyMismatchedWarning(resultDetail);
-  }
 }
 
 
@@ -47,7 +43,7 @@ export class TeamSelectionComponent extends InputFinalBaseComponent {
   imports: [CommonModule, FormsModule, MatTooltipModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-  <select [(ngModel)]="externalResult.homeValue" [disabled]="!enable"
+  <select [(ngModel)]="externalResult.homeValue" [disabled]="!enable" (ngModelChange)="checkResultIsMatched(resultDetail)"
                             [matTooltip]="getDropdownTooltip(externalResult.homeValue, 25, homeTeam, awayTeam)" matTooltipPosition="above">
                             <option></option>
                             <option value="H">{{homeTeam}}</option> 

@@ -28,12 +28,12 @@ public class OddsInfoModel
     public bool IsHome { get; set; }
 
     [JsonProperty("s")]
-    public List<SelectionInfo> Statistics { get; set; } = [];
+    public List<Statistic> Statistics { get; set; } = [];
     [JsonProperty("r")]
     public List<ResultInfo> Results { get; set; } = [];
 }
 
-public class SelectionInfo
+public class Statistic
 {
     [JsonProperty("t")]
     public string Type { get; set; }

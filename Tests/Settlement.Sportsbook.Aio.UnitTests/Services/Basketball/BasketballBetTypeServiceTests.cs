@@ -2,6 +2,7 @@
 using Settlement.ResourceInfos.Services;
 using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.Models;
+using Settlement.Sportsbook.Aio.Services;
 using Settlement.Sportsbook.Aio.Services.Basketball;
 
 namespace Settlement.Sportsbook.Aio.UnitTests.Services.Basketball;
@@ -13,6 +14,8 @@ public class BasketballBetTypeServiceTests
     private readonly IResourceNameService resourceNameService;
     private readonly IDynamicRepository dynamicRepository;
     private readonly IInputTypeService inputTypeService;
+    private readonly IGenerateBetTypeNameService generateBetTypeNameService;
+
 
     public BasketballBetTypeServiceTests()
     {
@@ -20,7 +23,8 @@ public class BasketballBetTypeServiceTests
         resourceNameService = Substitute.For<IResourceNameService>();
         dynamicRepository = Substitute.For<IDynamicRepository>();
         inputTypeService = Substitute.For<IInputTypeService>();
-        service = new BasketballBetTypeServiceImp(groupBetTypeService, resourceNameService, dynamicRepository, inputTypeService);
+        generateBetTypeNameService = Substitute.For<IGenerateBetTypeNameService>();
+        service = new BasketballBetTypeServiceImp(groupBetTypeService, resourceNameService, dynamicRepository, inputTypeService, generateBetTypeNameService);
     }
 
     [Fact]
@@ -33,7 +37,6 @@ public class BasketballBetTypeServiceTests
         await service.GetBetTypeNameAndGroup(resultDetails);
 
         // Assert
-        // Method should return early without calling any services
         Assert.True(true);
     }
 

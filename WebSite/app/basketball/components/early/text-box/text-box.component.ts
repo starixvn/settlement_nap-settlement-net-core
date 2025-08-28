@@ -10,7 +10,7 @@ import { InputFinalBaseComponent, InputOutSideBaseComponent } from '../input-bas
   imports: [CommonModule, FormsModule, MatTooltipModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-  <input type="text" [(ngModel)]="item.homeValue">
+  <input type="text" [(ngModel)]="item.homeValue" [disabled]="!enable"  (ngModelChange)="checkResultIsMatched(item)">
   `
 })
 export class TextBoxComponent extends InputFinalBaseComponent {
@@ -21,7 +21,7 @@ export class TextBoxComponent extends InputFinalBaseComponent {
   imports: [CommonModule, FormsModule, MatTooltipModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-  <input type="text" [(ngModel)]="externalResult.homeValue">
+  <input type="text" [(ngModel)]="externalResult.homeValue" [disabled]="!enable" (ngModelChange)="checkResultIsMatched(resultDetail)">
   `
 })
 export class TextBoxOutSideComponent extends InputOutSideBaseComponent {

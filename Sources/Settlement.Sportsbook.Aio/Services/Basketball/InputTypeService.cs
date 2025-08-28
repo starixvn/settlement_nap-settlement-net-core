@@ -20,8 +20,8 @@ public class InputTypeService : IInputTypeService
     {
         return resourceId switch
         {
-            var _ when GroupBetType.TextBoxType.Contains(resourceId) => InputType.SingleScore,
-            var _ when GroupBetType.YesNoNoneType.Contains(resourceId) => InputType.YesNoNone,
+            var _ when GroupBetType.SinglePlayerType.Contains(resourceId) => InputType.SingleScore,
+            var _ when GroupBetType.PerformanceType.Contains(resourceId) => InputType.YesNoNone,
             _ => InputType.PlayerNone,
         };
     }
