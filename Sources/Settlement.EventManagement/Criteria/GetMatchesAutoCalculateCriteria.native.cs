@@ -24,7 +24,7 @@ public class GetMatchesAutoCalculateCriteria : MultipleSiteCriteria
 
     public bool IsOverOnly { get; set; }
 
-    public bool IsInstant { get; set; }
+    public bool? IsInstant { get; set; }
 
     public string AutoSetting { get; set; }
 

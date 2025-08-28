@@ -25,7 +25,7 @@ public class ResourceNameServiceTests
 
     [Theory]
     [InlineData(9400, "Super Over Winner")]
-    [InlineData(9446, "Match Fours")]
+    [InlineData(9446, "Match Fours / Most Fours")]
     [InlineData(9453, "Highest Over Score")]
     public void GetNonInnsBetTypeName_Always_ReturnCorrectBetTypeName(int betTypeId, string betTypeName)
     {

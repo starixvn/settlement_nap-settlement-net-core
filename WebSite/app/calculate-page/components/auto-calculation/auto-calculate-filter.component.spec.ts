@@ -14,7 +14,6 @@ import { MaterialModule } from '../../../shared/material-module';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { DatePipe } from '@angular/common';
 import { DateFilter, ItemsSelect, League } from '../../../shared/models';
-import { of } from 'rxjs';
 import { Calculation } from '../../models';
 
 describe('AutoCalculateFilterComponent', () => {

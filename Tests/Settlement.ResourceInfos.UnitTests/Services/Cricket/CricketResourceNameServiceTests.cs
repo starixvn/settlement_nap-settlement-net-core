@@ -7,7 +7,7 @@ public class CricketResourceNameServiceTests
 {
     [Theory]
     [InlineData("9400", "Super Over Winner", "9400")]
-    [InlineData("9446", "Match Fours", "9446")]
+    [InlineData("9446", "Match Fours / Most Fours", "9446")]
     [InlineData("9453", "Highest Over Score", "9453")]
     [InlineData("96801001", "1st Inns Batsman Runs", "9680")]
     [InlineData("96622001", "2nd Inns Next Man Out", "9662")]

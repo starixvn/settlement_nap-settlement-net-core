@@ -88,6 +88,7 @@ describe('FilterComponent', () => {
         };
 
         jest.spyOn(moveTicketsService, 'getDate').mockReturnValue(of(dateServer));
+        jest.spyOn(moveTicketsService, 'getAutoMoveTicketsStatus').mockReturnValue(Promise.resolve(true));
         component.ngOnInit();
 
         fixture.whenStable()

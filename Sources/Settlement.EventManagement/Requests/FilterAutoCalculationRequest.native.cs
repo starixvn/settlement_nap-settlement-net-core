@@ -21,7 +21,7 @@ public class FilterAutoCalculationRequest : IRequest<CalculationLeagues>
 
     public bool IsUnCalculate { get; set; }
 
-    public bool IsInstant { get; set; }
+    public bool? IsInstant { get; set; }
 
     public bool IsMarkedTicket { get; set; }
 

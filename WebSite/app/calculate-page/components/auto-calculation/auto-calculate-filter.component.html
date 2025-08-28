@@ -15,30 +15,32 @@
         <ngbd-date-picker [date]="toDate" (change)="onSelectToDate($event)"></ngbd-date-picker>
       </div>
       <div class="col-md-7">
-        <div class="row">
-          <div class="col-md-2 field">
+        <div class="row filter-checkbox-row">
+          <div class="filter-checkbox-item">
             <input id="unCalcOnly" type="checkbox" [(ngModel)]="query.isUnCalculate">
             <label for="unCalcOnly" class="bold">&nbsp; Un-Calculated Game Only
             </label>
           </div>
-          <div class="col-md-2 field">
-            <input id="instantCalc" type="checkbox" [(ngModel)]="query.isInstant">
-            <label for="instantCalc" class="bold">&nbsp; Instant Calc
-            </label>
-          </div>
-          <div class="col-md-2 field">
+
+          <div class="filter-checkbox-item">
             <input id="IsMarkedTicket" type="checkbox" value="true" [(ngModel)]="query.isMarkedTicket">
             <label for="IsMarkedTicket" class="bold">&nbsp;Marked Tickets</label>
           </div>
 
-          <div class="col-md-2 field">
+          <div class="filter-checkbox-item">
             <input id="isHtOverOnly" type="checkbox" [(ngModel)]="query.isHtOverOnly">
             <label for="isHtOverOnly" class="bold">&nbsp; HT Over Only</label>
           </div>
 
-          <div class="col-md-2 field">
+          <div class="filter-checkbox-item">
             <input id="isOverOnly" type="checkbox" [(ngModel)]="query.isOverOnly">
             <label for="isOverOnly" class="bold">&nbsp; Over Only</label>
+          </div>
+
+          <div class="filter-checkbox-item instant-field">
+            <label class="bold" for="instant">Instant</label>
+            <new-multiple-select id="instant" (formValue)="onSelectInstant($event)"
+                [multipleSelect]="instantSelect"></new-multiple-select>
           </div>
         </div>
       </div>
@@ -78,6 +80,8 @@
             [multipleSelect]="payoutSelect"></new-multiple-select>
         </div>
       </div>
+
+      
       <div class="col-md-2" style="display: flex; align-items: center;">
         <button class="button" (click)="search()" [disabled]="isDisabled">Submit<span *ngIf="countdown() > 0">
             ({{countdown()}}s)</span></button>

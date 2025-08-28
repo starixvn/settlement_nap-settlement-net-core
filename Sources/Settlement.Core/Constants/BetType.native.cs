@@ -9,8 +9,9 @@ public static class BetType
         {9442, "1st Inns Highest Opening Partnership" },
         {9443, "1st Inns Highest Score in Over 1" },
 
-        {9446, "Match Fours" },
-        {9447, "Match Sixes" },
+        {9446, "Match Fours / Most Fours" },
+        {9447, "Match Sixes / Most Sixes" },
+
         {9449, "Match Wickets" },
         {9450, "Match Extras" },
         {9452, "Highest Individual Score" },
