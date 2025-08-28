@@ -130,7 +130,7 @@
                     </td>
                     <td class="align-right">
                         <input type="checkbox" class="select-checkbox" [(ngModel)]="map.checked"
-                            (ngModelChange)="onChangeGroupMap(map)" [disabled]="map.collapsed || map.isHoldResult" />
+                            (ngModelChange)="onSelectGroupMap(map)" [disabled]="map.collapsed || map.isHoldResult" />
                     </td>
                     <td class="hold-result">
                         <div [ngClass]="getResultSettingIcon(map.isHoldResult)" (click)="changeSettingGroup(map)"></div>

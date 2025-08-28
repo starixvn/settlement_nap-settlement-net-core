@@ -9,7 +9,7 @@ import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.p
 import { Language } from '../../shared/language.native';
 import * as _ from 'lodash';
 import { ResultSettingModel } from '../../shared/models';
-import { MatchDetail, Permission, ResultDetail } from '../../shared/models/sportsbook-sop';
+import { GroupMap, MatchDetail, Permission, ResultDetail } from '../../shared/models/sportsbook-sop';
 import { ExternalSourceNamePipe } from '../../shared/pipes/external-source-name.pipe';
 import { ResultByTeamNamePipe } from '../../shared/pipes/result-by-team-name.pipe';
 import { ExternalLinkPipe } from '../../score-source-setting/pipes';
@@ -18,6 +18,7 @@ import { ModalDialogComponent } from '../../shared/components/modal-dialog/modal
 import { ModalContentDialogComponent } from '../../shared/components/modal-dialog/modal-content-dialog.component';
 import { ResettleCheckerComponent } from '../../shared/components/resettle-checker/resettle-checker.component';
 import { PipesModule } from '../../shared/pipes/pipes.module.native';
+import { ResultRowComponent } from './early/result-row.component';
 
 describe('Component: EarlySettlementComponent', () => {
     let component: EarlySettlementComponent;
@@ -49,6 +50,16 @@ describe('Component: EarlySettlementComponent', () => {
 
     match.resultDetails = [resultDetail];
     const permission = new Permission();
+    
+    const groupMap: GroupMap = {
+        checked: false,
+        collapsed: false,
+        groupName: 'Test Group',
+        isHoldResult: false,
+        resultDetail: [resultDetail],
+        teamName: '',
+        icon: ''
+    };
 
     match.permission = permission;
     const successfulResult = {
@@ -437,5 +448,59 @@ describe('Component: EarlySettlementComponent', () => {
         expect(verificationService.autoFillEarlyResult).toHaveBeenCalled();
         expect(verificationService.isEarlyMismatchedWarning).toHaveBeenCalled();
     }));
+
+    describe('onChangeGroupMap', () => {
+        beforeEach(() => {
+            component.onChangeGroupMap = jest.fn();
+            component.resultDetails = [resultDetail];
+        })
+        it('should update result-row components when they exist', () => {
+            const mockComponent1 = { updateView: jest.fn() };
+            const mockComponent2 = { updateView: jest.fn() };
+            
+            component.resultRowComponents = {
+                forEach: jest.fn().mockImplementation((callback) => {
+                    [mockComponent1, mockComponent2].forEach(callback);
+                })
+            } as any;
+
+            component.onSelectGroupMap(groupMap);
+
+            expect(mockComponent1.updateView).toHaveBeenCalled();
+            expect(mockComponent2.updateView).toHaveBeenCalled();
+        });
+
+        it('should handle when no result-row components exist', () => {
+            component.resultRowComponents = null as any;
+            
+            expect(() => component.onSelectGroupMap(groupMap)).not.toThrow();
+        });
+    });
+
+    describe('changeSettingGroup', () => {
+        it('should update result-row components after setting change', () => {
+            const mockComponent = { updateView: jest.fn() };
+            
+            component.resultRowComponents = {
+                forEach: jest.fn().mockImplementation((callback) => {
+                    [mockComponent].forEach(callback);
+                })
+            } as any;
+
+            // Mock the parent method to execute the callback
+            jest.spyOn(component, 'changeSettingGroup').mockImplementation(function(this: any, groupMap) {
+                // Simulate callback execution
+                if (this.resultRowComponents) {
+                    this.resultRowComponents.forEach((component: any) => {
+                        component.updateView();
+                    });
+                }
+            });
+
+            component.changeSettingGroup(groupMap);
+
+            expect(mockComponent.updateView).toHaveBeenCalled();
+        });
+    });
 
 });

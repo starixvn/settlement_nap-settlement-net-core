@@ -367,4 +367,11 @@ describe('Component: ResultRowComponent', () => {
             expect(earlyStore.matchDetail).toHaveBeenCalled();
         });
     });
+
+    describe('updateView', () => {
+        it('should be callable without errors', () => {
+            expect(() => component.updateView()).not.toThrow();
+            expect(typeof component.updateView).toBe('function');
+        });
+    });
 });

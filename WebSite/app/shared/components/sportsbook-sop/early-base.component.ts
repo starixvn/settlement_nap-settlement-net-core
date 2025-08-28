@@ -232,7 +232,7 @@ export class EarlyBaseComponent {
         }
     }
 
-    public changeSettingGroup(groupMap: GroupMap) {
+    public changeSettingGroup(groupMap: GroupMap, func: () => void = () => {}) {
         if (this.permission.canCalculate || this.permission.canUncalculate || this.permission.canRefund) {
             const resourceIds = _.join(groupMap.resultDetail.map(item => item.resourceId), ',');
             const query = new ResultSettingQuery(this.matchId, ResultSettingType.holdResult,
@@ -242,6 +242,7 @@ export class EarlyBaseComponent {
             this.messageBoxService.confirm(this.confirmationDialogMessage, async () => {
                this.aioService.changeResultSetting(query).then((result) => {
                     this.setValueGroup(groupMap, result);
+                    func();
                 });
             });
         }

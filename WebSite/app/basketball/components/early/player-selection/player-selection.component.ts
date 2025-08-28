@@ -13,7 +13,8 @@ import { CommonModule } from '@angular/common';
   template: `
    <select [disabled]="!enable" [(ngModel)]="item.homeValue">
     <option *ngFor="let selection of playerSelections" [value]="selection.betChoice">{{selection.playerName}}</option>
-   </select>
+    <option value="none">None</option>
+  </select>
   `
 })
 export class PlayerSelectionComponent extends InputFinalBaseComponent implements OnInit  {

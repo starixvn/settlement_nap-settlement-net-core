@@ -2,14 +2,14 @@
 import { ExternalSourceNamePipe } from './../../shared/pipes/external-source-name.pipe';
 import * as _ from 'lodash';
 import { CalculateAction, ScoreSourceType, SettlementStatusId, SportType, TicketStatusText } from '../../shared/constants';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Injector, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Injector, ViewChild, ViewChildren, QueryList, AfterViewInit } from '@angular/core';
 import { ToastContainerDirective } from 'ngx-toastr';
 import { BasketballApiKeys, EarlyResourcesIds, KickOffTime, ResultStatus } from '../constants';
 import { BasketballService, BetStatusService, EarlyService, VerificationService } from '../services';
 import { Language } from '../../shared/language.native';
 import { Match } from '../models';
 import { BlockUIService } from '../../shared/services';
-import { ResultDetail, SettleQuery, SportTemplate } from '../../shared/models/sportsbook-sop';
+import { GroupMap, ResultDetail, SettleQuery, SportTemplate } from '../../shared/models/sportsbook-sop';
 import { EarlyBaseComponent } from '../../shared/components/sportsbook-sop/early-base.component';
 import { MatchDetailComponent } from './match-detail.component';
 import { NewMultipleSelectComponent } from '../../shared/components/multiple-select/multiple-select.component';
@@ -23,11 +23,11 @@ import { ResultRowComponent } from './early/result-row.component';
     standalone: true,
     imports: [EarlyCommonModule, MatchDetailComponent, NewMultipleSelectComponent, ExternalSourceNamePipe, ResultRowComponent],
     providers: [EarlyService, VerificationService, BasketballService, ResourceNameByIdPipe, BetStatusService],
-    changeDetection: ChangeDetectionStrategy.OnPush
 
 })
 export class EarlySettlementComponent extends EarlyBaseComponent implements SportTemplate {
     @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
+    @ViewChildren(ResultRowComponent) resultRowComponents: QueryList<ResultRowComponent>;
     private earlyService: EarlyService;
     public blockUI = true;
     public match: Match;
@@ -36,8 +36,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     constructor(
         protected injector: Injector,
         protected verificationService: VerificationService,
-        private readonly earlyStore: EarlyStore,
-        private readonly  cdr: ChangeDetectorRef) {
+        private readonly earlyStore: EarlyStore) {
         super(injector, verificationService);
     }
 
@@ -54,7 +53,6 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         this.isReadyMatch = this.match.matchDetail.playTime >= KickOffTime.playTime;
         this.permission = this.match.permission;
         this.init();
-        this.cdr.markForCheck();
     }
     
       public get outSideCount() {
@@ -244,6 +242,27 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
             this.doSaveResult('', this.match.originalResultDetail, this.resultDetails, BasketballApiKeys.normalMatch, () => { });
         });
+    }
+
+    public onSelectGroupMap(map: GroupMap) {
+        super.onChangeGroupMap(map);
+
+        if (this.resultRowComponents) {
+            this.resultRowComponents.forEach(component => {
+                component.updateView();
+            });
+        }
+    }
+
+    public changeSettingGroup(groupMap: GroupMap) {
+        super.changeSettingGroup(groupMap, () => {
+        if (this.resultRowComponents) {
+            this.resultRowComponents.forEach(component => {
+                    component.updateView();
+                });
+            }
+        });
+
     }
 
     public canSettleResult(result: ResultDetail) {
