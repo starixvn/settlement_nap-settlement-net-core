@@ -81,7 +81,7 @@ describe('FilterComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('should return date and number item as expected.', fakeAsync(() => {
+    it('should return date and number item as expected.', fakeAsync(async () => {
         const dateServer: DateFilter = {
             fromDate: "2020/06/20 00:00:00",
             toDate: "2020/06/19 00:00:00",
@@ -91,12 +91,12 @@ describe('FilterComponent', () => {
         jest.spyOn(moveTicketsService, 'getAutoMoveTicketsStatus').mockReturnValue(Promise.resolve(true));
         component.ngOnInit();
 
-        fixture.whenStable()
-            .then(() => {
-                expect(component.fromDate).toEqual({ year: 2020, month: 6, day: 20 });
-                expect(component.toDate).toEqual({ year: 2020, month: 6, day: 19 });
-                expect(component.matchStatusSelect.items.length).toEqual(6);
-            });
+        await fixture.whenStable();
+        tick();
+
+        expect(component.fromDate).toEqual({ year: 2020, month: 6, day: 20 });
+        expect(component.toDate).toEqual({ year: 2020, month: 6, day: 19 });
+        expect(component.matchStatusSelect.items.length).toEqual(6);
     }));
 
     describe('search method', () => {

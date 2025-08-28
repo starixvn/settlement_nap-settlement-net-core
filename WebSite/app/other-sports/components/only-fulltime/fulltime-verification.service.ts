@@ -1,16 +1,16 @@
-import { Injectable } from '@angular/core';
-import { Match, MatchDetail } from '../../models';
+import { inject, Injectable } from '@angular/core';
+import { Match, MatchDetail, MappedScore } from '../../models';
 import * as _ from 'lodash';
 import { SportType, TicketStatusText } from '../../../shared/constants';
 import { Language } from '../../../shared/language.native';
 import { map } from 'rxjs/operators';
 import { firstValueFrom } from 'rxjs';
 import { RequestService } from '../..//services/request.service';
+import { MappedScoreService } from './mapped-score.service';
 @Injectable()
 export class FullTimeVerificationService {
-
-    constructor(private readonly requestService: RequestService) {
-    }
+    private readonly requestService = inject(RequestService);
+     private readonly mappedScoreService = inject(MappedScoreService);
 
     public checkScoreMuayThai(matchDetail: MatchDetail) {
         if (matchDetail.sportType !== SportType.muayThai) {
@@ -81,26 +81,64 @@ export class FullTimeVerificationService {
         return !this.isFinalScoreConfirmed(matchDetail) && !this.isExistProviderScore(matchDetail);
     }
 
-    public isScoreInconsistent(matchDetail: MatchDetail) {
-        const isExistTraderScore = this.isFinalScoreConfirmed(matchDetail);
-        const isExistInputScore = this.isExistInputScore(matchDetail);
-        const isExistProviderScore = this.isExistProviderScore(matchDetail);
-        let isInconsistent = false;
-        if (isExistInputScore) {
-            if (isExistTraderScore) {
-                isInconsistent = Number(matchDetail.finalHomeScore) !== matchDetail.originalFinalHomeScore
-                    || Number(matchDetail.finalAwayScore) !== matchDetail.originalFinalAwayScore;
-            }
+    public isScoreInconsistent(matchDetail: MatchDetail): boolean {
+        const hasTraderScore = this.isFinalScoreConfirmed(matchDetail);
+        const hasInputScore = this.isExistInputScore(matchDetail);
+        const hasProviderScore = this.isExistProviderScore(matchDetail);
 
-            if (!isInconsistent && isExistProviderScore) {
-                isInconsistent = Number(matchDetail.finalHomeScore) !== matchDetail.exFTHomeScore
-                    || Number(matchDetail.finalAwayScore) !== matchDetail.exFTAwayScore;
-            }
-        } else if (isExistTraderScore && isExistProviderScore) {
-            isInconsistent = matchDetail.originalFinalHomeScore !== matchDetail.exFTHomeScore
-                || matchDetail.originalFinalAwayScore !== matchDetail.exFTAwayScore;
+        if (hasInputScore) {
+            return this.isInputScoreInconsistent(matchDetail, hasTraderScore, hasProviderScore);
         }
 
-        return isInconsistent;
+        if (hasTraderScore && hasProviderScore) {
+            return this.isTraderProviderScoreInconsistent(matchDetail);
+        }
+
+        return false;
+    }
+
+    private isInputScoreInconsistent(matchDetail: MatchDetail, hasTraderScore: boolean, hasProviderScore: boolean): boolean {
+        if (hasTraderScore && this.isInputTraderScoreInconsistent(matchDetail)) {
+            return true;
+        }
+
+        if (hasProviderScore && this.isInputProviderScoreInconsistent(matchDetail)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private isInputTraderScoreInconsistent(matchDetail: MatchDetail): boolean {
+        return Number(matchDetail.finalHomeScore) !== matchDetail.originalFinalHomeScore
+            || Number(matchDetail.finalAwayScore) !== matchDetail.originalFinalAwayScore;
+    }
+
+    private isInputProviderScoreInconsistent(matchDetail: MatchDetail): boolean {
+        const mappedScore = this.getMappedScores(matchDetail);
+
+        return Number(matchDetail.finalHomeScore) !== mappedScore.home
+            || Number(matchDetail.finalAwayScore) !== mappedScore.away 
+            || mappedScore.round !== matchDetail.betStatus;
+    }
+
+    private isTraderProviderScoreInconsistent(matchDetail: MatchDetail): boolean {
+        const mappedScore = this.getMappedScores(matchDetail);
+
+        return matchDetail.originalFinalHomeScore !== mappedScore.home
+            || matchDetail.originalFinalAwayScore !== mappedScore.away
+            || mappedScore.round !== matchDetail.betStatus;
+    }
+
+    private getMappedScores(matchDetail: MatchDetail): MappedScore {
+        if (matchDetail.sportType === SportType.muayThai) {
+            return this.mappedScoreService.getMappedScore(matchDetail.exFTHomeScore, matchDetail.exFTAwayScore);
+        }
+
+        return { 
+            home: matchDetail.exFTHomeScore, 
+            away: matchDetail.exFTAwayScore, 
+            round: matchDetail.betStatus 
+        };
     }
 }

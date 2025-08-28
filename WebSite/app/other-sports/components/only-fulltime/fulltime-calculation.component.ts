@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, inject } from '@angular/core';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import { FullTimeService } from './fulltime.service';
 import { FullTimeVerificationService } from './fulltime-verification.service';
@@ -8,10 +8,11 @@ import { MessageBoxService } from '../../../shared/services';
 import { CalculateAction, MatchStatus, SportType } from '../../../shared/constants';
 import { Language } from '../../../shared/language.native';
 import * as _ from 'lodash';
-import { KickOffTime, UpcommingSports } from '../../constants';
+import { KickOffTime } from '../../constants';
 import { ScorePipe } from '../../pipes';
 import { RequestService } from '../../services/request.service';
 import { SportTemplate } from '../../../shared/models/sportsbook-sop';
+import { MappedScoreService } from './mapped-score.service';
 @Component({
   selector: 'calculation-actions',
   templateUrl: './fulltime-calculation.component.html',
@@ -21,24 +22,26 @@ import { SportTemplate } from '../../../shared/models/sportsbook-sop';
 })
 export class FullTimeCalculationComponent implements SportTemplate {
   @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
+  private readonly requestService = inject(RequestService);
+  private readonly fullTimeService = inject(FullTimeService);
+  private readonly messageBoxService = inject(MessageBoxService);
+  private readonly verificationService = inject(FullTimeVerificationService);
+  private readonly toastrService = inject(ToastrService);
+  private readonly mappedScoreService = inject(MappedScoreService);
+  public readonly confirmationDialogMessage = new ModalDialogMessage();
   public isReadyMatch = false;
   public match: Match;
   public matchDetail: MatchDetail;
   public permission: Permission;
   public isReSettledTickets: boolean;
   public scoreClass: string;
-  public confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
   public muayThai = SportType.muayThai;
   private oldBetStatus = '';
   private readonly maxRound = 5;
   private refResultStatus: number = null;
-  constructor(private readonly requestService: RequestService,
-    private readonly fullTimeService: FullTimeService,
-    private readonly messageBoxService: MessageBoxService,
-    private readonly verificationService: FullTimeVerificationService,
-    private readonly toastrService: ToastrService) {
+  constructor() {
       this.confirmationDialogMessage.title = Language.confirmationBox;
-  }
+  } 
 
   async getMatch(matchId: number) {
     this.toastrService.overlayContainer = this.toastContainer;
@@ -193,19 +196,48 @@ export class FullTimeCalculationComponent implements SportTemplate {
     return !_.isEmpty(value) && Number(value) === 0;
   }
 
-  public copyScore() {
+  public copyScore(): void {
     this.toastrService.clear();
+    
     const errorMessage = this.verificationService.verifyCopyScore(this.match.matchDetail);
-    if(_.isEmpty(errorMessage)) {
-      const message = Language.confirmMessageCopySBOScore.replace("'provider_name'", this.externalSourceName);
-      this.confirmationDialogMessage.message = message;
-      this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
-        this.match.matchDetail.finalHomeScore = this.match.matchDetail.exFTHomeScore;
-        this.match.matchDetail.finalAwayScore = this.match.matchDetail.exFTAwayScore;
-      });
+    if (_.isEmpty(errorMessage)) {
+      this.showCopyScoreConfirmation();
     } else {
       this.toastrService.error(errorMessage);
     }
+  }
+
+  private showCopyScoreConfirmation(): void {
+    const message = Language.confirmMessageCopySBOScore.replace("'provider_name'", this.externalSourceName);
+    this.confirmationDialogMessage.message = message;
+    
+    this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
+      this.copyProviderScoreToMatchDetail();
+    });
+  }
+
+  private copyProviderScoreToMatchDetail(): void {
+    if (this.matchDetail.sportType === SportType.muayThai) {
+      this.copyMuayThaiScore();
+    } else {
+      this.copyRegularScore();
+    }
+  }
+
+  private copyMuayThaiScore(): void {
+    const mapSboToSettle = this.mappedScoreService.getMappedScore(
+      this.matchDetail.exFTHomeScore, 
+      this.matchDetail.exFTAwayScore
+    );
+    
+    this.matchDetail.finalHomeScore = mapSboToSettle.home;
+    this.matchDetail.finalAwayScore = mapSboToSettle.away;
+    this.matchDetail.betStatus = mapSboToSettle.round;
+  }
+
+  private copyRegularScore(): void {
+    this.matchDetail.finalHomeScore = this.matchDetail.exFTHomeScore;
+    this.matchDetail.finalAwayScore = this.matchDetail.exFTAwayScore;
   }
 
   public isFinalScoreConfirmed() {

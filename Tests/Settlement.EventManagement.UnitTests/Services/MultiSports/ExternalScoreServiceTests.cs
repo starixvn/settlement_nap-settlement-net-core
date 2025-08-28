@@ -5,11 +5,16 @@ namespace Settlement.EventManagement.UnitTests.Services.MultiSports;
 
 public class ExternalScoreServiceTests
 {
-    private readonly IExternalScoreService service = new ExternalScoreServiceImp();
+    private readonly IExternalScoreService service;
 
     private const int MatchId = 1;
-
     private const string UserConfirmation = "sa";
+
+    public ExternalScoreServiceTests()
+    {
+        var muayThaiHelperService = Substitute.For<MuayThaiHelperService>();
+        service = new ExternalScoreServiceImp(muayThaiHelperService);
+    }
 
     [Fact]
     public void IsInconsistentFullTimeScore_ExternalResultDetailIsNull_ReturnsFalse()
