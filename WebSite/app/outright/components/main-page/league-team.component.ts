@@ -154,15 +154,8 @@ export class LeagueTeamComponent implements OnChanges {
     checkButtonClass(league: LeagueMatch) {
         if (_.isNull(league.deadHeat)) {
             league.deadHeatClass = DeadHeatButton.notSet;
-            league.hasPotentialDeadHeatIssue = false;
             return;
         }
         league.deadHeatClass = league.deadHeat ? DeadHeatButton.yes : DeadHeatButton.no;
-        
-        if (league.deadHeat) {
-            league.hasPotentialDeadHeatIssue = league.deadHeatTeam < 2  && league.isCompleted;
-        } else {
-            league.hasPotentialDeadHeatIssue = false;
-        }
     }
 }

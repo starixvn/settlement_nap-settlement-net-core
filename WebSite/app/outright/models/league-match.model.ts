@@ -6,10 +6,7 @@ export class LeagueMatch {
     collapsed: boolean;
     eventDate: string;
     deadHeat: boolean | null;
-    deadHeatTeam: number;
-    isCompleted: boolean;
+    highLight: boolean;
     deadHeatClass: string;
-    hasPotentialDeadHeatIssue: boolean;
-
 }
 

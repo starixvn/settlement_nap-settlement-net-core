@@ -42,9 +42,9 @@
 
 <ng-template #leagueTemplate let-leagueMatch="leagueMatch">
   <ng-container *ngFor="let league of leagueMatch">
-    <tr class="league-name" [ngClass]="{'league-potential-issue': league.hasPotentialDeadHeatIssue}"
-      [matTooltip]="league.hasPotentialDeadHeatIssue ? 'Potential issue: Missing Won - Dead Heat match.' : ''"
-      [matTooltipDisabled]="!league.hasPotentialDeadHeatIssue">
+    <tr class="league-name" [ngClass]="{'league-potential-issue': league.highLight && league.deadHeat}"
+      [matTooltip]=" league.highLight && league.deadHeat ? 'Potential issue: Missing Won - Dead Heat match.' : ''"
+      [matTooltipDisabled]="!(league.highLight && league.deadHeat)">
       <td>
         <div class="leangue-name__content" (click)="collapseLeague(league)">
           <span class="collapse-icon" [ngClass]="league.collapsed ? 'collapsed' : ''"></span>

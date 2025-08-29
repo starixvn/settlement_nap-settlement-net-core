@@ -60,9 +60,7 @@ describe('LeagueTeamComponent', () => {
         eventDate: '',
         deadHeat: false,
         deadHeatClass: '',
-        hasPotentialDeadHeatIssue: false,
-        deadHeatTeam: 0,
-        isCompleted: false
+        highLight: false
     }
 
     beforeEach(async () => {

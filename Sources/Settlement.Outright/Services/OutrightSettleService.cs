@@ -35,6 +35,8 @@ public class OutrightSettleServiceImp(
 {
     private const string SpName = "NAP_Admin_Settlement_Outright";
 
+    private const int ActionSaveScore = 81064;
+
     private readonly List<string> runningStatus = [EventStatus.Running, EventStatus.Closed, EventStatus.Internal];
 
     public async Task<LeagueInfo> GetLeagueInfo(GetLeagueInfoRequest request)
@@ -227,6 +229,27 @@ public class OutrightSettleServiceImp(
 
         await repository.ExecuteAsync(criteria);
 
+        await LogRequestSaveScore(request);
+
         return new Result();
+    }
+
+    private async Task LogRequestSaveScore(SaveScoreRequest request)
+    {
+        var tasks = request.Teams.Select(match =>
+        {
+            var criteria = new InsertLogOutRightCriteria
+            {
+                LeagueId = match.LeagueId,
+                MatchId = match.OrId,
+                Result = match.ScreenShot,
+                UserId = currentSession.UserId,
+                ActionId = ActionSaveScore,
+                EventDate = DateTimeOffset.Now
+            };
+
+            return repository.ExecuteAsync(criteria);
+        });
+        await Task.WhenAll(tasks.ToArray());
     }
 }

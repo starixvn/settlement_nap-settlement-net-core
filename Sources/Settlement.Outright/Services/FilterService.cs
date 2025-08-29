@@ -67,7 +67,7 @@ public class FilterServiceImp(
     public async Task<SportOutright> Filter(FilterRequest request)
     {
         var criteria = mapper.Map<FilterRequest, GetOutrightDetailCriteria>(request);
-        var (deadHeatSettings, teams, deadHeatInfos) = await repository.FetchMultipleAsync<DeadHeatSetting, Team, DeadHeatInfo>(criteria);
+        var (deadHeatSettings, teams, deadHeatInfos) = await repository.FetchMultipleAsync<DeadHeatSetting, Team, LeagueSpecialIndicate>(criteria);
         var listTeams = teams.ToList();
         var groupTeam = await outrightTicketService.GetTeamsTicketCount(listTeams);
 
@@ -127,7 +127,7 @@ public class FilterServiceImp(
         }
     }
 
-    private IEnumerable<LeagueMatch> GroupLeague(IEnumerable<Team> teams, IEnumerable<DeadHeatSetting> deadHeatSettings, IEnumerable<DeadHeatInfo> deadHeatInfos)
+    private IEnumerable<LeagueMatch> GroupLeague(IEnumerable<Team> teams, IEnumerable<DeadHeatSetting> deadHeatSettings, IEnumerable<LeagueSpecialIndicate> leagueSpecialIndicates)
     {
         var currentLeague = 0;
         var listLeague = new List<LeagueMatch>();
@@ -163,11 +163,10 @@ public class FilterServiceImp(
                 l.EventDate = value.EventDate;
             }
 
-            var leagueInfo = deadHeatInfos.FirstOrDefault(item => item.LeagueId == l.LeagueId);
+            var leagueInfo = leagueSpecialIndicates.FirstOrDefault(item => item.LeagueId == l.LeagueId);
             if (leagueInfo is not null)
             {
-                l.IsCompleted = leagueInfo.IsCompleted;
-                l.DeadHeatTeam = leagueInfo.DeadHeatTeam;
+                l.HighLight = leagueInfo.HighLight;
             }
         });
 

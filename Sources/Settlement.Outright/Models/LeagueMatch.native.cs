@@ -12,7 +12,7 @@ public class LeagueMatch
 
     public bool IsCompleted { get; set; }
 
-    public int DeadHeatTeam { get; set; }
+    public bool HighLight { get; set; }
 
     public DateTime EventDate { get; set; }
 

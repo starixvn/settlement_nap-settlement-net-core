@@ -1,2 +1,2 @@
 ﻿namespace Settlement.Outright.Models;
-public record DeadHeatInfo(int LeagueId, int DeadHeatTeam, bool IsCompleted);
+public record LeagueSpecialIndicate(int LeagueId, bool HighLight);
