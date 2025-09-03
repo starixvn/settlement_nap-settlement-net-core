@@ -216,11 +216,21 @@ public static class WebSites
         services.Configure<KestrelServerOptions>(options =>
         {
             options.AllowSynchronousIO = true;
+
+            options.Limits.MinRequestBodyDataRate = new MinDataRate(
+                bytesPerSecond: 512,
+                gracePeriod: TimeSpan.FromSeconds(30)
+            );
+
+            options.Limits.RequestHeadersTimeout = TimeSpan.FromMinutes(5);
+            options.Limits.KeepAliveTimeout = TimeSpan.FromMinutes(5);
+            options.Limits.MaxRequestBodySize = 104857600;
         });
 
         services.Configure<IISServerOptions>(options =>
         {
             options.AllowSynchronousIO = true;
+            options.MaxRequestBodySize = 104857600;
         });
 
         services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Optimal);

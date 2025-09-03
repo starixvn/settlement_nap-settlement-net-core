@@ -58,7 +58,6 @@ public class ErrorHandler(
 
         await logger.ErrorAsync(logMessage);
     }
-            // ignored
 
     private async Task WriteResponse(HttpContext context, Exception exception)
     {
@@ -85,5 +84,4 @@ public class ErrorHandler(
             await context.Response.WriteAsync(exception.StackTrace);
         }
     }
-            // ignored
 }
