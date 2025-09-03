@@ -72,6 +72,20 @@ services.AddHealthChecks();
 
 var app = builder.Build();
 
+app.Use(async (context, next) =>
+{
+    try
+    {
+        context.RequestAborted = new CancellationTokenSource(TimeSpan.FromMinutes(5)).Token;
+        await next();
+    }
+    catch (OperationCanceledException)
+    {
+        context.Response.StatusCode = 408;
+        await context.Response.WriteAsync("Request timeout - data arrived too slowly");
+    }
+});
+
 app.UseDeveloperExceptionPage();
 app.UseResponseCompression();
 app.UseStaticFiles();

@@ -10,5 +10,5 @@ public class SportModel
     public string Name { get; set; }
 
     [Key("leagues")]
-    public List<LeagueModel> Leagues { get; set; }
+    public List<LeagueModel> Leagues { get; set; } = [];
 }

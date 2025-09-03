@@ -7,7 +7,7 @@ public class LeagueModel
     public int LeagueId { get; set; }
 
     [Key("name")]
-    public string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
 
     [Key("autoCalcSetting")]
     public AutoCalculationSetting AutoCalcSetting { get; set; } = new();
@@ -28,7 +28,7 @@ public class LeagueModel
     public int RefundWaitingTime { get; set; }
 
     [Key("matches")]
-    public List<Match> Matches { get; set; }
+    public List<Match> Matches { get; set; } = [];
 
     [Key("sportType")]
     public int SportType { get; set; }
