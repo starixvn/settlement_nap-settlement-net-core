@@ -25,17 +25,17 @@
 		</div>
 
 		<div class="footer" *ngIf="teams.length > 0">
-			<button class="btn btn-primary " [ngClass]="{ 'btn-disabled': disableCalculate() }"
+			<button [ngClass]="{  button: true, 'btn-disabled': disableCalculate() }"
 				[disabled]="disableCalculate()" (click)="calculate()">
 				Calculate
 			</button>
 
-			<button class="btn btn-primary" *ngIf="viewRecalculate" [ngClass]="{ 'btn-disabled': disableRecalculate }"
+			<button *ngIf="viewRecalculate" [ngClass]="{  button: true, 'btn-disabled': disableRecalculate }"
 				[disabled]="disableRecalculate" (click)="calculate(false)">
 				Re-Calculate
 			</button>
 
-			<button style="float: right;" class="btn btn-danger" [ngClass]="{ 'btn-disabled': disableRecalculate }"
+			<button class="save-score btn btn-danger" [ngClass]="{ 'btn-disabled': disableRecalculate }"
 				[disabled]="disableRecalculate" (click)="saveScore()">
 				Save Score
 			</button>
@@ -45,7 +45,7 @@
 	<ng-template #body>
 		<table>
 			<tbody>
-				<tr *ngIf="(teams | status: statusSelected : screenshotSelected).length == 0">
+				<tr *ngIf="(teams | status: statusSelected : screenshotSelected | ticketStatusFilter: ticketStatusSelected).length == 0">
 					<td [attr.colspan]="leagueSettle.permission.isLeader ? '8' : '6'">There is no information available</td>
 				</tr>
 

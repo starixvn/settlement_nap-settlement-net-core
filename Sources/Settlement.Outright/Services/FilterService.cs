@@ -41,7 +41,7 @@ public class FilterServiceImp(
     {
         var criteria = mapper.Map<SportLeagueRequest, GetOutrightSportLeaguesCriteria>(request);
 
-        var leagues = (await repository.FetchAsync<League>(criteria)).ToList();
+        var leagues = (await repository.FetchAsync<League>(criteria));
 
         foreach (var item in leagues)
         {
@@ -55,7 +55,7 @@ public class FilterServiceImp(
             item => item.LeagueName,
             item => item.SportType == SportType.Soccer,
             item => item.SportType == SportType.OtherSports,
-            item => PopularSport.IndexOf(item.SportType) > -1);
+            item => PopularSport.Contains(item.SportType));
 
         return new SportLeague
         {
@@ -68,17 +68,18 @@ public class FilterServiceImp(
     {
         var criteria = mapper.Map<FilterRequest, GetOutrightDetailCriteria>(request);
         var (deadHeatSettings, teams, deadHeatInfos) = await repository.FetchMultipleAsync<DeadHeatSetting, Team, LeagueSpecialIndicate>(criteria);
-        var listTeams = teams.ToList();
-        var groupTeam = await outrightTicketService.GetTeamsTicketCount(listTeams);
 
-        AddTicketCountToTeam(listTeams, groupTeam.ToList());
+        var teamList = teams.ToList();
+        var teamTickets = await outrightTicketService.GetTeamsTicketCount(teamList);
 
-        var sortedTeams = SortList(listTeams.ToList(),
+        AddTicketCountToTeam(teamList, teamTickets.ToList());
+
+        var sortedTeams = SortList(teamList,
             item => item.SportName,
             item => item.LeagueName,
             item => item.SportType == SportType.Soccer,
             item => item.SportType == SportType.OtherSports,
-            item => PopularSport.IndexOf(item.SportType) > -1);
+            item => PopularSport.Contains(item.SportType));
 
         var leagues = GroupLeague(sortedTeams, deadHeatSettings, deadHeatInfos);
 
@@ -88,13 +89,19 @@ public class FilterServiceImp(
         };
     }
 
-    private static IEnumerable<OutrightModel> CreateSportOutright(IEnumerable<LeagueMatch> leagues)
+    private static List<OutrightModel> CreateSportOutright(IEnumerable<LeagueMatch> leagues)
     {
-        var leagueGrouped = leagues.GroupBy(item => item.SportName);
-        return leagueGrouped.Select(league => new OutrightModel { SportName = league.Key, LeagueMatch = league }).ToList();
+        return leagues
+            .GroupBy(league => league.SportName)
+            .Select(group => new OutrightModel
+            {
+                SportName = group.Key,
+                LeagueMatch = group
+            })
+            .ToList();
     }
 
-    public static List<T> SortList<T>(List<T> items, Func<T, string> sportName, Func<T, string> leagueName, Func<T, bool> soccerOnTop, Func<T, bool> otherSportBottom, Func<T, bool> popularSport)
+    private static List<T> SortList<T>(List<T> items, Func<T, string> sportName, Func<T, string> leagueName, Func<T, bool> soccerOnTop, Func<T, bool> otherSportBottom, Func<T, bool> popularSport)
     {
         var sortBySportName = items.OrderBy(sportName).ThenBy(leagueName);
         return sortBySportName.OrderByDescending(soccerOnTop)
@@ -104,72 +111,61 @@ public class FilterServiceImp(
 
     private static IEnumerable<Sport> GenerateSport(IEnumerable<League> leagues)
     {
-        var listLeagueDistinct = leagues.GroupBy(league => league.SportType).Select(league => league.First());
-        return listLeagueDistinct.Select(item =>
-            new Sport
+        return leagues
+            .GroupBy(league => league.SportType)
+            .Select(group => group.First())
+            .Select(league => new Sport
             {
-                SportType = item.SportType,
-                SportName = item.SportName,
-                Group = PopularSport.Exists(sport => sport == item.SportType) ? SportGroup.PopularGroup : SportGroup.OtherGroup
+                SportType = league.SportType,
+                SportName = league.SportName,
+                Group = PopularSport.Contains(league.SportType) ? SportGroup.PopularGroup : SportGroup.OtherGroup
             });
     }
 
     private void AddTicketCountToTeam(IEnumerable<Team> teams, ICollection<TeamTicketModel> teamTickets)
     {
+        var ticketLookup = teamTickets.ToDictionary(t => t.OrId, t => t.TotalTicket);
+
         foreach (var team in teams)
         {
             team.RefDataService = refDataService;
-            var foundTeam = teamTickets.FirstOrDefault(t => t.OrId == team.OrId);
-            if (foundTeam is not null)
+            if (ticketLookup.TryGetValue(team.OrId, out var ticketCount))
             {
-                team.BetCount = foundTeam.TotalTicket;
+                team.BetCount = ticketCount;
             }
         }
     }
 
     private IEnumerable<LeagueMatch> GroupLeague(IEnumerable<Team> teams, IEnumerable<DeadHeatSetting> deadHeatSettings, IEnumerable<LeagueSpecialIndicate> leagueSpecialIndicates)
     {
-        var currentLeague = 0;
-        var listLeague = new List<LeagueMatch>();
-        var league = new LeagueMatch();
-        foreach (var team in teams)
-        {
-            if (currentLeague.Equals(team.LeagueId))
+        var deadHeatLookup = deadHeatSettings.ToDictionary(d => d.LeagueId, d => d);
+        var leagueInfoLookup = leagueSpecialIndicates.ToDictionary(l => l.LeagueId, l => l);
+
+        return teams
+            .GroupBy(t => t.LeagueId)
+            .Select(group =>
             {
-                league.Teams.Add(team);
-            }
-            else
-            {
-                league = new LeagueMatch
+                var firstTeam = group.First();
+                var league = new LeagueMatch
                 {
-                    LeagueName = team.LeagueName,
-                    LeagueId = team.LeagueId,
-                    Teams = [],
-                    SportName = refDataService.GetSportName(team.SportType)
+                    LeagueName = firstTeam.LeagueName,
+                    LeagueId = group.Key,
+                    Teams = group.ToList(),
+                    SportName = refDataService.GetSportName(firstTeam.SportType)
                 };
 
-                currentLeague = team.LeagueId;
-                league.Teams.Add(team);
-                listLeague.Add(league);
-            }
-        }
+                if (deadHeatLookup.TryGetValue(league.LeagueId, out var deadHeatSetting))
+                {
+                    league.DeadHeat = deadHeatSetting.DeadHeat;
+                    league.EventDate = deadHeatSetting.EventDate;
+                }
 
-        listLeague.ForEach(l =>
-        {
-            var value = deadHeatSettings.FirstOrDefault(item => item.LeagueId == l.LeagueId);
-            if (value is not null)
-            {
-                l.DeadHeat = value.DeadHeat;
-                l.EventDate = value.EventDate;
-            }
+                if (leagueInfoLookup.TryGetValue(league.LeagueId, out var leagueInfo))
+                {
+                    league.HighLight = leagueInfo.HighLight;
+                }
 
-            var leagueInfo = leagueSpecialIndicates.FirstOrDefault(item => item.LeagueId == l.LeagueId);
-            if (leagueInfo is not null)
-            {
-                l.HighLight = leagueInfo.HighLight;
-            }
-        });
-
-        return listLeague;
+                return league;
+            });
     }
 }

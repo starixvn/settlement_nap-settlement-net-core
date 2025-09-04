@@ -45,7 +45,6 @@ public class OutrightSettleServiceImp(
 
         var listTeam = (await repository.FetchAsync<Team>(criteria)).ToList();
 
-
         await GetTicketInfo(listTeam);
 
         return new LeagueInfo
@@ -118,17 +117,18 @@ public class OutrightSettleServiceImp(
 
     private async Task GetTicketInfo(List<Team> teams)
     {
-        var ticketInfo = (await outrightTicketService.GetTeamsTicketCount(teams)).ToList();
+        var ticketInfo = await outrightTicketService.GetTeamsTicketCount(teams);
+        var ticketLookup = ticketInfo.ToDictionary(t => t.OrId, t => t);
+        
         foreach (var team in teams)
         {
             team.RefDataService = refDataService;
-            var foundTeam = ticketInfo.Find(t => t.OrId == team.OrId);
-            if (foundTeam is not null)
+            if (ticketLookup.TryGetValue(team.OrId, out var ticketData))
             {
-                team.TotalCal = foundTeam.TotalCal;
-                team.TotalHide = foundTeam.TotalHide;
-                team.TotalRunning = foundTeam.TotalRunning;
-                team.BetCount = foundTeam.TotalTicket;
+                team.TotalCal = ticketData.TotalCal;
+                team.TotalHide = ticketData.TotalHide;
+                team.TotalRunning = ticketData.TotalRunning;
+                team.BetCount = ticketData.TotalTicket;
             }
         }
     }
@@ -138,10 +138,10 @@ public class OutrightSettleServiceImp(
         var listMatch = request.MatchIds.Split(',');
         var listTeamId = request.TeamIds.Split(',');
 
-        return listMatch.Select((t, i) => new InfoValidate(t, listTeamId[i])).ToList();
+        return listMatch.Select((t, i) => new InfoValidate(t, listTeamId[i]));
     }
 
-    private async Task<Result> PushRequestUncalculate(int matchId, string teamId, ICollection<string> teamSettleFailed)
+    private async Task<Result> PushRequestUncalculate(int matchId, string teamId, List<string> teamSettleFailed)
     {
         var result = await UpdateResultAndUndo(matchId);
         if (result.IsSuccessful)
@@ -155,7 +155,7 @@ public class OutrightSettleServiceImp(
         return result;
     }
 
-    private async Task<Result> PushRequestCalculate(TeamSettleModel team, int deadHeat, ICollection<string> teamSettleFailed)
+    private async Task<Result> PushRequestCalculate(TeamSettleModel team, int deadHeat, List<string> teamSettleFailed)
     {
         var result = await SettleMatch(team, deadHeat);
         if (result.IsSuccessful)

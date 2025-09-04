@@ -1,7 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { Component, Injector, OnInit } from "@angular/core";
 import { Outright } from "../../models/outright.model";
-import { LogPopupComponent } from "../popup/log-popup.component";
 import { FilterComponent } from "./filter.component";
 import { LeagueTeamComponent } from "./league-team.component";
 import { FilterRequest } from "../../models/filter-request.model";
@@ -10,7 +9,7 @@ import { FilterRequest } from "../../models/filter-request.model";
     selector: 'main-page',
     templateUrl: './main-page.component.html',
     standalone: true,
-    imports: [CommonModule, FilterComponent, LeagueTeamComponent, LogPopupComponent],
+    imports: [CommonModule, FilterComponent, LeagueTeamComponent],
 })
 export class MainPageComponent implements OnInit {
 
