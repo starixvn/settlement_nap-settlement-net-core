@@ -16,6 +16,7 @@ import { NewMultipleSelectComponent } from '../../shared/components/multiple-sel
 import { ResourceNameByIdPipe } from '../pipes/resource-name-by-id.pipe';
 import { EarlyStore } from '../store/early.store';
 import { ResultRowComponent } from './early/result-row.component';
+import { ResultControlGroup } from '../constants/result-control-group.native';
 
 @Component({
     selector: 'early-settlement',
@@ -54,15 +55,15 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         this.permission = this.match.permission;
         this.init();
     }
-    
-      public get outSideCount() {
-        return this.resultDetails[0].externalScores.filter(x => 
-          x.sourceId !== ScoreSourceType.trader && x.sourceId >= ScoreSourceType.screenshot).length
-      }
-    
-      public get maxProviderCol() {
+
+    public get outSideCount() {
+        return this.resultDetails[0].externalScores.filter(x =>
+            x.sourceId !== ScoreSourceType.trader && x.sourceId >= ScoreSourceType.screenshot).length
+    }
+
+    public get maxProviderCol() {
         return this.match.matchDetail.providerCount > 2 ? 3 : 2;
-      }
+    }
     public initService() {
         this.earlyService = this.injector.get(EarlyService);
         this.verificationService = this.injector.get(VerificationService);
@@ -104,8 +105,8 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
 
     private setIndicateColor() {
         this.resultDetails.forEach(item => {
-            item.resultStatusColor = this.isCompleted(item.resultStatusId, item.settlementStatusId) ? 'completed' 
-            : this.isRefunded(item.resultStatusId, item.settlementStatusId) ? 'refunded' : '';
+            item.resultStatusColor = this.isCompleted(item.resultStatusId, item.settlementStatusId) ? 'completed'
+                : this.isRefunded(item.resultStatusId, item.settlementStatusId) ? 'refunded' : '';
         });
     }
 
@@ -228,6 +229,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     }
 
     private async push(query: SettleQuery) {
+        this.generateOtherInfo(this.selectedResources);
         const result = await this.aioService.push(query);
         if (result.errCode === 0) {
             this.messageBoxService.closePopup();
@@ -236,7 +238,22 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         }
     }
 
+    private generateOtherInfo(resultDetails: ResultDetail[]) {
+        const playerSelectionInput = 2
+        resultDetails.forEach(result => {
+            if (_.isUndefined(result.oddFlex) || _.isEqual(result.oddFlex.length, 0)) {
+                result.otherInfo = '';
+                return;
+            }
 
+            if (result.inputType === playerSelectionInput) {
+                result.otherInfo = result.oddFlex.map(item => `${item.info.playerId},${item.info.playerName}`).join(',');
+            } else {
+                result.otherInfo = `${result.oddFlex[0].info.playerId},${result.oddFlex[1].info.playerName}`;
+            }
+        });
+    }
+      
     public saveResult() {
         this.confirmationDialogMessage.message = Language.eSports.saveScore;
         this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
@@ -256,8 +273,8 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
 
     public changeSettingGroup(groupMap: GroupMap) {
         super.changeSettingGroup(groupMap, () => {
-        if (this.resultRowComponents) {
-            this.resultRowComponents.forEach(component => {
+            if (this.resultRowComponents) {
+                this.resultRowComponents.forEach(component => {
                     component.updateView();
                 });
             }
@@ -267,9 +284,9 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
 
     public canSettleResult(result: ResultDetail) {
         const isRunning = _.isEqual(result.ticketStatus, TicketStatusText.running)
-            || _.isEqual(result.resultStatus, ResultStatus.noResult) 
+            || _.isEqual(result.resultStatus, ResultStatus.noResult)
             || _.isEqual(result.resultStatus, ResultStatus.running);
-            
-        return isRunning && !result.isScoreMismatched && this.verificationService.isValidTraderConfirmScore(result,false);
+
+        return isRunning && !result.isScoreMismatched && this.verificationService.isValidTraderConfirmScore(result, false);
     }
 }

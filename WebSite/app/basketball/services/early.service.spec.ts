@@ -320,50 +320,242 @@ describe('Service: EarlyService', () => {
     });
 
     describe('getConfirmMessage', () => {
-        it('should generate confirmation message for home team selection', () => {
+        it('should generate confirmation message with early calculation header', () => {
+            // Arrange
             const resultDetail = new ResultDetail();
+            resultDetail.inputType = 3;
             resultDetail.homeValue = 'H';
             resultDetail.betTypeName = 'Winner';
 
+            // Act
             const result = service.getConfirmMessage([resultDetail], matchDetail);
 
+            // Assert
             expect(result).toContain(Language.CalculationConfirmMessageEarly);
-            expect(result).toContain('Winner: Home Team');
+            expect(result).toContain('<br/>');
         });
 
-        it('should generate confirmation message for away team selection', () => {
-            const resultDetail = new ResultDetail();
-            resultDetail.homeValue = 'A';
-            resultDetail.betTypeName = 'Winner';
+        describe('team selection (inputType 3)', () => {
+            it('should generate message for home team selection', () => {
+                // Arrange
+                const resultDetail = new ResultDetail();
+                resultDetail.inputType = 3;
+                resultDetail.homeValue = 'H';
+                resultDetail.betTypeName = 'Winner';
 
-            const result = service.getConfirmMessage([resultDetail], matchDetail);
+                // Act
+                const result = service.getConfirmMessage([resultDetail], matchDetail);
 
-            expect(result).toContain('Winner: Away Team');
+                // Assert
+                expect(result).toContain('Winner: Home Team');
+            });
+
+            it('should generate message for away team selection', () => {
+                // Arrange
+                const resultDetail = new ResultDetail();
+                resultDetail.inputType = 3;
+                resultDetail.homeValue = 'A';
+                resultDetail.betTypeName = 'Winner';
+
+                // Act
+                const result = service.getConfirmMessage([resultDetail], matchDetail);
+
+                // Assert
+                expect(result).toContain('Winner: Away Team');
+            });
+
+            it('should generate message for neither selection', () => {
+                // Arrange
+                const resultDetail = new ResultDetail();
+                resultDetail.inputType = 3;
+                resultDetail.homeValue = 'X';
+                resultDetail.betTypeName = 'Winner';
+
+                // Act
+                const result = service.getConfirmMessage([resultDetail], matchDetail);
+
+                // Assert
+                expect(result).toContain('Winner: Neither');
+            });
         });
 
-        it('should generate confirmation message for none selection', () => {
-            const resultDetail = new ResultDetail();
-            resultDetail.homeValue = 'N';
-            resultDetail.betTypeName = 'Winner';
+        describe('textBox (inputType 0)', () => {
+            it('should generate message with home value directly', () => {
+                // Arrange
+                const resultDetail = new ResultDetail();
+                resultDetail.inputType = 0;
+                resultDetail.homeValue = '105.5';
+                resultDetail.betTypeName = 'Total Points';
 
-            const result = service.getConfirmMessage([resultDetail], matchDetail);
+                // Act
+                const result = service.getConfirmMessage([resultDetail], matchDetail);
 
-            expect(result).toContain('Winner: None');
+                // Assert
+                expect(result).toContain('Total Points: 105.5');
+            });
+
+            it('should handle null home value', () => {
+                // Arrange
+                const resultDetail = new ResultDetail();
+                resultDetail.inputType = 0;
+                resultDetail.homeValue = null;
+                resultDetail.betTypeName = 'Score';
+
+                // Act
+                const result = service.getConfirmMessage([resultDetail], matchDetail);
+
+                // Assert
+                expect(result).toContain('Score: null');
+            });
         });
 
-        it('should handle multiple result details', () => {
-            const resultDetail1 = new ResultDetail();
-            resultDetail1.homeValue = 'H';
-            resultDetail1.betTypeName = 'Winner';
-            
-            const resultDetail2 = new ResultDetail();
-            resultDetail2.homeValue = 'A';
-            resultDetail2.betTypeName = 'Total Points';
+        describe('yesNoNone (inputType 1)', () => {
+            it('should generate message for Yes selection', () => {
+                // Arrange
+                const resultDetail = new ResultDetail();
+                resultDetail.inputType = 1;
+                resultDetail.homeValue = 'Y';
+                resultDetail.betTypeName = 'Overtime';
 
-            const result = service.getConfirmMessage([resultDetail1, resultDetail2], matchDetail);
+                // Act
+                const result = service.getConfirmMessage([resultDetail], matchDetail);
 
-            expect(result).toContain('Winner: Home Team');
-            expect(result).toContain('Total Points: Away Team');
+                // Assert
+                expect(result).toContain('Overtime: Yes');
+            });
+
+            it('should generate message for No selection', () => {
+                // Arrange
+                const resultDetail = new ResultDetail();
+                resultDetail.inputType = 1;
+                resultDetail.homeValue = 'N';
+                resultDetail.betTypeName = 'Overtime';
+
+                // Act
+                const result = service.getConfirmMessage([resultDetail], matchDetail);
+
+                // Assert
+                expect(result).toContain('Overtime: No');
+            });
+
+            it('should generate empty value for invalid selection', () => {
+                // Arrange
+                const resultDetail = new ResultDetail();
+                resultDetail.inputType = 1;
+                resultDetail.homeValue = 'X';
+                resultDetail.betTypeName = 'Overtime';
+
+                // Act
+                const result = service.getConfirmMessage([resultDetail], matchDetail);
+
+                // Assert
+                expect(result).toContain('Overtime: ');
+            });
+        });
+
+        describe('playerSelect (inputType 2)', () => {
+            it('should generate message with player name when player found', () => {
+                // Arrange
+                const resultDetail = new ResultDetail();
+                resultDetail.inputType = 2;
+                resultDetail.homeValue = '12345';
+                resultDetail.betTypeName = 'First Scorer';
+                resultDetail.oddFlex = [
+                    { info: { playerId: '12345', playerName: 'John Doe' } },
+                    { info: { playerId: '67890', playerName: 'Jane Smith' } }
+                ] as any;
+
+                // Act
+                const result = service.getConfirmMessage([resultDetail], matchDetail);
+
+                // Assert
+                expect(result).toContain('First Scorer: John Doe');
+            });
+
+            it('should generate empty value when player not found', () => {
+                // Arrange
+                const resultDetail = new ResultDetail();
+                resultDetail.inputType = 2;
+                resultDetail.homeValue = '99999';
+                resultDetail.betTypeName = 'First Scorer';
+                resultDetail.oddFlex = [
+                    { info: { playerId: '12345', playerName: 'John Doe' } }
+                ] as any;
+
+                // Act
+                const result = service.getConfirmMessage([resultDetail], matchDetail);
+
+                // Assert
+                expect(result).toContain('First Scorer: ');
+            });
+
+            it('should handle empty oddFlex array', () => {
+                // Arrange
+                const resultDetail = new ResultDetail();
+                resultDetail.inputType = 2;
+                resultDetail.homeValue = '12345';
+                resultDetail.betTypeName = 'First Scorer';
+                resultDetail.oddFlex = [];
+
+                // Act
+                const result = service.getConfirmMessage([resultDetail], matchDetail);
+
+                // Assert
+                expect(result).toContain('First Scorer: ');
+            });
+        });
+
+        describe('unknown inputType', () => {
+            it('should generate empty value for unknown input type', () => {
+                // Arrange
+                const resultDetail = new ResultDetail();
+                resultDetail.inputType = 999;
+                resultDetail.homeValue = 'Test';
+                resultDetail.betTypeName = 'Unknown';
+
+                // Act
+                const result = service.getConfirmMessage([resultDetail], matchDetail);
+
+                // Assert
+                expect(result).toContain('Unknown: ');
+            });
+        });
+
+        describe('multiple result details', () => {
+            it('should handle multiple different input types', () => {
+                // Arrange
+                const teamResult = new ResultDetail();
+                teamResult.inputType = 3;
+                teamResult.homeValue = 'H';
+                teamResult.betTypeName = 'Winner';
+                
+                const textResult = new ResultDetail();
+                textResult.inputType = 0;
+                textResult.homeValue = '110.5';
+                textResult.betTypeName = 'Total';
+
+                const yesNoResult = new ResultDetail();
+                yesNoResult.inputType = 1;
+                yesNoResult.homeValue = 'Y';
+                yesNoResult.betTypeName = 'Overtime';
+
+                const playerResult = new ResultDetail();
+                playerResult.inputType = 2;
+                playerResult.homeValue = '123';
+                playerResult.betTypeName = 'MVP';
+                playerResult.oddFlex = [
+                    { info: { playerId: '123', playerName: 'Star Player' } }
+                ] as any;
+
+                // Act
+                const result = service.getConfirmMessage([teamResult, textResult, yesNoResult, playerResult], matchDetail);
+
+                // Assert
+                expect(result).toContain('Winner: Home Team');
+                expect(result).toContain('Total: 110.5');
+                expect(result).toContain('Overtime: Yes');
+                expect(result).toContain('MVP: Star Player');
+            });
         });
     });
 });

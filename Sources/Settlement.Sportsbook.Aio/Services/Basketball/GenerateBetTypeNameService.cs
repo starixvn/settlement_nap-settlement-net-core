@@ -32,7 +32,7 @@ public class GenerateBetTypeNameService(IRefDataService refDataService) : IGener
     private string GenerateSinglePlayerBetTypeName(ResultDetail resultDetail)
     {
         var matchingOddFlex = resultDetail.OddFlex.FirstOrDefault();
-        return matchingOddFlex == null ? resultDetail.BetTypeName : resultDetail.BetTypeName.Replace("player", matchingOddFlex.Info.PlayerName);
+        return matchingOddFlex == null ? resultDetail.BetTypeName : resultDetail.BetTypeName.Replace("Player", matchingOddFlex.Info.PlayerName);
     }
 
     private string GeneratePerformanceBetTypeName(ResultDetail resultDetail)
