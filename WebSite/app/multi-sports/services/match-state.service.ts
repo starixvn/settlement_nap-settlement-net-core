@@ -8,7 +8,7 @@ import * as _ from 'lodash';
 import { Language } from "../../shared/language.native";
 import { BackGroundService } from "./back-ground.service";
 import { DefaultValue } from "../constants";
-import { SportNewAutoPayout } from "../constants/sport-instant";
+import { SopSports, SportNewAutoPayout } from "../constants/sport-instant.native";
 
 @Injectable()
 export class MatchStateService {
@@ -340,16 +340,16 @@ export class MatchStateService {
   }
 
   getHasProviderHT(match: Match, permission: Permission) {
-    const isSOPCompleted = SportNewAutoPayout.includes(match.sportType) && !match.moreScores?.halfTimeScore?.isSettled;
-    const isNotSOPCompleted = !SportNewAutoPayout.includes(match.sportType) && match.originalEventStatus.toLowerCase() !== "completed";
+    const isSOPCompleted = SopSports.includes(match.sportType) && !match.moreScores?.halfTimeScore?.isSettled;
+    const isNotSOPCompleted = !SopSports.includes(match.sportType) && match.originalEventStatus.toLowerCase() !== "completed";
     const isNotLeader = !permission.isLeader;
 
     return match.hasProviderHT && (isSOPCompleted || (isNotSOPCompleted && isNotLeader));
   }
 
   getHasProviderFT(match: Match, permission: Permission) {
-    const isSOPCompleted = SportNewAutoPayout.includes(match.sportType) && (match.originalEventStatus.toLowerCase() !== "completed" || match.moreScores?.finalScore?.isNotSettled);
-    const isNotSOPCompleted = !SportNewAutoPayout.includes(match.sportType) && match.originalEventStatus.toLowerCase() !== "completed";
+    const isSOPCompleted = SopSports.includes(match.sportType) && (match.originalEventStatus.toLowerCase() !== "completed" || match.moreScores?.finalScore?.isNotSettled);
+    const isNotSOPCompleted = !SopSports.includes(match.sportType) && match.originalEventStatus.toLowerCase() !== "completed";
     const isNotLeader = !permission.isLeader;
 
     return match.hasProviderFT && (isSOPCompleted || (isNotSOPCompleted && isNotLeader));

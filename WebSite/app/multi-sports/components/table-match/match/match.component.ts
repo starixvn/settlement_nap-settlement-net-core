@@ -13,7 +13,7 @@ import { PipesModule } from '../../../../shared/pipes/pipes.module.native';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 import { MultiSportsStore } from '../../../services/multi-sports.store';
-import {SportNewAutoPayout, SportSupportInstant} from '../../../constants/sport-instant';
+import {SportNewAutoPayout, SportSupportInstant} from '../../../constants/sport-instant.native';
 import { MatchState } from '../../../models/match-state.model';
 import { IntervalScorePipe } from '../../../../shared/pipes/interval-score.pipe';
 import { MatchStateService } from '../../../services/match-state.service';

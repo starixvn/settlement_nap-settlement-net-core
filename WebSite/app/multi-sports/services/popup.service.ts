@@ -18,7 +18,7 @@ import {
   EventStatus,
 } from "../../shared/constants";
 import { AutoType } from "../constants";
-import { SportSingleAutoType } from "../constants/sport-instant";
+import { SportSingleAutoType } from "../constants/sport-instant.native";
 import { LeagueAutoSettings } from "../../shared/models/league-auto-settings.model";
 import { PopularSports } from "../constants/popular-sports.native";
 import { RefreshMatchService } from "./refresh-match.service";

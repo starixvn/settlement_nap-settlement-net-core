@@ -11,7 +11,7 @@ import { MatDialogModule } from "@angular/material/dialog";
 import { MatchStateService } from "../../../services/match-state.service";
 import { IntervalScorePipe } from "../../../../shared/pipes/interval-score.pipe";
 import * as exp from "constants";
-import { SportNewAutoPayout } from "../../../constants/sport-instant";
+import { SportNewAutoPayout } from "../../../constants/sport-instant.native";
 
 describe('LeagueComponent', () => {
   let component: LeagueComponent;

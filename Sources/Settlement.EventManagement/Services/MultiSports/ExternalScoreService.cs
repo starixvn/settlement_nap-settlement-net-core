@@ -71,7 +71,7 @@ public class ExternalScoreServiceImp(MuayThaiHelperService muayThaiHelperService
     {
         var homeScoreConsistent = AreScoresEqual(match.FinalHomeScore.ToString(), mappedScore.ExternalResult.HomeValue);
         var awayScoreConsistent = AreScoresEqual(match.FinalAwayScore.ToString(), mappedScore.ExternalResult.AwayValue);
-        var betStatusConsistent = AreBetStatusesEqual(match.BetStatus, mappedScore.Round);
+        var betStatusConsistent = AreBetStatusesEqual(match.SportType, match.BetStatus, mappedScore.Round);
 
         return !homeScoreConsistent || !awayScoreConsistent || !betStatusConsistent;
     }
@@ -84,10 +84,16 @@ public class ExternalScoreServiceImp(MuayThaiHelperService muayThaiHelperService
         return !homeScoreConsistent || !awayScoreConsistent;
     }
 
-    private static bool AreBetStatusesEqual(string matchBetStatus, string externalRound)
+    private static bool AreBetStatusesEqual(int sportType, string matchBetStatus, string externalRound)
     {
-        var normalizedBetStatus = string.IsNullOrWhiteSpace(matchBetStatus) ? EmptyString : matchBetStatus;
-        return string.Equals(normalizedBetStatus, externalRound);
+
+        if (sportType == SportType.MuayThai)
+        {
+            var normalizedBetStatus = string.IsNullOrWhiteSpace(matchBetStatus) ? EmptyString : matchBetStatus;
+            return string.Equals(normalizedBetStatus, externalRound);
+        }
+
+        return true;
     }
 
     private MappedScore MapSboScore(int sportType, ResultDetail finalExternalResult)

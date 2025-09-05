@@ -3,7 +3,7 @@ import { BackgroundColor, SportType } from "../../shared/constants";
 import { MatchStateService } from "../services/match-state.service";
 import { MultiSportsStore } from "../services/multi-sports.store";
 import { Match } from "./match.model";
-import {SportNewAutoPayout} from "../constants/sport-instant";
+import {SportNewAutoPayout} from "../constants/sport-instant.native";
 
 
 export class MatchState {

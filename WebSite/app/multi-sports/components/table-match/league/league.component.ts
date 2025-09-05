@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,  OnDestro
 import { LeagueMatch } from "../../../models";
 import { CommonModule } from "@angular/common";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { SportNewAutoPayout, SportSupportInstant } from "../../../constants/sport-instant";
+import { SportNewAutoPayout, SportSupportInstant } from "../../../constants/sport-instant.native";
 import { MultiSportsStore } from "../../../services/multi-sports.store";
 import { Permission } from "../../../models/permission.model";
 import { Subject, distinctUntilChanged, map, takeUntil } from "rxjs";

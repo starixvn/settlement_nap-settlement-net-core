@@ -218,12 +218,12 @@ public static class WebSites
             options.AllowSynchronousIO = true;
 
             options.Limits.MinRequestBodyDataRate = new MinDataRate(
-                bytesPerSecond: 512,
-                gracePeriod: TimeSpan.FromSeconds(30)
+                bytesPerSecond: 1024 * 1024,
+                gracePeriod: TimeSpan.FromMinutes(10)
             );
 
-            options.Limits.RequestHeadersTimeout = TimeSpan.FromMinutes(5);
-            options.Limits.KeepAliveTimeout = TimeSpan.FromMinutes(5);
+            options.Limits.RequestHeadersTimeout = TimeSpan.FromMinutes(10);
+            options.Limits.KeepAliveTimeout = TimeSpan.FromMinutes(10);
             options.Limits.MaxRequestBodySize = 104857600;
         });
 
