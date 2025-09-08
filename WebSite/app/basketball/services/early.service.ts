@@ -27,7 +27,6 @@ export class EarlyService extends EarlyBaseService {
         return maps;
     }
 
-
     private ReplaceTeamName(groupName: string, matchDetail: MatchDetail) {
         const teamNamePattern = /@teamName-(\d+)/;
         const match = groupName.match(teamNamePattern);

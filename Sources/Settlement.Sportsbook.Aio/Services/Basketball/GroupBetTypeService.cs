@@ -65,7 +65,7 @@ public class GroupBetTypeServiceImp : IGroupBetTypeService
             return new GroupNameModel
             {
                 GroupId = matchingOddFlex.Info.PlayerId + PlayerGroupIdOffset,
-                GroupName = $"@teamName-{matchingOddFlex.Info.TeamId} {matchingOddFlex.Info.PlayerName}"
+                GroupName = $"@teamName-{matchingOddFlex.Info.TeamId}-{matchingOddFlex.Info.PlayerName}"
             };
         }
 

@@ -89,7 +89,7 @@ public class GroupBetTypeServiceTests
                 Info = new OddsInfoModel
                 {
                     PlayerId  = 123,
-                    PlayerName = "Player Name",
+                    PlayerName = "Levi",
                     TeamId = 123
                 }
             }
@@ -99,8 +99,8 @@ public class GroupBetTypeServiceTests
         var result = service.GroupPlayerBetType(resultDetail, oddFlexs);
 
         // Assert
-        Assert.Equal(223, result.GroupId); // 123 + 100
-        Assert.Equal("@teamName-123 Player Name", result.GroupName);
+        Assert.Equal(223, result.GroupId);
+        Assert.Equal("@teamName-123-Levi", result.GroupName);
     }
 
     [Fact]

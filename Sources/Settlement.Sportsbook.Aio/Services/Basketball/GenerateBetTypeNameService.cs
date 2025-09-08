@@ -12,6 +12,8 @@ public interface IGenerateBetTypeNameService
 public class GenerateBetTypeNameService(IRefDataService refDataService) : IGenerateBetTypeNameService
 {
     private static readonly List<string> SpecialPerformanceType = ["677", "679"];
+    private static readonly string[] TextToRemove = [" At Least", " Over/Under", " Exact", " Bands"];
+    private const string PlayerPlaceholder = "Player";
     public string GenerateBetTypeName(ResultDetail resultDetail)
     {
 
@@ -32,7 +34,12 @@ public class GenerateBetTypeNameService(IRefDataService refDataService) : IGener
     private string GenerateSinglePlayerBetTypeName(ResultDetail resultDetail)
     {
         var matchingOddFlex = resultDetail.OddFlex.FirstOrDefault();
-        return matchingOddFlex == null ? resultDetail.BetTypeName : resultDetail.BetTypeName.Replace("Player", matchingOddFlex.Info.PlayerName);
+
+        var betTypeName = matchingOddFlex != null
+            ? resultDetail.BetTypeName.Replace(PlayerPlaceholder, matchingOddFlex.Info.PlayerName)
+            : resultDetail.BetTypeName;
+
+        return TextToRemove.Aggregate(betTypeName, (current, textToRemove) => current.Replace(textToRemove, string.Empty));
     }
 
     private string GeneratePerformanceBetTypeName(ResultDetail resultDetail)

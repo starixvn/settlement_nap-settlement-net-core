@@ -21,8 +21,8 @@ public class GenerateBetTypeNameServiceTests
         // Arrange
         var resultDetail = new ResultDetail
         {
-            BetType = "653", // SinglePlayerType
-            BetTypeName = "player Points Over/Under",
+            BetType = "653",
+            BetTypeName = "Player Points Over/Under",
             OddFlex = new List<OddFlexModel>
             {
                 new()
@@ -40,7 +40,7 @@ public class GenerateBetTypeNameServiceTests
         var result = service.GenerateBetTypeName(resultDetail);
 
         // Assert
-        Assert.Equal("LeBron James Points Over/Under", result);
+        Assert.Equal("LeBron James Points", result);
     }
 
     [Fact]
@@ -49,7 +49,7 @@ public class GenerateBetTypeNameServiceTests
         // Arrange
         var resultDetail = new ResultDetail
         {
-            BetType = "653", // SinglePlayerType
+            BetType = "653",
             BetTypeName = "Player Points Over/Under",
             OddFlex = new List<OddFlexModel>()
         };
@@ -58,7 +58,7 @@ public class GenerateBetTypeNameServiceTests
         var result = service.GenerateBetTypeName(resultDetail);
 
         // Assert
-        Assert.Equal("Player Points Over/Under", result);
+        Assert.Equal("Player Points", result);
     }
 
     [Fact]
@@ -67,8 +67,8 @@ public class GenerateBetTypeNameServiceTests
         // Arrange
         var resultDetail = new ResultDetail
         {
-            BetType = "677", // SpecialPerformanceType
-            BetTypeName = "player Triple Double",
+            BetType = "677",
+            BetTypeName = "Player Triple Double",
             OddFlex = new List<OddFlexModel>
             {
                 new()
@@ -107,15 +107,12 @@ public class GenerateBetTypeNameServiceTests
                     {
                         PlayerName = "LeBron James",
                         TeamId = 1111,
-                        Statistics = new List<Statistic>
-                        {
-                            new() { Type = "points", Value = "25+" },
-                            new() { Type = "assists", Value = "8+" }
-                        },
-                        Results = new List<ResultInfo>
-                        {
-                            new() { Type = "winner", Value = "1111" }
-                        }
+                        Statistics =
+                        [
+                            new Statistic { Type = "points", Value = "25+" },
+                            new Statistic { Type = "assists", Value = "8+" }
+                        ],
+                        Results = [new ResultInfo { Type = "winner", Value = "1111" }]
                     }
                 }
             }
@@ -245,14 +242,8 @@ public class GenerateBetTypeNameServiceTests
                     {
                         PlayerName = "Stephen Curry",
                         TeamId = 1111,
-                        Statistics = new List<Statistic>
-                        {
-                            new() { Type = "three point", Value = "5+" }
-                        },
-                        Results = new List<ResultInfo>
-                        {
-                            new() { Type = "winner", Value = "1111" }
-                        }
+                        Statistics = [new Statistic { Type = "three point", Value = "5+" }],
+                        Results = [new ResultInfo { Type = "winner", Value = "1111" }]
                     }
                 }
             }
@@ -283,17 +274,17 @@ public class GenerateBetTypeNameServiceTests
                     {
                         PlayerName = "LeBron James",
                         TeamId = 1111,
-                        Statistics = new List<Statistic>
-                        {
-                            new() { Type = "points", Value = "25+" },
-                            new() { Type = "assists", Value = "8+" },
-                            new() { Type = "rebounds", Value = "10+" }
-                        },
-                        Results = new List<ResultInfo>
-                        {
-                            new() { Type = "winner", Value = "1111" },
-                            new() { Type = "over", Value = "85.5" }
-                        }
+                        Statistics =
+                        [
+                            new Statistic { Type = "points", Value = "25+" },
+                            new Statistic { Type = "assists", Value = "8+" },
+                            new Statistic { Type = "rebounds", Value = "10+" }
+                        ],
+                        Results =
+                        [
+                            new ResultInfo { Type = "winner", Value = "1111" },
+                            new ResultInfo { Type = "over", Value = "85.5" }
+                        ]
                     }
                 }
             }
@@ -324,14 +315,8 @@ public class GenerateBetTypeNameServiceTests
                     {
                         PlayerName = "LeBron James",
                         TeamId = 1111,
-                        Statistics = new List<Statistic>
-                        {
-                            new() { Type = "points", Value = "20+" }
-                        },
-                        Results = new List<ResultInfo>
-                        {
-                            new() { Type = "handicap", Value = "-5.5" }
-                        }
+                        Statistics = [new Statistic { Type = "points", Value = "20+" }],
+                        Results = [new ResultInfo { Type = "handicap", Value = "-5.5" }]
                     }
                 }
             }
@@ -360,8 +345,8 @@ public class GenerateBetTypeNameServiceTests
                     {
                         PlayerName = "LeBron James",
                         TeamId = 1111,
-                        Statistics = new List<Statistic>(),
-                        Results = new List<ResultInfo>()
+                        Statistics = [],
+                        Results = []
                     }
                 }
             }
@@ -422,17 +407,14 @@ public class GenerateBetTypeNameServiceTests
                     {
                         PlayerName = "LeBron James",
                         TeamId = 1111,
-                        Statistics = new List<Statistic>
-                        {
-                            new() { Type = "points", Value = "25+" },
-                            new() { Type = "", Value = "invalid" }, // Should be filtered out
-                            new() { Type = "assists", Value = "" }, // Should be filtered out
-                            new() { Type = "rebounds", Value = "10+" }
-                        },
-                        Results = new List<ResultInfo>
-                        {
-                            new() { Type = "winner", Value = "1111" }
-                        }
+                        Statistics =
+                        [
+                            new Statistic { Type = "points", Value = "25+" },
+                            new Statistic { Type = "", Value = "invalid" }, // Should be filtered out
+                            new Statistic { Type = "assists", Value = "" }, // Should be filtered out
+                            new Statistic { Type = "rebounds", Value = "10+" }
+                        ],
+                        Results = [new ResultInfo { Type = "winner", Value = "1111" }]
                     }
                 }
             }
@@ -463,16 +445,13 @@ public class GenerateBetTypeNameServiceTests
                     {
                         PlayerName = "LeBron James",
                         TeamId = 1111,
-                        Statistics = new List<Statistic>
-                        {
-                            new() { Type = "points", Value = "25+" }
-                        },
-                        Results = new List<ResultInfo>
-                        {
-                            new() { Type = "winner", Value = "1111" },
-                            new() { Type = "", Value = "invalid" }, // Should be filtered out
-                            new() { Type = "over", Value = "" }, // Should be filtered out
-                        }
+                        Statistics = [new Statistic { Type = "points", Value = "25+" }],
+                        Results =
+                        [
+                            new ResultInfo { Type = "winner", Value = "1111" },
+                            new ResultInfo { Type = "", Value = "invalid" }, // Should be filtered out
+                            new ResultInfo { Type = "over", Value = "" } // Should be filtered out
+                        ]
                     }
                 }
             }
@@ -501,11 +480,8 @@ public class GenerateBetTypeNameServiceTests
                     {
                         PlayerName = "LeBron James",
                         TeamId = 1111,
-                        Statistics = new List<Statistic>
-                        {
-                            new() { Type = "points", Value = "25+" }
-                        },
-                        Results = new List<ResultInfo>()
+                        Statistics = [new Statistic { Type = "points", Value = "25+" }],
+                        Results = []
                     }
                 }
             }
@@ -536,11 +512,8 @@ public class GenerateBetTypeNameServiceTests
                     {
                         PlayerName = "LeBron James",
                         TeamId = 1111,
-                        Statistics = new List<Statistic>(),
-                        Results = new List<ResultInfo>
-                        {
-                            new() { Type = "unknown", Value = "somevalue" }
-                        }
+                        Statistics = [],
+                        Results = [new ResultInfo { Type = "unknown", Value = "somevalue" }]
                     }
                 }
             }
@@ -551,5 +524,162 @@ public class GenerateBetTypeNameServiceTests
 
         // Assert
         Assert.Equal("LeBron James have somevalue unknown", result);
+    }
+
+    [Fact]
+    public void GenerateSinglePlayerBetTypeName_WithAllTextToRemove_RemovesAllPatterns()
+    {
+        // Arrange
+        var resultDetail = new ResultDetail
+        {
+            BetType = "653", // SinglePlayerType
+            BetTypeName = "Player Points At Least Over/Under Exact Bands",
+            OddFlex = new List<OddFlexModel>
+            {
+                new()
+                {
+                    Info = new OddsInfoModel
+                    {
+                        PlayerName = "LeBron James",
+                        TeamId = 1111
+                    }
+                }
+            }
+        };
+
+        // Act
+        var result = service.GenerateBetTypeName(resultDetail);
+
+        // Assert
+        Assert.Equal("LeBron James Points", result);
+    }
+
+    [Fact]
+    public void GenerateSinglePlayerBetTypeName_WithAtLeastText_RemovesAtLeast()
+    {
+        // Arrange
+        var resultDetail = new ResultDetail
+        {
+            BetType = "653", // SinglePlayerType
+            BetTypeName = "Player Points At Least 25",
+            OddFlex = new List<OddFlexModel>
+            {
+                new()
+                {
+                    Info = new OddsInfoModel
+                    {
+                        PlayerName = "Stephen Curry",
+                        TeamId = 1111
+                    }
+                }
+            }
+        };
+
+        // Act
+        var result = service.GenerateBetTypeName(resultDetail);
+
+        // Assert
+        Assert.Equal("Stephen Curry Points 25", result);
+    }
+
+    [Fact]
+    public void GenerateSinglePlayerBetTypeName_WithOverUnderText_RemovesOverUnder()
+    {
+        // Arrange
+        var resultDetail = new ResultDetail
+        {
+            BetType = "653",
+            BetTypeName = "Player Assists Over/Under 10",
+            OddFlex = new List<OddFlexModel>
+            {
+                new()
+                {
+                    Info = new OddsInfoModel
+                    {
+                        PlayerName = "Chris Paul",
+                        TeamId = 1111
+                    }
+                }
+            }
+        };
+
+        // Act
+        var result = service.GenerateBetTypeName(resultDetail);
+
+        // Assert
+        Assert.Equal("Chris Paul Assists 10", result);
+    }
+
+    [Fact]
+    public void GenerateSinglePlayerBetTypeName_WithExactText_RemovesExact()
+    {
+        // Arrange
+        var resultDetail = new ResultDetail
+        {
+            BetType = "653",
+            BetTypeName = "Player Rebounds Exact 12",
+            OddFlex = new List<OddFlexModel>
+            {
+                new()
+                {
+                    Info = new OddsInfoModel
+                    {
+                        PlayerName = "Anthony Davis",
+                        TeamId = 1111
+                    }
+                }
+            }
+        };
+
+        // Act
+        var result = service.GenerateBetTypeName(resultDetail);
+
+        // Assert
+        Assert.Equal("Anthony Davis Rebounds 12", result);
+    }
+
+    [Fact]
+    public void GenerateSinglePlayerBetTypeName_WithBandsText_RemovesBands()
+    {
+        // Arrange
+        var resultDetail = new ResultDetail
+        {
+            BetType = "653",
+            BetTypeName = "Player 3-Pointers Bands",
+            OddFlex = new List<OddFlexModel>
+            {
+                new()
+                {
+                    Info = new OddsInfoModel
+                    {
+                        PlayerName = "Klay Thompson",
+                        TeamId = 1111
+                    }
+                }
+            }
+        };
+
+        // Act
+        var result = service.GenerateBetTypeName(resultDetail);
+
+        // Assert
+        Assert.Equal("Klay Thompson 3-Pointers", result);
+    }
+
+    [Fact]
+    public void GenerateSinglePlayerBetTypeName_NullOddFlex_CleansUpTextWithoutPlayerReplacement()
+    {
+        // Arrange
+        var resultDetail = new ResultDetail
+        {
+            BetType = "653",
+            BetTypeName = "Player Points Over/Under At Least",
+        };
+
+        // Act
+        var result = service.GenerateBetTypeName(resultDetail);
+
+        // Assert
+        Assert.Equal("Player Points", result);
     }
 }
