@@ -86,7 +86,7 @@ export class CalculatePopupComponent implements OnInit {
             team.dateTime = this.verifyDateService.convertToDateStruct(team.eventDate);
             team.disableDeadheat = !_.isEqual(team.status, 'WON');
             team.originalStatus = team.status;
-            team.screenShot = team.screenShot || team.status;
+            team.screenShot = team.screenShot || TeamStatuses[0].text.toUpperCase();
             team.originalScreenshot = team.screenShot;
             team.statusClass = this.makeBackgroundByStatus(team);
             team.mismatchClass = this.mismatchClass(team);
