@@ -23,7 +23,7 @@ export class YesNoNoneComponent extends InputFinalBaseComponent {
   imports: [CommonModule, FormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-  <select [disabled]="!enable" [(ngModel)]="externalResult.homeValue" (ngModelChange)="checkResultIsMatched(resultDetail)">
+  <select [disabled]="!enable" [(ngModel)]="externalResult.homeValue" (ngModelChange)="verifyAndAutoFillResult(resultDetail)">
     <option value="Y">Yes</option>
     <option value="N">No</option>
     <option value="None">None</option>

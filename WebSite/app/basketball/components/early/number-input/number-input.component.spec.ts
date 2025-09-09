@@ -1,12 +1,14 @@
 import { TestBed, ComponentFixture, waitForAsync } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { TextBoxComponent, TextBoxOutSideComponent } from './text-box.component';
+import { NumberInputComponent, NumberInputOutSideComponent } from './number-input.component';
 import { ResultDetail, ExternalResultDetail } from '../../../../shared/models/sportsbook-sop';
+import { VerificationBaseService } from '../../../../core/services/verification-base.service';
+import { ResultByTeamNamePipe } from '../../../../shared/pipes/result-by-team-name.pipe';
 
-describe('Component: TextBoxComponent', () => {
-    let component: TextBoxComponent;
-    let fixture: ComponentFixture<TextBoxComponent>;
+describe('Component: NumberInputComponent', () => {
+    let component: NumberInputComponent;
+    let fixture: ComponentFixture<NumberInputComponent>;
     
     const resultDetail = new ResultDetail();
     resultDetail.homeValue = 'Test Value';
@@ -17,12 +19,16 @@ describe('Component: TextBoxComponent', () => {
             imports: [
                 FormsModule,
                 MatTooltipModule,
-                TextBoxComponent
+                NumberInputComponent
+            ],
+            providers: [
+                VerificationBaseService,
+                ResultByTeamNamePipe
             ]
         })
         .compileComponents()
         .then(() => {
-            fixture = TestBed.createComponent(TextBoxComponent);
+            fixture = TestBed.createComponent(NumberInputComponent);
             component = fixture.componentInstance;
             component.item = resultDetail;
             component.enable = true;
@@ -35,9 +41,9 @@ describe('Component: TextBoxComponent', () => {
 
 });
 
-describe('Component: TextBoxOutSideComponent', () => {
-    let component: TextBoxOutSideComponent;
-    let fixture: ComponentFixture<TextBoxOutSideComponent>;
+describe('Component: NumberInputOutSideComponent', () => {
+    let component: NumberInputOutSideComponent;
+    let fixture: ComponentFixture<NumberInputOutSideComponent>;
     
     const resultDetail = new ResultDetail();
     const externalResult = {
@@ -49,12 +55,16 @@ describe('Component: TextBoxOutSideComponent', () => {
             imports: [
                 FormsModule,
                 MatTooltipModule,
-                TextBoxOutSideComponent
+                NumberInputOutSideComponent
+            ],
+            providers: [
+                VerificationBaseService,
+                ResultByTeamNamePipe
             ]
         })
         .compileComponents()
         .then(() => {
-            fixture = TestBed.createComponent(TextBoxOutSideComponent);
+            fixture = TestBed.createComponent(NumberInputOutSideComponent);
             component = fixture.componentInstance;
             component.resultDetail = resultDetail;
             component.externalResult = externalResult as ExternalResultDetail;

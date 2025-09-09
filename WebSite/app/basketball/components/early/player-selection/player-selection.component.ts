@@ -37,8 +37,9 @@ export class PlayerSelectionComponent extends InputFinalBaseComponent implements
   imports: [ FormsModule, CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-   <select [disabled]="!enable" [(ngModel)]="externalResult.homeValue" (ngModelChange)="checkResultIsMatched(resultDetail)">
+   <select [disabled]="!enable" [(ngModel)]="externalResult.homeValue" (ngModelChange)="verifyAndAutoFillResult(resultDetail)">
     <option *ngFor="let selection of playerSelections" [value]="selection.betChoice">{{selection.playerName}}</option>
+    <option value="none">None</option>
    </select>
   `
 })

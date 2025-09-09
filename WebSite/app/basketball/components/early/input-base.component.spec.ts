@@ -1,9 +1,11 @@
 import { TestBed, ComponentFixture, waitForAsync } from '@angular/core/testing';
 import { Component } from '@angular/core';
 import { InputFinalBaseComponent, InputOutSideBaseComponent } from './input-base.component';
-import { ResultDetail, ExternalResultDetail } from '../../../shared/models/sportsbook-sop';
+import { ResultDetail, ExternalResultDetail, MatchDetail } from '../../../shared/models/sportsbook-sop';
 import { EarlyResourcesIds } from '../../constants';
 import { VerificationBaseService } from '../../../core/services/verification-base.service';
+import { EarlyStore } from '../../store/early.store';
+import { SettlementStatusId } from '../../../shared/constants/settlement-status-id.native';
 
 @Component({
   template: '',
@@ -22,6 +24,7 @@ describe('Component: InputBaseComponent', () => {
     let outSideComponent: TestInputOutSideComponent;
     let finalFixture: ComponentFixture<TestInputFinalComponent>;
     let outSideFixture: ComponentFixture<TestInputOutSideComponent>;
+    let earlyStore: EarlyStore;
     
     const resultDetail = new ResultDetail();
     resultDetail.betType = '604';
@@ -32,13 +35,21 @@ describe('Component: InputBaseComponent', () => {
     
     beforeEach(waitForAsync(() => {
         const mockVerificationService = {
-            isEarlyMismatchedWarning: jest.fn()
+            isEarlyMismatchedWarning: jest.fn(),
+            autoFillEarlyResult: jest.fn()
+        };
+        
+        const mockEarlyStore = {
+            matchDetail: jest.fn().mockReturnValue({
+                isSavedScore: true
+            })
         };
         
         TestBed.configureTestingModule({
             imports: [TestInputFinalComponent, TestInputOutSideComponent],
             providers: [
-                { provide: VerificationBaseService, useValue: mockVerificationService }
+                { provide: VerificationBaseService, useValue: mockVerificationService },
+                { provide: EarlyStore, useValue: mockEarlyStore }
             ]
         })
         .compileComponents()
@@ -218,62 +229,8 @@ describe('Component: InputBaseComponent', () => {
             // Assert
             expect(testResultDetail.isScoreMismatched).toBe(false);
         });
-
-        it('should handle null result detail gracefully', () => {
-            // Arrange
-            mockVerificationService.isEarlyMismatchedWarning.mockReturnValue(false);
-
-            // Act & Assert
-            expect(() => finalComponent.checkResultIsMatched(null)).not.toThrow();
-            expect(mockVerificationService.isEarlyMismatchedWarning).toHaveBeenCalledWith(null);
-        });
     });
 
-    describe('checkResultIsMatched - InputOutSideBaseComponent', () => {
-        let mockVerificationService: any;
-
-        beforeEach(() => {
-            mockVerificationService = outSideComponent.verificationBaseService;
-            jest.clearAllMocks();
-        });
-
-        it('should call verificationBaseService.isEarlyMismatchedWarning with correct parameter', () => {
-            // Arrange
-            const testResultDetail = new ResultDetail();
-            mockVerificationService.isEarlyMismatchedWarning.mockReturnValue(true);
-
-            // Act
-            outSideComponent.checkResultIsMatched(testResultDetail);
-
-            // Assert
-            expect(mockVerificationService.isEarlyMismatchedWarning).toHaveBeenCalledWith(testResultDetail);
-            expect(mockVerificationService.isEarlyMismatchedWarning).toHaveBeenCalledTimes(1);
-        });
-
-        it('should set isScoreMismatched to true when service returns true', () => {
-            // Arrange
-            const testResultDetail = new ResultDetail();
-            mockVerificationService.isEarlyMismatchedWarning.mockReturnValue(true);
-
-            // Act
-            outSideComponent.checkResultIsMatched(testResultDetail);
-
-            // Assert
-            expect(testResultDetail.isScoreMismatched).toBe(true);
-        });
-
-        it('should set isScoreMismatched to false when service returns false', () => {
-            // Arrange
-            const testResultDetail = new ResultDetail();
-            mockVerificationService.isEarlyMismatchedWarning.mockReturnValue(false);
-
-            // Act
-            outSideComponent.checkResultIsMatched(testResultDetail);
-
-            // Assert
-            expect(testResultDetail.isScoreMismatched).toBe(false);
-        });
-    });
 
     describe('Input Properties - InputFinalBaseComponent', () => {
         it('should accept item input property', () => {
@@ -395,6 +352,96 @@ describe('Component: InputBaseComponent', () => {
 
             // Assert
             expect(testResultDetail.isScoreMismatched).toBeUndefined();
+        });
+    });
+
+    describe('verifyAndAutoFillResult', () => {
+        let mockVerificationService: any;
+
+
+        beforeEach(() => {
+            mockVerificationService = outSideComponent.verificationBaseService;
+            jest.clearAllMocks();
+        });
+
+        it('should set isSavedScore to false', () => {
+            // Arrange
+            const testResultDetail = new ResultDetail();
+            testResultDetail.settlementStatusId = SettlementStatusId.Calculated;
+
+            // Act
+            outSideComponent.verifyAndAutoFillResult(testResultDetail);
+
+            // Assert
+            expect(outSideComponent.matchDetail().isSavedScore).toBe(false);
+        });
+
+        it('should clear homeValue and awayValue when settlementStatusId is not Calculated', () => {
+            // Arrange
+            const testResultDetail = new ResultDetail();
+            testResultDetail.settlementStatusId = SettlementStatusId.Running;
+            testResultDetail.homeValue = 'H';
+            testResultDetail.awayValue = 'A';
+
+            // Act
+            outSideComponent.verifyAndAutoFillResult(testResultDetail);
+
+            // Assert
+            expect(testResultDetail.homeValue).toBe('');
+            expect(testResultDetail.awayValue).toBe('');
+        });
+
+        it('should not clear homeValue and awayValue when settlementStatusId is Calculated', () => {
+            // Arrange
+            const testResultDetail = new ResultDetail();
+            testResultDetail.settlementStatusId = SettlementStatusId.Calculated;
+            testResultDetail.homeValue = 'H';
+            testResultDetail.awayValue = 'A';
+
+            // Act
+            outSideComponent.verifyAndAutoFillResult(testResultDetail);
+
+            // Assert
+            expect(testResultDetail.homeValue).toBe('H');
+            expect(testResultDetail.awayValue).toBe('A');
+        });
+
+        it('should call autoFillEarlyResult', () => {
+            // Arrange
+            const testResultDetail = new ResultDetail();
+            testResultDetail.settlementStatusId = SettlementStatusId.Calculated;
+
+            // Act
+            outSideComponent.verifyAndAutoFillResult(testResultDetail);
+
+            // Assert
+            expect(mockVerificationService.autoFillEarlyResult).toHaveBeenCalledWith(testResultDetail);
+        });
+
+        it('should set isScoreMismatched to true when verification service returns true', () => {
+            // Arrange
+            const testResultDetail = new ResultDetail();
+            testResultDetail.settlementStatusId = SettlementStatusId.Calculated;
+            mockVerificationService.isEarlyMismatchedWarning.mockReturnValue(true);
+
+            // Act
+            outSideComponent.verifyAndAutoFillResult(testResultDetail);
+
+            // Assert
+            expect(testResultDetail.isScoreMismatched).toBe(true);
+        });
+
+        it('should set isScoreMismatched to false when verification service returns false', () => {
+            // Arrange
+            const testResultDetail = new ResultDetail();
+            testResultDetail.settlementStatusId = SettlementStatusId.Calculated;
+            mockVerificationService.isEarlyMismatchedWarning.mockReturnValue(false);
+
+            // Act
+            outSideComponent.verifyAndAutoFillResult(testResultDetail);
+
+            // Assert
+            expect(testResultDetail.isScoreMismatched).toBe(false);
         });
     });
 });

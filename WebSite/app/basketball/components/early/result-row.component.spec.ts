@@ -5,7 +5,7 @@ import { EarlyStore } from '../../store/early.store';
 import { VerificationService } from '../../services';
 import { MatchDetail, ResultDetail, GroupMap, Permission } from '../../../shared/models/sportsbook-sop';
 import { ResultStatus, TicketStatusText } from '../../../shared/constants';
-import { TextBoxComponent, TextBoxOutSideComponent } from './text-box/text-box.component';
+import { NumberInputComponent, NumberInputOutSideComponent } from './number-input/number-input.component';
 import { PlayerSelectionComponent, PlayerSelectionOutSideComponent } from './player-selection/player-selection.component';
 import { TeamSelectionComponent, TeamSelectionOutSideComponent } from './team-selection/team-selection.component';
 import { YesNoNoneComponent, YesNoNoneOutSideComponent } from './yesnonone/yes-no-none.component';
@@ -131,7 +131,7 @@ describe('Component: ResultRowComponent', () => {
 
             const result = component.getInputComponent();
 
-            expect(result).toBe(TextBoxComponent);
+            expect(result).toBe(NumberInputComponent);
         });
 
         it('should return YesNoNoneComponent when inputType is 1', () => {
@@ -165,7 +165,7 @@ describe('Component: ResultRowComponent', () => {
 
             const result = component.getInputOutSideComponent();
 
-            expect(result).toBe(TextBoxOutSideComponent);
+            expect(result).toBe(NumberInputOutSideComponent);
         });
 
         it('should return YesNoNoneOutSideComponent when inputType is 1', () => {

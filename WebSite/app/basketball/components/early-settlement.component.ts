@@ -105,7 +105,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
 
     private setIndicateColor() {
         this.resultDetails.forEach(item => {
-            item.resultStatusColor = this.isCompleted(item.resultStatusId, item.settlementStatusId) ? 'completed'
+            item.resultStatusColor = this.isCompleted(item.resultStatusId, item.settlementStatusId) ? 'calculated'
                 : this.isRefunded(item.resultStatusId, item.settlementStatusId) ? 'refunded' : '';
         });
     }
@@ -247,9 +247,9 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
             }
 
             if (result.inputType === playerSelectionInput) {
-                result.otherInfo = result.oddFlex.map(item => `${item.info.playerId},${item.info.playerName}`).join(',');
+                result.otherInfo = result.oddFlex.map(item => `${item.info.playerId},${item.info.teamId}`).join(',');
             } else {
-                result.otherInfo = `${result.oddFlex[0].info.playerId},${result.oddFlex[1].info.playerName}`;
+                result.otherInfo = `${result.oddFlex[0].info.playerId},${result.oddFlex[0].info.teamId}`;
             }
         });
     }

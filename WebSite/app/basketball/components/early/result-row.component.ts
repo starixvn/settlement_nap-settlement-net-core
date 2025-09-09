@@ -3,24 +3,24 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, EventE
 import { GroupMap, MatchDetail, ResultDetail } from "../../../shared/models/sportsbook-sop";
 import { isEqual } from "lodash";
 import { FormsModule } from "@angular/forms";
-import { TextBoxComponent, TextBoxOutSideComponent } from "./text-box/text-box.component";
+import { NumberInputComponent, NumberInputOutSideComponent } from "./number-input/number-input.component";
 import { EarlyStore } from "../../store/early.store";
 import { ResultStatus, TicketStatusText } from "../../../shared/constants";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { ResultByTeamNamePipe } from "../../../shared/pipes/result-by-team-name.pipe";
 import { VerificationService } from "../../services";
 import { PlayerSelectionComponent, PlayerSelectionOutSideComponent } from "./player-selection/player-selection.component";
 import { TeamSelectionComponent, TeamSelectionOutSideComponent } from "./team-selection/team-selection.component";
 import { YesNoNoneComponent, YesNoNoneOutSideComponent } from "./yesnonone/yes-no-none.component";
+import { TraderResultComponent } from "./trader-result/trader-result.component";
 
 
-type finalInput = PlayerSelectionComponent | TextBoxComponent | TeamSelectionComponent | YesNoNoneComponent;
-type finalInputOutSide = TeamSelectionOutSideComponent | PlayerSelectionOutSideComponent | TextBoxOutSideComponent | YesNoNoneOutSideComponent;
+type finalInput = PlayerSelectionComponent | NumberInputComponent | TeamSelectionComponent | YesNoNoneComponent;
+type finalInputOutSide = TeamSelectionOutSideComponent | PlayerSelectionOutSideComponent | NumberInputOutSideComponent | YesNoNoneOutSideComponent;
 
 @Component({
   selector: '[result-row]',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatTooltipModule, ResultByTeamNamePipe],
+  imports: [CommonModule, FormsModule, MatTooltipModule, TraderResultComponent],
   templateUrl: './result-row.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -57,10 +57,10 @@ export class ResultRowComponent implements OnInit {
     return this.getTextTooltip(tooltip, maxLength);
   }
 
-  getInputComponent(): Type<PlayerSelectionComponent | TextBoxComponent | TeamSelectionComponent> {
+  getInputComponent() {
     switch (this.item.inputType) {
       case 0:
-        return TextBoxComponent;
+        return NumberInputComponent;
       case 1:
         return YesNoNoneComponent;
       case 2:
@@ -73,7 +73,7 @@ export class ResultRowComponent implements OnInit {
   getInputOutSideComponent() {
     switch (this.item.inputType) {
       case 0:
-        return TextBoxOutSideComponent;
+        return NumberInputOutSideComponent;
       case 1:
         return YesNoNoneOutSideComponent;
       case 2:

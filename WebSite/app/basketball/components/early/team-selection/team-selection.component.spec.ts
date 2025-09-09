@@ -5,6 +5,7 @@ import { TeamSelectionComponent, TeamSelectionOutSideComponent } from './team-se
 import { EarlyStore } from '../../../store/early.store';
 import { VerificationBaseService } from '../../../../core/services/verification-base.service';
 import { ResultDetail, ExternalResultDetail, Permission } from '../../../../shared/models/sportsbook-sop';
+import { ResultByTeamNamePipe } from '../../../../shared/pipes/result-by-team-name.pipe';
 
 describe('Component: TeamSelectionComponent', () => {
     let component: TeamSelectionComponent;
@@ -123,7 +124,9 @@ describe('Component: TeamSelectionOutSideComponent', () => {
                 TeamSelectionOutSideComponent
             ],
             providers: [
-                { provide: EarlyStore, useValue: earlyStoreMock }
+                { provide: EarlyStore, useValue: earlyStoreMock },
+                VerificationBaseService,
+                ResultByTeamNamePipe
             ]
         })
         .compileComponents()

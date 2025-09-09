@@ -408,9 +408,9 @@ describe('Component: EarlySettlementComponent', () => {
         });
 
         it('should return false when result is completed', () => {
-            resultDetail.resultStatus = 'Completed';
+            resultDetail.resultStatus = 'calculated';
             resultDetail.externalScores = [];
-            resultDetail.ticketStatus = 'Completed';
+            resultDetail.ticketStatus = 'calculated';
             verificationService.isValidTraderConfirmScore = jest.fn().mockReturnValue(true);
 
             const result = component.canSettleResult(resultDetail);
@@ -526,8 +526,8 @@ describe('Component: EarlySettlementComponent', () => {
             const result = new ResultDetail();
             result.inputType = 2;
             result.oddFlex = [
-                { info: { playerId: '123', playerName: 'Player 1' } },
-                { info: { playerId: '456', playerName: 'Player 2' } }
+                { info: { playerId: '123', teamId: 'team 1' } },
+                { info: { playerId: '456', teamId: 'team 2' } }   
             ] as any;
             const resultDetails = [result];
 
@@ -535,7 +535,7 @@ describe('Component: EarlySettlementComponent', () => {
             component['generateOtherInfo'](resultDetails);
 
             // Assert
-            expect(result.otherInfo).toBe('123,Player 1,456,Player 2');
+            expect(result.otherInfo).toBe('123,team 1,456,team 2');
         });
 
         it('should generate default format when inputType is not player selection', () => {
@@ -543,8 +543,8 @@ describe('Component: EarlySettlementComponent', () => {
             const result = new ResultDetail();
             result.inputType = 1;
             result.oddFlex = [
-                { info: { playerId: '789', playerName: 'Player A' } },
-                { info: { playerId: '101', playerName: 'Player B' } }
+                { info: { playerId: '789', teamId: 'team A' } },
+                { info: { playerId: '101', teamId: 'team B' } }
             ] as any;
             const resultDetails = [result];
 
@@ -552,7 +552,7 @@ describe('Component: EarlySettlementComponent', () => {
             component['generateOtherInfo'](resultDetails);
 
             // Assert
-            expect(result.otherInfo).toBe('789,Player B');
+            expect(result.otherInfo).toBe('789,team A');
         });
 
         it('should handle multiple results with different inputTypes', () => {
@@ -560,15 +560,15 @@ describe('Component: EarlySettlementComponent', () => {
             const result1 = new ResultDetail();
             result1.inputType = 2;
             result1.oddFlex = [
-                { info: { playerId: '1', playerName: 'P1' } },
-                { info: { playerId: '2', playerName: 'P2' } }
+                { info: { playerId: '1', teamId: 'P1' } },
+                { info: { playerId: '2', teamId: 'P2' } }
             ] as any;
 
             const result2 = new ResultDetail();
             result2.inputType = 1;
             result2.oddFlex = [
-                { info: { playerId: '3', playerName: 'P3' } },
-                { info: { playerId: '4', playerName: 'P4' } }
+                { info: { playerId: '3', teamId: 'P3' } },
+                { info: { playerId: '4', teamId: 'P4' } }
             ] as any;
 
             const resultDetails = [result1, result2];
@@ -578,7 +578,7 @@ describe('Component: EarlySettlementComponent', () => {
 
             // Assert
             expect(result1.otherInfo).toBe('1,P1,2,P2');
-            expect(result2.otherInfo).toBe('3,P4');
+            expect(result2.otherInfo).toBe('3,P3');
         });
     });
 });

@@ -1,8 +1,10 @@
-import { Component, EventEmitter, inject, Input, Output } from "@angular/core";
+import { Component, computed, EventEmitter, inject, Input, Output } from "@angular/core";
 import { ExternalResultDetail, ResultDetail } from "../../../shared/models/sportsbook-sop";
 import { isEqual } from "lodash";
 import { EarlyResourcesIds } from "../../constants";
 import { VerificationBaseService } from "../../../core/services/verification-base.service";
+import { SettlementStatusId } from "../../../shared/constants/settlement-status-id.native";
+import { EarlyStore } from "../../store/early.store";
 
 abstract class InputBaseComponent {
   getDropdownTooltip(result: string, maxLength: number, homeTeam: string, awayTeam: string) {
@@ -23,29 +25,40 @@ abstract class InputBaseComponent {
 
 @Component({
   template: '',
+  standalone: true,
+  providers: [VerificationBaseService],
 })
 export class InputFinalBaseComponent extends InputBaseComponent {
-   @Input() item: ResultDetail ;
-   @Input() enable: boolean;
-   verificationBaseService = inject(VerificationBaseService);
+  @Input({ required: true }) item: ResultDetail;
+  @Input({ required: true }) enable: boolean;
+  verificationBaseService = inject(VerificationBaseService);
 
-   checkResultIsMatched(resultDetail: ResultDetail) {
+  checkResultIsMatched(resultDetail: ResultDetail) {
     resultDetail.isScoreMismatched = this.verificationBaseService.isEarlyMismatchedWarning(resultDetail);
-    
   }
 }
 
 @Component({
   template: '',
+  standalone: true,
+  providers: [VerificationBaseService, EarlyStore],
 })
 export class InputOutSideBaseComponent extends InputBaseComponent {
-   @Input() resultDetail: ResultDetail ;
-   @Input() externalResult: ExternalResultDetail;
-   @Input() enable: boolean;
-   verificationBaseService = inject(VerificationBaseService);
+  @Input({ required: true }) resultDetail: ResultDetail;
+  @Input({ required: true }) externalResult: ExternalResultDetail;
+  @Input({ required: true }) enable: boolean;
+  verificationBaseService = inject(VerificationBaseService);
+  readonly #earlyStore = inject(EarlyStore);
+  matchDetail = computed(() => this.#earlyStore.matchDetail()); 
 
-   checkResultIsMatched(resultDetail: ResultDetail) {
+  verifyAndAutoFillResult(resultDetail: ResultDetail) {
+    this.matchDetail().isSavedScore = false;
+    if (resultDetail.settlementStatusId !== SettlementStatusId.Calculated) {
+      resultDetail.homeValue = '';
+      resultDetail.awayValue = '';
+    }
+
+    this.verificationBaseService.autoFillEarlyResult(resultDetail);
     resultDetail.isScoreMismatched = this.verificationBaseService.isEarlyMismatchedWarning(resultDetail);
-    
   }
 }

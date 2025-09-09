@@ -43,7 +43,7 @@ export class TeamSelectionComponent extends InputFinalBaseComponent {
   imports: [CommonModule, FormsModule, MatTooltipModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-  <select [(ngModel)]="externalResult.homeValue" [disabled]="!enable" (ngModelChange)="checkResultIsMatched(resultDetail)"
+  <select [(ngModel)]="externalResult.homeValue" [disabled]="!enable" (ngModelChange)="verifyAndAutoFillResult(resultDetail)"
                             [matTooltip]="getDropdownTooltip(externalResult.homeValue, 25, homeTeam, awayTeam)" matTooltipPosition="above">
                             <option></option>
                             <option value="H">{{homeTeam}}</option> 

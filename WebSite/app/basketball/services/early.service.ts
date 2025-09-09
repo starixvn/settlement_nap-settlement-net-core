@@ -65,7 +65,7 @@ export class EarlyService extends EarlyBaseService {
 
 
     private getPlayerResultName(resultDetail: ResultDetail): string {
-        return resultDetail.oddFlex.find(item => isEqual(item.info.playerId, resultDetail.homeValue))?.info.playerName ?? '';
+        return resultDetail.oddFlex.find(item => isEqual(item.betChoice, resultDetail.homeValue))?.info.playerName ?? '';
     }
 
     private getHomeAwayValue(resultDetail: ResultDetail, matchDetail: MatchDetail): string {
@@ -90,7 +90,7 @@ export class EarlyService extends EarlyBaseService {
           return "No";
         }
     
-        return "";
+        return "None";
     
       }
 

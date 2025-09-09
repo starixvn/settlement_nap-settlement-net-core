@@ -2,6 +2,8 @@ import { TestBed, ComponentFixture, waitForAsync } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { YesNoNoneComponent, YesNoNoneOutSideComponent } from './yes-no-none.component';
 import { ResultDetail, ExternalResultDetail } from '../../../../shared/models/sportsbook-sop';
+import { VerificationBaseService } from '../../../../core/services/verification-base.service';
+import { ResultByTeamNamePipe } from '../../../../shared/pipes/result-by-team-name.pipe';
 
 describe('Component: YesNoNoneComponent', () => {
     let component: YesNoNoneComponent;
@@ -15,7 +17,12 @@ describe('Component: YesNoNoneComponent', () => {
         TestBed.configureTestingModule({
             imports: [
                 FormsModule,
-                YesNoNoneComponent
+                YesNoNoneComponent,
+
+            ],
+            providers: [
+                VerificationBaseService,
+                ResultByTeamNamePipe
             ]
         })
         .compileComponents()
@@ -51,6 +58,10 @@ describe('Component: YesNoNoneOutSideComponent', () => {
             imports: [
                 FormsModule,
                 YesNoNoneOutSideComponent
+            ],
+            providers: [
+                VerificationBaseService,
+                ResultByTeamNamePipe
             ]
         })
         .compileComponents()
