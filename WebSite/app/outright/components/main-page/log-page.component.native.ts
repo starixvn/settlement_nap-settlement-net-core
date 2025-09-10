@@ -4,8 +4,6 @@ import { FormsModule } from "@angular/forms";
 import { MatDialogModule } from "@angular/material/dialog";
 import { LogRequest } from "../../models/log-request.model";
 import { OutrightService } from "../../services";
-import { DatepickerComponent } from "../../../shared/components/date-picker/date-picker.component";
-import { DynamicHeightDirective } from "../../../shared/directives";
 import { 
     BlockUIService, 
     HttpRequestService, 
@@ -18,7 +16,7 @@ import LogComponent from "../log.component";
     selector: 'log-page',
     templateUrl: './log-page.component.html',
     standalone: true,
-    imports: [CommonModule, FormsModule, DatepickerComponent, MatDialogModule, DynamicHeightDirective, LogComponent],
+    imports: [CommonModule, FormsModule, MatDialogModule, LogComponent],
     providers: [VerifyDateService, OutrightService, HttpRequestService, MessageBoxService, BlockUIService],
 })
 export class LogPageComponent implements OnInit {

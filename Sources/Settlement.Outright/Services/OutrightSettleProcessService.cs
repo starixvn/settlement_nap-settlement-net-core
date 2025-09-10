@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Fanex.Data.Repository;
+using Fanex.Settlement.Converter.Services;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.Extensions.Options;
@@ -20,6 +21,8 @@ public interface OutrightSettleProcessService
     Task<Result> UpdateResultCalculate(OutrightSettleCriteria criteria);
 
     Task<bool> CheckOutrightVoidTicket(CheckOutrightVoidTicketRequest request);
+
+    string CreateScoreResources(IEnumerable<TeamExternalResult> teams);
 }
 
 public class OutrightSettleProcessServiceImp(
@@ -27,7 +30,8 @@ public class OutrightSettleProcessServiceImp(
     IOptions<AppSettingsKey> appSettingsKey,
     ScaleOutSettleThirdPartyService scaleOutSettleService,
     IMapper mapper,
-    IRefDataService refDataService)
+    IRefDataService refDataService,
+    XmlConvertService xmlConvertService)
     : OutrightSettleProcessService
 {
     private readonly AppSettingsKey appSettingsKey = appSettingsKey.Value;
@@ -152,5 +156,23 @@ public class OutrightSettleProcessServiceImp(
         await Task.CompletedTask;
 
         return results.Exists(r => r == 1) && results.Exists(r => r != 0);
+    }
+
+    public string CreateScoreResources(IEnumerable<TeamExternalResult> teams)
+    {
+
+        var resources = teams.Select(t => new ResourcesOutright
+        {
+            OrId = t.OrId,
+            TeamId = t.TeamId,
+            Result = t.ScreenShot
+        }).ToList();
+
+        var resourcesXml = new Resources<ResourcesOutright>
+        {
+            ResourceItems = resources
+        };
+
+        return xmlConvertService.Serialize(resourcesXml);
     }
 }

@@ -38,7 +38,11 @@ describe('UncalculatePopupComponent', () => {
     totalCal: 0,
     totalRunning: 0,
     totalHide: 0,
-    originalStatus: ''
+    originalStatus: '',
+    originalScreenshot: '',
+    screenShot: '',
+    confirmBy: '',
+    mismatchClass: ''
   }
   const leagueSettle: LeagueSettle = {
     leagueName: '',

@@ -1,9 +1,6 @@
-import { ChangeDetectorRef, Component, ComponentFactory, ComponentFactoryResolver, ComponentRef, ElementRef, Injector, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
+import { ChangeDetectorRef, Component, ComponentRef, ElementRef, Injector, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { BlockUIService } from '../../shared/services';
-import { FilterComponent } from './main-page/filter.component';
-import { LeagueTeamComponent } from './main-page/league-team.component';
 import { CommonModule } from '@angular/common';
-import { LogPopupComponent } from './popup/log-popup.component';
 import { MainPageComponent } from './main-page/main-page.component';
 import { PageType } from '../../shared/constants';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -13,7 +10,7 @@ import { LogPageComponent } from './main-page/log-page.component.native';
     selector: 'app-root',
     templateUrl: './app.component.html',
     standalone: true,
-    imports: [CommonModule, FilterComponent, LeagueTeamComponent, LogPopupComponent, MainPageComponent, MatDialogModule, LogPageComponent],
+    imports: [CommonModule, MatDialogModule],
     providers: [BlockUIService]
 })
 export class AppComponent implements OnInit {
@@ -23,8 +20,8 @@ export class AppComponent implements OnInit {
     public component: ComponentRef<OnInit>;
 
     constructor(protected injector: Injector,
-        private readonly componentFactoryResolver: ComponentFactoryResolver,
         private readonly elementRef: ElementRef<HTMLElement>,
+        private readonly viewContainerRef: ViewContainerRef,
         private readonly changeDetector: ChangeDetectorRef) { }
 
     ngOnInit() {
@@ -37,17 +34,16 @@ export class AppComponent implements OnInit {
     }
 
     private createComponent() {
-        const factory = this.getComponentFactory();
-        this.component = this.container.createComponent(factory);
+        this.component = this.getComponentFactory();
         return this.component;
     }
 
-    private getComponentFactory(): ComponentFactory<OnInit> {
+    private getComponentFactory() {
         const pageType = this.elementRef.nativeElement.getAttribute('page-type');
         if (pageType === PageType.OutrightLog) {
-            return this.componentFactoryResolver.resolveComponentFactory(LogPageComponent);
+            return this.viewContainerRef.createComponent(LogPageComponent);
         }
 
-        return this.componentFactoryResolver.resolveComponentFactory(MainPageComponent);
+        return this.viewContainerRef.createComponent(MainPageComponent);
     }
 }

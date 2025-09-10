@@ -12,6 +12,7 @@
       <th scope="col" class="w-10 center">
         Event Status
       </th>
+      <th *ngIf="false" scope="col" class="w-10 center">Confirm</th>
     </tr>
   </thead>
 </ng-template>
@@ -41,21 +42,24 @@
 
 <ng-template #leagueTemplate let-leagueMatch="leagueMatch">
   <ng-container *ngFor="let league of leagueMatch">
-    <tr class="league-name">
+    <tr class="league-name" [ngClass]="{'league-potential-issue': league.highLight && league.deadHeat}"
+      [matTooltip]=" league.highLight && league.deadHeat ? 'Potential issue: Missing Won - Dead Heat match.' : ''"
+      [matTooltipDisabled]="!(league.highLight && league.deadHeat)">
       <td>
-          <div class="leangue-name__content" (click)="collapseLeague(league)">
-            <span class="collapse-icon" [ngClass]="league.collapsed ? 'collapsed' : ''"></span>
-            &nbsp;
-            {{ league.eventDate | date: "mediumDate"}} - {{league.leagueName}}
-            </div>
+        <div class="leangue-name__content" (click)="collapseLeague(league)">
+          <span class="collapse-icon" [ngClass]="league.collapsed ? 'collapsed' : ''"></span>
+          &nbsp;
+          {{ league.eventDate | date: "mediumDate"}} - {{league.leagueName}}
+        </div>
       </td>
       <td class="view_log_league" (click)="collapseLeague(league)">
         <span class="code"> Code: {{ league.teams[0].matchCode }} </span>
-        <button (click)="viewLog(league);$event.stopPropagation()">View Log</button>
+        <button class="view-log" (click)="viewLog(league);$event.stopPropagation()">View Log</button>
       </td>
       <td *ngIf="permission.isLeader">
         <span>Dead Heat&nbsp;</span>
-        <button class="button-setting" [ngClass]="league.deadHeatClass" (click)="changeSettingLeague(league)"> <span  class="power"></span></button>
+        <button class="button-setting" [ngClass]="league.deadHeatClass" (click)="changeSettingLeague(league)"> <span
+            class="power"></span></button>
       </td>
       <td>
         <div class="league-action">
@@ -73,7 +77,7 @@
         <td class="event-id w-10 center">
           <span role="button" (click)="viewLog(league, team.orId)">{{
             team.orId
-          }}</span>
+            }}</span>
         </td>
         <td colspan="4" class="w-15 center">
           {{ team.kickOffTime | date: "mediumDate" }}
@@ -81,7 +85,9 @@
         </td>
         <td class="team-name w-100">{{ team.teamName }}</td>
         <td class="w-10 center">{{ team.betCount }}</td>
-        <td class="w-10 center" [ngClass]="eventStatusColor(team)">{{ UpperCaseFirstChar(team.status.toLocaleLowerCase())}}</td>
+        <td class="w-10 center" [ngClass]="eventStatusColor(team)">{{
+          UpperCaseFirstChar(team.status.toLocaleLowerCase())}}</td>
+        <td *ngIf="false" class="w-10 center">{{team.confirm}}</td>
       </tr>
     </ng-template>
   </ng-container>

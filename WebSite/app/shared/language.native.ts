@@ -357,7 +357,8 @@
     existTeamSettled:
       "Calculate function do not support settled Teams. Please recheck or use Re-Calculate function.",
     multiTeamWon: "Cannot proceed due to multiple Won teams exist. Please recheck, uncalculate then try again.",
-    confirmDeadHeatSetting: "Are you sure you want to change Dead Heat Setting from @CURRENT to @EXPECTED?"
+    confirmDeadHeatSetting: "Are you sure you want to change Dead Heat Setting from @CURRENT to @EXPECTED?",
+    screenshotMismatch: "WARNING! Cannot proceed due to values from Final Score are inconsistent with Screenshot."
   },
   TieBreakInconsistency: "Cannot proceed due to Set 3 score is not consistent with match type (Tie-Break)",
   childMatchTennisInfo: '- Xth Set Game Winner: refund not played matches.',

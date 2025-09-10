@@ -19,8 +19,8 @@ import { ModalDialogMessage } from '../../../shared/models';
   selector: 'update-deadheat-setting',
   templateUrl: './update-deadheat-setting.component.html',
   standalone: true,
-  imports: [CommonModule, DragDropModule, MatDialogModule, FormsModule],
-  providers: [OutrightService, HttpRequestService, MessageBoxService, BlockUIService]
+  imports: [CommonModule, DragDropModule, MatDialogModule, FormsModule, ToastContainerDirective],
+  providers: [OutrightService, HttpRequestService, MessageBoxService, BlockUIService, ToastrService]
 })
 export class UpdateDeadheatSettingComponent implements OnInit {
   @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;

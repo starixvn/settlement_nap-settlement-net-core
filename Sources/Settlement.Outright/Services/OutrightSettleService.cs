@@ -19,6 +19,8 @@ public interface OutrightSettleService
     Task UpdateDeadHeatSetting(UpdateDeadHeatSettingRequest request);
 
     Task<byte?> GetDeadHeadLeagueSetting(GetDeadHeadLeagueSettingRequest request);
+
+    Task<Result> SaveScore(SaveScoreRequest request);
 }
 
 public class OutrightSettleServiceImp(
@@ -32,6 +34,8 @@ public class OutrightSettleServiceImp(
     : OutrightSettleService
 {
     private const string SpName = "NAP_Admin_Settlement_Outright";
+
+    private const int ActionSaveScore = 81064;
 
     private readonly List<string> runningStatus = [EventStatus.Running, EventStatus.Closed, EventStatus.Internal];
 
@@ -113,17 +117,18 @@ public class OutrightSettleServiceImp(
 
     private async Task GetTicketInfo(List<Team> teams)
     {
-        var ticketInfo = (await outrightTicketService.GetTeamsTicketCount(teams)).ToList();
+        var ticketInfo = await outrightTicketService.GetTeamsTicketCount(teams);
+        var ticketLookup = ticketInfo.ToDictionary(t => t.OrId, t => t);
+        
         foreach (var team in teams)
         {
             team.RefDataService = refDataService;
-            var foundTeam = ticketInfo.Find(t => t.OrId == team.OrId);
-            if (foundTeam is not null)
+            if (ticketLookup.TryGetValue(team.OrId, out var ticketData))
             {
-                team.TotalCal = foundTeam.TotalCal;
-                team.TotalHide = foundTeam.TotalHide;
-                team.TotalRunning = foundTeam.TotalRunning;
-                team.BetCount = foundTeam.TotalTicket;
+                team.TotalCal = ticketData.TotalCal;
+                team.TotalHide = ticketData.TotalHide;
+                team.TotalRunning = ticketData.TotalRunning;
+                team.BetCount = ticketData.TotalTicket;
             }
         }
     }
@@ -133,10 +138,10 @@ public class OutrightSettleServiceImp(
         var listMatch = request.MatchIds.Split(',');
         var listTeamId = request.TeamIds.Split(',');
 
-        return listMatch.Select((t, i) => new InfoValidate(t, listTeamId[i])).ToList();
+        return listMatch.Select((t, i) => new InfoValidate(t, listTeamId[i]));
     }
 
-    private async Task<Result> PushRequestUncalculate(int matchId, string teamId, ICollection<string> teamSettleFailed)
+    private async Task<Result> PushRequestUncalculate(int matchId, string teamId, List<string> teamSettleFailed)
     {
         var result = await UpdateResultAndUndo(matchId);
         if (result.IsSuccessful)
@@ -150,7 +155,7 @@ public class OutrightSettleServiceImp(
         return result;
     }
 
-    private async Task<Result> PushRequestCalculate(TeamSettleModel team, int deadHeat, ICollection<string> teamSettleFailed)
+    private async Task<Result> PushRequestCalculate(TeamSettleModel team, int deadHeat, List<string> teamSettleFailed)
     {
         var result = await SettleMatch(team, deadHeat);
         if (result.IsSuccessful)
@@ -211,5 +216,40 @@ public class OutrightSettleServiceImp(
     private IEnumerable<Team> SortTeam(IEnumerable<Team> teams)
     {
         return teams.OrderByDescending(t => runningStatus.Exists(s => s == t.OddsStatus.ToLowerInvariant())).ThenBy(t => t.TeamName);
+    }
+
+    public async Task<Result> SaveScore(SaveScoreRequest request)
+    {
+        var criteria = new SaveScoreCriteria
+        {
+            LeagueId = request.Teams.First().LeagueId,
+            SourceId = SourceType.Screenshot,
+            Resources = outrightSettleProcessService.CreateScoreResources(request.Teams)
+        };
+
+        await repository.ExecuteAsync(criteria);
+
+        await LogRequestSaveScore(request);
+
+        return new Result();
+    }
+
+    private async Task LogRequestSaveScore(SaveScoreRequest request)
+    {
+        var tasks = request.Teams.Select(match =>
+        {
+            var criteria = new InsertLogOutRightCriteria
+            {
+                LeagueId = match.LeagueId,
+                MatchId = match.OrId,
+                Result = match.ScreenShot,
+                UserId = currentSession.UserId,
+                ActionId = ActionSaveScore,
+                EventDate = DateTimeOffset.Now
+            };
+
+            return repository.ExecuteAsync(criteria);
+        });
+        await Task.WhenAll(tasks.ToArray());
     }
 }

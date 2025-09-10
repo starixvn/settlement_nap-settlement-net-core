@@ -1,14 +1,14 @@
 ﻿using AutoMapper;
 using Fanex.Data.Repository;
 using NSubstitute;
+using Settlement.Core.Constants;
+using Settlement.Core.Models;
+using Settlement.Core.Services;
 using Settlement.Outright;
 using Settlement.Outright.Criteria;
 using Settlement.Outright.Models;
 using Settlement.Outright.Requests;
 using Settlement.Outright.Services;
-using Settlement.Core.Constants;
-using Settlement.Core.Models;
-using Settlement.Core.Services;
 
 namespace Settlement.Sportsbook.Outright.UnitTests.services;
 
@@ -73,7 +73,7 @@ public class FilterServiceTests
         var teamOne = new Team { LeagueId = 1, SportType = 1 };
         var teamTwo = new Team { LeagueId = 1, SportType = 1 };
         var teamThree = new Team { LeagueId = 2, SportType = 1 };
-        repository.FetchMultipleAsync<DeadHeatSetting, Team>(Arg.Any<GetOutrightDetailCriteria>()).Returns((new List<DeadHeatSetting>(), new List<Team> { teamOne, teamTwo, teamThree }));
+        repository.FetchMultipleAsync<DeadHeatSetting, Team, LeagueSpecialIndicate>(Arg.Any<GetOutrightDetailCriteria>()).Returns((new List<DeadHeatSetting>(), new List<Team> { teamOne, teamTwo, teamThree }, new List<LeagueSpecialIndicate>()));
         repository.FetchAsync<TeamTicketModel>(Arg.Any<GetTeamTicketCountCriteria>())
             .Returns(new List<TeamTicketModel>());
 
@@ -88,7 +88,7 @@ public class FilterServiceTests
         var teamOne = new Team { LeagueId = 1, BetCount = 4, OrId = 1 };
         var teamTwo = new Team { LeagueId = 1, OrId = 2 };
         var listTeam = new List<Team> { teamOne, teamTwo };
-        repository.FetchMultipleAsync<DeadHeatSetting, Team>(Arg.Any<GetOutrightDetailCriteria>()).Returns((new List<DeadHeatSetting>(), listTeam));
+        repository.FetchMultipleAsync<DeadHeatSetting, Team, LeagueSpecialIndicate>(Arg.Any<GetOutrightDetailCriteria>()).Returns((new List<DeadHeatSetting>(), listTeam, new List<LeagueSpecialIndicate>()));
 
         outrightTicketService.GetTeamsTicketCount(listTeam).Returns(new List<TeamTicketModel>
         {
@@ -112,7 +112,7 @@ public class FilterServiceTests
         var teamTwo = new Team { LeagueId = 1, SportType = 1 };
         var teamThree = new Team { LeagueId = 2, SportType = 1 };
         var deadHeadSetting = new DeadHeatSetting { DeadHeat = true, LeagueId = 1 };
-        repository.FetchMultipleAsync<DeadHeatSetting, Team>(Arg.Any<GetOutrightDetailCriteria>()).Returns((new List<DeadHeatSetting> { deadHeadSetting }, new List<Team> { teamOne, teamTwo, teamThree }));
+        repository.FetchMultipleAsync<DeadHeatSetting, Team, LeagueSpecialIndicate>(Arg.Any<GetOutrightDetailCriteria>()).Returns((new List<DeadHeatSetting> { deadHeadSetting }, new List<Team> { teamOne, teamTwo, teamThree }, new List<LeagueSpecialIndicate>()));
         repository.FetchAsync<TeamTicketModel>(Arg.Any<GetTeamTicketCountCriteria>())
             .Returns(new List<TeamTicketModel>());
 

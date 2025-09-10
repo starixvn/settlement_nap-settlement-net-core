@@ -4,16 +4,14 @@ import { BlockUIService, HttpRequestService, MessageBoxService, VerifyDateServic
 import { LogRequest } from '../../models/log-request.model';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { DatepickerComponent } from '../../../shared/components/date-picker/date-picker.component';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { DynamicHeightDirective } from '../../../shared/directives';
 import LogComponent from '../log.component';
 
 @Component({
     selector: 'log-popup',
     templateUrl: './log-popup.component.html',
     standalone: true,
-    imports: [CommonModule, FormsModule, DatepickerComponent, MatDialogModule, DynamicHeightDirective, LogComponent],
+    imports: [CommonModule, FormsModule, MatDialogModule, LogComponent],
     providers: [VerifyDateService, OutrightService, HttpRequestService, MessageBoxService, BlockUIService,
     ],
     encapsulation: ViewEncapsulation.None,

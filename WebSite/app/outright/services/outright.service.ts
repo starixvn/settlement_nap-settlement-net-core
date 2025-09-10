@@ -1,12 +1,13 @@
 
 import { Injectable } from "@angular/core";
-import { LeagueSettle, SportLeague, SportLeagueFilter, TeamSettle } from "../models";
+import { LeagueSettle, SportLeague, SportLeagueFilter, Team, TeamSettle } from "../models";
 import { HttpRequestService } from "../../shared/services";
 import { firstValueFrom, Observable } from 'rxjs';
 import { FilterRequest, InitFilter, SportLeagueRequest } from "../models/filter-request.model";
 import { LogRequest } from "../models/log-request.model";
 import { OutrightLog } from "../models/outright-log.model";
 import { ResultOutright } from "../../outright/models/result-outright.model";
+import { Result } from "../../shared/models";
 
 @Injectable()
 export class OutrightService {
@@ -55,6 +56,14 @@ export class OutrightService {
             deadHeat
         }
         const response = this.httpRequestService.postJson<ResultOutright>(query, `${this.outrightApi}/calculate`);
+        return firstValueFrom(response);
+    }
+
+    public saveScore(teams: Team[]) {
+        const query = {
+            teams
+        }
+        const response = this.httpRequestService.postJson<Result>(query, `${this.outrightApi}/save-score`);
         return firstValueFrom(response);
     }
 

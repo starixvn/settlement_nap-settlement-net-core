@@ -9,8 +9,8 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
 import { CustomNgbDateParserFormatter } from '../../../shared/components/date-picker/custom-ngb-date-parser-formatter';
 import { DialogBoxService } from '../../../shared/services';
-import { DynamicHeightDirective } from '../../../shared/directives';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { LogPopupComponent } from '../popup/log-popup.component';
 import { LeagueMatch } from '../../models/league-match.model';
 import { UncalculatePopupComponent } from '../popup/uncalculate-popup.component';
@@ -23,7 +23,7 @@ import { DeadHeatButton } from '../../constants/deatheat-button';
     templateUrl: './league-team.component.html',
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [CommonModule, MatDialogModule, DynamicHeightDirective],
+    imports: [CommonModule, MatDialogModule, MatTooltipModule],
     providers: [DatePipe, DialogBoxService,
         { provide: NgbDateParserFormatter, useFactory: () => new CustomNgbDateParserFormatter('MMM dd, y') }],
 
@@ -109,7 +109,7 @@ export class LeagueTeamComponent implements OnChanges {
                 sportType: league.teams[0].sportType,
                 eventDate: league.eventDate
             },
-            width: '930px',
+            width: '1130px',
             height: '100%',
             disableClose: true,
             hasBackdrop: true
@@ -118,6 +118,7 @@ export class LeagueTeamComponent implements OnChanges {
                 teams.forEach(team => {
                     league.teams.find(t => _.isEqual(t.orId, team.matchId)).status = team.status;
                 });
+                this.checkButtonClass(league);
             }
             this.cdRef.markForCheck();
         });
@@ -139,6 +140,7 @@ export class LeagueTeamComponent implements OnChanges {
                 teams.forEach(team => {
                     league.teams.find(t => _.isEqual(t.orId.toString(), team)).status = this.runningStatus;
                 });
+                this.checkButtonClass(league);
             }
             this.cdRef.markForCheck();
         });
