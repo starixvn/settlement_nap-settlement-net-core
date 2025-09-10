@@ -1,6 +1,6 @@
 import { TestBed, ComponentFixture, waitForAsync } from '@angular/core/testing';
 import { TraderResultComponent } from './trader-result.component';
-import { ResultDetail, MatchDetail } from '../../../../shared/models/sportsbook-sop';
+import { ResultDetail, MatchDetail, ExternalResultDetail } from '../../../../shared/models/sportsbook-sop';
 import { ResultControlGroup } from '../../../constants/result-control-group.native';
 import { OddFlexModel, OddsInfoModel } from '../../../../shared/models/sportsbook-sop/odds-flex.model';
 
@@ -9,6 +9,8 @@ describe('Component: TraderResultComponent', () => {
     let fixture: ComponentFixture<TraderResultComponent>;
     
     const mockMatchDetail = new MatchDetail();
+    
+    const mockExternalResult = new ExternalResultDetail(1, '00', 'Test Source');
     
     const mockOddFlex: OddFlexModel[] = [
         {
@@ -38,6 +40,8 @@ describe('Component: TraderResultComponent', () => {
             fixture = TestBed.createComponent(TraderResultComponent);
             component = fixture.componentInstance;
             component.matchDetail = mockMatchDetail;
+            component.externalResult = mockExternalResult;
+            component.resultDetail = new ResultDetail();
         });
     }));
 
@@ -50,9 +54,11 @@ describe('Component: TraderResultComponent', () => {
             // Arrange
             const resultDetail = new ResultDetail();
             resultDetail.inputType = ResultControlGroup.playerSelect;
-            resultDetail.homeValue = 'player1';
             resultDetail.oddFlex = mockOddFlex;
-            component.result = resultDetail;
+            component.resultDetail = resultDetail;
+            
+            const externalResult = new ExternalResultDetail(1, '00', 'Test Source', '', 'player1');
+            component.externalResult = externalResult;
 
             // Act
             component.ngOnInit();
@@ -65,9 +71,11 @@ describe('Component: TraderResultComponent', () => {
             // Arrange
             const resultDetail = new ResultDetail();
             resultDetail.inputType = ResultControlGroup.playerSelect;
-            resultDetail.homeValue = 'nonexistent';
             resultDetail.oddFlex = mockOddFlex;
-            component.result = resultDetail;
+            component.resultDetail = resultDetail;
+            
+            const externalResult = new ExternalResultDetail(1, '00', 'Test Source', '', 'nonexistent');
+            component.externalResult = externalResult;
 
             // Act
             component.ngOnInit();
@@ -80,9 +88,11 @@ describe('Component: TraderResultComponent', () => {
             // Arrange
             const resultDetail = new ResultDetail();
             resultDetail.inputType = ResultControlGroup.textBox;
-            resultDetail.homeValue = 'some value';
             resultDetail.oddFlex = mockOddFlex;
-            component.result = resultDetail;
+            component.resultDetail = resultDetail;
+            
+            const externalResult = new ExternalResultDetail(1, '00', 'Test Source', '', 'some value');
+            component.externalResult = externalResult;
 
             // Act
             component.ngOnInit();
@@ -95,9 +105,11 @@ describe('Component: TraderResultComponent', () => {
             // Arrange
             const resultDetail = new ResultDetail();
             resultDetail.inputType = ResultControlGroup.playerSelect;
-            resultDetail.homeValue = 'player1';
             resultDetail.oddFlex = null;
-            component.result = resultDetail;
+            component.resultDetail = resultDetail;
+            
+            const externalResult = new ExternalResultDetail(1, '00', 'Test Source', '', 'player1');
+            component.externalResult = externalResult;
 
             // Act
             expect(() => component.ngOnInit()).not.toThrow();
@@ -110,9 +122,11 @@ describe('Component: TraderResultComponent', () => {
             // Arrange
             const resultDetail = new ResultDetail();
             resultDetail.inputType = ResultControlGroup.playerSelect;
-            resultDetail.homeValue = 'player1';
             resultDetail.oddFlex = [];
-            component.result = resultDetail;
+            component.resultDetail = resultDetail;
+            
+            const externalResult = new ExternalResultDetail(1, '00', 'Test Source', '', 'player1');
+            component.externalResult = externalResult;
 
             // Act
             component.ngOnInit();
