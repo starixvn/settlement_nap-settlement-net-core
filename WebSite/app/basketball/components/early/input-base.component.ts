@@ -1,4 +1,4 @@
-import { Component, computed, EventEmitter, inject, Input, Output } from "@angular/core";
+import { ChangeDetectorRef, Component, computed, EventEmitter, inject, Input, Output } from "@angular/core";
 import { ExternalResultDetail, ResultDetail } from "../../../shared/models/sportsbook-sop";
 import { isEqual } from "lodash";
 import { EarlyResourcesIds } from "../../constants";
@@ -31,10 +31,12 @@ abstract class InputBaseComponent {
 export class InputFinalBaseComponent extends InputBaseComponent {
   @Input({ required: true }) item: ResultDetail;
   @Input({ required: true }) enable: boolean;
-  verificationBaseService = inject(VerificationBaseService);
+  @Input() updateView: () => void;
+  readonly #verificationBaseService = inject(VerificationBaseService);
 
   checkResultIsMatched(resultDetail: ResultDetail) {
-    resultDetail.isScoreMismatched = this.verificationBaseService.isEarlyMismatchedWarning(resultDetail);
+    resultDetail.isScoreMismatched = this.#verificationBaseService.isEarlyMismatchedWarning(resultDetail);
+    this.updateView();
   }
 }
 
@@ -47,18 +49,20 @@ export class InputOutSideBaseComponent extends InputBaseComponent {
   @Input({ required: true }) resultDetail: ResultDetail;
   @Input({ required: true }) externalResult: ExternalResultDetail;
   @Input({ required: true }) enable: boolean;
-  verificationBaseService = inject(VerificationBaseService);
+  @Input() updateView: () => void;
+  readonly #verificationBaseService = inject(VerificationBaseService);
   readonly #earlyStore = inject(EarlyStore);
-  matchDetail = computed(() => this.#earlyStore.matchDetail()); 
+  readonly #matchDetail = computed(() => this.#earlyStore.matchDetail()); 
 
   verifyAndAutoFillResult(resultDetail: ResultDetail) {
-    this.matchDetail().isSavedScore = false;
+    this.#matchDetail().isSavedScore = false;
     if (resultDetail.settlementStatusId !== SettlementStatusId.Calculated) {
       resultDetail.homeValue = '';
       resultDetail.awayValue = '';
     }
 
-    this.verificationBaseService.autoFillEarlyResult(resultDetail);
-    resultDetail.isScoreMismatched = this.verificationBaseService.isEarlyMismatchedWarning(resultDetail);
+    this.#verificationBaseService.autoFillEarlyResult(resultDetail);
+    resultDetail.isScoreMismatched = this.#verificationBaseService.isEarlyMismatchedWarning(resultDetail);
+    this.updateView();
   }
 }

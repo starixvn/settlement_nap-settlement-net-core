@@ -289,4 +289,8 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
 
         return isRunning && !result.isScoreMismatched && this.verificationService.isValidTraderConfirmScore(result, false);
     }
+
+    public updateValue(result: ResultDetail) {
+        this.toastrService.clear();
+    }
 }

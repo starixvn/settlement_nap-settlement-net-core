@@ -2,19 +2,19 @@
 <td class="ticket-status" [ngClass]="item.ticketStatus.toLowerCase()">{{item.ticketStatus}}</td>
 <td class="final-result-content">
   <ng-container [ngComponentOutlet]="inputComponent"
-    [ngComponentOutletInputs]="{item: item, enable: item.checked}"></ng-container>
+    [ngComponentOutletInputs]="{item: item, enable: item.checked, updateView: updateView}"></ng-container>
 </td>
 
 <ng-container *ngFor="let result of item.externalScores; let x=index">
-  <td *ngIf="x < (maxProviderCol()+1) && permission().isLeader" class="map">
+  <td *ngIf="x < (maxProviderCol+1) && permission.isLeader" class="map">
     <div class="outside-source-text" [matTooltip]="getTextTooltip(result.homeName, 13)" matTooltipPosition="above">
       <trader-result [externalResult]="result" [resultDetail]="item" [matchDetail]="matchDetail()"></trader-result>
     </div>
   </td>
-  <ng-container *ngIf="x >= (maxProviderCol()+1)">
+  <ng-container *ngIf="x >= (maxProviderCol+1)">
     <td class="map out-side-content" [ngClass]="{'striped': x % 2 === 0, 'can-settle': canSettleResult(item)}">
       <ng-container [ngComponentOutlet]="inputOutSideComponent"
-        [ngComponentOutletInputs]="{externalResult: result, resultDetail: item, enable: item.checked}"></ng-container>
+        [ngComponentOutletInputs]="{externalResult: result, resultDetail: item, enable: item.checked, updateView: updateView}"></ng-container>
     </td>
   </ng-container>
 </ng-container>

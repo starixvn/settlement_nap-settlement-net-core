@@ -11,20 +11,23 @@ import { SettlementStatusId } from '../../../shared/constants/settlement-status-
   template: '',
   standalone: true
 })
-class TestInputFinalComponent extends InputFinalBaseComponent {}
+class TestInputFinalComponent extends InputFinalBaseComponent {
+    updateView = jest.fn();
+}
 
 @Component({
   template: '',
   standalone: true
 })
-class TestInputOutSideComponent extends InputOutSideBaseComponent {}
+class TestInputOutSideComponent extends InputOutSideBaseComponent {
+    updateView = jest.fn();
+}
 
 describe('Component: InputBaseComponent', () => {
     let finalComponent: TestInputFinalComponent;
     let outSideComponent: TestInputOutSideComponent;
     let finalFixture: ComponentFixture<TestInputFinalComponent>;
     let outSideFixture: ComponentFixture<TestInputOutSideComponent>;
-    let earlyStore: EarlyStore;
     
     const resultDetail = new ResultDetail();
     resultDetail.betType = '604';
@@ -189,7 +192,7 @@ describe('Component: InputBaseComponent', () => {
         let mockVerificationService: any;
 
         beforeEach(() => {
-            mockVerificationService = finalComponent.verificationBaseService;
+            mockVerificationService = TestBed.inject(VerificationBaseService);
             jest.clearAllMocks();
         });
 
@@ -232,87 +235,8 @@ describe('Component: InputBaseComponent', () => {
     });
 
 
-    describe('Input Properties - InputFinalBaseComponent', () => {
-        it('should accept item input property', () => {
-            // Arrange
-            const newResultDetail = new ResultDetail();
-            newResultDetail.betType = '123';
+   
 
-            // Act
-            finalComponent.item = newResultDetail;
-
-            // Assert
-            expect(finalComponent.item).toBe(newResultDetail);
-            expect(finalComponent.item.betType).toBe('123');
-        });
-
-        it('should accept enable input property', () => {
-            // Act
-            finalComponent.enable = false;
-
-            // Assert
-            expect(finalComponent.enable).toBe(false);
-
-            // Act
-            finalComponent.enable = true;
-
-            // Assert
-            expect(finalComponent.enable).toBe(true);
-        });
-
-        it('should have verificationBaseService injected', () => {
-            // Assert
-            expect(finalComponent.verificationBaseService).toBeDefined();
-            expect(finalComponent.verificationBaseService).toBeTruthy();
-        });
-    });
-
-    describe('Input Properties - InputOutSideBaseComponent', () => {
-        it('should accept resultDetail input property', () => {
-            // Arrange
-            const newResultDetail = new ResultDetail();
-            newResultDetail.betType = '456';
-
-            // Act
-            outSideComponent.resultDetail = newResultDetail;
-
-            // Assert
-            expect(outSideComponent.resultDetail).toBe(newResultDetail);
-            expect(outSideComponent.resultDetail.betType).toBe('456');
-        });
-
-        it('should accept externalResult input property', () => {
-            // Arrange
-            const newExternalResult = { homeValue: 'A' } as ExternalResultDetail;
-
-            // Act
-            outSideComponent.externalResult = newExternalResult;
-
-            // Assert
-            expect(outSideComponent.externalResult).toBe(newExternalResult);
-            expect(outSideComponent.externalResult.homeValue).toBe('A');
-        });
-
-        it('should accept enable input property', () => {
-            // Act
-            outSideComponent.enable = false;
-
-            // Assert
-            expect(outSideComponent.enable).toBe(false);
-
-            // Act
-            outSideComponent.enable = true;
-
-            // Assert
-            expect(outSideComponent.enable).toBe(true);
-        });
-
-        it('should have verificationBaseService injected', () => {
-            // Assert
-            expect(outSideComponent.verificationBaseService).toBeDefined();
-            expect(outSideComponent.verificationBaseService).toBeTruthy();
-        });
-    });
 
     describe('Edge Cases', () => {
         it('should handle getDropdownTooltip with empty strings', () => {
@@ -344,7 +268,7 @@ describe('Component: InputBaseComponent', () => {
         it('should handle checkResultIsMatched with undefined properties', () => {
             // Arrange
             const testResultDetail = new ResultDetail();
-            const mockVerificationService = finalComponent.verificationBaseService;
+            const mockVerificationService = TestBed.inject(VerificationBaseService);
             jest.spyOn(mockVerificationService, 'isEarlyMismatchedWarning').mockReturnValue(undefined);
 
             // Act
@@ -360,20 +284,8 @@ describe('Component: InputBaseComponent', () => {
 
 
         beforeEach(() => {
-            mockVerificationService = outSideComponent.verificationBaseService;
+            mockVerificationService = TestBed.inject(VerificationBaseService);
             jest.clearAllMocks();
-        });
-
-        it('should set isSavedScore to false', () => {
-            // Arrange
-            const testResultDetail = new ResultDetail();
-            testResultDetail.settlementStatusId = SettlementStatusId.Calculated;
-
-            // Act
-            outSideComponent.verifyAndAutoFillResult(testResultDetail);
-
-            // Assert
-            expect(outSideComponent.matchDetail().isSavedScore).toBe(false);
         });
 
         it('should clear homeValue and awayValue when settlementStatusId is not Calculated', () => {

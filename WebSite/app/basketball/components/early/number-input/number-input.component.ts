@@ -9,7 +9,6 @@ import { OnlyIntegerDirective } from '../../../../shared/directives/only-integer
 @Component({
   standalone: true,
   imports: [CommonModule, FormsModule, MatTooltipModule, OnlyIntegerDirective],
-  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
   <input type="text" myOnlyInteger [(ngModel)]="item.homeValue" [disabled]="!enable"  (ngModelChange)="checkResultIsMatched(item)">
   `
@@ -20,7 +19,6 @@ export class NumberInputComponent extends InputFinalBaseComponent {
 @Component({
   standalone: true,
   imports: [CommonModule, FormsModule, MatTooltipModule, OnlyIntegerDirective],
-  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
   <input type="text" myOnlyInteger [(ngModel)]="externalResult.homeValue" [disabled]="!enable" (ngModelChange)="verifyAndAutoFillResult(resultDetail)">
   `

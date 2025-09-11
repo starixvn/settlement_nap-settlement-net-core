@@ -12,7 +12,6 @@ import { InputFinalBaseComponent, InputOutSideBaseComponent } from "../input-bas
   selector: 'team-selection',
   standalone: true,
   imports: [CommonModule, FormsModule, MatTooltipModule],
-  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <select [(ngModel)]="item.homeValue" [ngClass]="{'warning':item.isResultWarning}"
                             [disabled]="!enable || !permission.isLeader"
@@ -27,10 +26,8 @@ import { InputFinalBaseComponent, InputOutSideBaseComponent } from "../input-bas
   `
 })
 export class TeamSelectionComponent extends InputFinalBaseComponent {
-
   earlyStore = inject(EarlyStore);
   verificationBaseService = inject(VerificationBaseService);
-
   permission = this.earlyStore.permission();
   homeTeam = this.earlyStore.getHomeTeam();
   awayTeam = this.earlyStore.getAwayTeam();
@@ -41,7 +38,6 @@ export class TeamSelectionComponent extends InputFinalBaseComponent {
   selector: 'team-selection-out-side',
   standalone: true,
   imports: [CommonModule, FormsModule, MatTooltipModule],
-  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
   <select [(ngModel)]="externalResult.homeValue" [disabled]="!enable" (ngModelChange)="verifyAndAutoFillResult(resultDetail)"
                             [matTooltip]="getDropdownTooltip(externalResult.homeValue, 25, homeTeam, awayTeam)" matTooltipPosition="above">

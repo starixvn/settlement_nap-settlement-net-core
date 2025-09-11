@@ -461,8 +461,8 @@ describe('Service: EarlyService', () => {
                 resultDetail.homeValue = '12345';
                 resultDetail.betTypeName = 'First Scorer';
                 resultDetail.oddFlex = [
-                    { info: { playerId: '12345', playerName: 'John Doe' } },
-                    { info: { playerId: '67890', playerName: 'Jane Smith' } }
+                    { betChoice: '12345', info: { playerId: '12345', playerName: 'John Doe' } },
+                    { betChoice: '67890', info: { playerId: '67890', playerName: 'Jane Smith' } }
                 ] as any;
 
                 // Act
@@ -544,7 +544,7 @@ describe('Service: EarlyService', () => {
                 playerResult.homeValue = '123';
                 playerResult.betTypeName = 'MVP';
                 playerResult.oddFlex = [
-                    { info: { playerId: '123', playerName: 'Star Player' } }
+                    { betChoice: '123', info: { playerId: '123', playerName: 'Star Player' } }
                 ] as any;
 
                 // Act

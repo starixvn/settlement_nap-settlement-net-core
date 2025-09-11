@@ -347,14 +347,14 @@ describe('Component: ResultRowComponent', () => {
 
     describe('computed properties', () => {
         it('should return maxProviderCol from store', () => {
-            const maxCol = component.maxProviderCol();
+            const maxCol = component.maxProviderCol;
 
             expect(maxCol).toBe(5);
             expect(earlyStore.maxProviderCol).toHaveBeenCalled();
         });
 
         it('should return permission from store', () => {
-            const perm = component.permission();
+            const perm = component.permission;
 
             expect(perm).toBe(permission);
             expect(earlyStore.permission).toHaveBeenCalled();

@@ -2,6 +2,7 @@ import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { InputFinalBaseComponent, InputOutSideBaseComponent } from "../input-base.component";
+import { VerificationBaseService } from "../../../../core/services/verification-base.service";
 
 @Component({
   standalone: true,

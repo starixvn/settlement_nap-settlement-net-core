@@ -30,11 +30,12 @@ export class ResultRowComponent implements OnInit {
   @Input() map: GroupMap;
   @Output() settingChanged = new EventEmitter<{ item: ResultDetail, map: GroupMap }>();
   @Output() betTypeChanged = new EventEmitter<{ item: ResultDetail, map: GroupMap }>();
+  @Output() updateValue = new EventEmitter<ResultDetail>();
   readonly #earlyStore = inject(EarlyStore);
   readonly #verificationService = inject(VerificationService);
   readonly #cdr = inject(ChangeDetectorRef);
-  maxProviderCol = computed(() => this.#earlyStore.maxProviderCol());
-  permission = computed(() => this.#earlyStore.permission());
+  maxProviderCol =this.#earlyStore.maxProviderCol();
+  permission = this.#earlyStore.permission();
   matchDetail = computed(() => this.#earlyStore.matchDetail());
   inputComponent: Type<finalInput>;
   inputOutSideComponent: Type<finalInputOutSide>;
@@ -44,7 +45,8 @@ export class ResultRowComponent implements OnInit {
     this.inputOutSideComponent = this.getInputOutSideComponent();
   }
 
-  public updateView(): void {
+  public updateView = (): void => {
+    this.updateValue.emit(this.item);
     this.#cdr.markForCheck();
   }
 

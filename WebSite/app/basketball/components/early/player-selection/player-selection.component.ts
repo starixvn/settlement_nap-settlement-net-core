@@ -9,7 +9,6 @@ import { CommonModule } from '@angular/common';
   selector: 'player-select',
   standalone: true,
   imports: [ FormsModule, CommonModule],
-  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
    <select [disabled]="!enable" [(ngModel)]="item.homeValue" (ngModelChange)="checkResultIsMatched(item)">
     <option *ngFor="let selection of playerSelections" [value]="selection.betChoice">{{selection.playerName}}</option>
@@ -35,7 +34,6 @@ export class PlayerSelectionComponent extends InputFinalBaseComponent implements
   selector: 'player-select',
   standalone: true,
   imports: [ FormsModule, CommonModule],
-  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
    <select [disabled]="!enable" [(ngModel)]="externalResult.homeValue" (ngModelChange)="verifyAndAutoFillResult(resultDetail)">
     <option *ngFor="let selection of playerSelections" [value]="selection.betChoice">{{selection.playerName}}</option>

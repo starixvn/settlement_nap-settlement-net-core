@@ -140,7 +140,7 @@
                 resultStatusPipe: resultStatusSelected; track item.resourceId) {
                 <tr result-row [item]="item" [map]="map" [hidden]="map.collapsed"
                     (settingChanged)="isChangeSetting($event.item, $event.map)"
-                    (betTypeChanged)="onChangeBetType($event.item, $event.map)"
+                    (betTypeChanged)="onChangeBetType($event.item, $event.map)" (updateValue)="updateValue($event)"
                     [ngClass]="{'result-row': 1, 'mismatched': item.isScoreMismatched, 'confirmed-refund': permission.isLeader && item.resultSettingData.isConfirmedRefund}">
                 </tr>
                 }

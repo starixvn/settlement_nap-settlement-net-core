@@ -52,6 +52,7 @@ describe('Component: TeamSelectionComponent', () => {
             
             component.item = resultDetail;
             component.enable = true;
+            component.updateView = jest.fn();
         });
     }));
 
@@ -137,6 +138,7 @@ describe('Component: TeamSelectionOutSideComponent', () => {
             component.resultDetail = resultDetail;
             component.externalResult = externalResult as ExternalResultDetail;
             component.enable = true;
+            component.updateView = jest.fn();
         });
     }));
 
