@@ -46,6 +46,8 @@ public class UpdateMatchInfoCriteria : NonQueryCommand
 
     public int DeterminedType { get; set; }
 
+    public bool IsSDTEarly { get; set; }
+
     public override string GetSettingKey() => "NAP_Admin_MatchInfoUpd";
 
     public override bool IsValid() => MatchId > 0;

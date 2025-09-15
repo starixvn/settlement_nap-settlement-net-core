@@ -2,7 +2,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 import * as _ from 'lodash';
 import { ResultDetail } from '../models/sportsbook-sop';
 
-@Pipe({ name: 'ticketStatus' })
+@Pipe({ name: 'ticketStatus', standalone: false })
 export class TicketStatusPipe implements PipeTransform {
     public transform(resultDetails: ResultDetail[], args: string) {
         return resultDetails.filter((item) => {

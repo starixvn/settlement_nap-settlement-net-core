@@ -133,10 +133,10 @@ public class BasketballBetTypeServiceImp(
             MatchId = matchId,
             SportType = SportType.BasketBall
         };
-
         var oddFlex = (await dynamicRepository.FetchAsync<OddFlexModel>(criteria)).ToList();
 
-        Parallel.ForEach(oddFlex, playerModel => playerModel.Info = JsonConvert.DeserializeObject<OddsInfoModel>(playerModel.OddsInfo));
+        oddFlex.ForEach(playerModel => playerModel.Info = JsonConvert.DeserializeObject<OddsInfoModel>(playerModel.OddsInfo));
+
         return oddFlex;
     }
 

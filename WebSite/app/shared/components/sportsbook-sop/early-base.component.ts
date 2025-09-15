@@ -1,8 +1,8 @@
 import * as _ from 'lodash';
 import { Component, Injector } from '@angular/core';
-import { ResultDetail, GroupMap, Permission, SaveScoreQuery, MatchDetail } from '../../models/sportsbook-sop';
+import { ResultDetail, GroupMap, Permission, SaveScoreQuery, MatchDetail, ExternalResult, ExternalResultDetail } from '../../models/sportsbook-sop';
 import { ItemsSelect, ModalDialogMessage, MultipleSelect, ResultSettingQuery, ResourceItem } from '../../models';
-import { BackgroundColor, CalculateAction, ResultSettingType, ResultStatusId, SettlementStatusId, TicketStatusText } from '../../constants';
+import { BackgroundColor, CalculateAction, ResultSettingType, ResultStatusId, ScoreSourceType, SettlementStatusId, TicketStatusText } from '../../constants';
 import { AioService, MessageBoxService } from '../../services';
 import { VerificationBaseService } from '../../../core/services/verification-base.service';
 import { Language } from '../../language.native';
@@ -31,6 +31,7 @@ export class EarlyBaseComponent {
     public resultTypeSelected: string;
     public isReSettledTickets: boolean;
     public matchDetail: MatchDetail;
+    public isRefundWithSettleDetermined = false;
     public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
 
     constructor(protected injector: Injector,
@@ -77,18 +78,22 @@ export class EarlyBaseComponent {
     }
 
     public onSelectTicketsStatus(value: ItemsSelect[]) {
-        this.ticketStatusSelected = value.length > 0 ? value.map(item => item.value).join() : "";
+        this.ticketStatusSelected = this.joinSelectedValues(value);
         this.autoUncheckAfterFilter();
     }
 
     public onSelectResultsStatus(value: ItemsSelect[]) {
-        this.resultStatusSelected = value.length > 0 ? value.map(item => item.value).join() : "";
+        this.resultStatusSelected = this.joinSelectedValues(value);
         this.autoUncheckAfterFilter();
     }
 
     public onSelectResultType(value: ItemsSelect[]) {
-        this.resultTypeSelected = value.length > 0 ? value.map(item => item.value).join() : "";
+        this.resultTypeSelected = this.joinSelectedValues(value);
         this.autoUncheckAfterFilter();
+    }
+
+    private joinSelectedValues(value: ItemsSelect[]): string {
+        return value.length > 0 ? value.map(item => item.value).join() : "";
     }
 
     public autoUncheckAfterFilter() {
@@ -117,11 +122,15 @@ export class EarlyBaseComponent {
     }
 
     public getResultSettingIcon(holdResult: boolean) {
-        if (this.permission.canCalculate || this.permission.canUncalculate || this.permission.canRefund) {
+        if (this.hasModificationPermissions()) {
             return holdResult ? 'icon-yes' : 'icon-no';
         } else {
             return holdResult ? BackgroundColor.iconAutoDisabled : BackgroundColor.iconNoDisabled;
         }
+    }
+
+    private hasModificationPermissions(): boolean {
+        return this.permission.canCalculate || this.permission.canUncalculate || this.permission.canRefund;
     }
 
     public onResettleCheckboxChange(isChecked: boolean) {
@@ -158,68 +167,85 @@ export class EarlyBaseComponent {
 
     public async doSaveResult(type: string, originalResultDetail: ResultDetail[], resultDetails: ResultDetail[],
         ApiKey: string, func: () => void) {
+        const query = this.buildSaveScoreQuery(originalResultDetail, resultDetails, ApiKey);
+        const result = await this.aioService.saveScore(query);
+        
+        if (!result.isSuccessful) {
+            this.toastrService.error(result.errMsg);
+        } else {
+            this.handleSaveResultSuccess(type, func);
+        }
+    }
+
+    private buildSaveScoreQuery(originalResultDetail: ResultDetail[], resultDetails: ResultDetail[], ApiKey: string): SaveScoreQuery {
         const scoresToSave = this.verificationBaseService.getChangedScores(resultDetails, originalResultDetail);
         const checkedScores = this.verificationBaseService.getOutsideScores(resultDetails);
-        const query: SaveScoreQuery = {
+        return {
             matchId: this.matchId,
             scoresToSave,
             checkedScores,
             apiKey: ApiKey
         };
-        const result = await this.aioService.saveScore(query);
-        if (!result.isSuccessful) {
-            this.toastrService.error(result.errMsg);
+    }
+
+    private handleSaveResultSuccess(type: string, func: () => void) {
+        if (_.isEqual(type, CalculateAction.calculate)) {
+            func();
         } else {
-            if (_.isEqual(type, CalculateAction.calculate)) {
-                func();
-            } else {
-                this.autoUncheckAfterFilter();
-            }
+            this.autoUncheckAfterFilter();
         }
     }
 
     public verifyScoreSourcesAndCalculate(confirmChangedResults: () => void) {
-        if(!this.verificationBaseService.allMapHaveScreenshotSource(this.resultDetails)) {
+        if (!this.verificationBaseService.allMapHaveScreenshotSource(this.resultDetails)) {
             this.toastrService.error(Language.sop.notScreenshot);
             return;
         }
- 
-        if(this.verificationBaseService.isExistMismatchedScoreScreenshot(this.resultDetails)) {
+
+        if (this.verificationBaseService.isExistMismatchedScoreScreenshot(this.resultDetails)) {
             this.toastrService.error(Language.sop.mismatchedScreenshot);
             return;
         }
-        
+
         if (this.verificationBaseService.allResultsHaveScoreSources(this.resultDetails)) {
             this.confirmCalculateMismatchScores(confirmChangedResults);
         } else {
-            if (!this.permission.isLeader) {
-                this.toastrService.error(Language.eSports.nonLeader.insufficientSources);
-            } else {
-                this.confirmationDialogMessage.message = Language.eSports.leader.insufficientSources;
-                this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
-                    this.confirmCalculateMismatchScores(confirmChangedResults);
-                });
-            }
+            this.handleInsufficientSources(confirmChangedResults);
+        }
+    }
+
+    private handleInsufficientSources(confirmChangedResults: () => void) {
+        if (!this.permission.isLeader) {
+            this.toastrService.error(Language.eSports.nonLeader.insufficientSources);
+        } else {
+            this.confirmationDialogMessage.message = Language.eSports.leader.insufficientSources;
+            this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
+                this.confirmCalculateMismatchScores(confirmChangedResults);
+            });
         }
     }
 
     public confirmCalculateMismatchScores(confirmChangedResults: () => void) {
         if (this.verificationBaseService.isExistMismatchScore(this.resultDetails)) {
-            if (!this.permission.isLeader) {
-                this.toastrService.error(Language.eSports.nonLeader.mismatchedResult);
-            } else {
-                this.confirmationDialogMessage.message = Language.eSports.leader.mismatchedResult;
-                this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
-                    confirmChangedResults();
-                });
-            }
+            this.handleMismatchedScores(confirmChangedResults);
         } else {
             confirmChangedResults();
         }
     }
 
+    private handleMismatchedScores(confirmChangedResults: () => void) {
+        if (!this.permission.isLeader) {
+            this.toastrService.error(Language.eSports.nonLeader.mismatchedResult);
+        } else {
+            this.confirmationDialogMessage.message = Language.eSports.leader.mismatchedResult;
+            this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
+                confirmChangedResults();
+            });
+        }
+    }
+
     public isChangeSetting(resultDetail: ResultDetail, groupMap: GroupMap) {
-        if (this.permission.canCalculate || this.permission.canUncalculate || this.permission.canRefund) {
+        if (this.hasModificationPermissions()) {
             this.toastrService.clear();
             const query = new ResultSettingQuery(this.matchId, ResultSettingType.holdResult,
                 !resultDetail.resultSettingData.isHoldResult, resultDetail.resourceId);
@@ -232,15 +258,15 @@ export class EarlyBaseComponent {
         }
     }
 
-    public changeSettingGroup(groupMap: GroupMap, func: () => void = () => {}) {
-        if (this.permission.canCalculate || this.permission.canUncalculate || this.permission.canRefund) {
+    public changeSettingGroup(groupMap: GroupMap, func: () => void = () => { }) {
+        if (this.hasModificationPermissions()) {
             const resourceIds = _.join(groupMap.resultDetail.map(item => item.resourceId), ',');
             const query = new ResultSettingQuery(this.matchId, ResultSettingType.holdResult,
                 !groupMap.isHoldResult, resourceIds);
             this.confirmationDialogMessage.message = Language.holdResultGroupConfirmMessage;
 
             this.messageBoxService.confirm(this.confirmationDialogMessage, async () => {
-               this.aioService.changeResultSetting(query).then((result) => {
+                this.aioService.changeResultSetting(query).then((result) => {
                     this.setValueGroup(groupMap, result);
                     func();
                 });
@@ -249,15 +275,22 @@ export class EarlyBaseComponent {
     }
 
     public getUncalculateMessage() {
-        const isRunningResultStatus = _.find(this.resultDetails,
-            (x: ResultDetail) => x.checked
-                && (x.resultStatusId === ResultStatusId.RunningZero
-                    || x.resultStatusId === ResultStatusId.RunningOne
-                    || x.resultStatusId === ResultStatusId.RunningThree || x.resultStatusId === null));
-
+        const isRunningResultStatus = this.hasRunningResultStatus();
         this.confirmationDialogMessage.message = isRunningResultStatus
             ? Language.UnCalculationConfirmMessageEarly2
             : Language.UnCalculationConfirmMessageEarly1;
+    }
+
+    private hasRunningResultStatus(): boolean {
+        return !!_.find(this.resultDetails, (x: ResultDetail) => 
+            x.checked && this.isRunningStatus(x.resultStatusId));
+    }
+
+    private isRunningStatus(resultStatusId: number | null): boolean {
+        return resultStatusId === ResultStatusId.RunningZero
+            || resultStatusId === ResultStatusId.RunningOne
+            || resultStatusId === ResultStatusId.RunningThree
+            || resultStatusId === null;
     }
 
     public async checkMarkedTickets(resultDetails: ResultDetail[], pushFunc: () => void) {
@@ -269,11 +302,13 @@ export class EarlyBaseComponent {
         if (res.isExistMarkedTicket) {
             this.toastrService.error(Language.MarkedTicket);
         } else {
-            this.confirmationDialogMessage.message = Language.RefundConfirmMessageEarly;
-            this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
-                pushFunc();
-            });
+            this.showRefundConfirmation(pushFunc);
         }
+    }
+
+    private showRefundConfirmation(pushFunc: () => void) {
+        this.confirmationDialogMessage.message = Language.RefundConfirmMessageEarly;
+        this.messageBoxService.confirm(this.confirmationDialogMessage, pushFunc);
     }
 
     public getClass(teamName: string) {
@@ -281,10 +316,18 @@ export class EarlyBaseComponent {
     }
 
     public getDropdownTooltip(result: string, maxLength: number) {
-        const tooltip = _.isEqual(result, "H")
-            ? this.matchDetail.homeName : _.isEqual(result, "A")
-                ? this.matchDetail.awayName : '';
+        const tooltip = this.getTeamNameFromResult(result);
         return this.getTextTooltip(tooltip, maxLength);
+    }
+
+    private getTeamNameFromResult(result: string): string {
+        if (_.isEqual(result, "H")) {
+            return this.matchDetail.homeName;
+        }
+        if (_.isEqual(result, "A")) {
+            return this.matchDetail.awayName;
+        }
+        return '';
     }
 
     public isConfirmed(resultDetail: ResultDetail) {
@@ -293,45 +336,119 @@ export class EarlyBaseComponent {
 
     public confirmRefund() {
         this.toastrService.clear();
-        const resourceIds = _.join(this.selectedResources.map(item => item.resourceId), ',');
-    
-        const confirmRefundResources = this.selectedResources.map(x => ({...x, resourceName: x.betTypeName}));
-
-        const existResultConfirmed = _.find(this.selectedResources, item => item.resultSettingData.isConfirmedRefund);
+        const resourceIds = this.getResourceIds();
+        const confirmRefundResources = this.getConfirmRefundResources();
+        const existResultConfirmed = this.hasConfirmedResult();
+        
         if (existResultConfirmed) {
             this.undoConfirmedResult(this.selectedResources, this.matchDetail.matchId, resourceIds, confirmRefundResources);
         } else {
-            this.aioService.changeConfirmResultSetting(
-                Language.confirmRefund.confirmRefund, 
+            this.executeConfirmRefund(resourceIds, confirmRefundResources);
+        }
+    }
+
+    private getResourceIds(): string {
+        return _.join(this.selectedResources.map(item => item.resourceId), ',');
+    }
+
+    private getConfirmRefundResources() {
+        return this.selectedResources.map(x => ({ ...x, resourceName: x.betTypeName }));
+    }
+
+    private hasConfirmedResult(): boolean {
+        return !!_.find(this.selectedResources, item => 
+            item.resultSettingData.isConfirmedRefundSdt || item.resultSettingData.isConfirmedRefund);
+    }
+
+    private executeConfirmRefund(resourceIds: string, confirmRefundResources: ResultDetail[]) {
+        if (this.isRefundWithSettleDetermined) {
+            this.aioService.changeConfirmResultSDTSetting(
                 this.matchDetail.matchId, 
-                resourceIds, 
+                ResultSettingType.confirmRefundSDT, 
+                confirmRefundResources, 
                 true, 
-                null,
-                null,
-                confirmRefundResources
+                null
             );
+        } else {
+            this.aioService.changeConfirmResultSetting({
+                message: Language.confirmRefund.confirmRefund,
+                matchId: this.matchDetail.matchId,
+                resourceIds,
+                isEnabled: true,
+                hedgeMatchDetail: null,
+                oldMatchDetail: null,
+                confirmRefundResources,
+                selectedResources: this.selectedResources,
+                isSettleDetermined: this.isRefundWithSettleDetermined
+            });
         }
     }
 
     public undoConfirmedResult(
-        resultDetails: ResultDetail[], 
-        matchId: number, 
+        resultDetails: ResultDetail[],
+        matchId: number,
         resourceIds: string,
         confirmRefundResources: ResultDetail[]) {
-        const resultNotConfirmed = _.find(resultDetails, item => !item.resultSettingData.isConfirmedRefund);
-        if (_.isNil(resultNotConfirmed)) {
-            this.aioService.changeConfirmResultSetting(Language.confirmRefund.undoConfirm, matchId, resourceIds, false, null,null,confirmRefundResources);
+        const allResultConfirmed = this.areAllResultsConfirmed(resultDetails);
+        if (allResultConfirmed) {
+            this.executeUndoConfirmRefund(matchId, resourceIds, confirmRefundResources);
         } else {
             this.toastrService.error(Language.confirmRefund.differentStates);
         }
     }
 
+    private areAllResultsConfirmed(resultDetails: ResultDetail[]): boolean {
+        return _.every(resultDetails, item => 
+            this.isRefundWithSettleDetermined 
+                ? item.resultSettingData.isConfirmedRefundSdt 
+                : item.resultSettingData.isConfirmedRefund);
+    }
+
+    private executeUndoConfirmRefund(matchId: number, resourceIds: string, confirmRefundResources: ResultDetail[]) {
+        if (this.isRefundWithSettleDetermined) {
+            this.aioService.changeConfirmResultSDTSetting(
+                matchId, 
+                ResultSettingType.confirmRefundSDT, 
+                confirmRefundResources, 
+                false, 
+                null
+            );
+        } else {
+            this.aioService.changeConfirmResultSetting({
+                message: Language.confirmRefund.undoConfirm,
+                matchId,
+                resourceIds,
+                isEnabled: false,
+                hedgeMatchDetail: null,
+                oldMatchDetail: null,
+                confirmRefundResources,
+                selectedResources: null,
+                isSettleDetermined: this.isRefundWithSettleDetermined
+            });
+        }
+    }
+
     public allResultConfirmed() {
-        const existResultNotConfirmed = _.find(this.selectedResources, item => !item.resultSettingData.isConfirmedRefund);
-        if (!_.isNil(existResultNotConfirmed)) {
+        return !_.find(this.selectedResources, item => !item.resultSettingData.isConfirmedRefund);
+    }
+
+    public allResultConfirmedSdt(externalScores: ExternalResult[]) {
+        if (!this.isRefundWithSettleDetermined) {
             return false;
         }
-        return true;
+        
+        const resultConfirmedSdt = externalScores.find(item => item.sourceId === ScoreSourceType.confirmRefundSource);
+        if (_.isNil(resultConfirmedSdt)) {
+            return false;
+        }
+        
+        return this.selectedResources.every(item => {
+            if (item.resultSettingData.isConfirmedRefundSdt) {
+                const resultConfirmed = resultConfirmedSdt.resultDetails.find(x => x.resourceId === item.resourceId);
+                return resultConfirmed && resultConfirmed.homeValue === item.homeValue;
+            }
+            return false;
+        });
     }
 
     public checkResultIsMatched(resultDetail: ResultDetail) {
@@ -356,12 +473,36 @@ export class EarlyBaseComponent {
     }
 
     public async verifyRunningOdds(ResourceIds: string[], func: () => void) {
-        const errorMessage = await this.aioService.checkingNoRunningOdds(this.matchId,
-            ResourceIds, CalculateAction.earlyCalculate);
+        const errorMessage = await this.aioService.checkingNoRunningOdds(
+            this.matchId, ResourceIds, CalculateAction.earlyCalculate);
+        
         if (_.isNil(errorMessage)) {
             func();
         } else {
             this.toastrService.error(errorMessage);
+        }
+    }
+
+    autoFillConfirmedSDT(isLeader: boolean, externalResults: ExternalResult[], resultDetails: ResultDetail[]) {
+        const resultConfirmRefund = externalResults.find(r => r.sourceId === ScoreSourceType.confirmRefundSource);
+        if (isLeader && resultConfirmRefund) {
+            this.fillConfirmedResults(resultDetails, resultConfirmRefund.resultDetails);
+        }
+    }
+
+    private fillConfirmedResults(resultDetails: ResultDetail[], externalResults: ExternalResultDetail[]) {
+        resultDetails.forEach(result => {
+            if (result.resultSettingData.isConfirmedRefundSdt) {
+                this.resourceConfirmed(externalResults, result);
+            }
+        });
+    }
+
+    private resourceConfirmed(externalResults: ExternalResultDetail[], resultDetail: ResultDetail) {
+        const resource = externalResults.find(resultConfirmed => resultConfirmed.resourceId === resultDetail.resourceId);
+        if (resource) {
+            resultDetail.homeValue = resultDetail.confirmedSdtHomeValue = resource.homeValue;
+            resultDetail.awayValue = resultDetail.confirmedSdtAwayValue = resource.awayValue;
         }
     }
 }

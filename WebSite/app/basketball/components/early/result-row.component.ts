@@ -28,6 +28,7 @@ type finalInputOutSide = TeamSelectionOutSideComponent | PlayerSelectionOutSideC
 export class ResultRowComponent implements OnInit {
   @Input() item: ResultDetail;
   @Input() map: GroupMap;
+  @Input() isRefundWithSettleDetermined: boolean;
   @Output() settingChanged = new EventEmitter<{ item: ResultDetail, map: GroupMap }>();
   @Output() betTypeChanged = new EventEmitter<{ item: ResultDetail, map: GroupMap }>();
   @Output() updateValue = new EventEmitter<ResultDetail>();

@@ -211,7 +211,13 @@ describe('AioService', () => {
 
       messageBoxService.confirm = jest.fn();
 
-      service.changeConfirmResultSetting("message", 0, '', true, null);
+      service.changeConfirmResultSetting({
+        message: "message",
+        matchId: 0,
+        resourceIds: '',
+        isEnabled: true,
+        hedgeMatchDetail: null
+      });
 
       expect(messageBoxService.confirm).toHaveBeenCalled();
       expect(service.warningDialogMessage.message).toEqual("message");
@@ -224,7 +230,13 @@ describe('AioService', () => {
         true, '01');
         query.confirmRefundResources = []
 
-      service.changeConfirmResultSetting("", 0, '01', true, null);
+      service.changeConfirmResultSetting({
+        message: "",
+        matchId: 0,
+        resourceIds: '01',
+        isEnabled: true,
+        hedgeMatchDetail: null
+      });
       const buttonYes = document.getElementsByClassName("btn-danger")[0] as HTMLElement;
       buttonYes.click();
       tick();
@@ -239,7 +251,13 @@ describe('AioService', () => {
       const hedgeMatch = new HedgeMatchDetail();
       hedgeMatch.matchId = 1;
 
-      service.changeConfirmResultSetting("", 0, '01', true, hedgeMatch);
+      service.changeConfirmResultSetting({
+        message: "",
+        matchId: 0,
+        resourceIds: '01',
+        isEnabled: true,
+        hedgeMatchDetail: hedgeMatch
+      });
       const buttonYes = document.getElementsByClassName("btn-danger")[0] as HTMLElement;
       buttonYes.click();
       tick();
@@ -256,7 +274,14 @@ describe('AioService', () => {
 
       const oldMatch = {...hedgeMatch};
 
-      service.changeConfirmResultSetting("", 0, '01', true, hedgeMatch, oldMatch);
+      service.changeConfirmResultSetting({
+        message: "",
+        matchId: 0,
+        resourceIds: '01',
+        isEnabled: true,
+        hedgeMatchDetail: hedgeMatch,
+        oldMatchDetail: oldMatch
+      });
       const buttonYes = document.getElementsByClassName("btn-danger")[0] as HTMLElement;
       buttonYes.click();
       tick();

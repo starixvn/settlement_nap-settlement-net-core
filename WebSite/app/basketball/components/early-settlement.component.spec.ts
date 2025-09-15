@@ -18,7 +18,6 @@ import { ModalDialogComponent } from '../../shared/components/modal-dialog/modal
 import { ModalContentDialogComponent } from '../../shared/components/modal-dialog/modal-content-dialog.component';
 import { ResettleCheckerComponent } from '../../shared/components/resettle-checker/resettle-checker.component';
 import { PipesModule } from '../../shared/pipes/pipes.module.native';
-import { ResultRowComponent } from './early/result-row.component';
 
 describe('Component: EarlySettlementComponent', () => {
     let component: EarlySettlementComponent;
@@ -579,6 +578,55 @@ describe('Component: EarlySettlementComponent', () => {
             // Assert
             expect(result1.otherInfo).toBe('1,P1,2,P2');
             expect(result2.otherInfo).toBe('3,P3');
+        });
+    });
+
+    describe('confirmRefundBasketBall', () => {
+        beforeEach(() => {
+            component.init = jest.fn();
+            component.resultDetails = [resultDetail];
+            toastrService.clear = jest.fn();
+            component.confirmRefund = jest.fn();
+            component.matchDetail = matchDetail;
+        });
+
+        it('should call super.confirmRefund when isRefundWithSettleDetermined is false', () => {
+            // Arrange
+            component.isRefundWithSettleDetermined = false;
+
+            // Act
+            component.confirmRefundBasketBall();
+
+            // Assert
+            expect(toastrService.clear).toHaveBeenCalled();
+            expect(component.confirmRefund).toHaveBeenCalled();
+        });
+
+        it('should call super.confirmRefund when isRefundWithSettleDetermined is true and confirmed results exist', () => {
+            // Arrange
+            component.isRefundWithSettleDetermined = true;
+            resultDetail.resultSettingData.isConfirmedRefundSdt = true;
+
+            // Act
+            component.confirmRefundBasketBall();
+
+            // Assert
+            expect(toastrService.clear).toHaveBeenCalled();
+            expect(component.confirmRefund).toHaveBeenCalled();
+        });
+
+        it('should not call super.confirmRefund when isRefundWithSettleDetermined is true and no confirmed results exist', () => {
+            // Arrange
+            component.isRefundWithSettleDetermined = true;
+            resultDetail.resultSettingData.isConfirmedRefundSdt = false;
+            jest.spyOn(component, 'verifyExistResultEmpty' as any).mockReturnValue(false);
+
+            // Act
+            component.confirmRefundBasketBall();
+
+            // Assert
+            expect(toastrService.clear).toHaveBeenCalled();
+            expect(component.confirmRefund).not.toHaveBeenCalled();
         });
     });
 });

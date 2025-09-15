@@ -17,7 +17,8 @@ public class SportsbookAioAutoMapperProfile : Profile
         CreateMap<GetMatchRequest, GetHedgeMatchCriteria>();
         CreateMap<SettleRequest, SettleCriteria>()
             .ForMember(dest => dest.Action, map => map.MapFrom(src => src.ActionName))
-            .ForMember(dest => dest.SelectedResources, map => map.Ignore());
+            .ForMember(dest => dest.SelectedResources, map => map.Ignore())
+            .ForMember(dest => dest.IsSDTEarly, map => map.MapFrom(src => src.IsSettleDetermined));
         CreateMap<SettleChildMatchRequest, SettleCriteria>()
        .ForMember(dest => dest.Action, map => map.MapFrom(src => src.ActionName))
        .ForMember(dest => dest.SelectedResources, map => map.Ignore())

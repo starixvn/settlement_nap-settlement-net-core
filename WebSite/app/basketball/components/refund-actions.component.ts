@@ -18,7 +18,7 @@ import { CalculationMatchDetailComponent } from './calculation-match-detail.comp
     selector: 'refund-actions',
     templateUrl: './refund-actions.component.html',
     standalone: true,
-    imports: [RefundCommonModule, CalculationMatchDetailComponent, ResourceNameByIdPipe],
+    imports: [RefundCommonModule, CalculationMatchDetailComponent, ToastContainerDirective],
     providers: [VerificationService, BasketballService, ResourceNameByIdPipe, BetStatusService, CashOutService, GenerateCashOutService]
 })
 export class RefundActionsComponent extends RefundActionBaseComponent implements SportTemplate {

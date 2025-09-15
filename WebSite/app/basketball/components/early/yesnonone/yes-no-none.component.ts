@@ -1,13 +1,11 @@
 import { CommonModule } from "@angular/common";
-import { ChangeDetectionStrategy, Component } from "@angular/core";
+import { Component } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { InputFinalBaseComponent, InputOutSideBaseComponent } from "../input-base.component";
-import { VerificationBaseService } from "../../../../core/services/verification-base.service";
 
 @Component({
   standalone: true,
   imports: [CommonModule, FormsModule],
-  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
   <select [disabled]="!enable" [(ngModel)]="item.homeValue" (ngModelChange)="checkResultIsMatched(item)">
     <option value="Y">Yes</option>
@@ -22,7 +20,6 @@ export class YesNoNoneComponent extends InputFinalBaseComponent {
 @Component({
   standalone: true,
   imports: [CommonModule, FormsModule],
-  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
   <select [disabled]="!enable" [(ngModel)]="externalResult.homeValue" (ngModelChange)="verifyAndAutoFillResult(resultDetail)">
     <option value="Y">Yes</option>

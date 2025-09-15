@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpRequestService } from './http-request.service.native';
 import * as _ from 'lodash';
 import { firstValueFrom } from 'rxjs';
-import { GeneralResultDetail, MarkedTicketsModel, MatchResource, ModalDialogMessage, ResourceItem, Result, ResultSettingQuery } from '../models';
+import { ChangeConfirmResultSettingQuery, GeneralResultDetail, MarkedTicketsModel, MatchResource, ModalDialogMessage, ResourceItem, Result, ResultSettingQuery } from '../models';
 import { MessageBoxService } from './message-box.service.native';
 import { Language } from '../language.native';
 import { GeneralMatch, HedgeMatchDetail, ResultDetail, SaveScoreQuery } from '../models/sportsbook-sop';
@@ -123,8 +123,14 @@ export class AioService {
         hedgeMatchDetail: HedgeMatchDetail, oldMatchDetail: HedgeMatchDetail = null) {
         const resultNotConfirmed = _.find(resultDetails, item => !item.resultSettingData.isConfirmedRefund);
         if (_.isNil(resultNotConfirmed)) {
-            this.changeConfirmResultSetting(Language.confirmRefund.undoConfirm, matchId, resourceIds, false,
-                hedgeMatchDetail, oldMatchDetail);
+            this.changeConfirmResultSetting({
+                message: Language.confirmRefund.undoConfirm,
+                matchId,
+                resourceIds,
+                isEnabled: false,
+                hedgeMatchDetail,
+                oldMatchDetail
+            });
         } else {
             this.alertMessage(Language.confirmRefund.differentStates);
         }
@@ -132,14 +138,20 @@ export class AioService {
 
     public confirmResult(matchId: number, resourceIds: string,
         hedgeMatchDetail: HedgeMatchDetail, oldMatchDetail: HedgeMatchDetail = null) {
-        this.changeConfirmResultSetting(Language.confirmRefund.confirmRefund, matchId, resourceIds, true,
-            hedgeMatchDetail, oldMatchDetail);
+        this.changeConfirmResultSetting({
+            message: Language.confirmRefund.confirmRefund,
+            matchId,
+            resourceIds,
+            isEnabled: true,
+            hedgeMatchDetail,
+            oldMatchDetail
+        });
     }
 
     public changeConfirmResultSDTSetting(matchId: number, settingType: number, resourceItems: ResourceItem[], isEnabled: boolean, hedgeMatchDetail: HedgeMatchDetail, is3x3 = false) {
         this.warningDialogMessage.title = Language.confirmationBox;
         this.warningDialogMessage.message = isEnabled ?
-            Language.confirmRefund.sdtConfirm.replace('{0}', `${resourceItems[0].resourceName}: ${resourceItems[0].homeValue} - ${resourceItems[0].awayValue}`)
+            Language.confirmRefund.sdtConfirm.replace('{0}', `${resourceItems[0].resourceName}: ${resourceItems[0].homeValue} ${ resourceItems[0].awayValue ? '- ' + resourceItems[0].awayValue : ''}`)
             : Language.confirmRefund.undoConfirmAll;
         const resourceIds = resourceItems.map(resource => resource.resourceId).join(',');
         this.messageBoxService.confirm(this.warningDialogMessage, () => {
@@ -151,24 +163,22 @@ export class AioService {
         });
     }
 
-    public changeConfirmResultSetting(
-        message: string, 
-        matchId: number, 
-        resourceIds: string,
-        isEnabled: boolean, 
-        hedgeMatchDetail: HedgeMatchDetail, 
-        oldMatchDetail: HedgeMatchDetail = null, 
-        confirmRefundResources: ResourceItem[] = []) {
-
+    public changeConfirmResultSetting(params: ChangeConfirmResultSettingQuery) {
         this.warningDialogMessage.title = Language.confirmationBox;
-        this.warningDialogMessage.message = message;
+        this.warningDialogMessage.message = params.message;
         this.messageBoxService.confirm(this.warningDialogMessage, () => {
-            const query = new ResultSettingQuery(matchId, ResultSettingType.confirmRefund,isEnabled, resourceIds);
-            query.confirmRefundResources = confirmRefundResources;
+            const query = new ResultSettingQuery(
+                params.matchId, 
+                params.isSettleDetermined ? ResultSettingType.confirmRefundSDT : ResultSettingType.confirmRefund,
+                params.isEnabled, 
+                params.resourceIds
+            );
+            query.confirmRefundResources = params.confirmRefundResources || [];
+            query.selectedResources = params.isSettleDetermined ? params.selectedResources : null;
          
             this.changeResultSetting(query).then(async () => {
-                await this.confirmHedgeMatch(query, hedgeMatchDetail);
-                await this.confirmOldMatch(query, oldMatchDetail);
+                await this.confirmHedgeMatch(query, params.hedgeMatchDetail);
+                await this.confirmOldMatch(query, params.oldMatchDetail);
             }).finally(() => this.messageBoxService.closePopupNotChanged());
         });
     }

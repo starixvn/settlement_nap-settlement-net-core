@@ -1,5 +1,5 @@
 import { ComponentFixture, fakeAsync, flush, TestBed, tick, waitForAsync } from "@angular/core/testing";
-import { GroupMap, MatchDetail, Permission, ResultDetail } from "../../models/sportsbook-sop";
+import { ExternalResult, ExternalResultDetail, GroupMap, MatchDetail, Permission, ResultDetail } from "../../models/sportsbook-sop";
 import { ItemsSelect, ResultSettingModel, ResultSettingQuery } from "../../models";
 import { AioService, BlockUIService, ClosePopupService, HttpRequestService, MessageBoxService } from "../../services";
 import { EarlyBaseComponent } from "./early-base.component";
@@ -9,8 +9,7 @@ import { NgbModal, NgbModule } from "@ng-bootstrap/ng-bootstrap";
 import { VerificationBaseService } from "../../../core/services/verification-base.service";
 import { HttpClientModule } from "@angular/common/http";
 import { ResultByTeamNamePipe } from "../../pipes/result-by-team-name.pipe";
-import { CalculateAction, ResultSettingType, ResultStatusId, SettlementStatusId, TicketStatusText } from "../../constants";
-import { of, timeout } from "rxjs";
+import { CalculateAction, ResultStatusId, ScoreSourceType, TicketStatusText } from "../../constants";
 import { Language } from "../../language.native";
 import * as _ from "lodash";
 import { ToastContainerDirective, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
@@ -71,7 +70,6 @@ describe("Early Base Component", () => {
                 VerificationBaseService,
                 ResultByTeamNamePipe,
                 ClosePopupService,
-                AioService,
                 ToastContainerDirective,
                 { provide: ToastrService, useClass: ToastrService },
                 { provide: MessageBoxService, useClass: MessageBoxService },
@@ -646,6 +644,137 @@ describe("Early Base Component", () => {
             expect(component.confirmationDialogMessage.message).toEqual(Language.eSports.leader.mismatchedResult);
             expect(messageBoxService.confirm).toHaveBeenCalled();
             expect(confirmChangedResults).toHaveBeenCalled();
+        });
+    });
+
+    describe('autoFillConfirmedSDT', () => {
+        let externalResults: ExternalResult[];
+        let resultDetails: ResultDetail[];
+        let confirmRefundExternalResult: ExternalResult;
+        let externalResultDetail: ExternalResultDetail;
+
+        beforeEach(() => {
+            // Arrange
+            externalResultDetail = new ExternalResultDetail(
+                ScoreSourceType.confirmRefundSource,
+                '6130110',
+                'Confirm Refund Source',
+                '',
+                '2',
+                '1'
+            );
+
+            confirmRefundExternalResult = new ExternalResult(
+                ScoreSourceType.confirmRefundSource,
+                [externalResultDetail]
+            );
+
+            externalResults = [confirmRefundExternalResult];
+
+            const resultDetail = new ResultDetail();
+            resultDetail.resourceId = '6130110';
+            resultDetail.resultSettingData = new ResultSettingModel();
+            resultDetail.resultSettingData.isConfirmedRefundSdt = true;
+            resultDetail.homeValue = '';
+            resultDetail.awayValue = '';
+
+            resultDetails = [resultDetail];
+        });
+
+        it('should fill confirmed SDT values when user is leader and confirm refund source exists', () => {
+            // Arrange
+            const isLeader = true;
+
+            // Act
+            component.autoFillConfirmedSDT(isLeader, externalResults, resultDetails);
+
+            // Assert
+            expect(resultDetails[0].homeValue).toBe('2');
+            expect(resultDetails[0].awayValue).toBe('1');
+        });
+
+        it('should not fill values when user is not leader', () => {
+            // Arrange
+            const isLeader = false;
+
+            // Act
+            component.autoFillConfirmedSDT(isLeader, externalResults, resultDetails);
+
+            // Assert
+            expect(resultDetails[0].homeValue).toBe('');
+            expect(resultDetails[0].awayValue).toBe('');
+        });
+
+        it('should not fill values when confirm refund source does not exist', () => {
+            // Arrange
+            const isLeader = true;
+            const externalResultsWithoutConfirm = [];
+
+            // Act
+            component.autoFillConfirmedSDT(isLeader, externalResultsWithoutConfirm, resultDetails);
+
+            // Assert
+            expect(resultDetails[0].homeValue).toBe('');
+            expect(resultDetails[0].awayValue).toBe('');
+        });
+
+        it('should not fill values when result is not confirmed SDT', () => {
+            // Arrange
+            const isLeader = true;
+            resultDetails[0].resultSettingData.isConfirmedRefundSdt = false;
+
+            // Act
+            component.autoFillConfirmedSDT(isLeader, externalResults, resultDetails);
+
+            // Assert
+            expect(resultDetails[0].homeValue).toBe('');
+            expect(resultDetails[0].awayValue).toBe('');
+        });
+
+        it('should handle multiple result details with mixed confirmation states', () => {
+            // Arrange
+            const isLeader = true;
+            
+            const resultDetail2 = new ResultDetail();
+            resultDetail2.resourceId = '6130111';
+            resultDetail2.resultSettingData = new ResultSettingModel();
+            resultDetail2.resultSettingData.isConfirmedRefundSdt = false;
+            resultDetail2.homeValue = '';
+            resultDetail2.awayValue = '';
+
+            const externalResultDetail2 = new ExternalResultDetail(
+                ScoreSourceType.confirmRefundSource,
+                '6130111',
+                'Confirm Refund Source',
+                '',
+                '3',
+                '0'
+            );
+
+            confirmRefundExternalResult.resultDetails = [externalResultDetail, externalResultDetail2];
+            resultDetails = [resultDetails[0], resultDetail2];
+
+            // Act
+            component.autoFillConfirmedSDT(isLeader, externalResults, resultDetails);
+
+            // Assert
+            expect(resultDetails[0].homeValue).toBe('2');
+            expect(resultDetails[0].awayValue).toBe('1');
+            expect(resultDetails[1].homeValue).toBe('');
+            expect(resultDetails[1].awayValue).toBe('');
+        });
+
+        it('should not fill values when resource ID does not match', () => {
+            // Arrange
+            const isLeader = true;
+            resultDetails[0].resourceId = '9999999'; // Different resource ID
+
+            // Act
+            component.autoFillConfirmedSDT(isLeader, externalResults, resultDetails);
+
+            // Assert
+            expect(resultDetails[0].homeValue).toBe('');
+            expect(resultDetails[0].awayValue).toBe('');
         });
     });
 });

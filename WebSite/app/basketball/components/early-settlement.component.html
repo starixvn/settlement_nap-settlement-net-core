@@ -34,7 +34,7 @@
                 </span>
                 <button *ngIf="isShowRefundButton && permission.isLeader"
                     [ngClass]="{'btn btn-outline-primary button-confirmed': true}" [disabled]="isDisabledCalculate"
-                    (click)="confirmRefund()">
+                    (click)="confirmRefundBasketBall()">
                     Confirm/Undo-confirm Refund
                 </button>
                 <button *ngIf="isShowRefundButton"
@@ -42,6 +42,11 @@
                     (click)="refund()" [disabled]="isDisabledCalculate">
                     Refund
                 </button>
+                &nbsp;
+                <span *ngIf="isShowRefundButton">
+                    <label for="refundWithSettleDetermined">Refund with Settle Determined Tickets</label>&nbsp;<input
+                        id="refundWithSettleDetermined" type="checkbox" [(ngModel)]="isRefundWithSettleDetermined" />
+                </span>
             </div>
         </div>
     </div>
@@ -139,9 +144,10 @@
                 @for (item of map.resultDetail | resultType: resultTypeSelected | ticketStatus: ticketStatusSelected |
                 resultStatusPipe: resultStatusSelected; track item.resourceId) {
                 <tr result-row [item]="item" [map]="map" [hidden]="map.collapsed"
+                    [isRefundWithSettleDetermined]="isRefundWithSettleDetermined"
                     (settingChanged)="isChangeSetting($event.item, $event.map)"
                     (betTypeChanged)="onChangeBetType($event.item, $event.map)" (updateValue)="updateValue($event)"
-                    [ngClass]="{'result-row': 1, 'mismatched': item.isScoreMismatched, 'confirmed-refund': permission.isLeader && item.resultSettingData.isConfirmedRefund}">
+                    [ngClass]="{'result-row': 1, 'mismatched': item.isScoreMismatched && !isRefundWithSettleDetermined, 'confirmed-refund': permission.isLeader && (item.resultSettingData.isConfirmedRefund || item.resultSettingData.isConfirmedRefundSdt)}">
                 </tr>
                 }
             </ng-template>

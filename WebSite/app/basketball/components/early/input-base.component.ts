@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, computed, EventEmitter, inject, Input, Output } from "@angular/core";
+import { ChangeDetectorRef, Component, computed, EventEmitter, inject, Input, OnChanges, Output, SimpleChanges } from "@angular/core";
 import { ExternalResultDetail, ResultDetail } from "../../../shared/models/sportsbook-sop";
 import { isEqual } from "lodash";
 import { EarlyResourcesIds } from "../../constants";
@@ -28,11 +28,18 @@ abstract class InputBaseComponent {
   standalone: true,
   providers: [VerificationBaseService],
 })
-export class InputFinalBaseComponent extends InputBaseComponent {
+export class InputFinalBaseComponent extends InputBaseComponent implements OnChanges {
   @Input({ required: true }) item: ResultDetail;
   @Input({ required: true }) enable: boolean;
   @Input() updateView: () => void;
+  @Input() isRefundWithSettleDetermined: boolean;
   readonly #verificationBaseService = inject(VerificationBaseService);
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['isRefundWithSettleDetermined'] && this.item.checked) {
+        this.item.homeValue =  this.isRefundWithSettleDetermined && this.item.resultSettingData.isConfirmedRefundSdt ? this.item.confirmedSdtHomeValue : "";
+    }
+  }
 
   checkResultIsMatched(resultDetail: ResultDetail) {
     resultDetail.isScoreMismatched = this.#verificationBaseService.isEarlyMismatchedWarning(resultDetail);

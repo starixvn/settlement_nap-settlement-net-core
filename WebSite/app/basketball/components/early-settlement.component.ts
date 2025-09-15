@@ -16,7 +16,6 @@ import { NewMultipleSelectComponent } from '../../shared/components/multiple-sel
 import { ResourceNameByIdPipe } from '../pipes/resource-name-by-id.pipe';
 import { EarlyStore } from '../store/early.store';
 import { ResultRowComponent } from './early/result-row.component';
-import { ResultControlGroup } from '../constants/result-control-group.native';
 
 @Component({
     selector: 'early-settlement',
@@ -78,6 +77,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         this.verificationService.generateExternalScores(this.match, this.resultDetails, SportType.basketBall, this.maxProviderCol);
         this.resetResult(this.resultDetails);
         this.autoFillResultOnLoad(this.resultDetails);
+        this.autoFillConfirmedSDT(this.permission.isLeader, this.match.externalResults, this.resultDetails);
         this.groupMap = this.earlyService.getGroupMap(this.resultDetails, this.matchDetail);
         this.match.originalResultDetail = _.cloneDeep(this.resultDetails);
         this.hideTicketWaiting(this.groupMap);
@@ -112,8 +112,8 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
 
     private resetResult(resultDetails: ResultDetail[]) {
         resultDetails.forEach((map) => {
-            map.homeValue = map.settlementStatusId !== SettlementStatusId.Calculated ? "" : map.homeValue;
-            map.awayValue = map.settlementStatusId !== SettlementStatusId.Calculated ? "" : map.awayValue;
+            map.homeValue = map.settlementStatusId !== SettlementStatusId.Calculated && map.settlementStatusId !== SettlementStatusId.RefundSettleDetermined ? "" : map.homeValue;
+            map.awayValue = map.settlementStatusId !== SettlementStatusId.Calculated && map.settlementStatusId !== SettlementStatusId.RefundSettleDetermined ? "" : map.awayValue;
         });
     }
 
@@ -126,21 +126,21 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
 
     public calculate() {
         this.toastrService.clear();
-        const existResultConfirmed = _.find(this.selectedResources, item => item.resultSettingData.isConfirmedRefund);
+        const existResultConfirmed = _.find(this.selectedResources, item => item.resultSettingData.isConfirmedRefund || item.resultSettingData.isConfirmedRefundSdt);
         if (!_.isNil(existResultConfirmed)) {
             this.toastrService.error(Language.confirmRefund.calculateResultNotConfirmed);
-        } else if (this.verifyBeforeCalculation(this.selectedResources)) {
+        } else if (this.verifyExistResultEmpty()) {
             const selectedResourceIds = this.selectedResources.map(item => item.resourceId);
             this.verifyRunningOdds(selectedResourceIds, () => this.verifyScoreSourcesAndCalculate(() => this.confirmChangedResults()));
         }
     }
 
-    private verifyBeforeCalculation(selectedResultDetail: ResultDetail[]) {
-        this.earlyService.verifyResultValueForBetType(selectedResultDetail);
-        const isInValid = this.earlyService.isInValidResultValue(selectedResultDetail);
+    private verifyExistResultEmpty(isRefund = false) {
+        this.earlyService.verifyResultValueForBetType(this.selectedResources);
+        const isInValid = this.earlyService.isInValidResultValue(this.selectedResources);
 
         if (isInValid) {
-            this.toastrService.error(this.permission.isLeader ? Language.sop.leader.blankResult : Language.sop.nonLeader.blankResult);
+            this.toastrService.error(isRefund ? Language.warningInputScore : this.permission.isLeader ? Language.sop.leader.blankResult : Language.sop.nonLeader.blankResult);
             return false;
         }
 
@@ -209,10 +209,13 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
 
     public async refund() {
         this.toastrService.clear();
-        if (this.verificationService.isPinGoalMatch(this.matchDetail.leagueGroupId) || this.allResultConfirmed()) {
+        const allResultConfirmedNormally = this.verificationService.isPinGoalMatch(this.matchDetail.leagueGroupId) || this.allResultConfirmed();
+        const allResultConfirmedSdt = this.allResultConfirmedSdt(this.match.externalResults);
+        const allResultConfirmed = this.isRefundWithSettleDetermined ? allResultConfirmedSdt : allResultConfirmedNormally;
+        if (allResultConfirmed) {
             this.checkMarkedTickets(this.selectedResources, () => this.createQueryRefundAndPush());
         } else {
-            this.toastrService.error(Language.confirmRefund.refundResultNotConfirmed);
+            this.toastrService.error(this.isRefundWithSettleDetermined ? Language.confirmRefund.sdtErrorMessage : Language.confirmRefund.refundResultNotConfirmed);
         }
     }
 
@@ -224,7 +227,8 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
             this.isReSettledTickets,
             this.match.matchDetail.betStatus,
             BasketballApiKeys.settle,
-            this.permission.isLeader);
+            this.permission.isLeader,
+            this.isRefundWithSettleDetermined);
         this.push(query);
     }
 
@@ -292,5 +296,18 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
 
     public updateValue(result: ResultDetail) {
         this.toastrService.clear();
+    }
+
+    public confirmRefundBasketBall() {
+        this.toastrService.clear();
+        if(!this.isRefundWithSettleDetermined) {
+            this.confirmRefund();
+        }
+
+        const existResultConfirmed = _.find(this.selectedResources, item => item.resultSettingData.isConfirmedRefundSdt);
+        const verifyExistResultEmpty = existResultConfirmed || this.verifyExistResultEmpty(true);
+        if(this.isRefundWithSettleDetermined && verifyExistResultEmpty){
+            this.confirmRefund();
+        }
     }
 }

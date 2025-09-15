@@ -336,7 +336,8 @@ public class MultipleServerAioServiceImp(
             MatchId = criteria.MatchId,
             SelectedResources = criteria.SelectedResources,
             BetStatus = criteria.BetStatus,
-            DeterminedType = criteria.DeterminedType
+            DeterminedType = criteria.DeterminedType,
+            IsSDTEarly = criteria.IsSDTEarly
         };
 
         await dependencies.ScaleOutSettleService.UpdateMatchInfo(requestUpdateInfo);

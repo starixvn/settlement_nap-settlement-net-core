@@ -441,10 +441,11 @@ export class VerificationBaseService {
     }
 
     private providersScore(externalResults: ExternalResult[], maximumProvider: number) {
-
         const listProvidersScore: ExternalResult[] = [];
         const providersScore = _.filter(externalResults, (item: ExternalResult) =>
-            item.sourceId !== ScoreSourceType.trader && item.sourceId < ScoreSourceType.screenshot);
+            item.sourceId !== ScoreSourceType.trader
+            && item.sourceId !== ScoreSourceType.confirmRefundSource
+            && item.sourceId < ScoreSourceType.screenshot);
         for (let i = 0; i < maximumProvider; i++) {
             if (_.isNil(providersScore[i])) {
                 listProvidersScore.push(new ExternalResult(ScoreSourceType.emptySource, []));
@@ -560,14 +561,14 @@ export class VerificationBaseService {
     }
 
     public isValidTraderConfirmScore(result: ResultDetail, isCoupleScore = true) {
-        const isTraderResult = result.resultStatusId === ResultStatusId.TraderConfirm && this.isValidHomeAwayScore(result, isCoupleScore); ;
+        const isTraderResult = result.resultStatusId === ResultStatusId.TraderConfirm && this.isValidHomeAwayScore(result, isCoupleScore);;
         const traderExternalScore = result.externalScores.find((source) => source.sourceId === ScoreSourceType.trader);
 
         return isTraderResult || (traderExternalScore && this.isValidHomeAwayScore(traderExternalScore, isCoupleScore));
     }
 
     private isValidHomeAwayScore(result: GeneralResultDetail, isCoupleScore = true) {
-        if(isCoupleScore) {
+        if (isCoupleScore) {
             return result && !_.isEmpty(result.homeValue) && !_.isEmpty(result.awayValue);
         }
 

@@ -44,4 +44,6 @@ export class ResultDetail extends GeneralResultDetail {
     isNotExistedValue: boolean;
     resultStatusState: string;
     oddFlex: OddFlexModel[];
+    confirmedSdtHomeValue: string;
+    confirmedSdtAwayValue: string;
 }

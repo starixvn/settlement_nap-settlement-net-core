@@ -3,6 +3,7 @@ import { ResultDetail } from "../models/sportsbook-sop";
 import * as _ from 'lodash';
 @Pipe({
     name: 'resultStatusPipe',
+    standalone: false
 })
 
 export class ResultStatusPipe implements PipeTransform {
