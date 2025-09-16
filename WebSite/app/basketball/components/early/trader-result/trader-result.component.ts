@@ -34,7 +34,7 @@ export class TraderResultComponent  implements OnInit {
 
   ngOnInit(): void {
     if(this.resultDetail.inputType === ResultControlGroup.playerSelect) {
-      this.playerSelected = this.resultDetail.oddFlex?.find(item => item.betChoice === this.externalResult.homeValue)?.info.playerName ?? '';
+      this.playerSelected = this.resultDetail.oddFlex?.find(item => item.betChoice === this.externalResult.homeValue)?.info.playerName ?? this.externalResult.homeValue;
     }
   }
 }

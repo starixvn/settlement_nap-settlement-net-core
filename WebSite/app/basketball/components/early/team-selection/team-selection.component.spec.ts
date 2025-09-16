@@ -82,16 +82,6 @@ describe('Component: TeamSelectionComponent', () => {
         });
     });
 
-    it('should hide None option when hasNoneOption returns false', () => {
-        component.item.betType = '604';
-        fixture.detectChanges();
-        
-        const options = fixture.nativeElement.querySelectorAll('option');
-        const noneOption = Array.from(options).find((option: HTMLOptionElement) => option.value === 'N');
-
-        expect(noneOption).toBeUndefined();
-    });
-
     it('should not apply warning class when isResultWarning is false', () => {
         component.item.isResultWarning = false;
         fixture.detectChanges();
@@ -144,14 +134,5 @@ describe('Component: TeamSelectionOutSideComponent', () => {
 
     it('should create the component', () => {
         expect(component).toBeTruthy();
-    });
-    it('should hide None option when hasNoneOption returns false', () => {
-        component.resultDetail.betType = '604';
-        fixture.detectChanges();
-        
-        const options = fixture.nativeElement.querySelectorAll('option');
-        const noneOption = Array.from(options).find((option: HTMLOptionElement) => option.value === 'N');
-
-        expect(noneOption).toBeUndefined();
     });
 });

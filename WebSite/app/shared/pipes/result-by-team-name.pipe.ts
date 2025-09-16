@@ -23,6 +23,8 @@ export class ResultByTeamNamePipe implements PipeTransform {
                 return 'Middle';
             } else if (_.isEqual(result, 'NM')) {
                 return 'Top or Bottom';
+            } else if (_.isEqual(result, 'None')) {
+                return 'None';
             } else {
                 return this.optionGroupTwo(result, betTypeGroup);
             }

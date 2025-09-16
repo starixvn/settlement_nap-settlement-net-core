@@ -12,7 +12,7 @@ import { CommonModule } from '@angular/common';
   template: `
    <select [disabled]="!enable" [(ngModel)]="item.homeValue" (ngModelChange)="checkResultIsMatched(item)">
     <option *ngFor="let selection of playerSelections" [value]="selection.betChoice">{{selection.playerName}}</option>
-    <option value="none">None</option>
+    <option value="None">None</option>
   </select>
   `
 })
@@ -37,7 +37,7 @@ export class PlayerSelectionComponent extends InputFinalBaseComponent implements
   template: `
    <select [disabled]="!enable" [(ngModel)]="externalResult.homeValue" (ngModelChange)="verifyAndAutoFillResult(resultDetail)">
     <option *ngFor="let selection of playerSelections" [value]="selection.betChoice">{{selection.playerName}}</option>
-    <option value="none">None</option>
+    <option value="None">None</option>
    </select>
   `
 })

@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 import { CalculateAction, ScoreSourceType, SettlementStatusId, SportType, TicketStatusText } from '../../shared/constants';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Injector, ViewChild, ViewChildren, QueryList, AfterViewInit } from '@angular/core';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
-import { BasketballApiKeys, EarlyResourcesIds, KickOffTime, ResultStatus } from '../constants';
+import { BasketballApiKeys, EarlyResourcesIds, KickOffTime, Resources, ResultStatus } from '../constants';
 import { BasketballService, BetStatusService, EarlyService, VerificationService } from '../services';
 import { Language } from '../../shared/language.native';
 import { Match } from '../models';
@@ -31,7 +31,6 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     private earlyService: EarlyService;
     public blockUI = true;
     public match: Match;
-    public isShowRefundButton = false;
     public isReadyMatch: boolean;
     constructor(
         protected injector: Injector,
@@ -82,7 +81,8 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         this.match.originalResultDetail = _.cloneDeep(this.resultDetails);
         this.hideTicketWaiting(this.groupMap);
         this.renderFilterSelect();
-        this.setIndicateColor()
+        this.setIndicateColor();
+        this.setRefundButtonWhenExistConfirmedSDT(this.resultDetails);
         this.earlyStore.setState(this.matchDetail, this.permission, this.maxProviderCol);
 
         if (!this.isReadyMatch) {
@@ -251,13 +251,13 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
             }
 
             if (result.inputType === playerSelectionInput) {
-                result.otherInfo = result.oddFlex.map(item => `${item.info.playerId},${item.info.teamId}`).join(',');
+                result.otherInfo = result.oddFlex.map(item => `${item.info.playerId},${item.info.teamId}`).join(';');
             } else {
                 result.otherInfo = `${result.oddFlex[0].info.playerId},${result.oddFlex[0].info.teamId}`;
             }
         });
     }
-      
+
     public saveResult() {
         this.confirmationDialogMessage.message = Language.eSports.saveScore;
         this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
@@ -300,14 +300,41 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
 
     public confirmRefundBasketBall() {
         this.toastrService.clear();
-        if(!this.isRefundWithSettleDetermined) {
+        if (!this.isRefundWithSettleDetermined) {
             this.confirmRefund();
+            return;
         }
 
-        const existResultConfirmed = _.find(this.selectedResources, item => item.resultSettingData.isConfirmedRefundSdt);
-        const verifyExistResultEmpty = existResultConfirmed || this.verifyExistResultEmpty(true);
-        if(this.isRefundWithSettleDetermined && verifyExistResultEmpty){
+        const isValidResults = this.isResultEligibleForSDT() && this.verifyExistResultEmpty(true);
+        if (isValidResults) {
             this.confirmRefund();
         }
+    }
+
+    private isResultEligibleForSDT() {
+        const allSupportedSDT = this.selectedResources.every(result => Resources.supportSDT.includes(result.betType));
+        if (allSupportedSDT) {
+            return true;
+        }
+
+        this.toastrService.error(Language.confirmRefund.notSupportedSDT);
+        return false;
+
+    }
+
+    OnchangeSDT() {
+        if (this.isRefundWithSettleDetermined) {
+            this.resultDetails.forEach(result => {
+                result.checked = false;
+                result.isShow = Resources.supportSDT.includes(result.betType);
+            });
+        } else {
+            this.resultDetails.forEach(result => {
+                result.checked = false;
+                result.isShow = true;
+            });
+        }
+
+        this.calculateAndUnCalculateButton();
     }
 }

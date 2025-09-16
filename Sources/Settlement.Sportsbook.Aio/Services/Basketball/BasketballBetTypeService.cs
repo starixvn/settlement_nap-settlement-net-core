@@ -55,6 +55,7 @@ public class BasketballBetTypeServiceImp(
         else
         {
             GroupBasketballBetType(item);
+            item.InputType = (int)InputType.TeamSelection;
         }
     }
 

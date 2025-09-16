@@ -29,8 +29,9 @@
         <div class="footer border-top-0" *ngIf="permission.canRefund">
             <div class="sub-footer">
                 <span>
-                    <input type="checkbox" [(ngModel)]="isShowRefundButton" id="displayRefundButton" />&nbsp;<label
-                        for="displayRefundButton">Show/Hide Refund button</label>
+                    <input type="checkbox" [(ngModel)]="isShowRefundButton" id="displayRefundButton"
+                        (ngModelChange)="onShowRefundButtonChange()" />&nbsp;<label for="displayRefundButton">Show/Hide
+                        Refund button</label>
                 </span>
                 <button *ngIf="isShowRefundButton && permission.isLeader"
                     [ngClass]="{'btn btn-outline-primary button-confirmed': true}" [disabled]="isDisabledCalculate"
@@ -45,7 +46,8 @@
                 &nbsp;
                 <span *ngIf="isShowRefundButton">
                     <label for="refundWithSettleDetermined">Refund with Settle Determined Tickets</label>&nbsp;<input
-                        id="refundWithSettleDetermined" type="checkbox" [(ngModel)]="isRefundWithSettleDetermined" />
+                        id="refundWithSettleDetermined" type="checkbox" [(ngModel)]="isRefundWithSettleDetermined"
+                        (ngModelChange)="OnchangeSDT()" />
                 </span>
             </div>
         </div>
@@ -143,8 +145,8 @@
                 </tr>
                 @for (item of map.resultDetail | resultType: resultTypeSelected | ticketStatus: ticketStatusSelected |
                 resultStatusPipe: resultStatusSelected; track item.resourceId) {
-                <tr result-row [item]="item" [map]="map" [hidden]="map.collapsed"
-                    [isRefundWithSettleDetermined]="isRefundWithSettleDetermined"
+                <tr result-row [item]="item" [map]="map" [hidden]="map.collapsed || !item.isShow"
+                    [isRefundWithSettleDetermined]="isRefundWithSettleDetermined" [selected]="item.checked"
                     (settingChanged)="isChangeSetting($event.item, $event.map)"
                     (betTypeChanged)="onChangeBetType($event.item, $event.map)" (updateValue)="updateValue($event)"
                     [ngClass]="{'result-row': 1, 'mismatched': item.isScoreMismatched && !isRefundWithSettleDetermined, 'confirmed-refund': permission.isLeader && (item.resultSettingData.isConfirmedRefund || item.resultSettingData.isConfirmedRefundSdt)}">

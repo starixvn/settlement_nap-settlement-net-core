@@ -211,6 +211,7 @@
     sdtConfirm: 'WARNING! Are you sure you want to confirm-refund SDT for selected results?<br/>{0}',
     mercyConfirm: 'WARNING! Are you sure you want to confirm-refund Mercy for selected results?',
     undoConfirmAll: 'WARNING! Are you sure you want to undo confirm-refund for all results?',
+    notSupportedSDT: 'Error! Invalid results selected to Refund-SDT. Please check and try again.',
     sdtErrorMessage: 'Cannot continue with Refund due to confirm state or value mismatch. Please check and try again.',
     sdtHalfTimeErrorMessage: 'Failed: HT selected to Refund-SDT and FT has not been selected as well. Please re-check or select both HT and FT.',
     sdtFullTimeErrorMessage: 'Failed: FT selected to Refund-SDT and HT has not been settled. Please re-check or select settle HT first.',

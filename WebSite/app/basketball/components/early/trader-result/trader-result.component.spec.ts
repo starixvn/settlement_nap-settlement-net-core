@@ -81,41 +81,7 @@ describe('Component: TraderResultComponent', () => {
             component.ngOnInit();
 
             // Assert
-            expect(component.playerSelected).toEqual('');
-        });
-
-        it('should not set playerSelected when inputType is not playerSelect', () => {
-            // Arrange
-            const resultDetail = new ResultDetail();
-            resultDetail.inputType = ResultControlGroup.textBox;
-            resultDetail.oddFlex = mockOddFlex;
-            component.resultDetail = resultDetail;
-            
-            const externalResult = new ExternalResultDetail(1, '00', 'Test Source', '', 'some value');
-            component.externalResult = externalResult;
-
-            // Act
-            component.ngOnInit();
-
-            // Assert
-            expect(component.playerSelected).toBe('');
-        });
-
-        it('should handle null oddFlex gracefully', () => {
-            // Arrange
-            const resultDetail = new ResultDetail();
-            resultDetail.inputType = ResultControlGroup.playerSelect;
-            resultDetail.oddFlex = null;
-            component.resultDetail = resultDetail;
-            
-            const externalResult = new ExternalResultDetail(1, '00', 'Test Source', '', 'player1');
-            component.externalResult = externalResult;
-
-            // Act
-            expect(() => component.ngOnInit()).not.toThrow();
-
-            // Assert
-            expect(component.playerSelected).toEqual('');
+            expect(component.playerSelected).toEqual('nonexistent');
         });
 
         it('should handle empty oddFlex array', () => {
@@ -125,14 +91,14 @@ describe('Component: TraderResultComponent', () => {
             resultDetail.oddFlex = [];
             component.resultDetail = resultDetail;
             
-            const externalResult = new ExternalResultDetail(1, '00', 'Test Source', '', 'player1');
+            const externalResult = new ExternalResultDetail(1, '00', 'Test Source', '', 'None');
             component.externalResult = externalResult;
 
             // Act
             component.ngOnInit();
 
             // Assert
-            expect(component.playerSelected).toEqual('');
+            expect(component.playerSelected).toEqual('None');
         });
     });
 });

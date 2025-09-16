@@ -31,6 +31,7 @@ export class EarlyBaseComponent {
     public resultTypeSelected: string;
     public isReSettledTickets: boolean;
     public matchDetail: MatchDetail;
+    public isShowRefundButton = false;
     public isRefundWithSettleDetermined = false;
     public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
 
@@ -114,7 +115,7 @@ export class EarlyBaseComponent {
     }
 
     public isRefunded(resultStatusId: number, settlementStatusId: number) {
-        return resultStatusId === ResultStatusId.ManualCompleted && settlementStatusId === SettlementStatusId.Refund;
+        return resultStatusId === ResultStatusId.ManualCompleted && (settlementStatusId === SettlementStatusId.Refund || settlementStatusId === SettlementStatusId.RefundSettleDetermined);
     }
 
     public onCollapsedClick(map: GroupMap) {
@@ -307,7 +308,7 @@ export class EarlyBaseComponent {
     }
 
     private showRefundConfirmation(pushFunc: () => void) {
-        this.confirmationDialogMessage.message = Language.RefundConfirmMessageEarly;
+        this.confirmationDialogMessage.message = this.isRefundWithSettleDetermined ? Language.RefundConfirmSdtMessage : Language.RefundConfirmMessageEarly;
         this.messageBoxService.confirm(this.confirmationDialogMessage, pushFunc);
     }
 
@@ -463,7 +464,7 @@ export class EarlyBaseComponent {
 
     public verifyAndAutoFillResult(resultDetail: ResultDetail) {
         this.matchDetail.isSavedScore = false;
-        if (resultDetail.settlementStatusId !== SettlementStatusId.Calculated) {
+        if (resultDetail.settlementStatusId !== SettlementStatusId.Calculated && resultDetail.settlementStatusId !== SettlementStatusId.RefundSettleDetermined) {
             resultDetail.homeValue = '';
             resultDetail.awayValue = '';
         }
@@ -487,6 +488,19 @@ export class EarlyBaseComponent {
         const resultConfirmRefund = externalResults.find(r => r.sourceId === ScoreSourceType.confirmRefundSource);
         if (isLeader && resultConfirmRefund) {
             this.fillConfirmedResults(resultDetails, resultConfirmRefund.resultDetails);
+        }
+    }
+
+    setRefundButtonWhenExistConfirmedSDT(resultDetails: ResultDetail[]) {
+        const resultConfirmRefund = resultDetails.some(r => r.resultSettingData.isConfirmedRefundSdt);
+        if (resultConfirmRefund) {
+            this.isShowRefundButton = true;
+            this.isRefundWithSettleDetermined = true;
+        }
+    }
+    onShowRefundButtonChange(){
+        if(!this.isShowRefundButton){
+            this.isRefundWithSettleDetermined = false;
         }
     }
 

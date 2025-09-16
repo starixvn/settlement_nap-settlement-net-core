@@ -6,7 +6,8 @@ public enum InputType
 {
     SingleScore,
     YesNoNone,
-    PlayerNone
+    PlayerNone,
+    TeamSelection
 }
 
 public interface IInputTypeService

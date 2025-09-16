@@ -1,5 +1,4 @@
 import { TestBed, waitForAsync, ComponentFixture, fakeAsync, tick, flush } from '@angular/core/testing';
-import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { HttpClientModule } from '@angular/common/http';
 import { EarlySettlementComponent } from './early-settlement.component';
 import { EarlyService, VerificationService } from '../services';
@@ -534,7 +533,7 @@ describe('Component: EarlySettlementComponent', () => {
             component['generateOtherInfo'](resultDetails);
 
             // Assert
-            expect(result.otherInfo).toBe('123,team 1,456,team 2');
+            expect(result.otherInfo).toBe('123,team 1;456,team 2');
         });
 
         it('should generate default format when inputType is not player selection', () => {
@@ -576,21 +575,62 @@ describe('Component: EarlySettlementComponent', () => {
             component['generateOtherInfo'](resultDetails);
 
             // Assert
-            expect(result1.otherInfo).toBe('1,P1,2,P2');
+            expect(result1.otherInfo).toBe('1,P1;2,P2');
             expect(result2.otherInfo).toBe('3,P3');
+        });
+    });
+
+    describe('OnchangeSDT', () => {
+        beforeEach(() => {
+            component.init = jest.fn();
+            component.resultDetails = [resultDetail];
+            component.calculateAndUnCalculateButton = jest.fn();
+        });
+
+        it('should show only SDT supported resources when isRefundWithSettleDetermined is true', () => {
+            // Arrange
+            component.isRefundWithSettleDetermined = true;
+            resultDetail.betType = '653';
+            resultDetail.checked = true;
+            resultDetail.isShow = true;
+
+            // Act
+            component.OnchangeSDT();
+
+            // Assert
+            expect(resultDetail.checked).toBe(false);
+            expect(resultDetail.isShow).toBe(true);
+            expect(component.calculateAndUnCalculateButton).toHaveBeenCalled();
+        });
+
+        it('should show all resources when isRefundWithSettleDetermined is false', () => {
+            // Arrange
+            component.isRefundWithSettleDetermined = false;
+            resultDetail.checked = true;
+            resultDetail.isShow = false;
+
+            // Act
+            component.OnchangeSDT();
+
+            // Assert
+            expect(resultDetail.checked).toBe(false);
+            expect(resultDetail.isShow).toBe(true);
+            expect(component.calculateAndUnCalculateButton).toHaveBeenCalled();
         });
     });
 
     describe('confirmRefundBasketBall', () => {
         beforeEach(() => {
             component.init = jest.fn();
+            resultDetail.checked = true;
             component.resultDetails = [resultDetail];
             toastrService.clear = jest.fn();
+            toastrService.error = jest.fn();
             component.confirmRefund = jest.fn();
             component.matchDetail = matchDetail;
         });
 
-        it('should call super.confirmRefund when isRefundWithSettleDetermined is false', () => {
+        it('should call confirmRefund when not using SDT', () => {
             // Arrange
             component.isRefundWithSettleDetermined = false;
 
@@ -602,10 +642,11 @@ describe('Component: EarlySettlementComponent', () => {
             expect(component.confirmRefund).toHaveBeenCalled();
         });
 
-        it('should call super.confirmRefund when isRefundWithSettleDetermined is true and confirmed results exist', () => {
+        it('should call confirmRefund when using SDT and results are eligible', () => {
             // Arrange
             component.isRefundWithSettleDetermined = true;
-            resultDetail.resultSettingData.isConfirmedRefundSdt = true;
+            resultDetail.betType = '653';
+            resultDetail.homeValue = '1';
 
             // Act
             component.confirmRefundBasketBall();
@@ -615,17 +656,17 @@ describe('Component: EarlySettlementComponent', () => {
             expect(component.confirmRefund).toHaveBeenCalled();
         });
 
-        it('should not call super.confirmRefund when isRefundWithSettleDetermined is true and no confirmed results exist', () => {
+        it('should not call confirmRefund when SDT results are not eligible', () => {
             // Arrange
             component.isRefundWithSettleDetermined = true;
-            resultDetail.resultSettingData.isConfirmedRefundSdt = false;
-            jest.spyOn(component, 'verifyExistResultEmpty' as any).mockReturnValue(false);
+            resultDetail.betType = '999';
 
             // Act
             component.confirmRefundBasketBall();
 
             // Assert
             expect(toastrService.clear).toHaveBeenCalled();
+            expect(toastrService.error).toHaveBeenCalled();
             expect(component.confirmRefund).not.toHaveBeenCalled();
         });
     });

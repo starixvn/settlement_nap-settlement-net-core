@@ -1,7 +1,6 @@
-import { ChangeDetectorRef, Component, computed, EventEmitter, inject, Input, OnChanges, Output, SimpleChanges } from "@angular/core";
+import { ChangeDetectorRef, Component, computed, EventEmitter, inject, input, Input, OnChanges, Output, SimpleChanges } from "@angular/core";
 import { ExternalResultDetail, ResultDetail } from "../../../shared/models/sportsbook-sop";
 import { isEqual } from "lodash";
-import { EarlyResourcesIds } from "../../constants";
 import { VerificationBaseService } from "../../../core/services/verification-base.service";
 import { SettlementStatusId } from "../../../shared/constants/settlement-status-id.native";
 import { EarlyStore } from "../../store/early.store";
@@ -17,10 +16,6 @@ abstract class InputBaseComponent {
   getTextTooltip(text: string, maxLength: number) {
     return text?.length > maxLength ? text : null;
   }
-
-  hasNoneOption(betType: string) {
-    return !isEqual(EarlyResourcesIds.fullTime[0], betType);
-  }
 }
 
 @Component({
@@ -31,13 +26,18 @@ abstract class InputBaseComponent {
 export class InputFinalBaseComponent extends InputBaseComponent implements OnChanges {
   @Input({ required: true }) item: ResultDetail;
   @Input({ required: true }) enable: boolean;
+  @Input() isLeader: boolean;
   @Input() updateView: () => void;
   @Input() isRefundWithSettleDetermined: boolean;
   readonly #verificationBaseService = inject(VerificationBaseService);
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['isRefundWithSettleDetermined'] && this.item.checked) {
-        this.item.homeValue =  this.isRefundWithSettleDetermined && this.item.resultSettingData.isConfirmedRefundSdt ? this.item.confirmedSdtHomeValue : "";
+    if (changes['isRefundWithSettleDetermined'] === undefined) {
+      return;
+    }
+
+    if (!changes['isRefundWithSettleDetermined'].currentValue && this.item.checked) {
+      this.item.homeValue = "";
     }
   }
 
@@ -59,7 +59,7 @@ export class InputOutSideBaseComponent extends InputBaseComponent {
   @Input() updateView: () => void;
   readonly #verificationBaseService = inject(VerificationBaseService);
   readonly #earlyStore = inject(EarlyStore);
-  readonly #matchDetail = computed(() => this.#earlyStore.matchDetail()); 
+  readonly #matchDetail = computed(() => this.#earlyStore.matchDetail());
 
   verifyAndAutoFillResult(resultDetail: ResultDetail) {
     this.#matchDetail().isSavedScore = false;

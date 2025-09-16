@@ -147,44 +147,77 @@ describe('Component: InputBaseComponent', () => {
         });
     });
 
-    describe('hasNoneOption', () => {
-        it('should return false when betType is in fullTime resource ids', () => {
-            const result = finalComponent.hasNoneOption(EarlyResourcesIds.fullTime[0]);
+    describe('ngOnChanges - InputFinalBaseComponent', () => {
+        let testResultDetail: ResultDetail;
 
-            expect(result).toBe(false);
+        beforeEach(() => {
+            testResultDetail = new ResultDetail();
+            testResultDetail.checked = true;
+            testResultDetail.homeValue = 'H';
+            finalComponent.item = testResultDetail;
         });
 
-        it('should return true when betType is not in fullTime resource ids', () => {
-            const result = finalComponent.hasNoneOption('other-bet-type');
+        it('should return early when isRefundWithSettleDetermined change is undefined', () => {
+            // Arrange
+            const changes: any = {};
 
-            expect(result).toBe(true);
+            // Act
+            finalComponent.ngOnChanges(changes);
+
+            // Assert
+            expect(testResultDetail.homeValue).toBe('H');
         });
 
-        it('should return true for quarter resource ids', () => {
-            const result = finalComponent.hasNoneOption(EarlyResourcesIds.q1[0]);
+        it('should clear homeValue when isRefundWithSettleDetermined is false and item is checked', () => {
+            // Arrange
+            const changes: any = {
+                isRefundWithSettleDetermined: {
+                    currentValue: false,
+                    previousValue: true,
+                    isFirstChange: jest.fn().mockReturnValue(false)
+                }
+            };
 
-            expect(result).toBe(true);
-        });
-    });
+            // Act
+            finalComponent.ngOnChanges(changes);
 
-    // Test the OutSide component shares the same base functionality
-    describe('OutSideComponent - inherited methods', () => {
-        it('should inherit getDropdownTooltip functionality', () => {
-            const result = outSideComponent.getDropdownTooltip('H', 5, 'Home Team', 'Away Team');
-
-            expect(result).toBe('Home Team');
-        });
-
-        it('should inherit getTextTooltip functionality', () => {
-            const result = outSideComponent.getTextTooltip('Long text string', 5);
-
-            expect(result).toBe('Long text string');
+            // Assert
+            expect(testResultDetail.homeValue).toBe('');
         });
 
-        it('should inherit hasNoneOption functionality', () => {
-            const result = outSideComponent.hasNoneOption('non-fulltime-bet');
+        it('should not clear homeValue when isRefundWithSettleDetermined is true', () => {
+            // Arrange
+            const changes: any = {
+                isRefundWithSettleDetermined: {
+                    currentValue: true,
+                    previousValue: false,
+                    isFirstChange: jest.fn().mockReturnValue(false)
+                }
+            };
 
-            expect(result).toBe(true);
+            // Act
+            finalComponent.ngOnChanges(changes);
+
+            // Assert
+            expect(testResultDetail.homeValue).toBe('H');
+        });
+
+        it('should not clear homeValue when item is not checked', () => {
+            // Arrange
+            const changes: any = {
+                isRefundWithSettleDetermined: {
+                    currentValue: false,
+                    previousValue: true,
+                    isFirstChange: jest.fn().mockReturnValue(false)
+                }
+            };
+            testResultDetail.checked = false;
+
+            // Act
+            finalComponent.ngOnChanges(changes);
+
+            // Assert
+            expect(testResultDetail.homeValue).toBe('H');
         });
     });
 
@@ -255,14 +288,6 @@ describe('Component: InputBaseComponent', () => {
             const result = finalComponent.getTextTooltip('text', -1);
 
             expect(result).toBe('text');
-        });
-
-        it('should handle hasNoneOption with null or undefined betType', () => {
-            const result1 = finalComponent.hasNoneOption(null);
-            const result2 = finalComponent.hasNoneOption(undefined);
-
-            expect(result1).toBe(true);
-            expect(result2).toBe(true);
         });
 
         it('should handle checkResultIsMatched with undefined properties', () => {

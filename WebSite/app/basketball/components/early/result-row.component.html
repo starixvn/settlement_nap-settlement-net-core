@@ -1,8 +1,12 @@
 <td class="align-left bettype-name">{{item.betTypeName}}</td>
 <td class="ticket-status" [ngClass]="item.ticketStatus.toLowerCase()">{{item.ticketStatus}}</td>
 <td class="final-result-content">
-  <ng-container [ngComponentOutlet]="inputComponent"
-    [ngComponentOutletInputs]="{item: item, enable: item.checked && (permission.isLeader || item.resultSettingData.isConfirmedRefundSdt), updateView: updateView, isRefundWithSettleDetermined: isRefundWithSettleDetermined}"></ng-container>
+  <ng-container [ngComponentOutlet]="inputComponent" [ngComponentOutletInputs]="
+    { item: item,
+      isLeader: permission.isLeader,
+      enable: item.checked&& (permission.isLeader || isRefundWithSettleDetermined),
+      updateView: updateView,
+      isRefundWithSettleDetermined: isRefundWithSettleDetermined}"></ng-container>
 </td>
 
 <ng-container *ngFor="let result of item.externalScores; let x=index">

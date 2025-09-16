@@ -20,7 +20,7 @@ import { InputFinalBaseComponent, InputOutSideBaseComponent } from "../input-bas
                             <option></option>
                             <option value="H">{{homeTeam}}</option>
                             <option value="A">{{awayTeam}}</option>
-                            <option value="N" *ngIf="hasNoneOption(item.betType)">None</option>
+                            <option value="N">None</option>
    </select>
 
   `
@@ -44,7 +44,7 @@ export class TeamSelectionComponent extends InputFinalBaseComponent {
                             <option></option>
                             <option value="H">{{homeTeam}}</option> 
                             <option value="A">{{awayTeam}}</option>
-                            <option value="N" *ngIf="hasNoneOption(resultDetail.betType)">None</option>
+                            <option value="N">None</option>
    </select>
   `
 })
