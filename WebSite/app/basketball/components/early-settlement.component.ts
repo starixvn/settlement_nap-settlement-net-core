@@ -16,13 +16,25 @@ import { NewMultipleSelectComponent } from '../../shared/components/multiple-sel
 import { ResourceNameByIdPipe } from '../pipes/resource-name-by-id.pipe';
 import { EarlyStore } from '../store/early.store';
 import { ResultRowComponent } from './early/result-row.component';
+import { ResourceSupportSDTPipe } from '../pipes/resource-support-sdt.pipe';
 
 @Component({
     selector: 'early-settlement',
     templateUrl: './early-settlement.component.html',
     standalone: true,
-    imports: [EarlyCommonModule, MatchDetailComponent, NewMultipleSelectComponent, ExternalSourceNamePipe, ResultRowComponent, ToastContainerDirective],
-    providers: [EarlyService, VerificationService, BasketballService, ResourceNameByIdPipe, BetStatusService, ToastrService],
+    imports: [EarlyCommonModule,
+        MatchDetailComponent,
+        NewMultipleSelectComponent,
+        ExternalSourceNamePipe,
+        ResultRowComponent,
+        ToastContainerDirective,
+        ResourceSupportSDTPipe],
+    providers: [EarlyService,
+        VerificationService,
+        BasketballService,
+        ResourceNameByIdPipe,
+        BetStatusService,
+        ToastrService],
 
 })
 export class EarlySettlementComponent extends EarlyBaseComponent implements SportTemplate {
@@ -305,9 +317,11 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
             return;
         }
 
-        const isValidResults = this.isResultEligibleForSDT() && this.verifyExistResultEmpty(true);
+        const existResultConfirmedSdt = this.selectedResources.some(result => result.resultSettingData.isConfirmedRefundSdt);
+        const isValidResults = this.isResultEligibleForSDT() && (existResultConfirmedSdt || this.verifyExistResultEmpty(true));
         if (isValidResults) {
-            this.confirmRefund();
+            const SDTConfirmMessage = this.earlyService.getConfirmMessageSDT(this.selectedResources, this.matchDetail);
+            this.confirmRefund(SDTConfirmMessage);
         }
     }
 
@@ -319,22 +333,5 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
 
         this.toastrService.error(Language.confirmRefund.notSupportedSDT);
         return false;
-
-    }
-
-    OnchangeSDT() {
-        if (this.isRefundWithSettleDetermined) {
-            this.resultDetails.forEach(result => {
-                result.checked = false;
-                result.isShow = Resources.supportSDT.includes(result.betType);
-            });
-        } else {
-            this.resultDetails.forEach(result => {
-                result.checked = false;
-                result.isShow = true;
-            });
-        }
-
-        this.calculateAndUnCalculateButton();
     }
 }

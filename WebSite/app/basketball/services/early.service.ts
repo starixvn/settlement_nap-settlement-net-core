@@ -45,23 +45,33 @@ export class EarlyService extends EarlyBaseService {
     getConfirmMessage(resultDetails: ResultDetail[], matchDetail: MatchDetail) {
         let confirmMessage = `${Language.CalculationConfirmMessageEarly}<br/>`;
         resultDetails.forEach((x: ResultDetail) => {
-            let value: string;
-            if (x.inputType === ResultControlGroup.teamSelection) {
-                value = this.getHomeAwayValue(x, matchDetail);
-            } else if (x.inputType === ResultControlGroup.textBox) {
-                value = `${x.homeValue}`;
-            } else if (x.inputType === ResultControlGroup.playerSelect) {
-                value = this.getPlayerResultName(x);
-            } else if (x.inputType === ResultControlGroup.yesNoNone) {
-                value = this.getYesNoValue(x);
-            } else {
-                value = '';
-            }
-            confirmMessage += `${x.betTypeName}: ${value}<br/>`;
+            confirmMessage += `${x.betTypeName}: ${this.getResourceName(x, matchDetail)}<br/>`;
         });
 
         return confirmMessage;
     }   
+
+    getConfirmMessageSDT(resultDetails: ResultDetail[], matchDetail: MatchDetail) {
+        let confirmMessage = `${Language.confirmRefund.sdtConfirm.replace("{0}", "")}`;
+        resultDetails.forEach((x: ResultDetail) => {
+            confirmMessage += `${x.betTypeName}: ${this.getResourceName(x, matchDetail)}<br/>`;
+        });
+
+        return confirmMessage;
+    }
+
+    private getResourceName(resultDetail: ResultDetail, matchDetail: MatchDetail): string {
+        if (resultDetail.inputType === ResultControlGroup.teamSelection) {
+            return this.getHomeAwayValue(resultDetail, matchDetail);
+        } else if (resultDetail.inputType === ResultControlGroup.textBox) {
+            return `${resultDetail.homeValue}`;
+        } else if (resultDetail.inputType === ResultControlGroup.playerSelect) {
+            return this.getPlayerResultName(resultDetail);
+        } else if (resultDetail.inputType === ResultControlGroup.yesNoNone) {
+            return this.getYesNoValue(resultDetail);
+        } 
+        return '';
+    }
 
 
     private getPlayerResultName(resultDetail: ResultDetail): string {

@@ -23,23 +23,13 @@ abstract class InputBaseComponent {
   standalone: true,
   providers: [VerificationBaseService],
 })
-export class InputFinalBaseComponent extends InputBaseComponent implements OnChanges {
+export class InputFinalBaseComponent extends InputBaseComponent{
   @Input({ required: true }) item: ResultDetail;
   @Input({ required: true }) enable: boolean;
   @Input() isLeader: boolean;
   @Input() updateView: () => void;
   @Input() isRefundWithSettleDetermined: boolean;
   readonly #verificationBaseService = inject(VerificationBaseService);
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['isRefundWithSettleDetermined'] === undefined) {
-      return;
-    }
-
-    if (!changes['isRefundWithSettleDetermined'].currentValue && this.item.checked) {
-      this.item.homeValue = "";
-    }
-  }
 
   checkResultIsMatched(resultDetail: ResultDetail) {
     resultDetail.isScoreMismatched = this.#verificationBaseService.isEarlyMismatchedWarning(resultDetail);

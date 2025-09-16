@@ -169,7 +169,7 @@ export class AioService {
         this.messageBoxService.confirm(this.warningDialogMessage, () => {
             const query = new ResultSettingQuery(
                 params.matchId, 
-                params.isSettleDetermined ? ResultSettingType.confirmRefundSDT : ResultSettingType.confirmRefund,
+                ResultSettingType.confirmRefund,
                 params.isEnabled, 
                 params.resourceIds
             );

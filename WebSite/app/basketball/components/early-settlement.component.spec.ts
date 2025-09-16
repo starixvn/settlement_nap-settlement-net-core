@@ -17,6 +17,7 @@ import { ModalDialogComponent } from '../../shared/components/modal-dialog/modal
 import { ModalContentDialogComponent } from '../../shared/components/modal-dialog/modal-content-dialog.component';
 import { ResettleCheckerComponent } from '../../shared/components/resettle-checker/resettle-checker.component';
 import { PipesModule } from '../../shared/pipes/pipes.module.native';
+import { ResourceSupportSDTPipe } from '../pipes/resource-support-sdt.pipe';
 
 describe('Component: EarlySettlementComponent', () => {
     let component: EarlySettlementComponent;
@@ -96,6 +97,7 @@ describe('Component: EarlySettlementComponent', () => {
                 ResettleCheckerComponent,
                 ModalDialogComponent,
                 ModalContentDialogComponent,
+                ResourceSupportSDTPipe,
             ],
         })
             .compileComponents()
@@ -580,44 +582,8 @@ describe('Component: EarlySettlementComponent', () => {
         });
     });
 
-    describe('OnchangeSDT', () => {
-        beforeEach(() => {
-            component.init = jest.fn();
-            component.resultDetails = [resultDetail];
-            component.calculateAndUnCalculateButton = jest.fn();
-        });
 
-        it('should show only SDT supported resources when isRefundWithSettleDetermined is true', () => {
-            // Arrange
-            component.isRefundWithSettleDetermined = true;
-            resultDetail.betType = '653';
-            resultDetail.checked = true;
-            resultDetail.isShow = true;
 
-            // Act
-            component.OnchangeSDT();
-
-            // Assert
-            expect(resultDetail.checked).toBe(false);
-            expect(resultDetail.isShow).toBe(true);
-            expect(component.calculateAndUnCalculateButton).toHaveBeenCalled();
-        });
-
-        it('should show all resources when isRefundWithSettleDetermined is false', () => {
-            // Arrange
-            component.isRefundWithSettleDetermined = false;
-            resultDetail.checked = true;
-            resultDetail.isShow = false;
-
-            // Act
-            component.OnchangeSDT();
-
-            // Assert
-            expect(resultDetail.checked).toBe(false);
-            expect(resultDetail.isShow).toBe(true);
-            expect(component.calculateAndUnCalculateButton).toHaveBeenCalled();
-        });
-    });
 
     describe('confirmRefundBasketBall', () => {
         beforeEach(() => {

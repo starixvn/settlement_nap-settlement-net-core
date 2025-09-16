@@ -335,7 +335,7 @@ export class EarlyBaseComponent {
         return this.permission.isLeader && resultDetail.resultSettingData.isConfirmedRefund;
     }
 
-    public confirmRefund() {
+    public confirmRefund(SDTConfirmMessage = '') {
         this.toastrService.clear();
         const resourceIds = this.getResourceIds();
         const confirmRefundResources = this.getConfirmRefundResources();
@@ -344,7 +344,7 @@ export class EarlyBaseComponent {
         if (existResultConfirmed) {
             this.undoConfirmedResult(this.selectedResources, this.matchDetail.matchId, resourceIds, confirmRefundResources);
         } else {
-            this.executeConfirmRefund(resourceIds, confirmRefundResources);
+            this.executeConfirmRefund(resourceIds, confirmRefundResources, SDTConfirmMessage);
         }
     }
 
@@ -361,15 +361,13 @@ export class EarlyBaseComponent {
             item.resultSettingData.isConfirmedRefundSdt || item.resultSettingData.isConfirmedRefund);
     }
 
-    private executeConfirmRefund(resourceIds: string, confirmRefundResources: ResultDetail[]) {
+    private executeConfirmRefund(resourceIds: string, confirmRefundResources: ResultDetail[], SDTConfirmMessage = '') {
         if (this.isRefundWithSettleDetermined) {
-            this.aioService.changeConfirmResultSDTSetting(
-                this.matchDetail.matchId, 
-                ResultSettingType.confirmRefundSDT, 
-                confirmRefundResources, 
-                true, 
-                null
-            );
+           this.confirmationDialogMessage.message = SDTConfirmMessage;
+            this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
+                const query = new ResultSettingQuery(this.matchDetail.matchId, ResultSettingType.confirmRefundSDT, true, resourceIds, confirmRefundResources);
+                this.aioService.changeResultSetting(query).then().finally(this.messageBoxService.closePopupNotChanged);
+            });
         } else {
             this.aioService.changeConfirmResultSetting({
                 message: Language.confirmRefund.confirmRefund,
