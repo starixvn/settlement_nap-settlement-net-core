@@ -30,7 +30,11 @@ describe('CalculateService', () => {
         originalScreenshot: '',
         screenShot: '',
         confirmBy: '',
-        mismatchClass: ''
+        mismatchClass: '',
+        traderConfirmClass: '',
+        traderScore: '',
+        originalTraderScore: '',
+        resultDetailStatusId: 1
     }
 
     const deadheatMatch = _.cloneDeep(team);

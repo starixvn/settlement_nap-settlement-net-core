@@ -41,4 +41,7 @@ public class Team
     public int BetCount { get; set; }
 
     public string ScreenShot { get; set; }
+    public string TraderScore { get; set; }
+
+    public int ResultDetailStatusId { get; set; }
 }

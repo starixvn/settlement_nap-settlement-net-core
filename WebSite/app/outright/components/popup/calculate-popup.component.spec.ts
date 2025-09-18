@@ -56,7 +56,11 @@ describe('CalculatePopupComponent', () => {
     originalScreenshot: '',
     screenShot: '',
     confirmBy: '',
-    mismatchClass: ''
+    mismatchClass: '',
+    traderConfirmClass: '',
+    traderScore: '',
+    originalTraderScore: '',
+    resultDetailStatusId: 1
   }
   const leagueSettle: LeagueSettle = {
     leagueName: '',
@@ -371,7 +375,7 @@ describe('CalculatePopupComponent', () => {
 
     it('should return status-mismatched when status and screenshot do not match', () => {
       team.originalStatus = 'RUNNING';
-      team.status = 'WON';
+      team.status = 'HIDE';
       team.screenShot = 'LOSE';
 
       const actual = component.makeBackgroundByStatus(team);

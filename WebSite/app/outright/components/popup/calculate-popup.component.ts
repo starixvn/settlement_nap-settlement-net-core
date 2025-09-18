@@ -3,12 +3,12 @@ import { OutrightService } from './../../services/outright.service';
 import { Component, Inject, OnInit, ViewChild, inject } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { BlockUIService, HttpRequestService, MessageBoxService, VerifyDateService } from '../../../shared/services';
-import { LeagueSettle, Team, TeamSettle } from '../../models';
+import { LeagueSettle, Permission, Team, TeamSettle } from '../../models';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import { FormsModule } from '@angular/forms';
 import { DatepickerComponent } from '../../../shared/components/date-picker/date-picker.component';
 import { CustomNgbDateParserFormatter } from '../../../shared/components/date-picker/custom-ngb-date-parser-formatter';
-import { FilterStatuses, TeamStatuses, StatusId, Status, RunningStatus } from '../../constants';
+import { FilterStatuses, TeamStatuses, StatusId, Status, RunningStatus, CompletedStatus } from '../../constants';
 import * as _ from "lodash";
 import { StatusPipe } from '../../pipes/status-pipe';
 import { CalculateService } from '../../services';
@@ -42,6 +42,9 @@ export class CalculatePopupComponent implements OnInit {
     private readonly messageBoxService = inject(MessageBoxService);
     private readonly ticketStatusPipe = inject(TicketStatusFilterPipe);
     private readonly statusPipe = inject(StatusPipe);
+    private readonly completedStatus = "Completed";
+    private readonly statusRunning = [Status.running, Status.closed, Status.internal];
+
     blockUI = true;
     teams: Team[];
     selectAllTeam = false;
@@ -58,8 +61,8 @@ export class CalculatePopupComponent implements OnInit {
     readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
     private teamSettleWon: Team[];
     teamJustSettled: TeamSettle[] = [];
-    private readonly completedStatus = "Completed";
-    private readonly statusRunning = [Status.running, Status.closed, Status.internal];
+    permission: Permission;
+
 
     constructor(@Inject(MAT_DIALOG_DATA) public data: { leagueId: number, sportType: number, eventDate: string }) {
         this.confirmationDialogMessage.title = Language.confirmationBox;
@@ -80,6 +83,7 @@ export class CalculatePopupComponent implements OnInit {
 
     async getMatches() {
         this.leagueSettle = await this.outrightService.getMatches(this.data.leagueId, this.data.sportType, StatusId.runningAndCompleted);
+        this.permission = this.leagueSettle.permission;
         this.leagueSettle.teams.forEach(team => {
             team.status = team.status.toUpperCase();
             team.eventDate = _.includes(this.statusRunning, team.oddsStatus.toLowerCase()) ? this.leagueSettle.today : team.eventDate;
@@ -87,7 +91,12 @@ export class CalculatePopupComponent implements OnInit {
             team.disableDeadheat = !_.isEqual(team.status, 'WON');
             team.originalStatus = team.status;
             team.screenShot = team.screenShot || TeamStatuses[0].text.toUpperCase();
-            team.originalScreenshot = team.screenShot;
+            team.originalScreenshot = team.screenShot;            
+            team.originalTraderScore = team.traderScore;
+           
+            this.autoFillFinalScore(team);
+
+            team.traderConfirmClass = this.traderConfirmClass(team);
             team.statusClass = this.makeBackgroundByStatus(team);
             team.mismatchClass = this.mismatchClass(team);
         });
@@ -102,6 +111,27 @@ export class CalculatePopupComponent implements OnInit {
         } else {
             this.dialogRef.close(this.teamJustSettled);
         }
+    }
+
+    autoFillFinalScore(team: Team) {
+        if(!CompletedStatus.includes(team.originalStatus.toLocaleLowerCase())
+            && !_.isEmpty(team.originalTraderScore)
+            && _.isEqual(team.screenShot.toLocaleLowerCase(), team.traderScore.toLocaleLowerCase())) {
+                team.status = team.traderScore.toUpperCase();
+        } else {
+            team.status = team.originalStatus.toUpperCase();
+        }
+    }
+
+    traderConfirmClass(team: Team) {
+        const confirmStatus = 3;
+        if(!_.isEmpty(team.originalTraderScore) 
+            &&!CompletedStatus.includes(team.originalStatus.toLocaleLowerCase())
+            && _.isEqual(team.resultDetailStatusId, confirmStatus)
+        ){
+            return 'bg-result-confirmed';
+        }
+        return '';
     }
 
     clearError() {
@@ -156,7 +186,20 @@ export class CalculatePopupComponent implements OnInit {
     }
 
     private mismatchClass(team: Team) {
-        if(!_.isEmpty(team.screenShot) && !_.isEmpty(team.status) && !_.isEqual(team.status.toLocaleLowerCase(), team.screenShot.toLocaleLowerCase())) {
+        const isMismatchStatusScreenshot = !_.isEmpty(team.screenShot) 
+            && !_.isEmpty(team.status) 
+            && !_.isEqual(team.status.toLocaleLowerCase(), team.screenShot.toLocaleLowerCase())
+            && !_.isEqual(team.status.toLocaleLowerCase(), Status.won.toLocaleLowerCase());
+
+        const isMismatchStatusTraderScore = !_.isEmpty(team.traderScore)
+            && !_.isEqual(team.status.toLocaleLowerCase(), team.traderScore.toLocaleLowerCase());
+
+        const isMismatchScreenshotAndTraderScore = !_.isEmpty(team.screenShot)
+            && !_.isEmpty(team.traderScore)
+            && !_.isEqual(team.screenShot.toLocaleLowerCase(), team.traderScore.toLocaleLowerCase());
+
+
+        if(isMismatchStatusScreenshot || isMismatchStatusTraderScore || isMismatchScreenshotAndTraderScore) {
             return 'status-mismatched';
         }
         return '';
@@ -164,7 +207,7 @@ export class CalculatePopupComponent implements OnInit {
 
     changeScreenshot(team: Team) {
         this.clearError();
-        team.status = team.screenShot;
+        this.autoFillFinalScore(team);
         this.changeStatus(team);
        
     }
@@ -207,15 +250,42 @@ export class CalculatePopupComponent implements OnInit {
     private async validateBeforePush(teamWonSettled: Team[], teamWonSelected: Team[], teamHideSelected: Team[], isCalc = true) {
         if (isCalc && CalculateService.VerifySettledSelected(this.teamSelected, this.originalTeam)) {
             this.toastrService.error(Language.Outright.existTeamSettled);
-        } else if (CalculateService.ExistRunningStatus(this.teamSelected)) {
+            return;
+        }
+        
+        if (CalculateService.ExistRunningStatus(this.teamSelected)) {
             this.toastrService.error(Language.eSports.leader.blankScore);
-        } else if (this.verifyScreenshot()) {
+            return;
+        }
+        
+        if (this.verifyScreenshot()) {
             this.toastrService.error(Language.Outright.screenshotMismatch);
-        } else if (CalculateService.VerifyOnlyOneTeamWon(teamWonSelected, teamWonSettled)) {
+            return;
+        }
+        
+        if (this.verifyTraderScore()) {
+            this.confirmationDialogMessage.message = Language.eSports.leader.insufficientSources;
+            this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
+                this.verifyOnlyOneTeamWonAndDeadHeat(teamWonSettled, teamWonSelected, teamHideSelected);
+            });
+            return;
+        }
+
+        this.verifyOnlyOneTeamWonAndDeadHeat(teamWonSettled, teamWonSelected, teamHideSelected);
+    }
+    
+    private verifyOnlyOneTeamWonAndDeadHeat(teamWonSettled: Team[], teamWonSelected: Team[], teamHideSelected: Team[]) {
+        if (CalculateService.VerifyOnlyOneTeamWon(teamWonSelected, teamWonSettled)) {
             this.toastrService.error(Language.Outright.atLeastTwoDeadHeat);
         } else {
             this.verifyDeadHead(teamWonSettled, teamWonSelected, teamHideSelected);
         }
+    }
+
+    private verifyTraderScore() {
+        return this.permission.isLeader && this.teamSelected.some(team => 
+            _.isEmpty(team.traderScore) || (!_.isEmpty(team.status) && !_.isEqual(team.status.toLowerCase(), team.traderScore.toLowerCase()))
+        );
     }
 
     private verifyScreenshot() {

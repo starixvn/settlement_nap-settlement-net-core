@@ -42,7 +42,11 @@ describe('UncalculatePopupComponent', () => {
     originalScreenshot: '',
     screenShot: '',
     confirmBy: '',
-    mismatchClass: ''
+    mismatchClass: '',
+    traderConfirmClass: '',
+    traderScore: '',
+    originalTraderScore: '',
+    resultDetailStatusId: 1
   }
   const leagueSettle: LeagueSettle = {
     leagueName: '',

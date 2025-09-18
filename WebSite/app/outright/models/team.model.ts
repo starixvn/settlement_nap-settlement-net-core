@@ -15,7 +15,11 @@ export class Team extends Match {
     originalStatus: string;
     originalScreenshot: string;
     screenShot: string;
+    traderScore: string;
+    originalTraderScore: string;
+    resultDetailStatusId: number;
     mismatchClass: string;
+    traderConfirmClass: string;
     confirmBy: string;
 }
 
