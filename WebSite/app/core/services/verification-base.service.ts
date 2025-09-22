@@ -508,8 +508,8 @@ export class VerificationBaseService {
         }
     }
 
-    public isConsistentTraderAndProvider(originalResultDetails: ResultDetail[], externalResults: ExternalResultDetail[]) {
-        return originalResultDetails.some(trader => {
+    public isConsistentTraderAndProvider(checkedResults: string[], confirmedResultDetails: ResultDetail[], externalResults: ExternalResultDetail[]) {
+        return confirmedResultDetails.filter(x => checkedResults.includes(x.resourceId)).some(trader => {
             const suitableProvider = externalResults?.find(x => x.resourceId === trader.resourceId);
             return suitableProvider && (!_.isEqual(trader.homeValue ?? "", suitableProvider.homeValue ?? "")
                 || !_.isEqual(trader.awayValue ?? "", suitableProvider.awayValue ?? ""))

@@ -125,21 +125,31 @@ export class ValidationService extends VerificationBaseService {
     return firstHalf.checked || firstHalf.ticketStatus === 'No Ticket' || firstHalf.settlementStatusId !== SettlementStatusId.Running;
   }
 
-  public isInsufficientSOPLite(originalResultDetails: ResultDetail[], externalResult: ExternalResult) {
-    const hasTrader = originalResultDetails.some(r => r.resultStatusId === ResultStatusId.TraderConfirm);
-    const hasProvider =  externalResult?.resultDetails?.some(x => this.hasScore(x));
+  public isInsufficientSOPLite(resultDetails: ResultDetail[], confirmedResultDetails: ResultDetail[], externalResult: ExternalResult) {
+    const hasTrader = this.hasTrader(resultDetails, confirmedResultDetails);
+    const hasProvider = this.hasProvider(resultDetails, externalResult);
 
     return !hasTrader && !hasProvider;
   }
+  
+  private hasTrader(resultDetails: ResultDetail[], confirmedResultDetails: ResultDetail[]) {
+    const checkedResults = resultDetails.map(x => x.resourceId);
+    return confirmedResultDetails.some(r => checkedResults.includes(r.resourceId) && r.resultStatusId === ResultStatusId.TraderConfirm);
+  }
+  
+  private hasProvider(resultDetails: ResultDetail[], externalResult: ExternalResult) {
+    const checkedResults = resultDetails.map(x => x.resourceId);
+    return externalResult?.resultDetails?.some(x => checkedResults.includes(x.resourceId) && this.hasScore(x));
+  }
 
 
-  public isConsistentScoreSOPLite(resultDetails: ResultDetail[], confirmResultDetails: ResultDetail[], externalResult: ExternalResult) {
-    const hasTrader = confirmResultDetails.some(r => r.resultStatusId === ResultStatusId.TraderConfirm);
-    const hasProvider = externalResult?.resultDetails?.some(x => this.hasScore(x));
-
+  public isConsistentScoreSOPLite(resultDetails: ResultDetail[], confirmedResultDetails: ResultDetail[], externalResult: ExternalResult) {
+    const hasTrader = this.hasTrader(resultDetails, confirmedResultDetails);
+    const hasProvider = this.hasProvider(resultDetails, externalResult);
+    
     let isConsistent = false;
     if (hasProvider && hasTrader) {
-      isConsistent = this.isConsistentTraderAndProvider(confirmResultDetails, externalResult.resultDetails);
+      isConsistent = this.isConsistentTraderAndProvider(resultDetails.map(x => x.resourceId), confirmedResultDetails, externalResult.resultDetails);
     }
 
     if (!isConsistent && hasProvider) {
@@ -148,7 +158,7 @@ export class ValidationService extends VerificationBaseService {
 
 
     if (!isConsistent && hasTrader) {
-      isConsistent = this.isConsistentScoreTraderConfirm(confirmResultDetails, resultDetails);
+      isConsistent = this.isConsistentScoreTraderConfirm(confirmedResultDetails, resultDetails);
     }
 
     return isConsistent;
