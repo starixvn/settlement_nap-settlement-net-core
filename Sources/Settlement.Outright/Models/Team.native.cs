@@ -43,5 +43,8 @@ public class Team
     public string ScreenShot { get; set; }
     public string TraderScore { get; set; }
 
-    public int ResultDetailStatusId { get; set; }
+    public int ResultStatusId { get; set; }
+    public int ModifiedBy { get; set; }
+
+    public int ConfirmedBy => ResultStatusId == 3 ? ModifiedBy : default;
 }

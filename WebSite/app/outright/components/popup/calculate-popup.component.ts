@@ -127,7 +127,7 @@ export class CalculatePopupComponent implements OnInit {
         const confirmStatus = 3;
         if(!_.isEmpty(team.originalTraderScore) 
             &&!CompletedStatus.includes(team.originalStatus.toLocaleLowerCase())
-            && _.isEqual(team.resultDetailStatusId, confirmStatus)
+            && _.isEqual(team.resultStatusId, confirmStatus)
         ){
             return 'bg-result-confirmed';
         }
@@ -186,23 +186,35 @@ export class CalculatePopupComponent implements OnInit {
     }
 
     private mismatchClass(team: Team) {
-        const isMismatchStatusScreenshot = !_.isEmpty(team.screenShot) 
-            && !_.isEmpty(team.status) 
-            && !_.isEqual(team.status.toLocaleLowerCase(), team.screenShot.toLocaleLowerCase())
-            && !_.isEqual(team.status.toLocaleLowerCase(), Status.won.toLocaleLowerCase());
-
-        const isMismatchStatusTraderScore = !_.isEmpty(team.traderScore)
-            && !_.isEqual(team.status.toLocaleLowerCase(), team.traderScore.toLocaleLowerCase());
-
-        const isMismatchScreenshotAndTraderScore = !_.isEmpty(team.screenShot)
-            && !_.isEmpty(team.traderScore)
-            && !_.isEqual(team.screenShot.toLocaleLowerCase(), team.traderScore.toLocaleLowerCase());
-
+        const isMismatchStatusScreenshot = this.isMismatchStatusScreenshot(team);
+        const isMismatchStatusTraderScore = this.isMismatchStatusTraderScore(team);
+        const isMismatchScreenshotAndTraderScore = this.isMismatchScreenshotAndTraderScore(team);
 
         if(isMismatchStatusScreenshot || isMismatchStatusTraderScore || isMismatchScreenshotAndTraderScore) {
             return 'status-mismatched';
         }
         return '';
+    }
+
+    private isMismatchStatusScreenshot(team: Team) {
+        return !_.isEmpty(team.screenShot) 
+        && !_.isEmpty(team.status) 
+        && !_.isEqual(team.status.toLocaleLowerCase(), team.screenShot.toLocaleLowerCase())
+        && !_.isEqual(team.status.toLocaleLowerCase(), Status.won.toLocaleLowerCase());
+    }
+
+    private isMismatchStatusTraderScore(team: Team) {
+        return !_.isEmpty(team.traderScore)
+            && !_.isEqual(team.status.toLocaleLowerCase(), Status.running.toLocaleLowerCase())
+            && !_.isEqual(team.status.toLocaleLowerCase(), team.traderScore.toLocaleLowerCase())
+            && !_.isEqual(team.status.toLocaleLowerCase(), Status.won.toLocaleLowerCase());
+    }
+
+    private isMismatchScreenshotAndTraderScore(team: Team) {
+        return !_.isEmpty(team.screenShot)
+            && !_.isEmpty(team.traderScore)
+            && !_.isEqual(team.screenShot.toLocaleLowerCase(), Status.running.toLocaleLowerCase())
+            && !_.isEqual(team.screenShot.toLocaleLowerCase(), team.traderScore.toLocaleLowerCase());
     }
 
     changeScreenshot(team: Team) {
