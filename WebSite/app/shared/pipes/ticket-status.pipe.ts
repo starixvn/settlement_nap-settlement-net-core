@@ -1,6 +1,7 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import * as _ from 'lodash';
 import { ResultDetail } from '../models/sportsbook-sop';
+import { TicketStatusText } from '../constants';
 
 @Pipe({ name: 'ticketStatus', standalone: false })
 export class TicketStatusPipe implements PipeTransform {
@@ -12,6 +13,10 @@ export class TicketStatusPipe implements PipeTransform {
                 || this.filterConfirmedTrader(args, item);
             if(!_.includes(args, "Running;") && _.isEqual(item.ticketStatus, "Running") && args.length > 0) {
                 hasResultStatus = false;
+            }
+
+            if(_.includes(args, "Running") && item.isRelated && item.ticketStatus === TicketStatusText.noTicket) {
+                hasResultStatus = true;
             }
 
             return this.isExistedItem(hasResultStatus, item);

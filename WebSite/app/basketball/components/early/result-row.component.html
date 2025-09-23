@@ -4,7 +4,7 @@
   <ng-container [ngComponentOutlet]="inputComponent" [ngComponentOutletInputs]="
     { item: item,
       isLeader: permission.isLeader,
-      enable: item.checked && (permission.isLeader || isRefundWithSettleDetermined),
+      enable: isEnabled(item),
       updateView: updateView,
       isRefundWithSettleDetermined: isRefundWithSettleDetermined}"></ng-container>
 </td>

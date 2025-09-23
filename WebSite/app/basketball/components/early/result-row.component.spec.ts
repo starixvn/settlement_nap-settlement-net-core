@@ -374,4 +374,134 @@ describe('Component: ResultRowComponent', () => {
             expect(typeof component.updateView).toBe('function');
         });
     });
+
+    describe('isEnabled', () => {
+        beforeEach(() => {
+            // Arrange - Set up default test data
+            resultDetail.checked = true;
+            resultDetail.resultSettingData = {
+                isHoldResult: false,
+                isConfirmedRefund: false,
+                isConfirmedRefundSdt: false,
+                isConfirmedRefundMercy: false,
+                iconHoldResult: ''
+            };
+            permission.isLeader = true;
+            component.isRefundWithSettleDetermined = false;
+        });
+
+        it('should return true when isRefundWithSettleDetermined is true and item is checked', () => {
+            // Arrange
+            resultDetail.checked = true;
+            component.isRefundWithSettleDetermined = true;
+
+            // Act
+            const result = component.isEnabled(resultDetail);
+
+            // Assert
+            expect(result).toBe(true);
+        });
+
+        it('should return false when isRefundWithSettleDetermined is true but item is not checked', () => {
+            // Arrange
+            resultDetail.checked = false;
+            component.isRefundWithSettleDetermined = true;
+
+            // Act
+            const result = component.isEnabled(resultDetail);
+
+            // Assert
+            expect(result).toBe(false);
+        });
+
+        it('should return true when isRefundWithSettleDetermined is false, item is checked, user is leader, and not confirmed', () => {
+            // Arrange
+            resultDetail.checked = true;
+            resultDetail.resultSettingData.isConfirmedRefund = false;
+            resultDetail.resultSettingData.isConfirmedRefundSdt = false;
+            permission.isLeader = true;
+            component.isRefundWithSettleDetermined = false;
+
+            // Act
+            const result = component.isEnabled(resultDetail);
+
+            // Assert
+            expect(result).toBe(true);
+        });
+
+        it('should return false when isRefundWithSettleDetermined is false and item is not checked', () => {
+            // Arrange
+            resultDetail.checked = false;
+            resultDetail.resultSettingData.isConfirmedRefund = false;
+            resultDetail.resultSettingData.isConfirmedRefundSdt = false;
+            permission.isLeader = true;
+            component.isRefundWithSettleDetermined = false;
+
+            // Act
+            const result = component.isEnabled(resultDetail);
+
+            // Assert
+            expect(result).toBe(false);
+        });
+
+        it('should return false when isRefundWithSettleDetermined is false and user is not leader', () => {
+            // Arrange
+            resultDetail.checked = true;
+            resultDetail.resultSettingData.isConfirmedRefund = false;
+            resultDetail.resultSettingData.isConfirmedRefundSdt = false;
+            permission.isLeader = false;
+            component.isRefundWithSettleDetermined = false;
+
+            // Act
+            const result = component.isEnabled(resultDetail);
+
+            // Assert
+            expect(result).toBe(false);
+        });
+
+        it('should return false when isRefundWithSettleDetermined is false and item is confirmed via isConfirmedRefund', () => {
+            // Arrange
+            resultDetail.checked = true;
+            resultDetail.resultSettingData.isConfirmedRefund = true;
+            resultDetail.resultSettingData.isConfirmedRefundSdt = false;
+            permission.isLeader = true;
+            component.isRefundWithSettleDetermined = false;
+
+            // Act
+            const result = component.isEnabled(resultDetail);
+
+            // Assert
+            expect(result).toBe(false);
+        });
+
+        it('should return false when isRefundWithSettleDetermined is false and item is confirmed via isConfirmedRefundSdt', () => {
+            // Arrange
+            resultDetail.checked = true;
+            resultDetail.resultSettingData.isConfirmedRefund = false;
+            resultDetail.resultSettingData.isConfirmedRefundSdt = true;
+            permission.isLeader = true;
+            component.isRefundWithSettleDetermined = false;
+
+            // Act
+            const result = component.isEnabled(resultDetail);
+
+            // Assert
+            expect(result).toBe(false);
+        });
+
+        it('should return false when isRefundWithSettleDetermined is false and both confirmation flags are true', () => {
+            // Arrange
+            resultDetail.checked = true;
+            resultDetail.resultSettingData.isConfirmedRefund = true;
+            resultDetail.resultSettingData.isConfirmedRefundSdt = true;
+            permission.isLeader = true;
+            component.isRefundWithSettleDetermined = false;
+
+            // Act
+            const result = component.isEnabled(resultDetail);
+
+            // Assert
+            expect(result).toBe(false);
+        });
+    });
 });

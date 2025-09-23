@@ -91,7 +91,6 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         this.autoFillConfirmedSDT(this.permission.isLeader, this.match.externalResults, this.resultDetails);
         this.groupMap = this.earlyService.getGroupMap(this.resultDetails, this.matchDetail);
         this.match.originalResultDetail = _.cloneDeep(this.resultDetails);
-        this.hideTicketWaiting(this.groupMap);
         this.renderFilterSelect();
         this.setIndicateColor();
         this.setRefundButtonWhenExistConfirmedSDT(this.resultDetails);
@@ -158,6 +157,10 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
 
         return true;
     }
+
+    // private verifyRelatedResult(){
+    //     this.selectedResources.forEach(r => r.)
+    // }
 
     private async confirmChangedResults() {
         if (this.isReSettledTickets) {

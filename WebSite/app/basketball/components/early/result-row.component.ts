@@ -27,7 +27,7 @@ type finalInputOutSide = TeamSelectionOutSideComponent | PlayerSelectionOutSideC
 
 export class ResultRowComponent implements OnInit {
   @Input() item: ResultDetail;
-  @Input() selected: boolean; 
+  @Input() selected: boolean;
   @Input() map: GroupMap;
   @Input() isRefundWithSettleDetermined: boolean;
   @Output() settingChanged = new EventEmitter<{ item: ResultDetail, map: GroupMap }>();
@@ -36,18 +36,18 @@ export class ResultRowComponent implements OnInit {
   readonly #earlyStore = inject(EarlyStore);
   readonly #verificationService = inject(VerificationService);
   readonly #cdr = inject(ChangeDetectorRef);
-  maxProviderCol =this.#earlyStore.maxProviderCol();
+  maxProviderCol = this.#earlyStore.maxProviderCol();
   permission = this.#earlyStore.permission();
   matchDetail = computed(() => this.#earlyStore.matchDetail());
   inputComponent: Type<finalInput>;
   inputOutSideComponent: Type<finalInputOutSide>;
-  
+
   ngOnInit(): void {
     this.inputComponent = this.getInputComponent();
     this.inputOutSideComponent = this.getInputOutSideComponent();
   }
 
-  public updateView = (): void => {
+  updateView = (): void => {
     this.updateValue.emit(this.item);
     this.#cdr.markForCheck();
   }
@@ -91,23 +91,32 @@ export class ResultRowComponent implements OnInit {
     return text?.length > maxLength ? text : null;
   }
 
-  public getResultSettingIcon(isHoldResult: boolean): string {
+  getResultSettingIcon(isHoldResult: boolean): string {
     return isHoldResult ? 'icon-yes' : 'icon-no';
   }
 
-  public isChangeSetting(item: ResultDetail, map: GroupMap): void {
+  isChangeSetting(item: ResultDetail, map: GroupMap): void {
     this.settingChanged.emit({ item, map });
   }
 
-  public onChangeBetType(item: ResultDetail, map: GroupMap): void {
+  onChangeBetType(item: ResultDetail, map: GroupMap): void {
     this.betTypeChanged.emit({ item, map });
   }
 
-  public canSettleResult(item: ResultDetail): boolean {
+  canSettleResult(item: ResultDetail): boolean {
     const isRunning = isEqual(item.ticketStatus, TicketStatusText.running)
       || isEqual(item.resultStatus, ResultStatus.noResult)
       || isEqual(item.resultStatus, ResultStatus.running);
 
     return isRunning && !item.isScoreMismatched && this.#verificationService.isValidTraderConfirmScore(item, false);
+  }
+
+  isEnabled(item: ResultDetail): boolean {
+    if(this.isRefundWithSettleDetermined){
+      return item.checked;
+    } else {
+      const isConfirmed = item.resultSettingData.isConfirmedRefund || item.resultSettingData.isConfirmedRefundSdt;
+      return item.checked && this.permission.isLeader && !isConfirmed;
+    }
   }
 }

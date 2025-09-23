@@ -46,4 +46,6 @@ export class ResultDetail extends GeneralResultDetail {
     oddFlex: OddFlexModel[];
     confirmedSdtHomeValue: string;
     confirmedSdtAwayValue: string;
+    isRelated: boolean;
+    relatedCalResource: string
 }
