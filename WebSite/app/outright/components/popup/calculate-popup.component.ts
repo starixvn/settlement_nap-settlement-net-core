@@ -21,6 +21,7 @@ import { DeadHeatSettings } from '../../constants/deadheat-setting';
 import { NewMultipleSelectComponent } from '../../../shared/components/multiple-select/multiple-select.component';
 import { TicketStatusPipe } from '../../pipes/ticket-status-pipe';
 import { TicketStatusFilterPipe } from '../../pipes/ticket-status-filter-pipe';
+import { TeamResult } from '../../models/team-result';
 
 @Component({
     selector: 'calculate-popup',
@@ -91,7 +92,8 @@ export class CalculatePopupComponent implements OnInit {
             team.disableDeadheat = !_.isEqual(team.status, 'WON');
             team.originalStatus = team.status;
             team.screenShot = team.screenShot || TeamStatuses[0].text.toUpperCase();
-            team.originalScreenshot = team.screenShot;            
+            team.originalScreenshot = team.screenShot;
+            team.traderScore = (team.traderScore || TeamStatuses[0].text).toUpperCase();
             team.originalTraderScore = team.traderScore;
            
             this.autoFillFinalScore(team);
@@ -175,6 +177,12 @@ export class CalculatePopupComponent implements OnInit {
             return;
         }
         team.disableDeadheat = false;
+    }
+
+    changeTraderScore(team: Team) {
+        this.clearError();
+        team.statusClass = this.makeBackgroundByStatus(team);
+        team.mismatchClass = this.mismatchClass(team);
     }
 
     makeBackgroundByStatus(team: Team) {
@@ -397,6 +405,31 @@ export class CalculatePopupComponent implements OnInit {
         this.confirmationDialogMessage.message = Language.eSports.saveScore;
         this.messageBoxService.confirm(this.confirmationDialogMessage, async () => {
             await this.outrightService.saveScore(this.teamSelected);
+            this.dialogRef.close();
+        });
+    }
+
+    async saveTraderScore() {
+        this.toastrService.clear();
+        await this.getLatestData();
+        if (CalculateService.VerifySettledSelected(this.teamSelected, this.originalTeam)) {
+            this.toastrService.error(Language.Outright.existTeamSettled);
+            return;
+        }
+
+        if (CalculateService.existRunningResult(this.teamSelected, 'traderScore')) {
+            this.toastrService.error(Language.Outright.existRunningTraderResult);
+            return;
+        }
+
+        this.confirmationDialogMessage.message = Language.SaveTraderScore;
+        this.messageBoxService.confirm(this.confirmationDialogMessage, async () => {
+            const teams = this.teamSelected.map(team => ({
+                orId: team.orId,
+                teamId: team.teamId,
+                result: team.traderScore
+            }) as TeamResult);
+            await this.outrightService.saveTraderScore(this.data.leagueId, teams);
             this.dialogRef.close();
         });
     }

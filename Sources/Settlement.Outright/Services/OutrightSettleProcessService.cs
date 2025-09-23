@@ -23,6 +23,8 @@ public interface OutrightSettleProcessService
     Task<bool> CheckOutrightVoidTicket(CheckOutrightVoidTicketRequest request);
 
     string CreateScoreResources(IEnumerable<TeamExternalResult> teams);
+
+    string CreateResourceXmlByTeamResult(IEnumerable<TeamResult> teams);
 }
 
 public class OutrightSettleProcessServiceImp(
@@ -166,6 +168,25 @@ public class OutrightSettleProcessServiceImp(
             OrId = t.OrId,
             TeamId = t.TeamId,
             Result = t.ScreenShot
+        }).ToList();
+
+        var resourcesXml = new Resources<ResourcesOutright>
+        {
+            ResourceItems = resources
+        };
+
+        return xmlConvertService.Serialize(resourcesXml);
+    }
+
+
+    public string CreateResourceXmlByTeamResult(IEnumerable<TeamResult> teams)
+    {
+
+        var resources = teams.Select(t => new ResourcesOutright
+        {
+            OrId = t.OrId,
+            TeamId = t.TeamId,
+            Result = t.Result
         }).ToList();
 
         var resourcesXml = new Resources<ResourcesOutright>
