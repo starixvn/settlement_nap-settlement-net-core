@@ -17,7 +17,7 @@ import { MappedScoreService } from './mapped-score.service';
   selector: 'calculation-actions',
   templateUrl: './fulltime-calculation.component.html',
   providers: [
-    ScorePipe,
+    ScorePipe
   ]
 })
 export class FullTimeCalculationComponent implements SportTemplate {

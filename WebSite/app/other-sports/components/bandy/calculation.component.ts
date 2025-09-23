@@ -222,9 +222,7 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
   }
 
   private confirmScoreSource() {
-    const currentSelectedResults = this.resultDetails.filter(x => x.checked);
-    const isSourceInsufficient = this.validationService.isInsufficientSOPLite(currentSelectedResults, this.confirmResultDetails, this.externalResult);
-    
+    const isSourceInsufficient = this.validationService.isInsufficientSOPLite(this.selectedResults, this.confirmResultDetails, this.externalResult);
     if (isSourceInsufficient) {
       this.handleInsufficientSource();
       return;
@@ -251,9 +249,8 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
   }
 
   private confirmInconsistentScore() {
-    const currentSelectedResults = this.resultDetails.filter(x => x.checked);
-    const isInconsistent = this.validationService.isConsistentScoreSOPLite(
-      currentSelectedResults, 
+      const isInconsistent = this.validationService.isConsistentScoreSOPLite(
+      this.selectedResults, 
       this.confirmResultDetails, 
       this.externalResult
     );

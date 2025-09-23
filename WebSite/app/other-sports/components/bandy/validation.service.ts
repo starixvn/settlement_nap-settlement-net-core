@@ -126,6 +126,7 @@ export class ValidationService extends VerificationBaseService {
   }
 
   public isInsufficientSOPLite(resultDetails: ResultDetail[], confirmedResultDetails: ResultDetail[], externalResult: ExternalResult) {
+
     const hasTrader = this.hasTrader(resultDetails, confirmedResultDetails);
     const hasProvider = this.hasProvider(resultDetails, externalResult);
 
@@ -142,26 +143,29 @@ export class ValidationService extends VerificationBaseService {
     return externalResult?.resultDetails?.some(x => checkedResults.includes(x.resourceId) && this.hasScore(x));
   }
 
+  public isConsistentScoreSOPLite(resultDetails: ResultDetail[], confirmedResultDetails: ResultDetail[], externalResult: ExternalResult): boolean {
+    return resultDetails.some(resultDetail => 
+      this.isResultDetailConsistent(resultDetail, confirmedResultDetails, externalResult)
+    );
+  }
 
-  public isConsistentScoreSOPLite(resultDetails: ResultDetail[], confirmedResultDetails: ResultDetail[], externalResult: ExternalResult) {
-    const hasTrader = this.hasTrader(resultDetails, confirmedResultDetails);
-    const hasProvider = this.hasProvider(resultDetails, externalResult);
-    
-    let isConsistent = false;
+  private isResultDetailConsistent(resultDetail: ResultDetail, confirmedResultDetails: ResultDetail[], externalResult: ExternalResult): boolean {
+    const hasTrader = this.hasTrader([resultDetail], confirmedResultDetails);
+    const hasProvider = this.hasProvider([resultDetail], externalResult);
+  
     if (hasProvider && hasTrader) {
-      isConsistent = this.isConsistentTraderAndProvider(resultDetails.map(x => x.resourceId), confirmedResultDetails, externalResult.resultDetails);
+      return this.isConsistentTraderAndProvider([resultDetail.resourceId], confirmedResultDetails, externalResult.resultDetails);
     }
-
-    if (!isConsistent && hasProvider) {
-      isConsistent = this.isConsistentScoreProvider(resultDetails, externalResult.resultDetails);
+  
+    if (hasProvider) {
+      return this.isConsistentScoreProvider([resultDetail], externalResult.resultDetails);
     }
-
-
-    if (!isConsistent && hasTrader) {
-      isConsistent = this.isConsistentScoreTraderConfirm(confirmedResultDetails, resultDetails);
+  
+    if (hasTrader) {
+      return this.isConsistentScoreTraderConfirm(confirmedResultDetails, [resultDetail]);
     }
-
-    return isConsistent;
+  
+    return false;
   }
 
   public verifyChangeInputScore(currentResult: ResultDetail, resultDetails: ResultDetail[], confirmResultDetails: ResultDetail[], externalResult: ExternalResult) {
