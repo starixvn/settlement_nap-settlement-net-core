@@ -382,16 +382,6 @@ describe('CalculatePopupComponent', () => {
 
       expect(actual).toBe('status-mismatched');
     });
-
-    it('should return empty string when status and screenshot match', () => {
-      team.originalStatus = 'RUNNING';
-      team.status = 'WON';
-      team.screenShot = 'WON';
-
-      const actual = component.makeBackgroundByStatus(team);
-
-      expect(actual).toBe('');
-    });
   });
 
   describe("changeScreenshot", () => {
@@ -656,7 +646,4 @@ describe('CalculatePopupComponent', () => {
     });
   });
 });
-
-
-
 

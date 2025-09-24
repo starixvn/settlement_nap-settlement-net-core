@@ -26,9 +26,14 @@ export class CalculateService {
     }
 
     public static existRunningResult(listTeam: Team[], keyValue: keyof Team) {
-        return listTeam.some(team => team[keyValue] 
-            && typeof team[keyValue] === 'string' 
-            && !CompletedStatus.includes((team[keyValue] as string).toLowerCase()));
+        return listTeam.some(team => {
+            const value = team[keyValue];
+            return (
+                value &&
+                typeof value === 'string' &&
+                !CompletedStatus.includes(value.toLowerCase())
+            );
+        });
     }
 
     public static VerifyDeadHeatNoSet(teamWonSelected: Team[], teamWonSettled: Team[]) {
