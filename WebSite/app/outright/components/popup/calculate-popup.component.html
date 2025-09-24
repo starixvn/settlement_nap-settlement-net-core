@@ -38,10 +38,10 @@
 			</div>
 
 			<div class="save-score-button-group">
-				<button class="save-score btn btn-danger" [ngClass]="{ 'btn-disabled': disableRecalculate }"
+				<!-- <button class="save-score btn btn-danger" [ngClass]="{ 'btn-disabled': disableRecalculate }"
 					[disabled]="disableRecalculate" (click)="saveTraderScore()">
 					Save Trader Score
-				</button>
+				</button> -->
 
 				<button class="save-score btn btn-danger" [ngClass]="{ 'btn-disabled': disableRecalculate }"
 					[disabled]="disableRecalculate" (click)="saveScore()">
@@ -75,13 +75,13 @@
 					</td>
 					@if(permission.isLeader) {
 					<td class="status" [ngClass]="team.mismatchClass">
-						<select [(ngModel)]="team.traderScore" [disabled]="!team.selected || !leagueSettle.permission.isLeader"
-						(ngModelChange)="changeTraderScore(team)">
-						<option *ngFor="let status of teamStatus" [value]="status.text | uppercase" [hidden]="!status.isShow"> {{
-							status.text }}</option>
-					</select>
+						<!-- <select [(ngModel)]="team.traderScore" [disabled]="!team.selected || !leagueSettle.permission.isLeader"
+							(ngModelChange)="changeTraderScore(team)">
+							<option *ngFor="let status of teamStatus" [value]="status.text | uppercase" [hidden]="!status.isShow"> {{
+								status.text }}</option>
+						</select> -->
 
-						<!-- <span>{{ team.traderScore || '-' }}</span> -->
+						<span>{{ team.traderScore || '-' }}</span>
 					</td>
 					}
 					<td class="code" [ngClass]="team.mismatchClass">

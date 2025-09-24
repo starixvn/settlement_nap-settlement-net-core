@@ -207,15 +207,13 @@ export class CalculatePopupComponent implements OnInit {
     private isMismatchStatusScreenshot(team: Team) {
         return !_.isEmpty(team.screenShot) 
         && !_.isEmpty(team.status) 
-        && !_.isEqual(team.status.toLocaleLowerCase(), team.screenShot.toLocaleLowerCase())
-        && !_.isEqual(team.status.toLocaleLowerCase(), Status.won.toLocaleLowerCase());
+        && !_.isEqual(team.status.toLocaleLowerCase(), team.screenShot.toLocaleLowerCase());
     }
 
     private isMismatchStatusTraderScore(team: Team) {
         return !_.isEmpty(team.traderScore)
             && !_.isEqual(team.status.toLocaleLowerCase(), Status.running.toLocaleLowerCase())
-            && !_.isEqual(team.status.toLocaleLowerCase(), team.traderScore.toLocaleLowerCase())
-            && !_.isEqual(team.status.toLocaleLowerCase(), Status.won.toLocaleLowerCase());
+            && !_.isEqual(team.status.toLocaleLowerCase(), team.traderScore.toLocaleLowerCase());
     }
 
     private isMismatchScreenshotAndTraderScore(team: Team) {
