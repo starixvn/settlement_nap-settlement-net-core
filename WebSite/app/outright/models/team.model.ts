@@ -20,7 +20,7 @@ export class Team extends Match {
     resultStatusId: number;
     mismatchClass: string;
     traderConfirmClass: string;
-    confirmedBy: number;
+    confirmedBy?: string;
 }
 
 export class TeamSettle {

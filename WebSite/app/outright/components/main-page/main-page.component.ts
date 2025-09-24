@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, Injector, OnInit } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { Outright } from "../../models/outright.model";
 import { FilterComponent } from "./filter.component";
 import { LeagueTeamComponent } from "./league-team.component";
@@ -16,9 +16,11 @@ export class MainPageComponent implements OnInit {
     public outright: Outright;
     public filterRequest: FilterRequest;
 
-    constructor(protected injector: Injector) { }
     ngOnInit(): void {
+        
     }
+
+
     public search(outright: Outright) {
         this.outright = outright;
     }

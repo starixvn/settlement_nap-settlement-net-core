@@ -183,6 +183,7 @@ export class CalculatePopupComponent implements OnInit {
         this.clearError();
         team.statusClass = this.makeBackgroundByStatus(team);
         team.mismatchClass = this.mismatchClass(team);
+        this.autoFillFinalScore(team);
     }
 
     makeBackgroundByStatus(team: Team) {

@@ -54,7 +54,7 @@ describe('UpdateDeadheatSettingComponent', () => {
     betCount: 0,
     originalScreenshot: '',
     screenShot: '',
-    confirmedBy: 0,
+    confirmedBy: '',
     mismatchClass: '',
     traderConfirmClass: '',
     traderScore: '',

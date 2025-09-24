@@ -38,7 +38,7 @@
 			</div>
 
 			<div class="save-score-button-group">
-				<button class="save-score btn btn-danger" [ngClass]="{ 'btn-disabled': disableRecalculate }"
+				<button *ngIf="permission.isLeader" class="save-score btn btn-danger" [ngClass]="{ 'btn-disabled': disableRecalculate }"
 					[disabled]="disableRecalculate" (click)="saveTraderScore()">
 					Save Trader Score
 				</button>
