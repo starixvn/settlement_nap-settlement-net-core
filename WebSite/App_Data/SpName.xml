@@ -95,7 +95,7 @@
 		<Setting Key="NAP_Set_DeadHeatLeagueSel" SpName="NAP_Set_DeadHeatLeagueSel" DbName="DBPRO.bodb02.wsv_nap" />
 		<Setting Key="NAP_Set_ProviderResultDetailOutrightIns" SpName="NAP_Set_ProviderResultDetailOutrightIns" DbName="DBPRO.bodb02.wsv_nap" />
 		<Setting Key="WriteLog_UserLog_SettleOutright" SpName="WriteLog_UserLog_SettleOutright" DbName="DBLOG.bodb_CustomerLog.wsv_nap" />
-		<Setting Key="NAP_Set_OutrightResultDetailUpd" SpName="NAP_Set_OutrightResultDetailUpd_xtest" DbName="DBPRO.bodb02.wsv_nap" />
+		<Setting Key="NAP_Set_OutrightResultDetailUpd" SpName="NAP_Set_OutrightResultDetailUpd" DbName="DBPRO.bodb02.wsv_nap" />
 
 		
 	</Funtion>
