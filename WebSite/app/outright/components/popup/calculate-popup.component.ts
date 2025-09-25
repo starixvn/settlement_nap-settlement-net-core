@@ -95,12 +95,9 @@ export class CalculatePopupComponent implements OnInit {
             team.originalScreenshot = team.screenShot;
             team.traderScore = (team.traderScore || TeamStatuses[0].text).toUpperCase();
             team.originalTraderScore = team.traderScore;
-           
             this.autoFillFinalScore(team);
-
             team.traderConfirmClass = this.traderConfirmClass(team);
-            team.statusClass = this.makeBackgroundByStatus(team);
-            team.mismatchClass = this.mismatchClass(team);
+
         });
         this.moveBetsDay = this.verifyDateService.convertToDateStruct(this.leagueSettle.moveBetsDay);
         this.today = this.verifyDateService.convertToDateStruct(this.leagueSettle.today);
@@ -123,6 +120,8 @@ export class CalculatePopupComponent implements OnInit {
         } else {
             team.status = team.originalStatus.toUpperCase();
         }
+
+        this.changeStatus(team);
     }
 
     traderConfirmClass(team: Team) {
@@ -182,8 +181,6 @@ export class CalculatePopupComponent implements OnInit {
     changeTraderScore(team: Team) {
         this.clearError();
         this.autoFillFinalScore(team);
-        team.statusClass = this.makeBackgroundByStatus(team);
-        team.mismatchClass = this.mismatchClass(team);
     }
 
     makeBackgroundByStatus(team: Team) {
@@ -227,8 +224,6 @@ export class CalculatePopupComponent implements OnInit {
     changeScreenshot(team: Team) {
         this.clearError();
         this.autoFillFinalScore(team);
-        this.changeStatus(team);
-       
     }
 
     async calculate(isCalc = true) {

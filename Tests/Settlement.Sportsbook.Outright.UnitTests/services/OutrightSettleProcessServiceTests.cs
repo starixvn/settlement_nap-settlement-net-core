@@ -13,7 +13,7 @@ using Settlement.Outright.Criteria;
 using Settlement.Outright.Models;
 using Settlement.Outright.Services;
 
-namespace Settlement.Sportsbook.Outright.UnitTests.services;
+namespace Settlement.Sportsbook.Outright.UnitTests.Services;
 
 public class OutrightSettleProcessServiceTests
 {

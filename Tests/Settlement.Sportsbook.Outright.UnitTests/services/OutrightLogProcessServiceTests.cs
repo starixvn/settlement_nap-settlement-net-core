@@ -5,7 +5,7 @@ using Settlement.Outright.Models;
 using Settlement.Outright.Requests;
 using Settlement.Outright.Services;
 
-namespace Settlement.Sportsbook.Outright.UnitTests.services;
+namespace Settlement.Sportsbook.Outright.UnitTests.Services;
 
 public class OutrightLogProcessServiceTests
 {
