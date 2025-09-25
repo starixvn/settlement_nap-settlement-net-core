@@ -181,9 +181,9 @@ export class CalculatePopupComponent implements OnInit {
 
     changeTraderScore(team: Team) {
         this.clearError();
+        this.autoFillFinalScore(team);
         team.statusClass = this.makeBackgroundByStatus(team);
         team.mismatchClass = this.mismatchClass(team);
-        this.autoFillFinalScore(team);
     }
 
     makeBackgroundByStatus(team: Team) {

@@ -30,14 +30,14 @@
         <label class="inner-label">
           Sports
         </label>
-        <new-multiple-select [multipleSelect]="sportOptions$ | async" (formValue)="onSelectSport($event)"></new-multiple-select>
+        <new-multiple-select [style.width]="(sportOptions$ | async).maxWidth" [multipleSelect]="sportOptions$ | async" (formValue)="onSelectSport($event)"></new-multiple-select>
       </div>
 
       <div class="large-field league-field">
         <label class="inner-label">
           League
         </label>
-        <new-multiple-select #league [multipleSelect]="leagueOptions$ | async" (formValue)="onSelectLeague($event)"></new-multiple-select>
+        <new-multiple-select #league [style.width]="(leagueOptions$ | async).maxWidth" [multipleSelect]="leagueOptions$ | async" (formValue)="onSelectLeague($event)"></new-multiple-select>
       </div>
 
       <div class="field include-test">

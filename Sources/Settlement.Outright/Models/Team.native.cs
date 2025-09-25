@@ -49,7 +49,7 @@ public class Team
 
     public string ConfirmedBy
     {
-        set => confirmedBy = ResultStatusId == 3 ? value : string.Empty;
+        set => confirmedBy = ResultStatusId == 3 || ResultStatusId == 5 ? value : string.Empty;
         get => confirmedBy;
     }
 }

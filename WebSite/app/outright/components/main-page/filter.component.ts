@@ -43,7 +43,9 @@ export class FilterComponent implements OnInit {
     today: NgbDateStruct;
 
     sportTypesSelected: string[];
-    sportOptions$ = new BehaviorSubject(new MultipleSelect());
+    sportOptions$ = new BehaviorSubject(new MultipleSelect(
+        
+    ));
 
     leagueSelected: string;
     originalLeagues: League[];
@@ -58,10 +60,14 @@ export class FilterComponent implements OnInit {
 
     warningDialogMessage: ModalDialogMessage = new ModalDialogMessage();
 
-    constructor(protected injector: Injector) { }
-
-
     ngOnInit() {
+        const initLeagueSelect = new MultipleSelect();
+        initLeagueSelect.maxWidth = '85%';
+        initLeagueSelect.haveGroup = true;
+        this.leagueOptions$.next(initLeagueSelect);
+        const initSportSelect = new MultipleSelect();
+        initSportSelect.haveGroup = true;
+        this.sportOptions$.next(initSportSelect);
         this.initFilterData();
     }
 
