@@ -74,6 +74,8 @@ public sealed class ResultDetail
 
     public IList<OddFlexModel> OddFlex { get; set; } = [];
 
+    public bool InValid { get; set; } = false;
+
     public override bool Equals(object obj)
     {
         return obj is ResultDetail result && result.ResourceId == ResourceId;

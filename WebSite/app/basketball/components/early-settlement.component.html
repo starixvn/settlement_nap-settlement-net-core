@@ -101,7 +101,7 @@
                 </th>
             </tr>
             <tr>
-                <ng-container *ngFor=" let result of resultDetails[0].externalScores | slice:1; let i=index">
+                <ng-container *ngFor=" let result of resultDetails[0]?.externalScores | slice:1; let i=index">
                     <th class="map" *ngIf="i < maxProviderCol && permission.isLeader">
                         <div class="outside-source-text" [matTooltip]="getTextTooltip(result.sourceName, 15)">
                             {{result.sourceName|externalSourceName}}
@@ -129,7 +129,7 @@
         <tbody>
             <ng-template ngFor let-map [ngForOf]="groupMap">
                 <tr class="group-map">
-                    <td [colSpan]="permission.isLeader ? resultDetails[0].externalScores.length + 4 : resultDetails[0].externalScores.length"
+                    <td [colSpan]="permission.isLeader ? resultDetails[0]?.externalScores.length + 4 : resultDetails[0]?.externalScores.length"
                         (click)="onCollapsedClick(map)">
                         <span>{{map.collapsed?"+ ":"- "}}</span>
                         <span>{{map.groupName}}</span>

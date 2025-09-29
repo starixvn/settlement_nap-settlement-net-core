@@ -60,7 +60,7 @@ public class GroupBetTypeServiceImp : IGroupBetTypeService
 
         var matchingOddFlex = resultDetail.OddFlex.FirstOrDefault();
 
-        if (matchingOddFlex != null)
+        if (matchingOddFlex is { Info: not null })
         {
             return new GroupNameModel
             {

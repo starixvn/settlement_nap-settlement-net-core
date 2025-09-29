@@ -50,7 +50,7 @@ public class BasketballBetTypeServiceImp(
         if (resourceId.Length >= MinResourceIdLength && GroupBetType.Player.Contains(Convert.ToInt32(resourceId.Substring(0, MinResourceIdLength))))
         {
             GroupPlayerBetType(item, players);
-            item.BetTypeName = generateBetTypeNameService.GenerateBetTypeName(item);
+            item.BetTypeName = item.InValid ? string.Empty : generateBetTypeNameService.GenerateBetTypeName(item);
         }
         else
         {
@@ -136,7 +136,17 @@ public class BasketballBetTypeServiceImp(
         };
         var oddFlex = (await dynamicRepository.FetchAsync<OddFlexModel>(criteria)).ToList();
 
-        oddFlex.ForEach(playerModel => playerModel.Info = JsonConvert.DeserializeObject<OddsInfoModel>(playerModel.OddsInfo));
+        oddFlex.ForEach(playerModel =>
+        {
+            try
+            {
+                playerModel.Info = JsonConvert.DeserializeObject<OddsInfoModel>(playerModel.OddsInfo);
+            }
+            catch
+            {
+                playerModel.Info = null;
+            }
+        });
 
         return oddFlex;
     }
@@ -144,6 +154,7 @@ public class BasketballBetTypeServiceImp(
     private void GroupPlayerBetType(ResultDetail resultDetail, IList<OddFlexModel> players)
     {
         var group = groupBetTypeService.GroupPlayerBetType(resultDetail, players);
+        resultDetail.InValid = resultDetail.OddFlex.Any(o => o.Info is null);
         resultDetail.GroupName = group.GroupName;
         resultDetail.GroupId = group.GroupId;
         resultDetail.InputType = (int)inputTypeService.GetInputType(resultDetail.BetType);

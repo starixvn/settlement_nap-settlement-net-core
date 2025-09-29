@@ -67,6 +67,9 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     }
 
     public get outSideCount() {
+        if(this.resultDetails.length === 0) {
+            return 0;
+        }
         return this.resultDetails[0].externalScores.filter(x =>
             x.sourceId !== ScoreSourceType.trader && x.sourceId >= ScoreSourceType.screenshot).length
     }

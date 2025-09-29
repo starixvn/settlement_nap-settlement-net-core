@@ -35,7 +35,7 @@ public class GenerateBetTypeNameService(IRefDataService refDataService) : IGener
     {
         var matchingOddFlex = resultDetail.OddFlex.FirstOrDefault();
 
-        var betTypeName = matchingOddFlex != null
+        var betTypeName = matchingOddFlex is { Info: not null }
             ? resultDetail.BetTypeName.Replace(PlayerPlaceholder, matchingOddFlex.Info.PlayerName)
             : resultDetail.BetTypeName;
 
@@ -45,15 +45,16 @@ public class GenerateBetTypeNameService(IRefDataService refDataService) : IGener
     private string GeneratePerformanceBetTypeName(ResultDetail resultDetail)
     {
         var matchingOddFlex = resultDetail.OddFlex.FirstOrDefault();
-        return matchingOddFlex == null ? resultDetail.BetTypeName : $"{matchingOddFlex.Info.PlayerName} {ParseOddFlex(matchingOddFlex.Info)}";
+        return matchingOddFlex is { Info: not null } ? $"{matchingOddFlex.Info.PlayerName} {ParseOddFlex(matchingOddFlex.Info)}" : resultDetail.BetTypeName;
     }
 
     private string GenerateMostPointsBetTypeName(ResultDetail resultDetail)
     {
-        if (resultDetail.OddFlex.Count() != 2)
+        if (resultDetail.OddFlex.Count() != 2 || resultDetail.OddFlex[0].Info is null || resultDetail.OddFlex[1].Info is null)
         {
             return resultDetail.BetTypeName;
         }
+
         return $"{resultDetail.BetTypeName} - {resultDetail.OddFlex[0].Info.PlayerName} vs. {resultDetail.OddFlex[1].Info.PlayerName}";
     }
 

@@ -99,7 +99,7 @@ public class AioServiceImp(
             resultDetails.ForEach(result => result.MatchId = request.MatchId);
             await mapperService.Decorate(resultDetails);
         }
-        resultDetails = resultDetails.OrderBy(result => result.OrdNo).ToList();
+        resultDetails = resultDetails.Where(r => !r.InValid).OrderBy(result => result.OrdNo).ToList();
 
         var newResultDetails = await SetInterval(matchDetail, resultDetails);
 
