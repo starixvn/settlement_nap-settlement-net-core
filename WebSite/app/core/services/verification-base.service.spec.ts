@@ -1513,4 +1513,533 @@ describe('VerificationBaseService', () => {
             });
         });
     });
+
+    describe('hasScore', () => {
+        it('should return true when result has both home and away values', () => {
+            const result = new ResultDetail();
+            result.homeValue = '1';
+            result.awayValue = '2';
+
+            const actual = service.hasScore(result);
+
+            expect(actual).toBe(true);
+        });
+
+        it('should return false when result has empty home value', () => {
+            const result = new ResultDetail();
+            result.homeValue = '';
+            result.awayValue = '2';
+
+            const actual = service.hasScore(result);
+
+            expect(actual).toBe(false);
+        });
+
+        it('should return false when result has empty away value', () => {
+            const result = new ResultDetail();
+            result.homeValue = '1';
+            result.awayValue = '';
+
+            const actual = service.hasScore(result);
+
+            expect(actual).toBe(false);
+        });
+
+        it('should return false when result is null', () => {
+            const actual = service.hasScore(null as any);
+
+            expect(actual).toBeFalsy();
+        });
+    });
+
+    describe('isExistedHomeScore', () => {
+        it('should return true when home value exists', () => {
+            const actual = service.isExistedHomeScore('1');
+
+            expect(actual).toBe(true);
+        });
+
+        it('should return false when home value is empty', () => {
+            const actual = service.isExistedHomeScore('');
+
+            expect(actual).toBe(false);
+        });
+
+        it('should return false when home value is null', () => {
+            const actual = service.isExistedHomeScore(null);
+
+            expect(actual).toBe(false);
+        });
+    });
+
+    describe('allMapHaveScreenshotSource', () => {
+        it('should return true when all checked results have screenshot source', () => {
+            resultDetail.checked = true;
+            const screenshotScore = new ExternalResultDetail(1001, '', '', '', '1', '1');
+            resultDetail.externalScores = [screenshotScore];
+
+            const actual = service.allMapHaveScreenshotSource([resultDetail]);
+
+            expect(actual).toBe(true);
+        });
+
+        it('should return false when result missing screenshot source', () => {
+            resultDetail.checked = true;
+            resultDetail.externalScores = [externalResultDetail];
+
+            const actual = service.allMapHaveScreenshotSource([resultDetail]);
+
+            expect(actual).toBe(false);
+        });
+
+        it('should return true when no checked results', () => {
+            resultDetail.checked = false;
+
+            const actual = service.allMapHaveScreenshotSource([resultDetail]);
+
+            expect(actual).toBe(true);
+        });
+    });
+
+    describe('isExistScreenshotSource', () => {
+        it('should return true when screenshot source exists', () => {
+            const screenshotScore = new ExternalResultDetail(1001, '', '', '', '1', '1');
+            resultDetail.externalScores = [screenshotScore];
+
+            const actual = service.isExistScreenshotSource(resultDetail);
+
+            expect(actual).toBeTruthy();
+        });
+
+        it('should return false when no screenshot source', () => {
+            resultDetail.externalScores = [externalResultDetail];
+
+            const actual = service.isExistScreenshotSource(resultDetail);
+
+            expect(actual).toBeFalsy();
+        });
+    });
+
+    describe('autoFillScreenShotScore', () => {
+        beforeEach(() => {
+            resultDetail.homeValue = '0';
+            resultDetail.awayValue = '0';
+            const screenshotScore = new ExternalResultDetail(1001, '', '', '', '2', '1');
+            externalResultDetail.homeValue = '2';
+            externalResultDetail.awayValue = '1';
+            resultDetail.externalScores = [externalResultDetail, screenshotScore];
+            resultDetail.isScoreMismatched = false;
+        });
+
+        it('should fill home and away when all condition passed', () => {
+            service.autoFillScreenShotScore(resultDetail);
+
+            expect(resultDetail.homeValue).toEqual('2');
+            expect(resultDetail.awayValue).toEqual('1');
+        });
+
+        it('should fill blank for home and away when scores are mismatch', () => {
+            resultDetail.isScoreMismatched = true;
+            service.autoFillScreenShotScore(resultDetail);
+
+            expect(resultDetail.homeValue).toEqual('');
+            expect(resultDetail.awayValue).toEqual('');
+        });
+    });
+
+    describe('isExistMismatchedScoreScreenshot', () => {
+        it('should return true when exist mismatched screenshot score', () => {
+            resultDetail.checked = true;
+            resultDetail.homeValue = '1';
+            resultDetail.awayValue = '1';
+            const screenshotScore = new ExternalResultDetail(1001, '', '', '', '2', '2');
+            resultDetail.externalScores = [screenshotScore];
+
+            const actual = service.isExistMismatchedScoreScreenshot([resultDetail]);
+
+            expect(actual).toBe(true);
+        });
+
+        it('should return false when no mismatched screenshot score', () => {
+            resultDetail.checked = true;
+            resultDetail.homeValue = '1';
+            resultDetail.awayValue = '1';
+            const screenshotScore = new ExternalResultDetail(1001, '', '', '', '1', '1');
+            resultDetail.externalScores = [screenshotScore];
+
+            const actual = service.isExistMismatchedScoreScreenshot([resultDetail]);
+
+            expect(actual).toBe(false);
+        });
+    });
+
+    describe('isMismatchedScoreScreenshot', () => {
+        it('should return true when scores are different', () => {
+            resultDetail.homeValue = '1';
+            resultDetail.awayValue = '1';
+            const screenshotScore = new ExternalResultDetail(1001, '', '', '', '2', '2');
+            resultDetail.externalScores = [screenshotScore];
+
+            const actual = service.isMismatchedScoreScreenshot(resultDetail);
+
+            expect(actual).toBe(true);
+        });
+
+        it('should return false when scores are same', () => {
+            resultDetail.homeValue = '1';
+            resultDetail.awayValue = '1';
+            const screenshotScore = new ExternalResultDetail(1001, '', '', '', '1', '1');
+            resultDetail.externalScores = [screenshotScore];
+
+            const actual = service.isMismatchedScoreScreenshot(resultDetail);
+
+            expect(actual).toBe(false);
+        });
+    });
+
+    describe('enableUncalculateButton', () => {
+        it('should return true when exist result not running', () => {
+            resultDetail.settlementStatusId = 1; // Not Running
+
+            const actual = service.enableUncalculateButton([resultDetail]);
+
+            expect(actual).toBe(true);
+        });
+
+        it('should return false when all results are running', () => {
+            resultDetail.settlementStatusId = 0; // Running
+
+            const actual = service.enableUncalculateButton([resultDetail]);
+
+            expect(actual).toBe(false);
+        });
+    });
+
+    describe('sumTotalResultWin', () => {
+        it('should calculate total wins when scores are consecutive', () => {
+            const map1 = new ResultDetail();
+            map1.resourceId = '01';
+            map1.homeValue = '2';
+            map1.awayValue = '1';
+            const map2 = new ResultDetail();
+            map2.resourceId = '02';
+            map2.homeValue = '1';
+            map2.awayValue = '2';
+            const totalGames = new ResultDetail();
+            totalGames.resourceId = '00';
+
+            service.sumTotalResultWin([map1, map2], '01', totalGames);
+
+            expect(totalGames.homeValue).toBe('1');
+            expect(totalGames.awayValue).toBe('1');
+        });
+
+        it('should clear total when scores are not consecutive', () => {
+            const map1 = new ResultDetail();
+            map1.resourceId = '01';
+            map1.homeValue = '2';
+            map1.awayValue = '1';
+            const totalGames = new ResultDetail();
+            totalGames.resourceId = '00';
+
+            service.sumTotalResultWin([map1], '01', totalGames);
+
+            expect(totalGames.homeValue).toBe('');
+            expect(totalGames.awayValue).toBe('');
+        });
+    });
+
+    describe('sumTotalScores', () => {
+        it('should calculate total scores when consecutive', () => {
+            const map1 = new ResultDetail();
+            map1.resourceId = '01';
+            map1.homeValue = '2';
+            map1.awayValue = '1';
+            const map2 = new ResultDetail();
+            map2.resourceId = '02';
+            map2.homeValue = '1';
+            map2.awayValue = '2';
+            const totalPoints = new ResultDetail();
+            totalPoints.resourceId = '00';
+
+            service.sumTotalScores([map1, map2], '01', totalPoints);
+
+            expect(totalPoints.homeValue).toBe('3');
+            expect(totalPoints.awayValue).toBe('3');
+        });
+
+        it('should calculate total scores when not checking consecutive', () => {
+            const map1 = new ResultDetail();
+            map1.resourceId = '01';
+            map1.homeValue = '2';
+            map1.awayValue = '1';
+            const totalPoints = new ResultDetail();
+            totalPoints.resourceId = '00';
+
+            service.sumTotalScores([map1], '01', totalPoints, false);
+
+            expect(totalPoints.homeValue).toBe('2');
+            expect(totalPoints.awayValue).toBe('1');
+        });
+    });
+
+    describe('isConsistentTraderAndProvider', () => {
+        it('should return true when trader and provider are inconsistent', () => {
+            const checkedResults = ['01'];
+            const confirmedResultDetails = [resultDetail];
+            resultDetail.resourceId = '01';
+            resultDetail.homeValue = '1';
+            resultDetail.awayValue = '1';
+            const externalResults = [new ExternalResultDetail(1, '01', '', '', '2', '2')];
+
+            const actual = service.isConsistentTraderAndProvider(checkedResults, confirmedResultDetails, externalResults);
+
+            expect(actual).toBe(true);
+        });
+
+        it('should return false when trader and provider are consistent', () => {
+            const checkedResults = ['01'];
+            const confirmedResultDetails = [resultDetail];
+            resultDetail.resourceId = '01';
+            resultDetail.homeValue = '1';
+            resultDetail.awayValue = '1';
+            const externalResults = [new ExternalResultDetail(1, '01', '', '', '1', '1')];
+
+            const actual = service.isConsistentTraderAndProvider(checkedResults, confirmedResultDetails, externalResults);
+
+            expect(actual).toBe(false);
+        });
+    });
+
+    describe('isConsistentScoreTraderConfirm', () => {
+        it('should return true when trader confirm is inconsistent', () => {
+            const originalResult = new ResultDetail();
+            originalResult.resourceId = '01';
+            originalResult.homeValue = '1';
+            originalResult.awayValue = '1';
+            const currentResult = new ResultDetail();
+            currentResult.resourceId = '01';
+            currentResult.homeValue = '2';
+            currentResult.awayValue = '1';
+            const originalResultDetails = [originalResult];
+            const currentResultDetails = [currentResult];
+
+            const actual = service.isConsistentScoreTraderConfirm(originalResultDetails, currentResultDetails);
+
+            expect(actual).toBe(true);
+        });
+
+        it('should return false when trader confirm is consistent', () => {
+            resultDetail.resourceId = '01';
+            resultDetail.homeValue = '1';
+            resultDetail.awayValue = '1';
+            const originalResultDetails = [resultDetail];
+            const currentResultDetails = [resultDetail];
+
+            const actual = service.isConsistentScoreTraderConfirm(originalResultDetails, currentResultDetails);
+
+            expect(actual).toBe(false);
+        });
+    });
+
+    describe('isConsistentScoreProvider', () => {
+        it('should return true when provider is inconsistent', () => {
+            resultDetail.resourceId = '01';
+            resultDetail.homeValue = '1';
+            resultDetail.awayValue = '1';
+            const externalResults = [new ExternalResultDetail(1, '01', '', '', '2', '2')];
+
+            const actual = service.isConsistentScoreProvider([resultDetail], externalResults);
+
+            expect(actual).toBe(true);
+        });
+
+        it('should return false when provider is consistent', () => {
+            resultDetail.resourceId = '01';
+            resultDetail.homeValue = '1';
+            resultDetail.awayValue = '1';
+            const externalResults = [new ExternalResultDetail(1, '01', '', '', '1', '1')];
+
+            const actual = service.isConsistentScoreProvider([resultDetail], externalResults);
+
+            expect(actual).toBe(false);
+        });
+    });
+
+    describe('isEmptyHomeOrAwayValue', () => {
+        it('should return true when home value is empty', () => {
+            resultDetail.homeValue = '';
+            resultDetail.awayValue = '1';
+
+            const actual = service.isEmptyHomeOrAwayValue(resultDetail);
+
+            expect(actual).toBe(true);
+        });
+
+        it('should return true when away value is empty', () => {
+            resultDetail.homeValue = '1';
+            resultDetail.awayValue = '';
+
+            const actual = service.isEmptyHomeOrAwayValue(resultDetail);
+
+            expect(actual).toBe(true);
+        });
+
+        it('should return false when both values exist', () => {
+            resultDetail.homeValue = '1';
+            resultDetail.awayValue = '1';
+
+            const actual = service.isEmptyHomeOrAwayValue(resultDetail);
+
+            expect(actual).toBe(false);
+        });
+    });
+
+    describe('compareInputScoreWithProviderScores', () => {
+        it('should mark as mismatched when scores differ', () => {
+            resultDetail.homeValue = '1';
+            resultDetail.awayValue = '1';
+            const externalResults = [new ExternalResultDetail(1, '01', '', '', '2', '2')];
+
+            service.compareInputScoreWithProviderScores([resultDetail], externalResults);
+
+            expect(resultDetail.isScoreMismatched).toBe(true);
+        });
+
+        it('should not mark as mismatched when scores match', () => {
+            resultDetail.homeValue = '1';
+            resultDetail.awayValue = '1';
+            const externalResults = [new ExternalResultDetail(1, '01', '', '', '1', '1')];
+
+            service.compareInputScoreWithProviderScores([resultDetail], externalResults);
+
+            expect(resultDetail.isScoreMismatched).toBe(false);
+        });
+    });
+
+    describe('compareInputScoreTraderScores', () => {
+        it('should mark as mismatched when scores differ', () => {
+            const originalResult = new ResultDetail();
+            originalResult.resourceId = '01';
+            originalResult.homeValue = '1';
+            originalResult.awayValue = '1';
+            const currentResult = new ResultDetail();
+            currentResult.resourceId = '01';
+            currentResult.homeValue = '2';
+            currentResult.awayValue = '1';
+            const originalResultDetails = [originalResult];
+            const currentResultDetails = [currentResult];
+
+            service.compareInputScoreTraderScores(originalResultDetails, currentResultDetails);
+
+            expect(currentResult.isScoreMismatched).toBe(true);
+        });
+
+        it('should not mark as mismatched when scores match', () => {
+            resultDetail.homeValue = '1';
+            resultDetail.awayValue = '1';
+            const originalResultDetails = [resultDetail];
+            const currentResultDetails = [resultDetail];
+
+            service.compareInputScoreTraderScores(originalResultDetails, currentResultDetails);
+
+            expect(resultDetail.isScoreMismatched).toBe(false);
+        });
+    });
+
+    describe('acceptCaseZero', () => {
+        it('should return true when result is 0-0 and original is empty', () => {
+            resultDetail.homeValue = '0';
+            resultDetail.awayValue = '0';
+            const originalResult = new ResultDetail();
+            originalResult.homeValue = '';
+            originalResult.awayValue = '';
+
+            const actual = service.acceptCaseZero(originalResult, resultDetail);
+
+            expect(actual).toBe(true);
+        });
+
+        it('should return false when result is not 0-0', () => {
+            resultDetail.homeValue = '1';
+            resultDetail.awayValue = '0';
+            const originalResult = new ResultDetail();
+            originalResult.homeValue = '';
+            originalResult.awayValue = '';
+
+            const actual = service.acceptCaseZero(originalResult, resultDetail);
+
+            expect(actual).toBe(false);
+        });
+    });
+
+    describe('isValidTraderConfirmScore', () => {
+        it('should return true when trader external score is valid', () => {
+            resultDetail.resultStatusId = 0;
+            resultDetail.homeValue = '1';
+            resultDetail.awayValue = '1';
+            const traderScore = new ExternalResultDetail(100, '01', '', '', '1', '1');
+            resultDetail.externalScores = [traderScore];
+
+            const actual = service.isValidTraderConfirmScore(resultDetail);
+
+            expect(actual).toBe(true);
+        });
+    });
+
+    describe('getTraderScores', () => {
+        it('should return trader scores for checked results', () => {
+            resultDetail.checked = true;
+            const traderScore = new ExternalResultDetail(100, '01', '', '', '1', '1');
+            resultDetail.externalScores = [traderScore];
+
+            const actual = service.getTraderScores([resultDetail]);
+
+            expect(actual.length).toBe(1);
+            expect(actual[0]).toBe(traderScore);
+        });
+
+        it('should return empty array when no checked results', () => {
+            resultDetail.checked = false;
+
+            const actual = service.getTraderScores([resultDetail]);
+
+            expect(actual.length).toBe(0);
+        });
+    });
+
+    describe('getChangedTraderScores', () => {
+        it('should return changed trader scores', () => {
+            const originalResult = new ResultDetail();
+            originalResult.checked = true;
+            originalResult.resourceId = '01';
+            const originalTraderScore = new ExternalResultDetail(100, '01', '', '', '1', '1');
+            originalResult.externalScores = [originalTraderScore];
+            
+            const currentResult = new ResultDetail();
+            currentResult.checked = true;
+            currentResult.resourceId = '01';
+            const currentTraderScore = new ExternalResultDetail(100, '01', '', '', '2', '2');
+            currentResult.externalScores = [currentTraderScore];
+            
+            const originalResultDetails = [originalResult];
+            const currentResultDetails = [currentResult];
+
+            const actual = service.getChangedTraderScores(currentResultDetails, originalResultDetails);
+
+            expect(actual.length).toBe(1);
+        });
+
+        it('should return empty array when no changes', () => {
+            resultDetail.checked = true;
+            const traderScore = new ExternalResultDetail(100, '01', '', '', '1', '1');
+            resultDetail.externalScores = [traderScore];
+            const originalResultDetails = [resultDetail];
+            const currentResultDetails = [resultDetail];
+
+            const actual = service.getChangedTraderScores(currentResultDetails, originalResultDetails);
+
+            expect(actual.length).toBe(0);
+        });
+    });
 });

@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit, ViewChild, inject } from "@angular/core";
+import { Component, OnInit, ViewChild, inject } from "@angular/core";
 import { ToastContainerDirective, ToastrService } from "ngx-toastr";
 import { ExternalResult, ExternalResultDetail, MatchDetail, Permission, ResultDetail } from "../../../shared/models/sportsbook-sop";
 import { ModalDialogMessage } from "../../../shared/models";

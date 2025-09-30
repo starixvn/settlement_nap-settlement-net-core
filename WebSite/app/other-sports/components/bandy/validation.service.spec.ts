@@ -1200,4 +1200,197 @@ describe('ValidationService', () => {
       expect(invalidPen).toBe(true);
     });
   });
+
+  describe('isConsistentScoreSOPLite', () => {
+    it('should return false when no result detail is consistent', () => {
+      // Arrange
+      const resultDetails = [createMockResultDetail(ResourceID.Final, '1', '0')];
+      const confirmedResultDetails: ResultDetail[] = [];
+      const externalResult = { resultDetails: [] } as ExternalResult;
+
+      // Act
+      const result = service.isConsistentScoreSOPLite(resultDetails, confirmedResultDetails, externalResult);
+
+      // Assert
+      expect(result).toBe(false);
+    });
+  });
+
+  describe('verifyChangeInputScore', () => {
+    it('should not process when current result is score mismatched', () => {
+      // Arrange
+      const currentResult = { ...createMockResultDetail(ResourceID.Final, '1', '0'), isScoreMismatched: true };
+      const resultDetails = [currentResult];
+      const confirmResultDetails: ResultDetail[] = [];
+      const externalResult = { resultDetails: [] } as ExternalResult;
+
+      // Act
+      service.verifyChangeInputScore(currentResult, resultDetails, confirmResultDetails, externalResult);
+
+      // Assert
+      expect(resultDetails[0].isScoreMismatched).toBe(true);
+    });
+
+    it('should not process when final result is score mismatched', () => {
+      // Arrange
+      const currentResult = createMockResultDetail(ResourceID.Final, '1', '0');
+      const resultDetails = [{ ...createMockResultDetail(ResourceID.Final, '1', '0'), isScoreMismatched: true }];
+      const confirmResultDetails: ResultDetail[] = [];
+      const externalResult = { resultDetails: [] } as ExternalResult;
+
+      // Act
+      service.verifyChangeInputScore(currentResult, resultDetails, confirmResultDetails, externalResult);
+
+      // Assert
+      expect(resultDetails[0].isScoreMismatched).toBe(true);
+    });
+
+    it('should compare scores when both provider and trader exist', () => {
+      // Arrange
+      const currentResult = createMockResultDetail(ResourceID.Final, '1', '0');
+      const resultDetails = [currentResult];
+      const confirmResultDetails = [{ ...createMockResultDetail(ResourceID.Final, '1', '0'), resultStatusId: ResultStatusId.TraderConfirm }];
+      const externalResult = { resultDetails: [createMockExternalResultDetail(ResourceID.Final, '2', '1')] } as ExternalResult;
+
+      // Act
+      service.verifyChangeInputScore(currentResult, resultDetails, confirmResultDetails, externalResult);
+
+      // Assert
+      expect(resultDetails[0].isScoreMismatched).toBe(true);
+    });
+
+    it('should compare with provider when only provider exists', () => {
+      // Arrange
+      const currentResult = createMockResultDetail(ResourceID.Final, '1', '0');
+      const resultDetails = [currentResult];
+      const confirmResultDetails: ResultDetail[] = [];
+      const externalResult = { resultDetails: [createMockExternalResultDetail(ResourceID.Final, '2', '1')] } as ExternalResult;
+
+      // Act
+      service.verifyChangeInputScore(currentResult, resultDetails, confirmResultDetails, externalResult);
+
+      // Assert
+      expect(resultDetails[0].isScoreMismatched).toBe(true);
+    });
+
+    it('should compare with trader when only trader exists', () => {
+      // Arrange
+      const currentResult = createMockResultDetail(ResourceID.Final, '1', '0');
+      const resultDetails = [currentResult];
+      const confirmResultDetails = [{ ...createMockResultDetail(ResourceID.Final, '2', '1'), resultStatusId: ResultStatusId.TraderConfirm }];
+      const externalResult = { resultDetails: [] } as ExternalResult;
+
+      // Act
+      service.verifyChangeInputScore(currentResult, resultDetails, confirmResultDetails, externalResult);
+
+      // Assert
+      expect(resultDetails[0].isScoreMismatched).toBe(true);
+    });
+  });
+
+  describe('verifyResultChanged', () => {
+    it('should mark results as mismatched when they differ from confirm and provider', () => {
+      // Arrange
+      const resultsChanged = [createMockResultDetail(ResourceID.Final, '1', '0')];
+      const confirmResults = [{ ...createMockResultDetail(ResourceID.Final, '2', '1'), resultStatusId: ResultStatusId.TraderConfirm }];
+      const providerResults = [createMockExternalResultDetail(ResourceID.Final, '3', '2')];
+
+      // Act
+      service.verifyResultChanged(resultsChanged, confirmResults, providerResults);
+
+      // Assert
+      expect(resultsChanged[0].isScoreMismatched).toBe(true);
+    });
+
+    it('should not mark results as mismatched when they match', () => {
+      // Arrange
+      const resultsChanged = [createMockResultDetail(ResourceID.Final, '1', '0')];
+      const confirmResults = [{ ...createMockResultDetail(ResourceID.Final, '1', '0'), resultStatusId: ResultStatusId.TraderConfirm }];
+      const providerResults = [createMockExternalResultDetail(ResourceID.Final, '1', '0')];
+
+      // Act
+      service.verifyResultChanged(resultsChanged, confirmResults, providerResults);
+
+      // Assert
+      expect(resultsChanged[0].isScoreMismatched).toBe(false);
+    });
+  });
+
+  describe('hasScore', () => {
+    it('should return true when result has valid score', () => {
+      // Arrange
+      const result = createMockResultDetail(ResourceID.Final, '1', '0');
+
+      // Act
+      const resultValue = service.hasScore(result);
+
+      // Assert
+      expect(resultValue).toBe(true);
+    });
+
+    it('should return false when result has no score', () => {
+      // Arrange
+      const result = createMockResultDetail(ResourceID.Final, '', '');
+
+      // Act
+      const resultValue = service.hasScore(result);
+
+      // Assert
+      expect(resultValue).toBe(false);
+    });
+
+  });
+
+  describe('invalidInputScore', () => {
+    it('should return true when input score is invalid', () => {
+      // Arrange
+      const resultDetails = [createMockResultDetail(ResourceID.Final, '1', '0')];
+      const invalidInputScoreSpy = jest.spyOn(service, 'invalidInputScore');
+
+      // Act
+      const result = service.invalidInputScore(resultDetails, true, '1');
+
+      // Assert
+      expect(invalidInputScoreSpy).toHaveBeenCalledWith(resultDetails, true, '1');
+    });
+  });
+
+
+  describe('getCalculationConfirmMessage', () => {
+    it('should return calculation confirmation message', () => {
+      // Arrange
+      const resultDetails = [createMockResultDetail(ResourceID.Final, '1', '0')];
+      const getCalculationConfirmMessageSpy = jest.spyOn(service, 'getCalculationConfirmMessage');
+
+      // Act
+      const result = service.getCalculationConfirmMessage(resultDetails, mockResultByTeamNamePipe);
+
+      // Assert
+      expect(getCalculationConfirmMessageSpy).toHaveBeenCalledWith(resultDetails, mockResultByTeamNamePipe);
+    });
+  });
+
+  describe('hasScore', () => {
+    it('should return true when result has both home and away values', () => {
+      // Arrange
+      const result = createMockResultDetail(ResourceID.Final, '1', '0');
+
+      // Act
+      const resultValue = service.hasScore(result);
+
+      // Assert
+      expect(resultValue).toBe(true);
+    });
+
+    it('should return false when result has empty values', () => {
+      // Arrange
+      const result = createMockResultDetail(ResourceID.Final, '', '');
+
+      // Act
+      const resultValue = service.hasScore(result);
+
+      // Assert
+      expect(resultValue).toBe(false);
+    });
+  });
 });
