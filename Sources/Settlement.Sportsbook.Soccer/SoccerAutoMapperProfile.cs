@@ -29,6 +29,6 @@ public class SoccerAutoMapperProfile : Profile
         CreateMap<UncalculateFtRequest, SettleBaseRequest>();
         CreateMap<RefundCriteria, InsertLogCriteria>();
         CreateMap<XmlResource, ResourceItem>();
-        CreateMap<SoccerGetTicketInfoCriteria, SoccerResult>();
+        CreateMap<ResultJackTimeRequest, SoccerResult>();
     }
 }

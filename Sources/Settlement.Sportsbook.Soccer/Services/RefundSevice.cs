@@ -320,9 +320,9 @@ public class RefundServiceImp(
         await logService.WriteLog(criteria.MatchId, message);
     }
 
-    private async Task PublishJackTimeRequest(SoccerGetTicketInfoCriteria criteria)
+    private async Task PublishJackTimeRequest(ResultJackTimeRequest criteria)
     {
-        var request = mapper.Map<SoccerGetTicketInfoCriteria, SoccerResult>(criteria);
+        var request = mapper.Map<ResultJackTimeRequest, SoccerResult>(criteria);
         await publishEndpoint.Publish(
             request,
             new CancellationTokenSource(TimeSpan.FromSeconds(3)).Token);

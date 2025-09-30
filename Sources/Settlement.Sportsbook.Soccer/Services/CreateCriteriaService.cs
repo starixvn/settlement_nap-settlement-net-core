@@ -37,10 +37,9 @@ public interface ICreateCriteriaService
 
     public EventTicketRequest CreateEventTicketReturnRequest(RefundCriteria criteria);
 
-    public SoccerGetTicketInfoCriteria SoccerRefundGetTicketInfoCriteria(RefundCriteria criteria, bool isSettleAbandonedMatchIBC);
+    public ResultJackTimeRequest SoccerRefundGetTicketInfoCriteria(RefundCriteria criteria, bool isSettleAbandonedMatchIBC);
 
-    public SoccerGetTicketInfoCriteria SoccerGetTicketInfoCriteria(CalculateCriteria criteria);
-
+    public ResultJackTimeRequest SoccerGetTicketInfoCriteria(CalculateCriteria criteria);
 }
 
 public class CreateCriteriaServiceDependencies
@@ -458,28 +457,26 @@ public class CreateCriteriaServiceImp(
         };
     }
 
-    public SoccerGetTicketInfoCriteria SoccerRefundGetTicketInfoCriteria(RefundCriteria criteria, bool isSettleAbandonedMatchIBC)
+    public ResultJackTimeRequest SoccerRefundGetTicketInfoCriteria(RefundCriteria criteria, bool isSettleAbandonedMatchIBC)
     {
         var validResource = resourceService.CreateRefundJTResource(criteria, isSettleAbandonedMatchIBC);
 
-        return new SoccerGetTicketInfoCriteria
+        return new ResultJackTimeRequest
         {
             MatchId = criteria.MatchId,
             Action = criteria.Action,
             SelectedResources = CreateResources(validResource),
-            SDTRecord = criteria.SdtRecord
         };
     }
 
-    public SoccerGetTicketInfoCriteria SoccerGetTicketInfoCriteria(CalculateCriteria criteria)
+    public ResultJackTimeRequest SoccerGetTicketInfoCriteria(CalculateCriteria criteria)
     {
         var resources = resourceService.CreateJTResource(criteria);
-        return new SoccerGetTicketInfoCriteria
+        return new ResultJackTimeRequest
         {
             MatchId = criteria.MatchId,
-            SelectedResources = CreateResources(resources),
-            Action = criteria.Action
+            Action = criteria.Action,
+            SelectedResources = CreateResources(resources)
         };
     }
-
 }

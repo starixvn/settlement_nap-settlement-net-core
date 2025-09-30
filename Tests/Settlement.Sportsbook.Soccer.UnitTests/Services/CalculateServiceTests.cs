@@ -126,7 +126,7 @@ public class CalculateServiceTests
             Action = ActionType.CalculateAll
         };
 
-        createCriteriaService.SoccerGetTicketInfoCriteria(Arg.Any<CalculateCriteria>()).Returns(new SoccerGetTicketInfoCriteria());
+        createCriteriaService.SoccerGetTicketInfoCriteria(Arg.Any<CalculateCriteria>()).Returns(new ResultJackTimeRequest());
         createCriteriaService.CreateCalculateCriteria(Arg.Any<SettleRequest>()).Returns(criteria);
         createCriteriaService.CreateCalculateLogCriteria(Arg.Any<SettleRequest>()).Returns(new InsertLogCriteria());
         await logService.WriteLog(Arg.Any<int>(), Arg.Any<string>());
@@ -167,7 +167,7 @@ public class CalculateServiceTests
             Action = ActionType.CalculateAll
         };
 
-        createCriteriaService.SoccerGetTicketInfoCriteria(Arg.Any<CalculateCriteria>()).Returns(new SoccerGetTicketInfoCriteria());
+        createCriteriaService.SoccerGetTicketInfoCriteria(Arg.Any<CalculateCriteria>()).Returns(new ResultJackTimeRequest());
         createCriteriaService.CreateCalculateCriteria(Arg.Any<SettleRequest>()).Returns(criteria);
         createCriteriaService.CreateCalculateLogCriteria(Arg.Any<SettleRequest>()).Returns(new InsertLogCriteria());
         await logService.WriteLog(Arg.Any<int>(), Arg.Any<string>());
@@ -210,7 +210,7 @@ public class CalculateServiceTests
             Action = ActionType.UnCalculateFullTime
         };
 
-        createCriteriaService.SoccerGetTicketInfoCriteria(Arg.Any<CalculateCriteria>()).Returns(new SoccerGetTicketInfoCriteria());
+        createCriteriaService.SoccerGetTicketInfoCriteria(Arg.Any<CalculateCriteria>()).Returns(new ResultJackTimeRequest());
         createCriteriaService.CreateUnCalculateFtCriteria(Arg.Any<UncalculateFtRequest>()).Returns(criteria);
         createCriteriaService.CreateUnCalculateFtLogCriteria(Arg.Any<UncalculateFtRequest>()).Returns(new InsertLogCriteria());
         await logService.WriteLog(Arg.Any<int>(), Arg.Any<string>());
@@ -230,7 +230,7 @@ public class CalculateServiceTests
             Action = ActionType.UnCalculateFullTime,
             MatchId = 1
         };
-        createCriteriaService.SoccerGetTicketInfoCriteria(Arg.Any<CalculateCriteria>()).Returns(new SoccerGetTicketInfoCriteria());
+        createCriteriaService.SoccerGetTicketInfoCriteria(Arg.Any<CalculateCriteria>()).Returns(new ResultJackTimeRequest());
         createCriteriaService.CreateUnCalculateFtCriteria(Arg.Any<UncalculateFtRequest>()).Returns(criteria);
         createCriteriaService.CreateUnCalculateFtLogCriteria(Arg.Any<UncalculateFtRequest>()).Returns(new InsertLogCriteria());
         await logService.WriteLog(Arg.Any<int>(), Arg.Any<string>());
@@ -255,7 +255,7 @@ public class CalculateServiceTests
             Action = ActionType.UnCalculateFullTime,
             MatchId = 1
         };
-        createCriteriaService.SoccerGetTicketInfoCriteria(Arg.Any<CalculateCriteria>()).Returns(new SoccerGetTicketInfoCriteria());
+        createCriteriaService.SoccerGetTicketInfoCriteria(Arg.Any<CalculateCriteria>()).Returns(new ResultJackTimeRequest());
         createCriteriaService.CreateUnCalculateFtCriteria(Arg.Any<UncalculateFtRequest>()).Returns(criteria);
         createCriteriaService.CreateUnCalculateFtLogCriteria(Arg.Any<UncalculateFtRequest>()).Returns(new InsertLogCriteria());
         await logService.WriteLog(Arg.Any<int>(), Arg.Any<string>());

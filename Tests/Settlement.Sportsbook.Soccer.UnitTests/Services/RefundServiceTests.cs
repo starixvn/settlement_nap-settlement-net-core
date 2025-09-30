@@ -144,7 +144,7 @@ public class RefundServiceTests
             Action = ActionType.RefundAll
         };
 
-        createCriteriaService.SoccerRefundGetTicketInfoCriteria(Arg.Any<RefundCriteria>(), Arg.Any<bool>()).Returns(new SoccerGetTicketInfoCriteria());
+        createCriteriaService.SoccerRefundGetTicketInfoCriteria(Arg.Any<RefundCriteria>(), Arg.Any<bool>()).Returns(new ResultJackTimeRequest());
         createCriteriaService.CreateRefundCriteria(Arg.Any<RefundRequest>()).Returns(criteria);
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>())
             .Returns(new ResultMessage { ErrorCode = errorCode, ErrorMessage = errorMsg });
@@ -167,7 +167,7 @@ public class RefundServiceTests
             Action = ActionType.CalculateAll
         };
 
-        createCriteriaService.SoccerRefundGetTicketInfoCriteria(Arg.Any<RefundCriteria>(), Arg.Any<bool>()).Returns(new SoccerGetTicketInfoCriteria());
+        createCriteriaService.SoccerRefundGetTicketInfoCriteria(Arg.Any<RefundCriteria>(), Arg.Any<bool>()).Returns(new ResultJackTimeRequest());
         createCriteriaService.CreateRefundCriteria(Arg.Any<RefundRequest>()).Returns(criteria);
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
 
@@ -192,7 +192,7 @@ public class RefundServiceTests
             Action = ActionType.CalculateAll
         };
 
-        createCriteriaService.SoccerRefundGetTicketInfoCriteria(Arg.Any<RefundCriteria>(), Arg.Any<bool>()).Returns(new SoccerGetTicketInfoCriteria());
+        createCriteriaService.SoccerRefundGetTicketInfoCriteria(Arg.Any<RefundCriteria>(), Arg.Any<bool>()).Returns(new ResultJackTimeRequest());
         createCriteriaService.CreateRefundCriteria(Arg.Any<RefundRequest>()).Returns(criteria);
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
         await repository.ExecuteAsync(Arg.Any<RefundCriteria>());

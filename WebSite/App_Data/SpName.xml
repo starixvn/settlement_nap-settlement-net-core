@@ -407,12 +407,6 @@
       <Setting Key="NAP_Set_CashoutSel_DBSITE02" SpName="NAP_Set_CashoutSel" DbName="DBSITE02.bodb02.wsv_nap" />
       <Setting Key="NAP_Set_CashoutSel_DBSITE03" SpName="NAP_Set_CashoutSel" DbName="DBSITE03.bodb02.wsv_nap" />
     </Function>
-    <Function Name="TicketInfoSel">
-      <Setting Key="NAP_Settlement_1_CashoutTicketSel_DBTXN" SpName="NAP_Settlement_1_CashoutTicketSel" DbName="DBTXN.bodb02.wsv_nap" />
-      <Setting Key="NAP_Settlement_1_CashoutTicketSel_DBSITE01" SpName="NAP_Settlement_1_CashoutTicketSel" DbName="DBSITE01.bodb02.wsv_nap" />
-      <Setting Key="NAP_Settlement_1_CashoutTicketSel_DBSITE02" SpName="NAP_Settlement_1_CashoutTicketSel" DbName="DBSITE02.bodb02.wsv_nap" />
-      <Setting Key="NAP_Settlement_1_CashoutTicketSel_DBSITE03" SpName="NAP_Settlement_1_CashoutTicketSel" DbName="DBSITE03.bodb02.wsv_nap" />
-    </Function>
     <Function Name="NAP_Set_WaitingSel_Queue_3rd">
       <Setting Key="NAP_Set_WaitingSel_Queue_3rd_DBTXN" SpName="NAP_Set_WaitingSel_Queue_3rd" DbName="DBTXN.bodb02.wsv_nap" />
       <Setting Key="NAP_Set_WaitingSel_Queue_3rd_DBSITE01" SpName="NAP_Set_WaitingSel_Queue_3rd" DbName="DBSITE01.bodb02.wsv_nap" />
