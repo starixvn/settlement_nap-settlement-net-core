@@ -11,6 +11,7 @@ using Settlement.Core.Services;
 using Settlement.Outright;
 using Settlement.Outright.Criteria;
 using Settlement.Outright.Models;
+using Settlement.Outright.Requests;
 using Settlement.Outright.Services;
 
 namespace Settlement.Sportsbook.Outright.UnitTests.Services;
@@ -180,5 +181,194 @@ public class OutrightSettleProcessServiceTests
         Assert.Equal(expectedXml, actual);
         xmlConvertService.Received(1).Serialize(Arg.Is<Resources<ResourcesOutright>>(r =>
             r.ResourceItems.Count == 0));
+    }
+
+
+    [Fact]
+    public void CreateResourceXmlByTeamResult_ReturnsSerializedXml_AndBuildsCorrectResourceItems()
+    {
+        // Arrange
+        var teams = new List<TeamResult>
+            {
+                new() { OrId = 11, TeamId = 101, Result = "Win" },
+                new() { OrId = 12, TeamId = 102, Result = "Lose" }
+            };
+
+        Resources<ResourcesOutright> captured = null;
+        xmlConvertService.Serialize(Arg.Do<Resources<ResourcesOutright>>(r => captured = r))
+            .Returns("<xmlMock/>");
+
+        // Act
+        var xml = service.CreateResourceXmlByTeamResult(teams);
+
+        // Assert
+        Assert.Equal("<xmlMock/>", xml);
+        Assert.NotNull(captured);
+        Assert.NotNull(captured.ResourceItems);
+        Assert.Equal(2, captured.ResourceItems.Count);
+
+        Assert.Collection(
+            captured.ResourceItems,
+            first =>
+            {
+                Assert.Equal(11, first.OrId);
+                Assert.Equal(101, first.TeamId);
+                Assert.Equal("Win", first.Result);
+            },
+            second =>
+            {
+                Assert.Equal(12, second.OrId);
+                Assert.Equal(102, second.TeamId);
+                Assert.Equal("Lose", second.Result);
+            });
+    }
+
+    [Fact]
+    public void CreateResourceXmlByTeamResult_EmptyList_StillSerializesEmptyResources()
+    {
+        // Arrange
+        var teams = new List<TeamResult>();
+
+        Resources<ResourcesOutright> captured = null;
+        xmlConvertService.Serialize(Arg.Do<Resources<ResourcesOutright>>(r => captured = r))
+            .Returns("<empty/>");
+
+        // Act
+        var xml = service.CreateResourceXmlByTeamResult(teams);
+
+        // Assert
+        Assert.Equal("<empty/>", xml);
+        Assert.NotNull(captured);
+        Assert.NotNull(captured.ResourceItems);
+        Assert.Empty(captured.ResourceItems);
+    }
+
+    [Fact]
+    public void CreateResourceXmlByTeamResult_NullResultValues_Handled()
+    {
+        // Arrange
+        var teams = new List<TeamResult>
+            {
+                new() { OrId = 21, TeamId = 501, Result = null }
+            };
+
+        Resources<ResourcesOutright> captured = null;
+        xmlConvertService.Serialize(Arg.Do<Resources<ResourcesOutright>>(r => captured = r))
+            .Returns("<withNull/>");
+
+        // Act
+        var xml = service.CreateResourceXmlByTeamResult(teams);
+
+        // Assert
+        Assert.Equal("<withNull/>", xml);
+        Assert.Single(captured.ResourceItems);
+        var item = captured.ResourceItems[0];
+        Assert.Equal(21, item.OrId);
+        Assert.Equal(501, item.TeamId);
+        Assert.Null(item.Result);
+    }
+
+    [Fact]
+    public async Task CheckOutrightVoidTicket_AllZero_ReturnsFalse()
+    {
+        // Arrange
+        repository.GetAsync<int>(Arg.Any<OutrightVoidTicketCriteria>())
+                  .Returns(_ => Task.FromResult(0));
+
+        var request = new CheckOutrightVoidTicketRequest { Orid = 99 };
+
+        // Act
+        var result = await service.CheckOutrightVoidTicket(request);
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public async Task CheckOutrightVoidTicket_ContainsOneOnly_ReturnsTrue()
+    {
+        // Arrange
+        repository.GetAsync<int>(Arg.Any<OutrightVoidTicketCriteria>())
+                  .Returns(call =>
+                  {
+                      var criteria = call.Arg<OutrightVoidTicketCriteria>();
+                      return Task.FromResult(criteria.DbServer switch
+                      {
+                          "01" => 1,
+                          "02" => 1,
+                          _ => 1
+                      });
+                  });
+
+        var request = new CheckOutrightVoidTicketRequest { Orid = 50 };
+
+        // Act
+        var result = await service.CheckOutrightVoidTicket(request);
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public async Task CheckOutrightVoidTicket_NoOneButNonZeroValues_ReturnsFalse()
+    {
+        // Arrange
+        repository.GetAsync<int>(Arg.Any<OutrightVoidTicketCriteria>())
+                  .Returns(call =>
+                  {
+                      var criteria = call.Arg<OutrightVoidTicketCriteria>();
+                      return Task.FromResult(criteria.DbServer switch
+                      {
+                          "s1" => 2,
+                          "s2" => 3,
+                          _ => 0
+                      });
+                  });
+
+        var request = new CheckOutrightVoidTicketRequest { Orid = 77 };
+
+        // Act
+        var result = await service.CheckOutrightVoidTicket(request);
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public async Task CheckOutrightVoidTicket_EmptyServerList_ReturnsFalse()
+    {
+        // Arrange
+        var request = new CheckOutrightVoidTicketRequest { Orid = 10 };
+
+        // Act
+        var result = await service.CheckOutrightVoidTicket(request);
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public async Task CheckOutrightVoidTicket_MixedOneAndOtherNonZero_ReturnsTrue()
+    {
+        // Arrange
+        repository.GetAsync<int>(Arg.Any<OutrightVoidTicketCriteria>())
+                  .Returns(call =>
+                  {
+                      var criteria = call.Arg<OutrightVoidTicketCriteria>();
+                      return Task.FromResult(criteria.DbServer switch
+                      {
+                          "01" => 1,
+                          "02" => 5,
+                          _ => 0
+                      });
+                  });
+
+        var request = new CheckOutrightVoidTicketRequest { Orid = 123 };
+
+        // Act
+        var result = await service.CheckOutrightVoidTicket(request);
+
+        // Assert
+        Assert.True(result);
     }
 }
