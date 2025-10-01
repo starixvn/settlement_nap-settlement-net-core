@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ToastrService, ToastrModule } from 'ngx-toastr';
 import { of, throwError } from 'rxjs';
@@ -9,11 +9,12 @@ import { ValidationService } from './validation.service';
 import { BandyService } from './bandy.service';
 import { BetStatusService } from './betstatus.service';
 import { MatchAio } from '../../models/match-aio.model';
-import { MatchDetail, ResultDetail, Permission, ExternalResult } from '../../../shared/models/sportsbook-sop';
-import { ResourceID, LeagueType } from '../../constants';
+import { MatchDetail, ResultDetail, Permission, ExternalResult, ExternalResultDetail } from '../../../shared/models/sportsbook-sop';
+import { ResourceID, LeagueType, KickOffTime, RefResultStatus } from '../../constants';
 import { CalculateAction, MatchStatus, ResultStatusId, SettlementStatusId } from '../../../shared/constants';
 import { Result } from '../../../shared/models/result.model';
 import { Language } from '../../../shared/language.native';
+import { UrlHelper } from '../../../helper/url-helper';
 
 describe('BandyCalculationComponent', () => {
   let component: BandyCalculationComponent;
@@ -499,5 +500,410 @@ describe('BandyCalculationComponent', () => {
       expect(result).toContain('bg-result-confirmed');
     });
 
+    it('should add mismatched class when validation fails', () => {
+      // Arrange
+      mockValidationService.inValidResult.mockReturnValue(true);
+
+      // Act
+      const result = component.getClassName(mockResultDetail);
+
+      // Assert
+      expect(result).toContain('col-mismatched');
+    });
+
+    it('should include interval background class', () => {
+      // Act
+      const result = component.getClassName(mockResultDetail);
+
+      // Assert
+      expect(result).toContain('calculated');
+      expect(mockBandyService.getIntervalBackground).toHaveBeenCalledWith(mockResultDetail.settlementStatusId);
+    });
+  });
+
+  describe('ngOnInit', () => {
+    it('should initialize confirmation dialog message and subscribe to blockUI events', () => {
+      // Act
+      component.ngOnInit();
+
+      // Assert
+      expect(component.confirmationDialogMessage.title).toBe(Language.confirmationBox);
+      expect(mockBlockUIService.blockUIEvent.subscribe).toHaveBeenCalled();
+      expect(mockToastrService.overlayContainer).toBe(component.toastContainer);
+    });
+  });
+
+  describe('getMatch', () => {
+    beforeEach(() => {
+      jest.spyOn(UrlHelper, 'getUrlParameter').mockReturnValue('1');
+      mockAioService.getMatch.mockResolvedValue(mockMatch);
+      jest.spyOn(component as any, 'initialData');
+      jest.spyOn(component as any, 'viewData');
+    });
+
+    it('should get match data and initialize component', async () => {
+      // Act
+      await component.getMatch(12345);
+
+      // Assert
+      expect(mockAioService.getMatch).toHaveBeenCalledWith({
+        matchId: 12345,
+        apikey: 'bandy',
+        sportType: 1,
+        settleType: 'MNL'
+      });
+      expect(component.match).toBe(mockMatch);
+      expect(component['initialData']).toHaveBeenCalled();
+      expect(component['viewData']).toHaveBeenCalled();
+    });
+
+    it('should handle getMatch error', async () => {
+      // Arrange
+      const error = new Error('API Error');
+      mockAioService.getMatch.mockRejectedValue(error);
+
+      // Act & Assert
+      await expect(component.getMatch(12345)).rejects.toThrow('API Error');
+    });
+  });
+
+  describe('initialData', () => {
+    beforeEach(() => {
+      component.match = mockMatch;
+      mockResultDetailsService.generateConfirmResultDetails.mockReturnValue([]);
+      mockResultDetailsService.generateFullExternalResultDetails.mockReturnValue([]);
+      jest.spyOn(component as any, 'createProviderResource');
+      jest.spyOn(component as any, 'isCompletedOrConfirmScore').mockReturnValue(false);
+    });
+
+    it('should initialize component data from match', () => {
+      // Act
+      component['initialData']();
+
+      // Assert
+      expect(component.matchDetail).toBe(mockMatchDetail);
+      expect(component.resultDetails).toBe(mockMatch.resultDetails);
+      expect(component.originalResults).toEqual(mockMatch.resultDetails);
+      expect(component.permission).toBe(mockPermission);
+      expect(mockResultDetailsService.generateConfirmResultDetails).toHaveBeenCalledWith(mockMatch.resultDetails);
+      expect(component['createProviderResource']).toHaveBeenCalled();
+    });
+
+    it('should set isReadyMatch to true when match is completed', () => {
+      // Arrange
+      jest.spyOn(component as any, 'isCompletedOrConfirmScore').mockReturnValue(true);
+
+      // Act
+      component['initialData']();
+
+      // Assert
+      expect(component.isReadyMatch).toBe(true);
+    });
+
+    it('should show error when minimum play time not reached', () => {
+      // Arrange
+      component.matchDetail = { ...mockMatchDetail, playTime: 10 };
+
+      // Act
+      component['initialData']();
+
+      // Assert
+      expect(mockToastrService.error).toHaveBeenCalledWith(Language.minimumPlayTimeNotReached);
+    });
+  });
+
+  describe('createProviderResource', () => {
+    beforeEach(() => {
+      component.match = mockMatch;
+      mockResultDetailsService.generateFullExternalResultDetails.mockReturnValue([]);
+    });
+
+    it('should set external result when available', () => {
+      // Arrange
+      const externalResult = { sourceName: 'Test Provider' } as ExternalResult;
+      component.match.externalResults = [externalResult];
+
+      // Act
+      component['createProviderResource']();
+
+      // Assert
+      expect(component.externalResult).toBe(externalResult);
+      expect(component.externalSourceName).toBe('Test Provider');
+      expect(mockResultDetailsService.generateFullExternalResultDetails).toHaveBeenCalledWith(externalResult);
+    });
+
+    it('should handle no external results', () => {
+      // Arrange
+      component.match.externalResults = [];
+
+      // Act
+      component['createProviderResource']();
+
+      // Assert
+      expect(component.externalResult).toBeNull();
+      expect(component.externalSourceName).toBe('-');
+    });
+  });
+
+  describe('viewData', () => {
+    beforeEach(() => {
+      component.resultDetails = [mockResultDetail];
+      component.permission = { isLeader: true } as Permission;
+      mockResultDetailsService.hidenScoreResultDetails.mockReturnValue(undefined);
+      mockResultDetailsService.generateFullResultDetails.mockReturnValue([mockResultDetail]);
+      jest.spyOn(component as any, 'disabledInputResult');
+      jest.spyOn(component as any, 'checkScoreMissMatchedOnload');
+    });
+
+    it('should process result details and check for mismatches', () => {
+      // Act
+      component['viewData']();
+
+      // Assert
+      expect(mockResultDetailsService.hidenScoreResultDetails).toHaveBeenCalledWith(component.resultDetails, true);
+      expect(mockResultDetailsService.generateFullResultDetails).toHaveBeenCalledWith(component.resultDetails);
+      expect(component['disabledInputResult']).toHaveBeenCalled();
+      expect(component['checkScoreMissMatchedOnload']).toHaveBeenCalled();
+    });
+  });
+
+  describe('isCompletedOrConfirmScore', () => {
+    it('should return true when confirmHT > 0', () => {
+      // Arrange
+      const matchDetail = { ...mockMatchDetail, confirmHT: 1 };
+
+      // Act
+      const result = component['isCompletedOrConfirmScore'](matchDetail);
+
+      // Assert
+      expect(result).toBe(true);
+    });
+
+    it('should return true when confirmFT > 0', () => {
+      // Arrange
+      const matchDetail = { ...mockMatchDetail, confirmFT: 1 };
+
+      // Act
+      const result = component['isCompletedOrConfirmScore'](matchDetail);
+
+      // Assert
+      expect(result).toBe(true);
+    });
+
+    it('should return true when confirmResultDetails has length', () => {
+      // Arrange
+      component.confirmResultDetails = [mockResultDetail];
+      const matchDetail = { ...mockMatchDetail, confirmHT: 0, confirmFT: 0 };
+
+      // Act
+      const result = component['isCompletedOrConfirmScore'](matchDetail);
+
+      // Assert
+      expect(result).toBe(true);
+    });
+
+    it('should return true when event status is completed', () => {
+      // Arrange
+      const matchDetail = { ...mockMatchDetail, eventStatus: MatchStatus.Completed };
+
+      // Act
+      const result = component['isCompletedOrConfirmScore'](matchDetail);
+
+      // Assert
+      expect(result).toBe(true);
+    });
+  });
+
+  describe('calculation', () => {
+    beforeEach(() => {
+      component.match = mockMatch;
+      component.resultDetails = [mockResultDetail];
+      mockToastrService.clear.mockReturnValue(undefined);
+    });
+
+    it('should clear toast and reset refResultStatus', () => {
+      // Act
+      component.calculation();
+
+      // Assert
+      expect(component.match.isClickOnCalculate).toBe(true);
+      expect(mockToastrService.clear).toHaveBeenCalled();
+      expect(component['refResultStatus']).toBeNull();
+    });
+
+    it('should show error when confirmed refund exists', () => {
+      // Arrange
+      jest.spyOn(component, 'existsConfirmedRefund').mockReturnValue(true);
+
+      // Act
+      component.calculation();
+
+      // Assert
+      expect(mockToastrService.error).toHaveBeenCalledWith(Language.confirmRefund.calculateResultNotConfirmed);
+    });
+
+    it('should show error for invalid input score', () => {
+      // Arrange
+      jest.spyOn(component, 'existsConfirmedRefund').mockReturnValue(false);
+      mockValidationService.invalidInputScore.mockReturnValue(true);
+
+      // Act
+      component.calculation();
+
+      // Assert
+      expect(mockToastrService.error).toHaveBeenCalledWith(Language.warningInputScore);
+    });
+
+    it('should show error for invalid first half when only first half selected', () => {
+      // Arrange
+      jest.spyOn(component, 'existsConfirmedRefund').mockReturnValue(false);
+      mockValidationService.invalidInputScore.mockReturnValue(false);
+      Object.defineProperty(component, 'onlySelectedFirstHalf', { get: () => true, configurable: true });
+      mockValidationService.invalidFistHalf.mockReturnValue(true);
+
+      // Act
+      component.calculation();
+
+      // Assert
+      expect(mockToastrService.error).toHaveBeenCalledWith(Language.inconsistentValues);
+    });
+
+    it('should show error for invalid result when not only first half selected', () => {
+      // Arrange
+      jest.spyOn(component, 'existsConfirmedRefund').mockReturnValue(false);
+      mockValidationService.invalidInputScore.mockReturnValue(false);
+      Object.defineProperty(component, 'onlySelectedFirstHalf', { get: () => false, configurable: true });
+      mockValidationService.inValidResult.mockReturnValue(true);
+
+      // Act
+      component.calculation();
+
+      // Assert
+      expect(mockToastrService.error).toHaveBeenCalledWith(Language.inconsistentValues);
+    });
+
+    it('should show error when not allowing calc final result', () => {
+      // Arrange
+      jest.spyOn(component, 'existsConfirmedRefund').mockReturnValue(false);
+      mockValidationService.invalidInputScore.mockReturnValue(false);
+      Object.defineProperty(component, 'onlySelectedFirstHalf', { get: () => false, configurable: true });
+      mockValidationService.inValidResult.mockReturnValue(false);
+      mockValidationService.allowCalcFinalResult.mockReturnValue(false);
+
+      // Act
+      component.calculation();
+
+      // Assert
+      expect(mockToastrService.error).toHaveBeenCalledWith(Language.IntervalWarning);
+    });
+
+    it('should proceed to confirm score source when all validations pass', () => {
+      // Arrange
+      jest.spyOn(component, 'existsConfirmedRefund').mockReturnValue(false);
+      mockValidationService.invalidInputScore.mockReturnValue(false);
+      Object.defineProperty(component, 'onlySelectedFirstHalf', { get: () => false, configurable: true });
+      mockValidationService.inValidResult.mockReturnValue(false);
+      mockValidationService.allowCalcFinalResult.mockReturnValue(true);
+      jest.spyOn(component as any, 'confirmScoreSource');
+
+      // Act
+      component.calculation();
+
+      // Assert
+      expect(component['confirmScoreSource']).toHaveBeenCalled();
+    });
+  });
+
+  describe('uncalculation', () => {
+    beforeEach(() => {
+      component.match = mockMatch;
+      component.resultDetails = [
+        { ...mockResultDetail, resourceId: ResourceID.FullTime, checked: true },
+        { ...mockResultDetail, resourceId: ResourceID.Final, checked: true }
+      ];
+      component.matchDetail = { ...mockMatchDetail, leagueType: LeagueType.OtPenalty };
+      jest.spyOn(component as any, 'sendRequest');
+    });
+
+    it('should show confirmation dialog and send uncalculate request', () => {
+      // Arrange
+      let confirmCallback: Function;
+      mockMessageBoxService.confirm.mockImplementation((message, callback) => {
+        confirmCallback = callback;
+      });
+
+      // Act
+      component.uncalculation();
+      confirmCallback();
+
+      // Assert
+      expect(mockToastrService.clear).toHaveBeenCalled();
+      expect(component.match.isClickOnCalculate).toBe(false);
+      expect(component.confirmationDialogMessage.message).toBe(Language.UncalculationConfirmMessage);
+      expect(component['sendRequest']).toHaveBeenCalled();
+    });
+  });
+
+  describe('verifyAndAutoFillScore', () => {
+    beforeEach(() => {
+      component.resultDetails = [mockResultDetail];
+      component.confirmResultDetails = [];
+      component.providerResultDetails = [];
+      mockResultDetailsService.resetHomeAwayValue.mockReturnValue(undefined);
+      mockResultDetailsService.calcMatchResultDetails.mockReturnValue([mockResultDetail]);
+      mockValidationService.verifyResultChanged.mockReturnValue(undefined);
+      jest.spyOn(component as any, 'disabledInputResult');
+    });
+
+    it('should process result details and verify changes', () => {
+      // Act
+      component.verifyAndAutoFillScore(mockResultDetail);
+
+      // Assert
+      expect(component['disabledInputResult']).toHaveBeenCalled();
+      expect(mockResultDetailsService.resetHomeAwayValue).toHaveBeenCalledWith(component.resultDetails);
+      expect(mockResultDetailsService.calcMatchResultDetails).toHaveBeenCalledWith(component.resultDetails);
+      expect(mockValidationService.verifyResultChanged).toHaveBeenCalled();
+    });
+  });
+
+  describe('Edge cases and error handling', () => {
+    it('should handle null match in initialData', () => {
+      // Arrange
+      component.match = null;
+
+      // Act & Assert
+      expect(() => component['initialData']()).not.toThrow();
+    });
+
+    it('should handle null resultDetails in viewData', () => {
+      // Arrange
+      component.resultDetails = null;
+
+      // Act & Assert
+      expect(() => component['viewData']()).not.toThrow();
+    });
+
+    it('should handle null matchDetail in isCompletedOrConfirmScore', () => {
+      // Act & Assert
+      expect(() => component['isCompletedOrConfirmScore'](null)).not.toThrow();
+    });
+
+    it('should handle empty selectedResults in calculation', () => {
+      // Arrange
+      component.resultDetails = [];
+
+      // Act & Assert
+      expect(() => component.calculation()).not.toThrow();
+    });
+
+    it('should handle null externalResult in copyScore', () => {
+      // Arrange
+      component.externalResult = null;
+      component.providerResultDetails = [];
+
+      // Act & Assert
+      expect(() => component.copyScore()).not.toThrow();
+    });
   });
 });
