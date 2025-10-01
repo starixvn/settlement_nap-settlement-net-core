@@ -274,6 +274,7 @@ describe('Component: EarlySettlementComponent', () => {
         it('should alert when pass validation and exist running odds', fakeAsync(() => {
             component.match = match;
             earlyService.isInValidResultValue = jest.fn().mockReturnValue(false);
+            earlyService.FindRelatedResourceInValid = jest.fn().mockReturnValue('');
             aioService.verifyNoRunningOdds = jest.fn().mockReturnValue(Promise.resolve(unSuccessfulResult));
             // Mock the verifyBeforeCalculation method to avoid earlyService issues
             component['verifyBeforeCalculation'] = jest.fn().mockReturnValue(true);
@@ -292,6 +293,7 @@ describe('Component: EarlySettlementComponent', () => {
             messageBoxService.confirm = jest.fn();
 
             earlyService.isInValidResultValue = jest.fn().mockReturnValue(false);
+            earlyService.FindRelatedResourceInValid = jest.fn().mockReturnValue('');
             aioService.verifyNoRunningOdds = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
             verificationService.allResultsHaveScoreSources = jest.fn().mockReturnValue(true);
             verificationService.isExistMismatchScore = jest.fn().mockReturnValue(false);
@@ -314,6 +316,7 @@ describe('Component: EarlySettlementComponent', () => {
             component.match.matchDetail = matchDetail;
             component.isReSettledTickets = true;
             earlyService.isInValidResultValue = jest.fn().mockReturnValue(false);
+            earlyService.FindRelatedResourceInValid = jest.fn().mockReturnValue('');
             aioService.verifyNoRunningOdds = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
             verificationService.allResultsHaveScoreSources = jest.fn().mockReturnValue(true);
             verificationService.isExistMismatchScore = jest.fn().mockReturnValue(false);
@@ -340,10 +343,25 @@ describe('Component: EarlySettlementComponent', () => {
             expect(toastrService.error).toHaveBeenCalledWith(Language.sop.nonLeader.blankResult);
         });
 
+        it('should alert when related result is invalid', () => {
+            match.resultDetails[0].homeValue = '2';
+            component.match = match;
+            component.permission = new Permission();
+            
+            earlyService.FindRelatedResourceInValid = jest.fn().mockReturnValue('R001 - Winner');
+            earlyService.isInValidResultValue = jest.fn().mockReturnValue(false);
+
+            component.calculate();
+
+            expect(toastrService.error).toHaveBeenCalledWith(Language.sop.relatedResourceNotAttached.replace('{0}', 'R001 - Winner'));
+        });
+
+
         it('should alert when non-leader user calculate with mismatched score', fakeAsync(() => {
             component.match = match;
             component.permission = new Permission();
             aioService.verifyNoRunningOdds = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+            earlyService.FindRelatedResourceInValid = jest.fn().mockReturnValue('');
             earlyService.isInValidResultValue = jest.fn().mockReturnValue(false);
             verificationService.allResultsHaveScoreSources = jest.fn().mockReturnValue(true);
             verificationService.isExistMismatchScore = jest.fn().mockReturnValue(true);
@@ -362,6 +380,7 @@ describe('Component: EarlySettlementComponent', () => {
             component.matchDetail = matchDetail;
             component.match = match;
             earlyService.isInValidResultValue = jest.fn().mockReturnValue(false);
+            earlyService.FindRelatedResourceInValid = jest.fn().mockReturnValue('');
             aioService.verifyNoRunningOdds = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
             verificationService.allResultsHaveScoreSources = jest.fn().mockReturnValue(true);
             verificationService.isExistMismatchScore = jest.fn().mockReturnValue(false);

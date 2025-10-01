@@ -47,5 +47,5 @@ export class ResultDetail extends GeneralResultDetail {
     confirmedSdtHomeValue: string;
     confirmedSdtAwayValue: string;
     isRelated: boolean;
-    relatedCalResource: string
+    relatedCalResources: string
 }

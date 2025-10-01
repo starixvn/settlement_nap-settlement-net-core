@@ -11,7 +11,7 @@ public interface IGroupBetTypeService
 
     GroupNameModel GroupQuarterBetType(int resourceId);
 
-    GroupNameModel GroupPlayerBetType(ResultDetail resultDetail, IList<OddFlexModel> oddFlexs);
+    GroupNameModel GroupPlayerBetType(ResultDetail resultDetail);
 }
 
 public class GroupBetTypeServiceImp : IGroupBetTypeService
@@ -46,9 +46,8 @@ public class GroupBetTypeServiceImp : IGroupBetTypeService
             : new GroupNameModel();
     }
 
-    public GroupNameModel GroupPlayerBetType(ResultDetail resultDetail, IList<OddFlexModel> oddFlexs)
+    public GroupNameModel GroupPlayerBetType(ResultDetail resultDetail)
     {
-        resultDetail.OddFlex = oddFlexs.Where(x => x.ResourceId == resultDetail.ResourceId).ToList();
         if (GroupBetType.MostPointsType.Contains(resultDetail.BetType))
         {
             return new GroupNameModel

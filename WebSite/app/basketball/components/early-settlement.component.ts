@@ -17,6 +17,7 @@ import { ResourceNameByIdPipe } from '../pipes/resource-name-by-id.pipe';
 import { EarlyStore } from '../store/early.store';
 import { ResultRowComponent } from './early/result-row.component';
 import { ResourceSupportSDTPipe } from '../pipes/resource-support-sdt.pipe';
+import { TicketStatusPipe } from '../pipes/ticket-status.pipe';
 
 @Component({
     selector: 'early-settlement',
@@ -28,7 +29,8 @@ import { ResourceSupportSDTPipe } from '../pipes/resource-support-sdt.pipe';
         ExternalSourceNamePipe,
         ResultRowComponent,
         ToastContainerDirective,
-        ResourceSupportSDTPipe],
+        ResourceSupportSDTPipe,
+        TicketStatusPipe],
     providers: [EarlyService,
         VerificationService,
         BasketballService,
@@ -92,6 +94,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         this.resetResult(this.resultDetails);
         this.autoFillResultOnLoad(this.resultDetails);
         this.autoFillConfirmedSDT(this.permission.isLeader, this.match.externalResults, this.resultDetails);
+        this.orderResultDetails(this.resultDetails);
         this.groupMap = this.earlyService.getGroupMap(this.resultDetails, this.matchDetail);
         this.match.originalResultDetail = _.cloneDeep(this.resultDetails);
         this.renderFilterSelect();
@@ -102,6 +105,20 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         if (!this.isReadyMatch) {
             this.toastrService.error(Language.minimumPlayTimeNotReached);
         }
+    }
+
+    private orderResultDetails(resultDetails: ResultDetail[]) {
+        const orderedResults = _.orderBy(resultDetails, [
+            (item) => {
+                if (Resources.baseBetTypes.includes(item.betType)) {
+                    return Resources.baseBetTypes.indexOf(item.betType);
+                }
+
+                return -1;
+            }
+        ], ['desc']);
+
+        resultDetails.splice(0, resultDetails.length, ...orderedResults);
     }
 
     public hasNoneOption(betType: string) {
@@ -143,10 +160,21 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         const existResultConfirmed = _.find(this.selectedResources, item => item.resultSettingData.isConfirmedRefund || item.resultSettingData.isConfirmedRefundSdt);
         if (!_.isNil(existResultConfirmed)) {
             this.toastrService.error(Language.confirmRefund.calculateResultNotConfirmed);
-        } else if (this.verifyExistResultEmpty()) {
+        } else if (this.verifyExistResultEmpty() && this.verifyRelatedResources()) {
             const selectedResourceIds = this.selectedResources.map(item => item.resourceId);
             this.verifyRunningOdds(selectedResourceIds, () => this.verifyScoreSourcesAndCalculate(() => this.confirmChangedResults()));
         }
+    }
+
+    private verifyRelatedResources() {
+        const relatedResourceInValid = this.earlyService.FindRelatedResourceInValid(this.resultDetails, this.selectedResources);
+
+        if (relatedResourceInValid) {
+            this.toastrService.error(Language.sop.relatedResourceNotAttached.replace('{0}', relatedResourceInValid));
+            return false;
+        }
+
+        return true;
     }
 
     private verifyExistResultEmpty(isRefund = false) {
@@ -160,10 +188,6 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
 
         return true;
     }
-
-    // private verifyRelatedResult(){
-    //     this.selectedResources.forEach(r => r.)
-    // }
 
     private async confirmChangedResults() {
         if (this.isReSettledTickets) {
@@ -265,6 +289,10 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         resultDetails.forEach(result => {
             if (_.isUndefined(result.oddFlex) || _.isEqual(result.oddFlex.length, 0)) {
                 result.otherInfo = '';
+                return;
+            }
+
+            if (result.otherInfo) {
                 return;
             }
 

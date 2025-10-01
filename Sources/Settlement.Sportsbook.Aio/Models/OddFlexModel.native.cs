@@ -5,9 +5,11 @@ namespace Settlement.Sportsbook.Aio.Models;
 public class OddFlexModel
 {
     public string ResourceId { get; set; }
-    public int BetType { get; set; }
+    public string BetType { get; set; }
     public string BetChoice { get; set; }
     public string OddsInfo { get; set; }
+
+    public string RelatedBettype { get; set; }
 
     public OddsInfoModel Info { get; set; }
 
@@ -31,6 +33,9 @@ public class OddsInfoModel
     public List<Statistic> Statistics { get; set; } = [];
     [JsonProperty("r")]
     public List<ResultInfo> Results { get; set; } = [];
+
+    [JsonProperty("ResourceId")]
+    public string ResourceId { get; set; }
 }
 
 public class Statistic

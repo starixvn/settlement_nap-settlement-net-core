@@ -38,38 +38,53 @@ public class MultipleServerAioServiceImp(
     public async Task<(List<Models.ResultDetail>, TicketCounts)> FetchResultDetails(GetResultDetailCriteria criteria, int sportType)
     {
         criteria.SportType = sportType;
-        var fetchedResultDetails = await repository.FetchAsync<Models.ResultDetail>(criteria);
         var (ticketDetails, ticketCount) = await GetEarlyTicketDetails(criteria);
+        await GenerateRelatedResource(criteria, ticketDetails);
+        var fetchedResultDetails = await repository.FetchAsync<Models.ResultDetail>(criteria);
         var resultDetails = fetchedResultDetails.ToList();
-        MergeTicketsToResults(resultDetails, ticketDetails, criteria.SettleType);
+        MergeTicketsToResults(resultDetails, ticketDetails, criteria.SettleType, sportType);
 
         return (resultDetails.Where(result => result.TicketStatus != TicketStatus.NotIncluded).ToList(), ticketCount);
     }
 
-    private static void MergeTicketsToResults(List<Models.ResultDetail> resultDetails, List<Models.ResultDetail> ticketDetails, string settleType)
+    private async Task GenerateRelatedResource(GetResultDetailCriteria criteria, List<Models.ResultDetail> ticketDetails)
+    {
+        if (criteria.SportType == SportType.BasketBall && criteria.SettleType == SettleType.Early)
+        {
+            var command = new GenerateRelatedResourcesCriteria
+            {
+                MatchId = criteria.MatchId,
+                ResourceIds = string.Join(",", ticketDetails.Where(t => t.BetCount > 0).Select(t => t.ResourceId).Distinct())
+            };
+
+            await repository.ExecuteAsync(command);
+        }
+    }
+
+    private static void MergeTicketsToResults(List<Models.ResultDetail> resultDetails, List<Models.ResultDetail> ticketDetails, string settleType, int sportType)
     {
         var newTicketDetails = ticketDetails.Where(ticketDetail => !resultDetails.Exists(result => result.Equals(ticketDetail)));
 
         resultDetails.AddRange(newTicketDetails);
 
-        GenerateTicketsStatus(resultDetails, ticketDetails, settleType);
+        GenerateTicketsStatus(resultDetails, ticketDetails, settleType, sportType);
     }
 
-    private static void GenerateTicketsStatus(List<Models.ResultDetail> results, List<Models.ResultDetail> ticketDetails, string settleType)
+    private static void GenerateTicketsStatus(List<Models.ResultDetail> results, List<Models.ResultDetail> ticketDetails, string settleType, int sportType)
     {
         foreach (var result in results)
         {
             var ticketDetail = ticketDetails.Find(detail => detail.ResourceId == result.ResourceId);
-            result.TicketStatus = CreateTicketStatus(ticketDetail, settleType);
+            result.TicketStatus = CreateTicketStatus(ticketDetail, settleType, sportType);
             result.IsSpecialBettype = ticketDetail?.IsSpecialBettype ?? 0;
         }
     }
 
-    private static string CreateTicketStatus(Models.ResultDetail ticketDetail, string settleType)
+    private static string CreateTicketStatus(Models.ResultDetail ticketDetail, string settleType, int sportType)
     {
         if (ticketDetail == null)
         {
-            return TicketStatus.NotIncluded;
+            return sportType is SportType.BasketBall ? TicketStatus.NoTicket : TicketStatus.NotIncluded;
         }
 
         if (ticketDetail.BetCount == 0 || ticketDetail.BetCount == ticketDetail.InWaiting)

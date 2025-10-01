@@ -62,110 +62,17 @@ public class GroupBetTypeServiceTests
     [InlineData("682", 100, "Other")]
     [InlineData("683", 100, "Other")]
     [InlineData("684", 100, "Other")]
-    public void GroupPlayerBetType_PlayerSelectionType_ReturnsDefaultGroup(string betType, int groupId, string groupName)
+    public void GroupPlayerBetType_PlayerSelectionType_ReturnsDefaultGroup(string betType, int groupId,
+        string groupName)
     {
         // Arrange
         var resultDetail = new ResultDetail { BetType = betType };
-        var oddFlexs = new List<OddFlexModel>();
 
         // Act
-        var result = service.GroupPlayerBetType(resultDetail, oddFlexs);
+        var result = service.GroupPlayerBetType(resultDetail);
 
         // Assert
         Assert.Equal(groupId, result.GroupId);
         Assert.Equal(groupName, result.GroupName);
-    }
-
-    [Fact]
-    public void GroupPlayerBetType_WithMatchingOddFlex_ReturnsPlayerGroup()
-    {
-        // Arrange
-        var resultDetail = new ResultDetail { ResourceId = "65301" };
-        var oddFlexs = new List<OddFlexModel>
-        {
-            new()
-            {
-                ResourceId = "65301",
-                Info = new OddsInfoModel
-                {
-                    PlayerId  = 123,
-                    PlayerName = "Levi",
-                    TeamId = 123
-                }
-            }
-        };
-
-        // Act
-        var result = service.GroupPlayerBetType(resultDetail, oddFlexs);
-
-        // Assert
-        Assert.Equal(223, result.GroupId);
-        Assert.Equal("@teamName-123-Levi", result.GroupName);
-    }
-
-    [Fact]
-    public void GroupPlayerBetType_NoMatchingOddFlex_ReturnsDefaultGroup()
-    {
-        // Arrange
-        var resultDetail = new ResultDetail { ResourceId = "65301" };
-        var oddFlexs = new List<OddFlexModel>
-        {
-            new()
-            {
-                ResourceId = "65401",
-                Info = new OddsInfoModel
-                {
-                    PlayerId = 123,
-                    PlayerName = "Player Name"
-                }
-            }
-        };
-
-        // Act
-        var result = service.GroupPlayerBetType(resultDetail, oddFlexs);
-
-        // Assert
-        Assert.Equal(100, result.GroupId);
-        Assert.Equal("Other", result.GroupName);
-    }
-
-    [Fact]
-    public void GroupPlayerBetType_EmptyOddFlexs_ReturnsDefaultGroup()
-    {
-        // Arrange
-        var resultDetail = new ResultDetail { ResourceId = "65301" };
-        var oddFlexs = new List<OddFlexModel>();
-
-        // Act
-        var result = service.GroupPlayerBetType(resultDetail, oddFlexs);
-
-        // Assert
-        Assert.Equal(100, result.GroupId);
-        Assert.Equal("Other", result.GroupName);
-    }
-
-    [Fact]
-    public void GroupPlayerBetType_ModifyResultDetailOddFlex()
-    {
-        // Arrange
-        var resultDetail = new ResultDetail { ResourceId = "65301" };
-        var oddFlexs = new List<OddFlexModel>
-        {
-            new()
-            {
-                ResourceId = "65301",
-                Info = new OddsInfoModel
-                {
-                    PlayerId = 123,
-                    PlayerName = "Player Name"
-                }
-            }
-        };
-
-        // Act
-        service.GroupPlayerBetType(resultDetail, oddFlexs);
-
-        // Assert
-        Assert.Single(resultDetail.OddFlex);
     }
 }

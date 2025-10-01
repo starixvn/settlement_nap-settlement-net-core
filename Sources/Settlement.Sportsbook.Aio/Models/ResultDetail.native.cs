@@ -58,7 +58,7 @@ public sealed class ResultDetail
 
     public string AwayName { get; set; }
 
-    public string OtherInfo { get; set; }
+    public string OtherInfo { get; set; } = string.Empty;
 
     public int BetCount { get; set; }
 
@@ -73,6 +73,8 @@ public sealed class ResultDetail
     public int BetRefundedCount { get; set; }
 
     public IList<OddFlexModel> OddFlex { get; set; } = [];
+
+    public string RelatedCalResources { get; set; }
 
     public bool InValid { get; set; } = false;
 

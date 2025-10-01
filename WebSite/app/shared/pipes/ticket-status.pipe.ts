@@ -15,10 +15,6 @@ export class TicketStatusPipe implements PipeTransform {
                 hasResultStatus = false;
             }
 
-            if(_.includes(args, "Running") && item.isRelated && item.ticketStatus === TicketStatusText.noTicket) {
-                hasResultStatus = true;
-            }
-
             return this.isExistedItem(hasResultStatus, item);
         });
     }

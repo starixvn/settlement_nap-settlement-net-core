@@ -1,15 +1,16 @@
-﻿import { Injectable } from '@angular/core';
+﻿
+import { Injectable } from '@angular/core';
 import { EarlyBaseService } from '../../core/services/early-base.service';
-import * as _ from 'lodash';
 import { ResultDetail, GroupMap, MatchDetail } from '../../shared/models/sportsbook-sop';
 import { ResultControlGroup } from '../constants/result-control-group.native';
-import { Language } from '../../shared/language.native';
-import { isEqual } from 'lodash';
+import { Language, } from '../../shared/language.native';
+import { isEqual, uniqBy } from 'lodash';
+import { SettlementStatusId } from '../../shared/constants';
 
 @Injectable()
 export class EarlyService extends EarlyBaseService {
     public getGroupMap(resultDetail: ResultDetail[], matchDetail: MatchDetail) {
-        const list = _.uniqBy(resultDetail, (item) => item.groupName);
+        const list = uniqBy(resultDetail, (item) => item.groupName);
         const maps: GroupMap[] = [];
 
         list.forEach((item) => {
@@ -49,7 +50,7 @@ export class EarlyService extends EarlyBaseService {
         });
 
         return confirmMessage;
-    }   
+    }
 
     getConfirmMessageSDT(resultDetails: ResultDetail[], matchDetail: MatchDetail) {
         let confirmMessage = `${Language.confirmRefund.sdtConfirm.replace("{0}", "")}`;
@@ -69,7 +70,7 @@ export class EarlyService extends EarlyBaseService {
             return this.getPlayerResultName(resultDetail);
         } else if (resultDetail.inputType === ResultControlGroup.yesNoNone) {
             return this.getYesNoValue(resultDetail);
-        } 
+        }
         return '';
     }
 
@@ -80,28 +81,39 @@ export class EarlyService extends EarlyBaseService {
 
     private getHomeAwayValue(resultDetail: ResultDetail, matchDetail: MatchDetail): string {
         if (isEqual(resultDetail.homeValue, "H")) {
-          return matchDetail.homeName;
+            return matchDetail.homeName;
         }
-    
-        if (isEqual(resultDetail.homeValue, "A")) {
-          return matchDetail.awayName;
-        }
-    
-        return "Neither";
-    
-      }
-    
-      private getYesNoValue(resultDetail: ResultDetail): string {
-        if (isEqual(resultDetail.homeValue, "Y")) {
-          return "Yes";
-        }
-    
-        if (isEqual(resultDetail.homeValue, "N")) {
-          return "No";
-        }
-    
-        return "None";
-    
-      }
 
+        if (isEqual(resultDetail.homeValue, "A")) {
+            return matchDetail.awayName;
+        }
+
+        return "Neither";
+
+    }
+
+    private getYesNoValue(resultDetail: ResultDetail): string {
+        if (isEqual(resultDetail.homeValue, "Y")) {
+            return "Yes";
+        }
+
+        if (isEqual(resultDetail.homeValue, "N")) {
+            return "No";
+        }
+
+        return "None";
+
+    }
+
+
+    FindRelatedResourceInValid(resultDetails: ResultDetail[], selectedResource: ResultDetail[]): string {
+        const relatedResourceIds = selectedResource.filter(r => r.relatedCalResources).map(r => r.relatedCalResources);
+        const resources = relatedResourceIds.map(i => {
+            const relatedResourceInvalid = resultDetails.filter(r => i.includes(r.resourceId) && !r.checked && r.settlementStatusId !== SettlementStatusId.Calculated);
+           return relatedResourceInvalid.length > 0 ? relatedResourceInvalid.map(r => r.resourceId) : [];
+        }).flat();
+
+        const getResourceName = resources.length > 0 ? resultDetails.filter(r => resources.includes(r.resourceId)).map(r => `${r.resourceId} - ${r.betTypeName}`).join('<br/>') : ''   ;
+        return getResourceName;
+    }
 }
