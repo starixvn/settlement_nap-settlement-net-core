@@ -5,7 +5,6 @@ using Constants;
 using Criteria;
 using Fanex.Data.Repository;
 using Requests;
-using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using MatchResultDetail = Models.MatchResultDetail;

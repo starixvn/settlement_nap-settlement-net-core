@@ -28,13 +28,11 @@ public class GenerateServiceImp(IDynamicRepository repository, XmlConvertService
 {
     private const int FootballHtNode = 2;
 
-    private static readonly List<string> ResourceHalfTimeAction = [ActionType.RefundHalfTime, ActionType.CalculateHalfTime];
+    private static readonly List<string> HalfTimeAction = [ActionType.RefundHalfTime, ActionType.CalculateHalfTime];
 
-    private static readonly List<string> ResourceFullTimeAction =
-    [
-        ActionType.UnCalculate, ActionType.RefundFullTime, ActionType.CalculateFullTime,
-        ActionType.CalculateAll, ActionType.RefundAll
-    ];
+    private static readonly List<string> FullTimeAction = [ActionType.RefundFullTime, ActionType.CalculateFullTime];
+
+    private static readonly List<string> AllAction = [ActionType.UnCalculate, ActionType.CalculateAll, ActionType.RefundAll];
 
     private static readonly List<string> ResetValueActions =
     [
@@ -64,7 +62,7 @@ public class GenerateServiceImp(IDynamicRepository repository, XmlConvertService
             return;
         }
 
-        var shouldAddHalfTime = ResourceHalfTimeAction.Contains(request.Action) ||
+        var shouldAddHalfTime = HalfTimeAction.Contains(request.Action) ||
                                HalfTimeFulltimeGroup(request.SportType, request.Action);
 
         if (shouldAddHalfTime)
@@ -77,7 +75,7 @@ public class GenerateServiceImp(IDynamicRepository repository, XmlConvertService
     private static bool HalfTimeFulltimeGroup(int sportType, string action)
     {
         var halfTimeAndFulltime = !GroupSport.OnlyFullTime.Contains(sportType) && !GroupSport.Squash.Contains(sportType);
-        return halfTimeAndFulltime && action != ActionType.RefundFullTime;
+        return halfTimeAndFulltime && !FullTimeAction.Contains(action);
     }
 
     private static void AddFullTimeResourceIfApplicable(CalculateRequest request, Resources<ResourceItem> resources)
@@ -89,7 +87,7 @@ public class GenerateServiceImp(IDynamicRepository repository, XmlConvertService
             return;
         }
 
-        if (ResourceFullTimeAction.Contains(request.Action))
+        if (AllAction.Contains(request.Action) || FullTimeAction.Contains(request.Action))
         {
             var resourceToAdd = CreateResourceWithResetValues(fullTime, request.Action);
             resources.ResourceItems.Add(resourceToAdd);
@@ -122,7 +120,7 @@ public class GenerateServiceImp(IDynamicRepository repository, XmlConvertService
         }
 
         return request.Action == ActionType.CalculateHalfTime
-            ? GetHalfTimeScore(request.SelectedResources, request.SportType, betStatus)
+            ? GetHalfTimeScore(request.SelectedResources, betStatus)
             : GetFullTimeScore(request.SelectedResources, request.SportType);
     }
 
@@ -197,7 +195,7 @@ public class GenerateServiceImp(IDynamicRepository repository, XmlConvertService
 
     private static bool IsValidBetStatusItem(IReadOnlyList<string> betStatus, int currentIndex)
     {
-        return betStatus.Count > currentIndex && 
+        return betStatus.Count > currentIndex &&
                betStatus[currentIndex].Trim().IndexOf('-') >= 1;
     }
 
@@ -237,7 +235,7 @@ public class GenerateServiceImp(IDynamicRepository repository, XmlConvertService
             return [];
         }
 
-        return HasSemicolonSeparator(betStatus) 
+        return HasSemicolonSeparator(betStatus)
             ? ExtractScoresAfterSemicolon(betStatus)
             : betStatus.Split(',');
     }
@@ -267,10 +265,10 @@ public class GenerateServiceImp(IDynamicRepository repository, XmlConvertService
         return matchInfo != null ? matchInfo.BetStatus : string.Empty;
     }
 
-    private static ScoreSetModel GetHalfTimeScore(IReadOnlyList<ResourceItem> resources, int sportType, string latestBetStatus)
+    private static ScoreSetModel GetHalfTimeScore(IReadOnlyList<ResourceItem> resources, string latestBetStatus)
     {
         var (htHomeScore, htAwayScore) = CalculateHalfTimeScores(resources);
-        var betStatus = BuildBetStatusString(resources);
+        var betStatus = BuildBetStatusHalfTime(resources);
 
         betStatus = ProcessBetStatus(betStatus, latestBetStatus, FootballHtNode);
         AddRefundPrefixIfNeeded(betStatus, latestBetStatus);
@@ -297,15 +295,15 @@ public class GenerateServiceImp(IDynamicRepository repository, XmlConvertService
         return (homeScore, awayScore);
     }
 
-    private static StringBuilder BuildBetStatusString(IReadOnlyList<ResourceItem> resources)
+    private static StringBuilder BuildBetStatusHalfTime(IReadOnlyList<ResourceItem> resources)
     {
         var scoreStrings = new List<string>();
-        
+
         for (var i = 0; i < FootballHtNode; i++)
         {
             scoreStrings.Add($"{resources[i].HomeValue}-{resources[i].AwayValue}");
         }
-        
+
         return new StringBuilder(string.Join(",", scoreStrings));
     }
 
@@ -321,7 +319,7 @@ public class GenerateServiceImp(IDynamicRepository repository, XmlConvertService
     {
         var resourceSet = FilterValidResources(resources);
         var scores = CalculateScoresFromResources(resourceSet);
-        var betStatus = BuildBetStatusString(resourceSet);
+        var betStatus = BuildBetStatusFullTime(resourceSet);
 
         SetFinalScoreForSquashTemplate(resources, sportType, ref scores.HtHomeScore, ref scores.HtAwayScore, ref scores.FinalHomeScore, ref scores.FinalAwayScore);
 
@@ -355,10 +353,10 @@ public class GenerateServiceImp(IDynamicRepository repository, XmlConvertService
         {
             var home = GetSafeScoreValue(resourceSet[i].HomeValue);
             var away = GetSafeScoreValue(resourceSet[i].AwayValue);
-            
+
             finalHomeScore += home;
             finalAwayScore += away;
-            
+
             if (i == FootballHtNode - 1)
             {
                 htHomeScore = finalHomeScore;
@@ -369,12 +367,12 @@ public class GenerateServiceImp(IDynamicRepository repository, XmlConvertService
         return (htHomeScore, htAwayScore, finalHomeScore, finalAwayScore);
     }
 
-    private static StringBuilder BuildBetStatusString(List<ResourceItem> resourceSet)
+    private static StringBuilder BuildBetStatusFullTime(List<ResourceItem> resourceSet)
     {
         var betStatus = new StringBuilder();
-        var scoreStrings = resourceSet.Select(resource => 
+        var scoreStrings = resourceSet.Select(resource =>
             $"{GetSafeScoreValue(resource.HomeValue)}-{GetSafeScoreValue(resource.AwayValue)}");
-        
+
         betStatus.Append(string.Join(",", scoreStrings));
         return betStatus;
     }

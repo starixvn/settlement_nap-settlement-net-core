@@ -18,7 +18,6 @@ public class CashOutController(IMediator mediator) : ControllerBase
 
     [Route("get-ticket")]
     [HttpPost]
-    [LogGetRequest]
     public async Task<IActionResult> GetTicket(GetTicketInfo request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
     [Route("calc")]
