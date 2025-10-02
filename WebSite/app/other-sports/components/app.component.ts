@@ -3,8 +3,6 @@ import { BlockUIService } from '../../shared/services';
 import { UrlHelper } from "../../helper";
 import { FullTimeCalculationComponent } from './only-fulltime/fulltime-calculation.component';
 import { FullTimeRefundComponent } from './only-fulltime/fulltime-refund.component';
-import { GameTotalCalculationComponent } from './game-total/game-total-calculation.component';
-import { GameTotalRefundComponent } from './game-total/game-total-refund.component';
 import { TemplateType } from '../constants';
 import * as _ from 'lodash';
 import { HalfTimeFullTimeCalculationComponent } from './halftime-fulltime/halftime-fulltime-calculation.component';
@@ -46,12 +44,6 @@ export class AppComponent extends AppBaseComponent implements OnInit {
     private getType(): Type<SportTemplate> {
         this.sportType = Number(UrlHelper.getUrlParameter('sportType'));
         const pageType = this.elementRef.nativeElement.getAttribute('page-type');
-        return _.includes(TemplateType.gameTotalTemplate, this.sportType)
-            ? this.getComponentGameTotal(pageType)
-            : this.getComponentSecondGroup(pageType);
-    }
-
-    private getComponentSecondGroup(pageType: string): Type<SportTemplate> {
         return _.includes(TemplateType.halfTimeFullTimeTemplate, this.sportType)
             ? this.getComponentHalfTimeFullTime(pageType)
             : this.getComponentThirdGroup(pageType);
@@ -91,12 +83,6 @@ export class AppComponent extends AppBaseComponent implements OnInit {
         return pageType === PageType.ReCalculate
             ? HalfTimeFullTimeCalculationComponent
             : HalfTimeFullTimeRefundComponent;
-    }
-
-    private getComponentGameTotal(pageType: string): Type<SportTemplate> {
-        return pageType === PageType.ReCalculate
-            ? GameTotalCalculationComponent
-            : GameTotalRefundComponent;
     }
 
     private getComponentGameTotalMatch(pageType: string): Type<SportTemplate> {

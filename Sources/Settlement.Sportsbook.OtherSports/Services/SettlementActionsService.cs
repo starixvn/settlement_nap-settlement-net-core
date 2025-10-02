@@ -82,7 +82,7 @@ public class SettlementActionsServiceImp(
             Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString(),
             IsReSettledTickets = request.IsReSettledTickets,
             RefResultStatus = request.RefResultStatus,
-            SelectedResources = generateService.CreateResources(request.SelectedResources, request.Action),
+            SelectedResources = generateService.CreateResources(request),
             BetStatus = betStatus,
             SportType = request.SportType
         };

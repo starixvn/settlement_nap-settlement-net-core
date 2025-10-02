@@ -22,7 +22,6 @@ public class GenerateServiceTests
     }
 
     [Theory]
-    [InlineData(SportType.BaseBall, 12)]
     [InlineData(SportType.Football, 7)]
     [InlineData(SportType.FieldHockey, 5)]
     public void GenerateResultDetail_Always_GenerateResultsBySport(int sportType, int setNumber)
