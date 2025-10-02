@@ -124,7 +124,7 @@ export class MatchDetailComponent implements OnInit {
             enabled,
             resourceType: ResourceType.Main,
             isApplyChildMatches: isApplyAll,
-            waitingTime: 5
+            waitingTime: 300
         });
         
         return {
@@ -136,8 +136,6 @@ export class MatchDetailComponent implements OnInit {
             oldResultSettings: [createSetting(isCurrentlyEnabled)]
         };
     }
-
-
 
     public confirmUpdateMatchRefund() {
         this.toastService.clear();
@@ -172,7 +170,7 @@ export class MatchDetailComponent implements OnInit {
                     settleType: AutoSettleType.AutoRefundFM,
                     enabled: !isEnabled ,
                     resourceType: ResourceType.Main,
-                    waitingTime: 5
+                    waitingTime: 300
                 }
             ],
             oldResultSettings: [
@@ -180,7 +178,7 @@ export class MatchDetailComponent implements OnInit {
                     settleType: AutoSettleType.AutoRefundFM,
                     enabled: !!isEnabled,
                     resourceType: ResourceType.Main,
-                    waitingTime: 5
+                    waitingTime: 300
                 }
             ]
         }
