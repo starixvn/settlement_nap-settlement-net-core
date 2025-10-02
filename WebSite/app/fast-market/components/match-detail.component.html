@@ -61,7 +61,7 @@
           (click)="confirmUpdateMatchAutoSettle()"></div>
       </td>
       <td rowspan="2">
-        <div class="{{getAutoRefundClass(matchDetail.isFMAutoRefund, !matchDetail.hasAutoSettlementPermission)}}"
+        <div class="{{getAutoRefundClass(matchDetail.isFMAutoRefund ?? matchDetail.isFMAutoRefundLeague, !matchDetail.hasAutoSettlementPermission)}}"
           (click)="confirmUpdateMatchRefund()"></div>
       </td>
     </tr>
