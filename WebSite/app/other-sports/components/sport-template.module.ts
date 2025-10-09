@@ -16,10 +16,6 @@ import { FullTimeCalculationComponent } from './only-fulltime/fulltime-calculati
 import { FullTimeRefundComponent } from './only-fulltime/fulltime-refund.component';
 import { ScorePipe, ResourceHeaderPipe, ResultPipe, ScoreByPermissionPipe, ScoreMatchByPermissionPipe } from '../pipes';
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
-import { GameTotalVerificationService } from './game-total/game-total-verification.service';
-import { GameTotalCalculationComponent } from './game-total/game-total-calculation.component';
-import { GameTotalRefundComponent } from './game-total/game-total-refund.component';
-import { GameTotalService } from './game-total/game-total.service';
 import { ResourceNameByIdPipe } from '../pipes/resource-name-by-id.pipe';
 import { PipesModule } from '../../shared/pipes/pipes.module.native';
 import { HalfTimeFullTimeCalculationComponent } from './halftime-fulltime/halftime-fulltime-calculation.component';
@@ -66,8 +62,6 @@ import { MappedScoreService } from './only-fulltime/mapped-score.service';
     declarations: [
         FullTimeCalculationComponent,
         FullTimeRefundComponent,
-        GameTotalCalculationComponent,
-        GameTotalRefundComponent,
         ScorePipe,
         ResourceHeaderPipe,
         ResourceNameByIdPipe,
@@ -97,9 +91,7 @@ import { MappedScoreService } from './only-fulltime/mapped-score.service';
         RequestService,
         VerificationService,
         HalfTimeFullTimeService,
-        GameTotalService,
         AioService,
-        GameTotalVerificationService,
         IntervalBackgroundPipe,
         ResourceNameByIdPipe,
         ScoreByPermissionPipe,

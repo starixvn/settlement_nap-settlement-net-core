@@ -83,14 +83,14 @@ public class MergeLogServiceImp : MergeLogService
 
     private static string GetUnit(string input)
     {
-        var unitPart = Regex.Match(input, @"\D+").Value;
+        var unitPart = Regex.Match(input, @"\D+", RegexOptions.None, TimeSpan.FromSeconds(1)).Value;
 
         return unitPart.Length == input.Length ? string.Empty : unitPart;
     }
 
     private static int ExtractNumericValue(string input)
     {
-        var numericPart = Regex.Match(input, @"^\d+").Value;
+        var numericPart = Regex.Match(input, @"^\d+", RegexOptions.None, TimeSpan.FromSeconds(1)).Value;
         return int.TryParse(numericPart, out var numericValue) ? numericValue : 0;
     }
 }

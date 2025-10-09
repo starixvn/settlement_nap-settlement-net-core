@@ -5,7 +5,6 @@ using Constants;
 using Criteria;
 using Fanex.Data.Repository;
 using Requests;
-using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using MatchResultDetail = Models.MatchResultDetail;
@@ -63,7 +62,7 @@ public class SportsbookServiceImp(
     public bool IsModifyResultDetailGroup(int sportType)
     {
         return GroupSport.FootBall.Contains(sportType) || GroupSport.Hockey.Contains(sportType)
-               || GroupSport.Squash.Contains(sportType) || SportType.BaseBall == sportType;
+               || GroupSport.Squash.Contains(sportType);
     }
 
     private async Task<MatchHedgeDetail> MatchHedgeDetail(int matchId)

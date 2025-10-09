@@ -1,5 +1,7 @@
 ﻿namespace Settlement.Sportsbook.OtherSports.Services;
 
+using System.Collections.Generic;
+using System.Text;
 using Constants;
 using Criteria;
 using Fanex.Data.Repository;
@@ -8,9 +10,7 @@ using Models;
 using Requests;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
-using System.Collections.Generic;
-using System.Text;
-using ResourceItem = Settlement.Core.Models.ResourceItem;
+using ResourceItem = Core.Models.ResourceItem;
 
 public interface GenerateService
 {
@@ -18,7 +18,7 @@ public interface GenerateService
 
     public List<ResultDetail> GenerateResultDetail(MatchDetail matchDetail);
 
-    public string CreateResources(List<ResourceItem> selectedResources, string action);
+    public string CreateResources(CalculateRequest request);
 
     public List<ResourceItem> GenerateResources(CalculateRequest request);
 }
@@ -26,40 +26,89 @@ public interface GenerateService
 public class GenerateServiceImp(IDynamicRepository repository, XmlConvertService xmlConvertService)
     : GenerateService
 {
-    private const int BaseballHtNode = 5;
-
     private const int FootballHtNode = 2;
 
-    private static readonly List<string> ResourceHalfTimeAction =
-        [ActionType.UnCalculate, ActionType.RefundHalfTime, ActionType.CalculateHalfTime, ActionType.RefundAll];
+    private static readonly List<string> HalfTimeAction = [ActionType.RefundHalfTime, ActionType.CalculateHalfTime];
 
-    private static readonly List<string> ResourceFullTimeAction =
+    private static readonly List<string> FullTimeAction = [ActionType.RefundFullTime, ActionType.CalculateFullTime];
+
+    private static readonly List<string> AllAction = [ActionType.UnCalculate, ActionType.CalculateAll, ActionType.RefundAll];
+
+    private static readonly List<string> ResetValueActions =
     [
-        ActionType.UnCalculate, ActionType.RefundFullTime, ActionType.CalculateFullTime,
-        ActionType.CalculateAll, ActionType.RefundAll
+        ActionType.UnCalculate, ActionType.UnCalculateFullTime,
+        ActionType.RefundHalfTime, ActionType.RefundFullTime, ActionType.RefundAll
     ];
 
-    public string CreateResources(List<ResourceItem> selectedResources, string action)
+    public string CreateResources(CalculateRequest request)
     {
         var resources = new Resources<ResourceItem>
         {
             ResourceItems = []
         };
-        var halfTime = selectedResources.Find(item => item.ResourceId == ResourceType.Halftime);
-        if (halfTime is not null && (ResourceHalfTimeAction.Exists(item => item == action)
-                                     || ExistHalfTimeResult(action, halfTime)))
-        {
-            resources.ResourceItems.Add(halfTime);
-        }
 
-        var fullTime = selectedResources.Find(item => item.ResourceId == ResourceType.Final);
-
-        if (fullTime is not null && ResourceFullTimeAction.Exists(item => item == action))
-        {
-            resources.ResourceItems.Add(fullTime);
-        }
+        AddHalfTimeResourceIfApplicable(request, resources);
+        AddFullTimeResourceIfApplicable(request, resources);
 
         return xmlConvertService.Serialize(resources);
+    }
+
+    private static void AddHalfTimeResourceIfApplicable(CalculateRequest request, Resources<ResourceItem> resources)
+    {
+        var halfTime = request.SelectedResources.Find(item => item.ResourceId == ResourceType.Halftime);
+
+        if (halfTime is null)
+        {
+            return;
+        }
+
+        var shouldAddHalfTime = HalfTimeAction.Contains(request.Action) ||
+                               HalfTimeFulltimeGroup(request.SportType, request.Action);
+
+        if (shouldAddHalfTime)
+        {
+            var resourceToAdd = CreateResourceWithResetValues(halfTime, request.Action);
+            resources.ResourceItems.Add(resourceToAdd);
+        }
+    }
+
+    private static bool HalfTimeFulltimeGroup(int sportType, string action)
+    {
+        var halfTimeAndFulltime = !GroupSport.OnlyFullTime.Contains(sportType) && !GroupSport.Squash.Contains(sportType);
+        return halfTimeAndFulltime && !FullTimeAction.Contains(action);
+    }
+
+    private static void AddFullTimeResourceIfApplicable(CalculateRequest request, Resources<ResourceItem> resources)
+    {
+        var fullTime = request.SelectedResources.Find(item => item.ResourceId == ResourceType.Final);
+
+        if (fullTime is null)
+        {
+            return;
+        }
+
+        if (AllAction.Contains(request.Action) || FullTimeAction.Contains(request.Action))
+        {
+            var resourceToAdd = CreateResourceWithResetValues(fullTime, request.Action);
+            resources.ResourceItems.Add(resourceToAdd);
+        }
+    }
+
+    private static ResourceItem CreateResourceWithResetValues(ResourceItem originalResource, string action)
+    {
+        var resource = new ResourceItem(originalResource.ResourceId)
+        {
+            HomeValue = originalResource.HomeValue,
+            AwayValue = originalResource.AwayValue
+        };
+
+        if (ResetValueActions.Contains(action))
+        {
+            resource.HomeValue = string.Empty;
+            resource.AwayValue = string.Empty;
+        }
+
+        return resource;
     }
 
     public ScoreSetModel GenerateBetStatus(CalculateRequest request)
@@ -71,7 +120,7 @@ public class GenerateServiceImp(IDynamicRepository repository, XmlConvertService
         }
 
         return request.Action == ActionType.CalculateHalfTime
-            ? GetHalfTimeScore(request.SelectedResources, request.SportType, betStatus)
+            ? GetHalfTimeScore(request.SelectedResources, betStatus)
             : GetFullTimeScore(request.SelectedResources, request.SportType);
     }
 
@@ -115,11 +164,6 @@ public class GenerateServiceImp(IDynamicRepository repository, XmlConvertService
         return listResource;
     }
 
-    private static bool ExistHalfTimeResult(string action, ResourceItem halfTime)
-    {
-        return action == ActionType.CalculateAll && !string.IsNullOrEmpty(halfTime.AwayValue) && !string.IsNullOrEmpty(halfTime.HomeValue);
-    }
-
     private static string GetResourceId(int currentIndex, int maxSetNumber, int sportType)
     {
         return !GroupSport.Squash.Contains(sportType) && currentIndex + 1 == maxSetNumber ? "OT" : $"{currentIndex + 1}";
@@ -129,30 +173,41 @@ public class GenerateServiceImp(IDynamicRepository repository, XmlConvertService
     {
         const int footBallGroup = 5;
         const int hockeyGroup = 4;
-        const int baseballGroup = 10;
 
         if (GroupSport.FootBall.Contains(sportType) || GroupSport.Squash.Contains(sportType))
         {
             return footBallGroup;
         }
 
-        return GroupSport.Hockey.Contains(sportType) ? hockeyGroup : baseballGroup;
+        return hockeyGroup;
     }
 
     private static Score ScoreItemOnBetStatus(IReadOnlyList<string> betStatus, int currentIndex)
     {
-        if (betStatus.Count > currentIndex && betStatus[currentIndex].Trim().IndexOf('-') >= 1)
+        if (!IsValidBetStatusItem(betStatus, currentIndex))
         {
-            var score = betStatus[currentIndex].Trim().Split('-');
-            return new Score(score[0], score[1]);
+            return new Score();
         }
 
-        return new Score();
+        var scoreText = betStatus[currentIndex].Trim();
+        return ParseScoreFromText(scoreText);
+    }
+
+    private static bool IsValidBetStatusItem(IReadOnlyList<string> betStatus, int currentIndex)
+    {
+        return betStatus.Count > currentIndex &&
+               betStatus[currentIndex].Trim().IndexOf('-') >= 1;
+    }
+
+    private static Score ParseScoreFromText(string scoreText)
+    {
+        var scoreParts = scoreText.Split('-');
+        return new Score(scoreParts[0], scoreParts[1]);
     }
 
     private static List<ResultDetail> CreateResultFinal(MatchDetail matchDetail, List<ResultDetail> resultDetails)
     {
-        if (GroupSport.FootBall.Contains(matchDetail.SportType) || matchDetail.SportType == SportType.BaseBall)
+        if (GroupSport.FootBall.Contains(matchDetail.SportType))
         {
             var halfTimeResult = new ResultDetail
             {
@@ -175,15 +230,27 @@ public class GenerateServiceImp(IDynamicRepository repository, XmlConvertService
 
     private static string[] ArrayBetStatus(string betStatus)
     {
-        const int twoLength = 2;
         if (string.IsNullOrWhiteSpace(betStatus))
         {
             return [];
         }
 
-        return betStatus.IndexOf(';') > -1 && betStatus.Split(';').Length >= twoLength
-            ? betStatus.Split(';')[1].Split(',')
+        return HasSemicolonSeparator(betStatus)
+            ? ExtractScoresAfterSemicolon(betStatus)
             : betStatus.Split(',');
+    }
+
+    private static bool HasSemicolonSeparator(string betStatus)
+    {
+        const int minimumParts = 2;
+        var parts = betStatus.Split(';');
+        return parts.Length >= minimumParts;
+    }
+
+    private static string[] ExtractScoresAfterSemicolon(string betStatus)
+    {
+        var parts = betStatus.Split(';');
+        return parts[1].Split(',');
     }
 
     private string GetBetStatus(int matchId)
@@ -198,26 +265,13 @@ public class GenerateServiceImp(IDynamicRepository repository, XmlConvertService
         return matchInfo != null ? matchInfo.BetStatus : string.Empty;
     }
 
-    private static ScoreSetModel GetHalfTimeScore(IReadOnlyList<ResourceItem> resources, int sportType, string latestBetStatus)
+    private static ScoreSetModel GetHalfTimeScore(IReadOnlyList<ResourceItem> resources, string latestBetStatus)
     {
-        var betStatus = new StringBuilder();
-        var htHomeScore = 0;
-        var htAwayScore = 0;
-        var halfTimeNode = sportType == SportType.BaseBall ? BaseballHtNode : FootballHtNode;
+        var (htHomeScore, htAwayScore) = CalculateHalfTimeScores(resources);
+        var betStatus = BuildBetStatusHalfTime(resources);
 
-        for (var i = 0; i < halfTimeNode; i++)
-        {
-            htHomeScore += int.Parse(resources[i].HomeValue);
-            htAwayScore += int.Parse(resources[i].AwayValue);
-            var currentBetStatus = betStatus.Length > 0 ? "," : string.Empty;
-            betStatus.Append($"{currentBetStatus}{resources[i].HomeValue}-{resources[i].AwayValue}");
-        }
-
-        betStatus = ProcessBetStatus(betStatus, latestBetStatus, halfTimeNode);
-        if (!string.IsNullOrEmpty(latestBetStatus) && latestBetStatus.Contains($"{BetStatus.RefundFt};"))
-        {
-            betStatus.Insert(0, $"{BetStatus.RefundFt};");
-        }
+        betStatus = ProcessBetStatus(betStatus, latestBetStatus, FootballHtNode);
+        AddRefundPrefixIfNeeded(betStatus, latestBetStatus);
 
         return new ScoreSetModel
         {
@@ -227,45 +281,105 @@ public class GenerateServiceImp(IDynamicRepository repository, XmlConvertService
         };
     }
 
-    private static ScoreSetModel GetFullTimeScore(List<ResourceItem> resources, int sportType)
+    private static (int HomeScore, int AwayScore) CalculateHalfTimeScores(IReadOnlyList<ResourceItem> resources)
     {
-        var betStatus = new StringBuilder();
-        var htHomeScore = 0;
-        var htAwayScore = 0;
-        var finalHomeScore = 0;
-        var finalAwayScore = 0;
-        var halfTimeNode = sportType == SportType.BaseBall ? BaseballHtNode : FootballHtNode;
-        var resourceSet = resources.Where(item => item.ResourceId != ResourceType.Final
-                                                   && item.ResourceId != ResourceType.Halftime &&
-                                                   item.ResourceId != "OT").ToList();
+        var homeScore = 0;
+        var awayScore = 0;
 
-        for (var i = 0; i < resourceSet.Count; i++)
+        for (var i = 0; i < FootballHtNode; i++)
         {
-            var home = string.IsNullOrEmpty(resources[i].HomeValue) ? "0" : resources[i].HomeValue;
-            var away = string.IsNullOrEmpty(resources[i].AwayValue) ? "0" : resources[i].AwayValue;
-            finalHomeScore += int.Parse(home);
-            finalAwayScore += int.Parse(away);
-            if (i == halfTimeNode - 1)
-            {
-                htHomeScore += finalHomeScore;
-                htAwayScore += finalAwayScore;
-            }
-            var currentBetStatus = betStatus.Length > 0 ? "," : string.Empty;
-            betStatus.Append($"{currentBetStatus}{home}-{away}");
+            homeScore += GetSafeScoreValue(resources[i].HomeValue);
+            awayScore += GetSafeScoreValue(resources[i].AwayValue);
         }
 
-        SetFinalScoreForSquashTemplate(resources, sportType, ref htHomeScore, ref htAwayScore, ref finalHomeScore, ref finalAwayScore);
+        return (homeScore, awayScore);
+    }
+
+    private static StringBuilder BuildBetStatusHalfTime(IReadOnlyList<ResourceItem> resources)
+    {
+        var scoreStrings = new List<string>();
+
+        for (var i = 0; i < FootballHtNode; i++)
+        {
+            scoreStrings.Add($"{resources[i].HomeValue}-{resources[i].AwayValue}");
+        }
+
+        return new StringBuilder(string.Join(",", scoreStrings));
+    }
+
+    private static void AddRefundPrefixIfNeeded(StringBuilder betStatus, string latestBetStatus)
+    {
+        if (!string.IsNullOrEmpty(latestBetStatus) && latestBetStatus.Contains($"{BetStatus.RefundFt};"))
+        {
+            betStatus.Insert(0, $"{BetStatus.RefundFt};");
+        }
+    }
+
+    private static ScoreSetModel GetFullTimeScore(List<ResourceItem> resources, int sportType)
+    {
+        var resourceSet = FilterValidResources(resources);
+        var scores = CalculateScoresFromResources(resourceSet);
+        var betStatus = BuildBetStatusFullTime(resourceSet);
+
+        SetFinalScoreForSquashTemplate(resources, sportType, ref scores.HtHomeScore, ref scores.HtAwayScore, ref scores.FinalHomeScore, ref scores.FinalAwayScore);
 
         var scoreSet = new ScoreSetModel
         {
             BetStatus = betStatus,
-            HtHomeScore = htHomeScore,
-            HtAwayScore = htAwayScore,
-            FinalHomeScore = finalHomeScore,
-            FinalAwayScore = finalAwayScore
+            HtHomeScore = scores.HtHomeScore,
+            HtAwayScore = scores.HtAwayScore,
+            FinalHomeScore = scores.FinalHomeScore,
+            FinalAwayScore = scores.FinalAwayScore
         };
 
         return OverTime(scoreSet, resources);
+    }
+
+    private static List<ResourceItem> FilterValidResources(List<ResourceItem> resources)
+    {
+        return resources.Where(item => item.ResourceId != ResourceType.Final
+                                      && item.ResourceId != ResourceType.Halftime
+                                      && item.ResourceId != "OT").ToList();
+    }
+
+    private static (int HtHomeScore, int HtAwayScore, int FinalHomeScore, int FinalAwayScore) CalculateScoresFromResources(List<ResourceItem> resourceSet)
+    {
+        var htHomeScore = 0;
+        var htAwayScore = 0;
+        var finalHomeScore = 0;
+        var finalAwayScore = 0;
+
+        for (var i = 0; i < resourceSet.Count; i++)
+        {
+            var home = GetSafeScoreValue(resourceSet[i].HomeValue);
+            var away = GetSafeScoreValue(resourceSet[i].AwayValue);
+
+            finalHomeScore += home;
+            finalAwayScore += away;
+
+            if (i == FootballHtNode - 1)
+            {
+                htHomeScore = finalHomeScore;
+                htAwayScore = finalAwayScore;
+            }
+        }
+
+        return (htHomeScore, htAwayScore, finalHomeScore, finalAwayScore);
+    }
+
+    private static StringBuilder BuildBetStatusFullTime(List<ResourceItem> resourceSet)
+    {
+        var betStatus = new StringBuilder();
+        var scoreStrings = resourceSet.Select(resource =>
+            $"{GetSafeScoreValue(resource.HomeValue)}-{GetSafeScoreValue(resource.AwayValue)}");
+
+        betStatus.Append(string.Join(",", scoreStrings));
+        return betStatus;
+    }
+
+    private static int GetSafeScoreValue(string value)
+    {
+        return string.IsNullOrEmpty(value) ? 0 : int.Parse(value);
     }
 
     private static void SetFinalScoreForSquashTemplate(List<ResourceItem> resources, int sportType, ref int htHomeScore, ref int htAwayScore, ref int finalHomeScore, ref int finalAwayScore)
@@ -304,34 +418,50 @@ public class GenerateServiceImp(IDynamicRepository repository, XmlConvertService
         {
             return betStatus;
         }
-        var scoreFullTime = new StringBuilder();
-        var statusList = oldScore.Split(',');
-        if (statusList.Length >= totalHalfTimeSets + 1)
-        {
-            for (var j = totalHalfTimeSets; j < statusList.Length; j++)
-            {
-                scoreFullTime.Append(statusList[j]);
-                scoreFullTime.Append(j == statusList.Length - 1 ? string.Empty : ",");
-            }
-        }
 
-        if (!string.IsNullOrEmpty(scoreFullTime.ToString()))
+        var fullTimeScores = ExtractFullTimeScores(oldScore, totalHalfTimeSets);
+        if (!string.IsNullOrEmpty(fullTimeScores))
         {
-            betStatus.Append($",{scoreFullTime}");
+            betStatus.Append($",{fullTimeScores}");
         }
 
         return betStatus;
     }
 
-    private static string GetOldScoreOnly(string latestBetStatus)
+    private static string ExtractFullTimeScores(string oldScore, int totalHalfTimeSets)
     {
-        var scoreOnly = string.Empty;
-        if (!string.IsNullOrEmpty(latestBetStatus))
+        var statusList = oldScore.Split(',');
+        if (statusList.Length < totalHalfTimeSets + 1)
         {
-            scoreOnly = latestBetStatus.Contains(BetStatus.Refund) ? latestBetStatus.Remove(latestBetStatus.IndexOf('R'), latestBetStatus.IndexOf(';')).Trim(',', ';') : latestBetStatus;
+            return string.Empty;
         }
 
-        return scoreOnly;
+        var fullTimeScores = new List<string>();
+        for (var i = totalHalfTimeSets; i < statusList.Length; i++)
+        {
+            fullTimeScores.Add(statusList[i]);
+        }
+
+        return string.Join(",", fullTimeScores);
+    }
+
+    private static string GetOldScoreOnly(string latestBetStatus)
+    {
+        if (string.IsNullOrEmpty(latestBetStatus))
+        {
+            return string.Empty;
+        }
+
+        return latestBetStatus.Contains(BetStatus.Refund)
+            ? RemoveRefundPrefix(latestBetStatus)
+            : latestBetStatus;
+    }
+
+    private static string RemoveRefundPrefix(string betStatus)
+    {
+        var refundIndex = betStatus.IndexOf('R');
+        var semicolonIndex = betStatus.IndexOf(';');
+        return betStatus.Remove(refundIndex, semicolonIndex).Trim(',', ';');
     }
 
     private static ScoreSetModel GetScore(CalculateRequest request)

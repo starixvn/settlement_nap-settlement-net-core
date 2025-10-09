@@ -14,7 +14,7 @@ public static class SportType
 
     public const int VolleyBall = 6;
 
-    public const int Billard = 7;
+    public const int SnookerPool = 7;
 
     public const int BaseBall = 8;
 

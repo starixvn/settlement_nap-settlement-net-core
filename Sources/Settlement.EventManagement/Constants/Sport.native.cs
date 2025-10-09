@@ -23,7 +23,7 @@ public static class Sports
         SportType.Kabaddi,
         SportType.Futsal,
         SportType.UpcomingSport56,
-        SportType.Billard,
+        SportType.SnookerPool,
         SportType.Golf,
         SportType.Motorsports,
         SportType.Winter,
