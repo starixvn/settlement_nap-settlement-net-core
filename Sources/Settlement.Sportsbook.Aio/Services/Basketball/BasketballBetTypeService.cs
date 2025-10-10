@@ -33,7 +33,6 @@ public class BasketballBetTypeServiceImp(
     private const int QuarterBetTypeLength = 7;
     private const int MinResourceIdLength = 3;
 
-
     public async Task GetOddFlex(List<ResultDetail> items)
     {
         if (!items.Any())
@@ -50,6 +49,7 @@ public class BasketballBetTypeServiceImp(
 
         IdentifyRelatedResource(items, oddFlexsFlexModels);
     }
+
     public void GroupingBettype(IList<ResultDetail> items)
     {
         foreach (var item in items)
@@ -175,98 +175,156 @@ public class BasketballBetTypeServiceImp(
         resultDetail.InputType = (int)inputTypeService.GetInputType(resultDetail.BetType);
     }
 
-    private void IdentifyRelatedResource(List<ResultDetail> earlyResultDetails, List<OddFlexModel> oddFlex)
+    private static void IdentifyRelatedResource(List<ResultDetail> earlyResultDetails, List<OddFlexModel> oddFlex)
     {
         var dependentResources = earlyResultDetails.Where(r => GroupBetType.DependentResources.Contains(r.BetType)).ToList();
-        dependentResources.ForEach(r =>
+        dependentResources.ForEach(resultDetail =>
         {
-            generateResultByOddFlex(oddFlex, r, earlyResultDetails);
-            setOddFlexForRelatedResource(r, earlyResultDetails);
+            GenerateResultByOddFlex(oddFlex, resultDetail, earlyResultDetails);
+            SetOddFlexForRelatedResource(resultDetail, earlyResultDetails);
         });
     }
 
-    private void generateResultByOddFlex(List<OddFlexModel> oddFlex, ResultDetail dependentResource, List<ResultDetail> originalResultDetail)
+    private static void GenerateResultByOddFlex(List<OddFlexModel> oddFlex, ResultDetail dependentResource, List<ResultDetail> originalResultDetail)
     {
-        var relatedBetTypes = dependentResource.OddFlex.SelectMany(r => r.RelatedBettype.Split(',')).Distinct().ToList();
-        var relatedPlayers = string.Join(',', dependentResource.OddFlex.Select(r => r.Info.PlayerId));
+        var relatedBetTypes = GetRelatedBetTypes(dependentResource);
+        var relatedPlayers = GetRelatedPlayers(dependentResource);
         var relatedResourceIds = new List<string>();
 
-        foreach (var t in relatedBetTypes)
+        foreach (var betType in relatedBetTypes)
         {
-            var relatedOddFlex = oddFlex.Where(o =>
-                relatedPlayers.Contains(o.Info.PlayerId.ToString()) &&
-                o.ResourceId[..3] == t).DistinctBy(r => r.ResourceId).ToList();
-            relatedResourceIds.AddRange(relatedOddFlex.Select(r => r.ResourceId));
-
-            generateResultDetail(relatedOddFlex, originalResultDetail);
+            var matchingOddFlex = FindMatchingOddFlex(oddFlex, relatedPlayers, betType);
+            relatedResourceIds.AddRange(matchingOddFlex.Select(r => r.ResourceId));
+            GenerateResultDetail(matchingOddFlex, originalResultDetail);
         }
 
         dependentResource.RelatedCalResources = string.Join(',', relatedResourceIds.Distinct());
     }
 
-    private void generateResultDetail(List<OddFlexModel> relatedOddFlex, List<ResultDetail> originalResultDetail)
+    private static List<string> GetRelatedBetTypes(ResultDetail dependentResource)
     {
-        var needGenerate = relatedOddFlex.Where(o => !originalResultDetail.Exists(r => r.ResourceId == o.ResourceId)).ToList();
-        if (needGenerate.Any())
-        {
-            originalResultDetail.AddRange(needGenerate.Select(g => new ResultDetail
-            {
-                ResourceId = g.ResourceId,
-                BetType = g.BetType,
-                TicketStatus = TicketStatus.NoTicket,
-                OtherInfo = $"{g.Info.PlayerId},{g.Info.TeamId}",
-                OddFlex = new List<OddFlexModel> { g }
-            }));
-        }
-
+        return dependentResource.OddFlex
+            .SelectMany(r => r.RelatedBettype.Split(','))
+            .Distinct()
+            .ToList();
     }
 
-    private void setOddFlexForRelatedResource(ResultDetail dependentResource, List<ResultDetail> originalResultDetails)
+    private static string GetRelatedPlayers(ResultDetail dependentResource)
     {
-        var relatedResources =
-            originalResultDetails.Where(r => dependentResource.RelatedCalResources.Contains(r.ResourceId)).ToList();
+        return string.Join(',', dependentResource.OddFlex.Select(r => r.Info.PlayerId));
+    }
 
-        relatedResources.ForEach(r =>
+    private static List<OddFlexModel> FindMatchingOddFlex(List<OddFlexModel> oddFlex, string relatedPlayers, string betType)
+    {
+        return oddFlex
+            .Where(o => relatedPlayers.Contains(o.Info.PlayerId.ToString()) && o.ResourceId[..3] == betType)
+            .DistinctBy(r => r.ResourceId)
+            .ToList();
+    }
+
+    private static void GenerateResultDetail(List<OddFlexModel> relatedOddFlex, List<ResultDetail> originalResultDetail)
+    {
+        var newResultDetails = GetNewResultDetails(relatedOddFlex, originalResultDetail);
+        
+        if (newResultDetails.Any())
         {
-            if (!string.IsNullOrEmpty(r.OtherInfo) && r.OddFlex.Count == 0)
+            originalResultDetail.AddRange(newResultDetails);
+        }
+    }
+
+    private static List<ResultDetail> GetNewResultDetails(List<OddFlexModel> relatedOddFlex, List<ResultDetail> originalResultDetail)
+    {
+        return relatedOddFlex
+            .Where(oddFlex => !originalResultDetail.Exists(r => r.ResourceId == oddFlex.ResourceId))
+            .Select(CreateResultDetail)
+            .ToList();
+    }
+
+    private static ResultDetail CreateResultDetail(OddFlexModel oddFlex)
+    {
+        return new ResultDetail
+        {
+            ResourceId = oddFlex.ResourceId,
+            BetType = oddFlex.BetType,
+            TicketStatus = TicketStatus.NoTicket,
+            OtherInfo = $"{oddFlex.Info.PlayerId},{oddFlex.Info.TeamId}",
+            OddFlex = [oddFlex]
+        };
+    }
+
+    private static void SetOddFlexForRelatedResource(ResultDetail dependentResource, List<ResultDetail> originalResultDetails)
+    {
+        var relatedResources = GetRelatedResources(dependentResource, originalResultDetails);
+        
+        foreach (var resultDetail in relatedResources)
+        {
+            if (ShouldSetOddFlex(resultDetail))
             {
-                r.OddFlex = dependentResource.OddFlex.Where(o => r.OtherInfo.Contains(o.Info.PlayerId.ToString())).ToList();
+                SetOddFlexForResource(dependentResource, resultDetail);
             }
-        });
+        }
+    }
+
+    private static List<ResultDetail> GetRelatedResources(ResultDetail dependentResource, List<ResultDetail> originalResultDetails)
+    {
+        return originalResultDetails
+            .Where(r => dependentResource.RelatedCalResources.Contains(r.ResourceId))
+            .ToList();
+    }
+
+    private static bool ShouldSetOddFlex(ResultDetail resultDetail)
+    {
+        return !string.IsNullOrEmpty(resultDetail.OtherInfo) && resultDetail.OddFlex.Count == 0;
+    }
+
+    private static void SetOddFlexForResource(ResultDetail dependentResource, ResultDetail resultDetail)
+    {
+        resultDetail.OddFlex = GetMatchingOddFlexForResource(dependentResource, resultDetail);
+    }
+
+    private static List<OddFlexModel> GetMatchingOddFlexForResource(ResultDetail dependentResource, ResultDetail resultDetail)
+    {
+        return dependentResource.OddFlex
+            .Where(o => resultDetail.OtherInfo.Contains(o.Info.PlayerId.ToString()))
+            .ToList();
     }
 
     public void RemoveDuplicatedResources(List<ResultDetail> originalResultDetails)
     {
-        var duplicateGroups = findDuplicateGroups(originalResultDetails);
+        var duplicateGroups = FindDuplicateGroups(originalResultDetails);
 
         foreach (var group in duplicateGroups)
         {
-            processDuplicateGroup(originalResultDetails, group);
+            ProcessDuplicateGroup(originalResultDetails, group);
         }
     }
 
-    private List<IGrouping<dynamic, ResultDetail>> findDuplicateGroups(List<ResultDetail> originalResultDetails)
+    private static List<IGrouping<dynamic, ResultDetail>> FindDuplicateGroups(List<ResultDetail> originalResultDetails)
     {
         return originalResultDetails
-            .GroupBy(r => new { r.BetType, PlayerId = r.OddFlex?.FirstOrDefault()?.Info.PlayerId })
+            .GroupBy(resultDetail => new
+            {
+                resultDetail.BetType,
+                resultDetail.OddFlex?.FirstOrDefault()?.Info.PlayerId
+            })
             .Where(g => g.Count() > 1 && g.Key.PlayerId is not null)
             .Cast<IGrouping<dynamic, ResultDetail>>()
             .ToList();
     }
 
-    private void processDuplicateGroup(List<ResultDetail> originalResultDetails, IGrouping<dynamic, ResultDetail> group)
+    private static void ProcessDuplicateGroup(List<ResultDetail> originalResultDetails, IGrouping<dynamic, ResultDetail> group)
     {
         var groupKey = group.Key;
 
         originalResultDetails.RemoveAll(r => r.BetType == groupKey.BetType &&
                                            r.OddFlex?.FirstOrDefault()?.Info.PlayerId == groupKey.PlayerId);
 
-        var significantResource = findMostSignificantResource(group);
+        var significantResource = FindMostSignificantResource(group);
 
         originalResultDetails.Add(significantResource);
     }
 
-    private ResultDetail findMostSignificantResource(IGrouping<dynamic, ResultDetail> group)
+    private static ResultDetail FindMostSignificantResource(IGrouping<dynamic, ResultDetail> group)
     {
         var settledResult = group.FirstOrDefault(r => r.ResultStatusId is ResultStatus.AutoSettled or ResultStatus.ManuallySettled);
         if (settledResult is not null)
