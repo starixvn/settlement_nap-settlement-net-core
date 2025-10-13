@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 import { CalculateAction, ScoreSourceType, SettlementStatusId, SportType, TicketStatusText } from '../../shared/constants';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Injector, ViewChild, ViewChildren, QueryList, AfterViewInit } from '@angular/core';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
-import { BasketballApiKeys, EarlyResourcesIds, KickOffTime, Resources, ResultStatus } from '../constants';
+import { BasketballApiKeys, EarlyResourcesIds, KickOffTime, Resources, ResourcesIds, ResultStatus } from '../constants';
 import { BasketballService, BetStatusService, EarlyService, VerificationService } from '../services';
 import { Language } from '../../shared/language.native';
 import { Match } from '../models';
@@ -69,7 +69,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     }
 
     public get outSideCount() {
-        if(this.resultDetails.length === 0) {
+        if (this.resultDetails.length === 0) {
             return 0;
         }
         return this.resultDetails[0].externalScores.filter(x =>
@@ -160,10 +160,24 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         const existResultConfirmed = _.find(this.selectedResources, item => item.resultSettingData.isConfirmedRefund || item.resultSettingData.isConfirmedRefundSdt);
         if (!_.isNil(existResultConfirmed)) {
             this.toastrService.error(Language.confirmRefund.calculateResultNotConfirmed);
-        } else if (this.verifyExistResultEmpty() && this.verifyRelatedResources()) {
+        } else if (this.verifyFullTimeResult()) {
+            this.toastrService.error(Language.warningInputScore);
+        }
+        else if (this.verifyExistResultEmpty() && this.verifyRelatedResources()) {
             const selectedResourceIds = this.selectedResources.map(item => item.resourceId);
             this.verifyRunningOdds(selectedResourceIds, () => this.verifyScoreSourcesAndCalculate(() => this.confirmChangedResults()));
         }
+    }
+
+    private verifyFullTimeResult() {
+        const fullTime = _.find(this.resultDetails, (map: ResultDetail) =>
+            _.isEqual(map.resourceId, ResourcesIds.finalScore)
+        );
+        const existGeneratedResult = _.find(this.selectedResources, item => Resources.baseBetTypes.includes(item.betType));
+        if (existGeneratedResult && !this.permission.isLeader) {
+            return fullTime.settlementStatusId !== SettlementStatusId.Calculated;
+        }
+        return false;
     }
 
     private verifyRelatedResources() {

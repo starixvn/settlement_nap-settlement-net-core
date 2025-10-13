@@ -185,6 +185,15 @@ describe('Component: EarlySettlementComponent', () => {
         }));
     });
 
+    it('saveResult = should show confirm box', () => {
+        messageBoxService.confirm = jest.fn();
+
+        component.saveResult();
+
+        expect(messageBoxService.confirm).toHaveBeenCalled();
+        expect(component.confirmationDialogMessage.message).toEqual(Language.eSports.saveScore);
+    });
+
     describe('refund', () => {
         beforeEach(() => {
             resultDetail.resultSettingData.isConfirmedRefund = true;
@@ -249,168 +258,6 @@ describe('Component: EarlySettlementComponent', () => {
 
             expect(toastrService.error).toHaveBeenCalledWith(Language.confirmRefund.refundResultNotConfirmed);
         }));
-    });
-
-    describe("calculate", () => {
-        beforeEach(() => {
-            resultDetail.checked = true;
-            resultDetail.resourceId = '6130110';
-            resultDetail.externalScores = [];
-            match.resultDetails = [resultDetail];
-            component.resultDetails = [resultDetail];
-            component.permission = new Permission();
-            toastrService.error = jest.fn();
-            // Mock the init method to avoid initialization issues
-            component.init = jest.fn();
-            // Mock verification service methods to avoid screenshot source errors
-            verificationService.allMapHaveScreenshotSource = jest.fn().mockReturnValue(true);
-            verificationService.isExistMismatchedScoreScreenshot = jest.fn().mockReturnValue(false);
-            verificationService.allResultsHaveScoreSources = jest.fn().mockReturnValue(true);
-            verificationService.isExistMismatchScore = jest.fn().mockReturnValue(false);
-            // Mock earlyService methods
-            earlyService.getConfirmMessage = jest.fn().mockReturnValue(Language.CalculationConfirmMessageEarly + "<br/>Test bet type name: home<br/>");
-        });
-
-        it('should alert when pass validation and exist running odds', fakeAsync(() => {
-            component.match = match;
-            earlyService.isInValidResultValue = jest.fn().mockReturnValue(false);
-            earlyService.FindRelatedResourceInValid = jest.fn().mockReturnValue('');
-            aioService.verifyNoRunningOdds = jest.fn().mockReturnValue(Promise.resolve(unSuccessfulResult));
-            // Mock the verifyBeforeCalculation method to avoid earlyService issues
-            component['verifyBeforeCalculation'] = jest.fn().mockReturnValue(true);
-
-            component.calculate();
-            tick();
-
-            expect(toastrService.error).toHaveBeenCalledWith(errorMessage);
-        }));
-
-        it('should confirm when score settled is changed', fakeAsync(() => {
-            const resultDetails: ResultDetail[] = [resultDetail, resultDetail];
-            match.resultDetails = resultDetails;
-            component.match = match;
-            component.isReSettledTickets = false;
-            messageBoxService.confirm = jest.fn();
-
-            earlyService.isInValidResultValue = jest.fn().mockReturnValue(false);
-            earlyService.FindRelatedResourceInValid = jest.fn().mockReturnValue('');
-            aioService.verifyNoRunningOdds = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
-            verificationService.allResultsHaveScoreSources = jest.fn().mockReturnValue(true);
-            verificationService.isExistMismatchScore = jest.fn().mockReturnValue(false);
-            aioService.verifyChangedSettledTickets = jest.fn().mockReturnValue(Promise.resolve(true));
-            // Mock the verifyBeforeCalculation method to avoid earlyService issues
-            component['verifyBeforeCalculation'] = jest.fn().mockReturnValue(true);
-            component.calculate();
-            tick();
-
-            expect(messageBoxService.confirm).toHaveBeenCalled();
-        }));
-
-        it('Should return correct confirm message', fakeAsync(() => {
-            resultDetail.homeValue = 'H';
-            const resultDetails: ResultDetail[] = [resultDetail];
-            match.resultDetails = resultDetails;
-            matchDetail.homeName = 'home';
-            match.matchDetail = matchDetail;
-            component.match = match;
-            component.match.matchDetail = matchDetail;
-            component.isReSettledTickets = true;
-            earlyService.isInValidResultValue = jest.fn().mockReturnValue(false);
-            earlyService.FindRelatedResourceInValid = jest.fn().mockReturnValue('');
-            aioService.verifyNoRunningOdds = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
-            verificationService.allResultsHaveScoreSources = jest.fn().mockReturnValue(true);
-            verificationService.isExistMismatchScore = jest.fn().mockReturnValue(false);
-            // Mock the verifyBeforeCalculation method to avoid earlyService issues
-            component['verifyBeforeCalculation'] = jest.fn().mockReturnValue(true);
-            component.calculate();
-            tick();
-
-            const expected = Language.CalculationConfirmMessageEarly + "<br/>"
-                + `Test bet type name: ${matchDetail.homeName}<br/>`
-
-            expect(component.confirmationDialogMessage.message).toEqual(expected);
-        }));
-
-        it('should alert when result is invalid', () => {
-            match.resultDetails[0].homeValue = '';
-            component.match = match;
-            component.permission = new Permission();
-            // Mock the earlyService to return invalid result
-            earlyService.isInValidResultValue = jest.fn().mockReturnValue(true);
-
-            component.calculate();
-
-            expect(toastrService.error).toHaveBeenCalledWith(Language.sop.nonLeader.blankResult);
-        });
-
-        it('should alert when related result is invalid', () => {
-            match.resultDetails[0].homeValue = '2';
-            component.match = match;
-            component.permission = new Permission();
-            
-            earlyService.FindRelatedResourceInValid = jest.fn().mockReturnValue('R001 - Winner');
-            earlyService.isInValidResultValue = jest.fn().mockReturnValue(false);
-
-            component.calculate();
-
-            expect(toastrService.error).toHaveBeenCalledWith(Language.sop.relatedResourceNotAttached.replace('{0}', 'R001 - Winner'));
-        });
-
-
-        it('should alert when non-leader user calculate with mismatched score', fakeAsync(() => {
-            component.match = match;
-            component.permission = new Permission();
-            aioService.verifyNoRunningOdds = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
-            earlyService.FindRelatedResourceInValid = jest.fn().mockReturnValue('');
-            earlyService.isInValidResultValue = jest.fn().mockReturnValue(false);
-            verificationService.allResultsHaveScoreSources = jest.fn().mockReturnValue(true);
-            verificationService.isExistMismatchScore = jest.fn().mockReturnValue(true);
-            // Mock the verifyBeforeCalculation method to avoid earlyService issues
-            component['verifyBeforeCalculation'] = jest.fn().mockReturnValue(true);
-
-            component.calculate();
-            tick();
-
-            expect(toastrService.error).toHaveBeenCalledWith(Language.sop.nonLeader.mismatchedResult);
-        }));
-
-        it('Pass all validation and calculation is successful. Should error message is empty and close popup.', fakeAsync(async () => {
-            const resultDetails: ResultDetail[] = [resultDetail, resultDetail];
-            match.resultDetails = resultDetails;
-            component.matchDetail = matchDetail;
-            component.match = match;
-            earlyService.isInValidResultValue = jest.fn().mockReturnValue(false);
-            earlyService.FindRelatedResourceInValid = jest.fn().mockReturnValue('');
-            aioService.verifyNoRunningOdds = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
-            verificationService.allResultsHaveScoreSources = jest.fn().mockReturnValue(true);
-            verificationService.isExistMismatchScore = jest.fn().mockReturnValue(false);
-            verificationService.getOutsideScores = jest.fn().mockReturnValue([]);
-            verificationService.getChangedScores = jest.fn().mockReturnValue([]);
-            aioService.saveScore = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
-            messageBoxService.closePopup = jest.fn();
-            messageBoxService.confirm = jest.fn().mockImplementation((message, callback) => {
-                callback();
-            });
-            aioService.verifyChangedSettledTickets = jest.fn().mockReturnValue(Promise.resolve(false));
-            aioService.push = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
-            // Mock the verifyBeforeCalculation method to avoid earlyService issues
-            component['verifyBeforeCalculation'] = jest.fn().mockReturnValue(true);
-
-            component.calculate();
-            flush();
-
-            expect(toastrService.error).not.toHaveBeenCalled();
-            expect(messageBoxService.closePopup).toBeCalled();
-        }));
-    });
-
-    it('saveResult = should show confirm box', () => {
-        messageBoxService.confirm = jest.fn();
-
-        component.saveResult();
-
-        expect(messageBoxService.confirm).toHaveBeenCalled();
-        expect(component.confirmationDialogMessage.message).toEqual(Language.eSports.saveScore);
     });
 
     describe('canSettleResult', () => {
@@ -653,6 +500,227 @@ describe('Component: EarlySettlementComponent', () => {
             expect(toastrService.clear).toHaveBeenCalled();
             expect(toastrService.error).toHaveBeenCalled();
             expect(component.confirmRefund).not.toHaveBeenCalled();
+        });
+    });
+
+    describe("calculate", () => {
+        beforeEach(() => {
+            resultDetail.checked = true;
+            resultDetail.resourceId = '6130110';
+            resultDetail.externalScores = [];
+            match.resultDetails = [resultDetail];
+            component.resultDetails = [resultDetail];
+            component.permission = new Permission();
+            toastrService.error = jest.fn();
+            // Mock the init method to avoid initialization issues
+            component.init = jest.fn();
+            // Mock verification service methods to avoid screenshot source errors
+            verificationService.allMapHaveScreenshotSource = jest.fn().mockReturnValue(true);
+            verificationService.isExistMismatchedScoreScreenshot = jest.fn().mockReturnValue(false);
+            verificationService.allResultsHaveScoreSources = jest.fn().mockReturnValue(true);
+            verificationService.isExistMismatchScore = jest.fn().mockReturnValue(false);
+            // Mock earlyService methods
+            earlyService.getConfirmMessage = jest.fn().mockReturnValue(Language.CalculationConfirmMessageEarly + "<br/>Test bet type name: home<br/>");
+        });
+
+        it('should alert when pass validation and exist running odds', fakeAsync(() => {
+            component.match = match;
+            earlyService.isInValidResultValue = jest.fn().mockReturnValue(false);
+            earlyService.FindRelatedResourceInValid = jest.fn().mockReturnValue('');
+            aioService.verifyNoRunningOdds = jest.fn().mockReturnValue(Promise.resolve(unSuccessfulResult));
+            // Mock the verifyBeforeCalculation method to avoid earlyService issues
+            component['verifyBeforeCalculation'] = jest.fn().mockReturnValue(true);
+
+            component.calculate();
+            tick();
+
+            expect(toastrService.error).toHaveBeenCalledWith(errorMessage);
+        }));
+
+        it('should confirm when score settled is changed', fakeAsync(() => {
+            const resultDetails: ResultDetail[] = [resultDetail, resultDetail];
+            match.resultDetails = resultDetails;
+            component.match = match;
+            component.isReSettledTickets = false;
+            messageBoxService.confirm = jest.fn();
+
+            earlyService.isInValidResultValue = jest.fn().mockReturnValue(false);
+            earlyService.FindRelatedResourceInValid = jest.fn().mockReturnValue('');
+            aioService.verifyNoRunningOdds = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+            verificationService.allResultsHaveScoreSources = jest.fn().mockReturnValue(true);
+            verificationService.isExistMismatchScore = jest.fn().mockReturnValue(false);
+            aioService.verifyChangedSettledTickets = jest.fn().mockReturnValue(Promise.resolve(true));
+            // Mock the verifyBeforeCalculation method to avoid earlyService issues
+            component['verifyBeforeCalculation'] = jest.fn().mockReturnValue(true);
+            component.calculate();
+            tick();
+
+            expect(messageBoxService.confirm).toHaveBeenCalled();
+        }));
+
+        it('Should return correct confirm message', fakeAsync(() => {
+            resultDetail.homeValue = 'H';
+            const resultDetails: ResultDetail[] = [resultDetail];
+            match.resultDetails = resultDetails;
+            matchDetail.homeName = 'home';
+            match.matchDetail = matchDetail;
+            component.match = match;
+            component.match.matchDetail = matchDetail;
+            component.isReSettledTickets = true;
+            earlyService.isInValidResultValue = jest.fn().mockReturnValue(false);
+            earlyService.FindRelatedResourceInValid = jest.fn().mockReturnValue('');
+            aioService.verifyNoRunningOdds = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+            verificationService.allResultsHaveScoreSources = jest.fn().mockReturnValue(true);
+            verificationService.isExistMismatchScore = jest.fn().mockReturnValue(false);
+            // Mock the verifyBeforeCalculation method to avoid earlyService issues
+            component['verifyBeforeCalculation'] = jest.fn().mockReturnValue(true);
+            component.calculate();
+            tick();
+
+            const expected = Language.CalculationConfirmMessageEarly + "<br/>"
+                + `Test bet type name: ${matchDetail.homeName}<br/>`
+
+            expect(component.confirmationDialogMessage.message).toEqual(expected);
+        }));
+
+        it('should alert when result is invalid', () => {
+            match.resultDetails[0].homeValue = '';
+            component.match = match;
+            component.permission = new Permission();
+            // Mock the earlyService to return invalid result
+            earlyService.isInValidResultValue = jest.fn().mockReturnValue(true);
+
+            component.calculate();
+
+            expect(toastrService.error).toHaveBeenCalledWith(Language.sop.nonLeader.blankResult);
+        });
+
+        it('should alert when related result is invalid', () => {
+            match.resultDetails[0].homeValue = '2';
+            component.match = match;
+            component.permission = new Permission();
+            
+            earlyService.FindRelatedResourceInValid = jest.fn().mockReturnValue('R001 - Winner');
+            earlyService.isInValidResultValue = jest.fn().mockReturnValue(false);
+
+            component.calculate();
+
+            expect(toastrService.error).toHaveBeenCalledWith(Language.sop.relatedResourceNotAttached.replace('{0}', 'R001 - Winner'));
+        });
+
+
+        it('should alert when non-leader user calculate with mismatched score', fakeAsync(() => {
+            component.match = match;
+            component.permission = new Permission();
+            aioService.verifyNoRunningOdds = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+            earlyService.FindRelatedResourceInValid = jest.fn().mockReturnValue('');
+            earlyService.isInValidResultValue = jest.fn().mockReturnValue(false);
+            verificationService.allResultsHaveScoreSources = jest.fn().mockReturnValue(true);
+            verificationService.isExistMismatchScore = jest.fn().mockReturnValue(true);
+            // Mock the verifyBeforeCalculation method to avoid earlyService issues
+            component['verifyBeforeCalculation'] = jest.fn().mockReturnValue(true);
+
+            component.calculate();
+            tick();
+
+            expect(toastrService.error).toHaveBeenCalledWith(Language.sop.nonLeader.mismatchedResult);
+        }));
+
+        it('Pass all validation and calculation is successful. Should error message is empty and close popup.', fakeAsync(async () => {
+            const resultDetails: ResultDetail[] = [resultDetail, resultDetail];
+            match.resultDetails = resultDetails;
+            component.matchDetail = matchDetail;
+            component.match = match;
+            earlyService.isInValidResultValue = jest.fn().mockReturnValue(false);
+            earlyService.FindRelatedResourceInValid = jest.fn().mockReturnValue('');
+            aioService.verifyNoRunningOdds = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+            verificationService.allResultsHaveScoreSources = jest.fn().mockReturnValue(true);
+            verificationService.isExistMismatchScore = jest.fn().mockReturnValue(false);
+            verificationService.getOutsideScores = jest.fn().mockReturnValue([]);
+            verificationService.getChangedScores = jest.fn().mockReturnValue([]);
+            aioService.saveScore = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+            messageBoxService.closePopup = jest.fn();
+            messageBoxService.confirm = jest.fn().mockImplementation((message, callback) => {
+                callback();
+            });
+            aioService.verifyChangedSettledTickets = jest.fn().mockReturnValue(Promise.resolve(false));
+            aioService.push = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+            component['verifyBeforeCalculation'] = jest.fn().mockReturnValue(true);
+
+            component.calculate();
+            flush();
+
+            expect(toastrService.error).not.toHaveBeenCalled();
+            expect(messageBoxService.closePopup).toBeCalled();
+        }));
+
+        it('should alert when result has isConfirmedRefund flag set', () => {
+            // Arrange
+            resultDetail.resultSettingData.isConfirmedRefund = true;
+            resultDetail.checked = true;
+            component.resultDetails = [resultDetail];
+            component.match = match;
+
+            // Act
+            component.calculate();
+
+            // Assert
+            expect(toastrService.error).toHaveBeenCalledWith(Language.confirmRefund.calculateResultNotConfirmed);
+        });
+
+        it('should alert when result has isConfirmedRefundSdt flag set', () => {
+            // Arrange
+            resultDetail.resultSettingData.isConfirmedRefund = false;
+            resultDetail.resultSettingData.isConfirmedRefundSdt = true;
+            resultDetail.checked = true;
+            component.resultDetails = [resultDetail];
+            component.match = match;
+
+            // Act
+            component.calculate();
+
+            // Assert
+            expect(toastrService.error).toHaveBeenCalledWith(Language.confirmRefund.calculateResultNotConfirmed);
+        });
+
+        it('should alert when verifyFullTimeResult returns true for non-leader', () => {
+            // Arrange
+            const finalScoreResult = new ResultDetail();
+            finalScoreResult.resourceId = '00'; 
+            finalScoreResult.settlementStatusId = 1; 
+            finalScoreResult.checked = false;
+
+            const generatedResult = new ResultDetail();
+            generatedResult.resourceId = '6130110';
+            generatedResult.betType = '653'; 
+            generatedResult.checked = true;
+            generatedResult.resultSettingData = new ResultSettingModel();
+            
+            component.resultDetails = [finalScoreResult, generatedResult];
+            component.match = match;
+            component.match.resultDetails = [finalScoreResult, generatedResult];
+            component.permission = new Permission();
+            component.permission.isLeader = false;
+
+            // Act
+            component.calculate();
+
+            // Assert
+            expect(toastrService.error).toHaveBeenCalledWith(Language.warningInputScore);
+        });
+
+        it('should clear toastr messages before validation', () => {
+            // Arrange
+            toastrService.clear = jest.fn();
+            component.match = match;
+            resultDetail.resultSettingData.isConfirmedRefund = false;
+            resultDetail.resultSettingData.isConfirmedRefundSdt = false;
+
+            // Act
+            component.calculate();
+
+            // Assert
+            expect(toastrService.clear).toHaveBeenCalled();
         });
     });
 });

@@ -216,8 +216,9 @@ public class BasketballBetTypeServiceImp(
 
     private static List<OddFlexModel> FindMatchingOddFlex(List<OddFlexModel> oddFlex, string relatedPlayers, string betType)
     {
+        const int bettypeIndex = 3;
         return oddFlex
-            .Where(o => relatedPlayers.Contains(o.Info.PlayerId.ToString()) && o.ResourceId[..3] == betType)
+            .Where(o => relatedPlayers.Contains(o.Info.PlayerId.ToString()) && o.ResourceId[..bettypeIndex] == betType)
             .DistinctBy(r => r.ResourceId)
             .ToList();
     }
@@ -225,7 +226,7 @@ public class BasketballBetTypeServiceImp(
     private static void GenerateResultDetail(List<OddFlexModel> relatedOddFlex, List<ResultDetail> originalResultDetail)
     {
         var newResultDetails = GetNewResultDetails(relatedOddFlex, originalResultDetail);
-        
+
         if (newResultDetails.Any())
         {
             originalResultDetail.AddRange(newResultDetails);
@@ -255,13 +256,10 @@ public class BasketballBetTypeServiceImp(
     private static void SetOddFlexForRelatedResource(ResultDetail dependentResource, List<ResultDetail> originalResultDetails)
     {
         var relatedResources = GetRelatedResources(dependentResource, originalResultDetails);
-        
-        foreach (var resultDetail in relatedResources)
+
+        foreach (var resultDetail in relatedResources.Where(ShouldSetOddFlex))
         {
-            if (ShouldSetOddFlex(resultDetail))
-            {
-                SetOddFlexForResource(dependentResource, resultDetail);
-            }
+            SetOddFlexForResource(dependentResource, resultDetail);
         }
     }
 
