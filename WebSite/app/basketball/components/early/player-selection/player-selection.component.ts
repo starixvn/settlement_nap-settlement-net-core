@@ -8,22 +8,23 @@ import { CommonModule } from '@angular/common';
 @Component({
   selector: 'player-select',
   standalone: true,
-  imports: [ FormsModule, CommonModule],
+  imports: [FormsModule, CommonModule],
   template: `
    <select [disabled]="!enable" [(ngModel)]="item.homeValue" (ngModelChange)="checkResultIsMatched(item)">
-    <option *ngFor="let selection of playerSelections" [value]="selection.betChoice">{{selection.playerName}}</option>
+   <option></option>
+   <option *ngFor="let selection of playerSelections" [value]="selection.betChoice">{{selection.playerName}}</option>
     <option value="None">None</option>
   </select>
   `
 })
-export class PlayerSelectionComponent extends InputFinalBaseComponent implements OnInit  {
+export class PlayerSelectionComponent extends InputFinalBaseComponent implements OnInit {
   playerSelections: PlayerSelection[];
-  
+
   ngOnInit(): void {
     this.createSelection();
   }
 
-  private createSelection(){
+  private createSelection() {
     this.playerSelections = this.item.oddFlex?.map(item => {
       return new PlayerSelection(item.betChoice, item.info.playerName);
     });
@@ -33,22 +34,23 @@ export class PlayerSelectionComponent extends InputFinalBaseComponent implements
 @Component({
   selector: 'player-select',
   standalone: true,
-  imports: [ FormsModule, CommonModule],
+  imports: [FormsModule, CommonModule],
   template: `
    <select [disabled]="!enable" [(ngModel)]="externalResult.homeValue" (ngModelChange)="verifyAndAutoFillResult(resultDetail)">
-    <option *ngFor="let selection of playerSelections" [value]="selection.betChoice">{{selection.playerName}}</option>
-    <option value="None">None</option>
+   <option></option>
+   <option *ngFor="let selection of playerSelections" [value]="selection.betChoice">{{selection.playerName}}</option>
+   <option value="None">None</option>
    </select>
   `
 })
-export class PlayerSelectionOutSideComponent extends InputOutSideBaseComponent implements OnInit  {
+export class PlayerSelectionOutSideComponent extends InputOutSideBaseComponent implements OnInit {
   playerSelections: PlayerSelection[];
-  
+
   ngOnInit(): void {
     this.createSelection();
   }
 
-  private createSelection(){
+  private createSelection() {
     this.playerSelections = this.resultDetail.oddFlex?.map(item => {
       return new PlayerSelection(item.betChoice, item.info.playerName);
     });

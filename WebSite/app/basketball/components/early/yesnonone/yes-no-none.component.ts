@@ -8,12 +8,13 @@ import { InputFinalBaseComponent, InputOutSideBaseComponent } from "../input-bas
   imports: [CommonModule, FormsModule],
   template: `
   <select [disabled]="!enable" [(ngModel)]="item.homeValue" (ngModelChange)="checkResultIsMatched(item)">
-    <option value="Y">Yes</option>
+  <option></option>  
+  <option value="Y">Yes</option>
     <option value="N">No</option>
     <option value="None">None</option>
   </select>
   `
-  })
+})
 export class YesNoNoneComponent extends InputFinalBaseComponent {
 }
 
@@ -22,6 +23,7 @@ export class YesNoNoneComponent extends InputFinalBaseComponent {
   imports: [CommonModule, FormsModule],
   template: `
   <select [disabled]="!enable" [(ngModel)]="externalResult.homeValue" (ngModelChange)="verifyAndAutoFillResult(resultDetail)">
+    <option></option>  
     <option value="Y">Yes</option>
     <option value="N">No</option>
     <option value="None">None</option>
