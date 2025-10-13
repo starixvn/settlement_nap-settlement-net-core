@@ -18,7 +18,6 @@ public class BasketballResourceNameService : IMapperService
 
     public (string, string) GetResourceName(string resourceId, int sportType)
     {
-        // TODO
         const int maxLength = 2;
         switch (resourceId.Length)
         {
