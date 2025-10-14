@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpRequestService } from './http-request.service.native';
 import * as _ from 'lodash';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, Observable } from 'rxjs';
 import { ChangeConfirmResultSettingQuery, GeneralResultDetail, MarkedTicketsModel, MatchResource, ModalDialogMessage, ResourceItem, Result, ResultSettingQuery } from '../models';
 import { MessageBoxService } from './message-box.service.native';
 import { Language } from '../language.native';
@@ -229,4 +229,9 @@ export class AioService {
         this.warningDialogMessage.message = message;
         this.messageBoxService.alert(this.warningDialogMessage);
     }
+
+    public getResultsObservable<T>(query: {matchId: number}): Observable<T> {
+        return this.httpRequestService.getJson<T>(`${this.aioApi}/results/${query.matchId}`);
+    }
+
 }
