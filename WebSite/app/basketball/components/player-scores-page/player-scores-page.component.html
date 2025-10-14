@@ -5,7 +5,6 @@
     <h2 class="match-team">
       {{ matchDetail.homeName }} -vs- {{ matchDetail.awayName }}
       <button class="button">Refresh</button>
-      <mat-icon class="mat-icon-rtl-mirror" svgIcon="thumb-up"></mat-icon>
     </h2>
     <div>
       <div class="team-name">- {{ matchDetail.homeName }}</div>
@@ -54,31 +53,31 @@
 
               <td>
                 <div class="button-group">
-                  <button class="button" (click)="holdResult(player.playerId)">
-                    Hold
-                  </button>
                   <button
-                    class="button"
+                    class="btn hold-icon"
+                    (click)="holdResult(player.playerId)"
+                    title="Hold results"
+                  ></button>
+                  <button
+                    class="btn unhold-icon"
                     (click)="unholdResult(player.playerId)"
-                  >
-                    Unhold
-                  </button>
+                    title="Unhold results"
+                  ></button>
                 </div>
               </td>
               <td>
                 <div class="button-group">
                   <button
-                    class="button"
-                    (click)="unconfirmResult(player.playerId)"
-                  >
-                    Unconfirm
-                  </button>
-                  <button
-                    class="button"
+                    class="btn confirm-icon"
                     (click)="confirmResult(player.playerId)"
-                  >
-                    Confirm
-                  </button>
+                    title="Confirm results"
+                  ></button>
+                  <button
+                    class="btn unconfirm-icon"
+                    (click)="unconfirmResult(player.playerId)"
+                    title="Unconfirm results"
+                  ></button>
+                  
                 </div>
               </td>
             </tr>
@@ -179,7 +178,6 @@
     </div>
   </div>
 }
-
 
 <ng-template #tableHeader>
   <thead>

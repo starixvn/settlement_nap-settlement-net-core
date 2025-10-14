@@ -1,4 +1,9 @@
-﻿.calc-popup{
+﻿@hold-icon: "../../wwwroot/css/images/hold.png";
+@unhold-icon: "../../wwwroot/css/images/un-hold.png";
+@unconfirm-icon: "../../wwwroot/css/images/close-square-green.png";
+@confirm-icon: "../../wwwroot/css/images/check-square-green.png";
+
+.calc-popup{
     width: 100%;
 }
 
@@ -78,4 +83,35 @@ tr.mismatched td:not(:first-child):not(.set-status):not(.match-status):not(.calc
 
 .basketball-fantasy-matches {
     width: 900px !important;
+}
+
+
+.hold-icon {
+    background: url(@hold-icon) no-repeat;
+    width: 26px;
+    height: 24px;
+    background-size: 100% 100%; /* Fill the container */
+}
+
+
+.unhold-icon {
+    background: url(@unhold-icon) no-repeat;
+    width: 26px;
+    height: 24px;
+    background-size: 100% 100%; /* Fill the container */
+}
+
+.unconfirm-icon {
+    background: url(@unconfirm-icon) no-repeat;
+    width: 26px;
+    height: 24px;
+    background-size: 100% 100%; /* Fill the container */
+}
+
+
+.confirm-icon {
+    background: url(@confirm-icon) no-repeat;
+    width: 26px;
+    height: 24px;
+    background-size: 100% 100%; /* Fill the container */
 }

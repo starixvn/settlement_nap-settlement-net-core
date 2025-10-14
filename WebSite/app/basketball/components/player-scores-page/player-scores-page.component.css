@@ -69,6 +69,6 @@
 
 .button-group {
   display: flex;
-  gap: 24px;
+  gap: 10px;
   justify-content: center;
 }

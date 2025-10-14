@@ -68,8 +68,6 @@ export class PlayerScoresPageComponent implements OnInit, SportTemplate {
           scores: this.createFullScoreArray(scores),
         }) as Player;
       });
-
-      // console.log(players);
       
       this.players = players;
     });
@@ -94,6 +92,7 @@ export class PlayerScoresPageComponent implements OnInit, SportTemplate {
   }
 
   async holdResult(playerId: number) {
+    this.toastService.clear();
     const resourceIds = this.players
       .filter(x => x.playerId === playerId)
       .flatMap(x => x.scores)
