@@ -57,11 +57,11 @@ public class GroupBetTypeServiceTests
     }
 
     [Theory]
-    [InlineData("680", 100, "Other")]
-    [InlineData("681", 100, "Other")]
-    [InlineData("682", 100, "Other")]
-    [InlineData("683", 100, "Other")]
-    [InlineData("684", 100, "Other")]
+    [InlineData("680", 101, "Head to Head")]
+    [InlineData("681", 101, "Head to Head")]
+    [InlineData("682", 101, "Head to Head")]
+    [InlineData("683", 101, "Head to Head")]
+    [InlineData("684", 101, "Head to Head")]
     public void GroupPlayerBetType_PlayerSelectionType_ReturnsDefaultGroup(string betType, int groupId,
         string groupName)
     {

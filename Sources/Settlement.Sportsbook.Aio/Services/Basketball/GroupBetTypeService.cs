@@ -16,6 +16,8 @@ public interface IGroupBetTypeService
 
 public class GroupBetTypeServiceImp : IGroupBetTypeService
 {
+    private const string HeadToHead = "Head to Head";
+    private const int HeadToHeadId = 101;
     private const string DefaultPlayerGroupName = "Other";
     private const int PlayerGroupIdOffset = 100;
 
@@ -52,8 +54,8 @@ public class GroupBetTypeServiceImp : IGroupBetTypeService
         {
             return new GroupNameModel
             {
-                GroupId = PlayerGroupIdOffset,
-                GroupName = DefaultPlayerGroupName
+                GroupId = HeadToHeadId,
+                GroupName = HeadToHead
             };
         }
 
