@@ -58,8 +58,8 @@ export class PlayerScore implements IPlayerScore {
     p.value = resultDetail.homeValue;
     p.isConfirmed = resultDetail.resultStatusId === ResultStatusId.TraderConfirm;
     p.isHold = resultDetail.resultSettingData.isHoldResult;
-    p.isCalculated = resultDetail.resultStatusId == ResultStatusId.AutoCompleted || resultDetail.resultStatusId == ResultStatusId.ManualCompleted;
-    p.isRefunded = resultDetail.resultStatusId == ResultStatusId.Refund;
+    p.isCalculated = resultDetail.resultStatusId === ResultStatusId.AutoCompleted || resultDetail.resultStatusId === ResultStatusId.ManualCompleted;
+    p.isRefunded = resultDetail.resultStatusId === ResultStatusId.Refund;
     p.isConfirmedRefund = resultDetail.resultSettingData.isConfirmedRefund;
 
     p.playerId = +resultDetail.oddFlex[0].info.playerId;

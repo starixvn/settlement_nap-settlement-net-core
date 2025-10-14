@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Match, MatchDetail } from '../../models';
+import { Match } from '../../models';
 import * as _ from 'lodash';
-import { PlayerScore, playerScoreType } from './models';
-import { Player } from './models';
+import { PlayerScore, playerScoreType, Player } from './models';
+import { ResultDetail } from '../../../shared/models/sportsbook-sop';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +16,7 @@ export class PlayerScoresMappingService {
     return players;
   }
 
-  private mapResultDetailsToPlayerScores(resultDetails: any[]): PlayerScore[] {
+  private mapResultDetailsToPlayerScores(resultDetails: ResultDetail[]): PlayerScore[] {
     return resultDetails.map(resultDetail => PlayerScore.fromResultDetail(resultDetail));
   }
 

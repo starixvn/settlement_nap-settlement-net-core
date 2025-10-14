@@ -396,7 +396,6 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
                 }
             });
             modalRef.afterClosed().subscribe((result) => {
-                console.log('Modal closed with result:', result);
             });
         }
 }

@@ -26,7 +26,7 @@ public class GetResultsHandler(
     {
         var matchDetail = await GetMatchDetail(request.MatchId);
         var ticketDetails = await GetTicketDetails(request.MatchId, matchDetail.SportType);
-        await GenerateRelatedResource(request.MatchId, matchDetail.SportType, ticketDetails);
+        await GenerateRelatedResource(request.MatchId, ticketDetails);
         var resultDetails = await GetResultDetails(request.MatchId, ticketDetails);
 
         return new AioMatch
@@ -74,7 +74,7 @@ public class GetResultsHandler(
 
     private static bool IsBaseBetType(ResultDetail resultDetail) => BaseBetTypes.Any(resultDetail.ResourceId.StartsWith);
 
-    private async Task GenerateRelatedResource(int matchId, int sportType, List<ResultDetail> ticketDetails)
+    private async Task GenerateRelatedResource(int matchId, List<ResultDetail> ticketDetails)
     {
         var resourceIds = ticketDetails.Where(t => t.BetCount > 0).Select(t => t.ResourceId).Distinct().ToList();
         var criteria = new GenerateRelatedResourcesCriteria

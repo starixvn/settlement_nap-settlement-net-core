@@ -7,7 +7,9 @@ import { Player } from './models';
 })
 export class TeamFilterPipe implements PipeTransform {
   transform(players: Player[], teamId: number | null): Player[] {
-    if (!teamId) return players;
+    if (!teamId) {
+      return players;
+    }
     return players.filter(player => player.teamId === teamId);
   }
 }

@@ -114,9 +114,9 @@ import { Player } from './models';
 })
 export class TeamSectionComponent {
 
-  @Input() teamName: string = '';
+  @Input() teamName  = '';
   @Input() players: Player[] = [];
-  @Input() isCollapsed: boolean = false;
+  @Input() isCollapsed = false;
   
   @Output() toggleCollapse = new EventEmitter<void>();
   @Output() holdResult = new EventEmitter<number>();

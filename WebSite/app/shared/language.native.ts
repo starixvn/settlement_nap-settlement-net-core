@@ -1,5 +1,6 @@
 ﻿export const Language = {
   noResourceSelected: 'WARNING! No resource selected. Please check and try again.',
+  confirmResultConfirmMessage: 'Are you sure you want Confirm selected results. WARNING! Auto action may start immediately for selected and related results.',
   information: 'INFORMATION',
   confirmationBox: 'Confirmation box',
   CalculationWarning: 'Calculation warning',

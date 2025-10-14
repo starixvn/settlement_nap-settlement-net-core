@@ -56,7 +56,6 @@ export class PlayerScoresPageComponent implements OnInit {
   ngOnInit(): void {
     this.blockUiService.blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
     this.toastService.overlayContainer = this.toastContainer;
-    console.log(this.data);
     this.loadData();
   }
 
@@ -102,11 +101,27 @@ export class PlayerScoresPageComponent implements OnInit {
 
   async unconfirmResult(playerId: number) {
     this.toastService.clear();
+    
   }
 
   async confirmResult(playerId: number) {
     this.toastService.clear();
-
+    const checkedScores = this.players
+      .filter(x => x.playerId === playerId)
+      .flatMap(x => x.scores)
+      .filter(x => x && x.checked);
+      
+      if(_.isEmpty(checkedScores)) {
+        this.toastService.error(Language.noResourceSelected);
+        return;
+      }
+      
+      this.confirmationDialogMessage.message = Language.confirmResultConfirmMessage;
+      this.messageBoxService.confirm(this.confirmationDialogMessage, async () => {
+        const query = new ResultSettingQuery(this.matchDetail.matchId, ResultSettingType.holdResult, true, checkedScores.map(x => x.resourceId).join(','));
+        await this.aioService.changeResultSetting(query)
+      });
+      
   }
 
 
