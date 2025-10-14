@@ -142,8 +142,7 @@
                         <div [ngClass]="getResultSettingIcon(map.isHoldResult)" (click)="changeSettingGroup(map)"></div>
                     </td>
                 </tr>
-                @for (item of map.resultDetail | resultType: resultTypeSelected | ticketStatus: ticketStatusSelected :
-                resultDetails |
+                @for (item of map.resultDetail | ticketStatus: ticketStatusSelected | resultType: resultTypeSelected |
                 resultStatusPipe: resultStatusSelected | resourceSupportSDT: isRefundWithSettleDetermined; track
                 item.resourceId) {
                 <tr result-row [item]="item" [map]="map" [hidden]="map.collapsed || !item.isShow"

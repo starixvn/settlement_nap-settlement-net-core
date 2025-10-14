@@ -299,7 +299,7 @@ public class BasketballBetTypeServiceImp(
 
     private static List<IGrouping<dynamic, ResultDetail>> FindDuplicateGroups(List<ResultDetail> originalResultDetails)
     {
-        return originalResultDetails
+        return originalResultDetails.Where(r => GroupBetType.RelatedResources.Contains(r.BetType))
             .GroupBy(resultDetail => new
             {
                 resultDetail.BetType,

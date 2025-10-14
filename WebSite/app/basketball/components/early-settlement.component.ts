@@ -17,7 +17,6 @@ import { ResourceNameByIdPipe } from '../pipes/resource-name-by-id.pipe';
 import { EarlyStore } from '../store/early.store';
 import { ResultRowComponent } from './early/result-row.component';
 import { ResourceSupportSDTPipe } from '../pipes/resource-support-sdt.pipe';
-import { TicketStatusPipe } from '../pipes/ticket-status.pipe';
 
 @Component({
     selector: 'early-settlement',
@@ -29,8 +28,7 @@ import { TicketStatusPipe } from '../pipes/ticket-status.pipe';
         ExternalSourceNamePipe,
         ResultRowComponent,
         ToastContainerDirective,
-        ResourceSupportSDTPipe,
-        TicketStatusPipe],
+        ResourceSupportSDTPipe],
     providers: [EarlyService,
         VerificationService,
         BasketballService,
@@ -46,6 +44,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     public blockUI = true;
     public match: Match;
     public isReadyMatch: boolean;
+    public childResultIds: string[] = [];
     constructor(
         protected injector: Injector,
         protected verificationService: VerificationService,
@@ -126,7 +125,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     }
 
     private renderFilterSelect() {
-        this.ticketsStatusSelect.items = this.earlyService.renderTicketStatus();
+        this.ticketsStatusSelect.items = this.earlyService.renderTicketStatus([{ id: 4, value: "No Ticket", text: "No Ticket", checked: true }]);
         this.resultStatusSelect.items = this.earlyService.renderResultStatus(this.match.permission);
         this.resultTypeSelect.items = this.earlyService.renderResultType(this.groupMap);
         this.resultTypeSelect.maxWidth = '150px';

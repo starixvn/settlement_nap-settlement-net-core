@@ -20,6 +20,7 @@ export class ResultDetail extends GeneralResultDetail {
     externalScores: ExternalResultDetail[];
     isScoreMismatched: boolean;
     isShow = true;
+    parentShowed = false;
     disabled: boolean;
     resultSettingData: ResultSettingModel;
     originalHomeValue: string;
