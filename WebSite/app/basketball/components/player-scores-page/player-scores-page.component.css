@@ -1,46 +1,3 @@
-.player-col-inner {
-  margin-right: 30px;
-  display: flex;
-  align-items: center;
-  column-gap: 10px;
-  margin-left: 24px;
-}
-
-.input-score {
-  border: 1px solid #000;
-  outline: none;
-}
-.input-score:focus {
-  outline: none;
-  border: 1px solid;
-}
-
-.input-score.checked {
-  border-color: #007bff; /* Blue when focused */
-  outline: none;
-  border-width: 2px;
-
-}
-
-.input-score.isConfirmed {
-  background-color: #6fcf97;
-}
-
-.input-score-col.isHold {
-  background-color: #f8d7d7;
-}
-
-.input-score-col.isCalculated {
-  background-color: #dac093;
-}
-
-.input-score-col.isRefunded {
-  background-color: #aeeff9;
-}
-
-.input-score-col.isConfirmedRefund {
-  background-color: #ffff00;
-}
 
 .league {
   color: #1d3968;
@@ -65,10 +22,4 @@
 
 .main-container {
   margin-top: 10px;
-}
-
-.button-group {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
 }

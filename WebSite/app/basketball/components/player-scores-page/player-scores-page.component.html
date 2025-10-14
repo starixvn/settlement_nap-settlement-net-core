@@ -1,196 +1,49 @@
-<span toastContainer></span>
-@if (players.length > 0) {
-  <div class="main-container">
-    <h1 class="league">{{ matchDetail.leagueName }}</h1>
-    <h2 class="match-team">
-      {{ matchDetail.homeName }} -vs- {{ matchDetail.awayName }}
-      <button class="button">Refresh</button>
-    </h2>
-    <div>
-      <div class="team-name">- {{ matchDetail.homeName }}</div>
-      <table>
-        <ng-container [ngTemplateOutlet]="tableHeader"></ng-container>
+<div class="player-scores-page">
+  <h1 mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragBoundary=".cdk-overlay-container"
+    cdkDragHandle>
+    <label class="title">
+      Support Confirm Score - Player Stats
+    </label>
+    <button type="button" class="close dialog-close" (click)="close()">X</button>
+  </h1>
+  
+  <div mat-dialog-content id="modal-body" style="padding: 5px 5px 0 5px !important;">
+    <span toastContainer></span>
+    @if (players.length > 0) {
+    <div class="main-container">
+      <match-header [matchDetail]="matchDetail" (refresh)="loadData()"> </match-header>
 
-        <tbody>
-          @for (player of players; track player.playerId) {
-            <tr>
-              <td class="player-col">
-                <div class="player-col-inner">
-                  <input
-                    type="checkbox"
-                    style="margin: 0"
-                    [(ngModel)]="player.checked"
-                  />
-                  <span style="font-weight: bold">{{ player.playerName }}</span>
-                </div>
-              </td>
+      <!-- Home Team Section -->
+      <team-section [teamName]="matchDetail.homeName" [players]="players | teamFilter: matchDetail.homeId"
+        [isCollapsed]="isHomeTeamCollapsed" (toggleCollapse)="toggleHomeTeam()" (holdResult)="holdResult($event)"
+        (unholdResult)="unholdResult($event)" (confirmResult)="confirmResult($event)"
+        (unconfirmResult)="unconfirmResult($event)" (checkboxChange)="onCheckboxChange($event)">
+      </team-section>
 
-              @for (score of player.scores; track $index) {
-                @if (score) {
-                  <td
-                    class="input-score-col"
-                    [class.isHold]="score.isHold"
-                    [class.isCalculated]="score.isCalculated"
-                    [class.isRefunded]="score.isRefunded"
-                    [class.isConfirmedRefund]="score.isConfirmedRefund"
-                  >
-                    <input
-                      type="text"
-                      [value]="score.value"
-                      class="input-score"
-                      [class.checked]="score.checked"
-                      [class.isConfirmed]="score.isConfirmed"
-                      (focus)="score.checked = true"
-                      (dblclick)="score.checked = false"
-                      myOnlyInteger
-                      style="width: 48px"
-                    />
-                  </td>
-                } @else {
-                  <td></td>
-                }
-              }
 
-              <td>
-                <div class="button-group">
-                  <button
-                    class="btn hold-icon"
-                    (click)="holdResult(player.playerId)"
-                    title="Hold results"
-                  ></button>
-                  <button
-                    class="btn unhold-icon"
-                    (click)="unholdResult(player.playerId)"
-                    title="Unhold results"
-                  ></button>
-                </div>
-              </td>
-              <td>
-                <div class="button-group">
-                  <button
-                    class="btn confirm-icon"
-                    (click)="confirmResult(player.playerId)"
-                    title="Confirm results"
-                  ></button>
-                  <button
-                    class="btn unconfirm-icon"
-                    (click)="unconfirmResult(player.playerId)"
-                    title="Unconfirm results"
-                  ></button>
-                  
-                </div>
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
+      <!-- Away Team Section -->
+      <team-section [teamName]="matchDetail.awayName" [players]="players | teamFilter: matchDetail.awayId"
+        [isCollapsed]="isAwayTeamCollapsed" (toggleCollapse)="toggleAwayTeam()" (holdResult)="holdResult($event)"
+        (unholdResult)="unholdResult($event)" (confirmResult)="confirmResult($event)"
+        (unconfirmResult)="unconfirmResult($event)" (checkboxChange)="onCheckboxChange($event)">
+      </team-section>
     </div>
+    }
 
-    <div>
-      <div class="team-name">- {{ matchDetail.awayName }}</div>
-      <!-- <table>
-        <thead>
-          <tr>
-            <th>Player Name</th>
-            <th>Points</th>
-            <th>3-Point FG</th>
-            <th>Assists</th>
-            <th>Blocks</th>
-            <th>Rebounds</th>
-            <th>Steals</th>
-            <th>Hold Result</th>
-            <th>Confirm Result</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (player of players; track player.playerId) {
-            <tr>
-              <td class="player-col">
-                <div class="player-col-inner">
-                  <input
-                    type="checkbox"
-                    style="margin: 0"
-                    [(ngModel)]="player.checked"
-                  />
-                  <span style="font-weight: bold">{{ player.playerName }}</span>
-                </div>
-              </td>
-
-              @for (score of player.scores; track $index) {
-                @if (score) {
-                  <td
-                    class="input-score-col"
-                    [class.isHold]="score.isHold"
-                    [class.isCalculated]="score.isCalculated"
-                    [class.isRefunded]="score.isRefunded"
-                    [class.isConfirmedRefund]="score.isConfirmedRefund"
-                  >
-                    <input
-                      type="text"
-                      [value]="score.value"
-                      class="input-score"
-                      [class.checked]="score.checked"
-                      [class.isConfirmed]="score.isConfirmed"
-                      (focus)="score.checked = true"
-                      (dblclick)="score.checked = false"
-                      myOnlyInteger
-                      style="width: 48px"
-                    />
-                  </td>
-                } @else {
-                  <td></td>
-                }
-              }
-
-              <td>
-                <div style="display: flex; gap: 10px">
-                  <button class="button" (click)="holdResult(player.playerId)">
-                    Hold
-                  </button>
-                  <button
-                    class="button"
-                    (click)="unholdResult(player.playerId)"
-                  >
-                    Unhold
-                  </button>
-                </div>
-              </td>
-              <td>
-                <div style="display: flex; gap: 10px">
-                  <button
-                    class="button"
-                    (click)="unconfirmResult(player.playerId)"
-                  >
-                    Unconfirm
-                  </button>
-                  <button
-                    class="button"
-                    (click)="confirmResult(player.playerId)"
-                  >
-                    Confirm
-                  </button>
-                </div>
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table> -->
-    </div>
+    <ng-template #tableHeader>
+      <thead>
+        <tr>
+          <th style="width: 150px">Player Name</th>
+          <th>Points</th>
+          <th>3-Point FG</th>
+          <th>Assists</th>
+          <th>Blocks</th>
+          <th>Rebounds</th>
+          <th>Steals</th>
+          <th>Hold Result</th>
+          <th>Confirm Result</th>
+        </tr>
+      </thead>
+    </ng-template>
   </div>
-}
-
-<ng-template #tableHeader>
-  <thead>
-    <tr>
-      <th>Player Name</th>
-      <th>Points</th>
-      <th>3-Point FG</th>
-      <th>Assists</th>
-      <th>Blocks</th>
-      <th>Rebounds</th>
-      <th>Steals</th>
-      <th>Hold Result</th>
-      <th>Confirm Result</th>
-    </tr>
-  </thead>
-</ng-template>
+</div>

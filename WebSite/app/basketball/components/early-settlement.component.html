@@ -1,7 +1,10 @@
 ﻿<span toastContainer></span>
 <div class="padding" *ngIf="match">
     <match-detail [match]="match"></match-detail>
-    <ticket-count [ticketCounts]="match.ticketCounts"></ticket-count>
+    <div style="display: flex; justify-content: space-between; align-items: end;">
+        <ticket-count [ticketCounts]="match.ticketCounts"></ticket-count>
+        <button class="btn btn-primary" (click)="supportInputPlayerScores()">Support Input Player Scores</button>
+    </div>
     <div class="table-wrapper">
         <div class="table-header">
             <ng-template *ngTemplateOutlet="header"></ng-template>

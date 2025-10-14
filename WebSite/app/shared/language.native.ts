@@ -1,4 +1,5 @@
 ﻿export const Language = {
+  noResourceSelected: 'WARNING! No resource selected. Please check and try again.',
   information: 'INFORMATION',
   confirmationBox: 'Confirmation box',
   CalculationWarning: 'Calculation warning',
@@ -115,6 +116,8 @@
   warningInputScore: "Please input score accordingly.",
   holdResultConfirmMessage: "Are you sure you want to update Hold Result status for this result?",
   holdResultGroupConfirmMessage: "Are you sure you want to update Hold Result status for this results group?",
+  unholdResultConfirmMessage: "Are you sure you want to update Unhold Result status for this result?",
+  unholdResultGroupConfirmMessage: "Are you sure you want to update Unhold Result status for this results group?",
   fastMarket: {
     removeWaterBreak: "WARNING! This will remove selected Water Break session and may affect settlement results. Are you sure you want to proceed?",
     updateWaterBreak: "WARNING! This will add/update selected Water Break sesison and may affect settlement result. Are you sure you want to proceed?",
