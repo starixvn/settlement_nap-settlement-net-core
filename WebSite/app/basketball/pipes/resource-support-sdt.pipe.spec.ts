@@ -15,7 +15,7 @@ describe('ResourceSupportSDTPipe', () => {
 
         const result2 = new ResultDetail();
         result2.betType = '999';
-        result2.checked = true;
+        result2.checked = false;
         result2.isShow = true;
 
         resultDetails = [result1, result2];
@@ -28,7 +28,7 @@ describe('ResourceSupportSDTPipe', () => {
         // Assert
         expect(result).toHaveLength(1);
         expect(result[0].betType).toBe('653');
-        expect(result[0].checked).toBe(false);
+        expect(result[0].checked).toBe(true);
         expect(result[0].isShow).toBe(true);
     });
 
@@ -38,7 +38,7 @@ describe('ResourceSupportSDTPipe', () => {
 
         // Assert
         expect(result).toHaveLength(2);
-        expect(result[0].checked).toBe(false);
+        expect(result[0].checked).toBe(true);
         expect(result[0].isShow).toBe(true);
         expect(result[1].checked).toBe(false);
         expect(result[1].isShow).toBe(true);

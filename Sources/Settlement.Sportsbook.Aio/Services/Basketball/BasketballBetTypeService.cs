@@ -169,7 +169,7 @@ public class BasketballBetTypeServiceImp(
     private void GroupPlayerBetType(ResultDetail resultDetail)
     {
         var group = groupBetTypeService.GroupPlayerBetType(resultDetail);
-        resultDetail.InValid = resultDetail.OddFlex.Any(o => o.Info is null);
+        resultDetail.InValid = resultDetail.OddFlex is null || resultDetail.OddFlex.Any(o => o.Info is null);
         resultDetail.GroupName = group.GroupName;
         resultDetail.GroupId = group.GroupId;
         resultDetail.InputType = (int)inputTypeService.GetInputType(resultDetail.BetType);
@@ -193,6 +193,11 @@ public class BasketballBetTypeServiceImp(
 
         foreach (var betType in relatedBetTypes)
         {
+            if (betType == ResourceType.Final)
+            {
+                relatedResourceIds.Add(ResourceType.Final);
+                continue;
+            }
             var matchingOddFlex = FindMatchingOddFlex(oddFlex, relatedPlayers, betType);
             relatedResourceIds.AddRange(matchingOddFlex.Select(r => r.ResourceId));
             GenerateResultDetail(matchingOddFlex, originalResultDetail);
@@ -203,6 +208,10 @@ public class BasketballBetTypeServiceImp(
 
     private static List<string> GetRelatedBetTypes(ResultDetail dependentResource)
     {
+        if (dependentResource.OddFlex is null)
+        {
+            return [];
+        }
         return dependentResource.OddFlex
             .SelectMany(r => r.RelatedBettype.Split(','))
             .Distinct()

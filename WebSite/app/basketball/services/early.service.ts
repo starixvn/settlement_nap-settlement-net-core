@@ -5,7 +5,7 @@ import { ResultDetail, GroupMap, MatchDetail } from '../../shared/models/sportsb
 import { ResultControlGroup } from '../constants/result-control-group.native';
 import { Language, } from '../../shared/language.native';
 import { isEqual, uniqBy } from 'lodash';
-import { SettlementStatusId } from '../../shared/constants';
+import { ResultStatusId, SettlementStatusId } from '../../shared/constants';
 
 @Injectable()
 export class EarlyService extends EarlyBaseService {
@@ -109,11 +109,14 @@ export class EarlyService extends EarlyBaseService {
     FindRelatedResourceInValid(resultDetails: ResultDetail[], selectedResource: ResultDetail[]): string {
         const relatedResourceIds = selectedResource.filter(r => r.relatedCalResources).map(r => r.relatedCalResources);
         const resources = relatedResourceIds.map(i => {
-            const relatedResourceInvalid = resultDetails.filter(r => i.includes(r.resourceId) && !r.checked && r.settlementStatusId !== SettlementStatusId.Calculated);
-           return relatedResourceInvalid.length > 0 ? relatedResourceInvalid.map(r => r.resourceId) : [];
+            const relatedResourceInvalid = resultDetails.filter(r => i.includes(r.resourceId) &&
+                !r.checked &&
+                r.resultStatusId !== ResultStatusId.ManualCompleted &&
+                r.resultStatusId !== ResultStatusId.AutoCompleted);
+            return relatedResourceInvalid.length > 0 ? relatedResourceInvalid.map(r => r.resourceId) : [];
         }).flat();
 
-        const getResourceName = resources.length > 0 ? resultDetails.filter(r => resources.includes(r.resourceId)).map(r => `${r.resourceId} - ${r.betTypeName}`).join('<br/>') : ''   ;
+        const getResourceName = resources.length > 0 ? resultDetails.filter(r => resources.includes(r.resourceId)).map(r => `${r.resourceId} - ${r.betTypeName}`).join('<br/>') : '';
         return getResourceName;
     }
 }

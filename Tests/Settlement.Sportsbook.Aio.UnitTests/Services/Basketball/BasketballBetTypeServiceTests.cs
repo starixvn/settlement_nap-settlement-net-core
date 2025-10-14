@@ -504,7 +504,7 @@ public class BasketballBetTypeServiceTests
         service.RemoveDuplicatedResources(resultDetails);
 
         // Assert
-        Assert.Equal(2, resultDetails.Count);
+        Assert.Equal(3, resultDetails.Count);
         Assert.Contains(resultDetails, r => r.ResourceId == "653001" && r.ResultStatusId == ResultStatus.AutoSettled);
         Assert.Contains(resultDetails, r => r.ResourceId == "654005");
     }

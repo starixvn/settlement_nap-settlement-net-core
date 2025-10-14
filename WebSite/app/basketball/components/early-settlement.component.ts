@@ -180,7 +180,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     }
 
     private verifyRelatedResources() {
-        const relatedResourceInValid = this.earlyService.FindRelatedResourceInValid(this.resultDetails, this.selectedResources);
+        const relatedResourceInValid = this.earlyService.FindRelatedResourceInValid(this.match.resultDetails, this.selectedResources);
 
         if (relatedResourceInValid) {
             this.toastrService.error(Language.sop.relatedResourceNotAttached.replace('{0}', relatedResourceInValid));

@@ -9,7 +9,7 @@ public class OddFlexModel
     public string BetChoice { get; set; }
     public string OddsInfo { get; set; }
 
-    public string RelatedBettype { get; set; }
+    public string RelatedBettype { get; set; } = string.Empty;
 
     public OddsInfoModel Info { get; set; }
 

@@ -7,6 +7,7 @@ import { MessageBoxService } from '../../shared/services';
 import { MatchDetail, ResultDetail, GroupMap, Permission } from '../../shared/models/sportsbook-sop';
 import { ResultSettingModel, ItemsSelect } from '../../shared/models';
 import { Language } from '../../shared/language.native';
+import { ResultStatusId } from '../../shared/constants';
 
 describe('Service: EarlyService', () => {
     let service: EarlyService;
@@ -328,19 +329,19 @@ describe('Service: EarlyService', () => {
             result1.resourceId = 'R001';
             result1.betTypeName = 'Winner';
             result1.checked = false;
-            result1.settlementStatusId = 0;
+            result1.resultStatusId = ResultStatusId.RunningZero;
 
             const result2 = new ResultDetail();
             result2.resourceId = 'R002';
             result2.betTypeName = 'Total Points';
             result2.checked = true;
-            result2.settlementStatusId = 0;
+            result2.resultStatusId = ResultStatusId.RunningZero;
 
             const result3 = new ResultDetail();
             result3.resourceId = 'R003';
             result3.betTypeName = 'Handicap';
             result3.checked = false;
-            result3.settlementStatusId = 4;
+            result3.resultStatusId = ResultStatusId.AutoCompleted;
 
             resultDetails = [result1, result2, result3];
 
@@ -355,7 +356,7 @@ describe('Service: EarlyService', () => {
 
         it('should return resource names for unchecked and non-calculated related resources', () => {
             resultDetails[1].checked = false;
-            resultDetails[2].settlementStatusId = 0;
+            resultDetails[2].resultStatusId = ResultStatusId.RunningZero;
 
             const result = service.FindRelatedResourceInValid(resultDetails, selectedResources);
 
