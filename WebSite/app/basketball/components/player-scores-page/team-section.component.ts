@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { OnlyIntegerDirective } from '../../../shared/directives/only-integer.directive.native';
@@ -27,7 +27,7 @@ import { Player } from './models';
                       type="checkbox"
                       style="margin: 0"
                       [(ngModel)]="player.checked"
-                      (change)="onCheckboxChange(player.playerId)"
+                      (ngModelChange)="onCheckboxChange($event, player)"
                     />
                     <span style="font-weight: bold">{{ player.playerName }}</span>
                   </div>
@@ -41,10 +41,11 @@ import { Player } from './models';
                       [class.isCalculated]="score.isCalculated"
                       [class.isRefunded]="score.isRefunded"
                       [class.isConfirmedRefund]="score.isConfirmedRefund"
+                      [class.isEmpty]="score.isEmpty"
                     >
                       <input
                         type="text"
-                        [value]="score.value"
+                        [(ngModel)]="score.value"
                         class="input-score"
                         [class.checked]="score.checked"
                         [class.isConfirmed]="score.isConfirmed"
@@ -110,7 +111,8 @@ import { Player } from './models';
       </thead>
     </ng-template>
   `,
-  styleUrls: ['./team-section.component.css']
+  styleUrls: ['./team-section.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TeamSectionComponent {
 
@@ -123,7 +125,7 @@ export class TeamSectionComponent {
   @Output() unholdResult = new EventEmitter<number>();
   @Output() confirmResult = new EventEmitter<number>();
   @Output() unconfirmResult = new EventEmitter<number>();
-  @Output() checkboxChange = new EventEmitter<number>();
+  @Output() checkboxChange = new EventEmitter<{playerId: number, checked: boolean}>();
 
   toggleTeam(): void {
     this.toggleCollapse.emit();
@@ -145,7 +147,7 @@ export class TeamSectionComponent {
     this.unconfirmResult.emit(playerId);
   }
 
-  onCheckboxChange(playerId: number) {
-    this.checkboxChange.emit(playerId);
-    }
+  onCheckboxChange(value: boolean, player: Player) {
+   this.checkboxChange.emit({playerId: player.playerId, checked: value});
+  }
 }

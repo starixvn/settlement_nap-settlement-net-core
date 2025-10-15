@@ -234,4 +234,9 @@ export class AioService {
         return this.httpRequestService.getJson<T>(`${this.aioApi}/results/${query.matchId}`);
     }
 
+    public updateResultDetails(data: object) {
+        const request = this.httpRequestService.postJson<Result>(data, `${this.aioApi}/result-details`);
+        return firstValueFrom(request);
+    }
+
 }

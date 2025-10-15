@@ -1,8 +1,16 @@
 import { ResultStatusId } from "../../../shared/constants/result-status-id.native";
-import { ResultSettingModel } from "../../../shared/models/result-setting.model";
-import { ResultDetail } from "../../../shared/models/sportsbook-sop";
+import {
+  OddFlexModel,
+  ResultDetail,
+} from "../../../shared/models/sportsbook-sop";
 
-export type playerScoreType = 'points' | 'threePointFG' | 'rebounds' | 'assists' | 'blocks' | 'steals';
+export type playerScoreType =
+  | "points"
+  | "threePointFG"
+  | "rebounds"
+  | "assists"
+  | "blocks"
+  | "steals";
 
 export interface Player {
   playerId: number;
@@ -25,8 +33,8 @@ export interface IPlayerScore {
   isCalculated: boolean;
   isRefunded: boolean;
   isConfirmedRefund: boolean;
+  isEmpty: boolean;
 }
-
 
 export class PlayerScore implements IPlayerScore {
   teamId: number;
@@ -36,48 +44,94 @@ export class PlayerScore implements IPlayerScore {
   resourceId: string;
   value: string;
   checked = false;
-  isConfirmed= false;
-  isHold= false;
-  isCalculated= false;
-  isRefunded= false;
-  isConfirmedRefund= false;
-  
+  isConfirmed = false;
+  isHold = false;
+  isCalculated = false;
+  isRefunded = false;
+  isConfirmedRefund = false;
+  isEmpty = false;
 
   static fromResultDetail(resultDetail: ResultDetail): PlayerScore {
-    const resourceIdMapping = {
-      '653': 'points',
-      '662': 'threePointFG', 
-      '659': 'rebounds',
-      '656': 'assists',
-      '665': 'blocks',
-      '667': 'steals'
-    };
-    const p = new PlayerScore();
-    p.key = resourceIdMapping[resultDetail.resourceId.substring(0, 3)] as playerScoreType;
-    p.resourceId = resultDetail.resourceId;
-    p.value = resultDetail.homeValue;
-    p.isConfirmed = resultDetail.resultStatusId === ResultStatusId.TraderConfirm;
-    p.isHold = resultDetail.resultSettingData.isHoldResult;
-    p.isCalculated = resultDetail.resultStatusId === ResultStatusId.AutoCompleted || resultDetail.resultStatusId === ResultStatusId.ManualCompleted;
-    p.isRefunded = resultDetail.resultStatusId === ResultStatusId.Refund;
-    p.isConfirmedRefund = resultDetail.resultSettingData.isConfirmedRefund;
-
-    p.playerId = +resultDetail.oddFlex[0].info.playerId;
-    p.playerName = resultDetail.oddFlex[0].info.playerName;
-    p.teamId = +resultDetail.oddFlex[0].info.teamId;
-
-    return p;
+    return new PlayerScoreBuilder()
+      .withResourceId(resultDetail.resourceId)
+      .withValue(resultDetail.homeValue)
+      .withStatusFlags(resultDetail)
+      .withPlayerInfo(resultDetail.oddFlex)
+      .build();
   }
 
   static toResultDetail(playerScore: PlayerScore): ResultDetail {
-    const p = new ResultDetail();
-    p.betType = playerScore.key;
-    p.resourceId = playerScore.resourceId;
-    p.homeValue = playerScore.value;
-    p.checked = playerScore.checked;
-    p.resultStatusId = playerScore.isConfirmed ? 3 : 0;
-    p.resultSettingData = new ResultSettingModel();
-    p.resultSettingData.isConfirmedRefund = playerScore.isConfirmedRefund;
-    return p;
+    const resultDetail = new ResultDetail();
+    resultDetail.resourceId = playerScore.resourceId;
+    resultDetail.homeValue = playerScore.value;
+    return resultDetail;
+  }
+}
+
+class PlayerScoreBuilder {
+  private readonly playerScore: PlayerScore;
+
+  constructor() {
+    this.playerScore = new PlayerScore();
+  }
+
+  withResourceId(resourceId: string): PlayerScoreBuilder {
+    this.playerScore.resourceId = resourceId;
+    this.playerScore.key = this.getScoreTypeFromResourceId(resourceId);
+    return this;
+  }
+
+  withValue(value: string): PlayerScoreBuilder {
+    this.playerScore.value = value || "";
+    return this;
+  }
+
+  withStatusFlags(resultDetail: ResultDetail): PlayerScoreBuilder {
+    this.playerScore.isConfirmed =
+      resultDetail.resultStatusId === ResultStatusId.TraderConfirm;
+    this.playerScore.isHold =
+      resultDetail.resultSettingData?.isHoldResult || false;
+    this.playerScore.isCalculated =
+      resultDetail.resultStatusId === ResultStatusId.AutoCompleted ||
+      resultDetail.resultStatusId === ResultStatusId.ManualCompleted;
+    this.playerScore.isRefunded =
+      resultDetail.resultStatusId === ResultStatusId.Refund;
+    this.playerScore.isConfirmedRefund =
+      resultDetail.resultSettingData?.isConfirmedRefund || false;
+    return this;
+  }
+
+  withPlayerInfo(oddFlexInfos: OddFlexModel[]): PlayerScoreBuilder {
+    if (oddFlexInfos.length) {
+      const oddFlexInfo = oddFlexInfos[0];
+      this.playerScore.playerId = Number(oddFlexInfo.info.playerId) || 0;
+      this.playerScore.playerName = oddFlexInfo.info.playerName || "";
+      this.playerScore.teamId = Number(oddFlexInfo.info.teamId) || 0;
+    } else {
+      this.playerScore.playerId = 0;
+      this.playerScore.playerName = "";
+      this.playerScore.teamId = 0;
+    }
+    return this;
+  }
+
+  build(): PlayerScore {
+    return this.playerScore;
+  }
+
+  private getScoreTypeFromResourceId(resourceId: string): playerScoreType {
+    const resourceIdMapping: Record<string, playerScoreType> = {
+      "653": "points",
+      "662": "threePointFG",
+      "659": "rebounds",
+      "656": "assists",
+      "665": "blocks",
+      "667": "steals",
+    };
+
+    const resourcePrefix = resourceId?.substring(0, 3);
+    const scoreType = resourceIdMapping[resourcePrefix];
+
+    return scoreType;
   }
 }

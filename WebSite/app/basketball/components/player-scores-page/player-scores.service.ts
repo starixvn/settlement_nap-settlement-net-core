@@ -7,7 +7,7 @@ import { ResultDetail } from '../../../shared/models/sportsbook-sop';
 @Injectable({
   providedIn: 'root'
 })
-export class PlayerScoresMappingService {
+export class PlayerScoresService {
   
   mapMatchToPlayerScores(match: Match): Player[] {
     const playerScores = this.mapResultDetailsToPlayerScores(match.resultDetails);
@@ -52,5 +52,30 @@ export class PlayerScoresMappingService {
     });
 
     return fullScores;
+  }
+
+
+  updatePlayers(players: Player[], playerId: number, checked: boolean): Player[] {
+    return players.map(player => 
+      player.playerId === playerId 
+        ? this.updatePlayerScores(player, checked)
+        : player
+    );
+  }
+
+  private updatePlayerScores(player: Player, checked: boolean): Player {
+    return {
+      ...player,
+      scores: player.scores.map(score => 
+        score ? { ...score, checked } : score
+      )
+    };
+  }
+
+  getCheckedScoresForPlayer(players: Player[], playerId: number): PlayerScore[] {
+    return players
+      .filter(player => player.playerId === playerId)
+      .flatMap(player => player.scores)
+      .filter(score => score && score.checked);
   }
 }

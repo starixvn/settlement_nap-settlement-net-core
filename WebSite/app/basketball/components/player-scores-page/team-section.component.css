@@ -42,7 +42,6 @@
 }
 
 .input-score {
-  border: 1px solid #000;
   outline: none;
 }
 .input-score:focus {
@@ -75,6 +74,10 @@
 
 .input-score-col.isConfirmedRefund {
   background-color: #ffff00;
+}
+
+.input-score-col.isEmpty {
+  background-color: red;
 }
 
 .team-name {

@@ -1,20 +1,19 @@
 import { Component, Inject, inject, OnInit, ViewChild } from '@angular/core';
-import { MatchDetail, SportTemplate } from '../../../shared/models/sportsbook-sop';
+import { MatchDetail } from '../../../shared/models/sportsbook-sop';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AioService, BlockUIService, MessageBoxService } from '../../../shared/services';
 import { ResultSettingType } from '../../../shared/constants';
 import { Match } from '../../models';
 import * as _ from 'lodash';
-import { Player } from './models';
+import { Player, PlayerScore } from './models';
 import { ModalDialogMessage, ResultSettingQuery } from '../../../shared/models';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import { Language } from '../../../shared/language.native';
 import { TeamFilterPipe } from './team-filter.pipe';
 import { MatchHeaderComponent } from './match-header.component';
 import { TeamSectionComponent } from './team-section.component';
-import { UrlHelper } from '../../../helper/url-helper';
-import { PlayerScoresMappingService } from './player-scores-mapping.service';
+import { PlayerScoresService } from './player-scores.service';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 
@@ -31,25 +30,20 @@ export class PlayerScoresPageComponent implements OnInit {
 
   @ViewChild(ToastContainerDirective, { static: true })
   toastContainer: ToastContainerDirective;
-  readonly dialogRef = inject(MatDialogRef<PlayerScoresPageComponent>);
 
+  private readonly dialogRef = inject(MatDialogRef<PlayerScoresPageComponent>);
   private readonly messageBoxService = inject(MessageBoxService);
   private readonly aioService = inject(AioService);
   private readonly toastService = inject(ToastrService);
   private readonly blockUiService = inject(BlockUIService);
-  private readonly playerScoresMappingService = inject(PlayerScoresMappingService);
+  private readonly playerScoresMappingService = inject(PlayerScoresService);
   private readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
-
-  public close() {
-    this.dialogRef.close();
-  }
 
   matchDetail: MatchDetail = new MatchDetail();
   blockUI = false;
   players: Player[] = [];
   isHomeTeamCollapsed = false;
   isAwayTeamCollapsed = false;
-
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: { matchId: number }) { }
 
@@ -59,39 +53,24 @@ export class PlayerScoresPageComponent implements OnInit {
     this.loadData();
   }
 
+  public close() {
+    this.dialogRef.close();
+  }
+
   loadData() {
+    this.blockUiService.startBlock(true);
     this.aioService.getResultsObservable<Match>({
       matchId: this.data.matchId
     }).subscribe((match) => {
       this.matchDetail = match.matchDetail;
       this.players = this.playerScoresMappingService.mapMatchToPlayerScores(match);
+      this.blockUiService.stopBlock();
     });
   }
-
 
   holdResult(playerId: number) {
     this.toastService.clear();
     this.holdOrUnholdResult(playerId, true);
-  }
-
-  private holdOrUnholdResult(playerId: number, isHold: boolean) {
-    const resourceIds = this.players
-      .filter(x => x.playerId === playerId)
-      .flatMap(x => x.scores)
-      .filter(x => x && x.checked)
-      .map(x => x.resourceId)
-      .join(',');
-
-    if (_.isEmpty(resourceIds)) {
-      this.toastService.error(Language.noResourceSelected);
-      return;
-    }
-
-    this.confirmationDialogMessage.message = isHold ? Language.holdResultConfirmMessage : Language.unholdResultConfirmMessage;
-    this.messageBoxService.confirm(this.confirmationDialogMessage, async () => {
-      const query = new ResultSettingQuery(this.matchDetail.matchId, ResultSettingType.holdResult, isHold, resourceIds);
-      await this.aioService.changeResultSetting(query)
-    });
   }
 
   unholdResult(playerId: number) {
@@ -101,27 +80,13 @@ export class PlayerScoresPageComponent implements OnInit {
 
   async unconfirmResult(playerId: number) {
     this.toastService.clear();
-    
+    this.confirmOrUnconfirmResult(playerId, false);
+
   }
 
-  async confirmResult(playerId: number) {
+  confirmResult(playerId: number) {
     this.toastService.clear();
-    const checkedScores = this.players
-      .filter(x => x.playerId === playerId)
-      .flatMap(x => x.scores)
-      .filter(x => x && x.checked);
-      
-      if(_.isEmpty(checkedScores)) {
-        this.toastService.error(Language.noResourceSelected);
-        return;
-      }
-      
-      this.confirmationDialogMessage.message = Language.confirmResultConfirmMessage;
-      this.messageBoxService.confirm(this.confirmationDialogMessage, async () => {
-        const query = new ResultSettingQuery(this.matchDetail.matchId, ResultSettingType.holdResult, true, checkedScores.map(x => x.resourceId).join(','));
-        await this.aioService.changeResultSetting(query)
-      });
-      
+    this.confirmOrUnconfirmResult(playerId, true);
   }
 
 
@@ -133,7 +98,71 @@ export class PlayerScoresPageComponent implements OnInit {
     this.isAwayTeamCollapsed = !this.isAwayTeamCollapsed;
   }
 
-  onCheckboxChange(playerId: number) {
-    this.players = this.players.map(x => x.playerId === playerId ? { ...x, checked: !x.checked } : x);
+  onCheckboxChange(event: { playerId: number, checked: boolean }) {
+    this.players = this.playerScoresMappingService
+      .updatePlayers(this.players, event.playerId, event.checked);
+  }
+
+  private confirmOrUnconfirmResult(playerId: number, isConfirm: boolean) {
+    const checkedScores = this.playerScoresMappingService
+      .getCheckedScoresForPlayer(this.players, playerId);
+
+    if (_.isEmpty(checkedScores)) {
+      this.toastService.error(Language.noResourceSelected);
+      return;
+    }
+
+    if (checkedScores.some(x => _.isEmpty(x.value) || x.isCalculated || x.isRefunded)) {
+      this.toastService.error(Language.NotSpecifyValidResults);
+      return;
+    }
+
+    this.showConfirmationDialog(checkedScores, isConfirm);
+  }
+
+  private showConfirmationDialog(checkedScores: PlayerScore[], isConfirm: boolean): void {
+    this.confirmationDialogMessage.message = Language.confirmResultConfirmMessage;
+    this.messageBoxService.confirm(this.confirmationDialogMessage, async () => {
+      const resultDetails = checkedScores.map(score => PlayerScore.toResultDetail(score));
+      const data = {
+        matchId: this.matchDetail.matchId,
+        resultDetails: resultDetails,
+        isConfirm: isConfirm
+      };
+
+      const result = await this.aioService.updateResultDetails(data);
+      if (!result.isSuccessful) {
+        this.toastService.error(result.errMsg);
+        return;
+      }
+
+      this.loadData();
+    });
+  }
+
+  private holdOrUnholdResult(playerId: number, isHold: boolean) {
+    const resourceIds = this.playerScoresMappingService
+      .getCheckedScoresForPlayer(this.players, playerId)
+      .map(x => x.resourceId).join(',');
+
+    if (_.isEmpty(resourceIds)) {
+      this.toastService.error(Language.noResourceSelected);
+      return;
+    }
+
+    this.confirmationDialogMessage.message = isHold
+      ? Language.holdResultConfirmMessage
+      : Language.unholdResultConfirmMessage;
+
+    this.messageBoxService.confirm(this.confirmationDialogMessage, async () => {
+      const query = new ResultSettingQuery(
+        this.matchDetail.matchId,
+        ResultSettingType.holdResult,
+        isHold,
+        resourceIds);
+
+      await this.aioService.changeResultSetting(query);
+      this.loadData();
+    });
   }
 }
