@@ -17,7 +17,7 @@ export class MixAutoFillService {
     }
   }
 
-  private findReboundsAssistsResult(resultDetails: ResultDetail[]): ResultDetail {
+  private findReboundsAssistsResult(resultDetails: ResultDetail[]) {
     return resultDetails.find(result => _.isEqual(result.betType, PlayerBetTypes.reboundsAssists));
   }
 
@@ -26,64 +26,27 @@ export class MixAutoFillService {
     const reboundsResult = this.findResultByBetType(resultDetails, PlayerBetTypes.rebounds);
 
     if (assistsResult || reboundsResult) {
-      const reboundsValue = this.getReboundsValue(reboundsResult);
-      const assistsValue = this.getAssistsValue(assistsResult);
-      
-      this.updateReboundsAssistsResult(reboundsAssistsResult, reboundsValue, assistsValue);
+      this.updateReboundsAssistsResult(reboundsAssistsResult, reboundsResult.homeValue, assistsResult.homeValue);
       this.updateExternalScores(reboundsAssistsResult, reboundsResult, assistsResult);
     }
   }
 
-  private findResultByBetType(resultDetails: ResultDetail[], betType: string): ResultDetail {
+  private findResultByBetType(resultDetails: ResultDetail[], betType: string) {
     return resultDetails.find(result => _.isEqual(result.betType, betType));
   }
 
-  private getReboundsValue(reboundsResult: ResultDetail): number {
-    if (!reboundsResult || !reboundsResult.externalScores || reboundsResult.externalScores.length === 0) {
-      return 0;
-    }
-
-    const reboundsExternalScore = reboundsResult.externalScores.find(score => 
-      _.isEqual(score.resourceId, reboundsResult.resourceId)
-    );
-
-    if (reboundsExternalScore && !_.isEmpty(reboundsExternalScore.homeValue)) {
-      return parseInt(reboundsExternalScore.homeValue) || 0;
-    }
-
-    return 0;
+  private updateReboundsAssistsResult(reboundsAssistsResult: ResultDetail, reboundsValue: string, assistsValue: string) {
+   if(!_.isEmpty(reboundsValue) && !_.isEmpty(assistsValue)) {
+     const totalValue = parseInt(reboundsValue) + parseInt(assistsValue);
+     reboundsAssistsResult.homeValue = totalValue.toString();
+     reboundsAssistsResult.checked = true;
+   }
   }
 
-  private getAssistsValue(assistsResult: ResultDetail): number {
-    if (!assistsResult || !assistsResult.externalScores || assistsResult.externalScores.length === 0) {
-      return 0;
-    }
-
-    const assistsExternalScore = assistsResult.externalScores.find(score => 
-      _.isEqual(score.resourceId, assistsResult.resourceId)
-    );
-
-    if (assistsExternalScore && !_.isEmpty(assistsExternalScore.homeValue)) {
-      return parseInt(assistsExternalScore.homeValue) || 0;
-    }
-
-    return 0;
-  }
-
-  private updateReboundsAssistsResult(reboundsAssistsResult: ResultDetail, reboundsValue: number, assistsValue: number): void {
-    const totalValue = reboundsValue + assistsValue;
-    reboundsAssistsResult.homeValue = totalValue.toString();
-    reboundsAssistsResult.checked = true;
-  }
-
-  private updateExternalScores(reboundsAssistsResult: ResultDetail, reboundsResult: ResultDetail, assistsResult: ResultDetail): void {
-    if (!reboundsAssistsResult.externalScores || reboundsAssistsResult.externalScores.length === 0) {
-      return;
-    }
-
+  private updateExternalScores(reboundsAssistsResult: ResultDetail, reboundsResult: ResultDetail, assistsResult: ResultDetail) {
     reboundsAssistsResult.externalScores.forEach((externalScore, index) => {
-      const reboundsExternalScore = this.getExternalScoreByIndex(reboundsResult, index);
-      const assistsExternalScore = this.getExternalScoreByIndex(assistsResult, index);
+      const reboundsExternalScore = reboundsResult.externalScores[index];
+      const assistsExternalScore = assistsResult.externalScores[index];
 
       if (this.hasValidHomeValue(reboundsExternalScore) && this.hasValidHomeValue(assistsExternalScore)) {
         const reboundsValue = parseInt(reboundsExternalScore.homeValue);
@@ -93,14 +56,7 @@ export class MixAutoFillService {
     });
   }
 
-  private getExternalScoreByIndex(result: ResultDetail, index: number) {
-    if (!result || !result.externalScores || !result.externalScores[index]) {
-      return null;
-    }
-    return result.externalScores[index];
-  }
-
-  private hasValidHomeValue(externalScore: ExternalResultDetail): boolean {
+  private hasValidHomeValue(externalScore: ExternalResultDetail) {
     return externalScore && !_.isEmpty(externalScore.homeValue);
   }
 }
