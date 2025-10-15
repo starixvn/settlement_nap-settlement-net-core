@@ -54,8 +54,12 @@ describe('UpdateDeadheatSettingComponent', () => {
     betCount: 0,
     originalScreenshot: '',
     screenShot: '',
-    confirmBy: '',
-    mismatchClass: ''
+    confirmedBy: '',
+    mismatchClass: '',
+    traderConfirmClass: '',
+    traderScore: '',
+    originalTraderScore: '',
+    resultStatusId: 1
   }
 
   const dialogMock = {

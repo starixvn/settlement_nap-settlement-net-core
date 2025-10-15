@@ -12,7 +12,7 @@
       <th scope="col" class="w-10 center">
         Event Status
       </th>
-      <th *ngIf="false" scope="col" class="w-10 center">Confirm</th>
+      <th scope="col" class="w-10 center">Confirm</th>
     </tr>
   </thead>
 </ng-template>
@@ -87,7 +87,9 @@
         <td class="w-10 center">{{ team.betCount }}</td>
         <td class="w-10 center" [ngClass]="eventStatusColor(team)">{{
           UpperCaseFirstChar(team.status.toLocaleLowerCase())}}</td>
-        <td *ngIf="false" class="w-10 center">{{team.confirm}}</td>
+        <td  class="w-10 center">
+          <span *ngIf="team.confirmedBy">{{team.confirmedBy}}</span>
+        </td>
       </tr>
     </ng-template>
   </ng-container>

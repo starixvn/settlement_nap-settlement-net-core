@@ -25,27 +25,37 @@
 		</div>
 
 		<div class="footer" *ngIf="teams.length > 0">
-			<button [ngClass]="{  button: true, 'btn-disabled': disableCalculate() }"
-				[disabled]="disableCalculate()" (click)="calculate()">
-				Calculate
-			</button>
+			<div class="calculate-button-group">
+				<button [ngClass]="{  button: true, 'btn-disabled': disableCalculate() }" [disabled]="disableCalculate()"
+					(click)="calculate()">
+					Calculate
+				</button>
 
-			<button *ngIf="viewRecalculate" [ngClass]="{  button: true, 'btn-disabled': disableRecalculate }"
-				[disabled]="disableRecalculate" (click)="calculate(false)">
-				Re-Calculate
-			</button>
+				<button *ngIf="viewRecalculate" [ngClass]="{  button: true, 'btn-disabled': disableRecalculate }"
+					[disabled]="disableRecalculate" (click)="calculate(false)">
+					Re-Calculate
+				</button>
+			</div>
 
-			<button class="save-score btn btn-danger" [ngClass]="{ 'btn-disabled': disableRecalculate }"
-				[disabled]="disableRecalculate" (click)="saveScore()">
-				Save Score
-			</button>
+			<div class="save-score-button-group">
+				<button *ngIf="permission.isLeader" class="save-score btn btn-danger" [ngClass]="{ 'btn-disabled': disableRecalculate }"
+					[disabled]="disableRecalculate" (click)="saveTraderScore()">
+					Save Trader Score
+				</button>
+
+				<button class="save-score btn btn-danger" [ngClass]="{ 'btn-disabled': disableRecalculate }"
+					[disabled]="disableRecalculate" (click)="saveScore()">
+					Save Score
+				</button>
+			</div>
 		</div>
 	</div>
 
 	<ng-template #body>
 		<table>
 			<tbody>
-				<tr *ngIf="(teams | status: statusSelected : screenshotSelected | ticketStatusFilter: ticketStatusSelected).length == 0">
+				<tr
+					*ngIf="(teams | status: statusSelected : screenshotSelected | ticketStatusFilter: ticketStatusSelected).length == 0">
 					<td [attr.colspan]="leagueSettle.permission.isLeader ? '8' : '6'">There is no information available</td>
 				</tr>
 
@@ -63,16 +73,27 @@
 								status.text }}</option>
 						</select>
 					</td>
-					<td class="code">
+					@if(permission.isLeader) {
+					<td class="status" [ngClass]="team.mismatchClass">
+						<select [(ngModel)]="team.traderScore" [disabled]="!team.selected || !leagueSettle.permission.isLeader"
+							(ngModelChange)="changeTraderScore(team)">
+							<option *ngFor="let status of teamStatus" [value]="status.text | uppercase" [hidden]="!status.isShow"> {{
+								status.text }}</option>
+						</select>
+
+						<!-- <span>{{ team.traderScore || '-' }}</span> -->
+					</td>
+					}
+					<td class="code" [ngClass]="team.mismatchClass">
 						<input type="checkbox" [(ngModel)]="team.isDeadheat" [disabled]="team.disableDeadheat || !team.selected"
 							(click)="clearError()" />
 					</td>
-					<td class="code">
+					<td class="code" [ngClass]="team.mismatchClass">
 						<ngbd-date-picker [date]="team.dateTime" [disabled]="!team.selected" (change)="onSelectDate($event, team)"
 							[minDate]="moveBetsDay" [maxDate]="today">
 						</ngbd-date-picker>
 					</td>
-					<td class="status" [ngClass]="team.mismatchClass">
+					<td class="status" [ngClass]="[team.traderConfirmClass,team.mismatchClass ]">
 						<select [(ngModel)]="team.screenShot" [disabled]="!team.selected" (ngModelChange)="changeScreenshot(team)">
 							<option *ngFor="let status of teamStatus" [value]="status.text | uppercase" [hidden]="!status.isShow"> {{
 								status.text }}</option>
@@ -102,13 +123,19 @@
 						</div>
 					</th>
 					<th class="status">
-						Final Score
+						Status
 						<select [(ngModel)]="statusSelected" (ngModelChange)="selectStatus()">
 							<option *ngFor="let status of filterStatuses" [value]="status | uppercase">
 								{{ status }}
 							</option>
 						</select>
 					</th>
+
+					@if(permission.isLeader) {
+					<th class="status">
+						Trader Score
+					</th>
+					}
 					<th class="code">
 						Dead Heat
 					</th>

@@ -55,8 +55,12 @@ describe('CalculatePopupComponent', () => {
     originalStatus: '',
     originalScreenshot: '',
     screenShot: '',
-    confirmBy: '',
-    mismatchClass: ''
+    confirmedBy: '',
+    mismatchClass: '',
+    traderConfirmClass: '',
+    traderScore: '',
+    originalTraderScore: '',
+    resultStatusId: 1
   }
   const leagueSettle: LeagueSettle = {
     leagueName: '',
@@ -371,22 +375,12 @@ describe('CalculatePopupComponent', () => {
 
     it('should return status-mismatched when status and screenshot do not match', () => {
       team.originalStatus = 'RUNNING';
-      team.status = 'WON';
+      team.status = 'HIDE';
       team.screenShot = 'LOSE';
 
       const actual = component.makeBackgroundByStatus(team);
 
       expect(actual).toBe('status-mismatched');
-    });
-
-    it('should return empty string when status and screenshot match', () => {
-      team.originalStatus = 'RUNNING';
-      team.status = 'WON';
-      team.screenShot = 'WON';
-
-      const actual = component.makeBackgroundByStatus(team);
-
-      expect(actual).toBe('');
     });
   });
 
@@ -651,8 +645,447 @@ describe('CalculatePopupComponent', () => {
       expect(outrightService.saveScore).toHaveBeenCalledWith(component.teamSelected);
     });
   });
+
+  describe("autoFillFinalScore", () => {
+    it('should set status to traderScore when conditions are met', () => {
+      team.originalStatus = 'RUNNING';
+      team.originalTraderScore = 'WON';
+      team.screenShot = 'WON';
+      team.traderScore = 'WON';
+      component.changeStatus = jest.fn();
+
+      component.autoFillFinalScore(team);
+
+      expect(team.status).toBe('WON');
+      expect(component.changeStatus).toHaveBeenCalledWith(team);
+    });
+
+    it('should set status to originalStatus when traderScore is empty', () => {
+      team.originalStatus = 'RUNNING';
+      team.originalTraderScore = '';
+      team.screenShot = 'WON';
+      team.traderScore = 'WON';
+      component.changeStatus = jest.fn();
+
+      component.autoFillFinalScore(team);
+
+      expect(team.status).toBe('RUNNING');
+      expect(component.changeStatus).toHaveBeenCalledWith(team);
+    });
+
+    it('should set status to originalStatus when screenshot and traderScore do not match', () => {
+      team.originalStatus = 'RUNNING';
+      team.originalTraderScore = 'WON';
+      team.screenShot = 'LOSE';
+      team.traderScore = 'WON';
+      component.changeStatus = jest.fn();
+
+      component.autoFillFinalScore(team);
+
+      expect(team.status).toBe('RUNNING');
+      expect(component.changeStatus).toHaveBeenCalledWith(team);
+    });
+  });
+
+  describe("traderConfirmClass", () => {
+    it('should return bg-result-confirmed when conditions are met', () => {
+      team.originalTraderScore = 'WON';
+      team.originalStatus = 'RUNNING';
+      team.resultStatusId = 3;
+
+      const result = component.traderConfirmClass(team);
+
+      expect(result).toBe('bg-result-confirmed');
+    });
+
+    it('should return empty string when originalTraderScore is empty', () => {
+      team.originalTraderScore = '';
+      team.originalStatus = 'RUNNING';
+      team.resultStatusId = 3;
+
+      const result = component.traderConfirmClass(team);
+
+      expect(result).toBe('');
+    });
+
+    it('should return empty string when resultStatusId is not 3', () => {
+      team.originalTraderScore = 'WON';
+      team.originalStatus = 'RUNNING';
+      team.resultStatusId = 1;
+
+      const result = component.traderConfirmClass(team);
+
+      expect(result).toBe('');
+    });
+  });
+
+  describe("changeTraderScore", () => {
+    it('should clear error and call autoFillFinalScore', () => {
+      toastrService.clear = jest.fn();
+      component.autoFillFinalScore = jest.fn();
+
+      component.changeTraderScore(team);
+
+      expect(toastrService.clear).toHaveBeenCalled();
+      expect(component.autoFillFinalScore).toHaveBeenCalledWith(team);
+    });
+  });
+
+  describe("mismatch detection methods", () => {
+    describe("isMismatchStatusScreenshot", () => {
+      it('should return true when status and screenshot do not match', () => {
+        team.status = 'WON';
+        team.screenShot = 'LOSE';
+
+        const result = component['isMismatchStatusScreenshot'](team);
+
+        expect(result).toBeTruthy();
+      });
+
+      it('should return false when status and screenshot match', () => {
+        team.status = 'WON';
+        team.screenShot = 'WON';
+
+        const result = component['isMismatchStatusScreenshot'](team);
+
+        expect(result).toBeFalsy();
+      });
+
+      it('should return false when screenshot is empty', () => {
+        team.status = 'WON';
+        team.screenShot = '';
+
+        const result = component['isMismatchStatusScreenshot'](team);
+
+        expect(result).toBeFalsy();
+      });
+
+      it('should return false when status is empty', () => {
+        team.status = '';
+        team.screenShot = 'WON';
+
+        const result = component['isMismatchStatusScreenshot'](team);
+
+        expect(result).toBeFalsy();
+      });
+    });
+
+    describe("isMismatchStatusTraderScore", () => {
+      it('should return true when status and traderScore do not match and status is not running', () => {
+        team.status = 'WON';
+        team.traderScore = 'LOSE';
+
+        const result = component['isMismatchStatusTraderScore'](team);
+
+        expect(result).toBeTruthy();
+      });
+
+      it('should return false when status is running', () => {
+        team.status = 'RUNNING';
+        team.traderScore = 'WON';
+
+        const result = component['isMismatchStatusTraderScore'](team);
+
+        expect(result).toBeFalsy();
+      });
+
+      it('should return false when traderScore is empty', () => {
+        team.status = 'WON';
+        team.traderScore = '';
+
+        const result = component['isMismatchStatusTraderScore'](team);
+
+        expect(result).toBeFalsy();
+      });
+    });
+
+    describe("isMismatchScreenshotAndTraderScore", () => {
+      it('should return true when screenshot and traderScore do not match and screenshot is not running', () => {
+        team.screenShot = 'WON';
+        team.traderScore = 'LOSE';
+
+        const result = component['isMismatchScreenshotAndTraderScore'](team);
+
+        expect(result).toBeTruthy();
+      });
+
+      it('should return false when screenshot is running', () => {
+        team.screenShot = 'RUNNING';
+        team.traderScore = 'WON';
+
+        const result = component['isMismatchScreenshotAndTraderScore'](team);
+
+        expect(result).toBeFalsy();
+      });
+
+      it('should return false when screenshot is empty', () => {
+        team.screenShot = '';
+        team.traderScore = 'WON';
+
+        const result = component['isMismatchScreenshotAndTraderScore'](team);
+
+        expect(result).toBeFalsy();
+      });
+
+      it('should return false when traderScore is empty', () => {
+        team.screenShot = 'WON';
+        team.traderScore = '';
+
+        const result = component['isMismatchScreenshotAndTraderScore'](team);
+
+        expect(result).toBeFalsy();
+      });
+    });
+  });
+
+  describe("verifyTraderScore", () => {
+    beforeEach(() => {
+      component.permission = { isLeader: true } as Permission;
+    });
+
+    it('should return true when leader and team has empty traderScore', () => {
+      team.traderScore = '';
+      team.status = 'WON';
+      team.selected = true;
+      component.teams = [team];
+
+      const result = component['verifyTraderScore']();
+
+      expect(result).toBeTruthy();
+    });
+
+    it('should return true when leader and status does not match traderScore', () => {
+      team.traderScore = 'WON';
+      team.status = 'LOSE';
+      team.selected = true;
+      component.teams = [team];
+
+      const result = component['verifyTraderScore']();
+
+      expect(result).toBeTruthy();
+    });
+
+    it('should return false when not leader', () => {
+      component.permission = { isLeader: false } as Permission;
+      team.traderScore = '';
+      team.selected = true;
+      component.teams = [team];
+
+      const result = component['verifyTraderScore']();
+
+      expect(result).toBeFalsy();
+    });
+
+    it('should return false when all teams have valid traderScore', () => {
+      team.traderScore = 'WON';
+      team.status = 'WON';
+      team.selected = true;
+      component.teams = [team];
+
+      const result = component['verifyTraderScore']();
+
+      expect(result).toBeFalsy();
+    });
+  });
+
+  describe("verifyScreenshot", () => {
+    it('should return true when status and screenshot do not match', () => {
+      team.status = 'WON';
+      team.screenShot = 'LOSE';
+      team.selected = true;
+      component.teams = [team];
+
+      const result = component['verifyScreenshot']();
+
+      expect(result).toBeTruthy();
+    });
+
+    it('should return false when status and screenshot match', () => {
+      team.status = 'WON';
+      team.screenShot = 'WON';
+      team.selected = true;
+      component.teams = [team];
+
+      const result = component['verifyScreenshot']();
+
+      expect(result).toBeFalsy();
+    });
+
+    it('should return false when screenshot is empty', () => {
+      team.status = 'WON';
+      team.screenShot = '';
+      team.selected = true;
+      component.teams = [team];
+
+      const result = component['verifyScreenshot']();
+
+      expect(result).toBeFalsy();
+    });
+
+    it('should return false when status is empty', () => {
+      team.status = '';
+      team.screenShot = 'WON';
+      team.selected = true;
+      component.teams = [team];
+
+      const result = component['verifyScreenshot']();
+
+      expect(result).toBeFalsy();
+    });
+  });
+
+  describe("saveTraderScore", () => {
+    beforeEach(() => {
+      component.permission = { isLeader: true } as Permission;
+      component.data = { leagueId: 1, sportType: 1, eventDate: '2023-10-15' };
+    });
+
+    it('should show error when team is already settled', async () => {
+      const originalTeam = { ...team, status: 'COMPLETED' };
+      component.originalTeam = [originalTeam];
+      team.selected = true;
+      component.teams = [team];
+      outrightService.getMatches = jest.fn().mockReturnValue(Promise.resolve(leagueSettle));
+      CalculateService.VerifySettledSelected = jest.fn().mockReturnValue(true);
+      toastrService.clear = jest.fn();
+      toastrService.error = jest.fn();
+
+      await component.saveTraderScore();
+
+      expect(toastrService.error).toHaveBeenCalledWith(Language.Outright.existTeamSettled);
+    });
+
+    it('should show error when exist running trader result', async () => {
+      team.traderScore = 'RUNNING';
+      team.selected = true;
+      component.teams = [team];
+      outrightService.getMatches = jest.fn().mockReturnValue(Promise.resolve(leagueSettle));
+      CalculateService.VerifySettledSelected = jest.fn().mockReturnValue(false);
+      CalculateService.existRunningResult = jest.fn().mockReturnValue(true);
+      toastrService.clear = jest.fn();
+      toastrService.error = jest.fn();
+
+      await component.saveTraderScore();
+
+      expect(toastrService.error).toHaveBeenCalledWith(Language.Outright.existRunningTraderResult);
+    });
+
+    it('should save trader score when confirmed', async () => {
+      team.traderScore = 'WON';
+      team.selected = true;
+      component.teams = [team];
+      outrightService.getMatches = jest.fn().mockReturnValue(Promise.resolve(leagueSettle));
+      CalculateService.VerifySettledSelected = jest.fn().mockReturnValue(false);
+      CalculateService.existRunningResult = jest.fn().mockReturnValue(false);
+      toastrService.clear = jest.fn();
+      outrightService.saveTraderScore = jest.fn().mockReturnValue(Promise.resolve());
+      dialogRef.close = jest.fn();
+
+      const mockConfirm = jest.fn();
+      messageBoxService.confirm = mockConfirm;
+
+      await component.saveTraderScore();
+
+      expect(messageBoxService.confirm).toHaveBeenCalled();
+
+      const confirmCallback = mockConfirm.mock.calls[0][1];
+      await confirmCallback();
+
+      expect(outrightService.saveTraderScore).toHaveBeenCalledWith(1, [{
+        orId: team.orId,
+        teamId: team.teamId,
+        result: team.traderScore
+      }]);
+      expect(dialogRef.close).toHaveBeenCalled();
+    });
+  });
+
+  describe("VerifyHideStatus", () => {
+    it('should return true when all hide teams can be voided', async () => {
+      const hideTeam = { ...team, status: 'HIDE' };
+      outrightService.checkVoidTickets = jest.fn().mockReturnValue(Promise.resolve(true));
+
+      const result = await component.VerifyHideStatus([hideTeam]);
+
+      expect(result).toBeTruthy();
+      expect(outrightService.checkVoidTickets).toHaveBeenCalled();
+    });
+
+    it('should return false when any hide team cannot be voided', async () => {
+      const hideTeam = { ...team, status: 'HIDE' };
+      outrightService.checkVoidTickets = jest.fn().mockReturnValue(Promise.resolve(false));
+
+      const result = await component.VerifyHideStatus([hideTeam]);
+
+      expect(result).toBeFalsy();
+    });
+
+    it('should return true when no hide teams', async () => {
+      const result = await component.VerifyHideStatus([]);
+
+      expect(result).toBeTruthy();
+    });
+  });
+
+  describe("Edge cases and error scenarios", () => {
+    it('should handle empty teams array in filteredTeam', () => {
+      component.teams = [];
+      statusPipe.transform = jest.fn().mockReturnValue([]);
+      ticketStatusFilterPipe.transform = jest.fn().mockReturnValue([]);
+
+      const result = component.filteredTeam();
+
+      expect(result).toEqual([]);
+    });
+
+    it('should handle empty teamSelected array in disableCalculate', () => {
+      component.teams = [];
+      component.leagueSettle = { permission: { canCalculateOutright: true } } as LeagueSettle;
+
+      const result = component.disableCalculate();
+
+      expect(result).toBeTruthy();
+    });
+  });
+
+  describe("Integration test scenarios", () => {
+    it('should handle complete calculation workflow with multiple validations', async () => {
+      // Setup complex scenario
+      const team1 = { ...team, orId: '1', selected: true, status: 'WON', isDeadheat: false };
+      const team2 = { ...team, orId: '2', selected: true, status: 'WON', isDeadheat: true };
+      component.teams = [team1, team2];
+      component.permission = { isLeader: true, canCalculateOutright: true } as Permission;
+      
+      // Mock all services
+      outrightService.getMatches = jest.fn().mockReturnValue(Promise.resolve(leagueSettle));
+      outrightService.getDeadHeatSetting = jest.fn().mockReturnValue(Promise.resolve(DeadHeatSettings.Yes));
+      outrightService.saveScore = jest.fn().mockReturnValue(Promise.resolve());
+      outrightService.calculate = jest.fn().mockReturnValue(Promise.resolve(ResultSuccessful));
+      
+      // Mock validation methods to return false (no errors)
+      CalculateService.ExistRunningStatus = jest.fn().mockReturnValue(false);
+      CalculateService.VerifySettledSelected = jest.fn().mockReturnValue(false);
+      CalculateService.VerifyOnlyOneTeamWon = jest.fn().mockReturnValue(false);
+      CalculateService.VerifyDeadHeatYesSetting = jest.fn().mockReturnValue('');
+      component.VerifyHideStatus = jest.fn().mockReturnValue(Promise.resolve(true));
+      
+      toastrService.clear = jest.fn();
+      dialogRef.close = jest.fn();
+
+      const mockConfirm = jest.fn();
+      messageBoxService.confirm = mockConfirm;
+
+      await component.calculate();
+
+      expect(messageBoxService.confirm).toHaveBeenCalled();
+
+      const confirmCallback = mockConfirm.mock.calls[0][1];
+      await confirmCallback();
+
+      expect(outrightService.saveScore).toHaveBeenCalled();
+      expect(outrightService.calculate).toHaveBeenCalled();
+      expect(dialogRef.close).toHaveBeenCalled();
+    });
+  });
 });
-
-
-
 

@@ -53,8 +53,12 @@ describe('LeagueTeamComponent', () => {
             originalStatus: '',
             originalScreenshot: '',
             screenShot: '',
-            confirmBy: '',
-            mismatchClass: ''
+            confirmedBy: '',
+            mismatchClass: '',
+            traderConfirmClass: '',
+            traderScore: '',
+            originalTraderScore: '',
+            resultStatusId: 1
         }],
         collapsed: false,
         eventDate: '',

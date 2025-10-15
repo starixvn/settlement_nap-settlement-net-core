@@ -2,7 +2,7 @@ import { Language } from '../../shared/language.native';
 import { Injectable } from "@angular/core";
 import { Team } from "../models";
 import * as _ from "lodash";
-import { Status } from "../constants";
+import { CompletedStatus, Status } from "../constants";
 import { VerifyDeadHeatService } from './verify-deadheat.service';
 import { TicketStatusText } from '../../shared/constants';
 import { GenerateFilterService } from '../../shared/services';
@@ -23,6 +23,17 @@ export class CalculateService {
         }
 
         return false;
+    }
+
+    public static existRunningResult(listTeam: Team[], keyValue: keyof Team) {
+        return listTeam.some(team => {
+            const value = team[keyValue];
+            return (
+                value &&
+                typeof value === 'string' &&
+                !CompletedStatus.includes(value.toLowerCase())
+            );
+        });
     }
 
     public static VerifyDeadHeatNoSet(teamWonSelected: Team[], teamWonSettled: Team[]) {

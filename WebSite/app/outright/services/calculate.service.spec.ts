@@ -2,7 +2,7 @@ import { Team, } from './../models';
 import { CalculateService } from "./calculate.service";
 import * as _ from 'lodash';
 import { Language } from '../../shared/language.native';
-import { Status } from '../constants';
+import { Status, CompletedStatus } from '../constants';
 
 describe('CalculateService', () => {
     const team: Team = {
@@ -29,8 +29,12 @@ describe('CalculateService', () => {
         originalStatus: '',
         originalScreenshot: '',
         screenShot: '',
-        confirmBy: '',
-        mismatchClass: ''
+        confirmedBy: '',
+        mismatchClass: '',
+        traderConfirmClass: '',
+        traderScore: '',
+        originalTraderScore: '',
+        resultStatusId: 1
     }
 
     const deadheatMatch = _.cloneDeep(team);
@@ -53,6 +57,43 @@ describe('CalculateService', () => {
         expect(actual).toBeTruthy();
     });
 
+    describe('existRunningResult', () => {
+        it('should return true if any team has a non-completed string value for key', () => {
+            const teams: Team[] = [
+                    { status: 'completed' } as Team,
+                    { status: 'running' } as Team,
+                    { status: 'pending' } as Team
+            ];
+                expect(CalculateService.existRunningResult(teams, 'status')).toBe(true);
+        });
+
+        it('should return true if all teams have completed status for key', () => {
+            const teams: Team[] = [
+                    { status: 'won' } as Team,
+                    { status: 'lose' } as Team,
+                    { status: 'hide' } as Team
+            ];
+            
+            expect(CalculateService.existRunningResult(teams, 'status')).toEqual(false);
+        });
+
+        it('should handle mixed case values for key', () => {
+            const teams: Team[] = [
+                    { status: 'Running' } as Team,
+                    { status: 'COMPLETED' } as Team
+            ];
+                expect(CalculateService.existRunningResult(teams, 'status')).toBe(true);
+        });
+
+        it('should return false if key is missing or not a string', () => {
+            const teams: Team[] = [
+                { status: 'completed' } as any,
+                    { status: 123 as any } as Team
+            ];
+                expect(CalculateService.existRunningResult(teams, 'status')).toBe(true);
+        });
+    });
+    
     describe("VerifyDeadHeatNoSet", () => {
         it("should return true when exist both deadheat and non-deadheat won match", () => {
             const actual = CalculateService.VerifyDeadHeatNoSet([deadheatMatch, nonDeadHeatMatch], []);

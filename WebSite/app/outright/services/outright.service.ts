@@ -8,6 +8,7 @@ import { LogRequest } from "../models/log-request.model";
 import { OutrightLog } from "../models/outright-log.model";
 import { ResultOutright } from "../../outright/models/result-outright.model";
 import { Result } from "../../shared/models";
+import { TeamResult } from "../models/team-result";
 
 @Injectable()
 export class OutrightService {
@@ -64,6 +65,15 @@ export class OutrightService {
             teams
         }
         const response = this.httpRequestService.postJson<Result>(query, `${this.outrightApi}/save-score`);
+        return firstValueFrom(response);
+    }
+
+    public saveTraderScore(leagueId: number, teams: TeamResult[]) {
+        const query = {
+            leagueId,
+            teams
+        }
+        const response = this.httpRequestService.postJson<Result>(query, `${this.outrightApi}/save-trader-score`);
         return firstValueFrom(response);
     }
 

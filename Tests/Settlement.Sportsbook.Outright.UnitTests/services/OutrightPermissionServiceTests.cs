@@ -6,7 +6,7 @@ using NSubstitute;
 using Settlement.Core.Configurations;
 using Settlement.Outright.Services;
 
-namespace Settlement.Sportsbook.Outright.UnitTests.services;
+namespace Settlement.Sportsbook.Outright.UnitTests.Services;
 
 public class OutrightPermissionServiceTests
 {

@@ -54,4 +54,9 @@ public class OutrightController(IMediator mediator, FilterService getDataFilterS
     [Route("save-score")]
     public async Task<IActionResult> SaveScore(SaveScoreRequest request)
         => Ok(await mediator.Send(request).ConfigureAwait(false));
+
+    [HttpPost]
+    [Route("save-trader-score")]
+    public async Task<IActionResult> SaveTraderScore(SaveTraderScoreRequest request)
+    => Ok(await mediator.Send(request).ConfigureAwait(false));
 }

@@ -5,6 +5,7 @@ namespace Settlement.Outright.Models;
 public class Team
 {
     private string screenShot = "Running";
+    private string confirmedBy = "";
     public IRefDataService RefDataService { get; set; }
 
     public int OrId { get; set; }
@@ -41,4 +42,14 @@ public class Team
     public int BetCount { get; set; }
 
     public string ScreenShot { get; set; }
+    public string TraderScore { get; set; }
+
+    public int ResultStatusId { get; set; }
+    public int ModifiedBy { get; set; }
+
+    public string ConfirmedBy
+    {
+        set => confirmedBy = ResultStatusId == 3 || ResultStatusId == 5 ? value : string.Empty;
+        get => confirmedBy;
+    }
 }

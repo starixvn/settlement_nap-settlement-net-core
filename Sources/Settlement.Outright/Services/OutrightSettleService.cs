@@ -21,6 +21,8 @@ public interface OutrightSettleService
     Task<byte?> GetDeadHeadLeagueSetting(GetDeadHeadLeagueSettingRequest request);
 
     Task<Result> SaveScore(SaveScoreRequest request);
+
+    Task<Result> SaveTraderScore(SaveTraderScoreRequest request);
 }
 
 public class OutrightSettleServiceImp(
@@ -36,6 +38,7 @@ public class OutrightSettleServiceImp(
     private const string SpName = "NAP_Admin_Settlement_Outright";
 
     private const int ActionSaveScore = 81064;
+    private const int ActionSaveTraderScore = 81065;
 
     private readonly List<string> runningStatus = [EventStatus.Running, EventStatus.Closed, EventStatus.Internal];
 
@@ -119,7 +122,7 @@ public class OutrightSettleServiceImp(
     {
         var ticketInfo = await outrightTicketService.GetTeamsTicketCount(teams);
         var ticketLookup = ticketInfo.ToDictionary(t => t.OrId, t => t);
-        
+
         foreach (var team in teams)
         {
             team.RefDataService = refDataService;
@@ -245,6 +248,39 @@ public class OutrightSettleServiceImp(
                 Result = match.ScreenShot,
                 UserId = currentSession.UserId,
                 ActionId = ActionSaveScore,
+                EventDate = DateTimeOffset.Now
+            };
+
+            return repository.ExecuteAsync(criteria);
+        });
+        await Task.WhenAll(tasks.ToArray());
+    }
+
+    public async Task<Result> SaveTraderScore(SaveTraderScoreRequest request)
+    {
+        var criteria = new SaveTraderScoreCriteria
+        {
+            LeagueId = request.LeagueId,
+            UserId = currentSession.UserId,
+            SelectedResources = outrightSettleProcessService.CreateResourceXmlByTeamResult(request.Teams)
+        };
+        await repository.ExecuteAsync(criteria);
+        await LogRequestSaveTraderScore(request);
+
+        return new Result();
+    }
+
+    private async Task LogRequestSaveTraderScore(SaveTraderScoreRequest request)
+    {
+        var tasks = request.Teams.Select(match =>
+        {
+            var criteria = new InsertLogOutRightCriteria
+            {
+                LeagueId = request.LeagueId,
+                MatchId = match.OrId,
+                Result = match.Result,
+                UserId = currentSession.UserId,
+                ActionId = ActionSaveTraderScore,
                 EventDate = DateTimeOffset.Now
             };
 

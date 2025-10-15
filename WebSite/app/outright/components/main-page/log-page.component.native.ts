@@ -21,5 +21,7 @@ import LogComponent from "../log.component";
 })
 export class LogPageComponent implements OnInit {
     public request: LogRequest;
-    ngOnInit() { }
+
+    ngOnInit(): void {
+    }
 }

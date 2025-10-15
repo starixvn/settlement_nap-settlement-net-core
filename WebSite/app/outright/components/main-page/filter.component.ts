@@ -2,7 +2,7 @@ import { SportLeagueFilter } from './../../models/sport-league.model';
 import { GenerateFilterService } from './../../../shared/services/generate-filter.service';
 import { NewMultipleSelectComponent } from './../../../shared/components/multiple-select/multiple-select.component';
 import { DatePipe, CommonModule } from '@angular/common';
-import { Component, EventEmitter, Injector, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, inject, Injector, OnInit, Output, ViewChild } from '@angular/core';
 import { NgbDateStruct, NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
 import { CustomNgbDateParserFormatter } from './../../../shared/components/date-picker/custom-ngb-date-parser-formatter';
 import { Statuses } from '../../constants/options';
@@ -32,10 +32,10 @@ export class FilterComponent implements OnInit {
 
     @ViewChild('league') leagueMultiSelect: NewMultipleSelectComponent;
 
-    private verifyDateService: VerifyDateService;
-    private outrightService: OutrightService;
-    private messageBoxService: MessageBoxService;
-    private generateFilterService: GenerateFilterService;
+    private readonly verifyDateService = inject(VerifyDateService);
+    private readonly outrightService = inject(OutrightService);
+    private readonly messageBoxService = inject(MessageBoxService);
+    private readonly generateFilterService = inject(GenerateFilterService);
 
     fromDate: NgbDateStruct;
     toDate: NgbDateStruct;
@@ -43,7 +43,9 @@ export class FilterComponent implements OnInit {
     today: NgbDateStruct;
 
     sportTypesSelected: string[];
-    sportOptions$ = new BehaviorSubject(new MultipleSelect());
+    sportOptions$ = new BehaviorSubject(new MultipleSelect(
+        
+    ));
 
     leagueSelected: string;
     originalLeagues: League[];
@@ -58,16 +60,15 @@ export class FilterComponent implements OnInit {
 
     warningDialogMessage: ModalDialogMessage = new ModalDialogMessage();
 
-    constructor(protected injector: Injector) { }
-
-
-    async ngOnInit(): Promise<void> {
-        this.initSportLeague();
-        this.verifyDateService = this.injector.get(VerifyDateService);
-        this.outrightService = this.injector.get(OutrightService);
-        this.messageBoxService = this.injector.get(MessageBoxService);
-        this.generateFilterService = this.injector.get(GenerateFilterService);
-        await this.initFilterData();
+    ngOnInit() {
+        const initLeagueSelect = new MultipleSelect();
+        initLeagueSelect.maxWidth = '85%';
+        initLeagueSelect.haveGroup = true;
+        this.leagueOptions$.next(initLeagueSelect);
+        const initSportSelect = new MultipleSelect();
+        initSportSelect.haveGroup = true;
+        this.sportOptions$.next(initSportSelect);
+        this.initFilterData();
     }
 
     onSelectFromDate(value: NgbDateStruct) {
@@ -168,21 +169,6 @@ export class FilterComponent implements OnInit {
     private updateLeague(leagues: League[]) {
         const updateList = { ... this.leagueOptions$.getValue(), items: this.generateFilterService.renderLeagues(leagues) };
         this.leagueOptions$.next(updateList);
-    }
-
-    private initSportLeague() {
-        const showAllLeagues = "--- Show All Leagues ---";
-        const initLeagueSelect = new MultipleSelect();
-        initLeagueSelect.allItemsCheckedText = showAllLeagues;
-        initLeagueSelect.maxWidth = '85%';
-        initLeagueSelect.enableSearchBox = true;
-        initLeagueSelect.haveGroup = true;
-        this.leagueOptions$.next(initLeagueSelect);
-        const initSportSelect = new MultipleSelect();
-        initSportSelect.haveGroup = true;
-        initSportSelect.isCheckAll = true;
-        initSportSelect.maxWidth = "220px";
-        this.sportOptions$.next(initSportSelect);
     }
 
     private isValidInput(fromDate: NgbDateStruct, toDate: NgbDateStruct) {

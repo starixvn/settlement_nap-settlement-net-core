@@ -15,8 +15,12 @@ export class Team extends Match {
     originalStatus: string;
     originalScreenshot: string;
     screenShot: string;
+    traderScore: string;
+    originalTraderScore: string;
+    resultStatusId: number;
     mismatchClass: string;
-    confirmBy: string;
+    traderConfirmClass: string;
+    confirmedBy?: string;
 }
 
 export class TeamSettle {
