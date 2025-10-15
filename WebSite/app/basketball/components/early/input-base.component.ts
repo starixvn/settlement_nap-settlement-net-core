@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, computed, EventEmitter, inject, input, Input, OnChanges, Output, SimpleChanges } from "@angular/core";
+import { ChangeDetectorRef, Component, computed, EventEmitter, inject, input, Input, OnChanges, OnInit, Output, SimpleChanges } from "@angular/core";
 import { ExternalResultDetail, ResultDetail } from "../../../shared/models/sportsbook-sop";
 import { isEqual } from "lodash";
 import { VerificationBaseService } from "../../../core/services/verification-base.service";
@@ -28,13 +28,11 @@ export class InputFinalBaseComponent extends InputBaseComponent{
   @Input({ required: true }) item: ResultDetail;
   @Input({ required: true }) enable: boolean;
   @Input() isLeader: boolean;
-  @Input() updateView: () => void;
   @Input() isRefundWithSettleDetermined: boolean;
   readonly #verificationBaseService = inject(VerificationBaseService);
 
   checkResultIsMatched(resultDetail: ResultDetail) {
     resultDetail.isScoreMismatched = this.#verificationBaseService.isEarlyMismatchedWarning(resultDetail);
-    this.updateView();
   }
 }
 
@@ -47,7 +45,6 @@ export class InputOutSideBaseComponent extends InputBaseComponent {
   @Input({ required: true }) resultDetail: ResultDetail;
   @Input({ required: true }) externalResult: ExternalResultDetail;
   @Input({ required: true }) enable: boolean;
-  @Input() updateView: () => void;
   readonly #verificationBaseService = inject(VerificationBaseService);
   readonly #mixAutoFillService = inject(MixAutoFillService);
   readonly #earlyStore = inject(EarlyStore);
@@ -63,6 +60,5 @@ export class InputOutSideBaseComponent extends InputBaseComponent {
     this.#verificationBaseService.autoFillEarlyResult(resultDetail);
     resultDetail.isScoreMismatched = this.#verificationBaseService.isEarlyMismatchedWarning(resultDetail);
     this.#mixAutoFillService.autoFillMixReboundsAssists(this.#earlyStore.resultDetails(), resultDetail);
-    this.updateView();
   }
 }

@@ -21,8 +21,7 @@ type finalInputOutSide = TeamSelectionOutSideComponent | PlayerSelectionOutSideC
   selector: '[result-row]',
   standalone: true,
   imports: [CommonModule, FormsModule, MatTooltipModule, TraderResultComponent],
-  templateUrl: './result-row.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  templateUrl: './result-row.component.html'
 })
 
 export class ResultRowComponent implements OnInit {
@@ -35,7 +34,6 @@ export class ResultRowComponent implements OnInit {
   @Output() updateValue = new EventEmitter<ResultDetail>();
   readonly #earlyStore = inject(EarlyStore);
   readonly #verificationService = inject(VerificationService);
-  readonly #cdr = inject(ChangeDetectorRef);
   maxProviderCol = this.#earlyStore.maxProviderCol();
   permission = this.#earlyStore.permission();
   matchDetail = computed(() => this.#earlyStore.matchDetail());
@@ -45,11 +43,6 @@ export class ResultRowComponent implements OnInit {
   ngOnInit(): void {
     this.inputComponent = this.getInputComponent();
     this.inputOutSideComponent = this.getInputOutSideComponent();
-  }
-
-  updateView = (): void => {
-    this.updateValue.emit(this.item);
-    this.#cdr.markForCheck();
   }
 
   getDropdownTooltip(matchDetail: MatchDetail, result: string, maxLength: number) {

@@ -5,7 +5,6 @@
     { item: item,
       isLeader: permission.isLeader,
       enable: isEnabled(item),
-      updateView: updateView,
       isRefundWithSettleDetermined: isRefundWithSettleDetermined}"></ng-container>
 </td>
 
@@ -18,7 +17,7 @@
   <ng-container *ngIf="x >= (maxProviderCol+1)">
     <td class="map out-side-content" [ngClass]="{'striped': x % 2 === 0, 'can-settle': canSettleResult(item)}">
       <ng-container [ngComponentOutlet]="inputOutSideComponent"
-        [ngComponentOutletInputs]="{externalResult: result, resultDetail: item, enable: item.checked, updateView: updateView}"></ng-container>
+        [ngComponentOutletInputs]="{externalResult: result, resultDetail: item, enable: item.checked}"></ng-container>
     </td>
   </ng-container>
 </ng-container>

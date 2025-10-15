@@ -335,22 +335,10 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
 
     public onSelectGroupMap(map: GroupMap) {
         super.onChangeGroupMap(map);
-
-        if (this.resultRowComponents) {
-            this.resultRowComponents.forEach(component => {
-                component.updateView();
-            });
-        }
     }
 
     public changeSettingGroup(groupMap: GroupMap) {
-        super.changeSettingGroup(groupMap, () => {
-            if (this.resultRowComponents) {
-                this.resultRowComponents.forEach(component => {
-                    component.updateView();
-                });
-            }
-        });
+        super.changeSettingGroup(groupMap);
 
     }
 
