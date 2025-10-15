@@ -16,8 +16,17 @@ export const Resources = {
           "663", "664", "688", "665", "666", "667", "668", "669", "670", "671", "672", "673", "674"],
     baseBetTypes: ["653", "656", "659", "662", "665", "667"],
     orderBetTypes: ["653", "656", "659", "662", "665", "667", "669", "671", "673", "674", "677", "679", "675", "676", "678"] 
+    mixReboundsAssists:["656", "659"],
+    mixReboundsPoints:["653", "659"],
+    mixReboundsAssistsPoints:["653", "656", "659"],
+    mixStealsBlocks:["665", "667"],
 };
-
+export const PlayerBetTypes = {
+    points: "653",
+    assists: "656",
+    rebounds: "659",
+    reboundsAssists: "671"
+};
 
 export const OddResourceId = {
     htScore: "1H",

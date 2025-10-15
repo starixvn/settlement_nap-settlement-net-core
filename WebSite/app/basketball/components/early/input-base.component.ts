@@ -4,6 +4,7 @@ import { isEqual } from "lodash";
 import { VerificationBaseService } from "../../../core/services/verification-base.service";
 import { SettlementStatusId } from "../../../shared/constants/settlement-status-id.native";
 import { EarlyStore } from "../../store/early.store";
+import { MixAutoFillService } from "../../services/mix-auto-fill.service";
 
 abstract class InputBaseComponent {
   getDropdownTooltip(result: string, maxLength: number, homeTeam: string, awayTeam: string) {
@@ -48,6 +49,7 @@ export class InputOutSideBaseComponent extends InputBaseComponent {
   @Input({ required: true }) enable: boolean;
   @Input() updateView: () => void;
   readonly #verificationBaseService = inject(VerificationBaseService);
+  readonly #mixAutoFillService = inject(MixAutoFillService);
   readonly #earlyStore = inject(EarlyStore);
   readonly #matchDetail = computed(() => this.#earlyStore.matchDetail());
 
@@ -57,9 +59,10 @@ export class InputOutSideBaseComponent extends InputBaseComponent {
       resultDetail.homeValue = '';
       resultDetail.awayValue = '';
     }
-
+ 
     this.#verificationBaseService.autoFillEarlyResult(resultDetail);
     resultDetail.isScoreMismatched = this.#verificationBaseService.isEarlyMismatchedWarning(resultDetail);
+    this.#mixAutoFillService.autoFillMixReboundsAssists(this.#earlyStore.resultDetails(), resultDetail);
     this.updateView();
   }
 }

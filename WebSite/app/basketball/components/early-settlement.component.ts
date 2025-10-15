@@ -5,7 +5,7 @@ import { CalculateAction, ScoreSourceType, SettlementStatusId, SportType, Ticket
 import { Component, Injector, ViewChild, ViewChildren, QueryList, AfterViewInit, inject } from '@angular/core';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import { BasketballApiKeys, EarlyResourcesIds, KickOffTime, Resources, ResourcesIds, ResultStatus } from '../constants';
-import { BasketballService, BetStatusService, EarlyService, VerificationService } from '../services';
+import { BasketballService, BetStatusService, EarlyService, VerificationService, MixAutoFillService } from '../services';
 import { Language } from '../../shared/language.native';
 import { Match } from '../models';
 import { BlockUIService, DialogBoxService } from '../../shared/services';
@@ -38,6 +38,7 @@ import { PlayerScoresPageComponent } from './player-scores-page/player-scores-pa
         BetStatusService,
         ToastrService,
         DialogBoxService]
+        MixAutoFillService]
 })
 export class EarlySettlementComponent extends EarlyBaseComponent implements SportTemplate {
 
@@ -106,7 +107,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         this.renderFilterSelect();
         this.setIndicateColor();
         this.setRefundButtonWhenExistConfirmedSDT(this.resultDetails);
-        this.earlyStore.setState(this.matchDetail, this.permission, this.maxProviderCol);
+        this.earlyStore.setState(this.matchDetail, this.resultDetails, this.permission, this.maxProviderCol);
         this.isDisabledSupportInputPlayerScores = !this.resultDetails.some(item => Resources.orderBetTypes.includes(item.betType));
 
         if (!this.isReadyMatch) {
