@@ -6,5 +6,6 @@ public enum AutoSettleType
     AutoInstant = 2,
     AutoDirect = 5,
     AutoPayout = 6, // for service ap2
-    AutoRefund = 7
+    AutoRefund = 7,
+    FastMarketAutoRefund = 11,
 }

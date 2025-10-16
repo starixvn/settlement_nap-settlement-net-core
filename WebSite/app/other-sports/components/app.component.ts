@@ -14,7 +14,7 @@ import { GameTotalMatchCalculationComponent } from './game-total-match-flow/game
 import { GameTotalMatchRefundComponent } from './game-total-match-flow/game-total-match-refund.component';
 import { OtherRefundComponent } from './other/other-refund.component';
 import { OtherCalculationComponent } from './other/other-calculation.component';
-import { BandyCalculationComponent } from './bandy/calculation.component';
+import { BandyCalculationComponent } from './bandy/calculation.component.native';
 import { BandyRefundComponent } from './bandy/refund.component';
 
 @Component({

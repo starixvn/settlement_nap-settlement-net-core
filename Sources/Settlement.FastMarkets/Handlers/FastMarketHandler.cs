@@ -31,6 +31,7 @@ public class FastMarketHandler(
         var permission = permissionService.Permission;
         var matchDetail = await matchDetailService.MatchInfo(request.MatchId);
         matchDetail.AutoSettingIcon.Disabled = !permission.AutoSettlement;
+        matchDetail.HasAutoSettlementPermission = permission.AutoSettlement;
         return matchDetail;
     }
 

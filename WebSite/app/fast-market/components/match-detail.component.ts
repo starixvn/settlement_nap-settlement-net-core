@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import * as _ from 'lodash';
 import { MessageBoxService } from '../../shared/services';
 import { ModalDialogMessage, AutoSettingMatchQuery, AutoSettingLeagueQuery, Result } from '../../shared/models';
@@ -7,6 +7,8 @@ import { RequestService } from '../services/request.service';
 import { MatchDetail } from '../models';
 import { Language, Icon, State } from '../constants';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
+import { AutoSettleType } from '../../shared/constants/auto-settle-type.native';
+import { ResourceType } from '../../shared/constants/resource-type.native';
 
 @Component({
     selector: "match-detail",
@@ -14,16 +16,17 @@ import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 })
 
 export class MatchDetailComponent implements OnInit {
+
     @Input() toastContainer: ToastContainerDirective;
     private readonly fastMarketAutoType = 3;
+    private readonly requestService = inject(RequestService);
+    private readonly messageBoxService = inject(MessageBoxService);
+    private readonly toastService = inject(ToastrService);
+
     public matchDetail: MatchDetail;
     public readonly warningDialogMessage: ModalDialogMessage = new ModalDialogMessage();
 
-    constructor(
-        private readonly requestService: RequestService,
-        private readonly messageBoxService: MessageBoxService,
-        private readonly toastService: ToastrService) {
-    }
+
 
     public ngOnInit() {
         const matchId = Number(UrlHelper.getUrlParameter("matchId"));
@@ -87,6 +90,100 @@ export class MatchDetailComponent implements OnInit {
         }
     }
 
+    public confirmUpdateLeagueRefund() {
+        this.toastService.clear();
+
+        const message = Language.updateLeagueRefundConfirmationMessage
+            .replace(/EXPECTED_STATE/g, !this.matchDetail.isFMAutoRefundLeague ? 'ON' : 'OFF');
+
+        const dialogModel = {
+            title: Language.confirmationBoxTitle,
+            message,
+            checkboxLabel: 'Also apply to Running matches',
+            requireCheckbox: true
+        } as ModalDialogMessage;
+
+        this.messageBoxService.confirm(dialogModel, (isChecked) => this.updateLeagueRefund(isChecked))
+
+    }
+
+    private updateLeagueRefund(isApplyAll: boolean) {
+        const query = this.getLeagueRefundQuery(isApplyAll);
+
+        this.requestService
+            .updateAutoSettle(query)
+            .subscribe((response: Result) => { this.processUpdateSettingResult(response); });
+    }
+
+    private getLeagueRefundQuery(isApplyAll: boolean) {
+        const { matchId, leagueId } = this.matchDetail;
+        const isCurrentlyEnabled = this.matchDetail.isFMAutoRefundLeague ?? false;
+        
+        const createSetting = (enabled: boolean) => ({
+            settleType: AutoSettleType.AutoRefundFM,
+            enabled,
+            resourceType: ResourceType.Main,
+            isApplyChildMatches: isApplyAll,
+            waitingTime: 300
+        });
+        
+        return {
+            matchId,
+            leagueId,
+            typeObject: "League",
+            isApplyAll,
+            resultSettings: [createSetting(!isCurrentlyEnabled)],
+            oldResultSettings: [createSetting(isCurrentlyEnabled)]
+        };
+    }
+
+    public confirmUpdateMatchRefund() {
+        this.toastService.clear();
+        if (!this.matchDetail.autoSettingIcon.disabled) {
+            this.warningDialogMessage.title = Language.confirmationBoxTitle;
+            const message = Language.updateMatchRefundConfirmationMessage
+                .replace(/EXPECTED_STATE/g, !this.matchDetail.isFMAutoRefund ? 'ON' : 'OFF');
+            this.warningDialogMessage.message = message;
+
+
+            this.messageBoxService.confirm(
+                this.warningDialogMessage,
+                () => this.updateMatchRefund());
+        }
+    }
+
+    private updateMatchRefund() {
+        const query = this.getAutoRefundQuery(this.matchDetail.isFMAutoRefund);
+
+        this.requestService
+            .updateAutoSettle(query)
+            .subscribe((response: Result) => { this.processUpdateSettingResult(response); });
+    }
+
+    private getAutoRefundQuery(isEnabled: boolean | null) {
+        return {
+            matchId: this.matchDetail.matchId,
+            leagueId: this.matchDetail.leagueId,
+            typeObject: "Match",
+            resultSettings: [
+                {
+                    settleType: AutoSettleType.AutoRefundFM,
+                    enabled: !isEnabled ,
+                    resourceType: ResourceType.Main,
+                    waitingTime: 300
+                }
+            ],
+            oldResultSettings: [
+                {
+                    settleType: AutoSettleType.AutoRefundFM,
+                    enabled: !!isEnabled,
+                    resourceType: ResourceType.Main,
+                    waitingTime: 300
+                }
+            ]
+        }
+    }
+
     private updateLeagueAutoSettle(isApplyAll: boolean) {
         const isEnabled = this.matchDetail.autoSettingIcon.league !== Icon.yes;
         const query = new AutoSettingLeagueQuery(this.matchDetail.leagueId, this.fastMarketAutoType, isEnabled, isApplyAll);
@@ -100,5 +197,10 @@ export class MatchDetailComponent implements OnInit {
         } else {
             this.toastService.error(result.errMsg);
         }
+    }
+
+    getAutoRefundClass(isEnabled: boolean, disabled: boolean) {
+        const icon = isEnabled ? Icon.yes : Icon.no;
+        return disabled ? `${icon}-disable` : icon;
     }
 }

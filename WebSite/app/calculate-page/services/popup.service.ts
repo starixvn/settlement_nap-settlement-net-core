@@ -39,7 +39,7 @@ export class PopupService {
         const src = `/apps/fast-market?matchId=${match.matchId}`;
         const frameSrc = encodeURI(src);
         const dialogData = new DialogDataIframe(Language.FastMarketTile, frameSrc);
-        this.dialogBoxService.popup(dialogData, '985px', '925px').subscribe(async result => {
+        this.dialogBoxService.popup(dialogData, '999px', '925px').subscribe(async result => {
             if (result) {
                 this.handleChangedMatch(match);
             }

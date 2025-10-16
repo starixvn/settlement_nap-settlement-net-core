@@ -6,7 +6,6 @@ import { of } from 'rxjs';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ElementRef } from "@angular/core";
 import { ModalDialogComponent } from '../../shared/components/modal-dialog/modal-dialog.component';
-import { ModalContentDialogComponent } from '../../shared/components/modal-dialog/modal-content-dialog.component';
 import { MatchDetailComponent } from './match-detail.component';
 import { MatchDetail, AutoSettingIcon } from '../models';
 import { MessageBoxService, HttpRequestService, BlockUIService } from '../../shared/services';
@@ -14,6 +13,7 @@ import { RequestService } from '../services/request.service';
 import { UrlHelper } from '../../helper';
 import { ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 import { MaterialModule } from '../../shared/material-module';
+import { ModalContentDialogComponent } from '../../shared/components/modal-dialog/modal-content-dialog.component';
 
 describe('Component: MatchDetailComponent', () => {
     let component: MatchDetailComponent;
@@ -21,7 +21,6 @@ describe('Component: MatchDetailComponent', () => {
     let fastMarketService: RequestService;
     let messageBoxService: MessageBoxService;
     let toastrService: ToastrService;
-    const buttonName = "btn-danger";
     const errorMessage = "Error message";
     const matchDetail = new MatchDetail();
     matchDetail.matchId = 700000;
@@ -207,5 +206,91 @@ describe('Component: MatchDetailComponent', () => {
 
             expect(toastrService.error).toHaveBeenCalled();
         }));
+    });
+
+    describe('getAutoSettingTooltip', () => {
+        it('should return disable tooltip for yes icon', () => {
+            const result = component['getAutoSettingTooltip']('icon-yes');
+            expect(result).toBe('Click to turn off auto settlement of Fast Markets.');
+        });
+
+        it('should return enable tooltip for no icon', () => {
+            const result = component['getAutoSettingTooltip']('icon-no');
+            expect(result).toBe('Click to turn on auto settlement of Fast Markets.');
+        });
+
+        it('should return empty string for unknown icon', () => {
+            const result = component['getAutoSettingTooltip']('unknown-icon');
+            expect(result).toBe('');
+        });
+
+        it('should return empty string for empty string', () => {
+            const result = component['getAutoSettingTooltip']('');
+            expect(result).toBe('');
+        });
+
+        it('should return empty string for null', () => {
+            const result = component['getAutoSettingTooltip'](null);
+            expect(result).toBe('');
+        });
+    });
+
+    describe('confirmUpdateLeagueRefund', () => {
+        beforeEach(() => {
+            component.matchDetail = { ...matchDetail };
+            component.matchDetail.isFMAutoRefundLeague = false;
+            jest.spyOn(toastrService, 'clear');
+            jest.spyOn(messageBoxService, 'confirm');
+        });
+
+        it('should clear toast and show confirmation dialog', () => {
+            component.confirmUpdateLeagueRefund();
+
+            expect(toastrService.clear).toHaveBeenCalled();
+            expect(messageBoxService.confirm).toHaveBeenCalled();
+        });
+
+        it('should call updateLeagueRefund with true when confirmed', () => {
+            let confirmCallback: Function;
+            jest.spyOn(messageBoxService, 'confirm').mockImplementation((message, callback) => {
+                confirmCallback = callback;
+            });
+            jest.spyOn(component as any, 'updateLeagueRefund');
+
+            component.confirmUpdateLeagueRefund();
+            confirmCallback(true);
+
+            expect(component['updateLeagueRefund']).toHaveBeenCalledWith(true);
+        });
+    });
+
+    describe('confirmUpdateMatchRefund', () => {
+        beforeEach(() => {
+            component.matchDetail = { ...matchDetail };
+            component.matchDetail.isFMAutoRefund = false;
+            jest.spyOn(toastrService, 'clear');
+            jest.spyOn(messageBoxService, 'confirm');
+        });
+
+        it('should call updateMatchRefund when confirmed', () => {
+            component.matchDetail.autoSettingIcon.disabled = false;
+            let confirmCallback: Function;
+            jest.spyOn(messageBoxService, 'confirm').mockImplementation((message, callback) => {
+                confirmCallback = callback;
+            });
+            jest.spyOn(component as any, 'updateMatchRefund');
+
+            component.confirmUpdateMatchRefund();
+            confirmCallback();
+
+            expect(component['updateMatchRefund']).toHaveBeenCalled();
+        });
+    });
+
+    describe('getAutoRefundClass', () => {
+        it('should return yes-disable when enabled and disabled', () => {
+            const result = component.getAutoRefundClass(true, true);
+            expect(result).toBe('icon-yes-disable');
+        });
     });
 });
