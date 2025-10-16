@@ -1,5 +1,5 @@
 import { TeamFilterPipe } from './team-filter.pipe';
-import { Player } from './models.native';
+import { Player } from './models';
 
 describe('TeamFilterPipe', () => {
   let pipe: TeamFilterPipe;

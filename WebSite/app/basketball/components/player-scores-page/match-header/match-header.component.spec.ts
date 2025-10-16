@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatchHeaderComponent } from './match-header.component';
-import { MatchDetail } from '../../models';
+import { MatchDetail } from '../../../models';
 
 describe('MatchHeaderComponent', () => {
   let component: MatchHeaderComponent;

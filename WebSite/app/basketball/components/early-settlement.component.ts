@@ -390,7 +390,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     supportInputPlayerScores() {
             const modalRef = this.dialog.open(PlayerScoresPageComponent, {
                 width: '800px',
-                height: '715px',
+                height: '900px',
                 data: {
                     matchId: this.match.matchDetail.matchId
                 }

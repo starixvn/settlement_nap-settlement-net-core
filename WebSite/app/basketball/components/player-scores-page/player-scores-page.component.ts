@@ -1,21 +1,21 @@
 import { Component, Inject, inject, OnInit, ViewChild } from '@angular/core';
-import { MatchDetail } from '../../../shared/models/sportsbook-sop';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { AioService, BlockUIService, MessageBoxService } from '../../../shared/services';
-import { ResultSettingType } from '../../../shared/constants';
-import { Match } from '../../models';
 import * as _ from 'lodash';
-import { Player, PlayerScore } from './models.native';
-import { ModalDialogMessage, ResultSettingQuery } from '../../../shared/models';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
-import { Language } from '../../../shared/language.native';
 import { TeamFilterPipe } from './team-filter.pipe';
-import { MatchHeaderComponent } from './match-header.component';
-import { TeamSectionComponent } from './team-section.component';
+import { MatchHeaderComponent } from './match-header/match-header.component';
 import { PlayerScoresService } from './player-scores.service';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { DragDropModule } from '@angular/cdk/drag-drop';
+import { TeamSectionComponent } from './team-section/team-section.component';
+import { PlayerScore, Player } from './models';
+import { AioService, BlockUIService, MessageBoxService } from '../../../shared/services';
+import { ModalDialogMessage, ResultSettingQuery } from '../../../shared/models';
+import { Match } from '../../models';
+import { Language } from '../../../shared/language.native';
+import { ResultSettingType } from '../../../shared/constants';
+import { MatchDetail } from '../../../shared/models/sportsbook-sop';
 
 
 
@@ -63,7 +63,8 @@ export class PlayerScoresPageComponent implements OnInit {
       matchId: this.data.matchId
     }).subscribe((match) => {
       this.matchDetail = match.matchDetail;
-      this.players = this.playerScoresMappingService.mapMatchToPlayerScores(match);
+      console.log(this.playerScoresMappingService.mapMatchToPlayerScores(match));
+      // this.players = this.playerScoresMappingService.mapMatchToPlayerScores(match);
       this.blockUiService.stopBlock();
     });
   }

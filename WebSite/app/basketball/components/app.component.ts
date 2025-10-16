@@ -6,7 +6,6 @@ import { EarlySettlementComponent as EarlyBasketball } from './early-settlement.
 import { PageType } from '../../shared/constants';
 import { SportTemplate } from '../../shared/models/sportsbook-sop';
 import { AppBaseComponent } from '../../shared/components/sportsbook-sop/app-base.component';
-import { PlayerScoresPageComponent } from './player-scores-page/player-scores-page.component';
 
 @Component({
     selector: 'app-root',

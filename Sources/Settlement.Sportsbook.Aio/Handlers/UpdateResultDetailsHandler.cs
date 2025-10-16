@@ -50,6 +50,7 @@ public class UpdateResultDetailsHandler : IRequestHandler<UpdateResultDetailsReq
             HomeValue = x.HomeValue,
             AwayValue = x.AwayValue,
             ResultStatusId = request.IsConfirm ? ResultStatus.Confirmed : ResultStatus.Live,
+            OtherInfo = x.OtherInfo
         }).ToList();
 
         return new UpdateResultDetailsCriteria

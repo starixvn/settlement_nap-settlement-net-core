@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
-import { MatchDetail } from "../../models";
+import { MatchDetail } from "../../../models";
 
 @Component({
   selector: 'match-header',

@@ -1,8 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TeamSectionComponent } from './team-section.component';
-import { Player, PlayerScore } from './models.native';
-import { DebugElement } from '@angular/core';
-import { By } from '@angular/platform-browser';
+import { Player, PlayerScore } from '../models';
 
 describe('TeamSectionComponent', () => {
   let component: TeamSectionComponent;
@@ -17,6 +15,7 @@ describe('TeamSectionComponent', () => {
         key: 'points', 
         resourceId: '653', 
         value: '10',
+        otherInfo: '',
         checked: false,
         isConfirmed: false,
         isHold: false,
@@ -32,6 +31,7 @@ describe('TeamSectionComponent', () => {
         key: 'threePointFG', 
         resourceId: '662', 
         value: '3',
+        otherInfo: '',
         checked: false,
         isConfirmed: false,
         isHold: false,

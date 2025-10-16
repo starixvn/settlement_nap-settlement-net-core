@@ -1,24 +1,6 @@
-import { ResultStatusId } from "../../../shared/constants/result-status-id.native";
-import {
-  OddFlexModel,
-  ResultDetail,
-} from "../../../shared/models/sportsbook-sop";
-
-export type playerScoreType =
-  | "points"
-  | "threePointFG"
-  | "rebounds"
-  | "assists"
-  | "blocks"
-  | "steals";
-
-export interface Player {
-  playerId: number;
-  playerName: string;
-  teamId: number;
-  checked: boolean;
-  scores: IPlayerScore[];
-}
+import { OddFlexModel, ResultDetail } from "../../../../shared/models/sportsbook-sop";
+import { PlayerScoreStatusChecker } from "../result-status.checker";
+import { playerScoreType } from "./player-score.type";
 
 export interface IPlayerScore {
   playerId: number;
@@ -27,6 +9,7 @@ export interface IPlayerScore {
   key: playerScoreType;
   resourceId: string;
   value: string;
+  otherInfo: string;
   checked: boolean;
   isConfirmed: boolean;
   isHold: boolean;
@@ -43,6 +26,7 @@ export class PlayerScore implements IPlayerScore {
   key: playerScoreType;
   resourceId: string;
   value: string;
+  otherInfo: string;
   checked = false;
   isConfirmed = false;
   isHold = false;
@@ -87,17 +71,12 @@ class PlayerScoreBuilder {
   }
 
   withStatusFlags(resultDetail: ResultDetail): PlayerScoreBuilder {
-    this.playerScore.isConfirmed =
-      resultDetail.resultStatusId === ResultStatusId.TraderConfirm;
-    this.playerScore.isHold =
-      resultDetail.resultSettingData?.isHoldResult || false;
-    this.playerScore.isCalculated =
-      resultDetail.resultStatusId === ResultStatusId.AutoCompleted ||
-      resultDetail.resultStatusId === ResultStatusId.ManualCompleted;
-    this.playerScore.isRefunded =
-      resultDetail.resultStatusId === ResultStatusId.Refund;
-    this.playerScore.isConfirmedRefund =
-      resultDetail.resultSettingData?.isConfirmedRefund || false;
+    this.playerScore.isConfirmed = PlayerScoreStatusChecker.isConfirmed(resultDetail);
+    this.playerScore.isHold = PlayerScoreStatusChecker.isHold(resultDetail);
+    this.playerScore.isCalculated = PlayerScoreStatusChecker.isCalculated(resultDetail);
+    this.playerScore.isRefunded = PlayerScoreStatusChecker.isRefunded(resultDetail);
+    this.playerScore.isConfirmedRefund = PlayerScoreStatusChecker.isConfirmedRefund(resultDetail);
+    this.playerScore.otherInfo = resultDetail.otherInfo || "";
     return this;
   }
 

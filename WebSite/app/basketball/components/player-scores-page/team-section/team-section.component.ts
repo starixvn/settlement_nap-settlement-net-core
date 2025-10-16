@@ -1,8 +1,8 @@
 import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { OnlyIntegerDirective } from '../../../shared/directives/only-integer.directive.native';
-import { Player } from './models.native';
+import { Player } from '../models';
+import { OnlyIntegerDirective } from '../../../../shared/directives';
 
 @Component({
   selector: 'team-section',

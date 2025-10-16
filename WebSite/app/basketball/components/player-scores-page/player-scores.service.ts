@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Match } from '../../models';
 import * as _ from 'lodash';
-import { PlayerScore, playerScoreType, Player } from './models.native';
 import { ResultDetail } from '../../../shared/models/sportsbook-sop';
+import { Player, PlayerScore, playerScoreType } from './models';
+import { Match } from '../../models';
 
 @Injectable({
   providedIn: 'root'
