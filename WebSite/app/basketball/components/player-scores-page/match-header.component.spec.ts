@@ -1,4 +1,3 @@
-// match-header.component.spec.ts
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatchHeaderComponent } from './match-header.component';
 import { MatchDetail } from '../../models';

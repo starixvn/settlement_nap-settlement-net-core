@@ -6,7 +6,7 @@ import { AioService, BlockUIService, MessageBoxService } from '../../../shared/s
 import { ResultSettingType } from '../../../shared/constants';
 import { Match } from '../../models';
 import * as _ from 'lodash';
-import { Player, PlayerScore } from './models';
+import { Player, PlayerScore } from './models.native';
 import { ModalDialogMessage, ResultSettingQuery } from '../../../shared/models';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import { Language } from '../../../shared/language.native';
