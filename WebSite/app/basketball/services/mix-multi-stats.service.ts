@@ -6,50 +6,68 @@ import { ExternalResultDetail } from '../../shared/models/sportsbook-sop/externa
 import { VerificationBaseService } from "../../core/services/verification-base.service";
 import { SettlementStatusId } from '../../shared/constants';
 @Injectable()
-export class MixAutoFillService {
+export class MixMultiStatsService {
   readonly #verificationBaseService = inject(VerificationBaseService);
 
   autoFillMixReboundsAssists(resultDetails: ResultDetail[], changedResultDetail: ResultDetail) {
-    if (Resources.mixReboundsAssists.includes(changedResultDetail.betType)) {
-      const reboundsAssistsResult = this.findReboundsAssistsResult(resultDetails);
-      
-      if (reboundsAssistsResult) {
-        this.calculateReboundsAssistsValue(resultDetails, reboundsAssistsResult);
-      }
+    this.handleReboundsAssistsMix(resultDetails, changedResultDetail);
+    this.handleReboundsPointsMix(resultDetails, changedResultDetail);
+    this.handleReboundsAssistsPointsMix(resultDetails, changedResultDetail);
+    this.handleStealsBlocksMix(resultDetails, changedResultDetail);
+  }
+
+  private handleReboundsAssistsMix(resultDetails: ResultDetail[], changedResultDetail: ResultDetail) {
+    if (!Resources.mixReboundsAssists.includes(changedResultDetail.betType)) {
+      return;
     }
 
-    if (Resources.mixReboundsPoints.includes(changedResultDetail.betType)) {
-      const reboundsPointsResult = this.findReboundsPointsResult(resultDetails);
-
-      if (reboundsPointsResult) {
-        this.calculateReboundsPointsValue(resultDetails, reboundsPointsResult);
-      }
-    }
-
-    if(Resources.mixReboundsAssistsPoints.includes(changedResultDetail.betType)) {
-      const reboundsAssistsPointsResult = this.findReboundsAssistsPointsResult(resultDetails);
-
-      if (reboundsAssistsPointsResult) {
-        this.calculateReboundsAssistsPointsValue(resultDetails, reboundsAssistsPointsResult);
-      }
+    const reboundsAssistsResult =this.findMixResultByBetType(resultDetails, changedResultDetail.resourceId, PlayerBetTypes.reboundsAssists);
+    if (reboundsAssistsResult) {
+      this.calculateReboundsAssistsValue(resultDetails, reboundsAssistsResult);
     }
   }
 
-  private findReboundsAssistsResult(resultDetails: ResultDetail[]) {
-    return resultDetails.find(result => _.isEqual(result.betType, PlayerBetTypes.reboundsAssists) && _.isEqual(result.settlementStatusId, SettlementStatusId.Running));
+  private handleReboundsPointsMix(resultDetails: ResultDetail[], changedResultDetail: ResultDetail) {
+    if (!Resources.mixReboundsPoints.includes(changedResultDetail.betType)) {
+      return;
+    }
+
+    const reboundsPointsResult = this.findMixResultByBetType(resultDetails, changedResultDetail.resourceId, PlayerBetTypes.reboundsPoints);
+    if (reboundsPointsResult) {
+      this.calculateReboundsPointsValue(resultDetails, reboundsPointsResult);
+    }
   }
 
-  private findReboundsPointsResult(resultDetails: ResultDetail[]) {
-    return resultDetails.find(result => _.isEqual(result.betType, PlayerBetTypes.reboundsPoints) && _.isEqual(result.settlementStatusId, SettlementStatusId.Running));
+  private handleReboundsAssistsPointsMix(resultDetails: ResultDetail[], changedResultDetail: ResultDetail) {
+    if (!Resources.mixReboundsAssistsPoints.includes(changedResultDetail.betType)) {
+      return;
+    }
+
+    const reboundsAssistsPointsResult = this.findMixResultByBetType(resultDetails, changedResultDetail.resourceId, PlayerBetTypes.reboundsAssistsPoints);
+    if (reboundsAssistsPointsResult) {
+      this.calculateReboundsAssistsPointsValue(resultDetails, reboundsAssistsPointsResult);
+    }
   }
 
-  private findReboundsAssistsPointsResult(resultDetails: ResultDetail[]) {
-    return resultDetails.find(result => _.isEqual(result.betType, PlayerBetTypes.reboundsAssistsPoints) && _.isEqual(result.settlementStatusId, SettlementStatusId.Running));
+  private handleStealsBlocksMix(resultDetails: ResultDetail[], changedResultDetail: ResultDetail) {
+    if (!Resources.mixStealsBlocks.includes(changedResultDetail.betType)) {
+      return;
+    }
+
+    const stealsBlocksResult = this.findMixResultByBetType(resultDetails, changedResultDetail.resourceId, PlayerBetTypes.stealsBlocks);
+    if (stealsBlocksResult) {
+      this.calculateStealsBlocksValue(resultDetails, stealsBlocksResult);
+    }
+  }
+
+  private findMixResultByBetType(resultDetails: ResultDetail[], resourceId: string, betType: string) {
+    const modifiedResourceId = betType + resourceId.substring(3);
+    return resultDetails.find(result => _.isEqual(result.resourceId, modifiedResourceId) && _.isEqual(result.settlementStatusId, SettlementStatusId.Running));
   }
 
   private calculateReboundsAssistsValue(resultDetails: ResultDetail[], reboundsAssistsResult: ResultDetail) {
-    const assistsResult = this.findResultByBetType(resultDetails, PlayerBetTypes.assists);
-    const reboundsResult = this.findResultByBetType(resultDetails, PlayerBetTypes.rebounds);
+    const assistsResult = this.findResultByBetType(resultDetails, reboundsAssistsResult.resourceId, PlayerBetTypes.assists);
+    const reboundsResult = this.findResultByBetType(resultDetails, reboundsAssistsResult.resourceId, PlayerBetTypes.rebounds);
 
     if (assistsResult || reboundsResult) {
       this.updateMixResult(reboundsAssistsResult, reboundsResult, assistsResult);
@@ -57,8 +75,8 @@ export class MixAutoFillService {
   }
 
   private calculateReboundsPointsValue(resultDetails: ResultDetail[], reboundsPointsResult: ResultDetail) {
-    const pointsResult = this.findResultByBetType(resultDetails, PlayerBetTypes.points);
-    const reboundsResult = this.findResultByBetType(resultDetails, PlayerBetTypes.rebounds);
+    const pointsResult = this.findResultByBetType(resultDetails, reboundsPointsResult.resourceId, PlayerBetTypes.points);
+    const reboundsResult = this.findResultByBetType(resultDetails, reboundsPointsResult.resourceId, PlayerBetTypes.rebounds);
 
     if (pointsResult || reboundsResult) {
       this.updateMixResult(reboundsPointsResult, reboundsResult, pointsResult);
@@ -66,17 +84,28 @@ export class MixAutoFillService {
   }
 
   private calculateReboundsAssistsPointsValue(resultDetails: ResultDetail[], reboundsAssistsPointsResult: ResultDetail) {
-    const pointsResult = this.findResultByBetType(resultDetails, PlayerBetTypes.points);
-    const assistsResult = this.findResultByBetType(resultDetails, PlayerBetTypes.assists);
-    const reboundsResult = this.findResultByBetType(resultDetails, PlayerBetTypes.rebounds);
+    const pointsResult = this.findResultByBetType(resultDetails, reboundsAssistsPointsResult.resourceId, PlayerBetTypes.points);
+    const assistsResult = this.findResultByBetType(resultDetails, reboundsAssistsPointsResult.resourceId, PlayerBetTypes.assists);
+    const reboundsResult = this.findResultByBetType(resultDetails, reboundsAssistsPointsResult.resourceId, PlayerBetTypes.rebounds);
 
     if (pointsResult || assistsResult || reboundsResult) {
       this.updateTripleMixResult(reboundsAssistsPointsResult, reboundsResult, assistsResult, pointsResult);
     }
   }
 
-  private findResultByBetType(resultDetails: ResultDetail[], betType: string) {
-    return resultDetails.find(result => _.isEqual(result.betType, betType));
+  private calculateStealsBlocksValue(resultDetails: ResultDetail[], stealsBlocksResult: ResultDetail) {
+    const stealsResult = this.findResultByBetType(resultDetails, stealsBlocksResult.resourceId, PlayerBetTypes.steals);
+    const blocksResult = this.findResultByBetType(resultDetails, stealsBlocksResult.resourceId, PlayerBetTypes.blocks);
+
+    if (stealsResult || blocksResult) {
+      this.updateMixResult(stealsBlocksResult, stealsResult, blocksResult);
+    }
+  }
+
+  private findResultByBetType(resultDetails: ResultDetail[], resourceId: string, betType: string) {
+    const modifiedResourceId = betType + resourceId.substring(3);
+  
+    return resultDetails.find(result => _.isEqual(result.resourceId, modifiedResourceId));
   }
 
   private updateMixResult(targetResult: ResultDetail, firstResult: ResultDetail, secondResult: ResultDetail) {

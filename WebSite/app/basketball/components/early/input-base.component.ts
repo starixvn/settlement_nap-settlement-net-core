@@ -4,7 +4,7 @@ import { isEqual } from "lodash";
 import { VerificationBaseService } from "../../../core/services/verification-base.service";
 import { SettlementStatusId } from "../../../shared/constants/settlement-status-id.native";
 import { EarlyStore } from "../../store/early.store";
-import { MixAutoFillService } from "../../services/mix-auto-fill.service";
+import { MixMultiStatsService } from "../../services/mix-multi-stats.service";
 
 abstract class InputBaseComponent {
   getDropdownTooltip(result: string, maxLength: number, homeTeam: string, awayTeam: string) {
@@ -30,12 +30,12 @@ export class InputFinalBaseComponent extends InputBaseComponent{
   @Input() isLeader: boolean;
   @Input() isRefundWithSettleDetermined: boolean;
   readonly #verificationBaseService = inject(VerificationBaseService);
-  readonly #mixAutoFillService = inject(MixAutoFillService);
+  readonly #mixMultiStatsService = inject(MixMultiStatsService);
   readonly #earlyStore = inject(EarlyStore);
 
   checkResultIsMatched(resultDetail: ResultDetail) {
     resultDetail.isScoreMismatched = this.#verificationBaseService.isEarlyMismatchedWarning(resultDetail);
-     this.#mixAutoFillService.autoFillMixReboundsAssists(this.#earlyStore.resultDetails(), resultDetail);
+     this.#mixMultiStatsService.autoFillMixReboundsAssists(this.#earlyStore.resultDetails(), resultDetail);
   }
 }
 
@@ -49,7 +49,7 @@ export class InputOutSideBaseComponent extends InputBaseComponent {
   @Input({ required: true }) externalResult: ExternalResultDetail;
   @Input({ required: true }) enable: boolean;
   readonly #verificationBaseService = inject(VerificationBaseService);
-  readonly #mixAutoFillService = inject(MixAutoFillService);
+  readonly #mixMultiStatsService = inject(MixMultiStatsService);
   readonly #earlyStore = inject(EarlyStore);
   readonly #matchDetail = computed(() => this.#earlyStore.matchDetail());
 
@@ -62,6 +62,6 @@ export class InputOutSideBaseComponent extends InputBaseComponent {
  
     this.#verificationBaseService.autoFillEarlyResult(resultDetail);
     resultDetail.isScoreMismatched = this.#verificationBaseService.isEarlyMismatchedWarning(resultDetail);
-    this.#mixAutoFillService.autoFillMixReboundsAssists(this.#earlyStore.resultDetails(), resultDetail);
+    this.#mixMultiStatsService.autoFillMixReboundsAssists(this.#earlyStore.resultDetails(), resultDetail);
   }
 }

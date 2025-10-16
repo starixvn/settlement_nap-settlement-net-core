@@ -27,7 +27,10 @@ export const PlayerBetTypes = {
     rebounds: "659",
     reboundsAssists: "671",
     reboundsPoints: "673",
-    reboundsAssistsPoints: "669"
+    reboundsAssistsPoints: "669",
+    steals: "665",
+    blocks: "667",
+    stealsBlocks: "674"
 };
 
 export const OddResourceId = {

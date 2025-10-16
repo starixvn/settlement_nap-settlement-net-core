@@ -4,4 +4,4 @@ export * from './verification.service';
 export * from './bet-status.service';
 export * from './cash-out.service';
 export * from './generate-cash-out.service';
-export * from './mix-auto-fill.service';
+export * from './mix-multi-stats.service';
