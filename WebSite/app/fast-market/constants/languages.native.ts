@@ -4,9 +4,13 @@ export const Language = {
     confirmationBoxTitle: 'Fast Markets confirmation box',
     alertBoxTitle: 'Fast Markets alert box',
     updateMatchConfirmationMessage: 'Are you sure you want to update Setting of auto settlement on this match?',
+    updateMatchRefundConfirmationMessage: 'Are you sure you want to turn Auto Refund Special Session '
+        + 'EXPECTED_STATE for the current match?',
     updateLeagueConfirmationMessage: 'You have changed Setting of Auto Settlement from '
         + 'CURRENT_STATE to EXPECTED_STATE. '
         + 'Do you want to update EXPECTED_STATE for Un-Calculated matches?',
+    updateLeagueRefundConfirmationMessage: 'Are you sure you want to turn Auto Refund Special Session '
+        + 'EXPECTED_STATE for the current league?',
     tooltipNextFiveMinutes: "Over/Under value not found. Set default value to: Goal: 0.5; Corner: 0.5; "
         + "Free Kick: 1.5; Goal Kick: 0.5; Throw In: 2.5; Penalty: 0.5."
         + "\nPlease double check for these values before calculating!",

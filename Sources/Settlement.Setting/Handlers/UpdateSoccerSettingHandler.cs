@@ -125,7 +125,7 @@ public class UpdateSoccerSettingHandler(
 
         return new Result
         {
-            ChildMatchIds = criteria.UpdatedMatchIds
+            ChildMatchIds = criteria.UpdatedMatchIDs,
         };
     }
 }

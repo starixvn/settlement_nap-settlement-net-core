@@ -16,8 +16,7 @@
     }
 </div>
 <div class="modal-footer">
-    <button [disabled]="requireCheckbox && !isChecked" type="button" class="btn btn-danger" ngbAutofocus
-        (click)="activeModal.dismiss(yes)">{{yes}}</button>
+    <button type="button" class="btn btn-danger" ngbAutofocus (click)="activeModal.dismiss(yes)">{{yes}}</button>
     <span [hidden]="hideNo">
         <button type="button" class="btn btn-light" (click)="activeModal.dismiss(no)">{{no}}</button>
     </span>

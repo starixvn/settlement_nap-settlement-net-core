@@ -86,10 +86,10 @@
 	</Function>
 	<Funtion Name="Outright">
 		<Setting Key="NAP_Set_LeagueSelOutright" SpName="NAP_Set_LeagueSelOutright" DbName="DBPRO.bodb02.wsv_nap" />
-		<Setting Key="NAP_Set_OutrightSelInfo" SpName="NAP_Set_OutrightSelInfo_xtest" DbName="DBPRO.bodb02.wsv_nap" />
+		<Setting Key="NAP_Set_OutrightSelInfo" SpName="NAP_Set_OutrightSelInfo" DbName="DBPRO.bodb02.wsv_nap" />
 		<Setting Key="NAP_UserLog_Settle_OutrightSelByCode" SpName="NAP_UserLog_Settle_OutrightSelByCode" DbName="DBLOG.bodb_CustomerLog.wsv_nap" />
 		<Setting Key="NAP_UserLog_Settle_OutrightSelByLeagueID" SpName="NAP_UserLog_Settle_OutrightSelByLeagueID" DbName="DBLOG.bodb_CustomerLog.wsv_nap" />
-		<Setting Key="NAP_Set_OutrightSelInfoByLeagueID" SpName="NAP_Set_OutrightSelInfoByLeagueID_xtest" DbName="DBPRO.bodb02.wsv_nap" />
+		<Setting Key="NAP_Set_OutrightSelInfoByLeagueID" SpName="NAP_Set_OutrightSelInfoByLeagueID" DbName="DBPRO.bodb02.wsv_nap" />
 		<Setting Key="NAP_Admin_Outright_Update" SpName="NAP_Admin_Outright_Update" DbName="DBPRO.bodb02.wsv_nap" />
 		<Setting Key="NAP_Set_DeadHeatLeagueUpd" SpName="NAP_Set_DeadHeatLeagueUpd" DbName="DBPRO.bodb02.wsv_nap" />
 		<Setting Key="NAP_Set_DeadHeatLeagueSel" SpName="NAP_Set_DeadHeatLeagueSel" DbName="DBPRO.bodb02.wsv_nap" />

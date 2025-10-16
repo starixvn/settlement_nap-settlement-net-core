@@ -19,6 +19,8 @@ public class UpdateAutoSettingsHandler(
 {
     private const string League = "League";
 
+    private const string Match = "Match";
+
     public async Task<Result> Handle(UpdateAutoSettingsCommand command, CancellationToken cancellationToken)
     {
         var results = new List<Result>();
@@ -40,12 +42,13 @@ public class UpdateAutoSettingsHandler(
 
     private async Task<Result> ProcessResultSetting(UpdateAutoSettingsCommand command, UpdateResultSettingItem item)
     {
-        var result = item.SettleType != AutoSettleType.AutoRefund
+        var result = item.SettleType != AutoSettleType.AutoRefund && item.SettleType != AutoSettleType.FastMarketAutoRefund
             ? await EnableAutoSettle(command, item)
             : new Result();
 
         var sourceCriteria = CreateSettingSourceCriteria(command, item);
         await repository.ExecuteAsync(sourceCriteria);
+        result.ChildMatchIds = sourceCriteria.UpdatedMatchIDs;
 
         await WriteLogUpdateSetting(command, item, result);
 
@@ -95,7 +98,12 @@ public class UpdateAutoSettingsHandler(
     private async Task WriteLogUpdateSetting(UpdateAutoSettingsCommand command, UpdateResultSettingItem item, Result result)
     {
         var oldItem = command.OldResultSettings
-            .First(x => x.ResourceType == item.ResourceType && x.SettleType == item.SettleType);
+            .Find(x => x.ResourceType == item.ResourceType && x.SettleType == item.SettleType);
+
+        if (oldItem is null)
+        {
+            return;
+        }
 
         var differences = GetSpecificDifferences(oldItem, item);
 
@@ -104,26 +112,36 @@ public class UpdateAutoSettingsHandler(
             return;
         }
 
-        var objectInfo = string.Equals(command.TypeObject, League) ? $"League({command.LeagueId})" : $"Match({command.MatchId})";
-        var settingTypeInfo = $"for {item.SettleType} {item.ResourceType} ";
-
-        var childMatchInfo = command.IsApplyAll && !string.IsNullOrEmpty(result.ChildMatchIds) ? $"Effect child match: {result.ChildMatchIds}" : string.Empty;
-
-        var msg = $"NAP: Update auto setting on {objectInfo} {settingTypeInfo} has isApplyAll({command.IsApplyAll.ToString()}) {childMatchInfo} {differences}";
+        var logMessage = BuildLogMessage(command, item, result, differences);
 
         var actionLogId = GetActionLogId(command.TypeObject);
 
-        var logCriteria = new LogCriteria(command.MatchId, msg, actionLogId, napSession.UserId);
+        var logCriteria = new LogCriteria(command.MatchId, logMessage, actionLogId, napSession.UserId);
 
         await logService.WriteLog(logCriteria);
+    }
+
+    private string BuildLogMessage(UpdateAutoSettingsCommand command, UpdateResultSettingItem item, Result result, string differences)
+    {
+        var objectInfo = string.Equals(command.TypeObject, League)
+            ? $"League({command.LeagueId})"
+            : $"Match({command.MatchId})";
+
+        var settingTypeInfo = $"for {item.SettleType} {item.ResourceType}";
+
+        var childMatchInfo = command.IsApplyAll && !string.IsNullOrEmpty(result.ChildMatchIds)
+            ? $"effect child match: {result.ChildMatchIds}"
+            : string.Empty;
+
+        return $"NAP: Update auto setting on {objectInfo} {settingTypeInfo} has isApplyAll({command.IsApplyAll}) {childMatchInfo} {differences}".Trim();
     }
 
     private static int GetActionLogId(string typeObject)
     {
         return (typeObject) switch
         {
-            ("League") => ActionId.AutoPayoutSettingLeague,
-            ("Match") => ActionId.AutoPayoutSettingMatch,
+            (League) => ActionId.AutoPayoutSettingLeague,
+            (Match) => ActionId.AutoPayoutSettingMatch,
             _ => 0
         };
     }
@@ -152,12 +170,12 @@ public class UpdateAutoSettingsHandler(
         return result.ToString();
     }
 
-    private static INonQueryCommand CreateSettingSourceCriteria(UpdateAutoSettingsCommand command, UpdateResultSettingItem item)
+    private static AutoSettleRunUpdateCriteria CreateSettingSourceCriteria(UpdateAutoSettingsCommand command, UpdateResultSettingItem item)
     {
         SettingSourceCriteriaStrategy strategy = command.TypeObject switch
         {
-            "League" => new LeagueSettingSourceCriteriaStrategy(),
-            "Match" => new MatchCriteriaStrategy(),
+            League => new LeagueSettingSourceCriteriaStrategy(),
+            Match => new MatchCriteriaStrategy(),
             _ => throw new ArgumentException("Invalid TypeObject")
         };
 

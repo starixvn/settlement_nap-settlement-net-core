@@ -15,7 +15,7 @@ import {
   AutoSettingMatchQuery,
 } from "../../shared/models";
 import { TimeMachineResult } from "../models/interval.model";
-import { IUpdateSettlementResultHistoryStatus } from "shared/models/update-settle-result-history-status";
+import { IUpdateSettlementResultHistoryStatus } from "../../shared/models/update-settle-result-history-status";
 
 @Injectable()
 export class RequestService {
@@ -62,6 +62,11 @@ export class RequestService {
   public updateLeagueAutoSettle(leagueSetting: AutoSettingLeagueQuery) {
     const url = `/api/setting/update-setting-league`;
     return this.httpRequestService.postJson(leagueSetting, url);
+  }
+
+  public updateAutoSettle(query: {}) {
+    const url = `/api/auto-settle-settings/update-settings`;
+    return this.httpRequestService.postJson(query, url);
   }
 
   public updateWaterBreakSetting(query: UpdateWaterBreakQuery) {

@@ -36,6 +36,12 @@ public class RemarkServiceImp(RemarkNodeService remarkNodeService) : RemarkServi
         var arrayRemark = value.Split('|');
         var remark = new StringBuilder();
         const int remarkPosition = 2;
+
+        if (arrayRemark.Length == 1)
+        {
+            return value;
+        }
+
         if (arrayRemark.Length > remarkPosition)
         {
             remark.Append(remarkNodeService.EventCounter(arrayRemark[remarkPosition]));
