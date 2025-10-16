@@ -63,8 +63,7 @@ export class PlayerScoresPageComponent implements OnInit {
       matchId: this.data.matchId
     }).subscribe((match) => {
       this.matchDetail = match.matchDetail;
-      console.log(this.playerScoresMappingService.mapMatchToPlayerScores(match));
-      // this.players = this.playerScoresMappingService.mapMatchToPlayerScores(match);
+      this.players = this.playerScoresMappingService.mapMatchToPlayerScores(match);
       this.blockUiService.stopBlock();
     });
   }
