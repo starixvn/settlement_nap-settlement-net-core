@@ -61,51 +61,69 @@ export class MixMultiStatsService {
   }
 
   private findMixResultByBetType(resultDetails: ResultDetail[], resourceId: string, betType: string) {
-    const modifiedResourceId = betType + resourceId.substring(3);
-    return resultDetails.find(result => _.isEqual(result.resourceId, modifiedResourceId) && _.isEqual(result.settlementStatusId, SettlementStatusId.Running));
+    return resultDetails.find(result => {
+      if (!_.isEqual(result.betType, betType)) {
+        return false;
+      }
+
+      if (!_.isEqual(result.settlementStatusId, SettlementStatusId.Running)) {
+        return false;
+      }
+
+      if (!result.relatedCalResources || _.isEmpty(result.relatedCalResources)) {
+        return false;
+      }
+
+      const relatedResourceIds = result.relatedCalResources.split(',').map(id => id.trim());
+      return relatedResourceIds.includes(resourceId);
+    });
   }
 
   private calculateReboundsAssistsValue(resultDetails: ResultDetail[], reboundsAssistsResult: ResultDetail) {
-    const assistsResult = this.findResultByBetType(resultDetails, reboundsAssistsResult.resourceId, PlayerBetTypes.assists);
-    const reboundsResult = this.findResultByBetType(resultDetails, reboundsAssistsResult.resourceId, PlayerBetTypes.rebounds);
-
-    if (assistsResult || reboundsResult) {
-      this.updateMixResult(reboundsAssistsResult, reboundsResult, assistsResult);
+    const results = this.findResultsByBetTypes(resultDetails, reboundsAssistsResult.relatedCalResources, [PlayerBetTypes.assists, PlayerBetTypes.rebounds]);
+    if (results[PlayerBetTypes.assists] || results[PlayerBetTypes.rebounds]) {
+      this.updateMixResult(reboundsAssistsResult, results[PlayerBetTypes.rebounds], results[PlayerBetTypes.assists]);
     }
   }
 
   private calculateReboundsPointsValue(resultDetails: ResultDetail[], reboundsPointsResult: ResultDetail) {
-    const pointsResult = this.findResultByBetType(resultDetails, reboundsPointsResult.resourceId, PlayerBetTypes.points);
-    const reboundsResult = this.findResultByBetType(resultDetails, reboundsPointsResult.resourceId, PlayerBetTypes.rebounds);
-
-    if (pointsResult || reboundsResult) {
-      this.updateMixResult(reboundsPointsResult, reboundsResult, pointsResult);
+    const results = this.findResultsByBetTypes(resultDetails, reboundsPointsResult.relatedCalResources, [PlayerBetTypes.points, PlayerBetTypes.rebounds]);
+    if (results[PlayerBetTypes.points] || results[PlayerBetTypes.rebounds]) {
+      this.updateMixResult(reboundsPointsResult, results[PlayerBetTypes.rebounds], results[PlayerBetTypes.points]);
     }
   }
 
   private calculateReboundsAssistsPointsValue(resultDetails: ResultDetail[], reboundsAssistsPointsResult: ResultDetail) {
-    const pointsResult = this.findResultByBetType(resultDetails, reboundsAssistsPointsResult.resourceId, PlayerBetTypes.points);
-    const assistsResult = this.findResultByBetType(resultDetails, reboundsAssistsPointsResult.resourceId, PlayerBetTypes.assists);
-    const reboundsResult = this.findResultByBetType(resultDetails, reboundsAssistsPointsResult.resourceId, PlayerBetTypes.rebounds);
-
-    if (pointsResult || assistsResult || reboundsResult) {
-      this.updateTripleMixResult(reboundsAssistsPointsResult, reboundsResult, assistsResult, pointsResult);
+    const results = this.findResultsByBetTypes(resultDetails, reboundsAssistsPointsResult.relatedCalResources, [PlayerBetTypes.points, PlayerBetTypes.assists, PlayerBetTypes.rebounds]);
+    if (results[PlayerBetTypes.points] || results[PlayerBetTypes.assists] || results[PlayerBetTypes.rebounds]) {
+      this.updateTripleMixResult(reboundsAssistsPointsResult, results[PlayerBetTypes.rebounds], results[PlayerBetTypes.assists], results[PlayerBetTypes.points]);
     }
   }
 
   private calculateStealsBlocksValue(resultDetails: ResultDetail[], stealsBlocksResult: ResultDetail) {
-    const stealsResult = this.findResultByBetType(resultDetails, stealsBlocksResult.resourceId, PlayerBetTypes.steals);
-    const blocksResult = this.findResultByBetType(resultDetails, stealsBlocksResult.resourceId, PlayerBetTypes.blocks);
-
-    if (stealsResult || blocksResult) {
-      this.updateMixResult(stealsBlocksResult, stealsResult, blocksResult);
+    const results = this.findResultsByBetTypes(resultDetails, stealsBlocksResult.relatedCalResources, [PlayerBetTypes.steals, PlayerBetTypes.blocks]);
+    if (results[PlayerBetTypes.steals] || results[PlayerBetTypes.blocks]) {
+      this.updateMixResult(stealsBlocksResult, results[PlayerBetTypes.steals], results[PlayerBetTypes.blocks]);
     }
   }
 
-  private findResultByBetType(resultDetails: ResultDetail[], resourceId: string, betType: string) {
-    const modifiedResourceId = betType + resourceId.substring(3);
-  
-    return resultDetails.find(result => _.isEqual(result.resourceId, modifiedResourceId));
+  private findResultsByBetTypes(resultDetails: ResultDetail[], relatedCalResources: string, betTypes: string[]): { [key: string]: ResultDetail } {
+    const relatedResourceIds = relatedCalResources.split(',').map(id => id.trim());
+    const results: { [key: string]: ResultDetail } = {};
+    
+    for (const resourceId of relatedResourceIds) {
+      const result = resultDetails.find(r => _.isEqual(r.resourceId, resourceId));
+      if (result) {
+        for (const betType of betTypes) {
+          if (_.isEqual(result.betType, betType)) {
+            results[betType] = result;
+            break;
+          }
+        }
+      }
+    }
+    
+    return results;
   }
 
   private updateMixResult(targetResult: ResultDetail, firstResult: ResultDetail, secondResult: ResultDetail) {

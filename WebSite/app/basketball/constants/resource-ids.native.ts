@@ -19,7 +19,7 @@ export const Resources = {
     mixReboundsAssists:["656", "659"],
     mixReboundsPoints:["653", "659"],
     mixReboundsAssistsPoints:["653", "656", "659"],
-    mixStealsBlocks:["665", "667"],
+    mixStealsBlocks:["665", "667"]
 };
 export const PlayerBetTypes = {
     points: "653",
@@ -28,9 +28,10 @@ export const PlayerBetTypes = {
     reboundsAssists: "671",
     reboundsPoints: "673",
     reboundsAssistsPoints: "669",
-    steals: "665",
-    blocks: "667",
-    stealsBlocks: "674"
+    blocks: "665",
+    steals: "667",
+    stealsBlocks: "674",
+    doubleDouble: "677"
 };
 
 export const OddResourceId = {

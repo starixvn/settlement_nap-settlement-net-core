@@ -38,7 +38,7 @@ import { PlayerScoresPageComponent } from './player-scores-page/player-scores-pa
         BetStatusService,
         ToastrService,
         DialogBoxService]
-        MixMultiStatsService]
+        MixDoubleDoubleService]
 })
 export class EarlySettlementComponent extends EarlyBaseComponent implements SportTemplate {
 
