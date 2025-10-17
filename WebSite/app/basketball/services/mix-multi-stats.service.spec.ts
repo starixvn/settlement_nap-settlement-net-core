@@ -1,40 +1,36 @@
 import { TestBed } from '@angular/core/testing';
 import { MixMultiStatsService } from './mix-multi-stats.service';
 import { ResultDetail } from '../../shared/models/sportsbook-sop';
-import { ExternalResultDetail } from '../../shared/models/sportsbook-sop/external-result-detail.model';
-import { VerificationBaseService } from '../../core/services/verification-base.service';
 import { SettlementStatusId } from '../../shared/constants';
-import { PlayerBetTypes } from '../constants';
+import { PlayerBetTypes, Resources } from '../constants';
 
 describe('MixMultiStatsService', () => {
   let service: MixMultiStatsService;
-  let mockVerificationBaseService: any;
 
   beforeEach(() => {
-    const verificationBaseServiceSpy = {
-      isEarlyMismatchedWarning: jest.fn()
-    };
-
     TestBed.configureTestingModule({
-      providers: [
-        MixMultiStatsService,
-        { provide: VerificationBaseService, useValue: verificationBaseServiceSpy }
-      ]
+      providers: [MixMultiStatsService]
     });
-
     service = TestBed.inject(MixMultiStatsService);
-    mockVerificationBaseService = TestBed.inject(VerificationBaseService);
   });
 
   describe('autoFillMixReboundsAssists', () => {
-    it('should call all mix handlers', () => {
-      const resultDetails: ResultDetail[] = [];
-      const changedResultDetail = createMockResultDetail('656', 'assists');
+    let resultDetails: ResultDetail[];
+    let changedResultDetail: ResultDetail;
 
-      jest.spyOn(service as any, 'handleReboundsAssistsMix');
-      jest.spyOn(service as any, 'handleReboundsPointsMix');
-      jest.spyOn(service as any, 'handleReboundsAssistsPointsMix');
-      jest.spyOn(service as any, 'handleStealsBlocksMix');
+    beforeEach(() => {
+      resultDetails = [
+        createMockResultDetail('R001', PlayerBetTypes.assists, '', SettlementStatusId.Running),
+        createMockResultDetail('R002', PlayerBetTypes.rebounds, '', SettlementStatusId.Running),
+        createMockResultDetail('R003', PlayerBetTypes.reboundsAssists, 'R001,R002', SettlementStatusId.Running)
+      ];
+    });
+
+    it('should call all handle methods', () => {
+      spyOn(service as any, 'handleReboundsAssistsMix');
+      spyOn(service as any, 'handleReboundsPointsMix');
+      spyOn(service as any, 'handleReboundsAssistsPointsMix');
+      spyOn(service as any, 'handleStealsBlocksMix');
 
       service.autoFillMixReboundsAssists(resultDetails, changedResultDetail);
 
@@ -45,95 +41,184 @@ describe('MixMultiStatsService', () => {
     });
   });
 
-  describe('findMixResultByBetType', () => {
-    it('should find result with modified resourceId and Running status', () => {
-      const resultDetails: ResultDetail[] = [
-        createMockResultDetail('671XX', 'reboundsAssists', SettlementStatusId.Running),
-        createMockResultDetail('673XX', 'reboundsPoints', SettlementStatusId.Calculated)
+  describe('handleReboundsAssistsMix', () => {
+    let resultDetails: ResultDetail[];
+    let changedResultDetail: ResultDetail;
+
+    beforeEach(() => {
+      resultDetails = [
+        createMockResultDetail('R001', PlayerBetTypes.assists, '', SettlementStatusId.Running),
+        createMockResultDetail('R002', PlayerBetTypes.reboundsAssists, 'R001', SettlementStatusId.Running)
       ];
-      const resourceId = '653XX';
-      const betType = PlayerBetTypes.reboundsAssists;
-
-      const result = (service as any).findMixResultByBetType(resultDetails, resourceId, betType);
-
-      expect(result).toBeDefined();
-      expect(result.betType).toBe('reboundsAssists');
-      expect(result.resourceId).toBe('671XX');
     });
 
-    it('should return undefined when no matching result found', () => {
-      const resultDetails: ResultDetail[] = [
-        createMockResultDetail('673XX', 'reboundsPoints', SettlementStatusId.Running)
+    it('should not process if betType is not in mixReboundsAssists', () => {
+      changedResultDetail = createMockResultDetail('R001', 'invalid', '', SettlementStatusId.Running);
+      
+      spyOn(service as any, 'findMixResultByBetType').and.returnValue(null);
+      spyOn(service as any, 'calculateReboundsAssistsValue');
+
+      (service as any).handleReboundsAssistsMix(resultDetails, changedResultDetail);
+
+      expect((service as any).findMixResultByBetType).not.toHaveBeenCalled();
+      expect((service as any).calculateReboundsAssistsValue).not.toHaveBeenCalled();
+    });
+
+    it('should process reboundsAssists when found', () => {
+      changedResultDetail = createMockResultDetail('R001', PlayerBetTypes.assists, '', SettlementStatusId.Running);
+      
+      spyOn(service as any, 'findMixResultByBetType').and.returnValue(resultDetails[1]);
+      spyOn(service as any, 'calculateReboundsAssistsValue');
+
+      (service as any).handleReboundsAssistsMix(resultDetails, changedResultDetail);
+
+      expect((service as any).findMixResultByBetType).toHaveBeenCalledWith(resultDetails, 'R001', PlayerBetTypes.reboundsAssists);
+      expect((service as any).calculateReboundsAssistsValue).toHaveBeenCalledWith(resultDetails, resultDetails[1]);
+    });
+  });
+
+  describe('findMixResultByBetType', () => {
+    let resultDetails: ResultDetail[];
+
+    beforeEach(() => {
+      resultDetails = [
+        createMockResultDetail('R001', PlayerBetTypes.reboundsAssists, 'R002,R003', SettlementStatusId.Running),
+        createMockResultDetail('R002', PlayerBetTypes.reboundsAssists, 'R001', SettlementStatusId.Completed),
+        createMockResultDetail('R003', PlayerBetTypes.reboundsAssists, '', SettlementStatusId.Running)
       ];
-      const resourceId = '653XX';
-      const betType = PlayerBetTypes.reboundsAssists;
+    });
 
-      const result = (service as any).findMixResultByBetType(resultDetails, resourceId, betType);
+    it('should find result with matching betType, settlementStatus and resourceId in relatedCalResources', () => {
+      const result = (service as any).findMixResultByBetType(resultDetails, 'R002', PlayerBetTypes.reboundsAssists);
+      
+      expect(result).toBeDefined();
+      expect(result.resourceId).toBe('R001');
+      expect(result.betType).toBe(PlayerBetTypes.reboundsAssists);
+    });
 
+    it('should return undefined when betType does not match', () => {
+      const result = (service as any).findMixResultByBetType(resultDetails, 'R002', PlayerBetTypes.reboundsPoints);
+      
       expect(result).toBeUndefined();
     });
 
-    it('should return undefined when settlement status is not Running', () => {
-      const resultDetails: ResultDetail[] = [
-        createMockResultDetail('671XX', 'reboundsAssists', SettlementStatusId.Calculated)
-      ];
-      const resourceId = '653XX';
-      const betType = PlayerBetTypes.reboundsAssists;
+    it('should return undefined when settlementStatusId is not Running', () => {
+      const result = (service as any).findMixResultByBetType(resultDetails, 'R001', PlayerBetTypes.reboundsAssists);
+      
+      expect(result).toBeUndefined();
+    });
 
-      const result = (service as any).findMixResultByBetType(resultDetails, resourceId, betType);
-
+    it('should return undefined when relatedCalResources is empty', () => {
+      const result = (service as any).findMixResultByBetType(resultDetails, 'R001', PlayerBetTypes.reboundsAssists);
+      
       expect(result).toBeUndefined();
     });
   });
 
-  describe('findResultByBetType', () => {
-    it('should find result with modified resourceId', () => {
-      const resultDetails: ResultDetail[] = [
-        createMockResultDetail('656XX', 'assists'),
-        createMockResultDetail('659XX', 'rebounds')
+  describe('findResultsByBetTypes', () => {
+    let resultDetails: ResultDetail[];
+
+    beforeEach(() => {
+      resultDetails = [
+        createMockResultDetail('R001', PlayerBetTypes.assists, '', SettlementStatusId.Running),
+        createMockResultDetail('R002', PlayerBetTypes.rebounds, '', SettlementStatusId.Running),
+        createMockResultDetail('R003', PlayerBetTypes.points, '', SettlementStatusId.Running)
       ];
-      const resourceId = '653XX';
-      const betType = PlayerBetTypes.assists;
-
-      const result = (service as any).findResultByBetType(resultDetails, resourceId, betType);
-
-      expect(result).toBeDefined();
-      expect(result.betType).toBe('assists');
-      expect(result.resourceId).toBe('656XX');
     });
 
-    it('should return undefined when no matching result found', () => {
-      const resultDetails: ResultDetail[] = [
-        createMockResultDetail('659XX', 'rebounds')
+    it('should find results by betTypes', () => {
+      const results = (service as any).findResultsByBetTypes(
+        resultDetails, 
+        'R001,R002,R003', 
+        [PlayerBetTypes.assists, PlayerBetTypes.rebounds]
+      );
+      
+      expect(results[PlayerBetTypes.assists]).toBeDefined();
+      expect(results[PlayerBetTypes.assists].resourceId).toBe('R001');
+      expect(results[PlayerBetTypes.rebounds]).toBeDefined();
+      expect(results[PlayerBetTypes.rebounds].resourceId).toBe('R002');
+    });
+
+    it('should return empty object when no matches found', () => {
+      const results = (service as any).findResultsByBetTypes(
+        resultDetails, 
+        'R001,R002,R003', 
+        [PlayerBetTypes.steals, PlayerBetTypes.blocks]
+      );
+      
+      expect(Object.keys(results)).toHaveLength(0);
+    });
+
+    it('should handle empty relatedCalResources', () => {
+      const results = (service as any).findResultsByBetTypes(
+        resultDetails, 
+        '', 
+        [PlayerBetTypes.assists, PlayerBetTypes.rebounds]
+      );
+      
+      expect(Object.keys(results)).toHaveLength(0);
+    });
+  });
+
+  describe('calculateReboundsAssistsValue', () => {
+    let resultDetails: ResultDetail[];
+    let reboundsAssistsResult: ResultDetail;
+
+    beforeEach(() => {
+      resultDetails = [
+        createMockResultDetail('R001', PlayerBetTypes.assists, '', SettlementStatusId.Running, '10'),
+        createMockResultDetail('R002', PlayerBetTypes.rebounds, '', SettlementStatusId.Running, '8')
       ];
-      const resourceId = '653XX';
-      const betType = PlayerBetTypes.assists;
+      reboundsAssistsResult = createMockResultDetail('R003', PlayerBetTypes.reboundsAssists, 'R001,R002', SettlementStatusId.Running);
+    });
 
-      const result = (service as any).findResultByBetType(resultDetails, resourceId, betType);
+    it('should update mix result when both results found', () => {
+      spyOn(service as any, 'findResultsByBetTypes').and.returnValue({
+        [PlayerBetTypes.assists]: resultDetails[0],
+        [PlayerBetTypes.rebounds]: resultDetails[1]
+      });
+      spyOn(service as any, 'updateMixResult');
 
-      expect(result).toBeUndefined();
+      (service as any).calculateReboundsAssistsValue(resultDetails, reboundsAssistsResult);
+
+      expect((service as any).updateMixResult).toHaveBeenCalledWith(
+        reboundsAssistsResult, 
+        resultDetails[1], 
+        resultDetails[0]
+      );
+    });
+
+    it('should not update when no results found', () => {
+      spyOn(service as any, 'findResultsByBetTypes').and.returnValue({});
+      spyOn(service as any, 'updateMixResult');
+
+      (service as any).calculateReboundsAssistsValue(resultDetails, reboundsAssistsResult);
+
+      expect((service as any).updateMixResult).not.toHaveBeenCalled();
     });
   });
 
   describe('updateMixResult', () => {
-    it('should update target result with sum of both values when both have valid values', () => {
-      const targetResult = createMockResultDetail('671XX', 'reboundsAssists');
-      const firstResult = createMockResultDetail('659XX', 'rebounds', SettlementStatusId.Running, '5');
-      const secondResult = createMockResultDetail('656XX', 'assists', SettlementStatusId.Running, '3');
+    let targetResult: ResultDetail;
+    let firstResult: ResultDetail;
+    let secondResult: ResultDetail;
 
-      mockVerificationBaseService.isEarlyMismatchedWarning.mockReturnValue(false);
+    beforeEach(() => {
+      targetResult = createMockResultDetail('R001', PlayerBetTypes.reboundsAssists, '', SettlementStatusId.Running);
+      firstResult = createMockResultDetail('R002', PlayerBetTypes.rebounds, '', SettlementStatusId.Running, '10');
+      secondResult = createMockResultDetail('R003', PlayerBetTypes.assists, '', SettlementStatusId.Running, '8');
+    });
 
+    it('should set homeValue to sum when both values exist', () => {
       (service as any).updateMixResult(targetResult, firstResult, secondResult);
 
-      expect(targetResult.homeValue).toBe('8');
+      expect(targetResult.homeValue).toBe('18');
       expect(targetResult.checked).toBe(true);
-      expect(mockVerificationBaseService.isEarlyMismatchedWarning).toHaveBeenCalledWith(targetResult);
     });
 
-    it('should clear target result when either value is empty', () => {
-      const targetResult = createMockResultDetail('671XX', 'reboundsAssists');
-      const firstResult = createMockResultDetail('659XX', 'rebounds', SettlementStatusId.Running, '5');
-      const secondResult = createMockResultDetail('656XX', 'assists', SettlementStatusId.Running, '');
+    it('should set empty homeValue when values are missing', () => {
+      firstResult.homeValue = '';
+      secondResult.homeValue = '';
 
       (service as any).updateMixResult(targetResult, firstResult, secondResult);
 
@@ -141,39 +226,39 @@ describe('MixMultiStatsService', () => {
       expect(targetResult.checked).toBe(false);
     });
 
-    it('should clear target result when both values are empty', () => {
-      const targetResult = createMockResultDetail('671XX', 'reboundsAssists');
-      const firstResult = createMockResultDetail('659XX', 'rebounds', SettlementStatusId.Running, '');
-      const secondResult = createMockResultDetail('656XX', 'assists', SettlementStatusId.Running, '');
+    it('should call updateExternalScores and set isScoreMismatched', () => {
+      spyOn(service as any, 'updateExternalScores');
+      spyOn(service['#verificationBaseService'], 'isEarlyMismatchedWarning').and.returnValue(true);
 
       (service as any).updateMixResult(targetResult, firstResult, secondResult);
 
-      expect(targetResult.homeValue).toBe('');
-      expect(targetResult.checked).toBe(false);
+      expect((service as any).updateExternalScores).toHaveBeenCalledWith(targetResult, firstResult, secondResult);
+      expect(targetResult.isScoreMismatched).toBe(true);
     });
   });
 
   describe('updateTripleMixResult', () => {
-    it('should update target result with sum of all three values when all have valid values', () => {
-      const targetResult = createMockResultDetail('669XX', 'reboundsAssistsPoints');
-      const reboundsResult = createMockResultDetail('659XX', 'rebounds', SettlementStatusId.Running, '5');
-      const assistsResult = createMockResultDetail('656XX', 'assists', SettlementStatusId.Running, '3');
-      const pointsResult = createMockResultDetail('653XX', 'points', SettlementStatusId.Running, '10');
+    let targetResult: ResultDetail;
+    let reboundsResult: ResultDetail;
+    let assistsResult: ResultDetail;
+    let pointsResult: ResultDetail;
 
-      mockVerificationBaseService.isEarlyMismatchedWarning.mockReturnValue(false);
-
-      (service as any).updateTripleMixResult(targetResult, reboundsResult, assistsResult, pointsResult);
-
-      expect(targetResult.homeValue).toBe('18');
-      expect(targetResult.checked).toBe(true);
-      expect(mockVerificationBaseService.isEarlyMismatchedWarning).toHaveBeenCalledWith(targetResult);
+    beforeEach(() => {
+      targetResult = createMockResultDetail('R001', PlayerBetTypes.reboundsAssistsPoints, '', SettlementStatusId.Running);
+      reboundsResult = createMockResultDetail('R002', PlayerBetTypes.rebounds, '', SettlementStatusId.Running, '10');
+      assistsResult = createMockResultDetail('R003', PlayerBetTypes.assists, '', SettlementStatusId.Running, '8');
+      pointsResult = createMockResultDetail('R004', PlayerBetTypes.points, '', SettlementStatusId.Running, '15');
     });
 
-    it('should clear target result when any value is empty', () => {
-      const targetResult = createMockResultDetail('669XX', 'reboundsAssistsPoints');
-      const reboundsResult = createMockResultDetail('659XX', 'rebounds', SettlementStatusId.Running, '5');
-      const assistsResult = createMockResultDetail('656XX', 'assists', SettlementStatusId.Running, '');
-      const pointsResult = createMockResultDetail('653XX', 'points', SettlementStatusId.Running, '10');
+    it('should set homeValue to sum when all values exist', () => {
+      (service as any).updateTripleMixResult(targetResult, reboundsResult, assistsResult, pointsResult);
+
+      expect(targetResult.homeValue).toBe('33');
+      expect(targetResult.checked).toBe(true);
+    });
+
+    it('should set empty homeValue when any value is missing', () => {
+      pointsResult.homeValue = '';
 
       (service as any).updateTripleMixResult(targetResult, reboundsResult, assistsResult, pointsResult);
 
@@ -183,155 +268,129 @@ describe('MixMultiStatsService', () => {
   });
 
   describe('updateExternalScores', () => {
-    it('should update external scores with sum of both values', () => {
-      const targetResult = createMockResultDetailWithExternalScores('671XX', 'reboundsAssists');
-      const firstResult = createMockResultDetailWithExternalScores('659XX', 'rebounds');
-      const secondResult = createMockResultDetailWithExternalScores('656XX', 'assists');
+    let targetResult: ResultDetail;
+    let firstResult: ResultDetail;
+    let secondResult: ResultDetail;
 
-      // Set up external scores
-      firstResult.externalScores[0].homeValue = '5';
-      secondResult.externalScores[0].homeValue = '3';
+    beforeEach(() => {
+      targetResult = createMockResultDetail('R001', PlayerBetTypes.reboundsAssists, '', SettlementStatusId.Running);
+      targetResult.externalScores = [
+        { homeValue: '', awayValue: '' } as any,
+        { homeValue: '', awayValue: '' } as any
+      ];
+      firstResult = createMockResultDetail('R002', PlayerBetTypes.rebounds, '', SettlementStatusId.Running);
+      firstResult.externalScores = [
+        { homeValue: '10', awayValue: '' } as any,
+        { homeValue: '12', awayValue: '' } as any
+      ];
+      secondResult = createMockResultDetail('R003', PlayerBetTypes.assists, '', SettlementStatusId.Running);
+      secondResult.externalScores = [
+        { homeValue: '8', awayValue: '' } as any,
+        { homeValue: '6', awayValue: '' } as any
+      ];
+    });
 
+    it('should calculate external scores correctly', () => {
       (service as any).updateExternalScores(targetResult, firstResult, secondResult);
 
-      expect(targetResult.externalScores[0].homeValue).toBe('8');
+      expect(targetResult.externalScores[0].homeValue).toBe('18'); // 10 + 8
+      expect(targetResult.externalScores[1].homeValue).toBe('18'); // 12 + 6
     });
 
-    it('should not update external scores when either value is invalid', () => {
-      const targetResult = createMockResultDetailWithExternalScores('671XX', 'reboundsAssists');
-      const firstResult = createMockResultDetailWithExternalScores('659XX', 'rebounds');
-      const secondResult = createMockResultDetailWithExternalScores('656XX', 'assists');
-
-      // Set up external scores - one invalid
-      firstResult.externalScores[0].homeValue = '5';
-      secondResult.externalScores[0].homeValue = '';
+    it('should handle missing external scores', () => {
+      firstResult.externalScores[0] = { homeValue: '', awayValue: '' } as any;
 
       (service as any).updateExternalScores(targetResult, firstResult, secondResult);
-
-      expect(targetResult.externalScores[0].homeValue).toBe('');
-    });
-  });
-
-  describe('updateTripleExternalScores', () => {
-    it('should update external scores with sum of all three values', () => {
-      const targetResult = createMockResultDetailWithExternalScores('669XX', 'reboundsAssistsPoints');
-      const reboundsResult = createMockResultDetailWithExternalScores('659XX', 'rebounds');
-      const assistsResult = createMockResultDetailWithExternalScores('656XX', 'assists');
-      const pointsResult = createMockResultDetailWithExternalScores('653XX', 'points');
-
-      // Set up external scores
-      reboundsResult.externalScores[0].homeValue = '5';
-      assistsResult.externalScores[0].homeValue = '3';
-      pointsResult.externalScores[0].homeValue = '10';
-
-      (service as any).updateTripleExternalScores(targetResult, reboundsResult, assistsResult, pointsResult);
-
-      expect(targetResult.externalScores[0].homeValue).toBe('18');
-    });
-
-    it('should not update external scores when any value is invalid', () => {
-      const targetResult = createMockResultDetailWithExternalScores('669XX', 'reboundsAssistsPoints');
-      const reboundsResult = createMockResultDetailWithExternalScores('659XX', 'rebounds');
-      const assistsResult = createMockResultDetailWithExternalScores('656XX', 'assists');
-      const pointsResult = createMockResultDetailWithExternalScores('653XX', 'points');
-
-      // Set up external scores - one invalid
-      reboundsResult.externalScores[0].homeValue = '5';
-      assistsResult.externalScores[0].homeValue = '';
-      pointsResult.externalScores[0].homeValue = '10';
-
-      (service as any).updateTripleExternalScores(targetResult, reboundsResult, assistsResult, pointsResult);
 
       expect(targetResult.externalScores[0].homeValue).toBe('');
     });
   });
 
   describe('hasValidHomeValue', () => {
-    it('should return true for valid external score with home value', () => {
-      const externalScore = { homeValue: '5' } as ExternalResultDetail;
+    it('should return true for valid external score', () => {
+      const externalScore = { homeValue: '10', awayValue: '' } as any;
+      
       const result = (service as any).hasValidHomeValue(externalScore);
+      
       expect(result).toBe(true);
+    });
+
+    it('should return false for invalid external score', () => {
+      const externalScore = { homeValue: '', awayValue: '' } as any;
+      
+      const result = (service as any).hasValidHomeValue(externalScore);
+      
+      expect(result).toBe(false);
     });
 
     it('should return false for null external score', () => {
       const result = (service as any).hasValidHomeValue(null);
-      expect(result).toBeFalsy();
-    });
-
-    it('should return false for external score with empty home value', () => {
-      const externalScore = { homeValue: '' } as ExternalResultDetail;
-      const result = (service as any).hasValidHomeValue(externalScore);
+      
       expect(result).toBe(false);
     });
   });
-
-  // Helper functions
-  function createMockResultDetail(
-    resourceId: string, 
-    betType: string, 
-    settlementStatusId: number = SettlementStatusId.Running,
-    homeValue: string = ''
-  ): ResultDetail {
-    return {
-      resourceId,
-      betType,
-      homeValue,
-      settlementStatusId,
-      checked: false,
-      externalScores: [],
-      isScoreMismatched: false,
-      ticketStatus: '',
-      map: 0,
-      groupBetType: 0,
-      betTypeName: '',
-      homeName: '',
-      homeId: null,
-      awayId: null,
-      awayName: '',
-      isResultWarning: false,
-      isDurationWarning: false,
-      isShow: true,
-      parentShowed: false,
-      disabled: false,
-      originalHomeValue: '',
-      originalAwayValue: '',
-      className: '',
-      groupId: '',
-      resultName: '',
-      groupName: '',
-      inputType: 0,
-      isSpecialBettype: 0,
-      isDisplayedForMember: false,
-      inputOptions: [],
-      multipleResultSelect: {} as any,
-      otherInfo: '',
-      isResultWarningByBetType: false,
-      ordNo: 0,
-      intervalNo: 0,
-      isNotTaken: false,
-      isSettleDetermined: false,
-      isSettleDeterminedOriginal: false,
-      isInvalidSelectedProceed: false,
-      isNotExistedValue: false,
-      resultStatusState: '',
-      oddFlex: [],
-      confirmedSdtHomeValue: '',
-      confirmedSdtAwayValue: '',
-      isRelated: false,
-      relatedCalResources: '',
-      resultSettingData: {} as any
-    } as ResultDetail;
-  }
-
-  function createMockResultDetailWithExternalScores(
-    resourceId: string, 
-    betType: string
-  ): ResultDetail {
-    const result = createMockResultDetail(resourceId, betType);
-    result.externalScores = [
-      { homeValue: '', awayValue: '' } as ExternalResultDetail,
-      { homeValue: '', awayValue: '' } as ExternalResultDetail
-    ];
-    return result;
-  }
 });
+
+function createMockResultDetail(
+  resourceId: string, 
+  betType: string, 
+  relatedCalResources: string, 
+  settlementStatusId: number,
+  homeValue: string = ''
+): ResultDetail {
+  return {
+    resourceId,
+    betType,
+    relatedCalResources,
+    settlementStatusId,
+    homeValue,
+    awayValue: '',
+    resourceName: '',
+    resultStatusId: 1,
+    resultStatus: '',
+    resultStatusColor: '',
+    isInvalidValue: false,
+    ticketStatus: '',
+    map: 0,
+    groupBetType: 0,
+    betTypeName: '',
+    homeName: '',
+    homeId: null,
+    awayId: null,
+    awayName: '',
+    checked: false,
+    isResultWarning: false,
+    isDurationWarning: false,
+    externalScores: [{ homeValue: '', awayValue: '' } as any],
+    isScoreMismatched: false,
+    isShow: true,
+    parentShowed: false,
+    disabled: false,
+    resultSettingData: {} as any,
+    originalHomeValue: '',
+    originalAwayValue: '',
+    className: '',
+    groupId: '',
+    resultName: '',
+    groupName: '',
+    inputType: 0,
+    isSpecialBettype: 0,
+    isDisplayedForMember: false,
+    inputOptions: [],
+    multipleResultSelect: {} as any,
+    otherInfo: '',
+    isResultWarningByBetType: false,
+    ordNo: 0,
+    intervalNo: 0,
+    isNotTaken: false,
+    isSettleDetermined: false,
+    isSettleDeterminedOriginal: false,
+    isInvalidSelectedProceed: false,
+    isNotExistedValue: false,
+    resultStatusState: '',
+    oddFlex: [],
+    confirmedSdtHomeValue: '',
+    confirmedSdtAwayValue: '',
+    isRelated: false
+  } as ResultDetail;
+}

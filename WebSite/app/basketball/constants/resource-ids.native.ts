@@ -15,7 +15,7 @@ export const Resources = {
          "658", "686", "659", "660", "661", "687", "662",
           "663", "664", "688", "665", "666", "667", "668", "669", "670", "671", "672", "673", "674"],
     baseBetTypes: ["653", "656", "659", "662", "665", "667"],
-    orderBetTypes: ["653", "656", "659", "662", "665", "667", "669", "671", "673", "674", "677", "679", "675", "676", "678"] 
+    orderBetTypes: ["653", "656", "659", "662", "665", "667", "669", "671", "673", "674", "677", "679", "675", "676", "678"], 
     mixReboundsAssists:["656", "659"],
     mixReboundsPoints:["653", "659"],
     mixReboundsAssistsPoints:["653", "656", "659"],
@@ -31,7 +31,8 @@ export const PlayerBetTypes = {
     blocks: "665",
     steals: "667",
     stealsBlocks: "674",
-    doubleDouble: "677"
+    doubleDouble: "677",
+    tripleDouble: "679"
 };
 
 export const OddResourceId = {

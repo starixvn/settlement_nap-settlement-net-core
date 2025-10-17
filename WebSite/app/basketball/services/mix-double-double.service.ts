@@ -22,6 +22,11 @@ export class MixDoubleDoubleService {
     if (doubleDoubleResult) {
       this.calculateDoubleDoubleValue(resultDetails, doubleDoubleResult);
     }
+
+    const tripleDoubleResult = this.findMixResultByBetType(resultDetails, changedResultDetail.resourceId, PlayerBetTypes.tripleDouble);
+    if (tripleDoubleResult) {
+      this.calculateTripleDoubleValue(resultDetails, tripleDoubleResult);
+    }
   }
 
   private findMixResultByBetType(resultDetails: ResultDetail[], resourceId: string, betType: string) {
@@ -47,24 +52,47 @@ export class MixDoubleDoubleService {
     doubleDoubleResult.homeValue = this.calculateValue(resultDetails, doubleDoubleResult.relatedCalResources, this.extractHomeValue);
     
     doubleDoubleResult.checked = true;
-    this.updateExternalScores(doubleDoubleResult, resultDetails);
+    this.updateExternalScores(doubleDoubleResult, resultDetails, 'double');
     
     doubleDoubleResult.isScoreMismatched = this.#verificationBaseService.isEarlyMismatchedWarning(doubleDoubleResult);
   }
 
-  private updateExternalScores(targetResult: ResultDetail, resultDetails: ResultDetail[]) {
+  private calculateTripleDoubleValue(resultDetails: ResultDetail[], tripleDoubleResult: ResultDetail) {
+    tripleDoubleResult.homeValue = this.calculateTripleValue(resultDetails, tripleDoubleResult.relatedCalResources, this.extractHomeValue);
+    
+    tripleDoubleResult.checked = true;
+    this.updateExternalScores(tripleDoubleResult, resultDetails, 'triple');
+    
+    tripleDoubleResult.isScoreMismatched = this.#verificationBaseService.isEarlyMismatchedWarning(tripleDoubleResult);
+  }
+
+  private updateExternalScores(targetResult: ResultDetail, resultDetails: ResultDetail[], type: 'double' | 'triple') {
     targetResult.externalScores.forEach((externalScore, index) => {
       if (index <= 3 && this.areAllExternalScoresEmpty(resultDetails, targetResult.relatedCalResources, index)) {
         externalScore.homeValue = '';
       } else {
-        externalScore.homeValue = this.calculateValue(resultDetails, targetResult.relatedCalResources, (result) => 
-          this.extractExternalValue(result, index)
-        );
+        if (type === 'double') {
+          externalScore.homeValue = this.calculateValue(resultDetails, targetResult.relatedCalResources, (result) => 
+            this.extractExternalValue(result, index)
+          );
+        } else {
+          externalScore.homeValue = this.calculateTripleValue(resultDetails, targetResult.relatedCalResources, (result) => 
+            this.extractExternalValue(result, index)
+          );
+        }
       }
     });
   }
 
   private calculateValue(resultDetails: ResultDetail[], relatedCalResources: string, valueExtractor: (result: ResultDetail) => number | null) {
+    return this.calculateValueWithThresholds(resultDetails, relatedCalResources, valueExtractor, 2, 4);
+  }
+
+  private calculateTripleValue(resultDetails: ResultDetail[], relatedCalResources: string, valueExtractor: (result: ResultDetail) => number | null) {
+    return this.calculateValueWithThresholds(resultDetails, relatedCalResources, valueExtractor, 3, 3);
+  }
+
+  private calculateValueWithThresholds(resultDetails: ResultDetail[], relatedCalResources: string, valueExtractor: (result: ResultDetail) => number | null, highThreshold: number, lowThreshold: number) {
     const highValueCount = this.countValidResults(resultDetails, relatedCalResources, (result) => {
       const value = valueExtractor(result);
       return value !== null && value > 9;
@@ -75,9 +103,9 @@ export class MixDoubleDoubleService {
       return value !== null && value < 10;
     });
     
-    if (highValueCount >= 2) {
+    if (highValueCount >= highThreshold) {
       return this.yesValue;
-    } else if (lowValueCount >= 4) {
+    } else if (lowValueCount >= lowThreshold) {
       return this.noValue;
     } else {
       return this.noneValue;
