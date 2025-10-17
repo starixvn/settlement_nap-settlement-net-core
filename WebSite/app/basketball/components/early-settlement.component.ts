@@ -45,6 +45,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     public match: Match;
     public isReadyMatch: boolean;
     public childResultIds: string[] = [];
+    public allowNoTicketStatus = Resources.baseBetTypes;
     constructor(
         protected injector: Injector,
         protected verificationService: VerificationService,
@@ -109,13 +110,13 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     private orderResultDetails(resultDetails: ResultDetail[]) {
         const orderedResults = _.orderBy(resultDetails, [
             (item) => {
-                if (Resources.baseBetTypes.includes(item.betType)) {
-                    return Resources.baseBetTypes.indexOf(item.betType);
+                if (Resources.orderBetTypes.includes(item.betType)) {
+                    return Resources.orderBetTypes.indexOf(item.betType);
                 }
 
-                return -1;
+                return 99;
             }
-        ], ['desc']);
+        ], ['asc']);
 
         resultDetails.splice(0, resultDetails.length, ...orderedResults);
     }

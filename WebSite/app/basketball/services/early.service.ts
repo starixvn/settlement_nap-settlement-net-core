@@ -109,7 +109,8 @@ export class EarlyService extends EarlyBaseService {
     FindRelatedResourceInValid(resultDetails: ResultDetail[], selectedResource: ResultDetail[]): string {
         const relatedResourceIds = selectedResource.filter(r => r.relatedCalResources).map(r => r.relatedCalResources);
         const resources = relatedResourceIds.map(i => {
-            const relatedResourceInvalid = resultDetails.filter(r => i.includes(r.resourceId) &&
+            const listIds = i.split(',');
+            const relatedResourceInvalid = resultDetails.filter(r => listIds.includes(r.resourceId) &&
                 !r.checked &&
                 r.resultStatusId !== ResultStatusId.ManualCompleted &&
                 r.resultStatusId !== ResultStatusId.AutoCompleted);

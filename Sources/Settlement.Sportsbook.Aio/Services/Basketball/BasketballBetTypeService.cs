@@ -339,7 +339,7 @@ public class BasketballBetTypeServiceImp(
             return settledResult;
         }
 
-        var originalResult = group.FirstOrDefault(r => int.Parse(r.ResourceId[^2..]) < 11);
+        var originalResult = group.FirstOrDefault(r => int.Parse(r.ResourceId[^2..]) < 21);
         if (originalResult is not null)
         {
             return originalResult;
