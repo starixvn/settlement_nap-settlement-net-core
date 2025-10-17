@@ -6,6 +6,9 @@ import { EarlyStore } from '../../../store/early.store';
 import { VerificationBaseService } from '../../../../core/services/verification-base.service';
 import { ResultDetail, ExternalResultDetail, Permission } from '../../../../shared/models/sportsbook-sop';
 import { ResultByTeamNamePipe } from '../../../../shared/pipes/result-by-team-name.pipe';
+import { MixMultiStatsService } from '../../../services/mix-multi-stats.service';
+import { MixDoubleDoubleService } from '../../../services/mix-double-double.service';
+import { createMockVerificationService, createMockMixMultiStatsService, createMockMixDoubleDoubleService } from '../../../test-helpers/mock-services';
 
 describe('Component: TeamSelectionComponent', () => {
     let component: TeamSelectionComponent;
@@ -25,7 +28,8 @@ describe('Component: TeamSelectionComponent', () => {
         const earlyStoreMock = {
             permission: jest.fn().mockReturnValue(permission),
             getHomeTeam: jest.fn().mockReturnValue('Home Team'),
-            getAwayTeam: jest.fn().mockReturnValue('Away Team')
+            getAwayTeam: jest.fn().mockReturnValue('Away Team'),
+            resultDetails: jest.fn().mockReturnValue([])
         };
         
         const verificationBaseServiceMock = {
@@ -40,7 +44,9 @@ describe('Component: TeamSelectionComponent', () => {
             ],
             providers: [
                 { provide: EarlyStore, useValue: earlyStoreMock },
-                { provide: VerificationBaseService, useValue: verificationBaseServiceMock }
+                { provide: VerificationBaseService, useValue: verificationBaseServiceMock },
+                { provide: MixMultiStatsService, useValue: createMockMixMultiStatsService() },
+                { provide: MixDoubleDoubleService, useValue: createMockMixDoubleDoubleService() }
             ]
         })
         .compileComponents()
@@ -52,7 +58,7 @@ describe('Component: TeamSelectionComponent', () => {
             
             component.item = resultDetail;
             component.enable = true;
-            component.updateView = jest.fn();
+            // component.updateView = jest.fn(); // Method doesn't exist
         });
     }));
 
@@ -116,7 +122,9 @@ describe('Component: TeamSelectionOutSideComponent', () => {
             ],
             providers: [
                 { provide: EarlyStore, useValue: earlyStoreMock },
-                VerificationBaseService,
+                { provide: VerificationBaseService, useValue: createMockVerificationService() },
+                { provide: MixMultiStatsService, useValue: createMockMixMultiStatsService() },
+                { provide: MixDoubleDoubleService, useValue: createMockMixDoubleDoubleService() },
                 ResultByTeamNamePipe
             ]
         })
@@ -128,7 +136,7 @@ describe('Component: TeamSelectionOutSideComponent', () => {
             component.resultDetail = resultDetail;
             component.externalResult = externalResult as ExternalResultDetail;
             component.enable = true;
-            component.updateView = jest.fn();
+            // component.updateView = jest.fn(); // Method doesn't exist
         });
     }));
 

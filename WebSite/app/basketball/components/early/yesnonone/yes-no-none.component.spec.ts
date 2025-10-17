@@ -4,6 +4,9 @@ import { YesNoNoneComponent, YesNoNoneOutSideComponent } from './yes-no-none.com
 import { ResultDetail, ExternalResultDetail } from '../../../../shared/models/sportsbook-sop';
 import { VerificationBaseService } from '../../../../core/services/verification-base.service';
 import { ResultByTeamNamePipe } from '../../../../shared/pipes/result-by-team-name.pipe';
+import { MixMultiStatsService } from '../../../services/mix-multi-stats.service';
+import { MixDoubleDoubleService } from '../../../services/mix-double-double.service';
+import { createMockVerificationService, createMockMixMultiStatsService, createMockMixDoubleDoubleService } from '../../../test-helpers/mock-services';
 
 describe('Component: YesNoNoneComponent', () => {
     let component: YesNoNoneComponent;
@@ -21,7 +24,9 @@ describe('Component: YesNoNoneComponent', () => {
 
             ],
             providers: [
-                VerificationBaseService,
+                { provide: VerificationBaseService, useValue: createMockVerificationService() },
+                { provide: MixMultiStatsService, useValue: createMockMixMultiStatsService() },
+                { provide: MixDoubleDoubleService, useValue: createMockMixDoubleDoubleService() },
                 ResultByTeamNamePipe
             ]
         })
@@ -60,7 +65,9 @@ describe('Component: YesNoNoneOutSideComponent', () => {
                 YesNoNoneOutSideComponent
             ],
             providers: [
-                VerificationBaseService,
+                { provide: VerificationBaseService, useValue: createMockVerificationService() },
+                { provide: MixMultiStatsService, useValue: createMockMixMultiStatsService() },
+                { provide: MixDoubleDoubleService, useValue: createMockMixDoubleDoubleService() },
                 ResultByTeamNamePipe
             ]
         })

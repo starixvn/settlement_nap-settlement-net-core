@@ -6,6 +6,9 @@ import { EarlyResourcesIds } from '../../constants';
 import { VerificationBaseService } from '../../../core/services/verification-base.service';
 import { EarlyStore } from '../../store/early.store';
 import { SettlementStatusId } from '../../../shared/constants/settlement-status-id.native';
+import { MixMultiStatsService } from '../../services/mix-multi-stats.service';
+import { MixDoubleDoubleService } from '../../services/mix-double-double.service';
+import { createMockVerificationService, createMockMixMultiStatsService, createMockMixDoubleDoubleService } from '../../test-helpers/mock-services';
 
 @Component({
   template: '',
@@ -45,14 +48,17 @@ describe('Component: InputBaseComponent', () => {
         const mockEarlyStore = {
             matchDetail: jest.fn().mockReturnValue({
                 isSavedScore: true
-            })
+            }),
+            resultDetails: jest.fn().mockReturnValue([])
         };
         
         TestBed.configureTestingModule({
             imports: [TestInputFinalComponent, TestInputOutSideComponent],
             providers: [
                 { provide: VerificationBaseService, useValue: mockVerificationService },
-                { provide: EarlyStore, useValue: mockEarlyStore }
+                { provide: EarlyStore, useValue: mockEarlyStore },
+                { provide: MixMultiStatsService, useValue: createMockMixMultiStatsService() },
+                { provide: MixDoubleDoubleService, useValue: createMockMixDoubleDoubleService() }
             ]
         })
         .compileComponents()

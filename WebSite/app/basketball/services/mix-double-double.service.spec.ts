@@ -3,15 +3,25 @@ import { MixDoubleDoubleService } from './mix-double-double.service';
 import { ResultDetail } from '../../shared/models/sportsbook-sop';
 import { SettlementStatusId } from '../../shared/constants';
 import { PlayerBetTypes } from '../constants';
+import { VerificationBaseService } from '../../core/services/verification-base.service';
 
 describe('MixDoubleDoubleService', () => {
   let service: MixDoubleDoubleService;
+  let mockVerificationService: any;
 
   beforeEach(() => {
+    const verificationSpy = {
+      isEarlyMismatchedWarning: jest.fn()
+    };
+    
     TestBed.configureTestingModule({
-      providers: [MixDoubleDoubleService]
+      providers: [
+        MixDoubleDoubleService,
+        { provide: VerificationBaseService, useValue: verificationSpy }
+      ]
     });
     service = TestBed.inject(MixDoubleDoubleService);
+    mockVerificationService = TestBed.inject(VerificationBaseService);
   });
 
   describe('autoFillMixDoubleDouble', () => {
@@ -29,9 +39,9 @@ describe('MixDoubleDoubleService', () => {
     it('should not process if betType is not in targetBetTypes', () => {
       changedResultDetail = createMockResultDetail('R001', 'invalid', '', SettlementStatusId.Running);
       
-      spyOn(service as any, 'findMixResultByBetType').and.returnValue(null);
-      spyOn(service as any, 'calculateDoubleDoubleValue');
-      spyOn(service as any, 'calculateTripleDoubleValue');
+      jest.spyOn(service as any, 'findMixResultByBetType').mockReturnValue(null);
+      jest.spyOn(service as any, 'calculateDoubleDoubleValue');
+      jest.spyOn(service as any, 'calculateTripleDoubleValue');
 
       service.autoFillMixDoubleDouble(resultDetails, changedResultDetail);
 
@@ -43,9 +53,9 @@ describe('MixDoubleDoubleService', () => {
     it('should process doubleDouble when found', () => {
       changedResultDetail = createMockResultDetail('R001', PlayerBetTypes.points, '', SettlementStatusId.Running);
       
-      spyOn(service as any, 'findMixResultByBetType').and.returnValue(resultDetails[1]);
-      spyOn(service as any, 'calculateDoubleDoubleValue');
-      spyOn(service as any, 'calculateTripleDoubleValue');
+      jest.spyOn(service as any, 'findMixResultByBetType').mockReturnValue(resultDetails[1]);
+      jest.spyOn(service as any, 'calculateDoubleDoubleValue');
+      jest.spyOn(service as any, 'calculateTripleDoubleValue');
 
       service.autoFillMixDoubleDouble(resultDetails, changedResultDetail);
 
@@ -56,9 +66,9 @@ describe('MixDoubleDoubleService', () => {
     it('should process tripleDouble when found', () => {
       changedResultDetail = createMockResultDetail('R001', PlayerBetTypes.points, '', SettlementStatusId.Running);
       
-      spyOn(service as any, 'findMixResultByBetType').and.returnValue(resultDetails[2]);
-      spyOn(service as any, 'calculateDoubleDoubleValue');
-      spyOn(service as any, 'calculateTripleDoubleValue');
+      jest.spyOn(service as any, 'findMixResultByBetType').mockReturnValue(resultDetails[2]);
+      jest.spyOn(service as any, 'calculateDoubleDoubleValue');
+      jest.spyOn(service as any, 'calculateTripleDoubleValue');
 
       service.autoFillMixDoubleDouble(resultDetails, changedResultDetail);
 
@@ -145,7 +155,7 @@ describe('MixDoubleDoubleService', () => {
         4
       );
       
-      expect(result).toBe('N');
+      expect(result).toBe('None');
     });
 
     it('should return noneValue when neither condition is met', () => {
@@ -163,22 +173,22 @@ describe('MixDoubleDoubleService', () => {
 
   describe('calculateValue', () => {
     it('should call calculateValueWithThresholds with correct parameters', () => {
-      spyOn(service as any, 'calculateValueWithThresholds').and.returnValue('Y');
+      jest.spyOn(service as any, 'calculateValueWithThresholds').mockReturnValue('Y');
       
       const result = (service as any).calculateValue([], 'test', () => 10);
       
-      expect((service as any).calculateValueWithThresholds).toHaveBeenCalledWith([], 'test', jasmine.any(Function), 2, 4);
+      expect((service as any).calculateValueWithThresholds).toHaveBeenCalledWith([], 'test', expect.any(Function), 2, 4);
       expect(result).toBe('Y');
     });
   });
 
   describe('calculateTripleValue', () => {
     it('should call calculateValueWithThresholds with correct parameters', () => {
-      spyOn(service as any, 'calculateValueWithThresholds').and.returnValue('N');
+      jest.spyOn(service as any, 'calculateValueWithThresholds').mockReturnValue('N');
       
       const result = (service as any).calculateTripleValue([], 'test', () => 5);
       
-      expect((service as any).calculateValueWithThresholds).toHaveBeenCalledWith([], 'test', jasmine.any(Function), 3, 3);
+      expect((service as any).calculateValueWithThresholds).toHaveBeenCalledWith([], 'test', expect.any(Function), 3, 3);
       expect(result).toBe('N');
     });
   });

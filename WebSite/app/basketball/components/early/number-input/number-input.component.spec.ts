@@ -5,6 +5,9 @@ import { NumberInputComponent, NumberInputOutSideComponent } from './number-inpu
 import { ResultDetail, ExternalResultDetail } from '../../../../shared/models/sportsbook-sop';
 import { VerificationBaseService } from '../../../../core/services/verification-base.service';
 import { ResultByTeamNamePipe } from '../../../../shared/pipes/result-by-team-name.pipe';
+import { MixMultiStatsService } from '../../../services/mix-multi-stats.service';
+import { MixDoubleDoubleService } from '../../../services/mix-double-double.service';
+import { createMockVerificationService, createMockMixMultiStatsService, createMockMixDoubleDoubleService } from '../../../test-helpers/mock-services';
 
 describe('Component: NumberInputComponent', () => {
     let component: NumberInputComponent;
@@ -22,7 +25,9 @@ describe('Component: NumberInputComponent', () => {
                 NumberInputComponent
             ],
             providers: [
-                VerificationBaseService,
+                { provide: VerificationBaseService, useValue: createMockVerificationService() },
+                { provide: MixMultiStatsService, useValue: createMockMixMultiStatsService() },
+                { provide: MixDoubleDoubleService, useValue: createMockMixDoubleDoubleService() },
                 ResultByTeamNamePipe
             ]
         })
@@ -58,7 +63,9 @@ describe('Component: NumberInputOutSideComponent', () => {
                 NumberInputOutSideComponent
             ],
             providers: [
-                VerificationBaseService,
+                { provide: VerificationBaseService, useValue: createMockVerificationService() },
+                { provide: MixMultiStatsService, useValue: createMockMixMultiStatsService() },
+                { provide: MixDoubleDoubleService, useValue: createMockMixDoubleDoubleService() },
                 ResultByTeamNamePipe
             ]
         })

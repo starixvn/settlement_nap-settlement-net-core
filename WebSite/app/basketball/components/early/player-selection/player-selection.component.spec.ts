@@ -6,6 +6,9 @@ import { PlayerSelection } from '../../../models/player-selection.model';
 import { OddFlexModel, OddsInfoModel } from '../../../../shared/models/sportsbook-sop/odds-flex.model';
 import { VerificationBaseService } from '../../../../core/services/verification-base.service';
 import { ResultByTeamNamePipe } from '../../../../shared/pipes/result-by-team-name.pipe';
+import { MixMultiStatsService } from '../../../services/mix-multi-stats.service';
+import { MixDoubleDoubleService } from '../../../services/mix-double-double.service';
+import { createMockVerificationService, createMockMixMultiStatsService, createMockMixDoubleDoubleService } from '../../../test-helpers/mock-services';
 
 describe('Component: PlayerSelectionComponent', () => {
     let component: PlayerSelectionComponent;
@@ -39,7 +42,9 @@ describe('Component: PlayerSelectionComponent', () => {
                 PlayerSelectionComponent
             ],
             providers: [
-                VerificationBaseService,
+                { provide: VerificationBaseService, useValue: createMockVerificationService() },
+                { provide: MixMultiStatsService, useValue: createMockMixMultiStatsService() },
+                { provide: MixDoubleDoubleService, useValue: createMockMixDoubleDoubleService() },
                 ResultByTeamNamePipe
             ]
         })
@@ -126,7 +131,9 @@ describe('Component: PlayerSelectionOutSideComponent', () => {
                 PlayerSelectionOutSideComponent
             ],
             providers: [
-                VerificationBaseService,
+                { provide: VerificationBaseService, useValue: createMockVerificationService() },
+                { provide: MixMultiStatsService, useValue: createMockMixMultiStatsService() },
+                { provide: MixDoubleDoubleService, useValue: createMockMixDoubleDoubleService() },
                 ResultByTeamNamePipe
             ]
         })
