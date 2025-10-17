@@ -388,14 +388,18 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     }
 
     supportInputPlayerScores() {
-            const modalRef = this.dialog.open(PlayerScoresPageComponent, {
-                width: '800px',
-                height: '900px',
-                data: {
-                    matchId: this.match.matchDetail.matchId
-                }
-            });
-            modalRef.afterClosed().subscribe((result) => {
-            });
-        }
+        const modalRef = this.dialog.open(PlayerScoresPageComponent, {
+            width: '800px',
+            height: '900px',
+            data: {
+                matchId: this.match.matchDetail.matchId
+            }
+        });
+        
+        modalRef.afterClosed().subscribe((result) => {
+            if (result && result.hasChanges) {
+                window.location.reload();
+            }
+        });
+    }
 }

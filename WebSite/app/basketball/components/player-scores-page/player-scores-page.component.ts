@@ -53,8 +53,10 @@ export class PlayerScoresPageComponent implements OnInit {
     this.loadData();
   }
 
-  public close() {
-    this.dialogRef.close();
+  public close(hasChanges = false) {
+    this.dialogRef.close({
+      hasChanges
+    });
   }
 
   loadData() {
@@ -135,8 +137,7 @@ export class PlayerScoresPageComponent implements OnInit {
         this.toastService.error(result.errMsg);
         return;
       }
-
-      this.loadData();
+      this.close(true);
     });
   }
 
@@ -162,7 +163,7 @@ export class PlayerScoresPageComponent implements OnInit {
         resourceIds);
 
       await this.aioService.changeResultSetting(query);
-      this.loadData();
+      this.close(true);
     });
   }
 }
