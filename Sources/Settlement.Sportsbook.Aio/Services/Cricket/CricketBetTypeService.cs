@@ -1,11 +1,12 @@
 ﻿using Settlement.ResourceInfos.Constants;
-using Settlement.Sportsbook.Aio.Criteria.Cricket;
 using Settlement.Sportsbook.Aio.Models;
 
 namespace Settlement.Sportsbook.Aio.Services.Cricket;
 
 using Constants.Cricket;
+using Settlement.Core.Constants;
 using Settlement.ResourceInfos.Services;
+using Settlement.Sportsbook.Aio.Criteria;
 using System.Collections.Generic;
 
 public interface ICricketBetTypeService
@@ -42,7 +43,7 @@ public class CricketBetTypeService(
     {
         const char semicolon = ',';
 
-        var getPlayerCriteria = new GetPlayerInfoCriteria { MatchId = matchId };
+        var getPlayerCriteria = new GetPlayerInfoCriteria { MatchId = matchId, SportType = SportType.Cricket };
         var inputOptions = repository.Fetch<InputOption>(getPlayerCriteria)
             .Where(option => option.OddsInfo.Contains(semicolon)).ToList();
 

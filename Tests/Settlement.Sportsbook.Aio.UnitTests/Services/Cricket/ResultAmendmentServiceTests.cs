@@ -56,7 +56,10 @@ public class ResultAmendmentServiceTests
         {
             Action = "CAL"
         };
-        var selectedResources = new List<ResourceItem>();
+        var selectedResources = new List<ResourceItem>()
+        {
+            new ResourceItem { ResourceId = "R12345", Bettype = "BT1" },
+        };
 
         repository.FetchAsync<ResultChanged>(Arg.Any<CheckReSettleCriteria>()).Returns(
         [

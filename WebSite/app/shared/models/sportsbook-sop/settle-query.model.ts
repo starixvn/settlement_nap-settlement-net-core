@@ -17,6 +17,7 @@ export class SettleQuery {
     isFantasy:boolean;
     isSettleRelated = false;
     childMatchIds: string | null = null;
+    IsSettleDetermined: boolean;
     
     constructor(
         matchDetail: MatchDetail,
@@ -25,7 +26,8 @@ export class SettleQuery {
         isReSettledTickets: boolean,
         betStatus: string,
         apikey: string,
-        isLeader = false) {
+        isLeader = false,
+        IsSettleDetermined = false) {
         this.matchId = matchDetail.matchId;
         this.sportType = matchDetail.sportType;
         this.selectedResources = selectedResources;
@@ -35,5 +37,6 @@ export class SettleQuery {
         this.betStatus = betStatus;
         this.isLeader = isLeader;
         this.isFantasy = matchDetail.isFantasy;
+        this.IsSettleDetermined = IsSettleDetermined;
     }
 }

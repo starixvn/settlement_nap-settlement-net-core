@@ -15,7 +15,7 @@ public class ResultDetailMapperServiceImp : IMapperService
         badmintonBetTypeService = new BadmintonBetTypeServiceImp(resourceNameService);
     }
 
-    public void Decorate(dynamic obj)
+    public Task Decorate(dynamic obj)
     {
         if (obj is List<ResultDetail> list)
         {
@@ -23,5 +23,7 @@ public class ResultDetailMapperServiceImp : IMapperService
             var listEarly = list.Where(x => x.ResourceId.Length == maxLengthResourceId).ToList();
             listEarly.ForEach(x => badmintonBetTypeService.GetBetTypeName(x));
         }
+
+        return Task.CompletedTask;
     }
 }

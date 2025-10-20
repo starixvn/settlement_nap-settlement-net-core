@@ -97,9 +97,9 @@ public class AioServiceImp(
         if (mapperService != null)
         {
             resultDetails.ForEach(result => result.MatchId = request.MatchId);
-            mapperService.Decorate(resultDetails);
+            await mapperService.Decorate(resultDetails);
         }
-        resultDetails = resultDetails.OrderBy(result => result.OrdNo).ToList();
+        resultDetails = resultDetails.Where(r => !r.InValid).OrderBy(result => result.OrdNo).ToList();
 
         var newResultDetails = await SetInterval(matchDetail, resultDetails);
 
@@ -158,7 +158,7 @@ public class AioServiceImp(
             var providerResult = await repository.FetchAsync<ExternalResultDetailModel>(providerCriteria);
             var provider = new Tuple<List<ExternalResultDetailModel>, List<ExternalResultModel>>(providerResult.ToList(),
                 []);
-            providerMapperService.Decorate(provider);
+            await providerMapperService.Decorate(provider);
             externalResults = provider.Item2;
         }
 
@@ -350,7 +350,7 @@ public class AioServiceImp(
             var getChildMatchCriteria = validateApiKeyService.CriteriaName(request, $"{apiKey}-{ApiKeyConstant.ChildMatchKey}");
             var childMatchList = await repository.FetchAsync<ChildMatchModel>(getChildMatchCriteria);
             var childMatchTuple = new Tuple<List<ChildMatchModel>, List<ResultDetail>>(childMatchList.ToList(), resultDetails);
-            childMatchMapperService.Decorate(childMatchTuple);
+            await childMatchMapperService.Decorate(childMatchTuple);
             return childMatchTuple.Item1.ToList();
         }
 

@@ -18,7 +18,7 @@ public class ResultDetailMapperServiceImp : IMapperService
         earlyBetTypeNameService = new CricketBetTypeService(repository, resourceNameService, groupNameService, inputTypeService);
     }
 
-    public void Decorate(dynamic obj)
+    public Task Decorate(dynamic obj)
     {
         if (obj is List<ResultDetail> list)
         {
@@ -26,5 +26,7 @@ public class ResultDetailMapperServiceImp : IMapperService
             var listEarly = list.Where(x => x.ResourceId.Length > maxLengthResourceId).ToList();
             earlyBetTypeNameService.GroupBetTypesAndGenerateNames(listEarly);
         }
+
+        return Task.CompletedTask;
     }
 }

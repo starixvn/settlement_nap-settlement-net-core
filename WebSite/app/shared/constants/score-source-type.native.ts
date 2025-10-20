@@ -4,5 +4,5 @@ export const ScoreSourceType = {
     emptySource: 0,
     confirmRefundSource: 99,
     newScore: 98,
-    Sbo: 1
+    Sbo: 1,
 };

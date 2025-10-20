@@ -62,6 +62,7 @@ import { UrlHelper } from "../../helper";
     ExternalSourceNamePipe,
     ResourceNameByIdPipe,
     RelatedMatchesComponent,
+    ToastContainerDirective
   ],
   providers: [
     BasketballService,

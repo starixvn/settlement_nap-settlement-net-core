@@ -32,3 +32,4 @@ export * from './changed-match-setting.model';
 export * from './match-details/goal-icon.model';
 export * from './resource-item.model';
 export * from './settle-childmatch.model';
+export * from './change-confirm-result-setting-query.model';

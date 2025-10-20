@@ -8,7 +8,7 @@ public class ChildMatchService : IMapperService
 {
     private const string totalPoints = "01";
 
-    public void Decorate(dynamic obj)
+    public Task Decorate(dynamic obj)
     {
         if (obj is Tuple<List<ChildMatchModel>, List<ResultDetail>> tuple)
         {
@@ -17,6 +17,8 @@ public class ChildMatchService : IMapperService
             tuple.Item1.Clear();
             tuple.Item1.AddRange(childMatchAfterFilter);
         }
+
+        return Task.CompletedTask;
     }
 
     private static IEnumerable<ChildMatchModel> VerifyChildMatches(List<ChildMatchModel> childMatches, IEnumerable<ResultDetail> resultDetails)

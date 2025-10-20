@@ -88,14 +88,15 @@ export class RefundActionBaseComponent {
         const resourceIds = _.join(this.selectedResources.map(item => item.resourceId), ',');
         const resultConfirmed = _.find(this.selectedResources, item => item.resultSettingData.isConfirmedRefund);
         if (_.isNil(resultConfirmed)) {
-            this.aioService.changeConfirmResultSetting(
-                Language.confirmRefund.confirmRefund,
-                this.matchDetail.matchId, 
-                resourceIds, 
-                true,
+            this.aioService.changeConfirmResultSetting({
+                message: Language.confirmRefund.confirmRefund,
+                matchId: this.matchDetail.matchId,
+                resourceIds,
+                isEnabled: true,
                 hedgeMatchDetail,
-                null,
-                confirmRefundResources);
+                oldMatchDetail: null,
+                confirmRefundResources
+            });
         } else {
             this.undoConfirmedResult({
                 resultDetails: this.selectedResources,matchId: 
@@ -112,14 +113,15 @@ export class RefundActionBaseComponent {
         const resultNotConfirmed = _.find(undoConfirm.resultDetails, item => !item.resultSettingData.isConfirmedRefund);
         
         if (_.isNil(resultNotConfirmed)) {
-            this.aioService.changeConfirmResultSetting(
-                Language.confirmRefund.undoConfirm, 
-                undoConfirm.matchId, 
-                undoConfirm.resourceIds, 
-                false,
-                undoConfirm.hedgeMatchDetail, 
-                undoConfirm.oldMatchDetail,
-                undoConfirm.confirmRefundResources);
+            this.aioService.changeConfirmResultSetting({
+                message: Language.confirmRefund.undoConfirm,
+                matchId: undoConfirm.matchId,
+                resourceIds: undoConfirm.resourceIds,
+                isEnabled: false,
+                hedgeMatchDetail: undoConfirm.hedgeMatchDetail,
+                oldMatchDetail: undoConfirm.oldMatchDetail,
+                confirmRefundResources: undoConfirm.confirmRefundResources
+            });
         } else {
             this.toastrService.error(Language.confirmRefund.differentStates);
         }
@@ -131,8 +133,15 @@ export class RefundActionBaseComponent {
         const refundNormal = this.resultDetails.filter(item => item.resultSettingData.isConfirmedRefund);
         if (refundNormal.length > 0) {
             const resourceIds = refundNormal.map(resource => resource.resourceId).join(',');
-            this.aioService.changeConfirmResultSetting(Language.confirmRefund.undoConfirmAll, this.matchDetail.matchId, resourceIds, false,
-                hedgeMatch,null,[]);
+            this.aioService.changeConfirmResultSetting({
+                message: Language.confirmRefund.undoConfirmAll,
+                matchId: this.matchDetail.matchId,
+                resourceIds,
+                isEnabled: false,
+                hedgeMatchDetail: hedgeMatch,
+                oldMatchDetail: null,
+                confirmRefundResources: []
+            });
         } else {
             const resultConfirmed = this.resultDetails.filter(item => item.resultSettingData.isConfirmedRefundSdt)
             const resourceItems = resultConfirmed.map(item => new ResourceItem(item.resourceId, item.resourceName, item.homeValue, item.awayValue))

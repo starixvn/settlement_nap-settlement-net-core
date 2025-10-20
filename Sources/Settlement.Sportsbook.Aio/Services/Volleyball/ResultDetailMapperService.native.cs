@@ -12,7 +12,7 @@ public class ResultDetailMapperServiceImp : IMapperService
 
     private readonly IGroupBetTypeService groupBetTypeService = new GroupBetTypeServiceImp();
 
-    public void Decorate(dynamic obj)
+    public Task Decorate(dynamic obj)
     {
         if (obj is List<ResultDetail> list)
         {
@@ -26,6 +26,8 @@ public class ResultDetailMapperServiceImp : IMapperService
                 (resultDetail.BetType, resultDetail.BetTypeName) = resourceNameService.GetResourceName(resultDetail.ResourceId, KeyConstants.VolleyballKey);
             }
         }
+
+        return Task.CompletedTask;
     }
 
     private static int SplitBetType(string resourceId, int startIndex, int length)

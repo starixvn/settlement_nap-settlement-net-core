@@ -90,15 +90,15 @@ describe("Refund Base Component", () => {
             
             tick();
 
-            expect(changeConfirmResultSettingSpy).toHaveBeenCalledWith(
-                Language.confirmRefund.undoConfirm,
-                1,
-                "",
-                false,
-                null,
-                undefined,
-                undefined
-            );
+            expect(changeConfirmResultSettingSpy).toHaveBeenCalledWith({
+                message: Language.confirmRefund.undoConfirm,
+                matchId: 1,
+                resourceIds: "",
+                isEnabled: false,
+                hedgeMatchDetail: null,
+                oldMatchDetail: undefined,
+                confirmRefundResources: undefined
+            });
         }));
     });
 

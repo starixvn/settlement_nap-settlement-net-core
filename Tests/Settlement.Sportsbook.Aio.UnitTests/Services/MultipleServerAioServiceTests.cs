@@ -283,4 +283,298 @@ public class MultipleServerAioServiceTests
 
         await repository.Received(4).ExecuteAsync(Arg.Any<SettleCriteria>());
     }
+
+    [Fact]
+    public async Task FetchResultDetails_BasketballEarlySettlement_ExecutesGenerateRelatedResource()
+    {
+        // Arrange
+        var criteria = new GetResultDetailCriteria
+        {
+            MatchId = 12345,
+            SettleType = SettleType.Early
+        };
+
+        var ticketDetails = new List<ResultDetail>
+        {
+            new() { ResourceId = "00", BetCount = 5 },
+            new() { ResourceId = "01", BetCount = 3 },
+            new() { ResourceId = "02", BetCount = 0 } // Should not be included in related resources
+        };
+
+        var resultDetails = new List<ResultDetail>
+        {
+            new() { ResourceId = "00" },
+            new() { ResourceId = "01" }
+        };
+
+        repository.FetchAsync<ResultDetail>(Arg.Any<GetResultDetailCriteria>())
+            .Returns(resultDetails);
+
+        repository.FetchMultipleAsync<ResultDetail, TicketCounts>(Arg.Any<GetTicketDetailsCriteria>())
+            .Returns((new List<ResultDetail>(), new List<TicketCounts>()));
+
+        mergeDataService.MergeTicketDetails(Arg.Any<List<(List<ResultDetail>, TicketCounts)>>())
+            .Returns((ticketDetails, new TicketCounts()));
+
+        // Act
+        await service.FetchResultDetails(criteria, SportType.BasketBall);
+
+        // Assert
+        await repository.Received(1).ExecuteAsync(Arg.Is<GenerateRelatedResourcesCriteria>(x =>
+            x.MatchId == 12345 &&
+            x.ResourceIds == "00,01")); // Only resources with BetCount > 0
+    }
+
+    [Fact]
+    public async Task FetchResultDetails_NonBasketballSport_DoesNotExecuteGenerateRelatedResource()
+    {
+        // Arrange
+        var criteria = new GetResultDetailCriteria
+        {
+            MatchId = 12345,
+            SettleType = SettleType.Early
+        };
+
+        var ticketDetails = new List<ResultDetail>
+        {
+            new() { ResourceId = "00", BetCount = 5 }
+        };
+
+        var resultDetails = new List<ResultDetail>
+        {
+            new() { ResourceId = "00" }
+        };
+
+        repository.FetchAsync<ResultDetail>(Arg.Any<GetResultDetailCriteria>())
+            .Returns(resultDetails);
+
+        repository.FetchMultipleAsync<ResultDetail, TicketCounts>(Arg.Any<GetTicketDetailsCriteria>())
+            .Returns((new List<ResultDetail>(), new List<TicketCounts>()));
+
+        mergeDataService.MergeTicketDetails(Arg.Any<List<(List<ResultDetail>, TicketCounts)>>())
+            .Returns((ticketDetails, new TicketCounts()));
+
+        // Act
+        await service.FetchResultDetails(criteria, SportType.Soccer);
+
+        // Assert
+        await repository.DidNotReceive().ExecuteAsync(Arg.Any<GenerateRelatedResourcesCriteria>());
+    }
+
+    [Fact]
+    public async Task FetchResultDetails_BasketballNonEarlySettlement_DoesNotExecuteGenerateRelatedResource()
+    {
+        // Arrange
+        var criteria = new GetResultDetailCriteria
+        {
+            MatchId = 12345,
+            SettleType = SettleType.Calculate
+        };
+
+        var ticketDetails = new List<ResultDetail>
+        {
+            new() { ResourceId = "00", BetCount = 5 }
+        };
+
+        var resultDetails = new List<ResultDetail>
+        {
+            new() { ResourceId = "00" }
+        };
+
+        repository.FetchAsync<ResultDetail>(Arg.Any<GetResultDetailCriteria>())
+            .Returns(resultDetails);
+
+        repository.FetchMultipleAsync<ResultDetail, TicketCounts>(Arg.Any<GetTicketDetailsCriteria>())
+            .Returns((new List<ResultDetail>(), new List<TicketCounts>()));
+
+        mergeDataService.MergeTicketDetails(Arg.Any<List<(List<ResultDetail>, TicketCounts)>>())
+            .Returns((ticketDetails, new TicketCounts()));
+
+        // Act
+        await service.FetchResultDetails(criteria, SportType.BasketBall);
+
+        // Assert
+        await repository.DidNotReceive().ExecuteAsync(Arg.Any<GenerateRelatedResourcesCriteria>());
+    }
+
+    [Fact]
+    public async Task FetchResultDetails_MergeTicketDetailsWithResults_ReturnsCorrectMergedData()
+    {
+        // Arrange
+        var criteria = new GetResultDetailCriteria
+        {
+            MatchId = 12345,
+            SettleType = SettleType.Early
+        };
+
+        var ticketDetails = new List<ResultDetail>
+        {
+            new() { ResourceId = "00", BetCount = 5, IsSpecialBettype = 1 },
+            new() { ResourceId = "01", BetCount = 3, IsSpecialBettype = 0 },
+            new() { ResourceId = "02", BetCount = 2, IsSpecialBettype = 1 } // New ticket not in results
+        };
+
+        var resultDetails = new List<ResultDetail>
+        {
+            new() { ResourceId = "00" }, // Existing in both
+            new() { ResourceId = "01" }  // Existing in both
+        };
+
+        repository.FetchAsync<ResultDetail>(Arg.Any<GetResultDetailCriteria>())
+            .Returns(resultDetails);
+
+        repository.FetchMultipleAsync<ResultDetail, TicketCounts>(Arg.Any<GetTicketDetailsCriteria>())
+            .Returns((new List<ResultDetail>(), new List<TicketCounts>()));
+
+        mergeDataService.MergeTicketDetails(Arg.Any<List<(List<ResultDetail>, TicketCounts)>>())
+            .Returns((ticketDetails, new TicketCounts()));
+
+        // Act
+        var (actualResults, _) = await service.FetchResultDetails(criteria, SportType.Soccer);
+
+        // Assert
+        Assert.Equal(3, actualResults.Count); // Should include merged ticket detail
+        Assert.Contains(actualResults, r => r.ResourceId == "00" && r.IsSpecialBettype == 1);
+        Assert.Contains(actualResults, r => r.ResourceId == "01" && r.IsSpecialBettype == 0);
+        Assert.Contains(actualResults, r => r.ResourceId == "02" && r.IsSpecialBettype == 1);
+    }
+
+    [Fact]
+    public async Task FetchResultDetails_FilterNotIncludedTickets_ReturnsOnlyIncludedTickets()
+    {
+        // Arrange
+        var criteria = new GetResultDetailCriteria
+        {
+            MatchId = 12345,
+            SettleType = SettleType.Early
+        };
+
+        var ticketDetails = new List<ResultDetail>
+        {
+            new() { ResourceId = "00", BetCount = 5 }, // Will get status other than NotIncluded
+            new() { ResourceId = "01", BetCount = 0 }  // Will get NoTicket status
+        };
+
+        var resultDetails = new List<ResultDetail>
+        {
+            new() { ResourceId = "00" },
+            new() { ResourceId = "02" } // This will get NotIncluded status (no matching ticket)
+        };
+
+        repository.FetchAsync<ResultDetail>(Arg.Any<GetResultDetailCriteria>())
+            .Returns(resultDetails);
+
+        repository.FetchMultipleAsync<ResultDetail, TicketCounts>(Arg.Any<GetTicketDetailsCriteria>())
+            .Returns((new List<ResultDetail>(), new List<TicketCounts>()));
+
+        mergeDataService.MergeTicketDetails(Arg.Any<List<(List<ResultDetail>, TicketCounts)>>())
+            .Returns((ticketDetails, new TicketCounts()));
+
+        // Act
+        var (actualResults, _) = await service.FetchResultDetails(criteria, SportType.Soccer);
+
+        // Assert - Should exclude tickets with NotIncluded status
+        Assert.DoesNotContain(actualResults, r => r.TicketStatus == TicketStatus.NotIncluded);
+        Assert.All(actualResults, r => Assert.NotEqual(TicketStatus.NotIncluded, r.TicketStatus));
+    }
+
+    [Fact]
+    public async Task FetchResultDetails_MultipleServers_CallsRepositoryForEachServer()
+    {
+        // Arrange
+        var criteria = new GetResultDetailCriteria
+        {
+            MatchId = 12345,
+            SettleType = SettleType.Early
+        };
+
+        var ticketDetails = new List<ResultDetail>();
+        var resultDetails = new List<ResultDetail>();
+
+        repository.FetchAsync<ResultDetail>(Arg.Any<GetResultDetailCriteria>())
+            .Returns(resultDetails);
+
+        repository.FetchMultipleAsync<ResultDetail, TicketCounts>(Arg.Any<GetTicketDetailsCriteria>())
+            .Returns((new List<ResultDetail>(), new List<TicketCounts>()));
+
+        mergeDataService.MergeTicketDetails(Arg.Any<List<(List<ResultDetail>, TicketCounts)>>())
+            .Returns((ticketDetails, new TicketCounts()));
+
+        // Act
+        await service.FetchResultDetails(criteria, SportType.Soccer);
+
+        // Assert - Should call FetchMultipleAsync for each server (01, 02)
+        await repository.Received(2).FetchMultipleAsync<ResultDetail, TicketCounts>(
+            Arg.Is<GetTicketDetailsCriteria>(x =>
+                x.MatchId == 12345 &&
+                x.SettleType == SettleType.Early &&
+                x.SportType == SportType.Soccer));
+    }
+
+    [Fact]
+    public async Task FetchResultDetails_ReturnsCorrectTicketCounts()
+    {
+        // Arrange
+        var criteria = new GetResultDetailCriteria
+        {
+            MatchId = 12345,
+            SettleType = SettleType.Early
+        };
+
+        var expectedTicketCounts = new TicketCounts
+        {
+            BetCount = 100,
+            BetSettledCount = 50
+        };
+
+        var ticketDetails = new List<ResultDetail>();
+        var resultDetails = new List<ResultDetail>();
+
+        repository.FetchAsync<ResultDetail>(Arg.Any<GetResultDetailCriteria>())
+            .Returns(resultDetails);
+
+        repository.FetchMultipleAsync<ResultDetail, TicketCounts>(Arg.Any<GetTicketDetailsCriteria>())
+            .Returns((new List<ResultDetail>(), new List<TicketCounts>()));
+
+        mergeDataService.MergeTicketDetails(Arg.Any<List<(List<ResultDetail>, TicketCounts)>>())
+            .Returns((ticketDetails, expectedTicketCounts));
+
+        // Act
+        var (_, actualTicketCounts) = await service.FetchResultDetails(criteria, SportType.Soccer);
+
+        // Assert
+        Assert.Equal(expectedTicketCounts.BetCount, actualTicketCounts.BetCount);
+        Assert.Equal(expectedTicketCounts.BetSettledCount, actualTicketCounts.BetSettledCount);
+    }
+
+    [Fact]
+    public async Task FetchResultDetails_SetsSportTypeOnCriteria()
+    {
+        // Arrange
+        var criteria = new GetResultDetailCriteria
+        {
+            MatchId = 12345,
+            SettleType = SettleType.Early,
+            SportType = 0 // Initially unset
+        };
+
+        var ticketDetails = new List<ResultDetail>();
+        var resultDetails = new List<ResultDetail>();
+
+        repository.FetchAsync<ResultDetail>(Arg.Any<GetResultDetailCriteria>())
+            .Returns(resultDetails);
+
+        repository.FetchMultipleAsync<ResultDetail, TicketCounts>(Arg.Any<GetTicketDetailsCriteria>())
+            .Returns((new List<ResultDetail>(), new List<TicketCounts>()));
+
+        mergeDataService.MergeTicketDetails(Arg.Any<List<(List<ResultDetail>, TicketCounts)>>())
+            .Returns((ticketDetails, new TicketCounts()));
+
+        // Act
+        await service.FetchResultDetails(criteria, SportType.Tennis);
+
+        // Assert - Verify the criteria passed to repository has correct SportType
+        await repository.Received(1).FetchAsync<ResultDetail>(
+            Arg.Is<GetResultDetailCriteria>(x => x.SportType == SportType.Tennis));
+    }
 }

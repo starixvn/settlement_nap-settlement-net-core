@@ -138,7 +138,8 @@ describe('Soccer - EarlySettlementComponent', () => {
         isShow: false,
         isEnabled: false,
         originalHomeValue: 0,
-        originalAwayValue: 0
+        originalAwayValue: 0,
+        resultStatusColor: ''
     } ;
 
     const permission = {

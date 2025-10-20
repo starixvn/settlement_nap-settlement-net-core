@@ -1,10 +1,11 @@
 export class GeneralResultDetail {
-    public resourceId: string;
-    public resourceName: string;
-    public homeValue: string;
-    public awayValue: string;
-    public resultStatusId: number;
-    public settlementStatusId: number;
-    public resultStatus: string;
-    public isInvalidValue: boolean;
+    resourceId: string;
+    resourceName: string;
+    homeValue: string;
+    awayValue: string;
+    resultStatusId: number;
+    settlementStatusId: number;
+    resultStatus: string;
+    resultStatusColor: string;
+    isInvalidValue: boolean;
 }   

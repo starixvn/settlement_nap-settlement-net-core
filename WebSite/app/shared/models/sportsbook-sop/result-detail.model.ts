@@ -2,6 +2,7 @@
 import { GeneralResultDetail, ResultSettingModel } from "../index";
 import { ExternalResultDetail } from "./external-result-detail.model";
 import { MultipleSelect } from "../multiple-select.model";
+import { OddFlexModel } from "./odds-flex.model";
 
 export class ResultDetail extends GeneralResultDetail {
     ticketStatus: string;
@@ -19,6 +20,7 @@ export class ResultDetail extends GeneralResultDetail {
     externalScores: ExternalResultDetail[];
     isScoreMismatched: boolean;
     isShow = true;
+    parentShowed = false;
     disabled: boolean;
     resultSettingData: ResultSettingModel;
     originalHomeValue: string;
@@ -42,4 +44,9 @@ export class ResultDetail extends GeneralResultDetail {
     isInvalidSelectedProceed: boolean;
     isNotExistedValue: boolean;
     resultStatusState: string;
+    oddFlex: OddFlexModel[];
+    confirmedSdtHomeValue: string;
+    confirmedSdtAwayValue: string;
+    isRelated: boolean;
+    relatedCalResources: string
 }

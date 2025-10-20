@@ -10,3 +10,4 @@ export * from './group-map.model';
 export * from './settle-query.model';
 export * from './input-option.model';
 export * from './sport-template.model';
+export * from './odds-flex.model';

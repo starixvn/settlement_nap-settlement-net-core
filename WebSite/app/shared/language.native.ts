@@ -191,7 +191,8 @@
     invalidResultByBetType: 'Cannot continue due to invalid value inputted. Please check and try again.',
     mismatchedScreenshot: 'WARNING! Cannot continue due to values from Final Score inconsistent with Screenshot',
     notScreenshot: 'WARNING! Cannot continue due to missing Screenshot value.',
-    relatedResultsNotSelected: 'Cannot continue due to related results have been calculated and not selected.'
+    relatedResultsNotSelected: 'Cannot continue due to related results have been calculated and not selected.',
+    relatedResourceNotAttached: 'Failed: due to following base results have not been calculated or not selected to calculated at the same time<br/>{0}'
   },
   intervalsAndMatch: {
     matchNotSelected: "WARNING! Changed values may affect other results. Do you want to select Match/Full Time score also?",
@@ -211,6 +212,7 @@
     sdtConfirm: 'WARNING! Are you sure you want to confirm-refund SDT for selected results?<br/>{0}',
     mercyConfirm: 'WARNING! Are you sure you want to confirm-refund Mercy for selected results?',
     undoConfirmAll: 'WARNING! Are you sure you want to undo confirm-refund for all results?',
+    notSupportedSDT: 'Error! Invalid results selected to Refund-SDT. Please check and try again.',
     sdtErrorMessage: 'Cannot continue with Refund due to confirm state or value mismatch. Please check and try again.',
     sdtHalfTimeErrorMessage: 'Failed: HT selected to Refund-SDT and FT has not been selected as well. Please re-check or select both HT and FT.',
     sdtFullTimeErrorMessage: 'Failed: FT selected to Refund-SDT and HT has not been settled. Please re-check or select settle HT first.',

@@ -39,4 +39,7 @@ public class ResourceItem : BaseResourceItem
 
     [XmlIgnore]
     public int GroupBetType { get; set; }
+
+    [XmlIgnore]
+    public string Bettype { get; set; }
 }

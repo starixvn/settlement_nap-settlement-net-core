@@ -10,10 +10,17 @@ public interface IGroupBetTypeService
     GroupNameModel GroupHalfBetType(int resourceId);
 
     GroupNameModel GroupQuarterBetType(int resourceId);
+
+    GroupNameModel GroupPlayerBetType(ResultDetail resultDetail);
 }
 
 public class GroupBetTypeServiceImp : IGroupBetTypeService
 {
+    private const string HeadToHead = "Head to Head";
+    private const int HeadToHeadId = 101;
+    private const string DefaultPlayerGroupName = "Other";
+    private const int PlayerGroupIdOffset = 100;
+
     public GroupNameModel GroupHalfBetType(int resourceId)
     {
         return GroupBetType.FirstHalf.Contains(resourceId)
@@ -39,6 +46,35 @@ public class GroupBetTypeServiceImp : IGroupBetTypeService
                 GroupName = GroupBetType.OtherName
             }
             : new GroupNameModel();
+    }
+
+    public GroupNameModel GroupPlayerBetType(ResultDetail resultDetail)
+    {
+        if (GroupBetType.MostPointsType.Contains(resultDetail.BetType))
+        {
+            return new GroupNameModel
+            {
+                GroupId = HeadToHeadId,
+                GroupName = HeadToHead
+            };
+        }
+
+        var matchingOddFlex = resultDetail.OddFlex.FirstOrDefault();
+
+        if (matchingOddFlex is { Info: not null })
+        {
+            return new GroupNameModel
+            {
+                GroupId = matchingOddFlex.Info.PlayerId + PlayerGroupIdOffset,
+                GroupName = $"@teamName-{matchingOddFlex.Info.TeamId}-{matchingOddFlex.Info.PlayerName}"
+            };
+        }
+
+        return new GroupNameModel
+        {
+            GroupId = PlayerGroupIdOffset,
+            GroupName = DefaultPlayerGroupName
+        };
     }
 
     public GroupNameModel GroupQuarterBetType(int resourceId)

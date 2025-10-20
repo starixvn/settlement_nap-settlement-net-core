@@ -29,12 +29,13 @@
         <div class="footer border-top-0" *ngIf="permission.canRefund">
             <div class="sub-footer">
                 <span>
-                    <input type="checkbox" [(ngModel)]="isShowRefundButton" id="displayRefundButton" />&nbsp;<label
-                        for="displayRefundButton">Show/Hide Refund button</label>
+                    <input type="checkbox" [(ngModel)]="isShowRefundButton" id="displayRefundButton"
+                        (ngModelChange)="onShowRefundButtonChange()" />&nbsp;<label for="displayRefundButton">Show/Hide
+                        Refund button</label>
                 </span>
                 <button *ngIf="isShowRefundButton && permission.isLeader"
                     [ngClass]="{'btn btn-outline-primary button-confirmed': true}" [disabled]="isDisabledCalculate"
-                    (click)="confirmRefund()">
+                    (click)="confirmRefundBasketBall()">
                     Confirm/Undo-confirm Refund
                 </button>
                 <button *ngIf="isShowRefundButton"
@@ -42,6 +43,11 @@
                     (click)="refund()" [disabled]="isDisabledCalculate">
                     Refund
                 </button>
+                &nbsp;
+                <span *ngIf="isShowRefundButton">
+                    <label for="refundWithSettleDetermined">Refund with Settle Determined Tickets</label>&nbsp;<input
+                        id="refundWithSettleDetermined" type="checkbox" [(ngModel)]="isRefundWithSettleDetermined" />
+                </span>
             </div>
         </div>
     </div>
@@ -95,7 +101,7 @@
                 </th>
             </tr>
             <tr>
-                <ng-container *ngFor=" let result of resultDetails[0].externalScores | slice:1; let i=index">
+                <ng-container *ngFor=" let result of resultDetails[0]?.externalScores | slice:1; let i=index">
                     <th class="map" *ngIf="i < maxProviderCol && permission.isLeader">
                         <div class="outside-source-text" [matTooltip]="getTextTooltip(result.sourceName, 15)">
                             {{result.sourceName|externalSourceName}}
@@ -123,68 +129,29 @@
         <tbody>
             <ng-template ngFor let-map [ngForOf]="groupMap">
                 <tr class="group-map">
-                    <td [colSpan]="permission.isLeader ? resultDetails[0].externalScores.length + 4 : resultDetails[0].externalScores.length"
+                    <td [colSpan]="permission.isLeader ? resultDetails[0]?.externalScores.length + 4 : resultDetails[0]?.externalScores.length"
                         (click)="onCollapsedClick(map)">
                         <span>{{map.collapsed?"+ ":"- "}}</span>
                         <span>{{map.groupName}}</span>
                     </td>
                     <td class="align-right">
                         <input type="checkbox" class="select-checkbox" [(ngModel)]="map.checked"
-                            (ngModelChange)="onChangeGroupMap(map)" [disabled]="map.collapsed || map.isHoldResult" />
+                            (ngModelChange)="onSelectGroupMap(map)" [disabled]="map.collapsed || map.isHoldResult" />
                     </td>
                     <td class="hold-result">
                         <div [ngClass]="getResultSettingIcon(map.isHoldResult)" (click)="changeSettingGroup(map)"></div>
                     </td>
                 </tr>
-                <tr *ngFor="let item of map.resultDetail | resultType: resultTypeSelected | ticketStatus: ticketStatusSelected | resultStatusPipe: resultStatusSelected;"
-                    [hidden]="map.collapsed"
-                    [ngClass]="{'result-row': 1, 'mismatched': item.isScoreMismatched, 'confirmed-refund': permission.isLeader && item.resultSettingData.isConfirmedRefund}">
-                    <td class="align-left bettype-name">{{item.betTypeName}}</td>
-                    <td class="ticket-status" [ngClass]="item.ticketStatus.toLowerCase()">{{item.ticketStatus}}</td>
-                    <td class="final-result-content">
-                        <select [(ngModel)]="item.homeValue" [ngClass]="{'warning':item.isResultWarning}"
-                            [disabled]="!item.checked || !permission.isLeader"
-                            (ngModelChange)="checkResultIsMatched(item)"
-                            [matTooltip]="getDropdownTooltip(item.homeValue, 25)" matTooltipPosition="above">
-                            <option></option>
-                            <option value="H">{{match.matchDetail.homeName}}</option>
-                            <option value="A">{{match.matchDetail.awayName}}</option>
-                            <option value="N" *ngIf="hasNoneOption(item)">None</option>
-                        </select>
-                    </td>
-                    <ng-container *ngFor="let result of item.externalScores; let x=index">
-                        <td *ngIf="x < (maxProviderCol+1) && permission.isLeader" class="map">
-                            <div class="outside-source-text" [matTooltip]="getTextTooltip(result.homeName, 13)"
-                                matTooltipPosition="above">
-                                {{result.homeValue | resultByTeamName: match.matchDetail: 0}}
-                            </div>
-                        </td>
-                        <ng-container *ngIf="x >= (maxProviderCol+1)">
-                            <td class="map" [ngClass]="{'striped': x % 2 === 0, 'can-settle': canSettleResult(item)}">
-                                <select [(ngModel)]="result.homeValue" [disabled]="!item.checked"
-                                    (ngModelChange)="verifyAndAutoFillResult(item)"
-                                    [matTooltip]="getDropdownTooltip(result.homeValue, 9)" matTooltipPosition="above">
-                                    <option></option>
-                                    <option value="H">{{match.matchDetail.homeName}}</option>
-                                    <option value="A">{{match.matchDetail.awayName}}</option>
-                                    <option value="N" *ngIf="hasNoneOption(item)">None</option>
-                                </select>
-                            </td>
-                        </ng-container>
-                    </ng-container>
-                    <td [ngClass]="{'calculated': isCompleted(item.resultStatusId, item.settlementStatusId)
-                                , 'refunded': isRefunded(item.resultStatusId, item.settlementStatusId)}">
-                        {{item.resultStatus}}
-                    </td>
-                    <td class="select-proceed">
-                        <input type="checkbox" [disabled]="item.resultSettingData.isHoldResult"
-                            [(ngModel)]="item.checked" (change)="onChangeBetType(item, map);" />
-                    </td>
-                    <td class="hold-result">
-                        <div [ngClass]="getResultSettingIcon(item.resultSettingData.isHoldResult)"
-                            (click)="isChangeSetting(item, map)"></div>
-                    </td>
+                @for (item of map.resultDetail | ticketStatus: ticketStatusSelected : allowNoTicketStatus | resultType: resultTypeSelected |
+                resultStatusPipe: resultStatusSelected | resourceSupportSDT: isRefundWithSettleDetermined; track
+                item.resourceId) {
+                <tr result-row [item]="item" [map]="map" [hidden]="map.collapsed || !item.isShow"
+                    [isRefundWithSettleDetermined]="isRefundWithSettleDetermined" [selected]="item.checked"
+                    (settingChanged)="isChangeSetting($event.item, $event.map)"
+                    (betTypeChanged)="onChangeBetType($event.item, $event.map)" (updateValue)="updateValue($event)"
+                    [ngClass]="{'result-row': 1, 'mismatched': item.isScoreMismatched && !isRefundWithSettleDetermined, 'confirmed-refund': permission.isLeader && (item.resultSettingData.isConfirmedRefund || item.resultSettingData.isConfirmedRefundSdt)}">
                 </tr>
+                }
             </ng-template>
         </tbody>
     </table>
