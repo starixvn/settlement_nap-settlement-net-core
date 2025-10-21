@@ -2,7 +2,7 @@
 import { ExternalSourceNamePipe } from './../../shared/pipes/external-source-name.pipe';
 import * as _ from 'lodash';
 import { CalculateAction, ScoreSourceType, SettlementStatusId, SportType, TicketStatusText } from '../../shared/constants';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Injector, ViewChild, ViewChildren, QueryList, AfterViewInit, inject } from '@angular/core';
+import { Component, Injector, ViewChild, ViewChildren, QueryList, AfterViewInit, inject } from '@angular/core';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import { BasketballApiKeys, EarlyResourcesIds, KickOffTime, Resources, ResourcesIds, ResultStatus } from '../constants';
 import { BasketballService, BetStatusService, EarlyService, VerificationService } from '../services';
@@ -17,7 +17,6 @@ import { ResourceNameByIdPipe } from '../pipes/resource-name-by-id.pipe';
 import { EarlyStore } from '../store/early.store';
 import { ResultRowComponent } from './early/result-row.component';
 import { ResourceSupportSDTPipe } from '../pipes/resource-support-sdt.pipe';
-import { PopupService } from '../../multi-sports/services/popup.service';
 import { MatDialog } from '@angular/material/dialog';
 import { PlayerScoresPageComponent } from './player-scores-page/player-scores-page.component';
 
@@ -38,24 +37,26 @@ import { PlayerScoresPageComponent } from './player-scores-page/player-scores-pa
         ResourceNameByIdPipe,
         BetStatusService,
         ToastrService,
-        DialogBoxService,
-        PopupService],
-
+        DialogBoxService]
 })
 export class EarlySettlementComponent extends EarlyBaseComponent implements SportTemplate {
 
     @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
     @ViewChildren(ResultRowComponent) resultRowComponents: QueryList<ResultRowComponent>;
+    private readonly dialog = inject(MatDialog);
     private earlyService: EarlyService;
     public blockUI = true;
     public match: Match;
     public isReadyMatch: boolean;
+    public childResultIds: string[] = [];
+    public allowNoTicketStatus = Resources.baseBetTypes;
     constructor(
         protected injector: Injector,
         protected verificationService: VerificationService,
         private readonly earlyStore: EarlyStore) {
         super(injector, verificationService);
     }
+
 
     async getMatch(matchId: number): Promise<void> {
         this.initService();
