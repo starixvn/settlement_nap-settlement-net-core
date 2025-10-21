@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, EventEmitter, inject, Input, OnInit, Output, Type } from "@angular/core";
+import { Component, computed, EventEmitter, inject, Input, OnInit, Output, Type } from "@angular/core";
 import { GroupMap, MatchDetail, ResultDetail } from "../../../shared/models/sportsbook-sop";
 import { isEqual } from "lodash";
 import { FormsModule } from "@angular/forms";

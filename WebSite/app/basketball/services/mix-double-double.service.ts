@@ -4,49 +4,31 @@ import { PlayerBetTypes } from '../constants';
 import { ResultDetail } from '../../shared/models/sportsbook-sop';
 import { ExternalResultDetail } from '../../shared/models/sportsbook-sop/external-result-detail.model';
 import { VerificationBaseService } from "../../core/services/verification-base.service";
-import { SettlementStatusId } from '../../shared/constants';
+import { MixCoreService } from './mix-core.service';
 @Injectable()
 export class MixDoubleDoubleService {
   readonly targetBetTypes = [PlayerBetTypes.points, PlayerBetTypes.assists, PlayerBetTypes.rebounds, PlayerBetTypes.steals, PlayerBetTypes.blocks];
   readonly yesValue = 'Y';
   readonly noValue = 'N';
-  readonly noneValue = 'None';
   readonly #verificationBaseService = inject(VerificationBaseService);
+  readonly #mixCoreService = inject(MixCoreService);
 
   autoFillMixDoubleDouble(resultDetails: ResultDetail[], changedResultDetail: ResultDetail) {
      if (!this.targetBetTypes.includes(changedResultDetail.betType)) {
       return;
     }
 
-    const doubleDoubleResult = this.findMixResultByBetType(resultDetails, changedResultDetail.resourceId, PlayerBetTypes.doubleDouble);
+    const doubleDoubleResult = this.#mixCoreService.findMixResultByBetType(resultDetails, changedResultDetail.resourceId, PlayerBetTypes.doubleDouble);
     if (doubleDoubleResult) {
       this.calculateDoubleDoubleValue(resultDetails, doubleDoubleResult);
     }
 
-    const tripleDoubleResult = this.findMixResultByBetType(resultDetails, changedResultDetail.resourceId, PlayerBetTypes.tripleDouble);
+    const tripleDoubleResult = this.#mixCoreService.findMixResultByBetType(resultDetails, changedResultDetail.resourceId, PlayerBetTypes.tripleDouble);
     if (tripleDoubleResult) {
       this.calculateTripleDoubleValue(resultDetails, tripleDoubleResult);
     }
   }
 
-  private findMixResultByBetType(resultDetails: ResultDetail[], resourceId: string, betType: string) {
-    return resultDetails.find(result => {
-      if (!_.isEqual(result.betType, betType)) {
-        return false;
-      }
-
-      if (!_.isEqual(result.settlementStatusId, SettlementStatusId.Running)) {
-        return false;
-      }
-
-      if (!result.relatedCalResources || _.isEmpty(result.relatedCalResources)) {
-        return false;
-      }
-
-      const relatedResourceIds = result.relatedCalResources.split(',').map(id => id.trim());
-      return relatedResourceIds.includes(resourceId);
-    });
-  }
 
   private calculateDoubleDoubleValue(resultDetails: ResultDetail[], doubleDoubleResult: ResultDetail) {
     doubleDoubleResult.homeValue = this.calculateValue(resultDetails, doubleDoubleResult.relatedCalResources, this.extractHomeValue);
@@ -108,7 +90,7 @@ export class MixDoubleDoubleService {
     } else if (lowValueCount >= lowThreshold) {
       return this.noValue;
     } else {
-      return this.noneValue;
+      return this.#mixCoreService.noneValue;
     }
   }
 
@@ -135,7 +117,7 @@ export class MixDoubleDoubleService {
   }
 
   private extractExternalValue(result: ResultDetail, index: number) {
-    if (!result || !result.externalScores[index] || !this.hasValidHomeValue(result.externalScores[index])) {
+    if (!result || !result.externalScores[index] || !this.#mixCoreService.hasValidHomeValue(result.externalScores[index])) {
       return null;
     }
 
@@ -153,9 +135,5 @@ export class MixDoubleDoubleService {
     }
     
     return true;
-  }
-
-  private hasValidHomeValue(externalScore: ExternalResultDetail): boolean {
-    return externalScore && !_.isEmpty(externalScore.homeValue);
   }
 }

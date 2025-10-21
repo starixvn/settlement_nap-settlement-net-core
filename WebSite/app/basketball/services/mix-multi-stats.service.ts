@@ -4,10 +4,11 @@ import { Resources, PlayerBetTypes } from '../constants';
 import { ResultDetail } from '../../shared/models/sportsbook-sop';
 import { ExternalResultDetail } from '../../shared/models/sportsbook-sop/external-result-detail.model';
 import { VerificationBaseService } from "../../core/services/verification-base.service";
-import { SettlementStatusId } from '../../shared/constants';
+import { MixCoreService } from './mix-core.service';
 @Injectable()
 export class MixMultiStatsService {
   readonly #verificationBaseService = inject(VerificationBaseService);
+  readonly #mixCoreService = inject(MixCoreService);
 
   autoFillMixReboundsAssists(resultDetails: ResultDetail[], changedResultDetail: ResultDetail) {
     this.handleReboundsAssistsMix(resultDetails, changedResultDetail);
@@ -21,7 +22,7 @@ export class MixMultiStatsService {
       return;
     }
 
-    const reboundsAssistsResult =this.findMixResultByBetType(resultDetails, changedResultDetail.resourceId, PlayerBetTypes.reboundsAssists);
+    const reboundsAssistsResult = this.#mixCoreService.findMixResultByBetType(resultDetails, changedResultDetail.resourceId, PlayerBetTypes.reboundsAssists);
     if (reboundsAssistsResult) {
       this.calculateReboundsAssistsValue(resultDetails, reboundsAssistsResult);
     }
@@ -32,7 +33,7 @@ export class MixMultiStatsService {
       return;
     }
 
-    const reboundsPointsResult = this.findMixResultByBetType(resultDetails, changedResultDetail.resourceId, PlayerBetTypes.reboundsPoints);
+    const reboundsPointsResult = this.#mixCoreService.findMixResultByBetType(resultDetails, changedResultDetail.resourceId, PlayerBetTypes.reboundsPoints);
     if (reboundsPointsResult) {
       this.calculateReboundsPointsValue(resultDetails, reboundsPointsResult);
     }
@@ -43,7 +44,7 @@ export class MixMultiStatsService {
       return;
     }
 
-    const reboundsAssistsPointsResult = this.findMixResultByBetType(resultDetails, changedResultDetail.resourceId, PlayerBetTypes.reboundsAssistsPoints);
+    const reboundsAssistsPointsResult = this.#mixCoreService.findMixResultByBetType(resultDetails, changedResultDetail.resourceId, PlayerBetTypes.reboundsAssistsPoints);
     if (reboundsAssistsPointsResult) {
       this.calculateReboundsAssistsPointsValue(resultDetails, reboundsAssistsPointsResult);
     }
@@ -54,77 +55,40 @@ export class MixMultiStatsService {
       return;
     }
 
-    const stealsBlocksResult = this.findMixResultByBetType(resultDetails, changedResultDetail.resourceId, PlayerBetTypes.stealsBlocks);
+    const stealsBlocksResult = this.#mixCoreService.findMixResultByBetType(resultDetails, changedResultDetail.resourceId, PlayerBetTypes.stealsBlocks);
     if (stealsBlocksResult) {
       this.calculateStealsBlocksValue(resultDetails, stealsBlocksResult);
     }
   }
 
-  private findMixResultByBetType(resultDetails: ResultDetail[], resourceId: string, betType: string) {
-    return resultDetails.find(result => {
-      if (!_.isEqual(result.betType, betType)) {
-        return false;
-      }
-
-      if (!_.isEqual(result.settlementStatusId, SettlementStatusId.Running)) {
-        return false;
-      }
-
-      if (!result.relatedCalResources || _.isEmpty(result.relatedCalResources)) {
-        return false;
-      }
-
-      const relatedResourceIds = result.relatedCalResources.split(',').map(id => id.trim());
-      return relatedResourceIds.includes(resourceId);
-    });
-  }
-
   private calculateReboundsAssistsValue(resultDetails: ResultDetail[], reboundsAssistsResult: ResultDetail) {
-    const results = this.findResultsByBetTypes(resultDetails, reboundsAssistsResult.relatedCalResources, [PlayerBetTypes.assists, PlayerBetTypes.rebounds]);
+    const results = this.#mixCoreService.findResultsByBetTypesWithMapping(resultDetails, reboundsAssistsResult.relatedCalResources, [PlayerBetTypes.assists, PlayerBetTypes.rebounds]);
     if (results[PlayerBetTypes.assists] || results[PlayerBetTypes.rebounds]) {
       this.updateMixResult(reboundsAssistsResult, results[PlayerBetTypes.rebounds], results[PlayerBetTypes.assists]);
     }
   }
 
   private calculateReboundsPointsValue(resultDetails: ResultDetail[], reboundsPointsResult: ResultDetail) {
-    const results = this.findResultsByBetTypes(resultDetails, reboundsPointsResult.relatedCalResources, [PlayerBetTypes.points, PlayerBetTypes.rebounds]);
+    const results = this.#mixCoreService.findResultsByBetTypesWithMapping(resultDetails, reboundsPointsResult.relatedCalResources, [PlayerBetTypes.points, PlayerBetTypes.rebounds]);
     if (results[PlayerBetTypes.points] || results[PlayerBetTypes.rebounds]) {
       this.updateMixResult(reboundsPointsResult, results[PlayerBetTypes.rebounds], results[PlayerBetTypes.points]);
     }
   }
 
   private calculateReboundsAssistsPointsValue(resultDetails: ResultDetail[], reboundsAssistsPointsResult: ResultDetail) {
-    const results = this.findResultsByBetTypes(resultDetails, reboundsAssistsPointsResult.relatedCalResources, [PlayerBetTypes.points, PlayerBetTypes.assists, PlayerBetTypes.rebounds]);
+    const results = this.#mixCoreService.findResultsByBetTypesWithMapping(resultDetails, reboundsAssistsPointsResult.relatedCalResources, [PlayerBetTypes.points, PlayerBetTypes.assists, PlayerBetTypes.rebounds]);
     if (results[PlayerBetTypes.points] || results[PlayerBetTypes.assists] || results[PlayerBetTypes.rebounds]) {
       this.updateTripleMixResult(reboundsAssistsPointsResult, results[PlayerBetTypes.rebounds], results[PlayerBetTypes.assists], results[PlayerBetTypes.points]);
     }
   }
 
   private calculateStealsBlocksValue(resultDetails: ResultDetail[], stealsBlocksResult: ResultDetail) {
-    const results = this.findResultsByBetTypes(resultDetails, stealsBlocksResult.relatedCalResources, [PlayerBetTypes.steals, PlayerBetTypes.blocks]);
+    const results = this.#mixCoreService.findResultsByBetTypesWithMapping(resultDetails, stealsBlocksResult.relatedCalResources, [PlayerBetTypes.steals, PlayerBetTypes.blocks]);
     if (results[PlayerBetTypes.steals] || results[PlayerBetTypes.blocks]) {
       this.updateMixResult(stealsBlocksResult, results[PlayerBetTypes.steals], results[PlayerBetTypes.blocks]);
     }
   }
 
-  private findResultsByBetTypes(resultDetails: ResultDetail[], relatedCalResources: string, betTypes: string[]): { [key: string]: ResultDetail } {
-    const relatedResourceIds = relatedCalResources.split(',').map(id => id.trim());
-    const results: { [key: string]: ResultDetail } = {};
-    
-    for (const resourceId of relatedResourceIds) {
-      const result = resultDetails.find(r => _.isEqual(r.resourceId, resourceId));
-      if (result) {
-        for (const betType of betTypes) {
-          if (_.isEqual(result.betType, betType)) {
-            results[betType] = result;
-            break;
-          }
-        }
-      }
-    }
-    
-    return results;
-  }
 
   private updateMixResult(targetResult: ResultDetail, firstResult: ResultDetail, secondResult: ResultDetail) {
     const firstValue = firstResult?.homeValue || '';
@@ -166,7 +130,8 @@ export class MixMultiStatsService {
       const firstExternalScore = firstResult.externalScores[index];
       const secondExternalScore = secondResult.externalScores[index];
 
-      if (this.hasValidHomeValue(firstExternalScore) && this.hasValidHomeValue(secondExternalScore)) {
+      if (this.#mixCoreService.hasValidHomeValue(firstExternalScore) 
+        && this.#mixCoreService.hasValidHomeValue(secondExternalScore)) {
         const firstValue = parseInt(firstExternalScore.homeValue);
         const secondValue = parseInt(secondExternalScore.homeValue);
         externalScore.homeValue = (firstValue + secondValue).toString();
@@ -180,16 +145,14 @@ export class MixMultiStatsService {
       const assistsExternalScore = assistsResult.externalScores[index];
       const pointsExternalScore = pointsResult.externalScores[index];
 
-      if (this.hasValidHomeValue(reboundsExternalScore) && this.hasValidHomeValue(assistsExternalScore) && this.hasValidHomeValue(pointsExternalScore)) {
+      if (this.#mixCoreService.hasValidHomeValue(reboundsExternalScore) 
+        && this.#mixCoreService.hasValidHomeValue(assistsExternalScore) 
+      && this.#mixCoreService.hasValidHomeValue(pointsExternalScore)) {
         const reboundsValue = parseInt(reboundsExternalScore.homeValue);
         const assistsValue = parseInt(assistsExternalScore.homeValue);
         const pointsValue = parseInt(pointsExternalScore.homeValue);
         externalScore.homeValue = (reboundsValue + assistsValue + pointsValue).toString();
       }
     });
-  }
-
-  private hasValidHomeValue(externalScore: ExternalResultDetail) {
-    return externalScore && !_.isEmpty(externalScore.homeValue);
   }
 }

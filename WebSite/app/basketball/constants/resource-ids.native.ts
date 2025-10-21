@@ -30,9 +30,15 @@ export const PlayerBetTypes = {
     reboundsAssistsPoints: "669",
     blocks: "665",
     steals: "667",
+    shotsScored: "662",
     stealsBlocks: "674",
     doubleDouble: "677",
-    tripleDouble: "679"
+    tripleDouble: "679",
+    mostPoints: "680",
+    mostRebounds: "681",
+    mostSteals: "682",
+    mostAssists: "683",
+    mostPointShotsScored : "684"
 };
 
 export const OddResourceId = {

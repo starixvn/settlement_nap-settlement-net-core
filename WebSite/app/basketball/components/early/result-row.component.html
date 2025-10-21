@@ -11,7 +11,7 @@
 <ng-container *ngFor="let result of item.externalScores; let x=index">
   <td *ngIf="x < (maxProviderCol+1) && permission.isLeader" class="map">
     <div class="outside-source-text" [matTooltip]="getTextTooltip(result.homeName, 13)" matTooltipPosition="above">
-      <trader-result [externalResult]="result" [resultDetail]="item" [matchDetail]="matchDetail()"></trader-result>
+      <trader-result [externalResult]="result" [resultDetail]="item" [matchDetail]="matchDetail()" [index]="x"></trader-result>
     </div>
   </td>
   <ng-container *ngIf="x >= (maxProviderCol+1)">

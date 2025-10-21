@@ -19,6 +19,7 @@ import { ResultRowComponent } from './early/result-row.component';
 import { ResourceSupportSDTPipe } from '../pipes/resource-support-sdt.pipe';
 import { MatDialog } from '@angular/material/dialog';
 import { PlayerScoresPageComponent } from './player-scores-page/player-scores-page.component';
+import { MixCoreService } from '../services/mix-core.service';
 
 @Component({
     selector: 'early-settlement',
@@ -38,7 +39,9 @@ import { PlayerScoresPageComponent } from './player-scores-page/player-scores-pa
         BetStatusService,
         ToastrService,
         DialogBoxService]
-        MixDoubleDoubleService]
+        MixDoubleDoubleService,
+        MixHeadHeadService,
+        MixCoreService]
 })
 export class EarlySettlementComponent extends EarlyBaseComponent implements SportTemplate {
 

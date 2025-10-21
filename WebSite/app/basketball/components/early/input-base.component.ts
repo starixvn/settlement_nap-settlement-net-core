@@ -6,6 +6,7 @@ import { SettlementStatusId } from "../../../shared/constants/settlement-status-
 import { EarlyStore } from "../../store/early.store";
 import { MixMultiStatsService } from "../../services/mix-multi-stats.service";
 import { MixDoubleDoubleService } from "../../services/mix-double-double.service";
+import { MixHeadHeadService } from "../../services/mix-head-head.service";
 
 abstract class InputBaseComponent {
   getDropdownTooltip(result: string, maxLength: number, homeTeam: string, awayTeam: string) {
@@ -33,12 +34,14 @@ export class InputFinalBaseComponent extends InputBaseComponent{
   readonly #verificationBaseService = inject(VerificationBaseService);
   readonly #mixMultiStatsService = inject(MixMultiStatsService);
   readonly #mixDoubleDoubleService = inject(MixDoubleDoubleService);
+  readonly #mixHeadHeadService = inject(MixHeadHeadService);
   readonly #earlyStore = inject(EarlyStore);
 
   checkResultIsMatched(resultDetail: ResultDetail) {
     resultDetail.isScoreMismatched = this.#verificationBaseService.isEarlyMismatchedWarning(resultDetail);
      this.#mixMultiStatsService.autoFillMixReboundsAssists(this.#earlyStore.resultDetails(), resultDetail);
      this.#mixDoubleDoubleService.autoFillMixDoubleDouble(this.#earlyStore.resultDetails(), resultDetail);
+     this.#mixHeadHeadService.autoFillMixHeadHead(this.#earlyStore.resultDetails(), resultDetail);
   }
 }
 
@@ -54,6 +57,7 @@ export class InputOutSideBaseComponent extends InputBaseComponent {
   readonly #verificationBaseService = inject(VerificationBaseService);
   readonly #mixMultiStatsService = inject(MixMultiStatsService);
   readonly #mixDoubleDoubleService = inject(MixDoubleDoubleService);
+  readonly #mixHeadHeadService = inject(MixHeadHeadService);
   readonly #earlyStore = inject(EarlyStore);
   readonly #matchDetail = computed(() => this.#earlyStore.matchDetail());
 
@@ -68,5 +72,6 @@ export class InputOutSideBaseComponent extends InputBaseComponent {
     resultDetail.isScoreMismatched = this.#verificationBaseService.isEarlyMismatchedWarning(resultDetail);
     this.#mixMultiStatsService.autoFillMixReboundsAssists(this.#earlyStore.resultDetails(), resultDetail);
     this.#mixDoubleDoubleService.autoFillMixDoubleDouble(this.#earlyStore.resultDetails(), resultDetail);
+    this.#mixHeadHeadService.autoFillMixHeadHead(this.#earlyStore.resultDetails(), resultDetail);
   }
 }
