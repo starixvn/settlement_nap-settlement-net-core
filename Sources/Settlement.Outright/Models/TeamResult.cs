@@ -7,4 +7,7 @@ public class TeamResult
     public int TeamId { get; set; }
 
     public string Result { get; set; }
+
+    public bool IsDeadheat { get; set; }
+    public int ResultStatusId { get; set; }
 }

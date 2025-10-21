@@ -91,6 +91,7 @@ export class CalculatePopupComponent implements OnInit {
             team.dateTime = this.verifyDateService.convertToDateStruct(team.eventDate);
             team.disableDeadheat = !_.isEqual(team.status, 'WON');
             team.originalStatus = team.status;
+            team.originalIsDeadheat = team.isDeadheat;
             team.screenShot = team.screenShot || TeamStatuses[0].text.toUpperCase();
             team.originalScreenshot = team.screenShot;
             team.traderScore = (team.traderScore || TeamStatuses[0].text).toUpperCase();
@@ -311,6 +312,9 @@ export class CalculatePopupComponent implements OnInit {
     }
 
     private async verifyDeadHead(teamWonSettled: Team[], teamWonSelected: Team[], teamHideSelected: Team[]) {
+        console.log('teamWonSettled', teamWonSettled);
+        console.log('teamWonSelected', teamWonSelected);
+        console.log('teamHideSelected', teamHideSelected);
         const setting = await this.outrightService.getDeadHeatSetting(this.data.leagueId);
         const errorSettingMessage = this.verifySetting(setting, teamWonSettled, teamWonSelected);
         if (!_.isEmpty(errorSettingMessage)) {
@@ -320,7 +324,7 @@ export class CalculatePopupComponent implements OnInit {
         } else if (setting === DeadHeatSettings.No && CalculateService.ConfirmDeadHeatNoSetting(teamWonSelected, teamWonSettled)) {
             this.confirmCalcNonDeadheat();
         } else {
-            this.doCalculate(this.teamSettleWon.length);
+            // this.doCalculate(this.teamSettleWon.length);
         }
     }
 
@@ -411,17 +415,18 @@ export class CalculatePopupComponent implements OnInit {
             return;
         }
 
-        if (CalculateService.existRunningResult(this.teamSelected, 'traderScore')) {
-            this.toastrService.error(Language.Outright.existRunningTraderResult);
-            return;
-        }
+        // if (CalculateService.existRunningResult(this.teamSelected, 'traderScore')) {
+        //     this.toastrService.error(Language.Outright.existRunningTraderResult);
+        //     return;
+        // }
 
         this.confirmationDialogMessage.message = Language.SaveTraderScore;
         this.messageBoxService.confirm(this.confirmationDialogMessage, async () => {
             const teams = this.teamSelected.map(team => ({
                 orId: team.orId,
                 teamId: team.teamId,
-                result: team.traderScore
+                result: team.traderScore,
+                isDeadheat: team.isDeadheat
             }) as TeamResult);
             await this.outrightService.saveTraderScore(this.data.leagueId, teams);
             this.dialogRef.close();

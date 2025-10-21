@@ -21,6 +21,7 @@ export class Team extends Match {
     mismatchClass: string;
     traderConfirmClass: string;
     confirmedBy?: string;
+    originalIsDeadheat: boolean;
 }
 
 export class TeamSettle {

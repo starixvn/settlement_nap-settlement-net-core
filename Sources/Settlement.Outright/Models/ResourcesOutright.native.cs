@@ -12,3 +12,14 @@ public class ResourcesOutright
     [XmlAttribute("Result")]
     public string Result { get; set; }
 }
+
+
+public class DeadheatResourcesOutright : ResourcesOutright
+{
+
+    [XmlAttribute("IsDeadHeat")]
+    public bool IsDeadheat { get; set; }
+
+    [XmlAttribute("ResultStatusId")]
+    public int ResultStatusId { get; set; }
+}

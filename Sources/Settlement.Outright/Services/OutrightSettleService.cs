@@ -258,11 +258,20 @@ public class OutrightSettleServiceImp(
 
     public async Task<Result> SaveTraderScore(SaveTraderScoreRequest request)
     {
+        var resources = request.Teams.Select(t => new DeadheatResourcesOutright
+        {
+            OrId = t.OrId,
+            TeamId = t.TeamId,
+            Result = t.Result,
+            IsDeadheat = t.IsDeadheat,
+            ResultStatusId = StatusGroups.CompletedStatus.Contains(t.Result) ? 3 : 0
+        }).ToList();
+
         var criteria = new SaveTraderScoreCriteria
         {
             LeagueId = request.LeagueId,
             UserId = currentSession.UserId,
-            SelectedResources = outrightSettleProcessService.CreateResourceXmlByTeamResult(request.Teams)
+            SelectedResources = outrightSettleProcessService.CreateResourceXmlByTeamResult(resources)
         };
         await repository.ExecuteAsync(criteria);
         await LogRequestSaveTraderScore(request);
