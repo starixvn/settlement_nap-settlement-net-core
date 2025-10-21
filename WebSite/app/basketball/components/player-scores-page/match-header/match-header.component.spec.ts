@@ -43,7 +43,7 @@ describe('MatchHeaderComponent', () => {
   });
 
   it('should emit refresh event when refresh button is clicked', () => {
-    spyOn(component.refresh, 'emit');
+    jest.spyOn(component.refresh, 'emit');
     
     const refreshButton = fixture.nativeElement.querySelector('.refresh-icon');
     refreshButton.click();
@@ -52,7 +52,7 @@ describe('MatchHeaderComponent', () => {
   });
 
   it('should call onRefresh when refresh button is clicked', () => {
-    spyOn(component, 'onRefresh');
+    jest.spyOn(component, 'onRefresh');
     
     const refreshButton = fixture.nativeElement.querySelector('.refresh-icon');
     refreshButton.click();
