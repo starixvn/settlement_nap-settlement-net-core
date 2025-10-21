@@ -62,11 +62,11 @@
 				<tr
 					*ngFor="let team of teams | status: statusSelected : screenshotSelected | ticketStatusFilter: ticketStatusSelected; let i = index"
 					[ngClass]="{ 'won-color': team.status === 'WON', refund: team.status === 'REFUND' }">
-					<td class="align-left" style="width: auto;">{{ team.teamName }}</td>
-					<td class="ticket-status" [ngClass]="(team | ticketStatus).toLowerCase().replace(' ', '-')">
+					<td class="align-left" style="width: auto;" [ngClass]="getWonRefundConfirmClass(team)">{{ team.teamName }}</td>
+					<td class="ticket-status" [ngClass]="[(team | ticketStatus).toLowerCase().replace(' ', '-'), getWonRefundConfirmClass(team)]">
 						{{ team | ticketStatus }}
 					</td>
-					<td class="status" [ngClass]="team.statusClass">
+					<td class="status" [ngClass]="[team.statusClass, getWonRefundConfirmClass(team)]">
 						<select [(ngModel)]="team.status" [disabled]="!team.selected || !leagueSettle.permission.isLeader"
 							(ngModelChange)="changeStatus(team)">
 							<option *ngFor="let status of teamStatus" [value]="status.text | uppercase" [hidden]="!status.isShow"> {{
@@ -74,14 +74,12 @@
 						</select>
 					</td>
 					@if(permission.isLeader) {
-					<td class="status" [ngClass]="team.mismatchClass">
+					<td class="status" [ngClass]="[team.mismatchClass, getWonRefundConfirmClass(team)]">
 						<select [(ngModel)]="team.traderScore" [disabled]="!team.selected || !leagueSettle.permission.isLeader"
 							(ngModelChange)="changeTraderScore(team)">
 							<option *ngFor="let status of teamStatus" [value]="status.text | uppercase" [hidden]="!status.isShow"> {{
 								status.text }}</option>
 						</select>
-
-						<!-- <span>{{ team.traderScore || '-' }}</span> -->
 					</td>
 					}
 					<td class="code" [ngClass]="team.mismatchClass">

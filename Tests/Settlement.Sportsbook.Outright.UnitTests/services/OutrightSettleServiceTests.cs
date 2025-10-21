@@ -207,7 +207,7 @@ public class OutrightSettleServiceTests
                 new() { OrId = 1002, TeamId = 2002, Result = "R2" }
             }
         };
-        outrightSettleProcessService.CreateResourceXmlByTeamResult(Arg.Any<IEnumerable<TeamResult>>()).Returns("xmlData");
+        outrightSettleProcessService.CreateResourceXmlByTeamResult(Arg.Any<List<DeadheatResourcesOutright>>()).Returns("xmlData");
 
         // Act
         var result = await service.SaveTraderScore(request);

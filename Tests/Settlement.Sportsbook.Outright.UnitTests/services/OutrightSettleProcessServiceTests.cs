@@ -194,12 +194,22 @@ public class OutrightSettleProcessServiceTests
                 new() { OrId = 12, TeamId = 102, Result = "Lose" }
             };
 
-        Resources<ResourcesOutright> captured = null;
-        xmlConvertService.Serialize(Arg.Do<Resources<ResourcesOutright>>(r => captured = r))
+
+        var resources = teams.Select(t => new DeadheatResourcesOutright
+        {
+            OrId = t.OrId,
+            TeamId = t.TeamId,
+            Result = t.Result,
+            IsDeadheat = t.IsDeadheat,
+            ResultStatusId = t.ResultStatusId
+        }).ToList();
+
+        Resources<DeadheatResourcesOutright> captured = null;
+        xmlConvertService.Serialize(Arg.Do<Resources<DeadheatResourcesOutright>>(r => captured = r))
             .Returns("<xmlMock/>");
 
         // Act
-        var xml = service.CreateResourceXmlByTeamResult(teams);
+        var xml = service.CreateResourceXmlByTeamResult(resources);
 
         // Assert
         Assert.Equal("<xmlMock/>", xml);
@@ -229,12 +239,22 @@ public class OutrightSettleProcessServiceTests
         // Arrange
         var teams = new List<TeamResult>();
 
-        Resources<ResourcesOutright> captured = null;
-        xmlConvertService.Serialize(Arg.Do<Resources<ResourcesOutright>>(r => captured = r))
+        var resources = teams.Select(t => new DeadheatResourcesOutright
+        {
+            OrId = t.OrId,
+            TeamId = t.TeamId,
+            Result = t.Result,
+            IsDeadheat = t.IsDeadheat,
+            ResultStatusId = t.ResultStatusId
+        }).ToList();
+
+
+        Resources<DeadheatResourcesOutright> captured = null;
+        xmlConvertService.Serialize(Arg.Do<Resources<DeadheatResourcesOutright>>(r => captured = r))
             .Returns("<empty/>");
 
         // Act
-        var xml = service.CreateResourceXmlByTeamResult(teams);
+        var xml = service.CreateResourceXmlByTeamResult(resources);
 
         // Assert
         Assert.Equal("<empty/>", xml);
@@ -252,12 +272,21 @@ public class OutrightSettleProcessServiceTests
                 new() { OrId = 21, TeamId = 501, Result = null }
             };
 
-        Resources<ResourcesOutright> captured = null;
-        xmlConvertService.Serialize(Arg.Do<Resources<ResourcesOutright>>(r => captured = r))
+        var resources = teams.Select(t => new DeadheatResourcesOutright
+        {
+            OrId = t.OrId,
+            TeamId = t.TeamId,
+            Result = t.Result,
+            IsDeadheat = t.IsDeadheat,
+            ResultStatusId = t.ResultStatusId
+        }).ToList();
+
+        Resources<DeadheatResourcesOutright> captured = null;
+        xmlConvertService.Serialize(Arg.Do<Resources<DeadheatResourcesOutright>>(r => captured = r))
             .Returns("<withNull/>");
 
         // Act
-        var xml = service.CreateResourceXmlByTeamResult(teams);
+        var xml = service.CreateResourceXmlByTeamResult(resources);
 
         // Assert
         Assert.Equal("<withNull/>", xml);
