@@ -27,7 +27,9 @@ export class PlayerScoreStatusChecker {
   }
 
   static isConfirmedRefund(resultDetail: ResultDetail): boolean {
-    return resultDetail.resultSettingData?.isConfirmedRefund || false;
+    return resultDetail.resultSettingData?.isConfirmedRefund 
+    || resultDetail.resultSettingData?.isConfirmedRefundSdt 
+    || false;
   }
 
   // Helper methods

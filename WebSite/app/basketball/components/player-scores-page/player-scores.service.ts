@@ -38,9 +38,9 @@ export class PlayerScoresService {
     const allScoreTypes: playerScoreType[] = [
       'points', 
       'threePointFG', 
-      'rebounds', 
       'assists', 
-      'blocks', 
+      'blocks',
+      'rebounds', 
       'steals'
     ];
     
