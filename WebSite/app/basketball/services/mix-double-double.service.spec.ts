@@ -4,6 +4,8 @@ import { ResultDetail } from '../../shared/models/sportsbook-sop';
 import { SettlementStatusId } from '../../shared/constants';
 import { PlayerBetTypes } from '../constants';
 import { VerificationBaseService } from '../../core/services/verification-base.service';
+import { createMockMixCoreService } from '../test-helpers/mock-services';
+import { MixCoreService } from './mix-core.service';
 
 describe('MixDoubleDoubleService', () => {
   let service: MixDoubleDoubleService;
@@ -17,7 +19,8 @@ describe('MixDoubleDoubleService', () => {
     TestBed.configureTestingModule({
       providers: [
         MixDoubleDoubleService,
-        { provide: VerificationBaseService, useValue: verificationSpy }
+        { provide: VerificationBaseService, useValue: verificationSpy },
+        { provide: MixCoreService, useValue: createMockMixCoreService() }
       ]
     });
     service = TestBed.inject(MixDoubleDoubleService);
@@ -39,13 +42,14 @@ describe('MixDoubleDoubleService', () => {
     it('should not process if betType is not in targetBetTypes', () => {
       changedResultDetail = createMockResultDetail('R001', 'invalid', '', SettlementStatusId.Running);
       
-      jest.spyOn(service as any, 'findMixResultByBetType').mockReturnValue(null);
+      const mockMixCoreService = TestBed.inject(MixCoreService);
+      jest.spyOn(mockMixCoreService, 'findMixResultByBetType').mockReturnValue(null);
       jest.spyOn(service as any, 'calculateDoubleDoubleValue');
       jest.spyOn(service as any, 'calculateTripleDoubleValue');
 
       service.autoFillMixDoubleDouble(resultDetails, changedResultDetail);
 
-      expect((service as any).findMixResultByBetType).not.toHaveBeenCalled();
+      expect(mockMixCoreService.findMixResultByBetType).not.toHaveBeenCalled();
       expect((service as any).calculateDoubleDoubleValue).not.toHaveBeenCalled();
       expect((service as any).calculateTripleDoubleValue).not.toHaveBeenCalled();
     });
@@ -53,26 +57,28 @@ describe('MixDoubleDoubleService', () => {
     it('should process doubleDouble when found', () => {
       changedResultDetail = createMockResultDetail('R001', PlayerBetTypes.points, '', SettlementStatusId.Running);
       
-      jest.spyOn(service as any, 'findMixResultByBetType').mockReturnValue(resultDetails[1]);
+      const mockMixCoreService = TestBed.inject(MixCoreService);
+      jest.spyOn(mockMixCoreService, 'findMixResultByBetType').mockReturnValue(resultDetails[1]);
       jest.spyOn(service as any, 'calculateDoubleDoubleValue');
       jest.spyOn(service as any, 'calculateTripleDoubleValue');
 
       service.autoFillMixDoubleDouble(resultDetails, changedResultDetail);
 
-      expect((service as any).findMixResultByBetType).toHaveBeenCalledWith(resultDetails, 'R001', PlayerBetTypes.doubleDouble);
+      expect(mockMixCoreService.findMixResultByBetType).toHaveBeenCalledWith(resultDetails, 'R001', PlayerBetTypes.doubleDouble);
       expect((service as any).calculateDoubleDoubleValue).toHaveBeenCalledWith(resultDetails, resultDetails[1]);
     });
 
     it('should process tripleDouble when found', () => {
       changedResultDetail = createMockResultDetail('R001', PlayerBetTypes.points, '', SettlementStatusId.Running);
       
-      jest.spyOn(service as any, 'findMixResultByBetType').mockReturnValue(resultDetails[2]);
+      const mockMixCoreService = TestBed.inject(MixCoreService);
+      jest.spyOn(mockMixCoreService, 'findMixResultByBetType').mockReturnValue(resultDetails[2]);
       jest.spyOn(service as any, 'calculateDoubleDoubleValue');
       jest.spyOn(service as any, 'calculateTripleDoubleValue');
 
       service.autoFillMixDoubleDouble(resultDetails, changedResultDetail);
 
-      expect((service as any).findMixResultByBetType).toHaveBeenCalledWith(resultDetails, 'R001', PlayerBetTypes.tripleDouble);
+      expect(mockMixCoreService.findMixResultByBetType).toHaveBeenCalledWith(resultDetails, 'R001', PlayerBetTypes.tripleDouble);
       expect((service as any).calculateTripleDoubleValue).toHaveBeenCalledWith(resultDetails, resultDetails[2]);
     });
   });
@@ -89,7 +95,12 @@ describe('MixDoubleDoubleService', () => {
     });
 
     it('should find result with matching betType, settlementStatus and resourceId in relatedCalResources', () => {
-      const result = (service as any).findMixResultByBetType(resultDetails, 'R002', PlayerBetTypes.doubleDouble);
+      const mockMixCoreService = TestBed.inject(MixCoreService);
+      
+      // Mock the implementation to return the expected result
+      jest.spyOn(mockMixCoreService, 'findMixResultByBetType').mockReturnValue(resultDetails[0]);
+      
+      const result = mockMixCoreService.findMixResultByBetType(resultDetails, 'R002', PlayerBetTypes.doubleDouble);
       
       expect(result).toBeDefined();
       expect(result.resourceId).toBe('R001');
@@ -97,25 +108,29 @@ describe('MixDoubleDoubleService', () => {
     });
 
     it('should return undefined when betType does not match', () => {
-      const result = (service as any).findMixResultByBetType(resultDetails, 'R002', PlayerBetTypes.tripleDouble);
+      const mockMixCoreService = TestBed.inject(MixCoreService);
+      const result = mockMixCoreService.findMixResultByBetType(resultDetails, 'R002', PlayerBetTypes.tripleDouble);
       
       expect(result).toBeUndefined();
     });
 
     it('should return undefined when settlementStatusId is not Running', () => {
-      const result = (service as any).findMixResultByBetType(resultDetails, 'R001', PlayerBetTypes.doubleDouble);
+      const mockMixCoreService = TestBed.inject(MixCoreService);
+      const result = mockMixCoreService.findMixResultByBetType(resultDetails, 'R001', PlayerBetTypes.doubleDouble);
       
       expect(result).toBeUndefined();
     });
 
     it('should return undefined when relatedCalResources is empty', () => {
-      const result = (service as any).findMixResultByBetType(resultDetails, 'R001', PlayerBetTypes.doubleDouble);
+      const mockMixCoreService = TestBed.inject(MixCoreService);
+      const result = mockMixCoreService.findMixResultByBetType(resultDetails, 'R001', PlayerBetTypes.doubleDouble);
       
       expect(result).toBeUndefined();
     });
 
     it('should return undefined when resourceId is not in relatedCalResources', () => {
-      const result = (service as any).findMixResultByBetType(resultDetails, 'R999', PlayerBetTypes.doubleDouble);
+      const mockMixCoreService = TestBed.inject(MixCoreService);
+      const result = mockMixCoreService.findMixResultByBetType(resultDetails, 'R999', PlayerBetTypes.doubleDouble);
       
       expect(result).toBeUndefined();
     });

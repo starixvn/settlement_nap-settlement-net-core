@@ -3,6 +3,8 @@ import { TraderResultComponent } from './trader-result.component';
 import { ResultDetail, MatchDetail, ExternalResultDetail } from '../../../../shared/models/sportsbook-sop';
 import { ResultControlGroup } from '../../../constants/result-control-group.native';
 import { OddFlexModel, OddsInfoModel } from '../../../../shared/models/sportsbook-sop/odds-flex.model';
+import { createMockMixCoreService } from '../../../test-helpers/mock-services';
+import { MixCoreService } from '../../../services/mix-core.service';
 
 describe('Component: TraderResultComponent', () => {
     let component: TraderResultComponent;
@@ -33,6 +35,9 @@ describe('Component: TraderResultComponent', () => {
         TestBed.configureTestingModule({
             imports: [
                 TraderResultComponent
+            ],
+            providers: [
+                { provide: MixCoreService, useValue: createMockMixCoreService() }
             ]
         })
         .compileComponents()

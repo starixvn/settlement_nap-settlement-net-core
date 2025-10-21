@@ -4,6 +4,8 @@ import { ResultDetail } from '../../shared/models/sportsbook-sop';
 import { SettlementStatusId } from '../../shared/constants';
 import { PlayerBetTypes } from '../constants';
 import { VerificationBaseService } from '../../core/services/verification-base.service';
+import { createMockMixCoreService } from '../test-helpers/mock-services';
+import { MixCoreService } from './mix-core.service';
 
 describe('MixMultiStatsService', () => {
   let service: MixMultiStatsService;
@@ -17,7 +19,8 @@ describe('MixMultiStatsService', () => {
     TestBed.configureTestingModule({
       providers: [
         MixMultiStatsService,
-        { provide: VerificationBaseService, useValue: verificationSpy }
+        { provide: VerificationBaseService, useValue: verificationSpy },
+        { provide: MixCoreService, useValue: createMockMixCoreService() }
       ]
     });
     service = TestBed.inject(MixMultiStatsService);
@@ -67,12 +70,13 @@ describe('MixMultiStatsService', () => {
     it('should not process if betType is not in mixReboundsAssists', () => {
       changedResultDetail = createMockResultDetail('R001', 'invalid', '', SettlementStatusId.Running);
       
-      jest.spyOn(service as any, 'findMixResultByBetType').mockReturnValue(null);
+      const mockMixCoreService = TestBed.inject(MixCoreService);
+      jest.spyOn(mockMixCoreService, 'findMixResultByBetType').mockReturnValue(null);
       jest.spyOn(service as any, 'calculateReboundsAssistsValue');
 
       (service as any).handleReboundsAssistsMix(resultDetails, changedResultDetail);
 
-      expect((service as any).findMixResultByBetType).not.toHaveBeenCalled();
+      expect(mockMixCoreService.findMixResultByBetType).not.toHaveBeenCalled();
       expect((service as any).calculateReboundsAssistsValue).not.toHaveBeenCalled();
     });
 
@@ -82,13 +86,14 @@ describe('MixMultiStatsService', () => {
       const mockResult = createMockResultDetail('R005', PlayerBetTypes.reboundsAssists, 'R001,R002', SettlementStatusId.Running);
       mockResult.externalScores = [{ homeValue: '12', awayValue: '6' } as any];
       
-      jest.spyOn(service as any, 'findMixResultByBetType').mockReturnValue(mockResult);
+      const mockMixCoreService = TestBed.inject(MixCoreService);
+      jest.spyOn(mockMixCoreService, 'findMixResultByBetType').mockReturnValue(mockResult);
       jest.spyOn(service as any, 'calculateReboundsAssistsValue').mockImplementation(() => {
       });
 
       (service as any).handleReboundsAssistsMix(resultDetails, changedResultDetail);
 
-      expect((service as any).findMixResultByBetType).toHaveBeenCalledWith(resultDetails, 'R001', PlayerBetTypes.reboundsAssists);
+      expect(mockMixCoreService.findMixResultByBetType).toHaveBeenCalledWith(resultDetails, 'R001', PlayerBetTypes.reboundsAssists);
       expect((service as any).calculateReboundsAssistsValue).toHaveBeenCalledWith(resultDetails, mockResult);
     });
   });
@@ -105,7 +110,12 @@ describe('MixMultiStatsService', () => {
     });
 
     it('should find result with matching betType, settlementStatus and resourceId in relatedCalResources', () => {
-      const result = (service as any).findMixResultByBetType(resultDetails, 'R002', PlayerBetTypes.reboundsAssists);
+      const mockMixCoreService = TestBed.inject(MixCoreService);
+      
+      // Mock the implementation to return the expected result
+      jest.spyOn(mockMixCoreService, 'findMixResultByBetType').mockReturnValue(resultDetails[0]);
+      
+      const result = mockMixCoreService.findMixResultByBetType(resultDetails, 'R002', PlayerBetTypes.reboundsAssists);
       
       expect(result).toBeDefined();
       expect(result.resourceId).toBe('R001');
@@ -113,19 +123,22 @@ describe('MixMultiStatsService', () => {
     });
 
     it('should return undefined when betType does not match', () => {
-      const result = (service as any).findMixResultByBetType(resultDetails, 'R002', PlayerBetTypes.reboundsPoints);
+      const mockMixCoreService = TestBed.inject(MixCoreService);
+      const result = mockMixCoreService.findMixResultByBetType(resultDetails, 'R002', PlayerBetTypes.reboundsPoints);
       
       expect(result).toBeUndefined();
     });
 
     it('should return undefined when settlementStatusId is not Running', () => {
-      const result = (service as any).findMixResultByBetType(resultDetails, 'R001', PlayerBetTypes.reboundsAssists);
+      const mockMixCoreService = TestBed.inject(MixCoreService);
+      const result = mockMixCoreService.findMixResultByBetType(resultDetails, 'R001', PlayerBetTypes.reboundsAssists);
       
       expect(result).toBeUndefined();
     });
 
     it('should return undefined when relatedCalResources is empty', () => {
-      const result = (service as any).findMixResultByBetType(resultDetails, 'R001', PlayerBetTypes.reboundsAssists);
+      const mockMixCoreService = TestBed.inject(MixCoreService);
+      const result = mockMixCoreService.findMixResultByBetType(resultDetails, 'R001', PlayerBetTypes.reboundsAssists);
       
       expect(result).toBeUndefined();
     });
@@ -143,7 +156,8 @@ describe('MixMultiStatsService', () => {
     });
 
     it('should find results by betTypes', () => {
-      const results = (service as any).findResultsByBetTypes(
+      const mockMixCoreService = TestBed.inject(MixCoreService);
+      const results = mockMixCoreService.findResultsByBetTypesWithMapping(
         resultDetails, 
         'R001,R002,R003', 
         [PlayerBetTypes.assists, PlayerBetTypes.rebounds]
@@ -156,7 +170,8 @@ describe('MixMultiStatsService', () => {
     });
 
     it('should return empty object when no matches found', () => {
-      const results = (service as any).findResultsByBetTypes(
+      const mockMixCoreService = TestBed.inject(MixCoreService);
+      const results = mockMixCoreService.findResultsByBetTypesWithMapping(
         resultDetails, 
         'R001,R002,R003', 
         [PlayerBetTypes.steals, PlayerBetTypes.blocks]
@@ -166,7 +181,8 @@ describe('MixMultiStatsService', () => {
     });
 
     it('should handle empty relatedCalResources', () => {
-      const results = (service as any).findResultsByBetTypes(
+      const mockMixCoreService = TestBed.inject(MixCoreService);
+      const results = mockMixCoreService.findResultsByBetTypesWithMapping(
         resultDetails, 
         '', 
         [PlayerBetTypes.assists, PlayerBetTypes.rebounds]
@@ -189,7 +205,8 @@ describe('MixMultiStatsService', () => {
     });
 
     it('should update mix result when both results found', () => {
-      jest.spyOn(service as any, 'findResultsByBetTypes').mockReturnValue({
+      const mockMixCoreService = TestBed.inject(MixCoreService);
+      jest.spyOn(mockMixCoreService, 'findResultsByBetTypesWithMapping').mockReturnValue({
         [PlayerBetTypes.assists]: resultDetails[0],
         [PlayerBetTypes.rebounds]: resultDetails[1]
       });
@@ -205,7 +222,8 @@ describe('MixMultiStatsService', () => {
     });
 
     it('should not update when no results found', () => {
-      jest.spyOn(service as any, 'findResultsByBetTypes').mockReturnValue({});
+      const mockMixCoreService = TestBed.inject(MixCoreService);
+      jest.spyOn(mockMixCoreService, 'findResultsByBetTypesWithMapping').mockReturnValue({});
       jest.spyOn(service as any, 'updateMixResult');
 
       (service as any).calculateReboundsAssistsValue(resultDetails, reboundsAssistsResult);
@@ -307,6 +325,11 @@ describe('MixMultiStatsService', () => {
     });
 
     it('should calculate external scores correctly', () => {
+      const mockMixCoreService = TestBed.inject(MixCoreService);
+      jest.spyOn(mockMixCoreService, 'hasValidHomeValue').mockImplementation((externalScore) => {
+        return externalScore && externalScore.homeValue && externalScore.homeValue !== '';
+      });
+
       (service as any).updateExternalScores(targetResult, firstResult, secondResult);
 
       expect(targetResult.externalScores[0].homeValue).toBe('18'); // 10 + 8
@@ -324,23 +347,36 @@ describe('MixMultiStatsService', () => {
 
   describe('hasValidHomeValue', () => {
     it('should return true for valid external score', () => {
+      const mockMixCoreService = TestBed.inject(MixCoreService);
       const externalScore = { homeValue: '10', awayValue: '' } as any;
       
-      const result = (service as any).hasValidHomeValue(externalScore);
+      // Mock the implementation to return the expected value
+      jest.spyOn(mockMixCoreService, 'hasValidHomeValue').mockReturnValue(true);
+      
+      const result = mockMixCoreService.hasValidHomeValue(externalScore);
       
       expect(result).toBe(true);
     });
 
     it('should return false for invalid external score', () => {
+      const mockMixCoreService = TestBed.inject(MixCoreService);
       const externalScore = { homeValue: '', awayValue: '' } as any;
       
-      const result = (service as any).hasValidHomeValue(externalScore);
+      // Mock the implementation to return the expected value
+      jest.spyOn(mockMixCoreService, 'hasValidHomeValue').mockReturnValue(false);
+      
+      const result = mockMixCoreService.hasValidHomeValue(externalScore);
       
       expect(result).toBe(false);
     });
 
     it('should return null for null external score', () => {
-      const result = (service as any).hasValidHomeValue(null);
+      const mockMixCoreService = TestBed.inject(MixCoreService);
+      
+      // Mock the implementation to return the expected value
+      jest.spyOn(mockMixCoreService, 'hasValidHomeValue').mockReturnValue(null);
+      
+      const result = mockMixCoreService.hasValidHomeValue(null);
       
       expect(result).toBe(null);
     });

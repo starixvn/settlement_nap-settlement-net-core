@@ -8,7 +8,9 @@ import { ResultDetail, ExternalResultDetail, Permission } from '../../../../shar
 import { ResultByTeamNamePipe } from '../../../../shared/pipes/result-by-team-name.pipe';
 import { MixMultiStatsService } from '../../../services/mix-multi-stats.service';
 import { MixDoubleDoubleService } from '../../../services/mix-double-double.service';
-import { createMockVerificationService, createMockMixMultiStatsService, createMockMixDoubleDoubleService } from '../../../test-helpers/mock-services';
+import { MixHeadHeadService } from '../../../services/mix-head-head.service';
+import { MixCoreService } from '../../../services/mix-core.service';
+import { createMockVerificationService, createMockMixMultiStatsService, createMockMixDoubleDoubleService, createMockMixHeadHeadService, createMockMixCoreService } from '../../../test-helpers/mock-services';
 
 describe('Component: TeamSelectionComponent', () => {
     let component: TeamSelectionComponent;
@@ -46,7 +48,9 @@ describe('Component: TeamSelectionComponent', () => {
                 { provide: EarlyStore, useValue: earlyStoreMock },
                 { provide: VerificationBaseService, useValue: verificationBaseServiceMock },
                 { provide: MixMultiStatsService, useValue: createMockMixMultiStatsService() },
-                { provide: MixDoubleDoubleService, useValue: createMockMixDoubleDoubleService() }
+                { provide: MixDoubleDoubleService, useValue: createMockMixDoubleDoubleService() },
+                { provide: MixHeadHeadService, useValue: createMockMixHeadHeadService() },
+                { provide: MixCoreService, useValue: createMockMixCoreService() }
             ]
         })
         .compileComponents()
@@ -118,13 +122,15 @@ describe('Component: TeamSelectionOutSideComponent', () => {
             imports: [
                 FormsModule,
                 MatTooltipModule,
-                TeamSelectionOutSideComponent
+                TeamSelectionComponent
             ],
             providers: [
                 { provide: EarlyStore, useValue: earlyStoreMock },
                 { provide: VerificationBaseService, useValue: createMockVerificationService() },
                 { provide: MixMultiStatsService, useValue: createMockMixMultiStatsService() },
                 { provide: MixDoubleDoubleService, useValue: createMockMixDoubleDoubleService() },
+                { provide: MixHeadHeadService, useValue: createMockMixHeadHeadService() },
+                { provide: MixCoreService, useValue: createMockMixCoreService() },
                 ResultByTeamNamePipe
             ]
         })
