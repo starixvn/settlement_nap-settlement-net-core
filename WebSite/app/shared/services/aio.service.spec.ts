@@ -151,7 +151,8 @@ describe('AioService', () => {
       service.changeResultSetting = jest.fn().mockReturnValue(Promise.resolve(true));
       const query = new ResultSettingQuery(0, ResultSettingType.confirmRefund,
         false, '');
-        query.confirmRefundResources = []
+        query.confirmRefundResources = [];
+        query.selectedResources = null;
 
       service.undoConfirmedResult([result], 0, '', null);
 
@@ -228,7 +229,8 @@ describe('AioService', () => {
       messageBoxService.closePopupNotChanged = jest.fn();
       const query = new ResultSettingQuery(0, ResultSettingType.confirmRefund,
         true, '01');
-        query.confirmRefundResources = []
+        query.confirmRefundResources = [];
+        query.selectedResources = null;
 
       service.changeConfirmResultSetting({
         message: "",

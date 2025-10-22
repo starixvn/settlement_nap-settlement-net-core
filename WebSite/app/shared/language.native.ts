@@ -33,6 +33,8 @@
     FullTime: 'R.FT',
     HalfTime: 'R.HT',
   },
+  fullTimeNotSettled: 'Error! FT has not been calculated.',
+  fullTimeNotSettledLeader: 'WARNING! FT has not been calculated. Are you sure you want to proceed?',
   IntervalWarning: 'WARNING! Cannot continue due to related intervals are running or refunded. Please select them also and try again.',
   CalculationConfirmMessageEarly: 'Are you sure you want to CALCULATE the selected results?',
   RefundConfirmMessageEarly: 'Are you sure you want to REFUND the selected result?',
