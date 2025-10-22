@@ -110,12 +110,17 @@ export class PlayerScoresPageComponent implements OnInit {
       .getCheckedScoresForPlayer(this.players, playerId);
 
     if (_.isEmpty(checkedScores)) {
-      this.toastService.error(Language.noResourceSelected);
+      this.toastService.error(Language.NoResourceSelected);
       return;
     }
 
-    if (checkedScores.some(x => _.isEmpty(x.value) || x.isCalculated || x.isRefunded)) {
-      this.toastService.error(Language.NotSpecifyValidResults);
+    if (checkedScores.some(x => x.isCalculated || x.isRefunded)) {
+      this.toastService.error(Language.NoSettledResourceSelected);
+      return;
+    }
+
+    if (isConfirm && checkedScores.some(x => _.isEmpty(x.value))) {
+      this.toastService.error(Language.NoValidResultSelected);
       return;
     }
 
@@ -123,7 +128,9 @@ export class PlayerScoresPageComponent implements OnInit {
   }
 
   private showConfirmationDialog(checkedScores: PlayerScore[], isConfirm: boolean): void {
-    this.confirmationDialogMessage.message = Language.confirmResultConfirmMessage;
+    this.confirmationDialogMessage.message = isConfirm
+      ? Language.confirmResultConfirmMessage
+      : Language.unconfirmResultConfirmMessage;
     this.messageBoxService.confirm(this.confirmationDialogMessage, async () => {
       const resultDetails = checkedScores.map(score => PlayerScore.toResultDetail(score));
       const data = {
@@ -147,7 +154,7 @@ export class PlayerScoresPageComponent implements OnInit {
       .map(x => x.resourceId).join(',');
 
     if (_.isEmpty(resourceIds)) {
-      this.toastService.error(Language.noResourceSelected);
+      this.toastService.error(Language.NoResourceSelected);
       return;
     }
 
