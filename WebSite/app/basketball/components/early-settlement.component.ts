@@ -161,7 +161,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         if (!_.isNil(existResultConfirmed)) {
             this.toastrService.error(Language.confirmRefund.calculateResultNotConfirmed);
         } else if (this.verifyFullTimeResult()) {
-            this.toastrService.error(Language.warningInputScore);
+            this.toastrService.error(Language.fullTimeNotSettled);
         }
         else if (this.verifyExistResultEmpty() && this.verifyRelatedResources()) {
             const selectedResourceIds = this.selectedResources.map(item => item.resourceId);
@@ -170,7 +170,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     }
 
     private verifyFullTimeResult() {
-        const fullTime = _.find(this.resultDetails, (map: ResultDetail) =>
+        const fullTime = _.find(this.match.resultDetails, (map: ResultDetail) =>
             _.isEqual(map.resourceId, ResourcesIds.finalScore)
         );
         const existGeneratedResult = _.find(this.selectedResources, item => Resources.baseBetTypes.includes(item.betType));

@@ -706,7 +706,7 @@ describe('Component: EarlySettlementComponent', () => {
             component.calculate();
 
             // Assert
-            expect(toastrService.error).toHaveBeenCalledWith(Language.warningInputScore);
+            expect(toastrService.error).toHaveBeenCalledWith(Language.fullTimeNotSettled);
         });
 
         it('should clear toastr messages before validation', () => {
