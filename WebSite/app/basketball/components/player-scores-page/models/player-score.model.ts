@@ -38,7 +38,7 @@ export class PlayerScore implements IPlayerScore {
   static fromResultDetail(resultDetail: ResultDetail): PlayerScore {
     return new PlayerScoreBuilder()
       .withResourceId(resultDetail.resourceId)
-      .withValue(resultDetail.homeValue)
+      .withValue(resultDetail)
       .withStatusFlags(resultDetail)
       .withPlayerInfo(resultDetail.oddFlex)
       .build();
@@ -65,8 +65,13 @@ class PlayerScoreBuilder {
     return this;
   }
 
-  withValue(value: string): PlayerScoreBuilder {
-    this.playerScore.value = value || "";
+  withValue(resultDetail: ResultDetail): PlayerScoreBuilder {
+    const { isConfirmedRefundSdt } = resultDetail.resultSettingData;
+    if(isConfirmedRefundSdt && resultDetail.externalScores.length) {
+      this.playerScore.value = resultDetail.externalScores[0].homeValue || "";
+    } else {
+      this.playerScore.value = resultDetail.homeValue || "";
+    }
     return this;
   }
 

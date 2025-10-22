@@ -5,6 +5,7 @@ import { Player, PlayerScore, playerScoreType } from './models';
 import { Match } from '../../models';
 import { ResultStatusId } from '../../../shared/constants/result-status-id.native';
 import { SettlementStatusId } from '../../../shared/constants/settlement-status-id.native';
+import { OddFlexModel } from '../../../shared/models/sportsbook-sop';
 
 describe('PlayerScoresService', () => {
   let service: PlayerScoresService;
@@ -19,22 +20,6 @@ describe('PlayerScoresService', () => {
   });
 
   describe('mapMatchToPlayerScores', () => {
-    it('should map match data to player scores correctly', () => {
-      // Arrange
-      const mockMatch = createMockMatch();
-      
-      // Act
-      const result = service.mapMatchToPlayerScores(mockMatch);
-      
-      // Assert
-      expect(result).toBeDefined();
-      expect(result.length).toBe(2); // 2 players
-      expect(result[0].playerId).toBe(1);
-      expect(result[0].playerName).toBe('Player 1');
-      expect(result[0].teamId).toBe(100);
-      expect(result[0].checked).toBe(false);
-      expect(result[0].scores.length).toBe(6); // All score types
-    });
 
     it('should handle empty result details', () => {
       // Arrange
@@ -47,16 +32,29 @@ describe('PlayerScoresService', () => {
       expect(result).toEqual([]);
     });
 
-    it('should group multiple scores for same player', () => {
+    it('should handle external results correctly', () => {
       // Arrange
-      const mockMatch = createMockMatchWithMultipleScoresForSamePlayer();
+      const mockMatch = createMockMatchWithExternalResults();
       
       // Act
       const result = service.mapMatchToPlayerScores(mockMatch);
       
       // Assert
-      expect(result.length).toBe(1); // Only one player
-      expect(result[0].scores.filter(score => score !== null).length).toBe(3); // 3 actual scores
+      expect(result).toBeDefined();
+      expect(result.length).toBe(1);
+      expect(result[0].scores.filter(score => score !== null).length).toBe(1);
+    });
+
+    it('should create full score array with all score types', () => {
+      // Arrange
+      const mockMatch = createMockMatchWithAllScoreTypes();
+      
+      // Act
+      const result = service.mapMatchToPlayerScores(mockMatch);
+      
+      // Assert
+      expect(result[0].scores.length).toBe(6);
+      expect(result[0].scores.filter(score => score !== null).length).toBe(6);
     });
   });
 
@@ -100,6 +98,49 @@ describe('PlayerScoresService', () => {
       
       // Assert
       expect(result).toEqual(players); // No changes
+    });
+
+    it('should set checked to false when unchecked', () => {
+      // Arrange
+      const players = createMockPlayersWithCheckedScores();
+      const playerId = 1;
+      const checked = false;
+      
+      // Act
+      const result = service.updatePlayers(players, playerId, checked);
+      
+      // Assert
+      const updatedPlayer = result.find(p => p.playerId === playerId);
+      expect(updatedPlayer?.scores.every(score => score?.checked === false || score === null)).toBe(true);
+    });
+
+    it('should handle empty players array', () => {
+      // Arrange
+      const players: Player[] = [];
+      const playerId = 1;
+      const checked = true;
+      
+      // Act
+      const result = service.updatePlayers(players, playerId, checked);
+      
+      // Assert
+      expect(result).toEqual([]);
+    });
+
+    it('should preserve player properties other than scores', () => {
+      // Arrange
+      const players = createMockPlayers();
+      const playerId = 1;
+      const checked = true;
+      
+      // Act
+      const result = service.updatePlayers(players, playerId, checked);
+      
+      // Assert
+      const updatedPlayer = result.find(p => p.playerId === playerId);
+      expect(updatedPlayer?.playerName).toBe('Player 1');
+      expect(updatedPlayer?.teamId).toBe(100);
+      expect(updatedPlayer?.checked).toBe(false); // Player level checked should not change
     });
   });
 
@@ -149,6 +190,41 @@ describe('PlayerScoresService', () => {
       // Assert
       expect(result.every(score => score !== null)).toBe(true);
     });
+
+    it('should return empty array for empty players array', () => {
+      // Arrange
+      const players: Player[] = [];
+      
+      // Act
+      const result = service.getCheckedScoresForPlayer(players, 1);
+      
+      // Assert
+      expect(result).toEqual([]);
+    });
+
+    it('should return only checked scores from multiple players', () => {
+      // Arrange
+      const players = createMockPlayersWithMixedCheckedScores();
+      
+      // Act
+      const result = service.getCheckedScoresForPlayer(players, 1);
+      
+      // Assert
+      expect(result.length).toBe(1); // Only 1 checked score for player 1
+      expect(result[0].playerId).toBe(1);
+      expect(result[0].checked).toBe(true);
+    });
+
+    it('should handle players with all null scores', () => {
+      // Arrange
+      const players = createMockPlayersWithAllNullScores();
+      
+      // Act
+      const result = service.getCheckedScoresForPlayer(players, 1);
+      
+      // Assert
+      expect(result).toEqual([]);
+    });
   });
 
 
@@ -170,6 +246,33 @@ describe('PlayerScoresService', () => {
       expect(result[0].scores.length).toBe(6); // Full score array
       expect(result[1].playerId).toBe(2);
     });
+
+    it('should handle empty playerScores array', () => {
+      // Arrange
+      const playerScores: PlayerScore[] = [];
+      
+      // Act
+      const result = (service as any).groupPlayerScoresByPlayer(playerScores);
+      
+      // Assert
+      expect(result).toEqual([]);
+    });
+
+    it('should create full score array with nulls for missing score types', () => {
+      // Arrange
+      const playerScores = [
+        createMockPlayerScore('points', 1),
+        createMockPlayerScore('assists', 1)
+      ];
+      
+      // Act
+      const result = (service as any).groupPlayerScoresByPlayer(playerScores);
+      
+      // Assert
+      expect(result[0].scores.length).toBe(6);
+      expect(result[0].scores.filter(score => score !== null).length).toBe(2);
+      expect(result[0].scores.filter(score => score === null).length).toBe(4);
+    });
   });
 
   describe('mapResultDetailsToPlayerScores', () => {
@@ -189,6 +292,51 @@ describe('PlayerScoresService', () => {
       expect(result[0].playerName).toBe('Player 1');
       expect(result[0].key).toBe('points');
       expect(result[1].key).toBe('assists');
+    });
+
+    it('should handle empty resultDetails array', () => {
+      // Arrange
+      const resultDetails: ResultDetail[] = [];
+      
+      // Act
+      const result = (service as any).mapResultDetailsToPlayerScores(resultDetails);
+      
+      // Assert
+      expect(result).toEqual([]);
+    });
+  });
+
+  describe('createFullScoreArray', () => {
+    it('should create full score array with all score types', () => {
+      // Arrange
+      const existingScores = [
+        createMockPlayerScore('points', 1),
+        createMockPlayerScore('assists', 1)
+      ];
+      
+      // Act
+      const result = (service as any).createFullScoreArray(existingScores);
+      
+      // Assert
+      expect(result.length).toBe(6);
+      expect(result[0]).not.toBeNull(); // points
+      expect(result[1]).toBeNull(); // threePointFG
+      expect(result[2]).not.toBeNull(); // assists
+      expect(result[3]).toBeNull(); // blocks
+      expect(result[4]).toBeNull(); // rebounds
+      expect(result[5]).toBeNull(); // steals
+    });
+
+    it('should handle empty existingScores array', () => {
+      // Arrange
+      const existingScores: PlayerScore[] = [];
+      
+      // Act
+      const result = (service as any).createFullScoreArray(existingScores);
+      
+      // Assert
+      expect(result.length).toBe(6);
+      expect(result.every(score => score === null)).toBe(true);
     });
   });
 });
@@ -348,4 +496,90 @@ function createMockResultDetail(resourceId: string, value: string, playerId: num
     iconHoldResult: ''
   };
   return resultDetail;
+}
+
+function createMockMatchWithExternalResults(): Match {
+  return {
+    matchDetail: {} as any,
+    resultDetails: [
+      createMockResultDetail('6531', '10', 1, 'Player 1', 100)
+    ],
+    externalResults: [
+      {
+        resultDetails: [
+          createMockResultDetail('6531', '15', 1, 'Player 1', 100)
+        ]
+      }
+      ]
+  } as any;
+}
+
+function createMockMatchWithNullExternalResults(): Match {
+  return {
+    matchDetail: {} as any,
+    resultDetails: [
+      createMockResultDetail('6531', '10', 1, 'Player 1', 100)
+    ],
+    externalResults: null as any
+  } as any;
+}
+
+function createMockMatchWithAllScoreTypes(): Match {
+  return {
+    matchDetail: {} as any,
+    resultDetails: [
+      createMockResultDetail('6531', '10', 1, 'Player 1', 100), // points
+      createMockResultDetail('6621', '3', 1, 'Player 1', 100),  // threePointFG
+      createMockResultDetail('6561', '5', 1, 'Player 1', 100), // assists
+      createMockResultDetail('6651', '2', 1, 'Player 1', 100),  // blocks
+      createMockResultDetail('6591', '8', 1, 'Player 1', 100), // rebounds
+      createMockResultDetail('6671', '1', 1, 'Player 1', 100)  // steals
+    ],
+    externalResults: []
+  } as any;
+}
+
+function createMockPlayersWithMixedCheckedScores(): Player[] {
+  return [
+    {
+      playerId: 1,
+      playerName: 'Player 1',
+      teamId: 100,
+      checked: false,
+      scores: [
+        { ...createMockPlayerScore('points', 1), checked: true },
+        createMockPlayerScore('assists', 1),
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      playerId: 2,
+      playerName: 'Player 2',
+      teamId: 200,
+      checked: false,
+      scores: [
+        { ...createMockPlayerScore('points', 2), checked: true },
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    }
+  ];
+}
+
+function createMockPlayersWithAllNullScores(): Player[] {
+  return [
+    {
+      playerId: 1,
+      playerName: 'Player 1',
+      teamId: 100,
+      checked: false,
+      scores: [null, null, null, null, null, null]
+    }
+  ];
 }

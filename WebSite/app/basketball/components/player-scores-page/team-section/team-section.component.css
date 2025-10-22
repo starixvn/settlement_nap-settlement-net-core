@@ -60,10 +60,6 @@
   background-color: #6fcf97;
 }
 
-.input-score-col.isHold {
-  background-color: #f8d7d7;
-}
-
 .input-score-col.isCalculated {
   background-color: #dac093;
 }
@@ -74,6 +70,10 @@
 
 .input-score-col.isConfirmedRefund {
   background-color: #ffff00;
+}
+
+.input-score-col.isHold {
+  background-color: #f8d7d7;
 }
 
 .input-score-col.isEmpty {

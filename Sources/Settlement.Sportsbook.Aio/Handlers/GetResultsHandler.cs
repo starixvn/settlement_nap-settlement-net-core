@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using Settlement.Core.Constants;
+using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Aio.Constants;
@@ -9,6 +10,7 @@ using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Requests;
 using MatchDetail = Settlement.Sportsbook.Aio.Models.MatchDetail;
 using ResultDetail = Settlement.Sportsbook.Aio.Models.ResultDetail;
+
 
 namespace Settlement.Sportsbook.Aio.Handlers;
 
@@ -26,14 +28,33 @@ public class GetResultsHandler(
     {
         var matchDetail = await GetMatchDetail(request.MatchId);
         var ticketDetails = await GetTicketDetails(request.MatchId, matchDetail.SportType);
-        await GenerateRelatedResource(request.MatchId, ticketDetails);
         var resultDetails = await GetResultDetails(request.MatchId, ticketDetails);
+        var externalResults = await GetExternalResults(request.MatchId);
 
         return new AioMatch
         {
             MatchDetail = matchDetail,
-            ResultDetails = resultDetails
+            ResultDetails = resultDetails,
+            ExternalResults = externalResults
         };
+    }
+
+    private async Task<List<ExternalResultModel>> GetExternalResults(int matchId)
+    {
+        var criteria = new GetProviderCriteria
+        {
+            MatchId = matchId,
+            SettleType = SettleType.Early
+        };
+
+        var results = (await repository.FetchAsync<ExternalResultDetailModel>(criteria))
+            .Where(x => x.SourceId == SourceType.ConfirmSTD)
+            .ToList();
+
+        var groupResult = GroupExternalResults(results);
+
+
+        return groupResult;
     }
 
     private async Task<List<ResultDetail>> GetTicketDetails(int matchId, int sportType)
@@ -73,18 +94,6 @@ public class GetResultsHandler(
     }
 
     private static bool IsBaseBetType(ResultDetail resultDetail) => BaseBetTypes.Any(resultDetail.ResourceId.StartsWith);
-
-    private async Task GenerateRelatedResource(int matchId, List<ResultDetail> ticketDetails)
-    {
-        var resourceIds = ticketDetails.Where(t => t.BetCount > 0).Select(t => t.ResourceId).Distinct().ToList();
-        var criteria = new GenerateRelatedResourcesCriteria
-        {
-            MatchId = matchId,
-            ResourceIds = string.Join(',', resourceIds),
-        };
-
-        await repository.ExecuteAsync(criteria);
-    }
 
     private async Task<MatchDetail> GetMatchDetail(int matchId)
     {
@@ -138,4 +147,22 @@ public class GetResultsHandler(
             { BetRefundedCount: > 0 } when settleType != SettleType.Early => TicketStatus.Refunded,
             _ => TicketStatus.Calculated
         };
+
+    private static List<ExternalResultModel> GroupExternalResults(IEnumerable<ExternalResultDetailModel> resultDetails)
+    {
+        return [.. resultDetails.GroupBy(resultDetail => new
+        {
+            resultDetail.SourceId,
+            resultDetail.SourceName,
+            resultDetail.OrderNo,
+            resultDetail.Remark
+        }).Select(resultDetail => new ExternalResultModel
+        {
+            SourceId = resultDetail.Key.SourceId,
+            SourceName = resultDetail.Key.SourceName,
+            OrderNo = resultDetail.Key.OrderNo,
+            Remark = resultDetail.Key.Remark,
+            ResultDetails = [.. resultDetail]
+        })];
+    }
 }

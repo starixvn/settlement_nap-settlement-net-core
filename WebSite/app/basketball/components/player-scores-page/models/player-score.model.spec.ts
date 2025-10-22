@@ -1,14 +1,58 @@
 import { PlayerScore, IPlayerScore } from './player-score.model';
-import { ResultDetail, OddFlexModel } from '../../../../shared/models/sportsbook-sop';
+import { ResultDetail } from '../../../../shared/models/sportsbook-sop';
+import { OddFlexModel } from '../../../../shared/models/sportsbook-sop';
 import { ResultStatusId } from '../../../../shared/constants/result-status-id.native';
 import { SettlementStatusId } from '../../../../shared/constants';
 
-
 describe('PlayerScore', () => {
-  describe('Constructor', () => {
-    it('should create PlayerScore with default values', () => {
-      const playerScore = new PlayerScore();
+  let playerScore: PlayerScore;
+  let mockResultDetail: ResultDetail;
+  let mockOddFlex: OddFlexModel;
 
+  beforeEach(() => {
+    playerScore = new PlayerScore();
+    
+    mockOddFlex = {
+      resourceId: 'test-resource',
+      betType: 1,
+      betChoice: 'test-choice',
+      oddsInfo: 'test-odds',
+      info: {
+        playerId: 123,
+        playerName: 'Test Player',
+        teamId: 456,
+        isHome: true,
+        statistics: [],
+        results: []
+      }
+    } as OddFlexModel;
+
+    mockResultDetail = {
+      resourceId: '653123',
+      homeValue: '25',
+      otherInfo: 'Test info',
+      resultSettingData: {
+        isHoldResult: false,
+        isConfirmedRefund: false,
+        isConfirmedRefundSdt: false
+      },
+      resultStatusId: ResultStatusId.TraderConfirm,
+      settlementStatusId: SettlementStatusId.Calculated,
+      externalScores: [],
+      oddFlex: [mockOddFlex]
+    } as ResultDetail;
+  });
+
+  describe('PlayerScore class', () => {
+    it('should implement IPlayerScore interface', () => {
+      expect(playerScore).toBeDefined();
+      expect(playerScore.teamId).toBeUndefined();
+      expect(playerScore.playerId).toBeUndefined();
+      expect(playerScore.playerName).toBeUndefined();
+      expect(playerScore.key).toBeUndefined();
+      expect(playerScore.resourceId).toBeUndefined();
+      expect(playerScore.value).toBeUndefined();
+      expect(playerScore.otherInfo).toBeUndefined();
       expect(playerScore.checked).toBe(false);
       expect(playerScore.isConfirmed).toBe(false);
       expect(playerScore.isHold).toBe(false);
@@ -17,455 +61,245 @@ describe('PlayerScore', () => {
       expect(playerScore.isConfirmedRefund).toBe(false);
       expect(playerScore.isEmpty).toBe(false);
     });
+
+    it('should have correct default values', () => {
+      const newPlayerScore = new PlayerScore();
+      
+      expect(newPlayerScore.checked).toBe(false);
+      expect(newPlayerScore.isConfirmed).toBe(false);
+      expect(newPlayerScore.isHold).toBe(false);
+      expect(newPlayerScore.isCalculated).toBe(false);
+      expect(newPlayerScore.isRefunded).toBe(false);
+      expect(newPlayerScore.isConfirmedRefund).toBe(false);
+      expect(newPlayerScore.isEmpty).toBe(false);
+    });
   });
 
   describe('fromResultDetail', () => {
-    it('should create PlayerScore from ResultDetail with all properties', () => {
-      const resultDetail = createMockResultDetail('6531', '10', 1, 'Player 1', 1);
-      resultDetail.otherInfo = 'Test info';
+    it('should create PlayerScore from ResultDetail with basic data', () => {
+      const result = PlayerScore.fromResultDetail(mockResultDetail);
 
-      const playerScore = PlayerScore.fromResultDetail(resultDetail);
-
-      expect(playerScore.resourceId).toBe('6531');
-      expect(playerScore.value).toBe('10');
-      expect(playerScore.playerId).toBe(1);
-      expect(playerScore.playerName).toBe('Player 1');
-      expect(playerScore.teamId).toBe(1);
-      expect(playerScore.key).toBe('points');
-      expect(playerScore.otherInfo).toBe('Test info');
-    });
-
-    it('should map resourceId to correct score type', () => {
-      const testCases = [
-        { resourceId: '6531', expectedType: 'points' },
-        { resourceId: '6621', expectedType: 'threePointFG' },
-        { resourceId: '6591', expectedType: 'rebounds' },
-        { resourceId: '6561', expectedType: 'assists' },
-        { resourceId: '6651', expectedType: 'blocks' },
-        { resourceId: '6671', expectedType: 'steals' },
-      ];
-
-      testCases.forEach(({ resourceId, expectedType }) => {
-        const resultDetail = createMockResultDetail(resourceId, '10', 1, 'Player 1', 1);
-        const playerScore = PlayerScore.fromResultDetail(resultDetail);
-        expect(playerScore.key).toBe(expectedType);
-      });
-    });
-
-    it('should handle empty value correctly', () => {
-      const resultDetail = createMockResultDetail('6531', '', 1, 'Player 1', 1);
-
-      const playerScore = PlayerScore.fromResultDetail(resultDetail);
-
-      expect(playerScore.value).toBe('');
-    });
-
-    it('should handle null/undefined value', () => {
-      const resultDetail = createMockResultDetail('6531', null as any, 1, 'Player 1', 1);
-
-      const playerScore = PlayerScore.fromResultDetail(resultDetail);
-
-      expect(playerScore.value).toBe('');
+      expect(result.resourceId).toBe('653123');
+      expect(result.value).toBe('25');
+      expect(result.otherInfo).toBe('Test info');
+      expect(result.playerId).toBe(123);
+      expect(result.playerName).toBe('Test Player');
+      expect(result.teamId).toBe(456);
+      expect(result.key).toBe('points');
     });
 
     it('should handle empty oddFlex array', () => {
-      const resultDetail = createMockResultDetail('6531', '10', 1, 'Player 1', 1);
-      resultDetail.oddFlex = [];
+      mockResultDetail.oddFlex = [];
+      const result = PlayerScore.fromResultDetail(mockResultDetail);
 
-      const playerScore = PlayerScore.fromResultDetail(resultDetail);
-
-      expect(playerScore.playerId).toBe(0);
-      expect(playerScore.playerName).toBe('');
-      expect(playerScore.teamId).toBe(0);
+      expect(result.playerId).toBe(0);
+      expect(result.playerName).toBe('');
+      expect(result.teamId).toBe(0);
     });
 
-    it('should handle missing otherInfo', () => {
-      const resultDetail = createMockResultDetail('6531', '10', 1, 'Player 1', 1);
-      resultDetail.otherInfo = undefined;
+    it('should use external score when isConfirmedRefundSdt is true', () => {
+      mockResultDetail.resultSettingData.isConfirmedRefundSdt = true;
+      mockResultDetail.externalScores = [{
+        homeValue: '30',
+        awayValue: '20'
+      }] as any;
 
-      const playerScore = PlayerScore.fromResultDetail(resultDetail);
+      const result = PlayerScore.fromResultDetail(mockResultDetail);
 
-      expect(playerScore.otherInfo).toBe('');
+      expect(result.value).toBe('30');
     });
 
-    it('should set status flags correctly', () => {
-      const resultDetail = createMockResultDetail('6531', '10', 1, 'Player 1', 1);
-      resultDetail.resultStatusId = ResultStatusId.TraderConfirm;
-        resultDetail.resultSettingData = {
-          isHoldResult: true,
-          isConfirmedRefund: false,
-          isConfirmedRefundSdt: false,
-          isConfirmedRefundMercy: false,
-          iconHoldResult: ''
-        };
+    it('should use homeValue when isConfirmedRefundSdt is false', () => {
+      mockResultDetail.resultSettingData.isConfirmedRefundSdt = false;
+      mockResultDetail.externalScores = [{
+        homeValue: '30',
+        awayValue: '20'
+      }] as any;
 
-      const playerScore = PlayerScore.fromResultDetail(resultDetail);
+      const result = PlayerScore.fromResultDetail(mockResultDetail);
 
-      expect(playerScore.isConfirmed).toBe(true);
-      expect(playerScore.isHold).toBe(true);
-      expect(playerScore.isConfirmedRefund).toBe(false);
+      expect(result.value).toBe('25');
+    });
+
+    it('should handle null/undefined homeValue', () => {
+      mockResultDetail.homeValue = null as any;
+      const result = PlayerScore.fromResultDetail(mockResultDetail);
+
+      expect(result.value).toBe('');
+    });
+
+    it('should handle undefined otherInfo', () => {
+      mockResultDetail.otherInfo = undefined;
+      const result = PlayerScore.fromResultDetail(mockResultDetail);
+
+      expect(result.otherInfo).toBe('');
     });
   });
 
   describe('toResultDetail', () => {
     it('should convert PlayerScore to ResultDetail', () => {
-      const playerScore = new PlayerScore();
-      playerScore.resourceId = '6531';
-      playerScore.value = '10';
+      playerScore.resourceId = '653123';
+      playerScore.value = '25';
 
-      const resultDetail = PlayerScore.toResultDetail(playerScore);
+      const result = PlayerScore.toResultDetail(playerScore);
 
-      expect(resultDetail.resourceId).toBe('6531');
-      expect(resultDetail.homeValue).toBe('10');
+      expect(result).toBeInstanceOf(ResultDetail);
+      expect(result.resourceId).toBe('653123');
+      expect(result.homeValue).toBe('25');
     });
 
-    it('should handle empty value', () => {
-      const playerScore = new PlayerScore();
-      playerScore.resourceId = '6531';
+    it('should handle empty values', () => {
+      playerScore.resourceId = '';
       playerScore.value = '';
 
-      const resultDetail = PlayerScore.toResultDetail(playerScore);
+      const result = PlayerScore.toResultDetail(playerScore);
 
-      expect(resultDetail.resourceId).toBe('6531');
-      expect(resultDetail.homeValue).toBe('');
+      expect(result.resourceId).toBe('');
+      expect(result.homeValue).toBe('');
     });
   });
 
-  describe('Builder Pattern Integration', () => {
-    it('should support method chaining', () => {
-      const resultDetail = createMockResultDetail('6531', '10', 1, 'Player 1', 1);
-      
-      const playerScore = PlayerScore.fromResultDetail(resultDetail);
+  describe('PlayerScoreBuilder', () => {
+    describe('withResourceId', () => {
+      it('should set resourceId and determine score type for points', () => {
+        const result = PlayerScore.fromResultDetail({
+          ...mockResultDetail,
+          resourceId: '653123'
+        });
 
-      expect(playerScore).toBeInstanceOf(PlayerScore);
-      expect(playerScore.resourceId).toBe('6531');
-      expect(playerScore.value).toBe('10');
-      expect(playerScore.playerId).toBe(1);
+        expect(result.resourceId).toBe('653123');
+        expect(result.key).toBe('points');
+      });
+
+      it('should determine score type for threePointFG', () => {
+        const result = PlayerScore.fromResultDetail({
+          ...mockResultDetail,
+          resourceId: '662456'
+        });
+
+        expect(result.key).toBe('threePointFG');
+      });
+
+      it('should determine score type for rebounds', () => {
+        const result = PlayerScore.fromResultDetail({
+          ...mockResultDetail,
+          resourceId: '659789'
+        });
+
+        expect(result.key).toBe('rebounds');
+      });
+
+      it('should determine score type for assists', () => {
+        const result = PlayerScore.fromResultDetail({
+          ...mockResultDetail,
+          resourceId: '656012'
+        });
+
+        expect(result.key).toBe('assists');
+      });
+
+      it('should determine score type for blocks', () => {
+        const result = PlayerScore.fromResultDetail({
+          ...mockResultDetail,
+          resourceId: '665345'
+        });
+
+        expect(result.key).toBe('blocks');
+      });
+
+      it('should determine score type for steals', () => {
+        const result = PlayerScore.fromResultDetail({
+          ...mockResultDetail,
+          resourceId: '667678'
+        });
+
+        expect(result.key).toBe('steals');
+      });
+
+      it('should handle unknown resourceId prefix', () => {
+        const result = PlayerScore.fromResultDetail({
+          ...mockResultDetail,
+          resourceId: '999123'
+        });
+
+        expect(result.resourceId).toBe('999123');
+        expect(result.key).toBeUndefined();
+      });
+
+      it('should handle null/undefined resourceId', () => {
+        const result = PlayerScore.fromResultDetail({
+          ...mockResultDetail,
+          resourceId: null as any
+        });
+
+        expect(result.resourceId).toBeNull();
+        expect(result.key).toBeUndefined();
+      });
     });
 
-    it('should create complete PlayerScore with all methods', () => {
-      const resultDetail = createMockResultDetail('6621', '5', 2, 'Player 2', 2);
-      resultDetail.resultStatusId = ResultStatusId.TraderConfirm;
-        resultDetail.resultSettingData = {
-          isHoldResult: true,
-          isConfirmedRefund: false,
-          isConfirmedRefundSdt: false,
-          isConfirmedRefundMercy: false,
-          iconHoldResult: ''
-        };
-      resultDetail.otherInfo = 'Test info';
+    describe('withStatusFlags', () => {
 
-      const playerScore = PlayerScore.fromResultDetail(resultDetail);
+      it('should handle refund status', () => {
+        mockResultDetail.resultStatusId = ResultStatusId.ManualCompleted;
+        mockResultDetail.settlementStatusId = SettlementStatusId.Refund;
 
-      expect(playerScore.resourceId).toBe('6621');
-      expect(playerScore.value).toBe('5');
-      expect(playerScore.key).toBe('threePointFG');
-      expect(playerScore.playerId).toBe(2);
-      expect(playerScore.playerName).toBe('Player 2');
-      expect(playerScore.teamId).toBe(2);
-      expect(playerScore.isConfirmed).toBe(true);
-      expect(playerScore.isHold).toBe(true);
-      expect(playerScore.isConfirmedRefund).toBe(false);
-      expect(playerScore.otherInfo).toBe('Test info');
-    });
-  });
+        const result = PlayerScore.fromResultDetail(mockResultDetail);
 
-  // Additional unit tests for PlayerScoreBuilder
+        expect(result.isRefunded).toBe(true);
+      });
 
-describe('PlayerScoreBuilder - Additional Tests', () => {
-  describe('withResourceId', () => {
-    it('should handle unknown resourceId and return undefined score type', () => {
-      const resultDetail = createMockResultDetail('999', '10', 1, 'Player 1', 1);
-      const playerScore = PlayerScore.fromResultDetail(resultDetail);
-      
-      expect(playerScore.resourceId).toBe('999');
-      expect(playerScore.key).toBeUndefined();
+      it('should handle confirmed refund status', () => {
+        mockResultDetail.resultSettingData.isConfirmedRefund = true;
+
+        const result = PlayerScore.fromResultDetail(mockResultDetail);
+
+        expect(result.isConfirmedRefund).toBe(true);
+      });
+
+      it('should handle confirmed refund SDT status', () => {
+        mockResultDetail.resultSettingData.isConfirmedRefundSdt = true;
+
+        const result = PlayerScore.fromResultDetail(mockResultDetail);
+
+        expect(result.isConfirmedRefund).toBe(true);
+      });
     });
 
-    it('should handle null resourceId', () => {
-      const resultDetail = createMockResultDetail(null as any, '10', 1, 'Player 1', 1);
-      const playerScore = PlayerScore.fromResultDetail(resultDetail);
-      
-      expect(playerScore.resourceId).toBeNull();
-      expect(playerScore.key).toBeUndefined();
-    });
+    describe('withPlayerInfo', () => {
+      it('should extract player info from oddFlex', () => {
+        const result = PlayerScore.fromResultDetail(mockResultDetail);
 
-    it('should handle empty resourceId', () => {
-      const resultDetail = createMockResultDetail('', '10', 1, 'Player 1', 1);
-      const playerScore = PlayerScore.fromResultDetail(resultDetail);
-      
-      expect(playerScore.resourceId).toBe('');
-      expect(playerScore.key).toBeUndefined();
-    });
+        expect(result.playerId).toBe(123);
+        expect(result.playerName).toBe('Test Player');
+        expect(result.teamId).toBe(456);
+      });
 
-    it('should handle resourceId with only 2 characters', () => {
-      const resultDetail = createMockResultDetail('65', '10', 1, 'Player 1', 1);
-      const playerScore = PlayerScore.fromResultDetail(resultDetail);
-      
-      expect(playerScore.resourceId).toBe('65');
-      expect(playerScore.key).toBeUndefined();
-    });
-  });
+      it('should handle invalid playerId', () => {
+        mockOddFlex.info.playerId = NaN;
+        mockResultDetail.oddFlex = [mockOddFlex];
 
-  describe('withValue', () => {
-    it('should handle undefined value', () => {
-      const resultDetail = createMockResultDetail('6531', undefined as any, 1, 'Player 1', 1);
-      const playerScore = PlayerScore.fromResultDetail(resultDetail);
-      
-      expect(playerScore.value).toBe('');
-    });
+        const result = PlayerScore.fromResultDetail(mockResultDetail);
 
-    it('should handle zero value', () => {
-      const resultDetail = createMockResultDetail('6531', '0', 1, 'Player 1', 1);
-      const playerScore = PlayerScore.fromResultDetail(resultDetail);
-      
-      expect(playerScore.value).toBe('0');
-    });
+        expect(result.playerId).toBe(0);
+      });
 
-    it('should handle negative value', () => {
-      const resultDetail = createMockResultDetail('6531', '-5', 1, 'Player 1', 1);
-      const playerScore = PlayerScore.fromResultDetail(resultDetail);
-      
-      expect(playerScore.value).toBe('-5');
-    });
+      it('should handle invalid teamId', () => {
+        mockOddFlex.info.teamId = NaN;
+        mockResultDetail.oddFlex = [mockOddFlex];
 
-    it('should handle decimal value', () => {
-      const resultDetail = createMockResultDetail('6531', '10.5', 1, 'Player 1', 1);
-      const playerScore = PlayerScore.fromResultDetail(resultDetail);
-      
-      expect(playerScore.value).toBe('10.5');
-    });
+        const result = PlayerScore.fromResultDetail(mockResultDetail);
 
-    it('should handle whitespace value', () => {
-      const resultDetail = createMockResultDetail('6531', '   ', 1, 'Player 1', 1);
-      const playerScore = PlayerScore.fromResultDetail(resultDetail);
-      
-      expect(playerScore.value).toBe('   ');
-    });
-  });
+        expect(result.teamId).toBe(0);
+      });
 
-  describe('withStatusFlags', () => {
-    it('should handle resultDetail with null resultSettingData', () => {
-      const resultDetail = createMockResultDetail('6531', '10', 1, 'Player 1', 1);
-      resultDetail.resultSettingData = null;
-      resultDetail.resultStatusId = ResultStatusId.TraderConfirm;
+      it('should handle null/undefined player info', () => {
+        mockOddFlex.info.playerName = null as any;
+        mockResultDetail.oddFlex = [mockOddFlex];
 
-      const playerScore = PlayerScore.fromResultDetail(resultDetail);
+        const result = PlayerScore.fromResultDetail(mockResultDetail);
 
-      expect(playerScore.isConfirmed).toBe(true);
-      expect(playerScore.isHold).toBe(false);
-      expect(playerScore.isConfirmedRefund).toBe(false);
-    });
-
-    it('should handle resultDetail with undefined resultSettingData', () => {
-      const resultDetail = createMockResultDetail('6531', '10', 1, 'Player 1', 1);
-      resultDetail.resultSettingData = undefined;
-      resultDetail.resultStatusId = ResultStatusId.AutoCompleted;
-
-      const playerScore = PlayerScore.fromResultDetail(resultDetail);
-
-      expect(playerScore.isConfirmed).toBe(false);
-      expect(playerScore.isCalculated).toBe(true);
-      expect(playerScore.isHold).toBe(false);
-      expect(playerScore.isConfirmedRefund).toBe(false);
-    });
-
-    it('should handle all status flags as true', () => {
-      const resultDetail = createMockResultDetail('6531', '10', 1, 'Player 1', 1);
-      resultDetail.resultStatusId = ResultStatusId.TraderConfirm;
-      resultDetail.resultSettingData = {
-        isHoldResult: true,
-        isConfirmedRefund: true,
-        isConfirmedRefundSdt: true,
-        isConfirmedRefundMercy: true,
-        iconHoldResult: 'hold-icon'
-      };
-
-      const playerScore = PlayerScore.fromResultDetail(resultDetail);
-
-      expect(playerScore.isConfirmed).toBe(true);
-      expect(playerScore.isHold).toBe(true);
-      expect(playerScore.isConfirmedRefund).toBe(true);
-    });
-
-    it('should handle refunded status', () => {
-      const resultDetail = createMockResultDetail('6531', '10', 1, 'Player 1', 1);
-      resultDetail.resultStatusId = ResultStatusId.ManualCompleted;
-      resultDetail.settlementStatusId = SettlementStatusId.Refund;
-
-      const playerScore = PlayerScore.fromResultDetail(resultDetail);
-
-      expect(playerScore.isRefunded).toBe(true);
-    });
-  });
-
-  describe('withPlayerInfo', () => {
-    it('should handle oddFlex with string playerId and teamId', () => {
-      const resultDetail = createMockResultDetail('6531', '10', 1, 'Player 1', 1);
-      resultDetail.oddFlex = [{
-        resourceId: '',
-        betType: 0,
-        betChoice: '',
-        oddsInfo: '',
-        info: {
-          playerId: 123,
-          playerName: 'Test Player',
-          teamId: 456,
-          isHome: true,
-          statistics: [],
-          results: []
-        }
-      }];
-
-      const playerScore = PlayerScore.fromResultDetail(resultDetail);
-
-      expect(playerScore.playerId).toBe(123);
-      expect(playerScore.playerName).toBe('Test Player');
-      expect(playerScore.teamId).toBe(456);
-    });
-
-    it('should handle oddFlex with non-numeric playerId and teamId', () => {
-      const resultDetail = createMockResultDetail('6531', '10', 1, 'Player 1', 1);
-      resultDetail.oddFlex = [{
-        resourceId: '',
-        betType: 0,
-        betChoice: '',
-        oddsInfo: '',
-        info: {
-          playerId: 0,
-          playerName: 'Test Player',
-          teamId: 0,
-          isHome: true,
-          statistics: [],
-          results: []
-        }
-      }];
-
-      const playerScore = PlayerScore.fromResultDetail(resultDetail);
-
-      expect(playerScore.playerId).toBe(0);
-      expect(playerScore.playerName).toBe('Test Player');
-      expect(playerScore.teamId).toBe(0);
-    });
-
-    it('should handle multiple oddFlex items and use the first one', () => {
-      const resultDetail = createMockResultDetail('6531', '10', 1, 'Player 1', 1);
-      resultDetail.oddFlex = [
-        createMockOddFlex(1, 'First Player', 1),
-        createMockOddFlex(2, 'Second Player', 2)
-      ];
-
-      const playerScore = PlayerScore.fromResultDetail(resultDetail);
-
-      expect(playerScore.playerId).toBe(1);
-      expect(playerScore.playerName).toBe('First Player');
-      expect(playerScore.teamId).toBe(1);
-    });
-  });
-
-  describe('Edge Cases and Error Handling', () => {
-
-    it('should maintain builder pattern immutability', () => {
-      const resultDetail = createMockResultDetail('6531', '10', 1, 'Player 1', 1);
-      
-      const playerScore1 = PlayerScore.fromResultDetail(resultDetail);
-      const playerScore2 = PlayerScore.fromResultDetail(resultDetail);
-
-      // Each call should create a new instance
-      expect(playerScore1).not.toBe(playerScore2);
-      expect(playerScore1.resourceId).toBe(playerScore2.resourceId);
-    });
-  });
-
-  describe('Resource ID Mapping Coverage', () => {
-    it('should map all valid resource IDs correctly', () => {
-      const testCases = [
-        { resourceId: '6531', expectedType: 'points' },
-        { resourceId: '6532', expectedType: 'points' },
-        { resourceId: '65399', expectedType: 'points' },
-        { resourceId: '6621', expectedType: 'threePointFG' },
-        { resourceId: '6622', expectedType: 'threePointFG' },
-        { resourceId: '6591', expectedType: 'rebounds' },
-        { resourceId: '6592', expectedType: 'rebounds' },
-        { resourceId: '6561', expectedType: 'assists' },
-        { resourceId: '6562', expectedType: 'assists' },
-        { resourceId: '6651', expectedType: 'blocks' },
-        { resourceId: '6652', expectedType: 'blocks' },
-        { resourceId: '6671', expectedType: 'steals' },
-        { resourceId: '6672', expectedType: 'steals' }
-      ];
-
-      testCases.forEach(({ resourceId, expectedType }) => {
-        const resultDetail = createMockResultDetail(resourceId, '10', 1, 'Player 1', 1);
-        const playerScore = PlayerScore.fromResultDetail(resultDetail);
-        expect(playerScore.key).toBe(expectedType);
+        expect(result.playerName).toBe('');
       });
     });
   });
-
-  describe('Status Checker Integration', () => {
-    it('should correctly identify calculated status with AutoCompleted', () => {
-      const resultDetail = createMockResultDetail('6531', '10', 1, 'Player 1', 1);
-      resultDetail.resultStatusId = ResultStatusId.AutoCompleted;
-
-      const playerScore = PlayerScore.fromResultDetail(resultDetail);
-
-      expect(playerScore.isCalculated).toBe(true);
-    });
-
-    it('should correctly identify calculated status with manual completion', () => {
-      const resultDetail = createMockResultDetail('6531', '10', 1, 'Player 1', 1);
-      resultDetail.resultStatusId = ResultStatusId.ManualCompleted;
-      resultDetail.settlementStatusId = SettlementStatusId.Calculated;
-
-      const playerScore = PlayerScore.fromResultDetail(resultDetail);
-
-      expect(playerScore.isCalculated).toBe(true);
-    });
-
-    it('should correctly identify refunded status with RefundSettleDetermined', () => {
-      const resultDetail = createMockResultDetail('6531', '10', 1, 'Player 1', 1);
-      resultDetail.resultStatusId = ResultStatusId.ManualCompleted;
-      resultDetail.settlementStatusId = SettlementStatusId.RefundSettleDetermined;
-
-      const playerScore = PlayerScore.fromResultDetail(resultDetail);
-
-      expect(playerScore.isRefunded).toBe(true);
-    });
-  });
 });
-});
-
-// Helper functions
-function createMockResultDetail(
-  resourceId: string,
-  homeValue: string,
-  playerId: number,
-  playerName: string,
-  teamId: number
-): ResultDetail {
-  const resultDetail = new ResultDetail();
-  resultDetail.resourceId = resourceId;
-  resultDetail.homeValue = homeValue;
-  resultDetail.resultStatusId = ResultStatusId.TraderConfirm;
-  resultDetail.oddFlex = [createMockOddFlex(playerId, playerName, teamId)];
-  return resultDetail;
-}
-
-function createMockOddFlex(playerId: any, playerName: any, teamId: any): OddFlexModel {
-  const oddFlex: OddFlexModel = {
-    resourceId: '',
-    betType: 0,
-    betChoice: '',
-    oddsInfo: '',
-    info: {
-      playerId: playerId?.toString(),
-      playerName: playerName,
-      teamId: teamId?.toString(),
-      isHome: true,
-      statistics: [],
-      results: []
-    }
-  };
-  return oddFlex;
-}

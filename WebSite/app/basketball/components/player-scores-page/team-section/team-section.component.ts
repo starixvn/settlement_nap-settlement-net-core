@@ -37,10 +37,10 @@ import { OnlyIntegerDirective } from '../../../../shared/directives';
                   @if (score) {
                     <td
                       class="input-score-col"
-                      [class.isHold]="score.isHold"
                       [class.isCalculated]="score.isCalculated"
                       [class.isRefunded]="score.isRefunded"
                       [class.isConfirmedRefund]="score.isConfirmedRefund"
+                      [class.isHold]="score.isHold"
                       [class.isEmpty]="score.isEmpty"
                     >
                       <input
