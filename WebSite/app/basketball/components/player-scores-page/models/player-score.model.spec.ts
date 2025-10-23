@@ -127,13 +127,6 @@ describe('PlayerScore', () => {
 
       expect(result.value).toBe('');
     });
-
-    it('should handle undefined otherInfo', () => {
-      mockResultDetail.otherInfo = undefined;
-      const result = PlayerScore.fromResultDetail(mockResultDetail);
-
-      expect(result.otherInfo).toBe('');
-    });
   });
 
   describe('toResultDetail', () => {

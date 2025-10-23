@@ -47,8 +47,8 @@ public class UpdateResultDetailsHandler : IRequestHandler<UpdateResultDetailsReq
         var resourceItems = request.ResultDetails.Select(x => new StatusResourceItem
         {
             ResourceId = x.ResourceId,
-            HomeValue = x.HomeValue,
-            AwayValue = x.AwayValue,
+            HomeValue = request.IsConfirm ? x.HomeValue : "",
+            AwayValue = request.IsConfirm ? x.AwayValue : "",
             ResultStatusId = request.IsConfirm ? ResultStatus.Confirmed : ResultStatus.Live,
             OtherInfo = x.OtherInfo
         }).ToList();

@@ -40,7 +40,7 @@ export class PlayerScore implements IPlayerScore {
       .withResourceId(resultDetail.resourceId)
       .withValue(resultDetail)
       .withStatusFlags(resultDetail)
-      .withPlayerInfo(resultDetail.oddFlex)
+      .withPlayerInfo(resultDetail)
       .build();
   }
 
@@ -48,6 +48,7 @@ export class PlayerScore implements IPlayerScore {
     const resultDetail = new ResultDetail();
     resultDetail.resourceId = playerScore.resourceId;
     resultDetail.homeValue = playerScore.value;
+    resultDetail.otherInfo = playerScore.otherInfo;
     return resultDetail;
   }
 }
@@ -81,11 +82,12 @@ class PlayerScoreBuilder {
     this.playerScore.isCalculated = PlayerScoreStatusChecker.isCalculated(resultDetail);
     this.playerScore.isRefunded = PlayerScoreStatusChecker.isRefunded(resultDetail);
     this.playerScore.isConfirmedRefund = PlayerScoreStatusChecker.isConfirmedRefund(resultDetail);
-    this.playerScore.otherInfo = resultDetail.otherInfo || "";
+   
     return this;
   }
 
-  withPlayerInfo(oddFlexInfos: OddFlexModel[]): PlayerScoreBuilder {
+  withPlayerInfo(resultDetail: ResultDetail): PlayerScoreBuilder {
+    const oddFlexInfos = resultDetail.oddFlex;
     if (oddFlexInfos.length) {
       const oddFlexInfo = oddFlexInfos[0];
       this.playerScore.playerId = Number(oddFlexInfo.info.playerId) || 0;
@@ -96,6 +98,8 @@ class PlayerScoreBuilder {
       this.playerScore.playerName = "";
       this.playerScore.teamId = 0;
     }
+    this.playerScore.otherInfo = resultDetail.otherInfo 
+      || (oddFlexInfos.length ? `${oddFlexInfos[0].info.playerId},${oddFlexInfos[0].info.teamId}` : "");
     return this;
   }
 
