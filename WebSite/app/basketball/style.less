@@ -129,6 +129,14 @@ tr.mismatched td:not(:first-child):not(.set-status):not(.match-status):not(.calc
     color: white;
 }
 
+.btn-green-disabled {
+    background-color: #cccccc;
+    color: white;
+    opacity: 0.8;
+    cursor: not-allowed; /* Change cursor to indicate non-interactiveness */
+    pointer-events: none;
+}
+
 .ticket-count-wrapper {
     display: flex;
     justify-content: space-between;

@@ -50,6 +50,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     public isReadyMatch: boolean;
     public childResultIds: string[] = [];
     public allowNoTicketStatus = Resources.baseBetTypes;
+    public isDisabledSupportInputPlayerScores = false;
     constructor(
         protected injector: Injector,
         protected verificationService: VerificationService,
@@ -106,6 +107,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         this.setIndicateColor();
         this.setRefundButtonWhenExistConfirmedSDT(this.resultDetails);
         this.earlyStore.setState(this.matchDetail, this.permission, this.maxProviderCol);
+        this.isDisabledSupportInputPlayerScores = !this.resultDetails.some(item => Resources.orderBetTypes.includes(item.betType));
 
         if (!this.isReadyMatch) {
             this.toastrService.error(Language.minimumPlayTimeNotReached);

@@ -7,7 +7,7 @@
         <div class="ticket-count-wrapper">
             <ticket-count [ticketCounts]="match.ticketCounts"></ticket-count>
             @if(permission.isLeader) {
-            <button class="btn btn-green"  (click)="supportInputPlayerScores()">Support Input Player Scores</button>
+            <button class="btn btn-green"  [ngClass]="{'btn-green-disabled': isDisabledSupportInputPlayerScores}" (click)="supportInputPlayerScores()">Support Input Player Scores</button>
             }
         </div>
         <div class="table-header">
