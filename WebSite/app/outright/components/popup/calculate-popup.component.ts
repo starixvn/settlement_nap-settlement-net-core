@@ -459,7 +459,7 @@ export class CalculatePopupComponent implements OnInit {
 
     getWonRefundConfirmClass(team: Team) {
         if(!this.permission.isLeader) {
-            return '';
+            return ' ';
         }
 
         if(_.isEqual(team.originalTraderScore.toLowerCase(), Status.refund) && team.resultStatusId === 3) {
