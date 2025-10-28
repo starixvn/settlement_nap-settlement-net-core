@@ -186,6 +186,10 @@ export class CalculatePopupComponent implements OnInit {
     changeTraderScore(team: Team) {
         this.clearError();
         this.autoFillFinalScore(team);
+
+        if (_.isEqual(team.traderScore.toLowerCase(), Status.won.toLowerCase())) {
+            team.disableDeadheat = false;
+        }
     }
 
     makeBackgroundByStatus(team: Team) {
