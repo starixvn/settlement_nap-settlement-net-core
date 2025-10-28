@@ -55,6 +55,7 @@ describe('CalculatePopupComponent', () => {
     originalStatus: '',
     originalScreenshot: '',
     screenShot: '',
+    originalIsDeadheat: false,
     confirmedBy: '',
     mismatchClass: '',
     traderConfirmClass: '',
@@ -144,6 +145,7 @@ describe('CalculatePopupComponent', () => {
     messageBoxService = fixture.debugElement.injector.get(MessageBoxService);
     fixture.detectChanges();
     component.leagueSettle = leagueSettle;
+    component.permission = new Permission();
   });
 
   it('should create', () => {
@@ -955,24 +957,11 @@ describe('CalculatePopupComponent', () => {
       expect(toastrService.error).toHaveBeenCalledWith(Language.Outright.existTeamSettled);
     });
 
-    it('should show error when exist running trader result', async () => {
-      team.traderScore = 'RUNNING';
-      team.selected = true;
-      component.teams = [team];
-      outrightService.getMatches = jest.fn().mockReturnValue(Promise.resolve(leagueSettle));
-      CalculateService.VerifySettledSelected = jest.fn().mockReturnValue(false);
-      CalculateService.existRunningResult = jest.fn().mockReturnValue(true);
-      toastrService.clear = jest.fn();
-      toastrService.error = jest.fn();
-
-      await component.saveTraderScore();
-
-      expect(toastrService.error).toHaveBeenCalledWith(Language.Outright.existRunningTraderResult);
-    });
 
     it('should save trader score when confirmed', async () => {
       team.traderScore = 'WON';
       team.selected = true;
+      team.isDeadheat = false;
       component.teams = [team];
       outrightService.getMatches = jest.fn().mockReturnValue(Promise.resolve(leagueSettle));
       CalculateService.VerifySettledSelected = jest.fn().mockReturnValue(false);
@@ -994,7 +983,8 @@ describe('CalculatePopupComponent', () => {
       expect(outrightService.saveTraderScore).toHaveBeenCalledWith(1, [{
         orId: team.orId,
         teamId: team.teamId,
-        result: team.traderScore
+        result: team.traderScore,
+        isDeadheat: team.isDeadheat
       }]);
       expect(dialogRef.close).toHaveBeenCalled();
     });

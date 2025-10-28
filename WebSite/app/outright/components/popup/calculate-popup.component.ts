@@ -99,6 +99,7 @@ export class CalculatePopupComponent implements OnInit {
             team.traderScore = (team.traderScore || TeamStatuses[0].text).toUpperCase();
             team.originalTraderScore = team.traderScore;
             this.autoFillFinalScore(team);
+            this.autoChangeDeadheat(team);
             team.traderConfirmClass = this.traderConfirmClass(team);
             this.loading = false;
         });
@@ -125,6 +126,17 @@ export class CalculatePopupComponent implements OnInit {
         }
 
         this.changeStatus(team);
+    }
+
+    autoChangeDeadheat(team: Team) {
+        if(this.permission.isLeader) {
+            team.isDeadheat = team.originalIsDeadheat;
+            return;
+        } 
+
+        if(team.resultStatusId === 3) {
+            team.isDeadheat = false;
+        }
     }
 
     traderConfirmClass(team: Team) {
@@ -174,9 +186,7 @@ export class CalculatePopupComponent implements OnInit {
         team.statusClass = this.makeBackgroundByStatus(team);
         team.mismatchClass = this.mismatchClass(team);
         if (!_.isEqual(team.status, 'WON')) {
-            if(!this.loading) {
-                team.isDeadheat = false;
-            }
+            team.isDeadheat = false;
             team.disableDeadheat = true;
             return;
         }
@@ -189,7 +199,10 @@ export class CalculatePopupComponent implements OnInit {
 
         if (_.isEqual(team.traderScore.toLowerCase(), Status.won.toLowerCase())) {
             team.disableDeadheat = false;
+            return;
         }
+
+        team.disableDeadheat = !_.isEqual(team.status, 'WON');
     }
 
     makeBackgroundByStatus(team: Team) {
@@ -277,7 +290,7 @@ export class CalculatePopupComponent implements OnInit {
         }
         
         if (CalculateService.ExistRunningStatus(this.teamSelected)) {
-            this.toastrService.error(Language.eSports.leader.blankScore);
+            this.toastrService.error(Language.Outright.blankScore);
             return;
         }
         
@@ -327,7 +340,7 @@ export class CalculatePopupComponent implements OnInit {
         }
         
         if(!this.permission.isLeader && CalculateService.verifyDeadHeat(teamWonSelected)) {
-            this.toastrService.error(CalculateService.MessageInconsistentDeadheat(teamWonSelected, Language.Outright.inconsistentDeadheat));
+            this.toastrService.error(Language.Outright.inconsistentTraderDeadheat);
             return;
         }
         
@@ -445,6 +458,10 @@ export class CalculatePopupComponent implements OnInit {
     }
 
     getWonRefundConfirmClass(team: Team) {
+        if(!this.permission.isLeader) {
+            return '';
+        }
+
         if(_.isEqual(team.originalTraderScore.toLowerCase(), Status.refund) && team.resultStatusId === 3) {
             return 'bg-result-refund';
         }
