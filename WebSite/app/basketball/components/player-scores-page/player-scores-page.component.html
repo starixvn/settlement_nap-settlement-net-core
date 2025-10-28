@@ -13,7 +13,6 @@
     <div class="main-container">
       <match-header [matchDetail]="matchDetail" (refresh)="loadData()"> </match-header>
 
-      <!-- Home Team Section -->
       <team-section [teamName]="matchDetail.homeName" [players]="players | teamFilter: matchDetail.homeId"
         [isCollapsed]="isHomeTeamCollapsed" (toggleCollapse)="toggleHomeTeam()" (holdResult)="holdResult($event)"
         (unholdResult)="unholdResult($event)" (confirmResult)="confirmResult($event)"
@@ -21,7 +20,6 @@
       </team-section>
 
 
-      <!-- Away Team Section -->
       <team-section [teamName]="matchDetail.awayName" [players]="players | teamFilter: matchDetail.awayId"
         [isCollapsed]="isAwayTeamCollapsed" (toggleCollapse)="toggleAwayTeam()" (holdResult)="holdResult($event)"
         (unholdResult)="unholdResult($event)" (confirmResult)="confirmResult($event)"
