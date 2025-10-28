@@ -1,3 +1,4 @@
-﻿namespace Settlement.Setting.Requests.Notification;
+﻿
+namespace Settlement.Setting.Requests.Notification;
 
-public record class NotificationOutrightRequest() : IRequest<bool>;
+public record class NotificationOutrightRequest : IRequest<bool>;

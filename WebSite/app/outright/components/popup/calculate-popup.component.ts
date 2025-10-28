@@ -431,11 +431,6 @@ export class CalculatePopupComponent implements OnInit {
             return;
         }
 
-        // if (CalculateService.existRunningResult(this.teamSelected, 'traderScore')) {
-        //     this.toastrService.error(Language.Outright.existRunningTraderResult);
-        //     return;
-        // }
-
         this.confirmationDialogMessage.message = Language.SaveTraderScore;
         this.messageBoxService.confirm(this.confirmationDialogMessage, async () => {
             const teams = this.teamSelected.map(team => ({
