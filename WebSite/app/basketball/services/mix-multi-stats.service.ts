@@ -2,7 +2,6 @@ import { Injectable, inject } from '@angular/core';
 import * as _ from 'lodash';
 import { Resources, PlayerBetTypes } from '../constants';
 import { ResultDetail } from '../../shared/models/sportsbook-sop';
-import { ExternalResultDetail } from '../../shared/models/sportsbook-sop/external-result-detail.model';
 import { VerificationBaseService } from "../../core/services/verification-base.service";
 import { MixCoreService } from './mix-core.service';
 @Injectable()
@@ -97,12 +96,12 @@ export class MixMultiStatsService {
     if (!_.isEmpty(firstValue) && !_.isEmpty(secondValue)) {
       const totalValue = parseInt(firstValue) + parseInt(secondValue);
       targetResult.homeValue = totalValue.toString();
-      targetResult.checked = true;
+    
     } else {
       targetResult.homeValue = '';
-      targetResult.checked = false;
     }
     
+    targetResult.checked = true;
     this.updateExternalScores(targetResult, firstResult, secondResult);
     targetResult.isScoreMismatched = this.#verificationBaseService.isEarlyMismatchedWarning(targetResult);
   }
@@ -115,12 +114,11 @@ export class MixMultiStatsService {
     if (!_.isEmpty(reboundsValue) && !_.isEmpty(assistsValue) && !_.isEmpty(pointsValue)) {
       const totalValue = parseInt(reboundsValue) + parseInt(assistsValue) + parseInt(pointsValue);
       targetResult.homeValue = totalValue.toString();
-      targetResult.checked = true;
     } else {
       targetResult.homeValue = '';
-      targetResult.checked = false;
     }
 
+    targetResult.checked = true;
     this.updateTripleExternalScores(targetResult, reboundsResult, assistsResult, pointsResult);
     targetResult.isScoreMismatched = this.#verificationBaseService.isEarlyMismatchedWarning(targetResult);
   }

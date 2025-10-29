@@ -7,6 +7,25 @@ import { SettlementStatusId } from '../../shared/constants';
 export class MixCoreService {
   readonly noneValue = 'None';
 
+  filterMixResultByBetType(resultDetails: ResultDetail[], resourceId: string, betType: string) {
+    return resultDetails.filter(result => {
+      if (!_.isEqual(result.betType, betType)) {
+        return false;
+      }
+
+      if (!_.isEqual(result.settlementStatusId, SettlementStatusId.Running)) {
+        return false;
+      }
+
+      if (!result.relatedCalResources || _.isEmpty(result.relatedCalResources)) {
+        return false;
+      }
+
+      const relatedResourceIds = result.relatedCalResources.split(',').map(id => id.trim());
+      return relatedResourceIds.includes(resourceId);
+    });
+  }
+  
   findMixResultByBetType(resultDetails: ResultDetail[], resourceId: string, betType: string): ResultDetail | undefined {
     return resultDetails.find(result => {
       if (!_.isEqual(result.betType, betType)) {

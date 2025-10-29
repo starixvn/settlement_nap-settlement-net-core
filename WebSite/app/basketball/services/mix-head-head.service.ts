@@ -33,10 +33,10 @@ export class MixHeadHeadService {
 
     const mixResultType = mixResultMapping[betType];
     if (mixResultType) {
-      const mixResult = this.#mixCoreService.findMixResultByBetType(resultDetails, changedResultDetail.resourceId, mixResultType);
-      if (mixResult) {
+      const mixResult = this.#mixCoreService.filterMixResultByBetType(resultDetails, changedResultDetail.resourceId, mixResultType);
+      _.forEach(mixResult, mixResult => {
         this.calculateMixHeadHeadValue(resultDetails, mixResult);
-      }
+      });
     }
   }
 
@@ -51,11 +51,13 @@ export class MixHeadHeadService {
     
     if (results.length === 2) {
       const playerIdWinner = this.comparePlayerStatistics(results[0], results[1]);
-      if (playerIdWinner > 0) {
+      if(playerIdWinner === null) {
+        mixResult.homeValue = "";
+      } else if (_.isEqual(playerIdWinner, this.#mixCoreService.noneValue)) {
+        mixResult.homeValue = this.#mixCoreService.noneValue;
+      } else  {
         const winnerOddFlex = mixResult.oddFlex.find(odd => odd.info.playerId === playerIdWinner);
         mixResult.homeValue = winnerOddFlex.betChoice;
-      } else {
-        mixResult.homeValue = "";
       }
     }
 
@@ -65,12 +67,13 @@ export class MixHeadHeadService {
   }
 
   private comparePlayerStatistics(player1: ResultDetail, player2: ResultDetail) {
-    const player1Value = player1.homeValue;
-    const player2Value = player2.homeValue;
-   
-    if (_.isEmpty(player1Value) || _.isEmpty(player2Value)) {
+    
+    if (_.isEmpty(player1.homeValue) || _.isEmpty(player2.homeValue)) {
       return null;
     }
+
+    const player1Value = parseInt(player1.homeValue);
+    const player2Value = parseInt(player2.homeValue);
 
     if (player1Value > player2Value) {
       return player1.oddFlex[0].info.playerId;
@@ -79,7 +82,7 @@ export class MixHeadHeadService {
       return player2.oddFlex[0].info.playerId;
     }
 
-    return null;
+    return this.#mixCoreService.noneValue;
   }
 
   private updateExternalScores(targetResult: ResultDetail, results: ResultDetail[]) {
@@ -108,7 +111,7 @@ export class MixHeadHeadService {
       } else if (player2Value > player1Value) {
         return this.getWinnerBetChoice(player2);
       } else {
-        return '';
+        return this.#mixCoreService.noneValue;
       }
     }
 
