@@ -461,7 +461,7 @@ describe('CalculatePopupComponent', () => {
       const team2 = { ...team, selected: true };
       component.filteredTeam = jest.fn().mockReturnValue([team1, team2]);
 
-      component.onSelectTeam();
+      component.onSelectTeam(team1);
 
       expect(component.selectAllTeam).toBeTruthy();
     });
@@ -471,7 +471,7 @@ describe('CalculatePopupComponent', () => {
       const team2 = { ...team, selected: false };
       component.filteredTeam = jest.fn().mockReturnValue([team1, team2]);
 
-      component.onSelectTeam();
+      component.onSelectTeam(team1);
 
       expect(component.selectAllTeam).toBeFalsy();
     });
