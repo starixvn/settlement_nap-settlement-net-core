@@ -59,6 +59,19 @@ thead {
     float: left;
 }
 
+.hold-icon {
+    background: url("images/hold.png") no-repeat;
+    width: 14px;
+    height: 14px;
+}
+
+
+.unhold-icon {
+    background: url("images/unhold.png") no-repeat;
+    width: 14px;
+    height: 14px;
+}
+
 .table-calculation {
     border-collapse: collapse;
     width: 100%;

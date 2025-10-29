@@ -43,3 +43,9 @@ public class ResourceItem : BaseResourceItem
     [XmlIgnore]
     public string Bettype { get; set; }
 }
+
+public class StatusResourceItem : ResourceItem
+{
+    [XmlAttribute("ResultStatusId")]
+    public byte ResultStatusId { get; set; }
+}

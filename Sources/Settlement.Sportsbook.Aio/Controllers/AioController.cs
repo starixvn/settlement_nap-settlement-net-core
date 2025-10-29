@@ -48,4 +48,15 @@ public class AioController(IMediator mediator) : ControllerBase
     [HttpPost]
     [LogPushRequest]
     public async Task<IActionResult> ResultSetting(ResultSettingRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+
+    [Route("results/{mathId}")]
+    [HttpGet]
+    public async Task<IActionResult> GetResults(int mathId)
+        => Ok(await mediator.Send(new GetResultsRequest(mathId)).ConfigureAwait(false));
+
+    [Route("result-details")]
+    [HttpPost]
+    public async Task<IActionResult> UpdateResultDetails(UpdateResultDetailsRequest request)
+    => Ok(await mediator.Send(request).ConfigureAwait(false));
+
 }

@@ -83,8 +83,5 @@ public sealed class ResultDetail
         return obj is ResultDetail result && result.ResourceId == ResourceId;
     }
 
-    public override int GetHashCode()
-    {
-        return Map;
-    }
+    public override int GetHashCode() => ResourceId.GetHashCode();
 }

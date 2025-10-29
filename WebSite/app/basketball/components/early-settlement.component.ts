@@ -2,13 +2,13 @@
 import { ExternalSourceNamePipe } from './../../shared/pipes/external-source-name.pipe';
 import * as _ from 'lodash';
 import { CalculateAction, ScoreSourceType, SettlementStatusId, SportType, TicketStatusText } from '../../shared/constants';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Injector, ViewChild, ViewChildren, QueryList, AfterViewInit } from '@angular/core';
+import { Component, Injector, ViewChild, ViewChildren, QueryList, AfterViewInit, inject } from '@angular/core';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import { BasketballApiKeys, EarlyResourcesIds, KickOffTime, Resources, ResourcesIds, ResultStatus } from '../constants';
 import { BasketballService, BetStatusService, EarlyService, VerificationService } from '../services';
 import { Language } from '../../shared/language.native';
 import { Match } from '../models';
-import { BlockUIService } from '../../shared/services';
+import { BlockUIService, DialogBoxService } from '../../shared/services';
 import { GroupMap, ResultDetail, SettleQuery, SportTemplate } from '../../shared/models/sportsbook-sop';
 import { EarlyBaseComponent } from '../../shared/components/sportsbook-sop/early-base.component';
 import { MatchDetailComponent } from './match-detail.component';
@@ -17,6 +17,8 @@ import { ResourceNameByIdPipe } from '../pipes/resource-name-by-id.pipe';
 import { EarlyStore } from '../store/early.store';
 import { ResultRowComponent } from './early/result-row.component';
 import { ResourceSupportSDTPipe } from '../pipes/resource-support-sdt.pipe';
+import { MatDialog } from '@angular/material/dialog';
+import { PlayerScoresPageComponent } from './player-scores-page/player-scores-page.component';
 
 @Component({
     selector: 'early-settlement',
@@ -34,24 +36,28 @@ import { ResourceSupportSDTPipe } from '../pipes/resource-support-sdt.pipe';
         BasketballService,
         ResourceNameByIdPipe,
         BetStatusService,
-        ToastrService],
-
+        ToastrService,
+        DialogBoxService]
 })
 export class EarlySettlementComponent extends EarlyBaseComponent implements SportTemplate {
+
     @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
     @ViewChildren(ResultRowComponent) resultRowComponents: QueryList<ResultRowComponent>;
+    private readonly dialog = inject(MatDialog);
     private earlyService: EarlyService;
     public blockUI = true;
     public match: Match;
     public isReadyMatch: boolean;
     public childResultIds: string[] = [];
     public allowNoTicketStatus = Resources.baseBetTypes;
+    public isDisabledSupportInputPlayerScores = false;
     constructor(
         protected injector: Injector,
         protected verificationService: VerificationService,
         private readonly earlyStore: EarlyStore) {
         super(injector, verificationService);
     }
+
 
     async getMatch(matchId: number): Promise<void> {
         this.initService();
@@ -101,6 +107,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         this.setIndicateColor();
         this.setRefundButtonWhenExistConfirmedSDT(this.resultDetails);
         this.earlyStore.setState(this.matchDetail, this.permission, this.maxProviderCol);
+        this.isDisabledSupportInputPlayerScores = !this.resultDetails.some(item => Resources.orderBetTypes.includes(item.betType));
 
         if (!this.isReadyMatch) {
             this.toastrService.error(Language.minimumPlayTimeNotReached);
@@ -381,5 +388,21 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
 
         this.toastrService.error(Language.confirmRefund.notSupportedSDT);
         return false;
+    }
+
+    supportInputPlayerScores() {
+        const modalRef = this.dialog.open(PlayerScoresPageComponent, {
+            width: '800px',
+            height: '900px',
+            data: {
+                matchId: this.match.matchDetail.matchId
+            }
+        });
+        
+        modalRef.afterClosed().subscribe((result) => {
+            if (result && result.hasChanges) {
+                window.location.reload();
+            }
+        });
     }
 }

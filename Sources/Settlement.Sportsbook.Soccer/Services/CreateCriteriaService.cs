@@ -239,9 +239,9 @@ public class CreateCriteriaServiceImp(
         return IsAbandonedMatch(request) ? betStatusAllService.GetBetStatusRefund(request) : request.BetStatus;
     }
 
-    private string CreateResources(List<ResourceItem> selectedResources)
+    private string CreateResources<T>(List<T> selectedResources) where T : ResourceItem, new()
     {
-        var resources = new Resources<ResourceItem>
+        var resources = new Resources<T>
         {
             ResourceItems = selectedResources
         };
@@ -390,11 +390,12 @@ public class CreateCriteriaServiceImp(
     public SaveScoreCriteria CreateSaveScoreCriteria(SaveScoreRequest request)
     {
         var resourceItems = request.ResultDetails.Select(requestResultDetail =>
-            new ResourceItem
+            new StatusResourceItem
             {
                 ResourceId = requestResultDetail.ResourceId,
                 HomeValue = requestResultDetail.HomeValue,
-                AwayValue = requestResultDetail.AwayValue
+                AwayValue = requestResultDetail.AwayValue,
+                ResultStatusId = ResultStatus.Confirmed
             }).ToList();
 
         AddGoalRecordResourceItems(request, resourceItems);
@@ -407,11 +408,11 @@ public class CreateCriteriaServiceImp(
         };
     }
 
-    private void AddGoalRecordResourceItems(SaveScoreRequest request, List<ResourceItem> resourceItems)
+    private void AddGoalRecordResourceItems(SaveScoreRequest request, List<StatusResourceItem> resourceItems)
     {
         if (request.IsEnabledGoalRecordFt && !string.IsNullOrEmpty(request.GoalRecord) && request.ResultDetails.Any(r => r.ResourceId == ResourceType.Final))
         {
-            resourceItems.Add(new ResourceItem
+            resourceItems.Add(new StatusResourceItem
             {
                 ResourceId = ResourceType.FullTimeGoalRecord,
                 HomeValue = request.GoalRecord
@@ -421,7 +422,7 @@ public class CreateCriteriaServiceImp(
         if (request.IsEnabledGoalRecordHt && !string.IsNullOrEmpty(request.GoalRecord) && request.ResultDetails.Any(r => r.ResourceId == ResourceType.Halftime))
         {
             var semicolonIndex = request.GoalRecord.IndexOf(';');
-            resourceItems.Add(new ResourceItem
+            resourceItems.Add(new StatusResourceItem
             {
                 ResourceId = ResourceType.HalftimeGoalRecord,
                 HomeValue = semicolonIndex < 0 ? request.GoalRecord : request.GoalRecord[..(semicolonIndex + 1)].ToUpperInvariant()

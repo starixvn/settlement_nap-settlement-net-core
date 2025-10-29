@@ -1,0 +1,25 @@
+
+.league {
+  color: #1d3968;
+  font-weight: 700;
+  background-color: #ccc;
+  padding: 7px 8px 10px 10px;
+  margin: 0 -5px 7px -10px;
+  font-size: 1.5rem;
+}
+
+.match-team {
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+
+.team-name {
+  font-weight: 700;
+  font-size: 1.2rem;
+  background-color: #e5ebf2;
+  padding: 4px
+}
+
+.main-container {
+  margin-top: 10px;
+}

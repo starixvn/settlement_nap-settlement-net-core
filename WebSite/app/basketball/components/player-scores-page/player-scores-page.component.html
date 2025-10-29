@@ -1,0 +1,47 @@
+<div class="player-scores-page">
+  <h1 mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragBoundary=".cdk-overlay-container"
+    cdkDragHandle>
+    <label class="title">
+      Support Confirm Score - Player Stats
+    </label>
+    <button type="button" class="close dialog-close" (click)="close()">X</button>
+  </h1>
+  
+  <div mat-dialog-content id="modal-body" style="padding: 5px 5px 0 5px !important;">
+    <span toastContainer></span>
+    @if (players.length > 0) {
+    <div class="main-container">
+      <match-header [matchDetail]="matchDetail" (refresh)="loadData()"> </match-header>
+
+      <team-section [teamName]="matchDetail.homeName" [players]="players | teamFilter: matchDetail.homeId"
+        [isCollapsed]="isHomeTeamCollapsed" (toggleCollapse)="toggleHomeTeam()" (holdResult)="holdResult($event)"
+        (unholdResult)="unholdResult($event)" (confirmResult)="confirmResult($event)"
+        (unconfirmResult)="unconfirmResult($event)" (checkboxChange)="onCheckboxChange($event)">
+      </team-section>
+
+
+      <team-section [teamName]="matchDetail.awayName" [players]="players | teamFilter: matchDetail.awayId"
+        [isCollapsed]="isAwayTeamCollapsed" (toggleCollapse)="toggleAwayTeam()" (holdResult)="holdResult($event)"
+        (unholdResult)="unholdResult($event)" (confirmResult)="confirmResult($event)"
+        (unconfirmResult)="unconfirmResult($event)" (checkboxChange)="onCheckboxChange($event)">
+      </team-section>
+    </div>
+    }
+
+    <ng-template #tableHeader>
+      <thead>
+        <tr>
+          <th style="width: 150px">Player Name</th>
+          <th>Points</th>
+          <th>3-Point FG</th>
+          <th>Assists</th>
+          <th>Blocks</th>
+          <th>Rebounds</th>
+          <th>Steals</th>
+          <th>Hold Result</th>
+          <th>Confirm Result</th>
+        </tr>
+      </thead>
+    </ng-template>
+  </div>
+</div>

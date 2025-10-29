@@ -1,8 +1,15 @@
 ﻿<span toastContainer></span>
 <div class="padding" *ngIf="match">
     <match-detail [match]="match"></match-detail>
-    <ticket-count [ticketCounts]="match.ticketCounts"></ticket-count>
-    <div class="table-wrapper">
+  
+       
+    <div class="table-wrapper early-settlement-table-wrapper">
+        <div class="ticket-count-wrapper">
+            <ticket-count [ticketCounts]="match.ticketCounts"></ticket-count>
+            @if(permission.isLeader) {
+            <button class="btn btn-green"  [ngClass]="{'btn-green-disabled': isDisabledSupportInputPlayerScores}" (click)="supportInputPlayerScores()">Support Input Player Scores</button>
+            }
+        </div>
         <div class="table-header">
             <ng-template *ngTemplateOutlet="header"></ng-template>
         </div>

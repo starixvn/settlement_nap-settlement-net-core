@@ -3,5 +3,6 @@ export const PageType = {
     Refund: "Refund",
     EarlySettlement: "EarlySettlement",
     OutrightLog: "OutrightLog",
-    ProviderLog: "ProviderLog"
+    ProviderLog: "ProviderLog",
+    PlayerScores: "PlayerScores"
 }

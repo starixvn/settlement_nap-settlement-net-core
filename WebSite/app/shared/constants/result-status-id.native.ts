@@ -4,5 +4,7 @@
     RunningThree: 3,
     AutoCompleted: 2,
     ManualCompleted: 5,
-    TraderConfirm: 3
+    TraderConfirm: 3,
+    Refund: 4,
+    RefundWithDetermined: 7,
 };
