@@ -284,7 +284,7 @@ export class CalculatePopupComponent implements OnInit {
 
     onSelectTeam(team: Team) {
         const filteredTeams = this.filteredTeam()
-        const selectedTeams = filteredTeams.every(team => team.selected);
+        const selectedTeams = filteredTeams.every(x => x.selected);
         if(this.permission.isLeader && team.originalTraderScore.toLowerCase() === Status.won.toLowerCase()) {
             team.disableDeadheat = false;
         }
