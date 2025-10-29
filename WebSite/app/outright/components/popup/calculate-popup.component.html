@@ -98,7 +98,7 @@
 						</select>
 					</td>
 					<td class="code">
-						<input id="checkbox-map-{{ i + 1 }}" type="checkbox" [(ngModel)]="team.selected" (change)="onSelectTeam()"
+						<input id="checkbox-map-{{ i + 1 }}" type="checkbox" [(ngModel)]="team.selected" (change)="onSelectTeam(team)"
 							(click)="clearError()" />
 					</td>
 				</tr>

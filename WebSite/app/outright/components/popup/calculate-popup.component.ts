@@ -267,6 +267,11 @@ export class CalculatePopupComponent implements OnInit {
         this.teams.forEach(team => {
             const isShowed = filteredTeams.some(value => value.orId === team.orId);
             team.selected = isShowed ? e : false;
+            if(this.permission.isLeader 
+                && team.originalTraderScore.toLowerCase() === Status.won.toLowerCase() 
+                && team.selected) {
+                team.disableDeadheat = false;
+            }
         });
     }
 
@@ -277,9 +282,12 @@ export class CalculatePopupComponent implements OnInit {
         return filterTicketStatus;
     }
 
-    onSelectTeam() {
+    onSelectTeam(team: Team) {
         const filteredTeams = this.filteredTeam()
         const selectedTeams = filteredTeams.every(team => team.selected);
+        if(this.permission.isLeader && team.originalTraderScore.toLowerCase() === Status.won.toLowerCase()) {
+            team.disableDeadheat = false;
+        }
         this.selectAllTeam = selectedTeams;
     }
 
@@ -337,6 +345,7 @@ export class CalculatePopupComponent implements OnInit {
         const errorSettingMessage = this.verifySetting(setting, teamWonSettled, teamWonSelected);
         if (!_.isEmpty(errorSettingMessage)) {
             this.toastrService.error(errorSettingMessage);
+            return;
         }
         
         if(!this.permission.isLeader && CalculateService.verifyDeadHeat(teamWonSelected)) {
@@ -459,7 +468,7 @@ export class CalculatePopupComponent implements OnInit {
 
     getWonRefundConfirmClass(team: Team) {
         if(!this.permission.isLeader) {
-            return ' ';
+            return '';
         }
 
         if(_.isEqual(team.originalTraderScore.toLowerCase(), Status.refund) && team.resultStatusId === 3) {
