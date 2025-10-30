@@ -144,7 +144,7 @@ export class PlayerScoresPageComponent implements OnInit {
         this.toastService.error(result.errMsg);
         return;
       }
-      this.close(true);
+      this.loadData();
     });
   }
 
@@ -170,7 +170,7 @@ export class PlayerScoresPageComponent implements OnInit {
         resourceIds);
 
       await this.aioService.changeResultSetting(query);
-      this.close(true);
+      this.loadData();
     });
   }
 }
