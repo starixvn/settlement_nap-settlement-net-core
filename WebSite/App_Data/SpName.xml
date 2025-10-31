@@ -90,14 +90,14 @@
 		<Setting Key="NAP_Set_OutrightSelInfo" SpName="NAP_Set_OutrightSelInfo" DbName="DBPRO.bodb02.wsv_nap" />
 		<Setting Key="NAP_UserLog_Settle_OutrightSelByCode" SpName="NAP_UserLog_Settle_OutrightSelByCode" DbName="DBLOG.bodb_CustomerLog.wsv_nap" />
 		<Setting Key="NAP_UserLog_Settle_OutrightSelByLeagueID" SpName="NAP_UserLog_Settle_OutrightSelByLeagueID" DbName="DBLOG.bodb_CustomerLog.wsv_nap" />
-		<Setting Key="NAP_Set_OutrightSelInfoByLeagueID" SpName="NAP_Set_OutrightSelInfoByLeagueID_xtest" DbName="DBPRO.bodb02.wsv_nap" />
+		<Setting Key="NAP_Set_OutrightSelInfoByLeagueID" SpName="NAP_Set_OutrightSelInfoByLeagueID" DbName="DBPRO.bodb02.wsv_nap" />
 		<Setting Key="NAP_Admin_Outright_Update" SpName="NAP_Admin_Outright_Update" DbName="DBPRO.bodb02.wsv_nap" />
 		<Setting Key="NAP_Set_DeadHeatLeagueUpd" SpName="NAP_Set_DeadHeatLeagueUpd" DbName="DBPRO.bodb02.wsv_nap" />
 		<Setting Key="NAP_Set_DeadHeatLeagueSel" SpName="NAP_Set_DeadHeatLeagueSel" DbName="DBPRO.bodb02.wsv_nap" />
 		<Setting Key="NAP_Set_ProviderResultDetailOutrightIns" SpName="NAP_Set_ProviderResultDetailOutrightIns" DbName="DBPRO.bodb02.wsv_nap" />
 		<Setting Key="WriteLog_UserLog_SettleOutright" SpName="WriteLog_UserLog_SettleOutright" DbName="DBLOG.bodb_CustomerLog.wsv_nap" />
-		<Setting Key="NAP_Set_OutrightResultDetailUpd" SpName="NAP_Set_OutrightResultDetailUpd_xtest" DbName="DBPRO.bodb02.wsv_nap" />
-		<Setting Key="Nap_Set_MatchOutrightStatusSel" SpName="Nap_Set_MatchOutrightStatusSel_xtest" DbName="DBACC.bodb02.wsv_nap" />
+		<Setting Key="NAP_Set_OutrightResultDetailUpd" SpName="NAP_Set_OutrightResultDetailUpd" DbName="DBPRO.bodb02.wsv_nap" />
+		<Setting Key="Nap_Set_MatchOutrightStatusSel" SpName="Nap_Set_MatchOutrightStatusSel" DbName="DBACC.bodb02.wsv_nap" />
 	</Funtion>
 	<Function Name="MultiSport">
 		<Setting Key="NAP_Set_OtherSportsSel" SpName="NAP_Set_OtherSportsSel" DbName="DBPRO.bodb02.wsv_nap" TimeOut="120" />
