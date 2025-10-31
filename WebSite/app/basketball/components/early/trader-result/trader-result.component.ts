@@ -55,43 +55,52 @@ export class TraderResultComponent  implements OnInit {
   private handleTargetBetTypes(): void {
     const results = this.#mixCoreService.findResultsByBetTypes(this.resultDetails, this.resultDetail.relatedCalResources);
 
-    if (this.#mixCoreService.hasAnyRefundedResult(results)) {
-      this.playerSelected = this.#mixCoreService.noneValue;
-      this.externalResult.homeValue = this.playerSelected;
-      return;
-    }
-
-    const playerIdWinner = this.comparePlayerStatistics(results[0], results[1]);
-    if (playerIdWinner > 0) {
-      const winnerOddFlex = this.resultDetail.oddFlex.find(odd => odd.info.playerId === playerIdWinner);
-      this.playerSelected = winnerOddFlex.info.playerName;
-      this.externalResult.homeValue = winnerOddFlex.betChoice;
+    if (results.length === 2) {
+      const result = this.comparePlayerStatistics(results[0], results[1]);
+      this.playerSelected = result.playerName;
+      this.externalResult.homeValue = result.betChoice;
     }
   }
 
   private comparePlayerStatistics(player1: ResultDetail, player2: ResultDetail) {
-    const player1Value = this.getExternalValue(player1, this.index);
-    const player2Value = this.getExternalValue(player2, this.index);
+    const player1HomeValue = this.getExternalValue(player1, this.index);
+    const player2HomeValue = this.getExternalValue(player2, this.index);
    
-    if (player1Value === null || player2Value === null) {
-      return null;
+    if (_.isEmpty(player1HomeValue) || _.isEmpty(player2HomeValue)) {
+      return this.createPlayerResult("", "");
     }
 
-    if (player1Value > player2Value) {
-      return player1.oddFlex[0].info.playerId;
-    } 
-    else if (player2Value > player1Value) {
-      return player2.oddFlex[0].info.playerId;
+    const player1Value = parseInt(player1HomeValue);
+    const player2Value = parseInt(player2HomeValue);
+
+    if(this.#mixCoreService.hasAnyRefundedResult([player1, player2]) || player1Value === player2Value) {
+      return this.createPlayerResult(
+        this.#mixCoreService.noneValue,
+        this.#mixCoreService.noneValue
+      );
     }
 
-    return null;
+    const playerIdWinner = player1Value > player2Value ? player1.oddFlex[0].info.playerId : player2.oddFlex[0].info.playerId;
+    const winnerOddFlex = this.resultDetail.oddFlex.find(odd => odd.info.playerId === playerIdWinner);
+
+    return this.createPlayerResult(
+      winnerOddFlex.betChoice,
+      winnerOddFlex.info.playerName
+    );
+  }
+
+  private createPlayerResult(betChoice: string, playerName: string) {
+    return {
+      betChoice,
+      playerName
+    };
   }
 
   private getExternalValue(result: ResultDetail, index: number) {
     if (result.externalScores && result.externalScores[index] && !_.isEmpty(result.externalScores[index].homeValue)) {
-      return parseInt(result.externalScores[index].homeValue);
+      return result.externalScores[index].homeValue;
     }
 
-    return null;
+    return "";
   }
 }

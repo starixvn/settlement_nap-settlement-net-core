@@ -2,7 +2,7 @@
 import { ExternalSourceNamePipe } from './../../shared/pipes/external-source-name.pipe';
 import * as _ from 'lodash';
 import { CalculateAction, ScoreSourceType, SettlementStatusId, SportType, TicketStatusText } from '../../shared/constants';
-import { Component, Injector, ViewChild, ViewChildren, QueryList, AfterViewInit, inject } from '@angular/core';
+import { Component, Injector, ViewChild, ViewChildren, QueryList, inject } from '@angular/core';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import { BasketballApiKeys, EarlyResourcesIds, KickOffTime, Resources, ResourcesIds, ResultStatus } from '../constants';
 import { BasketballService, BetStatusService, EarlyService, VerificationService, MixMultiStatsService } from '../services';
@@ -20,6 +20,8 @@ import { ResourceSupportSDTPipe } from '../pipes/resource-support-sdt.pipe';
 import { MatDialog } from '@angular/material/dialog';
 import { PlayerScoresPageComponent } from './player-scores-page/player-scores-page.component';
 import { MixCoreService } from '../services/mix-core.service';
+import { MixDoubleDoubleService } from '../services/mix-double-double.service';
+import { MixHeadHeadService } from '../services/mix-head-head.service';
 
 @Component({
     selector: 'early-settlement',
@@ -38,7 +40,8 @@ import { MixCoreService } from '../services/mix-core.service';
         ResourceNameByIdPipe,
         BetStatusService,
         ToastrService,
-        DialogBoxService]
+        DialogBoxService,
+        MixMultiStatsService,
         MixDoubleDoubleService,
         MixHeadHeadService,
         MixCoreService]
