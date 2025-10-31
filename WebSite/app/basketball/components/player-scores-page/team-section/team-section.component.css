@@ -56,6 +56,12 @@
 
 }
 
+.player-name {
+  font-weight: bold;
+  text-align: left;
+  font-size: 1rem;
+  line-height: 1.5;
+}
 .input-score.isConfirmed {
   background-color: #6fcf97;
 }

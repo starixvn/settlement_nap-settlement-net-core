@@ -27,6 +27,6 @@
 .footer-actions {
   display: flex;
   justify-content: end;
-  margin-top: 10px;
+  padding: 12px 0px;
   column-gap: 10px;
 }
