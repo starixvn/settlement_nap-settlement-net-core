@@ -1,5 +1,7 @@
-﻿using Fanex.Settlement.ScaleOut.Request;
+﻿using Fanex.Settlement.MessageBridge.JackTime;
+using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
+using MassTransit;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Constants;
 using Settlement.Core.Criteria;
@@ -269,6 +271,8 @@ public class MultipleServerAioServiceImp(
 
         var result = await PushResultSettleAllSites(criteria);
 
+        await PublishJackTimeRequest(criteria);
+
         return new Result
         {
             HasResultAmendment = isResultAmendment,
@@ -377,6 +381,45 @@ public class MultipleServerAioServiceImp(
         return matchIds.Count > 0 ? string.Join(',', matchIds.ToList()) : string.Empty;
     }
 
+    private async Task PublishJackTimeRequest(SettleCriteria criteria)
+    {
+        var validateHybrid = await ValidateHybridMatch(criteria.MatchId);
+
+        if (validateHybrid)
+        {
+            var request = new HybridMatch
+            {
+                MatchId = criteria.MatchId,
+                LogDate = DateTimeOffset.Now,
+                Action = criteria.Action,
+                UserId = criteria.AdminId
+            };
+            await dependencies.PublishEndpoint.Publish(
+                request,
+                new CancellationTokenSource(TimeSpan.FromSeconds(3)).Token);
+        }
+    }
+
+    private async Task<bool> ValidateHybridMatch(int matchId)
+    {
+        var tasks = appSettingsKey.Value.SiteDbServer
+            .Select(async server =>
+            {
+                var validateCommand = new HyBridValidateCriteria
+                {
+                    MatchId = matchId,
+                    DbServer = server
+                };
+
+                await repository.ExecuteAsync(validateCommand);
+                return validateCommand.ErrCode;
+            })
+            .ToList();
+
+        var results = await Task.WhenAll(tasks);
+        return Array.Exists(results, r => r == 0);
+    }
+
     public async Task<Result> SettleChildMatch(SettleChildMatchRequest request)
     {
         var criteria = createQueryService.QuerySettleChildMatch(request);
@@ -413,7 +456,8 @@ public class MultipleServerAioServiceDependencies(
     MergeDataService mergeDataService,
     LogService logService,
     IMapper mapper,
-    ResultAmendmentService resultAmendmentService)
+    ResultAmendmentService resultAmendmentService,
+    IPublishEndpoint publishEndpoint)
 {
     public ScaleOutSettleService ScaleOutSettleService { get; } = scaleOutSettleService;
     public ICreateQueryService CreateQueryService { get; } = createQueryService;
@@ -421,4 +465,6 @@ public class MultipleServerAioServiceDependencies(
     public LogService LogService { get; } = logService;
     public IMapper Mapper { get; } = mapper;
     public ResultAmendmentService ResultAmendmentService { get; } = resultAmendmentService;
+
+    public IPublishEndpoint PublishEndpoint { get; } = publishEndpoint;
 }

@@ -3,6 +3,7 @@ using Fanex.Data.Repository;
 using Fanex.Settlement.ScaleOut.Models;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
+using MassTransit;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Constants;
 using Settlement.Core.Criteria;
@@ -31,6 +32,7 @@ public class MultipleServerAioServiceTests
 
     private readonly MultipleServerAioService service;
 
+
     public MultipleServerAioServiceTests()
     {
         var mapperConfig = new MapperConfigurationExpression();
@@ -45,6 +47,8 @@ public class MultipleServerAioServiceTests
         createQueryService = Substitute.For<ICreateQueryService>();
         mergeDataService = Substitute.For<MergeDataService>();
         logService = Substitute.For<LogService>();
+        var publishEndpoint = Substitute.For<IPublishEndpoint>();
+
         var resultAmendmentService = Substitute.For<ResultAmendmentService>();
 
         service = new MultipleServerAioServiceImp(
@@ -56,7 +60,9 @@ public class MultipleServerAioServiceTests
                 mergeDataService,
                 logService,
                 mapper,
-                resultAmendmentService
+                resultAmendmentService,
+                publishEndpoint
+
             )
         );
     }

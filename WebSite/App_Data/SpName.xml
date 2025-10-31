@@ -437,5 +437,11 @@
 			<Setting Key="NAP_Set_MatchTicket_CheckingByGroupResult_DBSITE02" SpName="NAP_Set_MatchTicket_CheckingByGroupResult" DbName="DBSITE02.bodb02.wsv_nap" />
 			<Setting Key="NAP_Set_MatchTicket_CheckingByGroupResult_DBSITE03" SpName="NAP_Set_MatchTicket_CheckingByGroupResult" DbName="DBSITE03.bodb02.wsv_nap" />
 		</Function>
+    <Function Name="NAP_Set_HybridParlay_Validate">
+      <Setting Key="NAP_Set_HybridParlay_Validate_DBTXN" SpName="NAP_Set_HybridParlay_Validate_UAT3" DbName="DBTXN.bodb02.wsv_nap" />
+      <Setting Key="NAP_Set_HybridParlay_Validate_DBSITE01" SpName="NAP_Set_HybridParlay_Validate_UAT3" DbName="DBSITE01.bodb02.wsv_nap" />
+      <Setting Key="NAP_Set_HybridParlay_Validate_DBSITE02" SpName="NAP_Set_HybridParlay_Validate_UAT3" DbName="DBSITE02.bodb02.wsv_nap" />
+      <Setting Key="NAP_Set_HybridParlay_Validate_DBSITE03" SpName="NAP_Set_HybridParlay_Validate_UAT3" DbName="DBSITE03.bodb02.wsv_nap" />
+    </Function>
 	</Function>
 </Functions>

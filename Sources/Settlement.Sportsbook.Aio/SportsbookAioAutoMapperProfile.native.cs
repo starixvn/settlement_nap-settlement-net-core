@@ -1,4 +1,5 @@
-﻿using Settlement.Core.Criteria;
+﻿using Fanex.Settlement.MessageBridge.JackTime;
+using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.Models;
@@ -26,5 +27,8 @@ public class SportsbookAioAutoMapperProfile : Profile
         CreateMap<ChildMatchModel, ResourceItem>();
         CreateMap<SettleCriteria, InsertLogCriteria>();
         CreateMap<ResultSettingRequest, ResultSettingCriteria>();
+        CreateMap<SettleCriteria, HybridMatch>()
+            .ForMember(dest => dest.LogDate, opt => opt.MapFrom(src => DateTime.Now));
+
     }
 }
