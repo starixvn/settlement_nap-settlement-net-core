@@ -17,6 +17,7 @@ import { MatchDetail } from "../../../models";
     .league {
       font-size: 1.2rem;
       font-weight: bold;
+      padding-top: 0px;
     }
     .match-team {
       display: flex;

@@ -82,13 +82,15 @@ export class PlayerScoresPageComponent implements OnInit {
 
   async unconfirmResult(playerId: number) {
     this.toastService.clear();
-    this.confirmOrUnconfirmResult(playerId, false);
+    const checkedScores = this.playerScoresMappingService.getCheckedScoresForPlayer(this.players, playerId);
+    this.confirmOrUnconfirmResult(checkedScores, false);
 
   }
 
   confirmResult(playerId: number) {
     this.toastService.clear();
-    this.confirmOrUnconfirmResult(playerId, true);
+    const checkedScores = this.playerScoresMappingService.getCheckedScoresForPlayer(this.players, playerId);
+    this.confirmOrUnconfirmResult(checkedScores, true);
   }
 
 
@@ -105,9 +107,14 @@ export class PlayerScoresPageComponent implements OnInit {
       .updatePlayers(this.players, event.playerId, event.checked);
   }
 
-  private confirmOrUnconfirmResult(playerId: number, isConfirm: boolean) {
-    const checkedScores = this.playerScoresMappingService
-      .getCheckedScoresForPlayer(this.players, playerId);
+  confirmAll() {
+    const checkedScores = this.playerScoresMappingService.getCheckedScoresForAllPlayers(this.players);
+    this.confirmOrUnconfirmResult(checkedScores, true);
+  }
+    
+
+  private confirmOrUnconfirmResult(checkedScores: PlayerScore[], isConfirm: boolean) {
+
 
     if (_.isEmpty(checkedScores)) {
       this.toastService.error(Language.NoResourceSelected);
@@ -144,7 +151,7 @@ export class PlayerScoresPageComponent implements OnInit {
         this.toastService.error(result.errMsg);
         return;
       }
-      this.close(true);
+      this.loadData();
     });
   }
 
@@ -170,7 +177,7 @@ export class PlayerScoresPageComponent implements OnInit {
         resourceIds);
 
       await this.aioService.changeResultSetting(query);
-      this.close(true);
+      this.loadData();
     });
   }
 }

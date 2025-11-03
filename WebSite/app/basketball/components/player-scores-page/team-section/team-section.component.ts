@@ -29,7 +29,7 @@ import { OnlyIntegerDirective } from '../../../../shared/directives';
                       [(ngModel)]="player.checked"
                       (ngModelChange)="onCheckboxChange($event, player)"
                     />
-                    <span style="font-weight: bold">{{ player.playerName }}</span>
+                    <span  class="player-name">{{ player.playerName }}</span>
                   </div>
                 </td>
 

@@ -95,4 +95,10 @@ export class PlayerScoresService {
       .flatMap((player) => player.scores)
       .filter((score) => score && score.checked);
   }
+
+  getCheckedScoresForAllPlayers(
+    players: Player[],
+  ): PlayerScore[] {
+    return players.flatMap((player) => player.scores).filter((score) => score && score.checked);
+  }
 }
