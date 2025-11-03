@@ -153,4 +153,8 @@ export class CalculateService {
         return teamNotSelectButSettled;
     }
 
+    public static verifyDeadHeat(teamWonSelected: Team[]) {
+        return teamWonSelected.some(team => team.isDeadheat !== team.originalIsDeadheat);
+    }
+
 }

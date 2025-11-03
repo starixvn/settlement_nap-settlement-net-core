@@ -19,4 +19,9 @@ public class NotificationsController(IMediator mediator) : ControllerBase
     [HttpGet]
     [Route("get-notification-bet-builder")]
     public async Task<IActionResult> GetNotificationBetBuilder() => Ok(await mediator.Send(new NotificationBetBuilderRequest()).ConfigureAwait(false));
+
+
+    [HttpGet]
+    [Route("get-notification-outright")]
+    public async Task<IActionResult> GetNotificationOutright() => Ok(await mediator.Send(new NotificationOutrightRequest()).ConfigureAwait(false));
 }

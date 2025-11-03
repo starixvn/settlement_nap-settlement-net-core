@@ -4,8 +4,9 @@ namespace Settlement.Outright.Models;
 
 public class Team
 {
-    private string screenShot = "Running";
     private string confirmedBy = "";
+    private bool isDeadheat = false;
+
     public IRefDataService RefDataService { get; set; }
 
     public int OrId { get; set; }
@@ -36,7 +37,9 @@ public class Team
 
     public string LeagueName => RefDataService.GetLeagueName(LeagueId);
 
-    public bool IsDeadheat { get; set; }
+    //public bool IsDeadheat { get; set; }
+    public bool? IsDeadHeatResultDetail { get; set; }
+
 
     public string OddsStatus { get; set; }
     public int BetCount { get; set; }
@@ -51,5 +54,26 @@ public class Team
     {
         set => confirmedBy = ResultStatusId == 3 || ResultStatusId == 5 ? value : string.Empty;
         get => confirmedBy;
+    }
+
+    public bool IsDeadheat
+    {
+        get
+        {
+            // If we have confirmed deadheat result detail, always use that
+            if (IsDeadHeatResultDetail.HasValue && ResultStatusId == 3)
+            {
+                return IsDeadHeatResultDetail.Value;
+            }
+            return isDeadheat;
+        }
+        set
+        {
+            // Only allow setting if not overridden by result detail
+            if (!(IsDeadHeatResultDetail.HasValue && ResultStatusId == 3))
+            {
+                isDeadheat = value;
+            }
+        }
     }
 }

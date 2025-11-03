@@ -24,7 +24,7 @@ public interface OutrightSettleProcessService
 
     string CreateScoreResources(IEnumerable<TeamExternalResult> teams);
 
-    string CreateResourceXmlByTeamResult(IEnumerable<TeamResult> teams);
+    string CreateResourceXmlByTeamResult(List<DeadheatResourcesOutright> resources);
 }
 
 public class OutrightSettleProcessServiceImp(
@@ -179,17 +179,10 @@ public class OutrightSettleProcessServiceImp(
     }
 
 
-    public string CreateResourceXmlByTeamResult(IEnumerable<TeamResult> teams)
+    public string CreateResourceXmlByTeamResult(List<DeadheatResourcesOutright> resources)
     {
 
-        var resources = teams.Select(t => new ResourcesOutright
-        {
-            OrId = t.OrId,
-            TeamId = t.TeamId,
-            Result = t.Result
-        }).ToList();
-
-        var resourcesXml = new Resources<ResourcesOutright>
+        var resourcesXml = new Resources<DeadheatResourcesOutright>
         {
             ResourceItems = resources
         };

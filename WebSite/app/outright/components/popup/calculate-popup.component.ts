@@ -63,6 +63,7 @@ export class CalculatePopupComponent implements OnInit {
     private teamSettleWon: Team[];
     teamJustSettled: TeamSettle[] = [];
     permission: Permission;
+    loading = false;
 
 
     constructor(@Inject(MAT_DIALOG_DATA) public data: { leagueId: number, sportType: number, eventDate: string }) {
@@ -86,18 +87,21 @@ export class CalculatePopupComponent implements OnInit {
         this.leagueSettle = await this.outrightService.getMatches(this.data.leagueId, this.data.sportType, StatusId.runningAndCompleted);
         this.permission = this.leagueSettle.permission;
         this.leagueSettle.teams.forEach(team => {
+            this.loading = true;
             team.status = team.status.toUpperCase();
             team.eventDate = _.includes(this.statusRunning, team.oddsStatus.toLowerCase()) ? this.leagueSettle.today : team.eventDate;
             team.dateTime = this.verifyDateService.convertToDateStruct(team.eventDate);
             team.disableDeadheat = !_.isEqual(team.status, 'WON');
             team.originalStatus = team.status;
+            team.originalIsDeadheat = team.isDeadheat;
             team.screenShot = team.screenShot || TeamStatuses[0].text.toUpperCase();
             team.originalScreenshot = team.screenShot;
             team.traderScore = (team.traderScore || TeamStatuses[0].text).toUpperCase();
             team.originalTraderScore = team.traderScore;
             this.autoFillFinalScore(team);
+            this.autoChangeDeadheat(team);
             team.traderConfirmClass = this.traderConfirmClass(team);
-
+            this.loading = false;
         });
         this.moveBetsDay = this.verifyDateService.convertToDateStruct(this.leagueSettle.moveBetsDay);
         this.today = this.verifyDateService.convertToDateStruct(this.leagueSettle.today);
@@ -122,6 +126,17 @@ export class CalculatePopupComponent implements OnInit {
         }
 
         this.changeStatus(team);
+    }
+
+    autoChangeDeadheat(team: Team) {
+        if(this.permission.isLeader) {
+            team.isDeadheat = team.originalIsDeadheat;
+            return;
+        } 
+
+        if(team.resultStatusId === 3) {
+            team.isDeadheat = false;
+        }
     }
 
     traderConfirmClass(team: Team) {
@@ -181,6 +196,13 @@ export class CalculatePopupComponent implements OnInit {
     changeTraderScore(team: Team) {
         this.clearError();
         this.autoFillFinalScore(team);
+
+        if (_.isEqual(team.traderScore.toLowerCase(), Status.won.toLowerCase())) {
+            team.disableDeadheat = false;
+            return;
+        }
+
+        team.disableDeadheat = !_.isEqual(team.status, 'WON');
     }
 
     makeBackgroundByStatus(team: Team) {
@@ -245,6 +267,11 @@ export class CalculatePopupComponent implements OnInit {
         this.teams.forEach(team => {
             const isShowed = filteredTeams.some(value => value.orId === team.orId);
             team.selected = isShowed ? e : false;
+            if(this.permission.isLeader 
+                && team.originalTraderScore.toLowerCase() === Status.won.toLowerCase() 
+                && team.selected) {
+                team.disableDeadheat = false;
+            }
         });
     }
 
@@ -255,9 +282,12 @@ export class CalculatePopupComponent implements OnInit {
         return filterTicketStatus;
     }
 
-    onSelectTeam() {
+    onSelectTeam(team: Team) {
         const filteredTeams = this.filteredTeam()
-        const selectedTeams = filteredTeams.every(team => team.selected);
+        const selectedTeams = filteredTeams.every(x => x.selected);
+        if(this.permission.isLeader && team.originalTraderScore.toLowerCase() === Status.won.toLowerCase()) {
+            team.disableDeadheat = false;
+        }
         this.selectAllTeam = selectedTeams;
     }
 
@@ -268,7 +298,7 @@ export class CalculatePopupComponent implements OnInit {
         }
         
         if (CalculateService.ExistRunningStatus(this.teamSelected)) {
-            this.toastrService.error(Language.eSports.leader.blankScore);
+            this.toastrService.error(Language.Outright.blankScore);
             return;
         }
         
@@ -315,13 +345,25 @@ export class CalculatePopupComponent implements OnInit {
         const errorSettingMessage = this.verifySetting(setting, teamWonSettled, teamWonSelected);
         if (!_.isEmpty(errorSettingMessage)) {
             this.toastrService.error(errorSettingMessage);
-        } else if (!(await this.VerifyHideStatus(teamHideSelected))) {
-            this.toastrService.error(Language.Outright.existHideTicketNotVoided)
-        } else if (setting === DeadHeatSettings.No && CalculateService.ConfirmDeadHeatNoSetting(teamWonSelected, teamWonSettled)) {
-            this.confirmCalcNonDeadheat();
-        } else {
-            this.doCalculate(this.teamSettleWon.length);
+            return;
         }
+        
+        if(!this.permission.isLeader && CalculateService.verifyDeadHeat(teamWonSelected)) {
+            this.toastrService.error(Language.Outright.inconsistentTraderDeadheat);
+            return;
+        }
+        
+        if (!(await this.VerifyHideStatus(teamHideSelected))) {
+            this.toastrService.error(Language.Outright.existHideTicketNotVoided);
+            return;
+        }
+        
+        if (setting === DeadHeatSettings.No && CalculateService.ConfirmDeadHeatNoSetting(teamWonSelected, teamWonSettled)) {
+            this.confirmCalcNonDeadheat();
+            return;
+        }
+        
+        this.doCalculate(this.teamSettleWon.length);
     }
 
     private verifySetting(setting: number, teamWonSettled: Team[], teamWonSelected: Team[]) {
@@ -411,20 +453,32 @@ export class CalculatePopupComponent implements OnInit {
             return;
         }
 
-        if (CalculateService.existRunningResult(this.teamSelected, 'traderScore')) {
-            this.toastrService.error(Language.Outright.existRunningTraderResult);
-            return;
-        }
-
         this.confirmationDialogMessage.message = Language.SaveTraderScore;
         this.messageBoxService.confirm(this.confirmationDialogMessage, async () => {
             const teams = this.teamSelected.map(team => ({
                 orId: team.orId,
                 teamId: team.teamId,
-                result: team.traderScore
+                result: team.traderScore,
+                isDeadheat: team.isDeadheat
             }) as TeamResult);
             await this.outrightService.saveTraderScore(this.data.leagueId, teams);
             this.dialogRef.close();
         });
+    }
+
+    getWonRefundConfirmClass(team: Team) {
+        if(!this.permission.isLeader) {
+            return '';
+        }
+
+        if(_.isEqual(team.originalTraderScore.toLowerCase(), Status.refund) && team.resultStatusId === 3) {
+            return 'bg-result-refund';
+        }
+
+        if(_.isEqual(team.originalTraderScore.toLowerCase(), Status.won) && team.resultStatusId === 3) {
+            return 'bg-result-won';
+        }
+
+        return '';
     }
 }

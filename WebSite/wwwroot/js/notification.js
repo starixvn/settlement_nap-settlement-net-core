@@ -10,6 +10,7 @@ window.onload = initializeNotification;
 function initializeNotification() {
     setTimeout(showIconNumberOfNotifications);
     setTimeout(showIconBetBuilder);
+    setTimeout(showIconOutright);
 
     var notificationToggle = document.getElementById('notification-toggle');
     notificationToggle.addEventListener('click', function (event) {
@@ -160,5 +161,34 @@ function showIconBetBuilder() {
     };
 
     xmlHttp.open('GET', urlNotificationBetBuilder, true);
+    xmlHttp.send();
+}
+
+function showIconOutright() {
+    var parentMenu = document.getElementById('Outright-menu');
+    var urlNotificationOutright = '/api/notifications/get-notification-outright';
+    var xmlHttp = new XMLHttpRequest();
+
+    xmlHttp.onreadystatechange = function () {
+        if (xmlHttp.readyState === XMLHttpRequest.DONE) {
+            var result = JSON.parse(xmlHttp.responseText);
+            if (result) {
+                var icon = "<span class='flag-notification'> </span>";
+
+                if (parentMenu.getElementsByClassName("flag-notification").length === 0) {
+                    parentMenu.innerHTML += icon;
+                }
+            }
+            else {
+                if (document.getElementsByClassName("flag-notification").length > 0) {
+                    document.classList.remove("flag-notification");
+                }
+            }
+
+            setTimeout(showIconOutright, notification.fiveMinutesTimeout);
+        }
+    };
+
+    xmlHttp.open('GET', urlNotificationOutright, true);
     xmlHttp.send();
 }
