@@ -123,6 +123,10 @@ export class HalfTimeFullTimeCalculationComponent implements SportTemplate {
     return this.matchDetail.externalSourceName;
   }
 
+  get externalHTSourceName() {
+    return this.matchDetail.externalSourceHTHomeScore || this.matchDetail.externalSourceName || '-';
+  }
+
   changeInputDirectly() {
     this.clearStatus();
     this.resultDetails = _.cloneDeep(this.originalResultDetail);
@@ -172,7 +176,7 @@ export class HalfTimeFullTimeCalculationComponent implements SportTemplate {
     } else if (!isExtHTScoreValid && isExtFTScoreValid) {
       this.halfTimeFullTimeService.copyScore(this.fullTime, this.matchDetail, Language.confirmMessageCopySBOScore, this.externalSourceName);
     } else if (isExtHTScoreValid && !isExtFTScoreValid) {
-      this.halfTimeFullTimeService.copyScore(this.halfTime, this.matchDetail, Language.confirmCopyHalfTimeScore, this.externalSourceName);
+      this.halfTimeFullTimeService.copyScore(this.halfTime, this.matchDetail, Language.confirmCopyHalfTimeScore, this.externalHTSourceName);
     } else {
       this.halfTimeFullTimeService.copyAllScore(this.halfTime, this.fullTime, this.matchDetail, this.externalSourceName);
     }

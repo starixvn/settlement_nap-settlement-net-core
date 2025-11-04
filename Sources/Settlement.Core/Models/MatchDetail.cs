@@ -100,6 +100,7 @@ public class MatchDetail
                                          || (BetStatus.IgnoreCaseContains(Constants.EventStatus.Refund) && !BetStatus.IgnoreCaseContains(Constants.EventStatus.RefundHt)));
 
     public string ExternalSourceName { get; set; }
+    public string ExternalHTSourceName { get; set; }
 
     public bool IsHtOnly { get; set; }
 

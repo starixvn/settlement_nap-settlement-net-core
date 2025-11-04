@@ -26,6 +26,7 @@ export class MatchDetail {
     public confirmFT: number;
     public eventStatus: string;
     public externalSourceName: string;
+    public externalSourceHTHomeScore: string;
     public originalFinalHomeScore?: number;
     public originalFinalAwayScore?: number;
     public isCalculated: boolean;
