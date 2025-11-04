@@ -44,6 +44,7 @@ export class AppComponent extends AppBaseComponent implements OnInit {
     private getType(): Type<SportTemplate> {
         this.sportType = Number(UrlHelper.getUrlParameter('sportType'));
         const pageType = this.elementRef.nativeElement.getAttribute('page-type');
+        return HalfTimeFullTimeCalculationComponent;
         return _.includes(TemplateType.halfTimeFullTimeTemplate, this.sportType)
             ? this.getComponentHalfTimeFullTime(pageType)
             : this.getComponentThirdGroup(pageType);

@@ -37,8 +37,8 @@ public class SportsbookServiceImp(
             MatchId = request.MatchId
         };
 
-        var externalResultDetails = repository.Fetch<ResultDetail>(providerCriteria);
-        matchDetail = ProviderScore(matchDetail, externalResultDetails.ToList());
+        var externalResultDetails = await repository.FetchAsync<ResultDetail>(providerCriteria);
+        matchDetail = ProviderScore(matchDetail, [.. externalResultDetails]);
 
         var resultDetails = IsModifyResultDetailGroup(matchDetail.SportType)
             ? generateService.GenerateResultDetail(matchDetail) : await GetResultDetail(request.MatchId);
@@ -49,7 +49,7 @@ public class SportsbookServiceImp(
             MatchDetail = matchDetail,
             ResultDetails = resultDetails,
             TicketCount = ticketCounts,
-            HedgeMatchDetail = hedgeMatch
+            HedgeMatchDetail = hedgeMatch,
         };
     }
 
