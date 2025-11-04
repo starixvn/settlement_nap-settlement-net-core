@@ -4,8 +4,10 @@ import { EarlyBaseService } from '../../core/services/early-base.service';
 import { ResultDetail, GroupMap, MatchDetail } from '../../shared/models/sportsbook-sop';
 import { ResultControlGroup } from '../constants/result-control-group.native';
 import { Language, } from '../../shared/language.native';
-import { isEqual, uniqBy } from 'lodash';
-import { ResultStatusId, SettlementStatusId } from '../../shared/constants';
+import { isEmpty, isEqual, uniqBy } from 'lodash';
+import { ResultStatusId } from '../../shared/constants';
+import { PlayerBetTypes, PlayerTypes } from '../constants';
+import * as _ from 'lodash';
 
 @Injectable()
 export class EarlyService extends EarlyBaseService {
@@ -105,8 +107,7 @@ export class EarlyService extends EarlyBaseService {
 
     }
 
-
-    FindRelatedResourceInValid(resultDetails: ResultDetail[], selectedResource: ResultDetail[]): string {
+    findRelatedResourceInValid(resultDetails: ResultDetail[], selectedResource: ResultDetail[]) {
         const relatedResourceIds = selectedResource.filter(r => r.relatedCalResources).map(r => r.relatedCalResources);
         const resources = relatedResourceIds.map(i => {
             const listIds = i.split(',');
@@ -116,8 +117,102 @@ export class EarlyService extends EarlyBaseService {
                 r.resultStatusId !== ResultStatusId.AutoCompleted);
             return relatedResourceInvalid.length > 0 ? relatedResourceInvalid.map(r => r.resourceId) : [];
         }).flat();
+        
+        return resources.length > 0 
+                ? resultDetails.filter(r => resources.includes(r.resourceId)).map(r => `${r.resourceId} - ${r.betTypeName}`).join('<br/>') 
+                : "";
+    }
 
-        const getResourceName = resources.length > 0 ? resultDetails.filter(r => resources.includes(r.resourceId)).map(r => `${r.resourceId} - ${r.betTypeName}`).join('<br/>') : '';
-        return getResourceName;
+    private shouldCheckInconsistencyMultiStats(betType: string) {
+        const targetBetTypes = [
+            PlayerBetTypes.stealsBlocks,
+            PlayerBetTypes.reboundsAssists,
+            PlayerBetTypes.reboundsPoints,
+            PlayerBetTypes.reboundsAssistsPoints
+        ];
+        return targetBetTypes.includes(betType);
+    }
+
+    private checkInconsistencyForMultiStats(resource: ResultDetail, relatedResources: ResultDetail[]): boolean {
+        const selectedHomeValue = parseInt(resource.homeValue) || 0;
+        const sumOfRelatedHomeValues = relatedResources.reduce((sum, r) => {
+            const value = parseInt(r.homeValue) || 0;
+            return sum + value;
+        }, 0);
+
+        return selectedHomeValue !== sumOfRelatedHomeValues;
+    }
+
+    private checkInconsistencyForDoubleOrTriple(
+        resource: ResultDetail, 
+        relatedResources: ResultDetail[], 
+        minGreaterThan9: number, 
+        minLessThan10: number
+    ): boolean {
+        const countGreaterThan9 = relatedResources.filter(r => {
+            return !isEmpty(r.homeValue) && parseInt(r.homeValue) > 9;
+        }).length;
+
+        if (countGreaterThan9 >= minGreaterThan9) {
+            return !isEqual(resource.homeValue, "Y");
+        }
+
+        const countLessThan10 = relatedResources.filter(r => {
+            return !isEmpty(r.homeValue) && parseInt(r.homeValue) < 10;
+        }).length;
+
+        if (countLessThan10 >= minLessThan10) {
+            return !isEqual(resource.homeValue, "N");
+        }
+
+        return !isEqual(resource.homeValue, "None");
+    }
+
+    private checkInconsistencyForDoubleDouble(resource: ResultDetail, relatedResources: ResultDetail[]) {
+        return this.checkInconsistencyForDoubleOrTriple(resource, relatedResources, 2, 4);
+    }
+
+    private checkInconsistencyForTripleDouble(resource: ResultDetail, relatedResources: ResultDetail[]) {
+        return this.checkInconsistencyForDoubleOrTriple(resource, relatedResources, 3, 3);
+    }
+
+    private checkInconsistencyForHeadToHead(resource: ResultDetail, relatedResources: ResultDetail[]) {
+       return false;  
+    }
+
+    isInconsistentWithRelatedResources(resultDetails: ResultDetail[], selectedResource: ResultDetail[]) {
+        const inconsistentResourceIds: string[] = [];
+
+        selectedResource.forEach(resource => {
+            if (!resource.relatedCalResources || isEmpty(resource.relatedCalResources.trim())) {
+                return;
+            }
+
+            const relatedResourceIds = resource.relatedCalResources.split(',').map(id => id.trim());
+            const relatedResources = resultDetails.filter(r => relatedResourceIds.includes(r.resourceId));
+
+            if (relatedResources.length === 0) {
+                return;
+            }
+
+            let isInconsistent = false;
+            if (this.shouldCheckInconsistencyMultiStats(resource.betType)) {
+                isInconsistent = this.checkInconsistencyForMultiStats(resource, relatedResources);
+            } else if(_.isEqual(resource.betType, PlayerBetTypes.doubleDouble)) {
+                isInconsistent = this.checkInconsistencyForDoubleDouble(resource, relatedResources);
+            } else if(_.isEqual(resource.betType, PlayerBetTypes.tripleDouble)) {
+                isInconsistent = this.checkInconsistencyForTripleDouble(resource, relatedResources);
+            } else if(PlayerTypes.headToHead.includes(resource.betType)) {
+                isInconsistent = this.checkInconsistencyForHeadToHead(resource, relatedResources);
+            }
+
+            if (isInconsistent) {
+                inconsistentResourceIds.push(resource.resourceId);
+            }
+        });
+
+        return inconsistentResourceIds.length > 0 
+                ? resultDetails.filter(r => inconsistentResourceIds.includes(r.resourceId)).map(r => `${r.resourceId} - ${r.betTypeName}`).join('<br/>') 
+                : "";
     }
 }

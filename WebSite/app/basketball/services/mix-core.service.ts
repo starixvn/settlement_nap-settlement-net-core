@@ -26,7 +26,7 @@ export class MixCoreService {
     });
   }
   
-  findMixResultByBetType(resultDetails: ResultDetail[], resourceId: string, betType: string): ResultDetail | undefined {
+  findMixResultByBetType(resultDetails: ResultDetail[], resourceId: string, betType: string) {
     return resultDetails.find(result => {
       if (!_.isEqual(result.betType, betType)) {
         return false;
@@ -53,7 +53,7 @@ export class MixCoreService {
     });
   }
 
-  findResultsByBetTypesWithMapping(resultDetails: ResultDetail[], relatedCalResources: string, betTypes: string[]): { [key: string]: ResultDetail } {
+  findResultsByBetTypesWithMapping(resultDetails: ResultDetail[], relatedCalResources: string, betTypes: string[]) {
     const relatedResourceIds = relatedCalResources.split(',').map(id => id.trim());
     const results: { [key: string]: ResultDetail } = {};
     

@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import { Component, Injector } from '@angular/core';
 import { ResultDetail, GroupMap, Permission, SaveScoreQuery, MatchDetail, ExternalResult, ExternalResultDetail } from '../../models/sportsbook-sop';
-import { ItemsSelect, ModalDialogMessage, MultipleSelect, ResultSettingQuery, ResourceItem } from '../../models';
+import { ItemsSelect, ModalDialogMessage, MultipleSelect, ResultSettingQuery } from '../../models';
 import { BackgroundColor, CalculateAction, ResultSettingType, ResultStatusId, ScoreSourceType, SettlementStatusId, TicketStatusText } from '../../constants';
 import { AioService, MessageBoxService } from '../../services';
 import { VerificationBaseService } from '../../../core/services/verification-base.service';

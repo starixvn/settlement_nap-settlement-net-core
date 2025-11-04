@@ -41,6 +41,23 @@ export const PlayerBetTypes = {
     mostPointShotsScored : "684"
 };
 
+export const PlayerTypes = {
+    headToHead : [
+        PlayerBetTypes.mostPoints,
+        PlayerBetTypes.mostRebounds,
+        PlayerBetTypes.mostAssists,
+        PlayerBetTypes.mostSteals,
+        PlayerBetTypes.mostPointShotsScored
+    ],
+    baseStats : [
+        PlayerBetTypes.points, 
+        PlayerBetTypes.rebounds, 
+        PlayerBetTypes.steals, 
+        PlayerBetTypes.assists, 
+        PlayerBetTypes.shotsScored
+    ]
+};
+
 export const OddResourceId = {
     htScore: "1H",
     finalScore: "FT",

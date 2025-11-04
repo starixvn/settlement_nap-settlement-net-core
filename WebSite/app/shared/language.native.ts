@@ -39,8 +39,6 @@
     FullTime: 'R.FT',
     HalfTime: 'R.HT',
   },
-  fullTimeNotSettled: 'Error! FT has not been calculated.',
-  fullTimeNotSettledLeader: 'WARNING! FT has not been calculated. Are you sure you want to proceed?',
   IntervalWarning: 'WARNING! Cannot continue due to related intervals are running or refunded. Please select them also and try again.',
   CalculationConfirmMessageEarly: 'Are you sure you want to CALCULATE the selected results?',
   RefundConfirmMessageEarly: 'Are you sure you want to REFUND the selected result?',
@@ -187,7 +185,10 @@
       insufficientSources: "WARNING! Insufficient Score Sources! Are you sure you want to proceed?",
       mismatchedScore: 'WARNING! There are inconsistent scores! Are you sure you want to proceed with "Final Score" values?',
       mismatchedResult: 'WARNING! There are inconsistent results! Are you sure you want to proceed with "Final Result" values?',
-      finalIsDraw: 'Are you sure you want to calculate FT = DRAW?'
+      finalIsDraw: 'Are you sure you want to calculate FT = DRAW?',
+      fullTimeNotSettled: 'WARNING! FT has not been calculated. Are you sure you want to proceed?',
+      relatedResourceNotAttached: 'WARNING! Selected result and base stat results are inconsistent. Are you sure you want to proceed?<br/>{0}',
+      relatedResourceInconsistent: 'WARNING! Selected and base stat values are inconsistent. Are you sure you want to proceed?<br/>{0}'
     },
     nonLeader: {
       blankScore: `WARNING! Selected intervals' "Final Score" must not be blank! Please check Score Sources or contact leaders.`,
@@ -196,13 +197,16 @@
       mismatchedScore: 'WARNING! There are inconsistent scores! Please check inputted values.',
       mismatchedResult: 'WARNING! There are inconsistent results! Please check inputted values.',
       finalIsDraw: 'Please contact Leader to Calculate FT = Draw.',
+      fullTimeNotSettled: 'Error! FT has not been calculated.',
+      relatedResourceNotAttached: 'Error! All base stats have not been calculated or selected to calculate at the same time.<br/>{0}',
+      relatedResourceInconsistent: 'Error! Selected and base stats values are inconsistent.<br/>{0}'
     },
     saveScore: 'Are you sure you want to save changes made to selected Outside Scores?',
     invalidResultByBetType: 'Cannot continue due to invalid value inputted. Please check and try again.',
     mismatchedScreenshot: 'WARNING! Cannot continue due to values from Final Score inconsistent with Screenshot',
     notScreenshot: 'WARNING! Cannot continue due to missing Screenshot value.',
     relatedResultsNotSelected: 'Cannot continue due to related results have been calculated and not selected.',
-    relatedResourceNotAttached: 'Failed: due to following base results have not been calculated or not selected to calculated at the same time<br/>{0}'
+    
   },
   intervalsAndMatch: {
     matchNotSelected: "WARNING! Changed values may affect other results. Do you want to select Match/Full Time score also?",

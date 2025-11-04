@@ -22,6 +22,10 @@ import { PlayerScoresPageComponent } from './player-scores-page/player-scores-pa
 import { MixCoreService } from '../services/mix-core.service';
 import { MixDoubleDoubleService } from '../services/mix-double-double.service';
 import { MixHeadHeadService } from '../services/mix-head-head.service';
+import { AutoFillPlayerService } from '../services/auto-fill-player.service';
+import { MixMultiStatsCalculateService } from '../services/mix-multi-stats-calculate.service';
+import { MixDoubleDoubleCalculateService } from '../services/mix-double-double-calculate.service';
+import { MixHeadHeadCalculateService } from '../services/mix-head-head.service.calculate';
 
 @Component({
     selector: 'early-settlement',
@@ -42,16 +46,22 @@ import { MixHeadHeadService } from '../services/mix-head-head.service';
         ToastrService,
         DialogBoxService,
         MixMultiStatsService,
+        MixMultiStatsCalculateService,
         MixDoubleDoubleService,
+        MixDoubleDoubleCalculateService,
         MixHeadHeadService,
-        MixCoreService]
+        MixHeadHeadCalculateService,
+        MixCoreService, 
+        AutoFillPlayerService]
 })
 export class EarlySettlementComponent extends EarlyBaseComponent implements SportTemplate {
 
     @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
     @ViewChildren(ResultRowComponent) resultRowComponents: QueryList<ResultRowComponent>;
     private readonly dialog = inject(MatDialog);
-    private earlyService: EarlyService;
+    readonly #autoFillPlayerService = inject(AutoFillPlayerService);
+    readonly #earlyService = inject(EarlyService);
+    readonly #earlyStore = inject(EarlyStore);
     public blockUI = true;
     public match: Match;
     public isReadyMatch: boolean;
@@ -60,8 +70,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     public isDisabledSupportInputPlayerScores = false;
     constructor(
         protected injector: Injector,
-        protected verificationService: VerificationService,
-        private readonly earlyStore: EarlyStore) {
+        protected verificationService: VerificationService) {
         super(injector, verificationService);
     }
 
@@ -93,7 +102,6 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         return this.match.matchDetail.providerCount > 2 ? 3 : 2;
     }
     public initService() {
-        this.earlyService = this.injector.get(EarlyService);
         this.verificationService = this.injector.get(VerificationService);
         this.injector.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
         this.toastrService.overlayContainer = this.toastContainer;
@@ -104,18 +112,18 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         this.matchId = this.match.matchDetail.matchId;
         this.resultDetails = _.filter(this.match.resultDetails, item => item.resourceId.length > 2);
         this.verificationService.generateExternalScores(this.match, this.resultDetails, SportType.basketBall, this.maxProviderCol);
-        this.resetResult(this.resultDetails);
         this.autoFillResultOnLoad(this.resultDetails);
         this.autoFillConfirmedSDT(this.permission.isLeader, this.match.externalResults, this.resultDetails);
         this.orderResultDetails(this.resultDetails);
-        this.groupMap = this.earlyService.getGroupMap(this.resultDetails, this.matchDetail);
+        this.#autoFillPlayerService.autoFillPlayerName(this.resultDetails);
+        this.groupMap = this.#earlyService.getGroupMap(this.resultDetails, this.matchDetail);
         this.match.originalResultDetail = _.cloneDeep(this.resultDetails);
         this.renderFilterSelect();
         this.setIndicateColor();
         this.setRefundButtonWhenExistConfirmedSDT(this.resultDetails);
-        this.earlyStore.setState(this.matchDetail, this.resultDetails, this.permission, this.maxProviderCol);
+        this.#earlyStore.setState(this.matchDetail, this.resultDetails, this.permission, this.maxProviderCol);
         this.isDisabledSupportInputPlayerScores = !this.resultDetails.some(item => Resources.orderBetTypes.includes(item.betType));
-
+        
         if (!this.isReadyMatch) {
             this.toastrService.error(Language.minimumPlayTimeNotReached);
         }
@@ -140,9 +148,9 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     }
 
     private renderFilterSelect() {
-        this.ticketsStatusSelect.items = this.earlyService.renderTicketStatus([{ id: 4, value: "No Ticket", text: "No Ticket", checked: true }]);
-        this.resultStatusSelect.items = this.earlyService.renderResultStatus(this.match.permission);
-        this.resultTypeSelect.items = this.earlyService.renderResultType(this.groupMap);
+        this.ticketsStatusSelect.items = this.#earlyService.renderTicketStatus([{ id: 4, value: "No Ticket", text: "No Ticket", checked: true }]);
+        this.resultStatusSelect.items = this.#earlyService.renderResultStatus(this.match.permission);
+        this.resultTypeSelect.items = this.#earlyService.renderResultType(this.groupMap);
         this.resultTypeSelect.maxWidth = '150px';
         this.ticketsStatusSelect.maxWidth = '92px';
         this.resultStatusSelect.maxWidth = '120px';
@@ -152,13 +160,6 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         this.resultDetails.forEach(item => {
             item.resultStatusColor = this.isCompleted(item.resultStatusId, item.settlementStatusId) ? 'calculated'
                 : this.isRefunded(item.resultStatusId, item.settlementStatusId) ? 'refunded' : '';
-        });
-    }
-
-    private resetResult(resultDetails: ResultDetail[]) {
-        resultDetails.forEach((map) => {
-            map.homeValue = map.settlementStatusId !== SettlementStatusId.Calculated && map.settlementStatusId !== SettlementStatusId.RefundSettleDetermined ? "" : map.homeValue;
-            map.awayValue = map.settlementStatusId !== SettlementStatusId.Calculated && map.settlementStatusId !== SettlementStatusId.RefundSettleDetermined ? "" : map.awayValue;
         });
     }
 
@@ -174,43 +175,107 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         const existResultConfirmed = _.find(this.selectedResources, item => item.resultSettingData.isConfirmedRefund || item.resultSettingData.isConfirmedRefundSdt);
         if (!_.isNil(existResultConfirmed)) {
             this.toastrService.error(Language.confirmRefund.calculateResultNotConfirmed);
-        } else if (this.verifyFullTimeResult()) {
-            this.toastrService.error(Language.fullTimeNotSettled);
+            return
+        } 
+        
+        if (this.isExistResultEmpty()) {
+             this.toastrService.error(this.permission.isLeader ? Language.sop.leader.blankResult : Language.sop.nonLeader.blankResult);
+            return;
         }
-        else if (this.verifyExistResultEmpty() && this.verifyRelatedResources()) {
-            const selectedResourceIds = this.selectedResources.map(item => item.resourceId);
-            this.verifyRunningOdds(selectedResourceIds, () => this.verifyScoreSourcesAndCalculate(() => this.confirmChangedResults()));
+        
+        if(this.permission.isLeader) {
+           this.calculateWithLeader();
+        } else{
+            this.calculateWithNotLeader();
         }
     }
 
-    private verifyFullTimeResult() {
+    private calculateWithNotLeader() {
+        if (this.isFullTimeNotCalculated()) {
+            this.toastrService.error(Language.sop.nonLeader.fullTimeNotSettled);
+            return;
+        }
+
+        var relatedResourceInValid = this.#earlyService.findRelatedResourceInValid(this.match.resultDetails, this.selectedResources);
+        if(!_.isEmpty(relatedResourceInValid)){
+            this.toastrService.error(Language.sop.nonLeader.relatedResourceNotAttached.replace('{0}', relatedResourceInValid));
+            return;
+        } 
+
+        var inconsistentResources = this.#earlyService.isInconsistentWithRelatedResources(this.match.resultDetails, this.selectedResources);
+        if (!_.isEmpty(inconsistentResources)) {
+            this.toastrService.error(Language.sop.nonLeader.relatedResourceInconsistent.replace('{0}', inconsistentResources));
+            return; 
+        }
+        
+        this.proceedCalculationAfterValidation();
+    }
+
+    private calculateWithLeader() {
+        if (this.isFullTimeNotCalculated()) {
+            this.confirmationDialogMessage.message = Language.sop.leader.fullTimeNotSettled;
+            this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
+                this.proceedWithLeaderFullTimeNotCalculated();
+            });
+            return;
+        }
+
+        this.proceedWithLeaderFullTimeNotCalculated();
+    }
+
+    private proceedWithLeaderFullTimeNotCalculated() {
+        var relatedResourceInValid = this.#earlyService.findRelatedResourceInValid(this.match.resultDetails, this.selectedResources);
+        if(!_.isEmpty(relatedResourceInValid)){
+            this.confirmationDialogMessage.message = Language.sop.leader.relatedResourceNotAttached.replace('{0}', relatedResourceInValid);
+            this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
+                this.proceedWithLeaderRelatedResourceInValid();
+            });
+            return;
+        } 
+
+       this.proceedWithLeaderRelatedResourceInValid();
+    }
+
+    private proceedWithLeaderRelatedResourceInValid() {
+         var inconsistentResources = this.#earlyService.isInconsistentWithRelatedResources(this.match.resultDetails, this.selectedResources);
+        if (!_.isEmpty(inconsistentResources)) {
+            this.confirmationDialogMessage.message = Language.sop.leader.relatedResourceInconsistent.replace('{0}', inconsistentResources);
+            this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
+                this.proceedCalculationAfterValidation();
+            });
+            return; 
+        }
+
+        this.proceedCalculationAfterValidation();
+    }
+
+    private proceedCalculationAfterValidation() {
+        const selectedResourceIds = this.selectedResources.map(item => item.resourceId);
+        this.verifyRunningOdds(selectedResourceIds, () => this.verifyScoreSourcesAndCalculate(() => this.confirmChangedResults()));
+    }
+
+    private isFullTimeNotCalculated() {
         const fullTime = _.find(this.match.resultDetails, (map: ResultDetail) =>
             _.isEqual(map.resourceId, ResourcesIds.finalScore)
         );
         const existGeneratedResult = _.find(this.selectedResources, item => Resources.baseBetTypes.includes(item.betType));
-        if (existGeneratedResult && !this.permission.isLeader) {
+        if (existGeneratedResult) {
             return fullTime.settlementStatusId !== SettlementStatusId.Calculated;
         }
+
         return false;
     }
 
-    private verifyRelatedResources() {
-        const relatedResourceInValid = this.earlyService.FindRelatedResourceInValid(this.match.resultDetails, this.selectedResources);
-
-        if (relatedResourceInValid) {
-            this.toastrService.error(Language.sop.relatedResourceNotAttached.replace('{0}', relatedResourceInValid));
-            return false;
-        }
-
-        return true;
+    private isExistResultEmpty() {
+        return this.selectedResources.some(item => item.homeValue === null || _.isEmpty(item.homeValue));
     }
 
-    private verifyExistResultEmpty(isRefund = false) {
-        this.earlyService.verifyResultValueForBetType(this.selectedResources);
-        const isInValid = this.earlyService.isInValidResultValue(this.selectedResources);
+    private verifyExistResultEmpty() {
+        this.#earlyService.verifyResultValueForBetType(this.selectedResources);
+        const isInValid = this.#earlyService.isInValidResultValue(this.selectedResources);
 
         if (isInValid) {
-            this.toastrService.error(isRefund ? Language.warningInputScore : this.permission.isLeader ? Language.sop.leader.blankResult : Language.sop.nonLeader.blankResult);
+            this.toastrService.error(Language.warningInputScore);
             return false;
         }
 
@@ -239,7 +304,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     }
 
     private confirmCalculation(resultDetails: ResultDetail[]) {
-        this.confirmationDialogMessage.message = this.earlyService.getConfirmMessage(resultDetails, this.match.matchDetail);
+        this.confirmationDialogMessage.message = this.#earlyService.getConfirmMessage(resultDetails, this.match.matchDetail);
         this.messageBoxService.confirm(this.confirmationDialogMessage, async () => {
             this.setTeamResultSettle(this.selectedResources);
             const query = new SettleQuery(this.match.matchDetail,
@@ -368,9 +433,9 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         }
 
         const existResultConfirmedSdt = this.selectedResources.some(result => result.resultSettingData.isConfirmedRefundSdt);
-        const isValidResults = this.isResultEligibleForSDT() && (existResultConfirmedSdt || this.verifyExistResultEmpty(true));
+        const isValidResults = this.isResultEligibleForSDT() && (existResultConfirmedSdt || this.verifyExistResultEmpty());
         if (isValidResults) {
-            const SDTConfirmMessage = this.earlyService.getConfirmMessageSDT(this.selectedResources, this.matchDetail);
+            const SDTConfirmMessage = this.#earlyService.getConfirmMessageSDT(this.selectedResources, this.matchDetail);
             this.confirmRefund(SDTConfirmMessage);
         }
     }

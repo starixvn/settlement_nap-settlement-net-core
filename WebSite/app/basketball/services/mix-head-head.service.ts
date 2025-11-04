@@ -1,19 +1,17 @@
 import { Injectable, inject } from '@angular/core';
 import * as _ from 'lodash';
-import { PlayerBetTypes } from '../constants';
+import { PlayerBetTypes, PlayerTypes } from '../constants';
 import { ResultDetail } from '../../shared/models/sportsbook-sop';
-import { VerificationBaseService } from "../../core/services/verification-base.service";
 import { MixCoreService } from './mix-core.service';
-import { ExternalResultDetail } from '../../shared/models/sportsbook-sop/external-result-detail.model';
+import { MixHeadHeadCalculateService } from './mix-head-head.service.calculate';
 
 @Injectable()
 export class MixHeadHeadService {
-  readonly targetBetTypes = [PlayerBetTypes.points, PlayerBetTypes.rebounds, PlayerBetTypes.steals, PlayerBetTypes.assists, PlayerBetTypes.shotsScored];
   readonly #mixCoreService = inject(MixCoreService);
-  readonly #verificationBaseService = inject(VerificationBaseService);
+  readonly #mixHeadHeadCalculateService = inject(MixHeadHeadCalculateService);
 
   autoFillMixHeadHead(resultDetails: ResultDetail[], changedResultDetail: ResultDetail) {
-    if (!this.targetBetTypes.includes(changedResultDetail.betType)) {
+    if (!PlayerTypes.baseStats.includes(changedResultDetail.betType)) {
       return;
     }
     
@@ -35,72 +33,10 @@ export class MixHeadHeadService {
     if (mixResultType) {
       const mixResult = this.#mixCoreService.filterMixResultByBetType(resultDetails, changedResultDetail.resourceId, mixResultType);
       _.forEach(mixResult, mixResult => {
-        this.calculateMixHeadHeadValue(resultDetails, mixResult);
+        this.#mixHeadHeadCalculateService.calculateMixHeadHeadValue(resultDetails, mixResult);
       });
     }
   }
 
-  private calculateMixHeadHeadValue(resultDetails: ResultDetail[], mixResult: ResultDetail) {
-    const results = this.#mixCoreService.findResultsByBetTypes(resultDetails, mixResult.relatedCalResources);
-    
-    if (results.length === 2) {
-      mixResult.homeValue = this.comparePlayerStatistics(results[0], results[1], mixResult);
-    }
-
-    mixResult.checked = true;
-    this.updateExternalScores(mixResult, results);
-    mixResult.isScoreMismatched = this.#verificationBaseService.isEarlyMismatchedWarning(mixResult);
-  }
-
-  private comparePlayerStatistics(player1: ResultDetail, player2: ResultDetail, mixResult: ResultDetail) {
-    
-    if (_.isEmpty(player1.homeValue) || _.isEmpty(player2.homeValue)) {
-      return "";
-    }
-
-    const player1Value = parseInt(player1.homeValue);
-    const player2Value = parseInt(player2.homeValue);
-
-    if(this.#mixCoreService.hasAnyRefundedResult([player1, player2]) || player1Value === player2Value) {
-      return this.#mixCoreService.noneValue;
-    }
-
-    const playerIdWinner = player1Value > player2Value ? player1.oddFlex[0].info.playerId : player2.oddFlex[0].info.playerId;
-    const winnerOddFlex = mixResult.oddFlex.find(odd => odd.info.playerId === playerIdWinner);
-    return winnerOddFlex.betChoice;
-  }
-
-  private updateExternalScores(targetResult: ResultDetail, results: ResultDetail[]) {
-    if (results.length < 2) {
-      return;
-    }
-
-    const player1 = results[0];
-    const player2 = results[1];
-    
-    targetResult.externalScores.forEach((externalScore, index) => {
-      const player1ExternalScore = player1.externalScores[index];
-      const player2ExternalScore = player2.externalScores[index];
-      externalScore.homeValue = this.calculateExternalScoreValue(player1, player2, player1ExternalScore, player2ExternalScore);
-    });
-  }
-
-  private calculateExternalScoreValue(player1: ResultDetail, player2: ResultDetail, player1ExternalScore: ExternalResultDetail, player2ExternalScore: ExternalResultDetail) {
-    if (_.isEmpty(player1ExternalScore.homeValue) || _.isEmpty(player2ExternalScore.homeValue)) {
-      return "";
-    }
-    
-    const player1Value = parseInt(player1ExternalScore.homeValue);
-    const player2Value = parseInt(player2ExternalScore.homeValue);
-    if(this.#mixCoreService.hasAnyRefundedResult([player1, player2]) || player1Value === player2Value) {
-      return this.#mixCoreService.noneValue;
-    }
-    
-    return player1Value > player2Value ? this.getWinnerBetChoice(player1) : this.getWinnerBetChoice(player2);
-  }
-
-  private getWinnerBetChoice(winnerResult: ResultDetail): string {
-    const winnerOddFlex = winnerResult.oddFlex.find(odd => odd.info.playerId === winnerResult.oddFlex[0].info.playerId);
-    return winnerOddFlex ? winnerOddFlex.betChoice : '';
-  }
+  
 }
