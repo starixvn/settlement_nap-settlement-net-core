@@ -524,7 +524,6 @@ export class BetTypesComponent implements OnInit, DoCheck {
 
     this.requestService.doSubmitByAction(query).subscribe((result: Result) => {
       if (result.isSuccessful) {
-        this.updateStatusResultAmendments(result);
         this.messageBoxService.closePopup();
       } else {
         this.errorMessage = result.errMsg;
@@ -532,17 +531,6 @@ export class BetTypesComponent implements OnInit, DoCheck {
     });
   }
 
-  private async updateStatusResultAmendments(settledResult: Result) {
-    const request = new UpdateSettlementResultHistoryStatus(
-      this.fastMarkets.matchId,
-      settledResult.settledSessionId,
-      1,
-      settledResult.isOrg);
-
-    if (settledResult.hasResultAmendment) {
-      await this.requestService.updateSettlementResultHistoryStatus(request);
-    }
-  }
 
   private showOrHideButton(item: FastMarketResult) {
     const resultStatus = [ResultStatus.completedAuto, ResultStatus.completedManual, ResultStatus.refund, ResultStatus.refundWithDetermined,];
