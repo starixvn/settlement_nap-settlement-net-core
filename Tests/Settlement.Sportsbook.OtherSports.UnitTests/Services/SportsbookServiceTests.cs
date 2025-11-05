@@ -44,7 +44,7 @@ public class SportsbookServiceTests
 
         Assert.IsType<MatchResultDetail>(result);
         await repository.Received().FetchAsync<ResultDetail>(Arg.Any<GetResultDetailCriteria>());
-        repository.Received().Fetch<ResultDetail>(Arg.Any<GetExternalResultCriteria>());
+        await repository.Received().FetchAsync<ResultDetail>(Arg.Any<GetExternalResultCriteria>());
         await repository.Received().GetAsync<MatchHedgeDetail>(Arg.Any<GetMatchDetailHedgeMatchCriteria>());
     }
 
@@ -59,7 +59,7 @@ public class SportsbookServiceTests
 
         Assert.IsType<MatchResultDetail>(result);
         generateService.Received().GenerateResultDetail(Arg.Any<MatchDetail>());
-        repository.Received().Fetch<ResultDetail>(Arg.Any<GetExternalResultCriteria>());
+        await repository.Received().FetchAsync<ResultDetail>(Arg.Any<GetExternalResultCriteria>());
         await repository.Received().GetAsync<MatchHedgeDetail>(Arg.Any<GetMatchDetailHedgeMatchCriteria>());
     }
 
@@ -89,7 +89,7 @@ public class SportsbookServiceTests
         multipleServerService.GetMatchInfo(Arg.Any<GetMatchRequest>())
             .Returns((matchDetail, []));
         generateService.GenerateResultDetail(Arg.Any<MatchDetail>());
-        repository.Fetch<ResultDetail>(Arg.Any<GetExternalResultCriteria>()).Returns(resultDetails);
+        repository.FetchAsync<ResultDetail>(Arg.Any<GetExternalResultCriteria>()).Returns(resultDetails);
 
         var result = await service.GetMatch(new GetMatchRequest());
         var actual = result.MatchDetail;
