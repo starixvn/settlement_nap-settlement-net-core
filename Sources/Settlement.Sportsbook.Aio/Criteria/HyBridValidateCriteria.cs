@@ -1,5 +1,5 @@
 ﻿namespace Settlement.Sportsbook.Aio.Criteria;
-public class HyBridValidateCriteria : INonQueryCommand
+public class HyBridValidateCriteria : CriteriaBase
 {
     public int MatchId { get; set; }
 
@@ -10,7 +10,7 @@ public class HyBridValidateCriteria : INonQueryCommand
     [SpParam(Ignored = true)]
     public string DbServer { get; set; }
 
-    public string GetSettingKey() => $"NAP_Set_HybridParlay_Validate_{DbServer}";
+    public override string GetSettingKey() => $"NAP_Set_HybridParlay_Validate_{DbServer}";
 
-    public bool IsValid() => MatchId > 0;
+    public override bool IsValid() => MatchId > 0;
 }

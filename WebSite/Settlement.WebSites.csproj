@@ -37,7 +37,7 @@
     <PackageReference Include="Fanex.NAP.SignIn" Version="2.0.4" />
     <PackageReference Include="Fanex.RemotingRef" Version="1.5.5.1" />
     <PackageReference Include="Fanex.Settlement.Converter" Version="1.0.0.1" />
-    <PackageReference Include="Fanex.Settlement.MessageBridge" Version="1.0.14" />
+    <PackageReference Include="Fanex.Settlement.MessageBridge" Version="1.0.15" />
     <PackageReference Include="MediatR" Version="13.0.0" />
     <PackageReference Include="MessagePack" Version="3.1.4" />
     <PackageReference Include="MessagePack.AspNetCoreMvcFormatter" Version="3.1.4" />

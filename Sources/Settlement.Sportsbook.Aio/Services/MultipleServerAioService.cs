@@ -383,16 +383,17 @@ public class MultipleServerAioServiceImp(
 
     private async Task PublishJackTimeRequest(SettleCriteria criteria)
     {
-        var validateHybrid = await ValidateHybridMatch(criteria.MatchId);
+        var HybridTransId = await GetHyBridTransId(criteria.MatchId);
 
-        if (validateHybrid)
+        if (HybridTransId != string.Empty)
         {
             var request = new HybridMatch
             {
                 MatchId = criteria.MatchId,
                 LogDate = DateTimeOffset.Now,
                 Action = criteria.Action,
-                UserId = criteria.AdminId
+                UserId = criteria.AdminId,
+                TransId = HybridTransId
             };
             await dependencies.PublishEndpoint.Publish(
                 request,
@@ -400,7 +401,7 @@ public class MultipleServerAioServiceImp(
         }
     }
 
-    private async Task<bool> ValidateHybridMatch(int matchId)
+    private async Task<string> GetHyBridTransId(int matchId)
     {
         var tasks = appSettingsKey.Value.SiteDbServer
             .Select(async server =>
@@ -411,13 +412,13 @@ public class MultipleServerAioServiceImp(
                     DbServer = server
                 };
 
-                await repository.ExecuteAsync(validateCommand);
-                return validateCommand.ErrCode;
+                return await repository.FetchAsync<TranInfo>(validateCommand);
             })
             .ToList();
 
         var results = await Task.WhenAll(tasks);
-        return Array.Exists(results, r => r == 0);
+        var listTransIds = results.SelectMany(r => r);
+        return string.Join(",", listTransIds.Select(t => t.TransId));
     }
 
     public async Task<Result> SettleChildMatch(SettleChildMatchRequest request)

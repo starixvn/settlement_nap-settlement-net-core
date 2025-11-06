@@ -6,7 +6,7 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="14.0.0" />
     <PackageReference Include="Fanex.Settlement.Converter" Version="1.0.0.1" />
-    <PackageReference Include="Fanex.Settlement.MessageBridge" Version="1.0.14" />
+    <PackageReference Include="Fanex.Settlement.MessageBridge" Version="1.0.15" />
     <PackageReference Include="MediatR" Version="13.0.0" />
   </ItemGroup>
   <ItemGroup>

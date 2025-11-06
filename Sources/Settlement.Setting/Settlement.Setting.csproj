@@ -8,7 +8,7 @@
     <PackageReference Include="Fanex.MailDeliver.MailClient" Version="2.1.0" />
     <PackageReference Include="Fanex.NAP.Client" Version="2.0.3" />
     <PackageReference Include="Fanex.Settlement.Converter" Version="1.0.0.1" />
-    <PackageReference Include="Fanex.Settlement.MessageBridge" Version="1.0.14" />
+    <PackageReference Include="Fanex.Settlement.MessageBridge" Version="1.0.15" />
     <PackageReference Include="MediatR" Version="13.0.0" />
     <PackageReference Include="RazorEngineCore" Version="2024.4.1" />
   </ItemGroup>
