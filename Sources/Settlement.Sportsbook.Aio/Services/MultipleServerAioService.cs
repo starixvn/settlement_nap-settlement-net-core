@@ -271,7 +271,7 @@ public class MultipleServerAioServiceImp(
 
         var result = await PushResultSettleAllSites(criteria);
 
-        await PublishJackTimeRequest(criteria);
+        await PublishJackTimeRequest(result.IsSuccessful, criteria);
 
         return new Result
         {
@@ -381,44 +381,22 @@ public class MultipleServerAioServiceImp(
         return matchIds.Count > 0 ? string.Join(',', matchIds.ToList()) : string.Empty;
     }
 
-    private async Task PublishJackTimeRequest(SettleCriteria criteria)
+    private async Task PublishJackTimeRequest(bool isSuccessful, SettleCriteria criteria)
     {
-        var HybridTransId = await GetHyBridTransId(criteria.MatchId);
-
-        if (HybridTransId != string.Empty)
+        if (isSuccessful && criteria.SportType == SportType.BasketBall)
         {
             var request = new HybridMatch
             {
                 MatchId = criteria.MatchId,
                 LogDate = DateTimeOffset.Now,
                 Action = criteria.Action,
-                UserId = criteria.AdminId,
-                TransId = HybridTransId
+                UserId = criteria.AdminId
             };
+
             await dependencies.PublishEndpoint.Publish(
                 request,
                 new CancellationTokenSource(TimeSpan.FromSeconds(3)).Token);
         }
-    }
-
-    private async Task<string> GetHyBridTransId(int matchId)
-    {
-        var tasks = appSettingsKey.Value.SiteDbServer
-            .Select(async server =>
-            {
-                var validateCommand = new HyBridValidateCriteria
-                {
-                    MatchId = matchId,
-                    DbServer = server
-                };
-
-                return await repository.FetchAsync<TranInfo>(validateCommand);
-            })
-            .ToList();
-
-        var results = await Task.WhenAll(tasks);
-        var listTransIds = results.SelectMany(r => r);
-        return string.Join(",", listTransIds.Select(t => t.TransId));
     }
 
     public async Task<Result> SettleChildMatch(SettleChildMatchRequest request)
