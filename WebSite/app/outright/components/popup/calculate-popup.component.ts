@@ -45,6 +45,7 @@ export class CalculatePopupComponent implements OnInit {
     private readonly statusPipe = inject(StatusPipe);
     private readonly completedStatus = "Completed";
     private readonly statusRunning = [Status.running, Status.closed, Status.internal];
+    private readonly RESULT_STATUS_CONFIRMED = 3;
 
     blockUI = true;
     teams: Team[];
@@ -74,7 +75,9 @@ export class CalculatePopupComponent implements OnInit {
 
     async ngOnInit(): Promise<void> {
         this.toastrService.overlayContainer = this.toastContainer;
-        this.blockUIService.blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
+        this.blockUIService.blockUIEvent
+           .pipe(takeUntilDestroyed())
+           .subscribe((event: boolean) => this.blockUI = event);
         await this.getMatches();
         this.ticketsStatusSelect.items = this.calculateService.renderTicketStatus();
     }
@@ -84,10 +87,10 @@ export class CalculatePopupComponent implements OnInit {
     }
 
     async getMatches() {
+        this.loading = true;
         this.leagueSettle = await this.outrightService.getMatches(this.data.leagueId, this.data.sportType, StatusId.runningAndCompleted);
         this.permission = this.leagueSettle.permission;
         this.leagueSettle.teams.forEach(team => {
-            this.loading = true;
             team.status = team.status.toUpperCase();
             team.eventDate = _.includes(this.statusRunning, team.oddsStatus.toLowerCase()) ? this.leagueSettle.today : team.eventDate;
             team.dateTime = this.verifyDateService.convertToDateStruct(team.eventDate);
@@ -101,11 +104,11 @@ export class CalculatePopupComponent implements OnInit {
             this.autoFillFinalScore(team);
             this.autoChangeDeadheat(team);
             team.traderConfirmClass = this.traderConfirmClass(team);
-            this.loading = false;
         });
         this.moveBetsDay = this.verifyDateService.convertToDateStruct(this.leagueSettle.moveBetsDay);
         this.today = this.verifyDateService.convertToDateStruct(this.leagueSettle.today);
         this.teams = this.leagueSettle.teams;
+        this.loading = false;
     }
 
     close() {
@@ -134,16 +137,15 @@ export class CalculatePopupComponent implements OnInit {
             return;
         } 
 
-        if(team.resultStatusId === 3) {
+        if(team.resultStatusId === this.RESULT_STATUS_CONFIRMED) {
             team.isDeadheat = false;
         }
     }
 
     traderConfirmClass(team: Team) {
-        const confirmStatus = 3;
         if(!_.isEmpty(team.originalTraderScore) 
             &&!CompletedStatus.includes(team.originalStatus.toLocaleLowerCase())
-            && _.isEqual(team.resultStatusId, confirmStatus)
+            && _.isEqual(team.resultStatusId, this.RESULT_STATUS_CONFIRMED)
         ){
             return 'bg-result-confirmed';
         }
@@ -471,14 +473,18 @@ export class CalculatePopupComponent implements OnInit {
             return '';
         }
 
-        if(_.isEqual(team.originalTraderScore.toLowerCase(), Status.refund) && team.resultStatusId === 3) {
+        if(_.isEqual(team.traderScore.toLowerCase(), Status.refund) && team.resultStatusId === this.RESULT_STATUS_CONFIRMED) {
             return 'bg-result-refund';
         }
 
-        if(_.isEqual(team.originalTraderScore.toLowerCase(), Status.won) && team.resultStatusId === 3) {
+        if(_.isEqual(team.traderScore.toLowerCase(), Status.won) && team.resultStatusId === this.RESULT_STATUS_CONFIRMED) {
             return 'bg-result-won';
         }
 
         return '';
     }
 }
+function takeUntilDestroyed(): import("rxjs").OperatorFunction<boolean, unknown> {
+    throw new Error('Function not implemented.');
+}
+
