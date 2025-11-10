@@ -39,8 +39,9 @@ public class AioHandler(
     public async Task<Result> Handle(SettleRequest request, CancellationToken cancellationToken)
     {
         var result = await aioService.Settle(request);
+        List<int> sports = [SportType.VolleyBall, SportType.Badminton, SportType.TableTennis, SportType.BeachVolleyball, SportType.BasketBall, SportType.ESports];
 
-        if (result.HasResultAmendment && (request.SportType is SportType.BasketBall or SportType.ESports))
+        if (result.HasResultAmendment && sports.Contains(request.SportType))
         {
             await publishEndpoint.Publish(
                 new ResultAmendSettled(request.MatchId, result.SettledSessionId, result.IsOrg),
@@ -83,7 +84,7 @@ public class AioHandler(
 
     public async Task<bool> Handle(UpdateSettlementResultHistoryStatusRequest request, CancellationToken cancellationToken)
     {
-        List<int> sports = [SportType.Tennis, SportType.VolleyBall, SportType.Badminton, SportType.TableTennis, SportType.BeachVolleyball];
+        List<int> sports = [SportType.Tennis];
         if (sports.Contains(request.SportType))
         {
             await publishEndpoint.Publish(

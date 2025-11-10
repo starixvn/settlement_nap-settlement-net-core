@@ -496,7 +496,6 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
       const pushResult = await this.aioService.push(query);
       if (pushResult.isSuccessful) {
         await this.handleChildMatch(query, type);
-        await this.updateStatusResultAmendments(this.match, pushResult);
         this.settleHedgeMatch(query);
       } else {
         this.toastrService.error(pushResult.errMsg);
@@ -505,19 +504,6 @@ export class CalculateActionsComponent implements SportTemplate, OnInit {
       this.toastrService.error(result.errMsg);
     }
   }
-
-  private async updateStatusResultAmendments(match: Match, settledResult: Result) {
-    const request = new UpdateSettlementResultHistoryStatus(
-      match.matchDetail.matchId, 
-      settledResult.settledSessionId, 
-      match.matchDetail.sportType, 
-      settledResult.isOrg);    
-
-      if(settledResult.hasResultAmendment) {
-        await this.aioService.updateSettlementResultHistoryStatus(request);
-      }
-  }
-
 
   saveScore() {
     this.toastrService.clear();
