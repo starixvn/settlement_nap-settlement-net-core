@@ -13,6 +13,7 @@ export interface OddsInfoModel {
     isHome: boolean;
     statistics: SelectionInfo[];
     results: ResultInfo[];
+    relatedBettype: string;
 }
 
 export interface SelectionInfo {

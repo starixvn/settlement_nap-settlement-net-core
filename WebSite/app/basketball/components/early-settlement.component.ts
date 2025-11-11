@@ -26,6 +26,7 @@ import { AutoFillPlayerService } from '../services/auto-fill-player.service';
 import { MixMultiStatsCalculateService } from '../services/mix-multi-stats-calculate.service';
 import { MixDoubleDoubleCalculateService } from '../services/mix-double-double-calculate.service';
 import { MixHeadHeadCalculateService } from '../services/mix-head-head.service.calculate';
+import { MixPerformanceCalculateService } from '../services/mix-performance-calculate.service';
 
 @Component({
     selector: 'early-settlement',
@@ -52,7 +53,9 @@ import { MixHeadHeadCalculateService } from '../services/mix-head-head.service.c
         MixHeadHeadService,
         MixHeadHeadCalculateService,
         MixCoreService, 
-        AutoFillPlayerService]
+        AutoFillPlayerService,
+        MixPerformanceCalculateService
+    ]
 })
 export class EarlySettlementComponent extends EarlyBaseComponent implements SportTemplate {
 
@@ -111,11 +114,12 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         this.matchDetail = this.match.matchDetail;
         this.matchId = this.match.matchDetail.matchId;
         this.resultDetails = _.filter(this.match.resultDetails, item => item.resourceId.length > 2);
+        const finalResult = this.match.resultDetails.find(result => result.resourceId === ResourcesIds.finalScore);
         this.verificationService.generateExternalScores(this.match, this.resultDetails, SportType.basketBall, this.maxProviderCol);
         this.autoFillResultOnLoad(this.resultDetails);
         this.autoFillConfirmedSDT(this.permission.isLeader, this.match.externalResults, this.resultDetails);
         this.orderResultDetails(this.resultDetails);
-        this.#autoFillPlayerService.autoFillPlayerName(this.resultDetails);
+        this.#autoFillPlayerService.autoFillPlayerName(this.resultDetails.concat(finalResult));
         this.groupMap = this.#earlyService.getGroupMap(this.resultDetails, this.matchDetail);
         this.match.originalResultDetail = _.cloneDeep(this.resultDetails);
         this.renderFilterSelect();

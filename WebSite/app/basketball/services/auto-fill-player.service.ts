@@ -6,6 +6,7 @@ import { SettlementStatusId } from '../../shared/constants';
 import { MixMultiStatsCalculateService } from './mix-multi-stats-calculate.service';
 import { MixDoubleDoubleCalculateService } from './mix-double-double-calculate.service';
 import { MixHeadHeadCalculateService } from './mix-head-head.service.calculate';
+import { MixPerformanceCalculateService } from './mix-performance-calculate.service';
 
 @Injectable()
 export class AutoFillPlayerService {
@@ -20,15 +21,18 @@ export class AutoFillPlayerService {
           PlayerBetTypes.mostRebounds,
           PlayerBetTypes.mostAssists,
           PlayerBetTypes.mostSteals,
-          PlayerBetTypes.mostPointShotsScored
+          PlayerBetTypes.mostPointShotsScored,
+          PlayerBetTypes.performance,
+          PlayerBetTypes.performanceDouble,
+          PlayerBetTypes.performanceTriple
       ];
 
     readonly #mixMultiStatsCalculateService = inject(MixMultiStatsCalculateService);
     readonly #mixDoubleDoubleCalculateService = inject(MixDoubleDoubleCalculateService);
     readonly #mixHeadHeadCalculateService = inject(MixHeadHeadCalculateService);
+    readonly #mixPerformanceCalculateService = inject(MixPerformanceCalculateService);
 
-  autoFillPlayerName(resultDetails: ResultDetail[]) {
-     
+  autoFillPlayerName(resultDetails: ResultDetail[]) {   
       const filteredResults = resultDetails.filter(resultDetail => {
           return this.targetBetTypes.includes(resultDetail.betType) && 
                  resultDetail.settlementStatusId === SettlementStatusId.Running;
@@ -38,6 +42,7 @@ export class AutoFillPlayerService {
         this.calculateMultiStats(resultDetails, resultDetail);
         this.calculateDoubleTripleDouble(resultDetails, resultDetail);
         this.calculateHeadToHead(resultDetails, resultDetail);
+        this.calculatePerformance(resultDetails, resultDetail);
       });
   }
 
@@ -64,6 +69,12 @@ export class AutoFillPlayerService {
   private calculateHeadToHead(resultDetails: ResultDetail[], resultDetail: ResultDetail): void {
     if(PlayerTypes.headToHead.includes(resultDetail.betType)){
       this.#mixHeadHeadCalculateService.calculateMixHeadHeadValue(resultDetails, resultDetail);
+    }
+  }
+
+  private calculatePerformance(resultDetails: ResultDetail[], resultDetail: ResultDetail): void {
+    if(PlayerTypes.performance.includes(resultDetail.betType)){
+      this.#mixPerformanceCalculateService.autoFillMixPerformance(resultDetails, resultDetail);
     }
   }
 }

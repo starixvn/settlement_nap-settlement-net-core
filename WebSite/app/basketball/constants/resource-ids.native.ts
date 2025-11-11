@@ -38,7 +38,10 @@ export const PlayerBetTypes = {
     mostRebounds: "681",
     mostSteals: "682",
     mostAssists: "683",
-    mostPointShotsScored : "684"
+    mostPointShotsScored : "684",
+    performance: "675",
+    performanceDouble: "676",
+    performanceTriple: "678",
 };
 
 export const PlayerTypes = {
@@ -55,6 +58,11 @@ export const PlayerTypes = {
         PlayerBetTypes.steals, 
         PlayerBetTypes.assists, 
         PlayerBetTypes.shotsScored
+    ],
+    performance: [
+        PlayerBetTypes.performance,
+        PlayerBetTypes.performanceDouble,
+        PlayerBetTypes.performanceTriple
     ]
 };
 
