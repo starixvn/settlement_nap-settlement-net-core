@@ -32,8 +32,8 @@ export class MixHeadHeadService {
     const mixResultType = mixResultMapping[betType];
     if (mixResultType) {
       const mixResult = this.#mixCoreService.filterMixResultByBetType(resultDetails, changedResultDetail.resourceId, mixResultType);
-      _.forEach(mixResult, mixResult => {
-        this.#mixHeadHeadCalculateService.calculateMixHeadHeadValue(resultDetails, mixResult);
+      _.forEach(mixResult, x => {
+        this.#mixHeadHeadCalculateService.calculateMixHeadHeadValue(resultDetails, x);
       });
     }
   }

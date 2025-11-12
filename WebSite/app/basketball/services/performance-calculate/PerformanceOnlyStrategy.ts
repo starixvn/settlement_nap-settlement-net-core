@@ -1,8 +1,6 @@
 import { AutofillResult } from "../../constants/result-value";
-import { ResultDetail } from "../../../shared/models/sportsbook-sop";
-import { ResultStatusId } from "../../../shared/constants/result-status-id.native";
-import { SettlementStatusId } from "../../../shared/constants/settlement-status-id.native";
-import { OddFlexModel } from "../../../shared/models/sportsbook-sop";
+import { OddFlexModel, ResultDetail } from "../../../shared/models/sportsbook-sop";
+import { ResultStatusId, SettlementStatusId } from "../../../shared/constants";
 import { IAutofillStrategy } from "./performance-autofill.strategy";
 import { Injectable } from "@angular/core";
 import { compareWithCondition, statisticToResourceId } from "./autofill.utils";

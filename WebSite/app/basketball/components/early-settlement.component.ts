@@ -208,13 +208,13 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
             return;
         }
 
-        var relatedResourceInValid = this.#earlyService.findRelatedResourceInValid(this.match.resultDetails, this.selectedResources);
+        const relatedResourceInValid = this.#earlyService.findRelatedResourceInValid(this.match.resultDetails, this.selectedResources);
         if(!_.isEmpty(relatedResourceInValid)){
             this.toastrService.error(Language.sop.nonLeader.relatedResourceNotAttached.replace('{0}', relatedResourceInValid));
             return;
         } 
 
-        var inconsistentResources = this.#earlyService.isInconsistentWithRelatedResources(this.match.resultDetails, this.selectedResources);
+        const inconsistentResources = this.#earlyService.isInconsistentWithRelatedResources(this.match.resultDetails, this.selectedResources);
         if (!_.isEmpty(inconsistentResources)) {
             this.toastrService.error(Language.sop.nonLeader.relatedResourceInconsistent.replace('{0}', inconsistentResources));
             return; 
@@ -236,7 +236,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     }
 
     private proceedWithLeaderFullTimeNotCalculated() {
-        var relatedResourceInValid = this.#earlyService.findRelatedResourceInValid(this.match.resultDetails, this.selectedResources);
+        const relatedResourceInValid = this.#earlyService.findRelatedResourceInValid(this.match.resultDetails, this.selectedResources);
         if(!_.isEmpty(relatedResourceInValid)){
             this.confirmationDialogMessage.message = Language.sop.leader.relatedResourceNotAttached.replace('{0}', relatedResourceInValid);
             this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
@@ -249,7 +249,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     }
 
     private proceedWithLeaderRelatedResourceInValid() {
-         var inconsistentResources = this.#earlyService.isInconsistentWithRelatedResources(this.match.resultDetails, this.selectedResources);
+        const inconsistentResources = this.#earlyService.isInconsistentWithRelatedResources(this.match.resultDetails, this.selectedResources);
         if (!_.isEmpty(inconsistentResources)) {
             this.confirmationDialogMessage.message = Language.sop.leader.relatedResourceInconsistent.replace('{0}', inconsistentResources);
             this.messageBoxService.confirm(this.confirmationDialogMessage, () => {

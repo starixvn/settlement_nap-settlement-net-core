@@ -1,10 +1,10 @@
 import { AutofillResult } from "../../constants/result-value";
-import { OddFlexModel, ResultDetail } from "../../../shared/models/sportsbook-sop";
 import { IAutofillStrategy } from "./performance-autofill.strategy";
 import { Injectable } from "@angular/core";
 import { ResultStatusId, SettlementStatusId } from "../../../shared/constants";
 import { ResourcesIds } from "../../constants";
 import { compareWithCondition, statisticToResourceId, validateCalcFinalResult } from "./autofill.utils";
+import { OddFlexModel, ResultDetail } from "../../../shared/models/sportsbook-sop";
 
 @Injectable()
 export class PerformanceAndTeamWinStrategy implements IAutofillStrategy {
@@ -67,7 +67,7 @@ export class PerformanceAndTeamWinStrategy implements IAutofillStrategy {
   private getValidRelatedResourceIds(oddFlex: OddFlexModel, changedResultDetail: ResultDetail): string[] {
     const relatedCalResourceIds = changedResultDetail.relatedCalResources.split(',').map(id => id.trim());
     return relatedCalResourceIds.filter(id => {
-      const statistic = oddFlex.info.statistics.find(statistic => id.startsWith(statisticToResourceId[statistic.type]));
+      const statistic = oddFlex.info.statistics.find(s => id.startsWith(statisticToResourceId[s.type]));
       return statistic !== undefined;
     });
   }

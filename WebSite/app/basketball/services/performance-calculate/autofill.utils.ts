@@ -11,7 +11,6 @@ export const statisticToResourceId: Record<string, string> = {
 
 
 export function compareWithCondition(value: number, condition: string): boolean {
-
   const matched = condition.match(/^(\d+)([+-]?)$/);
   if (!matched) {
     return false;
