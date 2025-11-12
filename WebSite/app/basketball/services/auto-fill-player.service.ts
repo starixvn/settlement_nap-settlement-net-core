@@ -6,7 +6,7 @@ import { SettlementStatusId } from '../../shared/constants';
 import { MixMultiStatsCalculateService } from './mix-multi-stats-calculate.service';
 import { MixDoubleDoubleCalculateService } from './mix-double-double-calculate.service';
 import { MixHeadHeadCalculateService } from './mix-head-head.service.calculate';
-import { MixPerformanceCalculateService } from './mix-performance-calculate.service';
+import { MixPerformanceCalculateService } from './performance-calculate/mix-performance-calculate.service';
 
 @Injectable()
 export class AutoFillPlayerService {

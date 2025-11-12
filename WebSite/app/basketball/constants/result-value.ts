@@ -1,0 +1,1 @@
+export type AutofillResult = 'Y' | 'N' | 'None' | null;

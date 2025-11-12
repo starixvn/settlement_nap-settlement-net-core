@@ -26,7 +26,11 @@ import { AutoFillPlayerService } from '../services/auto-fill-player.service';
 import { MixMultiStatsCalculateService } from '../services/mix-multi-stats-calculate.service';
 import { MixDoubleDoubleCalculateService } from '../services/mix-double-double-calculate.service';
 import { MixHeadHeadCalculateService } from '../services/mix-head-head.service.calculate';
-import { MixPerformanceCalculateService } from '../services/mix-performance-calculate.service';
+import { MixPerformanceCalculateService } from '../services/performance-calculate/mix-performance-calculate.service';
+import { PerformanceAutoFillFactory } from '../services/performance-calculate/PerformanceAutoFillFactory';
+import { PerformanceOnlyStrategy } from '../services/performance-calculate/PerformanceOnlyStrategy';
+import { PerformanceAndTotalScoreStrategy } from '../services/performance-calculate/PerformanceAndTotalScoreStrategy';
+import { PerformanceAndTeamWinStrategy } from '../services/performance-calculate/PerformanceAndTeamWinStrategy';
 
 @Component({
     selector: 'early-settlement',
@@ -54,7 +58,11 @@ import { MixPerformanceCalculateService } from '../services/mix-performance-calc
         MixHeadHeadCalculateService,
         MixCoreService, 
         AutoFillPlayerService,
-        MixPerformanceCalculateService
+        MixPerformanceCalculateService,
+        PerformanceAutoFillFactory,
+        PerformanceOnlyStrategy,
+        PerformanceAndTotalScoreStrategy,
+        PerformanceAndTeamWinStrategy
     ]
 })
 export class EarlySettlementComponent extends EarlyBaseComponent implements SportTemplate {
