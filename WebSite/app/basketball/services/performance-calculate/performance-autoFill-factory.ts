@@ -1,18 +1,19 @@
-import { IAutofillStrategy } from "./performance-autofill.strategy";
-import { ResultDetail } from "../../../shared/models/sportsbook-sop";
-import { PerformanceOnlyStrategy } from "./PerformanceOnlyStrategy";
-import { PerformanceAndTotalScoreStrategy } from "./PerformanceAndTotalScoreStrategy";
-import { PerformanceAndTeamWinStrategy } from "./PerformanceAndTeamWinStrategy";
+import { IAutofillStrategy, DefaultAutofillStrategy } from "./performance-autofill.strategy.native";
+import { PerformanceOnlyStrategy } from "./performance-only.strategy";
+import { PerformanceAndTotalScoreStrategy } from "./performance-total-score.strategy";
+import { PerformanceAndTeamWinStrategy } from "./performance-team-win.strategy";
 import { inject, Injectable } from "@angular/core";
+import { AutofillResultContext } from "./autofill.utils";
 
 @Injectable()
 export class PerformanceAutoFillFactory {
   readonly #performanceOnlyStrategy = inject(PerformanceOnlyStrategy);
   readonly #performanceAndTotalScoreStrategy = inject(PerformanceAndTotalScoreStrategy);
   readonly #performanceAndTeamWinStrategy = inject(PerformanceAndTeamWinStrategy);
+  readonly #defaultAutofillStrategy = inject(DefaultAutofillStrategy);
   
-  getAutofillStrategy(changedResultDetail: ResultDetail): IAutofillStrategy | undefined {
-    const oddFlex = changedResultDetail.oddFlex[0];
+  getAutofillStrategy(context: AutofillResultContext): IAutofillStrategy | undefined {
+    const { oddFlex } = context;
     if (!oddFlex.info.results.length) {
       return this.#performanceOnlyStrategy;
     }
@@ -25,6 +26,6 @@ export class PerformanceAutoFillFactory {
       return this.#performanceAndTeamWinStrategy;
     }
     
-    return undefined;
+    return this.#defaultAutofillStrategy;
   }
 }

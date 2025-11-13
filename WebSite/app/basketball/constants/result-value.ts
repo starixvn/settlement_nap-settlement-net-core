@@ -1,1 +1,1 @@
-export type AutofillResult = 'Y' | 'N' | 'None' | null;
+export type AutofillResult = 'Y' | 'N' | 'None' | '';

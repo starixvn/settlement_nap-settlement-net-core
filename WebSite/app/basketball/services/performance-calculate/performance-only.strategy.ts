@@ -1,30 +1,22 @@
 import { AutofillResult } from "../../constants/result-value";
-import { OddFlexModel, ResultDetail } from "../../../shared/models/sportsbook-sop";
+import { OddFlexModel } from "../../../shared/models/sportsbook-sop";
 import { ResultStatusId, SettlementStatusId } from "../../../shared/constants";
-import { IAutofillStrategy } from "./performance-autofill.strategy";
+import { IAutofillStrategy } from "./performance-autofill.strategy.native";
 import { Injectable } from "@angular/core";
-import { compareWithCondition, statisticToResourceId } from "./autofill.utils";
+import { AutofillResultContext, compareWithCondition, RelatedResult, statisticToResourceId } from "./autofill.utils";
 
 
 @Injectable()
 export class PerformanceOnlyStrategy implements IAutofillStrategy {
-  getAutofillResult(resultDetails: ResultDetail[], changedResultDetail: ResultDetail): AutofillResult {
-    const relatedResults = this.getRelatedResults(resultDetails, changedResultDetail);
-    const oddFlex = changedResultDetail.oddFlex[0];
+  getAutofillResult(context: AutofillResultContext): AutofillResult {
+    const { oddFlex, relatedResults } = context;
     const isValidStatisticResults = this.validateStatisticResult(oddFlex, relatedResults);
 
     return this.determineAutofillResult(relatedResults, isValidStatisticResults);
   }
 
-  private getRelatedResults(resultDetails: ResultDetail[], changedResultDetail: ResultDetail): ResultDetail[] {
-    const relatedCalResourceIds = changedResultDetail.relatedCalResources
-      .split(',')
-      .map(id => id.trim());
-    return resultDetails.filter(result => relatedCalResourceIds.includes(result.resourceId));
-  }
-
   private determineAutofillResult(
-    relatedResults: ResultDetail[],
+    relatedResults: RelatedResult[],
     isValidStatisticResults: boolean
   ): AutofillResult {
     if (this.canHaveYesValue(relatedResults) && isValidStatisticResults) {
@@ -39,22 +31,22 @@ export class PerformanceOnlyStrategy implements IAutofillStrategy {
       return 'None';
     }
 
-    return null;
+    return '';
   }
 
-  private allCalculated(relatedResults: ResultDetail[]): boolean {
+  private allCalculated(relatedResults: RelatedResult[]): boolean {
     return relatedResults.every(result =>
       result.settlementStatusId === SettlementStatusId.Calculated
     );
   }
 
-  private allRefundWithDetermined(relatedResults: ResultDetail[]): boolean {
+  private allRefundWithDetermined(relatedResults: RelatedResult[]): boolean {
     return relatedResults.every(result =>
       result.resultStatusId === ResultStatusId.RefundWithDetermined
     );
   }
 
-  private allValueAndRunning(relatedResults: ResultDetail[]): boolean {
+  private allValueAndRunning(relatedResults: RelatedResult[]): boolean {
     return relatedResults.every(result =>
       result.homeValue &&
       result.resultStatusId !== ResultStatusId.AutoCompleted &&
@@ -62,7 +54,7 @@ export class PerformanceOnlyStrategy implements IAutofillStrategy {
     );
   }
 
-  private canHaveYesValue(relatedResults: ResultDetail[]): boolean {
+  private canHaveYesValue(relatedResults: RelatedResult[]): boolean {
     return (
       this.allValueAndRunning(relatedResults) ||
       this.allCalculated(relatedResults) ||
@@ -70,18 +62,18 @@ export class PerformanceOnlyStrategy implements IAutofillStrategy {
     );
   }
 
-  private canHaveNoValue(relatedResults: ResultDetail[]): boolean {
+  private canHaveNoValue(relatedResults: RelatedResult[]): boolean {
     return (
       this.allValueAndRunning(relatedResults) &&
       !this.allCalculated(relatedResults)
     );
   }
 
-  private canHaveNoneValue(relatedResults: ResultDetail[]): boolean {
+  private canHaveNoneValue(relatedResults: RelatedResult[]): boolean {
     return this.allRefundWithDetermined(relatedResults);
   }
 
-  private validateStatisticResult(oddFlex: OddFlexModel, relatedResults: ResultDetail[]): boolean {
+  private validateStatisticResult(oddFlex: OddFlexModel, relatedResults: RelatedResult[]): boolean {
     return oddFlex.info.statistics.every(statistic => {
       const statisticResourceId = statisticToResourceId[statistic.type];
       const relatedResult = relatedResults.find(result => result.betType === statisticResourceId);

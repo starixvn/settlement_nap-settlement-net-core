@@ -27,10 +27,12 @@ import { MixMultiStatsCalculateService } from '../services/mix-multi-stats-calcu
 import { MixDoubleDoubleCalculateService } from '../services/mix-double-double-calculate.service';
 import { MixHeadHeadCalculateService } from '../services/mix-head-head.service.calculate';
 import { MixPerformanceCalculateService } from '../services/performance-calculate/mix-performance-calculate.service';
-import { PerformanceAutoFillFactory } from '../services/performance-calculate/PerformanceAutoFillFactory';
-import { PerformanceOnlyStrategy } from '../services/performance-calculate/PerformanceOnlyStrategy';
-import { PerformanceAndTotalScoreStrategy } from '../services/performance-calculate/PerformanceAndTotalScoreStrategy';
-import { PerformanceAndTeamWinStrategy } from '../services/performance-calculate/PerformanceAndTeamWinStrategy';
+import { PerformanceAutoFillFactory } from '../services/performance-calculate/performance-autoFill-factory';
+import { PerformanceOnlyStrategy } from '../services/performance-calculate/performance-only.strategy';
+import { PerformanceAndTotalScoreStrategy } from '../services/performance-calculate/performance-total-score.strategy';
+import { PerformanceAndTeamWinStrategy } from '../services/performance-calculate/performance-team-win.strategy';
+import { DefaultAutofillStrategy } from '../services/performance-calculate/performance-autofill.strategy.native';
+import { MixPerformanceService } from '../services/performance-calculate/mix-performance.service';
 
 @Component({
     selector: 'early-settlement',
@@ -59,10 +61,12 @@ import { PerformanceAndTeamWinStrategy } from '../services/performance-calculate
         MixCoreService, 
         AutoFillPlayerService,
         MixPerformanceCalculateService,
+        MixPerformanceService,
         PerformanceAutoFillFactory,
         PerformanceOnlyStrategy,
         PerformanceAndTotalScoreStrategy,
-        PerformanceAndTeamWinStrategy
+        PerformanceAndTeamWinStrategy,
+        DefaultAutofillStrategy
     ]
 })
 export class EarlySettlementComponent extends EarlyBaseComponent implements SportTemplate {
@@ -127,13 +131,13 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         this.autoFillResultOnLoad(this.resultDetails);
         this.autoFillConfirmedSDT(this.permission.isLeader, this.match.externalResults, this.resultDetails);
         this.orderResultDetails(this.resultDetails);
-        this.#autoFillPlayerService.autoFillPlayerName(this.resultDetails.concat(finalResult));
+        this.#autoFillPlayerService.autoFillPlayerName(this.resultDetails,finalResult);
         this.groupMap = this.#earlyService.getGroupMap(this.resultDetails, this.matchDetail);
         this.match.originalResultDetail = _.cloneDeep(this.resultDetails);
         this.renderFilterSelect();
         this.setIndicateColor();
         this.setRefundButtonWhenExistConfirmedSDT(this.resultDetails);
-        this.#earlyStore.setState(this.matchDetail, this.resultDetails, this.permission, this.maxProviderCol);
+        this.#earlyStore.setState(this.matchDetail, this.resultDetails, this.permission, this.maxProviderCol, finalResult);
         this.isDisabledSupportInputPlayerScores = !this.resultDetails.some(item => Resources.orderBetTypes.includes(item.betType));
         
         if (!this.isReadyMatch) {

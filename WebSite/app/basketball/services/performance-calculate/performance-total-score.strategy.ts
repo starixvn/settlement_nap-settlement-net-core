@@ -1,18 +1,14 @@
 import { AutofillResult } from "../../constants/result-value";
 import { OddFlexModel, ResultDetail } from "../../../shared/models/sportsbook-sop";
 import { ResultStatusId, SettlementStatusId } from "../../../shared/constants";
-import { IAutofillStrategy } from "./performance-autofill.strategy";
-import { ResourcesIds } from "../../constants";
+import { IAutofillStrategy } from "./performance-autofill.strategy.native";
 import { Injectable } from "@angular/core";
-import { compareWithCondition, statisticToResourceId, validateCalcFinalResult } from "./autofill.utils";
+import { AutofillResultContext, compareWithCondition, RelatedResult, statisticToResourceId, validateCalcFinalResult } from "./autofill.utils";
 
 @Injectable()
 export class PerformanceAndTotalScoreStrategy implements IAutofillStrategy {
-  getAutofillResult(resultDetails: ResultDetail[], changedResultDetail: ResultDetail): AutofillResult {
-    const finalResult = resultDetails.find(result => result.resourceId === ResourcesIds.finalScore);
-    const relatedCalResourceIds = changedResultDetail.relatedCalResources.split(',').map(id => id.trim());
-    const relatedResults = resultDetails.filter(result => relatedCalResourceIds.includes(result.resourceId));
-    const oddFlex = changedResultDetail.oddFlex[0];
+  getAutofillResult(context: AutofillResultContext): AutofillResult {
+    const { oddFlex, relatedResults, finalResult } = context;
     
     // final is refund
     if (finalResult.resultStatusId === ResultStatusId.Refund) {
@@ -29,14 +25,11 @@ export class PerformanceAndTotalScoreStrategy implements IAutofillStrategy {
       return 'N';
     }
 
-    return null;
+    return '';
 
   }
 
-
-
-  private validateStatisticResult(oddFlex: OddFlexModel, relatedResults: ResultDetail[]): boolean {
-
+  private validateStatisticResult(oddFlex: OddFlexModel, relatedResults: RelatedResult[]): boolean {
     return oddFlex.info.statistics.every(statistic => {
       const statisticResourceId = statisticToResourceId[statistic.type];
       const relatedResult = relatedResults.find(result => result.betType === statisticResourceId);

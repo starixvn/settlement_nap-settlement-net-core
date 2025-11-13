@@ -7,6 +7,8 @@ import { EarlyStore } from "../../store/early.store";
 import { MixMultiStatsService } from "../../services/mix-multi-stats.service";
 import { MixDoubleDoubleService } from "../../services/mix-double-double.service";
 import { MixHeadHeadService } from "../../services/mix-head-head.service";
+import { MixPerformanceCalculateService } from "../../services/performance-calculate/mix-performance-calculate.service";
+import { MixPerformanceService } from "../../services/performance-calculate/mix-performance.service";
 
 abstract class InputBaseComponent {
   getDropdownTooltip(result: string, maxLength: number, homeTeam: string, awayTeam: string) {
@@ -35,6 +37,7 @@ export class InputFinalBaseComponent extends InputBaseComponent{
   readonly #mixMultiStatsService = inject(MixMultiStatsService);
   readonly #mixDoubleDoubleService = inject(MixDoubleDoubleService);
   readonly #mixHeadHeadService = inject(MixHeadHeadService);
+  readonly #mixPerformanceService = inject(MixPerformanceService);
   readonly #earlyStore = inject(EarlyStore);
 
   checkResultIsMatched(resultDetail: ResultDetail) {
@@ -42,6 +45,7 @@ export class InputFinalBaseComponent extends InputBaseComponent{
      this.#mixMultiStatsService.autoFillMixReboundsAssists(this.#earlyStore.resultDetails(), resultDetail);
      this.#mixDoubleDoubleService.autoFillMixDoubleDouble(this.#earlyStore.resultDetails(), resultDetail);
      this.#mixHeadHeadService.autoFillMixHeadHead(this.#earlyStore.resultDetails(), resultDetail);
+     this.#mixPerformanceService.autoFillMixPerformance(this.#earlyStore.resultDetails(), resultDetail, this.#earlyStore.finalResult());
   }
 }
 
@@ -58,6 +62,7 @@ export class InputOutSideBaseComponent extends InputBaseComponent {
   readonly #mixMultiStatsService = inject(MixMultiStatsService);
   readonly #mixDoubleDoubleService = inject(MixDoubleDoubleService);
   readonly #mixHeadHeadService = inject(MixHeadHeadService);
+  readonly #mixPerformanceCalculateService = inject(MixPerformanceCalculateService);
   readonly #earlyStore = inject(EarlyStore);
   readonly #matchDetail = computed(() => this.#earlyStore.matchDetail());
 
@@ -73,5 +78,6 @@ export class InputOutSideBaseComponent extends InputBaseComponent {
     this.#mixMultiStatsService.autoFillMixReboundsAssists(this.#earlyStore.resultDetails(), resultDetail);
     this.#mixDoubleDoubleService.autoFillMixDoubleDouble(this.#earlyStore.resultDetails(), resultDetail);
     this.#mixHeadHeadService.autoFillMixHeadHead(this.#earlyStore.resultDetails(), resultDetail);
+    this.#mixPerformanceCalculateService.autoFillMixPerformance(this.#earlyStore.resultDetails(), resultDetail, this.#earlyStore.finalResult());
   }
 }

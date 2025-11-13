@@ -1,4 +1,23 @@
-import { OddFlexModel, ResultDetail } from "../../../shared/models/sportsbook-sop";
+import {
+  OddFlexModel,
+  ResultDetail,
+} from "../../../shared/models/sportsbook-sop";
+
+export interface AutofillResultContext {
+  relatedResults: RelatedResult[];
+  oddFlex: OddFlexModel;
+  changedResultDetail: ResultDetail;
+  finalResult: ResultDetail;
+}
+
+export type RelatedResult = Pick<
+  ResultDetail,
+  | "resourceId"
+  | "betType"
+  | "homeValue"
+  | "resultStatusId"
+  | "settlementStatusId"
+>;
 
 export const statisticToResourceId: Record<string, string> = {
   points: "653",
@@ -6,11 +25,13 @@ export const statisticToResourceId: Record<string, string> = {
   assists: "656",
   steals: "667",
   blocks: "665",
-  three_points: "662"
+  three_points: "662",
 };
 
-
-export function compareWithCondition(value: number, condition: string): boolean {
+export function compareWithCondition(
+  value: number,
+  condition: string
+): boolean {
   const matched = condition.match(/^(\d+)([+-]?)$/);
   if (!matched) {
     return false;
@@ -20,14 +41,19 @@ export function compareWithCondition(value: number, condition: string): boolean 
   const operator = matched[2];
 
   switch (operator) {
-    case '+': return value >= threshold;
-    case '-': return value < threshold;
-    default: return value === threshold;
+    case "+":
+      return value >= threshold;
+    case "-":
+      return value < threshold;
+    default:
+      return value === threshold;
   }
 }
 
-
-export function validateCalcFinalResult(oddFlex: OddFlexModel, finalResult: ResultDetail): boolean {
+export function validateCalcFinalResult(
+  oddFlex: OddFlexModel,
+  finalResult: ResultDetail
+): boolean {
   const { isHome, teamId } = oddFlex.info;
   const homeValue = Number(finalResult.homeValue) || 0;
   const awayValue = Number(finalResult.awayValue) || 0;
@@ -40,10 +66,12 @@ export function validateCalcFinalResult(oddFlex: OddFlexModel, finalResult: Resu
     },
     over: (score) => totalScore > score,
     handicap: (handicap) =>
-      isHome ? homeValue - handicap >= awayValue : awayValue - handicap >= homeValue
+      isHome
+        ? homeValue - handicap >= awayValue
+        : awayValue - handicap >= homeValue,
   };
 
-  return oddFlex.info.results.every(result => {
+  return oddFlex.info.results.every((result) => {
     const validator = validators[result.type];
     return validator ? validator(parseInt(result.value, 10)) : false;
   });

@@ -32,7 +32,7 @@ export class AutoFillPlayerService {
     readonly #mixHeadHeadCalculateService = inject(MixHeadHeadCalculateService);
     readonly #mixPerformanceCalculateService = inject(MixPerformanceCalculateService);
 
-  autoFillPlayerName(resultDetails: ResultDetail[]) {   
+  autoFillPlayerName(resultDetails: ResultDetail[], finalResult: ResultDetail) {   
       const filteredResults = resultDetails.filter(resultDetail => {
           return this.targetBetTypes.includes(resultDetail.betType) && 
                  resultDetail.settlementStatusId === SettlementStatusId.Running;
@@ -42,7 +42,7 @@ export class AutoFillPlayerService {
         this.calculateMultiStats(resultDetails, resultDetail);
         this.calculateDoubleTripleDouble(resultDetails, resultDetail);
         this.calculateHeadToHead(resultDetails, resultDetail);
-        this.calculatePerformance(resultDetails, resultDetail);
+        this.calculatePerformance(resultDetails, resultDetail, finalResult);
       });
   }
 
@@ -72,9 +72,9 @@ export class AutoFillPlayerService {
     }
   }
 
-  private calculatePerformance(resultDetails: ResultDetail[], resultDetail: ResultDetail): void {
+  private calculatePerformance(resultDetails: ResultDetail[], resultDetail: ResultDetail, finalResult: ResultDetail): void {
     if(PlayerTypes.performance.includes(resultDetail.betType)){
-      this.#mixPerformanceCalculateService.autoFillMixPerformance(resultDetails, resultDetail);
+      this.#mixPerformanceCalculateService.autoFillMixPerformance(resultDetails, resultDetail, finalResult);
     }
   }
 }
