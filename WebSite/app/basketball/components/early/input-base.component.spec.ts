@@ -10,7 +10,8 @@ import { MixMultiStatsService } from '../../services/mix-multi-stats.service';
 import { MixDoubleDoubleService } from '../../services/mix-double-double.service';
 import { MixHeadHeadService } from '../../services/mix-head-head.service';
 import { MixCoreService } from '../../services/mix-core.service';
-import { createMockVerificationService, createMockMixMultiStatsService, createMockMixDoubleDoubleService, createMockMixHeadHeadService, createMockMixCoreService } from '../../test-helpers/mock-services';
+import { createMockVerificationService, createMockMixMultiStatsService, createMockMixDoubleDoubleService, createMockMixHeadHeadService, createMockMixCoreService, createMockMixPerformanceService } from '../../test-helpers/mock-services';
+import { MixPerformanceService } from '../../services/performance-calculate/mix-performance.service';
 
 @Component({
   template: '',
@@ -51,7 +52,8 @@ describe('Component: InputBaseComponent', () => {
             matchDetail: jest.fn().mockReturnValue({
                 isSavedScore: true
             }),
-            resultDetails: jest.fn().mockReturnValue([])
+            resultDetails: jest.fn().mockReturnValue([]),
+            finalResult: jest.fn().mockReturnValue(new ResultDetail())
         };
         
         TestBed.configureTestingModule({
@@ -62,7 +64,8 @@ describe('Component: InputBaseComponent', () => {
                 { provide: MixMultiStatsService, useValue: createMockMixMultiStatsService() },
                 { provide: MixDoubleDoubleService, useValue: createMockMixDoubleDoubleService() },
                 { provide: MixHeadHeadService, useValue: createMockMixHeadHeadService() },
-                { provide: MixCoreService, useValue: createMockMixCoreService() }
+                { provide: MixCoreService, useValue: createMockMixCoreService() },
+                { provide: MixPerformanceService, useValue: createMockMixPerformanceService() }
             ]
         })
         .compileComponents()

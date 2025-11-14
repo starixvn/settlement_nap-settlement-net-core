@@ -28,6 +28,12 @@ export const createMockMixHeadHeadService = () => {
   };
 };
 
+export const createMockMixPerformanceService = () => {
+  return {
+    autoFillMixPerformance: jest.fn()
+  };
+};
+
 export const createMockMixCoreService = () => {
   return {
     findMixResultByBetType: jest.fn().mockImplementation((resultDetails, resourceId, betType) => {
