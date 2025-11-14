@@ -1,16 +1,18 @@
 ﻿
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { EarlyBaseService } from '../../core/services/early-base.service';
 import { ResultDetail, GroupMap, MatchDetail } from '../../shared/models/sportsbook-sop';
 import { ResultControlGroup } from '../constants/result-control-group.native';
 import { Language, } from '../../shared/language.native';
 import { isEmpty, isEqual, uniqBy } from 'lodash';
-import { ResultStatusId } from '../../shared/constants';
+import { ResourceIds, ResultStatusId } from '../../shared/constants';
 import { PlayerBetTypes, PlayerTypes } from '../constants';
 import * as _ from 'lodash';
+import { MixPerformanceCalculateService } from './performance-calculate/mix-performance-calculate.service';
 
 @Injectable()
 export class EarlyService extends EarlyBaseService {
+    readonly #mixPerformanceCalculateService = inject(MixPerformanceCalculateService);
     public getGroupMap(resultDetail: ResultDetail[], matchDetail: MatchDetail) {
         const list = uniqBy(resultDetail, (item) => item.groupName);
         const maps: GroupMap[] = [];
@@ -204,7 +206,9 @@ export class EarlyService extends EarlyBaseService {
                 isInconsistent = this.checkInconsistencyForTripleDouble(resource, relatedResources);
             } else if(PlayerTypes.headToHead.includes(resource.betType)) {
                 isInconsistent = this.checkInconsistencyForHeadToHead(resource, relatedResources);
-            }
+            } else if(PlayerTypes.performance.includes(resource.betType)) {
+                isInconsistent = this.checkInconsistencyForPerformance(resource, relatedResources);
+            } 
 
             if (isInconsistent) {
                 inconsistentResourceIds.push(resource.resourceId);
@@ -214,5 +218,16 @@ export class EarlyService extends EarlyBaseService {
         return inconsistentResourceIds.length > 0 
                 ? resultDetails.filter(r => inconsistentResourceIds.includes(r.resourceId)).map(r => `${r.resourceId} - ${r.betTypeName}`).join('<br/>') 
                 : "";
+    }
+
+    checkInconsistencyForPerformance(resource: ResultDetail, relatedResources: ResultDetail[]) {
+        const finalResult = relatedResources.find(r => r.resourceId === ResourceIds.fullTime);
+        const newRelatedResources = relatedResources.filter(r => r.resourceId !== ResourceIds.fullTime);
+        const expectedValue = this.#mixPerformanceCalculateService.getExpectedValueOnly(newRelatedResources, resource, finalResult);
+        if (expectedValue) {
+            return !isEqual(resource.homeValue, expectedValue);
+        }
+
+        return false;
     }
 }

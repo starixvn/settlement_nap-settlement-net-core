@@ -6,6 +6,7 @@ import { ResultDetail, GroupMap, MatchDetail, Permission } from '../../shared/mo
 
 @Injectable()
 export class EarlyBaseService {
+
   public isInValidResultValue(resultDetail: ResultDetail[]) {
     const resultWarning = _.find(resultDetail, (x: ResultDetail) => x.isResultWarning);
     return !_.isEmpty(resultWarning);
