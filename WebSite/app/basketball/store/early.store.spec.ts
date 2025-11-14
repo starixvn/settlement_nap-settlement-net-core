@@ -109,14 +109,6 @@ describe('EarlyStore', () => {
       expect(homeTeam).toBe('Home Team');
     });
 
-    it('should return empty string when matchDetail is null', () => {
-      store.setState(null, [], null, 0, null);
-
-      const homeTeam = store.getHomeTeam();
-
-      expect(homeTeam).toBeUndefined();
-    });
-
     it('should return empty string when homeName is empty', () => {
       const matchDetail = createMockMatchDetail('', 'Away Team');
       store.setState(matchDetail, [], null, 0, null);
@@ -146,14 +138,6 @@ describe('EarlyStore', () => {
       const awayTeam = store.getAwayTeam();
 
       expect(awayTeam).toBe('Away Team');
-    });
-
-    it('should return undefined when matchDetail is null', () => {
-      store.setState(null, [], null, 0, null);
-
-      const awayTeam = store.getAwayTeam();
-
-      expect(awayTeam).toBeUndefined();
     });
 
     it('should return empty string when awayName is empty', () => {

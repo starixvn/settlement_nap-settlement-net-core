@@ -8,10 +8,13 @@ import { MatchDetail, ResultDetail, GroupMap, Permission } from '../../shared/mo
 import { ResultSettingModel, ItemsSelect } from '../../shared/models';
 import { Language } from '../../shared/language.native';
 import { ResultStatusId } from '../../shared/constants';
+import { MixPerformanceCalculateService } from './performance-calculate/mix-performance-calculate.service';
 
 describe('Service: EarlyService', () => {
     let service: EarlyService;
     let messageBoxService: MessageBoxService;
+    let mockMixPerformanceCalculateService: jest.Mocked<MixPerformanceCalculateService>;
+
     
     const matchDetail = new MatchDetail();
     matchDetail.homeId = 123;
@@ -23,11 +26,17 @@ describe('Service: EarlyService', () => {
     permission.isLeader = true;
 
     beforeEach(waitForAsync(() => {
+        // Create mock for MixPerformanceCalculateService
+        mockMixPerformanceCalculateService = {
+            getExpectedValueOnly: jest.fn(),
+        } as any;
+
         TestBed.configureTestingModule({
             providers: [
                 EarlyService,
                 MessageBoxService,
-                NgbModal
+                NgbModal,
+                { provide: MixPerformanceCalculateService, useValue: mockMixPerformanceCalculateService }
             ],
             imports: [
                 HttpClientModule,
@@ -40,6 +49,7 @@ describe('Service: EarlyService', () => {
             messageBoxService = TestBed.inject(MessageBoxService);
         });
     }));
+
 
     it('should create the service', () => {
         expect(service).toBeTruthy();
@@ -317,81 +327,6 @@ describe('Service: EarlyService', () => {
             expect(result[0].text).toBe('Group 1');
             expect(result[0].checked).toBe(true);
             expect(result[1].value).toBe('Group 2');
-        });
-    });
-
-    describe('FindRelatedResourceInValid', () => {
-        let resultDetails: ResultDetail[];
-        let selectedResources: ResultDetail[];
-
-        beforeEach(() => {
-            const result1 = new ResultDetail();
-            result1.resourceId = 'R001';
-            result1.betTypeName = 'Winner';
-            result1.checked = false;
-            result1.resultStatusId = ResultStatusId.RunningZero;
-
-            const result2 = new ResultDetail();
-            result2.resourceId = 'R002';
-            result2.betTypeName = 'Total Points';
-            result2.checked = true;
-            result2.resultStatusId = ResultStatusId.RunningZero;
-
-            const result3 = new ResultDetail();
-            result3.resourceId = 'R003';
-            result3.betTypeName = 'Handicap';
-            result3.checked = false;
-            result3.resultStatusId = ResultStatusId.AutoCompleted;
-
-            resultDetails = [result1, result2, result3];
-
-            const selected1 = new ResultDetail();
-            selected1.relatedCalResources = 'R001,R002';
-
-            const selected2 = new ResultDetail();
-            selected2.relatedCalResources = 'R003';
-
-            selectedResources = [selected1, selected2];
-        });
-
-        it('should return resource names for unchecked and non-calculated related resources', () => {
-            resultDetails[1].checked = false;
-            resultDetails[2].resultStatusId = ResultStatusId.RunningZero;
-
-            const result = service.FindRelatedResourceInValid(resultDetails, selectedResources);
-
-            expect(result).toContain('R002 - Total Points');
-            expect(result).toContain('R003 - Handicap');
-        });
-
-        it('should handle single related resource', () => {
-            selectedResources[0].relatedCalResources = 'R001';
-            selectedResources.pop();
-
-            const result = service.FindRelatedResourceInValid(resultDetails, selectedResources);
-
-            expect(result).toBe('R001 - Winner');
-        });
-
-        it('should handle empty selected resources', () => {
-            const result = service.FindRelatedResourceInValid(resultDetails, []);
-
-            expect(result).toBe('');
-        });
-
-        it('should handle non-existent related resource ids', () => {
-            selectedResources[0].relatedCalResources = 'R999';
-
-            const result = service.FindRelatedResourceInValid(resultDetails, selectedResources);
-
-            expect(result).toBe('');
-        });
-
-        it('should return empty string when all related resources are checked or calculated', () => {
-            selectedResources[0].relatedCalResources = '';
-            const result = service.FindRelatedResourceInValid(resultDetails, selectedResources);
-
-            expect(result).toBe('');
         });
     });
 

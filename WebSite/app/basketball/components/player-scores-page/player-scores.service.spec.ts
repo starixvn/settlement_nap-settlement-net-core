@@ -485,7 +485,8 @@ function createMockResultDetail(resourceId: string, value: string, playerId: num
       teamId: teamId,
       isHome: true,
       statistics: [],
-      results: []
+      results: [],
+      relatedBettype: ''
     }
   }];
   resultDetail.resultSettingData = {

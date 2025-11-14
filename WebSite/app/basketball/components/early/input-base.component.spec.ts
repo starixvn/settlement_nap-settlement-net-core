@@ -10,7 +10,7 @@ import { MixMultiStatsService } from '../../services/mix-multi-stats.service';
 import { MixDoubleDoubleService } from '../../services/mix-double-double.service';
 import { MixHeadHeadService } from '../../services/mix-head-head.service';
 import { MixCoreService } from '../../services/mix-core.service';
-import { createMockVerificationService, createMockMixMultiStatsService, createMockMixDoubleDoubleService, createMockMixHeadHeadService, createMockMixCoreService, createMockMixPerformanceService } from '../../test-helpers/mock-services';
+import { createMockVerificationService, createMockMixMultiStatsService, createMockMixDoubleDoubleService, createMockMixHeadHeadService, createMockMixCoreService, createMockMixPerformanceService } from '../../test-helpers/mock-services.native';
 import { MixPerformanceService } from '../../services/performance-calculate/mix-performance.service';
 
 @Component({
