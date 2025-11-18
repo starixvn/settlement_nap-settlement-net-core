@@ -36,32 +36,6 @@
             <input type="checkbox" [(ngModel)]="isUndecidedApplyChild" />
           </td>
         </tr>
-        <tr>
-          <td>
-            <div style="padding: 0 10px">MTD. Hold</div>
-          </td>
-          <td class="text-center">
-            <input
-              type="radio"
-              [(ngModel)]="remark.isMtdHold"
-              [value]="false"
-              name="isMtdHold"
-              [disabled]="!permission?.canMarkUnDecided"
-            />
-          </td>
-          <td class="text-center">
-            <input
-              type="radio"
-              [(ngModel)]="remark.isMtdHold"
-              [value]="true"
-              name="isMtdHold"
-              [disabled]="!permission?.canMarkUnDecided"
-            />
-          </td>
-          <td class="text-center">
-            <input type="checkbox" [(ngModel)]="isMtdApplyChild" />
-          </td>
-        </tr>
 
         <tr>
           <td>
@@ -110,6 +84,32 @@
             />
           </td>
           <td></td>
+        </tr>
+        <tr>
+          <td class="disabled">
+            <div style="padding: 0 10px">MTD. Hold</div>
+          </td>
+          <td class="text-center">
+            <input
+              type="radio"
+              [(ngModel)]="remark.isMtdHold"
+              [value]="false"
+              name="isMtdHold"
+              disabled
+            />
+          </td>
+          <td class="text-center">
+            <input
+              type="radio"
+              [(ngModel)]="remark.isMtdHold"
+              [value]="true"
+              name="isMtdHold"
+              disabled
+            />
+          </td>
+          <td class="text-center">
+            <!-- <input type="checkbox" [(ngModel)]="isMtdApplyChild" /> -->
+          </td>
         </tr>
         <tr>
           <td class="disabled">
