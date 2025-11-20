@@ -76,7 +76,6 @@ export class CalculatePopupComponent implements OnInit {
     async ngOnInit(): Promise<void> {
         this.toastrService.overlayContainer = this.toastContainer;
         this.blockUIService.blockUIEvent
-           .pipe(takeUntilDestroyed())
            .subscribe((event: boolean) => this.blockUI = event);
         await this.getMatches();
         this.ticketsStatusSelect.items = this.calculateService.renderTicketStatus();
@@ -455,6 +454,15 @@ export class CalculatePopupComponent implements OnInit {
             return;
         }
 
+        const teamWonSelected = _.filter(this.teamSelected, team => _.isEqual(team.traderScore.toLowerCase(), Status.won));
+        const teamWonSettled = CalculateService.teamWonSettled(this.teamSelected, this.originalTeam);
+        const setting = await this.outrightService.getDeadHeatSetting(this.data.leagueId);
+        const errorSettingMessage = this.verifySetting(setting, teamWonSettled, teamWonSelected);
+        if (!_.isEmpty(errorSettingMessage)) {
+            this.toastrService.error(errorSettingMessage);
+            return;
+        }
+
         this.confirmationDialogMessage.message = Language.SaveTraderScore;
         this.messageBoxService.confirm(this.confirmationDialogMessage, async () => {
             const teams = this.teamSelected.map(team => ({
@@ -473,18 +481,15 @@ export class CalculatePopupComponent implements OnInit {
             return '';
         }
 
-        if(_.isEqual(team.traderScore.toLowerCase(), Status.refund) && team.resultStatusId === this.RESULT_STATUS_CONFIRMED) {
+        if(_.isEqual(team.traderScore.toLowerCase(), Status.refund)) {
             return 'bg-result-refund';
         }
 
-        if(_.isEqual(team.traderScore.toLowerCase(), Status.won) && team.resultStatusId === this.RESULT_STATUS_CONFIRMED) {
+        if(_.isEqual(team.traderScore.toLowerCase(), Status.won)) {
             return 'bg-result-won';
         }
 
         return '';
     }
-}
-function takeUntilDestroyed(): import("rxjs").OperatorFunction<boolean, unknown> {
-    throw new Error('Function not implemented.');
 }
 
