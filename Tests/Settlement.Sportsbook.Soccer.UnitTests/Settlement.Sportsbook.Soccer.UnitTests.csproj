@@ -12,8 +12,8 @@
 	<ItemGroup>
 		<PackageReference Include="Fanex.Settlement.Converter" Version="1.0.0.1" />
 		<PackageReference Include="Fanex.Settlement.MessageBridge" Version="1.0.15" />
-		<PackageReference Include="MassTransit" Version="8.5.1" />
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+		<PackageReference Include="MassTransit" Version="8.5.5" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
 		<PackageReference Include="coverlet.collector" Version="6.0.4">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
