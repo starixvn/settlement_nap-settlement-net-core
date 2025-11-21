@@ -1,5 +1,7 @@
-﻿using Fanex.Settlement.ScaleOut.Request;
+﻿using Fanex.Settlement.MessageBridge.JackTime;
+using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
+using MassTransit;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Constants;
 using Settlement.Core.Criteria;
@@ -269,6 +271,8 @@ public class MultipleServerAioServiceImp(
 
         var result = await PushResultSettleAllSites(criteria);
 
+        await PublishJackTimeRequest(result.IsSuccessful, criteria);
+
         return new Result
         {
             HasResultAmendment = isResultAmendment,
@@ -377,6 +381,24 @@ public class MultipleServerAioServiceImp(
         return matchIds.Count > 0 ? string.Join(',', matchIds.ToList()) : string.Empty;
     }
 
+    private async Task PublishJackTimeRequest(bool isSuccessful, SettleCriteria criteria)
+    {
+        if (isSuccessful && criteria.SportType == SportType.BasketBall)
+        {
+            var request = new HybridMatch
+            {
+                MatchId = criteria.MatchId,
+                LogDate = DateTimeOffset.Now,
+                Action = criteria.Action,
+                UserId = criteria.AdminId
+            };
+
+            await dependencies.PublishEndpoint.Publish(
+                request,
+                new CancellationTokenSource(TimeSpan.FromSeconds(3)).Token);
+        }
+    }
+
     public async Task<Result> SettleChildMatch(SettleChildMatchRequest request)
     {
         var criteria = createQueryService.QuerySettleChildMatch(request);
@@ -413,7 +435,8 @@ public class MultipleServerAioServiceDependencies(
     MergeDataService mergeDataService,
     LogService logService,
     IMapper mapper,
-    ResultAmendmentService resultAmendmentService)
+    ResultAmendmentService resultAmendmentService,
+    IPublishEndpoint publishEndpoint)
 {
     public ScaleOutSettleService ScaleOutSettleService { get; } = scaleOutSettleService;
     public ICreateQueryService CreateQueryService { get; } = createQueryService;
@@ -421,4 +444,6 @@ public class MultipleServerAioServiceDependencies(
     public LogService LogService { get; } = logService;
     public IMapper Mapper { get; } = mapper;
     public ResultAmendmentService ResultAmendmentService { get; } = resultAmendmentService;
+
+    public IPublishEndpoint PublishEndpoint { get; } = publishEndpoint;
 }

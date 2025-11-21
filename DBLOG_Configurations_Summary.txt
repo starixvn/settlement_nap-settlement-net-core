@@ -1,0 +1,151 @@
+TỔNG HỢP CẤU HÌNH DBLOG TỪ TẤT CẢ APPSETTINGS FILES
+=====================================================
+
+Generated on: $(Get-Date)
+Source: nap-settlement-net-core project
+
+=====================================================
+1. APPSETTINGS.JSON (Default)
+=====================================================
+Environment: DEV
+LogCategory: NAP-Settlement-LOCAL
+
+DBLOG Configuration:
+- Name: DBLOG.bodb_CustomerLog.wsv_nap
+- Data Source: 10.18.200.57
+- Initial Catalog: bodb_CustomerLog
+- User ID: wsv_nap
+- Password: tGvQ81wDp57an/VkfWyADdrGgwl6B52sSewTPyTAFw4=
+- Provider: System.Data.SqlClient
+- Additional Settings: packet size=4096, integrated security=false, trustservercertificate=true
+
+Connection String:
+packet size=4096; Data Source=10.18.200.57;Initial Catalog=bodb_CustomerLog;integrated security=false; trustservercertificate=true; user id=wsv_nap; password=tGvQ81wDp57an/VkfWyADdrGgwl6B52sSewTPyTAFw4=
+
+=====================================================
+2. APPSETTINGS.DEV.JSON
+=====================================================
+Environment: DEV
+LogCategory: NAP-Settlement-LOCAL
+
+DBLOG Configuration:
+- Name: DBLOG.bodb_CustomerLog.wsv_nap
+- Data Source: 10.18.200.61\DevDB055
+- Initial Catalog: bodb_CustomerLog
+- User ID: wsv_nap
+- Password: tGvQ81wDp57an/VkfWyADdrGgwl6B52sSewTPyTAFw4=
+- Provider: System.Data.SqlClient
+- Additional Settings: packet size=4096, integrated security=false, trustservercertificate=true
+
+Connection String:
+packet size=4096; Data Source=10.18.200.61\DevDB055;Initial Catalog=bodb_CustomerLog;integrated security=false; trustservercertificate=true; user id=wsv_nap; password=tGvQ81wDp57an/VkfWyADdrGgwl6B52sSewTPyTAFw4=
+
+=====================================================
+3. APPSETTINGS.KLPROD.JSON
+=====================================================
+Environment: PRO
+LogCategory: NAP-Settlement
+
+DBLOG Configuration:
+- Name: DBLOG.bodb_CustomerLog.wsv_nap
+- Data Source: 10.40.40.227
+- Initial Catalog: bodb_CustomerLog
+- User ID: wsv_nap
+- Password: tGvQ81wDp57an/VkfWyADdrGgwl6B52sSewTPyTAFw4=
+- Provider: System.Data.SqlClient
+- Additional Settings: packet size=4096, integrated security=false, trustservercertificate=true
+
+Connection String:
+packet size=4096; Data Source=10.40.40.227;Initial Catalog=bodb_CustomerLog;integrated security=false; trustservercertificate=true; user id=wsv_nap; password=tGvQ81wDp57an/VkfWyADdrGgwl6B52sSewTPyTAFw4=
+
+=====================================================
+4. APPSETTINGS.LOCAL.JSON
+=====================================================
+Environment: DEV
+LogCategory: NAP-Settlement-LOCAL
+
+DBLOG Configuration:
+- Name: DBLOG.bodb_CustomerLog.wsv_nap
+- Data Source: 127.0.0.1
+- Initial Catalog: bodb_CustomerLog
+- User ID: wsv_nap
+- Password: tGvQ81wDp57an/VkfWyADdrGgwl6B52sSewTPyTAFw4=
+- Provider: System.Data.SqlClient
+- Additional Settings: packet size=4096, integrated security=false, trustservercertificate=true
+
+Connection String:
+packet size=4096; Data Source=127.0.0.1;Initial Catalog=bodb_CustomerLog;integrated security=false; trustservercertificate=true; user id=wsv_nap; password=tGvQ81wDp57an/VkfWyADdrGgwl6B52sSewTPyTAFw4=
+
+=====================================================
+5. APPSETTINGS.SIT.JSON
+=====================================================
+Environment: SIT
+LogCategory: NAP-Settlement-SIT
+
+DBLOG Configuration:
+- Name: DBLOG.bodb_CustomerLog.wsv_nap
+- Data Source: 172.16.40.7
+- Initial Catalog: bodb_CustomerLog
+- User ID: wsv_nap
+- Password: tGvQ81wDp57an/VkfWyADdrGgwl6B52sSewTPyTAFw4=
+- Provider: System.Data.SqlClient
+- Additional Settings: packet size=4096, integrated security=false, trustservercertificate=true
+
+Connection String:
+packet size=4096; Data Source=172.16.40.7;Initial Catalog=bodb_CustomerLog;integrated security=false; trustservercertificate=true; user id=wsv_nap; password=tGvQ81wDp57an/VkfWyADdrGgwl6B52sSewTPyTAFw4=
+
+=====================================================
+6. APPSETTINGS.UAT.JSON
+=====================================================
+Environment: UAT
+LogCategory: NAP-Settlement-UAT
+
+DBLOG Configuration:
+- Name: DBLOG.bodb_CustomerLog.wsv_nap
+- Data Source: 127.0.0.1
+- Initial Catalog: bodb_CustomerLog
+- User ID: wsv_nap
+- Password: tGvQ81wDp57an/VkfWyADdrGgwl6B52sSewTPyTAFw4=
+- Provider: System.Data.SqlClient
+- Additional Settings: packet size=4096, integrated security=false, trustservercertificate=true
+
+Connection String:
+packet size=4096; Data Source=127.0.0.1;Initial Catalog=bodb_CustomerLog;integrated security=false; trustservercertificate=true; user id=wsv_nap; password=tGvQ81wDp57an/VkfWyADdrGgwl6B52sSewTPyTAFw4=
+
+=====================================================
+TỔNG KẾT
+=====================================================
+
+Tổng số file appsettings được phân tích: 6
+Tổng số cấu hình DBLOG: 6
+
+Các môi trường:
+- DEV (appsettings.json, appsettings.DEV.json, appsettings.LOCAL.json): 3 files
+- PRO (appsettings.KLPROD.json): 1 file  
+- SIT (appsettings.SIT.json): 1 file
+- UAT (appsettings.UAT.json): 1 file
+
+Các Data Source khác nhau:
+- 10.18.200.57 (appsettings.json)
+- 10.18.200.61\DevDB055 (appsettings.DEV.json)
+- 10.40.40.227 (appsettings.KLPROD.json)
+- 127.0.0.1 (appsettings.LOCAL.json, appsettings.UAT.json)
+- 172.16.40.7 (appsettings.SIT.json)
+
+Tất cả cấu hình đều sử dụng:
+- Database: bodb_CustomerLog
+- User: wsv_nap
+- Password: tGvQ81wDp57an/VkfWyADdrGgwl6B52sSewTPyTAFw4=
+- Provider: System.Data.SqlClient
+- Packet size: 4096
+- Integrated security: false
+- Trust server certificate: true
+
+=====================================================
+GHI CHÚ
+=====================================================
+- Tất cả cấu hình DBLOG đều có cùng tên: "DBLOG.bodb_CustomerLog.wsv_nap"
+- Mật khẩu giống nhau cho tất cả môi trường
+- Chỉ khác nhau về Data Source (địa chỉ server)
+- Các môi trường DEV và UAT sử dụng localhost (127.0.0.1)
+- Môi trường PRO và SIT sử dụng địa chỉ IP thực tế
