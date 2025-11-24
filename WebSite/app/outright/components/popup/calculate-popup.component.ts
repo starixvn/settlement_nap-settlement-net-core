@@ -456,8 +456,12 @@ export class CalculatePopupComponent implements OnInit {
 
         const teamWonSelected = _.filter(this.teamSelected, team => _.isEqual(team.traderScore.toLowerCase(), Status.won));
         const teamWonSettled = CalculateService.teamWonSettled(this.teamSelected, this.originalTeam);
+        const teamWonConfirmed = CalculateService.teamWonConfirmed(this.teamSelected, this.originalTeam);
         const setting = await this.outrightService.getDeadHeatSetting(this.data.leagueId);
-        const errorSettingMessage = this.verifySetting(setting, teamWonSettled, teamWonSelected);
+
+        const errorSettingMessage = this.verifySetting(setting, teamWonSettled, teamWonSelected) 
+            || this.verifySetting(setting, teamWonConfirmed, teamWonSelected);
+
         if (!_.isEmpty(errorSettingMessage)) {
             this.toastrService.error(errorSettingMessage);
             return;
