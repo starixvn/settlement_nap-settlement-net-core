@@ -407,8 +407,17 @@ public class MultipleServerAioServiceImp(
             foreach (var match in request.ChildMatches)
             {
                 criteria.MatchId = match.MatchId;
-                criteria.SelectedResources = createQueryService.CreateResourceChildMatch(match);
-                var result = await Execute(criteria, request.SelectedResources);
+                var (selectedResources, selectedResourcesXml) = createQueryService.CreateResourceItemsChildMatch(match);
+                criteria.SelectedResources = selectedResourcesXml;
+                var result = await Execute(criteria, selectedResources);
+
+                if (result.HasResultAmendment)
+                {
+                    await dependencies.PublishEndpoint.Publish(
+                        new Fanex.Settlement.MessageBridge.ResultAmendment.ResultAmendSettled(match.MatchId, criteria.BroadcastSessionId, result.IsOrg),
+                        new CancellationTokenSource(TimeSpan.FromSeconds(3)).Token);
+                }
+
                 createQueryService.WriteLogChildMatch(criteria, result);
             }
         }

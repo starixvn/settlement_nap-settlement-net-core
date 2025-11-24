@@ -22,6 +22,8 @@ public interface ICreateQueryService
 
     string CreateResourceChildMatch(ChildMatchModel childMatch);
 
+    (List<ResourceItem>, string) CreateResourceItemsChildMatch(ChildMatchModel childMatch);
+
     string CreateResources<T>(List<T> selectedResources);
 
     GetRecalResultCriteria QueryRecalResult(GetRecalResultRequest request);
@@ -124,6 +126,17 @@ public class CreateQueryServiceImp(
         };
 
         return xmlConvertService.Serialize(resource);
+    }
+
+    public (List<ResourceItem>, string) CreateResourceItemsChildMatch(ChildMatchModel childMatch)
+    {
+        List<ResourceItem> resourceItems = [mapper.Map<ChildMatchModel, ResourceItem>(childMatch)];
+        var resource = new Resources<ResourceItem>
+        {
+            ResourceItems = resourceItems
+        };
+
+        return (resourceItems, xmlConvertService.Serialize(resource));
     }
 
     public SaveScoreRequest QuerySaveScore(SaveScoreRequest request)
