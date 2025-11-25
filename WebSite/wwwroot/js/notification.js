@@ -3,7 +3,7 @@ var notification = {
     timeout: 40000, // 40s
     fiveMinutesTimeout: 300000, //5m
     numberOfItems: 10,
-    oneSecondInterval: 1000, // 1s
+    oneSecondInterval: 3000, // 1s
 
 }
 

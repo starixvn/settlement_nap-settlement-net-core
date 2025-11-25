@@ -1160,7 +1160,7 @@ describe('CalculatePopupComponent', () => {
 
       const result = component['verifySetting'](DeadHeatSettings.Yes, teamWonSettled, teamWonSelected);
 
-      expect(CalculateService.VerifyDeadHeatYesSetting).toHaveBeenCalledWith(teamWonSelected, teamWonSettled);
+      expect(CalculateService.VerifyDeadHeatYesSetting).toHaveBeenCalledWith(teamWonSelected, teamWonSettled,false);
       expect(result).toBe('Yes setting error');
     });
 

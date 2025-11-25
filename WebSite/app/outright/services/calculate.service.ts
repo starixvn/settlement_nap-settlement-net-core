@@ -48,7 +48,7 @@ export class CalculateService {
         return "";
     }
 
-    public static VerifyDeadHeatYesSetting(teamWonSelected: Team[], teamWonSettled: Team[]) {
+    public static VerifyDeadHeatYesSetting(teamWonSelected: Team[], teamWonSettled: Team[], isConfirm = false) {
         const teamWonSelectedNoneDeadHeat = _.filter(teamWonSelected, team => !team.isDeadheat);
         const teamWonSelectedDeadHeat = _.filter(teamWonSelected, team => team.isDeadheat);
         const teamSettledDeadHeat = _.filter(teamWonSettled, team => team.isDeadheat);
@@ -61,13 +61,15 @@ export class CalculateService {
         if (teamWonSelectedNoneDeadHeat.length === 1 && ((teamSettledNoneDeadHeat.length >= 1 && _.isEmpty(teamSettledDeadHeat)) ||
             !_.isEmpty(teamSettledDeadHeat) ||
             !_.isEmpty(teamWonSelectedDeadHeat))) {
-
             return this.MessageInconsistentDeadheat(teamWonSelected.concat(teamWonSettled), Language.Outright.incorrectDeadHeatSetting);
-
         }
 
         if (VerifyDeadHeatService.VerifyDeadheatSettingYes(teamWonSelected, teamWonSettled)) {
             return this.MessageInconsistentDeadheat(teamWonSelected.concat(teamWonSettled), Language.Outright.inconsistentDeadheat);
+        }
+
+        if(isConfirm && teamSettledDeadHeat.length === 1) { // teamWonSettled is confirm
+            return Language.Outright.atLeastTwoDeadHeat;
         }
 
         return "";

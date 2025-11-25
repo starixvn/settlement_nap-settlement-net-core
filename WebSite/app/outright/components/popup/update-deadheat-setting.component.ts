@@ -57,7 +57,8 @@ export class UpdateDeadheatSettingComponent implements OnInit {
   updateSetting() {
     this.clearError();
     const teamWonQuantity = this.leagueSettle.teams.filter(team => team.status.toLowerCase() === 'won').length;
-    if (teamWonQuantity > 1) {
+    const teamWonConfirmedQuantity = this.leagueSettle.teams.filter(team => team.traderScore?.toLowerCase() === 'won' && team.resultStatusId === 3).length;
+    if (teamWonQuantity > 1 || teamWonConfirmedQuantity > 1) {
       this.toastrService.error(Language.Outright.multiTeamWon);
       return;
     }

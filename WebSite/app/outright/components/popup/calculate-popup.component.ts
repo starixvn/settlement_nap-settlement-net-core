@@ -367,14 +367,14 @@ export class CalculatePopupComponent implements OnInit {
         this.doCalculate(this.teamSettleWon.length);
     }
 
-    private verifySetting(setting: number, teamWonSettled: Team[], teamWonSelected: Team[]) {
+    private verifySetting(setting: number, teamWonSettled: Team[], teamWonSelected: Team[], isConfirm = false) {
         let errorSettingMessage = "";
         switch (setting) {
             case DeadHeatSettings.No:
                 errorSettingMessage = CalculateService.VerifyDeadHeatNoSetting(teamWonSelected, teamWonSettled);
                 break;
             case DeadHeatSettings.Yes:
-                errorSettingMessage = CalculateService.VerifyDeadHeatYesSetting(teamWonSelected, teamWonSettled);
+                errorSettingMessage = CalculateService.VerifyDeadHeatYesSetting(teamWonSelected, teamWonSettled, isConfirm);
                 break;
             default: errorSettingMessage = CalculateService.VerifyDeadHeatNoSet(teamWonSelected, teamWonSettled);
         }
@@ -460,7 +460,7 @@ export class CalculatePopupComponent implements OnInit {
         const setting = await this.outrightService.getDeadHeatSetting(this.data.leagueId);
 
         const errorSettingMessage = this.verifySetting(setting, teamWonSettled, teamWonSelected) 
-            || this.verifySetting(setting, teamWonConfirmed, teamWonSelected);
+            || this.verifySetting(setting, teamWonConfirmed, teamWonSelected, true);
 
         if (!_.isEmpty(errorSettingMessage)) {
             this.toastrService.error(errorSettingMessage);
