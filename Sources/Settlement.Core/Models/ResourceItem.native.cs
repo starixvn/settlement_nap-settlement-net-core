@@ -42,6 +42,10 @@ public class ResourceItem : BaseResourceItem
 
     [XmlIgnore]
     public string Bettype { get; set; }
+
+    [XmlIgnore]
+    public string[] OddsInfo { get; set; } = [];
+
 }
 
 public class StatusResourceItem : ResourceItem

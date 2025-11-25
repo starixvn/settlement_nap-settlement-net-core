@@ -313,6 +313,8 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
                 return;
             }
 
+            const oddsInfo = _.uniq(result.oddFlex.map(item => item.oddsInfo));
+            result.oddsInfo = oddsInfo;
             if (result.otherInfo) {
                 return;
             }

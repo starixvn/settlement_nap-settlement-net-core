@@ -20,9 +20,9 @@
     <PackageReference Include="Fanex.NAP.Client" Version="2.0.3" />
     <PackageReference Include="Fanex.RemotingRef" Version="1.5.5.1" />
     <PackageReference Include="Fanex.Settlement.Converter" Version="1.0.0.1" />
-    <PackageReference Include="Fanex.Settlement.MessageBridge" Version="1.0.15" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-    <PackageReference Include="Polly" Version="8.6.4" />
+    <PackageReference Include="Fanex.Settlement.MessageBridge" Version="1.0.14-alpha01" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Polly" Version="8.6.2" />
   </ItemGroup>
   <ItemGroup>
     <None Update="Configurations\SettlementFunctionKeys.tt">

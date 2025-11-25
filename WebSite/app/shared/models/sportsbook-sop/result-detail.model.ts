@@ -48,5 +48,6 @@ export class ResultDetail extends GeneralResultDetail {
     confirmedSdtHomeValue: string;
     confirmedSdtAwayValue: string;
     isRelated: boolean;
-    relatedCalResources: string
+    relatedCalResources: string;
+    oddsInfo: string[] = [];
 }

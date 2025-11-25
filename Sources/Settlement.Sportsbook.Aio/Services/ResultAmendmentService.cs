@@ -5,7 +5,6 @@ using Settlement.Core.Constants;
 using Settlement.Core.Criteria.ResultAmendment;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
-using Settlement.Sportsbook.Aio.Constants.Basketball;
 using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.Criteria.Cricket;
 using Settlement.Sportsbook.Aio.Models;
@@ -34,15 +33,7 @@ public class ResultAmendmentServiceImp(
     {
         try
         {
-            var amendmentResources = settleCriteria.SportType == SportType.BasketBall ? selectedResources
-                    .Where(x => !GroupBetType.BettypeIgnoreResultAmendment.Contains(x.Bettype)).ToList() : selectedResources;
-
-            if (amendmentResources.Count > 0)
-            {
-                return await ProcessResultAmendment(settleCriteria, amendmentResources);
-            }
-
-            return false;
+            return await ProcessResultAmendment(settleCriteria, selectedResources);
         }
         catch (Exception ex)
         {
@@ -119,6 +110,7 @@ public class ResultAmendmentServiceImp(
                     HomeId = x.HomeId,
                     OtherInfo = x.OtherInfo,
                     GroupBetType = x.GroupBetType,
+                    OddsInfo = x.OddsInfo
                 })],
                 [.. results]),
                 new CancellationTokenSource(TimeSpan.FromSeconds(3)).Token);
