@@ -68,7 +68,7 @@ export class CalculateService {
             return this.MessageInconsistentDeadheat(teamWonSelected.concat(teamWonSettled), Language.Outright.inconsistentDeadheat);
         }
 
-        if(isConfirm && teamSettledDeadHeat.length === 1) { // teamWonSettled is confirm
+        if (isConfirm && this.isOnlyOneDeadHeat(teamSettledDeadHeat, teamWonSelectedDeadHeat)) {
             return Language.Outright.atLeastTwoDeadHeat;
         }
 
@@ -166,4 +166,7 @@ export class CalculateService {
         return teamWonSelected.some(team => team.isDeadheat !== team.originalIsDeadheat);
     }
 
+    public static isOnlyOneDeadHeat(teamSettledDeadHeat: Team[], teamWonSelectedDeadHeat: Team[]) {
+        return teamSettledDeadHeat.length === 1 || teamWonSelectedDeadHeat.length === 1;
+    }
 }
