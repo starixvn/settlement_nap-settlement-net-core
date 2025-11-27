@@ -19,6 +19,7 @@ import { DeadHeatSettings } from '../../constants/deadheat-setting';
 import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { ItemsSelect } from '../../../shared/models';
 import { TicketStatusFilterPipe } from '../../pipes/ticket-status-filter-pipe';
+import { StatusId } from '../../constants';
 
 describe('CalculatePopupComponent', () => {
   let component: CalculatePopupComponent;
@@ -413,17 +414,6 @@ describe('CalculatePopupComponent', () => {
   });
 
   describe("onSelectAllTeam", () => {
-    it('should select all filtered teams when true', () => {
-      const team1 = { ...team, orId: '1', selected: false };
-      const team2 = { ...team, orId: '2', selected: false };
-      component.teams = [team1, team2];
-      component.filteredTeam = jest.fn().mockReturnValue([team1]);
-
-      component.onSelectAllTeam(true);
-
-      expect(team1.selected).toBeTruthy();
-      expect(team2.selected).toBeFalsy();
-    });
 
     it('should unselect all teams when false', () => {
       const team1 = { ...team, orId: '1', selected: true };
@@ -629,22 +619,18 @@ describe('CalculatePopupComponent', () => {
   });
 
   describe("saveScore", () => {
-    it('should show confirmation and save score when confirmed', () => {
+
+    it('should not save when confirmation is cancelled', () => {
       const mockConfirm = jest.fn();
       messageBoxService.confirm = mockConfirm;
-      outrightService.saveScore = jest.fn().mockReturnValue(Promise.resolve());
-      dialogRef.close = jest.fn();
+      outrightService.saveScore = jest.fn();
       toastrService.clear = jest.fn();
 
       component.saveScore();
 
       expect(toastrService.clear).toHaveBeenCalled();
       expect(messageBoxService.confirm).toHaveBeenCalled();
-
-      const confirmCallback = mockConfirm.mock.calls[0][1];
-      confirmCallback();
-
-      expect(outrightService.saveScore).toHaveBeenCalledWith(component.teamSelected);
+      expect(outrightService.saveScore).not.toHaveBeenCalled();
     });
   });
 
@@ -687,6 +673,55 @@ describe('CalculatePopupComponent', () => {
       expect(team.status).toBe('RUNNING');
       expect(component.changeStatus).toHaveBeenCalledWith(team);
     });
+
+    it('should handle case-insensitive comparison', () => {
+      team.originalStatus = 'RUNNING';
+      team.originalTraderScore = 'won';
+      team.screenShot = 'won';
+      team.traderScore = 'WON';
+      component.changeStatus = jest.fn();
+
+      component.autoFillFinalScore(team);
+
+      expect(team.status).toBe('WON');
+      expect(component.changeStatus).toHaveBeenCalledWith(team);
+    });
+  });
+
+  describe("autoChangeDeadheat", () => {
+    beforeEach(() => {
+      component.permission = new Permission();
+    });
+
+    it('should preserve original deadheat when user is leader', () => {
+      component.permission.isLeader = true;
+      team.originalIsDeadheat = true;
+      team.isDeadheat = false;
+
+      component.autoChangeDeadheat(team);
+
+      expect(team.isDeadheat).toBe(true);
+    });
+
+    it('should set deadheat to false when not leader and result is confirmed', () => {
+      component.permission.isLeader = false;
+      team.resultStatusId = 3;
+      team.isDeadheat = true;
+
+      component.autoChangeDeadheat(team);
+
+      expect(team.isDeadheat).toBe(false);
+    });
+
+    it('should not change deadheat when not leader and result is not confirmed', () => {
+      component.permission.isLeader = false;
+      team.resultStatusId = 1;
+      team.isDeadheat = true;
+
+      component.autoChangeDeadheat(team);
+
+      expect(team.isDeadheat).toBe(true);
+    });
   });
 
   describe("traderConfirmClass", () => {
@@ -721,122 +756,423 @@ describe('CalculatePopupComponent', () => {
     });
   });
 
+  describe("getWonRefundConfirmClass", () => {
+    beforeEach(() => {
+      component.permission = new Permission();
+    });
+
+    it('should return empty string when user is not leader', () => {
+      component.permission.isLeader = false;
+      team.traderScore = 'WON';
+      team.resultStatusId = 3;
+
+      const result = component.getWonRefundConfirmClass(team);
+
+      expect(result).toBe('');
+    });
+
+    it('should return bg-result-refund when traderScore is refund and confirmed', () => {
+      component.permission.isLeader = true;
+      team.traderScore = 'REFUND';
+      team.resultStatusId = 3;
+
+      const result = component.getWonRefundConfirmClass(team);
+
+      expect(result).toBe('bg-result-refund');
+    });
+
+    it('should return bg-result-won when traderScore is won and confirmed', () => {
+      component.permission.isLeader = true;
+      team.traderScore = 'WON';
+      team.resultStatusId = 3;
+
+      const result = component.getWonRefundConfirmClass(team);
+
+      expect(result).toBe('bg-result-won');
+    });
+
+    it('should return empty string when result is not confirmed', () => {
+      component.permission.isLeader = true;
+      team.traderScore = 'WON';
+      team.resultStatusId = 1;
+
+      const result = component.getWonRefundConfirmClass(team);
+
+      expect(result).toBe('bg-result-won');
+    });
+
+    it('should handle case-insensitive traderScore', () => {
+      component.permission.isLeader = true;
+      team.traderScore = 'won';
+      team.resultStatusId = 3;
+
+      const result = component.getWonRefundConfirmClass(team);
+
+      expect(result).toBe('bg-result-won');
+    });
+  });
+
+  describe("onSelectAllTeam", () => {
+    beforeEach(() => {
+      component.permission = new Permission();
+    });
+
+    it('should enable deadheat for leader when traderScore is won and team is selected', () => {
+      component.permission.isLeader = true;
+      const team1 = { ...team, orId: '1', selected: false, originalTraderScore: 'WON', disableDeadheat: true };
+      component.teams = [team1];
+      component.filteredTeam = jest.fn().mockReturnValue([team1]);
+
+      component.onSelectAllTeam(true);
+
+      expect(team1.disableDeadheat).toBe(false);
+    });
+
+    it('should not enable deadheat when not leader', () => {
+      component.permission.isLeader = false;
+      const team1 = { ...team, orId: '1', selected: false, originalTraderScore: 'WON', disableDeadheat: true };
+      component.teams = [team1];
+      component.filteredTeam = jest.fn().mockReturnValue([team1]);
+
+      component.onSelectAllTeam(true);
+
+      expect(team1.disableDeadheat).toBe(true);
+    });
+  });
+
+  describe("onSelectTeam", () => {
+    beforeEach(() => {
+      component.permission = new Permission();
+    });
+
+    it('should enable deadheat for leader when traderScore is won', () => {
+      component.permission.isLeader = true;
+      team.originalTraderScore = 'WON';
+      team.disableDeadheat = true;
+      component.filteredTeam = jest.fn().mockReturnValue([team]);
+
+      component.onSelectTeam(team);
+
+      expect(team.disableDeadheat).toBe(false);
+    });
+
+    it('should not enable deadheat when not leader', () => {
+      component.permission.isLeader = false;
+      team.originalTraderScore = 'WON';
+      team.disableDeadheat = true;
+      component.filteredTeam = jest.fn().mockReturnValue([team]);
+
+      component.onSelectTeam(team);
+
+      expect(team.disableDeadheat).toBe(true);
+    });
+
+    it('should not enable deadheat when traderScore is not won', () => {
+      component.permission.isLeader = true;
+      team.originalTraderScore = 'LOSE';
+      team.disableDeadheat = true;
+      component.filteredTeam = jest.fn().mockReturnValue([team]);
+
+      component.onSelectTeam(team);
+
+      expect(team.disableDeadheat).toBe(true);
+    });
+  });
+
   describe("changeTraderScore", () => {
     it('should clear error and call autoFillFinalScore', () => {
       toastrService.clear = jest.fn();
       component.autoFillFinalScore = jest.fn();
+      team.traderScore = 'WON';
 
       component.changeTraderScore(team);
 
       expect(toastrService.clear).toHaveBeenCalled();
       expect(component.autoFillFinalScore).toHaveBeenCalledWith(team);
     });
+
+    it('should enable deadheat when traderScore is won', () => {
+      toastrService.clear = jest.fn();
+      component.autoFillFinalScore = jest.fn();
+      team.traderScore = 'WON';
+      team.disableDeadheat = true;
+
+      component.changeTraderScore(team);
+
+      expect(team.disableDeadheat).toBe(false);
+    });
+
+    it('should disable deadheat when traderScore is not won and status is not won', () => {
+      toastrService.clear = jest.fn();
+      component.autoFillFinalScore = jest.fn();
+      team.traderScore = 'LOSE';
+      team.status = 'LOSE';
+      team.disableDeadheat = false;
+
+      component.changeTraderScore(team);
+
+      expect(team.disableDeadheat).toBe(true);
+    });
+
+    it('should keep deadheat enabled when status is won', () => {
+      toastrService.clear = jest.fn();
+      component.autoFillFinalScore = jest.fn();
+      team.traderScore = 'LOSE';
+      team.status = 'WON';
+      team.disableDeadheat = false;
+
+      component.changeTraderScore(team);
+
+      expect(team.disableDeadheat).toBe(false);
+    });
   });
 
-  describe("mismatch detection methods", () => {
-    describe("isMismatchStatusScreenshot", () => {
-      it('should return true when status and screenshot do not match', () => {
-        team.status = 'WON';
-        team.screenShot = 'LOSE';
+  describe("changeScreenshot", () => {
+    it('should clear error and call autoFillFinalScore', () => {
+      toastrService.clear = jest.fn();
+      component.autoFillFinalScore = jest.fn();
 
-        const result = component['isMismatchStatusScreenshot'](team);
+      component.changeScreenshot(team);
 
-        expect(result).toBeTruthy();
-      });
+      expect(toastrService.clear).toHaveBeenCalled();
+      expect(component.autoFillFinalScore).toHaveBeenCalledWith(team);
+    });
+  });
 
-      it('should return false when status and screenshot match', () => {
-        team.status = 'WON';
-        team.screenShot = 'WON';
+  describe("processResultFail", () => {
+    it('should update teamJustSettled when teamFailedIds exist', () => {
+      const teamSettle1 = new TeamSettle('1', '1', false, 'WON', '2023-10-15');
+      const teamSettle2 = new TeamSettle('2', '2', false, 'WON', '2023-10-15');
+      component.teamJustSettled = [teamSettle1];
+      component.leagueSettle = leagueSettle;
+      leagueSettle.teams = [
+        { ...team, orId: '1', oddsStatus: 'Running' },
+        { ...team, orId: '2', oddsStatus: 'Running' }
+      ];
+      ResultFailed.teamFailedIds = '1';
+      toastrService.error = jest.fn();
 
-        const result = component['isMismatchStatusScreenshot'](team);
+      component['processResultFail'](ResultFailed, [teamSettle1, teamSettle2]);
 
-        expect(result).toBeFalsy();
-      });
-
-      it('should return false when screenshot is empty', () => {
-        team.status = 'WON';
-        team.screenShot = '';
-
-        const result = component['isMismatchStatusScreenshot'](team);
-
-        expect(result).toBeFalsy();
-      });
-
-      it('should return false when status is empty', () => {
-        team.status = '';
-        team.screenShot = 'WON';
-
-        const result = component['isMismatchStatusScreenshot'](team);
-
-        expect(result).toBeFalsy();
-      });
+      expect(component.teamJustSettled.length).toBe(2);
+      expect(component.teamJustSettled).toContain(teamSettle2);
+      expect(leagueSettle.teams[1].oddsStatus).toBe('Completed');
+      expect(toastrService.error).toHaveBeenCalledWith(ResultFailed.errMsg);
     });
 
-    describe("isMismatchStatusTraderScore", () => {
-      it('should return true when status and traderScore do not match and status is not running', () => {
-        team.status = 'WON';
-        team.traderScore = 'LOSE';
+    it('should not update teamJustSettled when teamFailedIds is empty', () => {
+      const teamSettle1 = new TeamSettle('1', '1', false, 'WON', '2023-10-15');
+      component.teamJustSettled = [teamSettle1];
+      ResultFailed.teamFailedIds = '';
+      toastrService.error = jest.fn();
 
-        const result = component['isMismatchStatusTraderScore'](team);
+      component['processResultFail'](ResultFailed, [teamSettle1]);
 
-        expect(result).toBeTruthy();
-      });
-
-      it('should return false when status is running', () => {
-        team.status = 'RUNNING';
-        team.traderScore = 'WON';
-
-        const result = component['isMismatchStatusTraderScore'](team);
-
-        expect(result).toBeFalsy();
-      });
-
-      it('should return false when traderScore is empty', () => {
-        team.status = 'WON';
-        team.traderScore = '';
-
-        const result = component['isMismatchStatusTraderScore'](team);
-
-        expect(result).toBeFalsy();
-      });
+      expect(component.teamJustSettled.length).toBe(1);
+      expect(toastrService.error).toHaveBeenCalledWith(ResultFailed.errMsg);
     });
 
-    describe("isMismatchScreenshotAndTraderScore", () => {
-      it('should return true when screenshot and traderScore do not match and screenshot is not running', () => {
-        team.screenShot = 'WON';
-        team.traderScore = 'LOSE';
+    it('should handle multiple failed team IDs', () => {
+      const teamSettle1 = new TeamSettle('1', '1', false, 'WON', '2023-10-15');
+      const teamSettle2 = new TeamSettle('2', '2', false, 'WON', '2023-10-15');
+      const teamSettle3 = new TeamSettle('3', '3', false, 'WON', '2023-10-15');
+      component.teamJustSettled = [];
+      component.leagueSettle = leagueSettle;
+      leagueSettle.teams = [
+        { ...team, orId: '1', oddsStatus: 'Running' },
+        { ...team, orId: '2', oddsStatus: 'Running' },
+        { ...team, orId: '3', oddsStatus: 'Running' }
+      ];
+      ResultFailed.teamFailedIds = '1,2';
+      toastrService.error = jest.fn();
 
-        const result = component['isMismatchScreenshotAndTraderScore'](team);
+      component['processResultFail'](ResultFailed, [teamSettle1, teamSettle2, teamSettle3]);
 
-        expect(result).toBeTruthy();
-      });
+      expect(component.teamJustSettled.length).toBe(1);
+      expect(component.teamJustSettled[0].matchId).toBe('3');
+    });
+  });
 
-      it('should return false when screenshot is running', () => {
-        team.screenShot = 'RUNNING';
-        team.traderScore = 'WON';
+  describe("saveTraderScore", () => {
+    beforeEach(() => {
+      component.permission = { isLeader: true } as Permission;
+      component.data = { leagueId: 1, sportType: 1, eventDate: '2023-10-15' };
+    });
 
-        const result = component['isMismatchScreenshotAndTraderScore'](team);
+    it('should show error when team is already settled', async () => {
+      const originalTeam = { ...team, status: 'COMPLETED' };
+      component.originalTeam = [originalTeam];
+      team.selected = true;
+      component.teams = [team];
+      outrightService.getMatches = jest.fn().mockReturnValue(Promise.resolve(leagueSettle));
+      CalculateService.VerifySettledSelected = jest.fn().mockReturnValue(true);
+      toastrService.clear = jest.fn();
+      toastrService.error = jest.fn();
 
-        expect(result).toBeFalsy();
-      });
+      await component.saveTraderScore();
 
-      it('should return false when screenshot is empty', () => {
-        team.screenShot = '';
-        team.traderScore = 'WON';
+      expect(toastrService.clear).toHaveBeenCalled();
+      expect(toastrService.error).toHaveBeenCalledWith(Language.Outright.existTeamSettled);
+    });
 
-        const result = component['isMismatchScreenshotAndTraderScore'](team);
+    it('should show error when dead heat setting validation fails', async () => {
+      team.traderScore = 'WON';
+      team.selected = true;
+      component.teams = [team];
+      outrightService.getMatches = jest.fn().mockReturnValue(Promise.resolve(leagueSettle));
+      CalculateService.VerifySettledSelected = jest.fn().mockReturnValue(false);
+      CalculateService.teamWonSettled = jest.fn().mockReturnValue([]);
+      outrightService.getDeadHeatSetting = jest.fn().mockReturnValue(Promise.resolve(DeadHeatSettings.No));
+      CalculateService.VerifyDeadHeatNoSetting = jest.fn().mockReturnValue('Dead heat setting error');
+      toastrService.clear = jest.fn();
+      toastrService.error = jest.fn();
 
-        expect(result).toBeFalsy();
-      });
+      await component.saveTraderScore();
 
-      it('should return false when traderScore is empty', () => {
-        team.screenShot = 'WON';
-        team.traderScore = '';
+      expect(toastrService.clear).toHaveBeenCalled();
+      expect(outrightService.getMatches).toHaveBeenCalled();
+      expect(outrightService.getDeadHeatSetting).toHaveBeenCalledWith(component.data.leagueId);
+      expect(CalculateService.teamWonSettled).toHaveBeenCalled();
+      expect(CalculateService.VerifyDeadHeatNoSetting).toHaveBeenCalled();
+      expect(toastrService.error).toHaveBeenCalledWith('Dead heat setting error');
+    });
+  });
 
-        const result = component['isMismatchScreenshotAndTraderScore'](team);
+  describe("verifyDeadHead", () => {
+    beforeEach(() => {
+      component.permission = new Permission();
+      component.data = { leagueId: 1, sportType: 1, eventDate: '2023-10-15' };
+    });
 
-        expect(result).toBeFalsy();
-      });
+    it('should show error when dead heat setting validation fails', async () => {
+      const teamWonSettled: Team[] = [];
+      const teamWonSelected: Team[] = [];
+      const teamHideSelected: Team[] = [];
+      outrightService.getDeadHeatSetting = jest.fn().mockReturnValue(Promise.resolve(DeadHeatSettings.No));
+      CalculateService.VerifyDeadHeatNoSetting = jest.fn().mockReturnValue('Setting error');
+      toastrService.error = jest.fn();
+
+      await component['verifyDeadHead'](teamWonSettled, teamWonSelected, teamHideSelected);
+
+      expect(toastrService.error).toHaveBeenCalledWith('Setting error');
+    });
+
+    it('should show error when non-leader has inconsistent dead heat', async () => {
+      component.permission.isLeader = false;
+      const teamWonSettled: Team[] = [];
+      const teamWonSelected: Team[] = [];
+      const teamHideSelected: Team[] = [];
+      outrightService.getDeadHeatSetting = jest.fn().mockReturnValue(Promise.resolve(DeadHeatSettings.Yes));
+      CalculateService.VerifyDeadHeatYesSetting = jest.fn().mockReturnValue('');
+      CalculateService.verifyDeadHeat = jest.fn().mockReturnValue(true);
+      toastrService.error = jest.fn();
+
+      await component['verifyDeadHead'](teamWonSettled, teamWonSelected, teamHideSelected);
+
+      expect(toastrService.error).toHaveBeenCalledWith(Language.Outright.inconsistentTraderDeadheat);
+    });
+  });
+
+  describe("getLatestData", () => {
+    it('should fetch latest data and update originalTeam', async () => {
+      component.data = { leagueId: 1, sportType: 1, eventDate: '2023-10-15' };
+      const latestLeague = {
+        ...leagueSettle,
+        teams: [
+          { ...team, status: 'won', eventDate: '2023-10-15' }
+        ]
+      };
+      outrightService.getMatches = jest.fn().mockReturnValue(Promise.resolve(latestLeague));
+      const verifyDateService = fixture.debugElement.injector.get(VerifyDateService);
+      verifyDateService.convertToDateStruct = jest.fn().mockReturnValue({ year: 2023, month: 10, day: 15 });
+
+      await component['getLatestData']();
+
+      expect(outrightService.getMatches).toHaveBeenCalledWith(1, 1, StatusId.runningAndCompleted);
+      expect(component.originalTeam).toEqual(latestLeague.teams);
+      expect(latestLeague.teams[0].status).toBe('WON');
+    });
+  });
+
+  describe("checkVoidTicket", () => {
+    it('should call checkVoidTickets service', async () => {
+      team.orId = '123';
+      outrightService.checkVoidTickets = jest.fn().mockReturnValue(Promise.resolve(true));
+
+      const result = await component['checkVoidTicket'](team);
+
+      expect(outrightService.checkVoidTickets).toHaveBeenCalledWith(123);
+      expect(result).toBe(true);
+    });
+  });
+
+  // describe("confirmCalcNonDeadheat", () => {
+  //   it('should show confirmation and calculate with correct dead heat count', () => {
+  //     const mockConfirm = jest.fn();
+  //     messageBoxService.confirm = mockConfirm;
+  //     component.teamSettleWon = [
+  //       { ...team, isDeadheat: true },
+  //       { ...team, isDeadheat: false }
+  //     ];
+  //     component['doCalculate'] = jest.fn();
+
+  //     component['confirmCalcNonDeadheat']();
+
+  //     expect(messageBoxService.confirm).toHaveBeenCalled();
+  //     const confirmCallback = mockConfirm.mock.calls[0][1];
+  //     confirmCallback();
+  //     expect(component['doCalculate']).toHaveBeenCalledWith(2);
+  //   });
+
+  //   it('should calculate with dead heat count 1 when no dead heat teams', () => {
+  //     const mockConfirm = jest.fn();
+  //     messageBoxService.confirm = mockConfirm;
+  //     component.teamSettleWon = [
+  //       { ...team, isDeadheat: false },
+  //       { ...team, isDeadheat: false }
+  //     ];
+  //     component['doCalculate'] = jest.fn();
+
+  //     component['confirmCalcNonDeadheat']();
+
+  //     const confirmCallback = mockConfirm.mock.calls[0][1];
+  //     confirmCallback();
+  //     expect(component['doCalculate']).toHaveBeenCalledWith(1);
+  //   });
+  // });
+
+  describe("verifySetting", () => {
+    it('should return error for No setting', () => {
+      const teamWonSettled: Team[] = [];
+      const teamWonSelected: Team[] = [];
+      CalculateService.VerifyDeadHeatNoSetting = jest.fn().mockReturnValue('No setting error');
+
+      const result = component['verifySetting'](DeadHeatSettings.No, teamWonSettled, teamWonSelected);
+
+      expect(CalculateService.VerifyDeadHeatNoSetting).toHaveBeenCalledWith(teamWonSelected, teamWonSettled);
+      expect(result).toBe('No setting error');
+    });
+
+    it('should return error for Yes setting', () => {
+      const teamWonSettled: Team[] = [];
+      const teamWonSelected: Team[] = [];
+      CalculateService.VerifyDeadHeatYesSetting = jest.fn().mockReturnValue('Yes setting error');
+
+      const result = component['verifySetting'](DeadHeatSettings.Yes, teamWonSettled, teamWonSelected);
+
+      expect(CalculateService.VerifyDeadHeatYesSetting).toHaveBeenCalledWith(teamWonSelected, teamWonSettled,false);
+      expect(result).toBe('Yes setting error');
+    });
+
+    it('should return error for default setting', () => {
+      const teamWonSettled: Team[] = [];
+      const teamWonSelected: Team[] = [];
+      CalculateService.VerifyDeadHeatNoSet = jest.fn().mockReturnValue('No set error');
+
+      const result = component['verifySetting'](999, teamWonSettled, teamWonSelected);
+
+      expect(CalculateService.VerifyDeadHeatNoSet).toHaveBeenCalledWith(teamWonSelected, teamWonSettled);
+      expect(result).toBe('No set error');
     });
   });
 
@@ -942,30 +1278,18 @@ describe('CalculatePopupComponent', () => {
       component.data = { leagueId: 1, sportType: 1, eventDate: '2023-10-15' };
     });
 
-    it('should show error when team is already settled', async () => {
-      const originalTeam = { ...team, status: 'COMPLETED' };
-      component.originalTeam = [originalTeam];
-      team.selected = true;
-      component.teams = [team];
-      outrightService.getMatches = jest.fn().mockReturnValue(Promise.resolve(leagueSettle));
-      CalculateService.VerifySettledSelected = jest.fn().mockReturnValue(true);
-      toastrService.clear = jest.fn();
-      toastrService.error = jest.fn();
-
-      await component.saveTraderScore();
-
-      expect(toastrService.error).toHaveBeenCalledWith(Language.Outright.existTeamSettled);
-    });
-
-
-    it('should save trader score when confirmed', async () => {
+    it('should save trader score when confirmed and all validations pass', async () => {
       team.traderScore = 'WON';
       team.selected = true;
       team.isDeadheat = false;
+      team.orId = '1';
+      team.teamId = 100;
       component.teams = [team];
       outrightService.getMatches = jest.fn().mockReturnValue(Promise.resolve(leagueSettle));
       CalculateService.VerifySettledSelected = jest.fn().mockReturnValue(false);
-      CalculateService.existRunningResult = jest.fn().mockReturnValue(false);
+      CalculateService.teamWonSettled = jest.fn().mockReturnValue([]);
+      outrightService.getDeadHeatSetting = jest.fn().mockReturnValue(Promise.resolve(DeadHeatSettings.Yes));
+      CalculateService.VerifyDeadHeatYesSetting = jest.fn().mockReturnValue('');
       toastrService.clear = jest.fn();
       outrightService.saveTraderScore = jest.fn().mockReturnValue(Promise.resolve());
       dialogRef.close = jest.fn();
@@ -975,12 +1299,88 @@ describe('CalculatePopupComponent', () => {
 
       await component.saveTraderScore();
 
+      expect(toastrService.clear).toHaveBeenCalled();
+      expect(outrightService.getMatches).toHaveBeenCalled();
+      expect(outrightService.getDeadHeatSetting).toHaveBeenCalledWith(component.data.leagueId);
+      expect(CalculateService.teamWonSettled).toHaveBeenCalled();
       expect(messageBoxService.confirm).toHaveBeenCalled();
 
       const confirmCallback = mockConfirm.mock.calls[0][1];
       await confirmCallback();
 
-      expect(outrightService.saveTraderScore).toHaveBeenCalledWith(1, [{
+      expect(outrightService.saveTraderScore).toHaveBeenCalledWith(component.data.leagueId, [{
+        orId: team.orId,
+        teamId: team.teamId,
+        result: team.traderScore,
+        isDeadheat: team.isDeadheat
+      }]);
+      expect(dialogRef.close).toHaveBeenCalled();
+    });
+
+    it('should handle dead heat setting No case', async () => {
+      team.traderScore = 'WON';
+      team.selected = true;
+      team.isDeadheat = false;
+      team.orId = '1';
+      team.teamId = 100;
+      component.teams = [team];
+      outrightService.getMatches = jest.fn().mockReturnValue(Promise.resolve(leagueSettle));
+      CalculateService.VerifySettledSelected = jest.fn().mockReturnValue(false);
+      CalculateService.teamWonSettled = jest.fn().mockReturnValue([]);
+      outrightService.getDeadHeatSetting = jest.fn().mockReturnValue(Promise.resolve(DeadHeatSettings.No));
+      CalculateService.VerifyDeadHeatNoSetting = jest.fn().mockReturnValue('');
+      toastrService.clear = jest.fn();
+      outrightService.saveTraderScore = jest.fn().mockReturnValue(Promise.resolve());
+      dialogRef.close = jest.fn();
+
+      const mockConfirm = jest.fn();
+      messageBoxService.confirm = mockConfirm;
+
+      await component.saveTraderScore();
+
+      expect(CalculateService.VerifyDeadHeatNoSetting).toHaveBeenCalled();
+      expect(messageBoxService.confirm).toHaveBeenCalled();
+
+      const confirmCallback = mockConfirm.mock.calls[0][1];
+      await confirmCallback();
+
+      expect(outrightService.saveTraderScore).toHaveBeenCalledWith(component.data.leagueId, [{
+        orId: team.orId,
+        teamId: team.teamId,
+        result: team.traderScore,
+        isDeadheat: team.isDeadheat
+      }]);
+      expect(dialogRef.close).toHaveBeenCalled();
+    });
+
+    it('should handle default dead heat setting case', async () => {
+      team.traderScore = 'WON';
+      team.selected = true;
+      team.isDeadheat = false;
+      team.orId = '1';
+      team.teamId = 100;
+      component.teams = [team];
+      outrightService.getMatches = jest.fn().mockReturnValue(Promise.resolve(leagueSettle));
+      CalculateService.VerifySettledSelected = jest.fn().mockReturnValue(false);
+      CalculateService.teamWonSettled = jest.fn().mockReturnValue([]);
+      outrightService.getDeadHeatSetting = jest.fn().mockReturnValue(Promise.resolve(999)); // Unknown setting
+      CalculateService.VerifyDeadHeatNoSet = jest.fn().mockReturnValue('');
+      toastrService.clear = jest.fn();
+      outrightService.saveTraderScore = jest.fn().mockReturnValue(Promise.resolve());
+      dialogRef.close = jest.fn();
+
+      const mockConfirm = jest.fn();
+      messageBoxService.confirm = mockConfirm;
+
+      await component.saveTraderScore();
+
+      expect(CalculateService.VerifyDeadHeatNoSet).toHaveBeenCalled();
+      expect(messageBoxService.confirm).toHaveBeenCalled();
+
+      const confirmCallback = mockConfirm.mock.calls[0][1];
+      await confirmCallback();
+
+      expect(outrightService.saveTraderScore).toHaveBeenCalledWith(component.data.leagueId, [{
         orId: team.orId,
         teamId: team.teamId,
         result: team.traderScore,

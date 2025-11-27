@@ -2,15 +2,17 @@
 var notification = {
     timeout: 40000, // 40s
     fiveMinutesTimeout: 300000, //5m
-    numberOfItems: 10
+    numberOfItems: 10,
+    oneSecondInterval: 3000, // 1s
+
 }
 
 window.onload = initializeNotification;
 
 function initializeNotification() {
     setTimeout(showIconNumberOfNotifications);
-    setTimeout(showIconBetBuilder);
-    setTimeout(showIconOutright);
+    setInterval(showIconBetBuilder, notification.oneSecondInterval);
+    setInterval(showIconOutright, notification.oneSecondInterval);
 
     var notificationToggle = document.getElementById('notification-toggle');
     notificationToggle.addEventListener('click', function (event) {
@@ -151,12 +153,12 @@ function showIconBetBuilder() {
                 }
             }
             else {
-                if (document.getElementsByClassName("products-notification").length > 0) {
-                    document.classList.remove("products-notification");
+                var productsNotificationElements = document.getElementsByClassName("products-notification");
+                for (var i = productsNotificationElements.length - 1; i >= 0; i--) {
+                    productsNotificationElements[i].remove();
                 }
             }
 
-            setTimeout(showIconBetBuilder, notification.fiveMinutesTimeout);
         }
     };
 
@@ -180,12 +182,11 @@ function showIconOutright() {
                 }
             }
             else {
-                if (document.getElementsByClassName("flag-notification").length > 0) {
-                    document.classList.remove("flag-notification");
+                var flagNotificationElements = document.getElementsByClassName("flag-notification");
+                for (var i = flagNotificationElements.length - 1; i >= 0; i--) {
+                    flagNotificationElements[i].remove();
                 }
             }
-
-            setTimeout(showIconOutright, notification.fiveMinutesTimeout);
         }
     };
 

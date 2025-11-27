@@ -41,7 +41,6 @@ export class CalculateService {
         const teamWonSelectedDeadHeat = _.filter(teamWonSelected, team => team.isDeadheat);
         const teamSettledNoneDeadHeat = _.filter(teamWonSettled, team => !team.isDeadheat);
 
-
         if ((teamWonSelectedNoneDeadHeat.length === 1 && teamSettledNoneDeadHeat.length >= 1) ||
             teamWonSelectedNoneDeadHeat.length > 1 || teamWonSelectedDeadHeat.length > 0) {
             return this.MessageInconsistentDeadheat(teamWonSelected.concat(teamWonSettled), Language.Outright.incorrectDeadHeatSetting);
@@ -49,7 +48,7 @@ export class CalculateService {
         return "";
     }
 
-    public static VerifyDeadHeatYesSetting(teamWonSelected: Team[], teamWonSettled: Team[]) {
+    public static VerifyDeadHeatYesSetting(teamWonSelected: Team[], teamWonSettled: Team[], isConfirm = false) {
         const teamWonSelectedNoneDeadHeat = _.filter(teamWonSelected, team => !team.isDeadheat);
         const teamWonSelectedDeadHeat = _.filter(teamWonSelected, team => team.isDeadheat);
         const teamSettledDeadHeat = _.filter(teamWonSettled, team => team.isDeadheat);
@@ -62,13 +61,15 @@ export class CalculateService {
         if (teamWonSelectedNoneDeadHeat.length === 1 && ((teamSettledNoneDeadHeat.length >= 1 && _.isEmpty(teamSettledDeadHeat)) ||
             !_.isEmpty(teamSettledDeadHeat) ||
             !_.isEmpty(teamWonSelectedDeadHeat))) {
-
             return this.MessageInconsistentDeadheat(teamWonSelected.concat(teamWonSettled), Language.Outright.incorrectDeadHeatSetting);
-
         }
 
         if (VerifyDeadHeatService.VerifyDeadheatSettingYes(teamWonSelected, teamWonSettled)) {
             return this.MessageInconsistentDeadheat(teamWonSelected.concat(teamWonSettled), Language.Outright.inconsistentDeadheat);
+        }
+
+        if (isConfirm && this.isOnlyOneDeadHeat(teamSettledDeadHeat, teamWonSelectedDeadHeat)) {
+            return Language.Outright.atLeastTwoDeadHeat;
         }
 
         return "";
@@ -153,8 +154,19 @@ export class CalculateService {
         return teamNotSelectButSettled;
     }
 
+    public static teamWonConfirmed(teamSelected: Team[], originalTeam: Team[]) {
+        const teamNotSelectButSettled = _.filter(originalTeam, team =>
+            _.isUndefined(teamSelected.find(t => _.isEqual(t.orId, team.orId)))
+            && _.isEqual(team.resultStatusId, 3)
+            && _.isEqual(team.traderScore?.toLowerCase() || '', Status.won)
+        );
+        return teamNotSelectButSettled;    }
+
     public static verifyDeadHeat(teamWonSelected: Team[]) {
         return teamWonSelected.some(team => team.isDeadheat !== team.originalIsDeadheat);
     }
 
+    public static isOnlyOneDeadHeat(teamSettledDeadHeat: Team[], teamWonSelectedDeadHeat: Team[]) {
+        return teamSettledDeadHeat.length === 1 || teamWonSelectedDeadHeat.length === 1;
+    }
 }

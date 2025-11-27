@@ -45,6 +45,7 @@ export class CalculatePopupComponent implements OnInit {
     private readonly statusPipe = inject(StatusPipe);
     private readonly completedStatus = "Completed";
     private readonly statusRunning = [Status.running, Status.closed, Status.internal];
+    private readonly RESULT_STATUS_CONFIRMED = 3;
 
     blockUI = true;
     teams: Team[];
@@ -74,7 +75,8 @@ export class CalculatePopupComponent implements OnInit {
 
     async ngOnInit(): Promise<void> {
         this.toastrService.overlayContainer = this.toastContainer;
-        this.blockUIService.blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
+        this.blockUIService.blockUIEvent
+           .subscribe((event: boolean) => this.blockUI = event);
         await this.getMatches();
         this.ticketsStatusSelect.items = this.calculateService.renderTicketStatus();
     }
@@ -84,10 +86,10 @@ export class CalculatePopupComponent implements OnInit {
     }
 
     async getMatches() {
+        this.loading = true;
         this.leagueSettle = await this.outrightService.getMatches(this.data.leagueId, this.data.sportType, StatusId.runningAndCompleted);
         this.permission = this.leagueSettle.permission;
         this.leagueSettle.teams.forEach(team => {
-            this.loading = true;
             team.status = team.status.toUpperCase();
             team.eventDate = _.includes(this.statusRunning, team.oddsStatus.toLowerCase()) ? this.leagueSettle.today : team.eventDate;
             team.dateTime = this.verifyDateService.convertToDateStruct(team.eventDate);
@@ -101,11 +103,11 @@ export class CalculatePopupComponent implements OnInit {
             this.autoFillFinalScore(team);
             this.autoChangeDeadheat(team);
             team.traderConfirmClass = this.traderConfirmClass(team);
-            this.loading = false;
         });
         this.moveBetsDay = this.verifyDateService.convertToDateStruct(this.leagueSettle.moveBetsDay);
         this.today = this.verifyDateService.convertToDateStruct(this.leagueSettle.today);
         this.teams = this.leagueSettle.teams;
+        this.loading = false;
     }
 
     close() {
@@ -134,16 +136,15 @@ export class CalculatePopupComponent implements OnInit {
             return;
         } 
 
-        if(team.resultStatusId === 3) {
+        if(team.resultStatusId === this.RESULT_STATUS_CONFIRMED) {
             team.isDeadheat = false;
         }
     }
 
     traderConfirmClass(team: Team) {
-        const confirmStatus = 3;
         if(!_.isEmpty(team.originalTraderScore) 
             &&!CompletedStatus.includes(team.originalStatus.toLocaleLowerCase())
-            && _.isEqual(team.resultStatusId, confirmStatus)
+            && _.isEqual(team.resultStatusId, this.RESULT_STATUS_CONFIRMED)
         ){
             return 'bg-result-confirmed';
         }
@@ -366,14 +367,14 @@ export class CalculatePopupComponent implements OnInit {
         this.doCalculate(this.teamSettleWon.length);
     }
 
-    private verifySetting(setting: number, teamWonSettled: Team[], teamWonSelected: Team[]) {
+    private verifySetting(setting: number, teamWonSettled: Team[], teamWonSelected: Team[], isConfirm = false) {
         let errorSettingMessage = "";
         switch (setting) {
             case DeadHeatSettings.No:
                 errorSettingMessage = CalculateService.VerifyDeadHeatNoSetting(teamWonSelected, teamWonSettled);
                 break;
             case DeadHeatSettings.Yes:
-                errorSettingMessage = CalculateService.VerifyDeadHeatYesSetting(teamWonSelected, teamWonSettled);
+                errorSettingMessage = CalculateService.VerifyDeadHeatYesSetting(teamWonSelected, teamWonSettled, isConfirm);
                 break;
             default: errorSettingMessage = CalculateService.VerifyDeadHeatNoSet(teamWonSelected, teamWonSettled);
         }
@@ -453,6 +454,19 @@ export class CalculatePopupComponent implements OnInit {
             return;
         }
 
+        const teamWonSelected = _.filter(this.teamSelected, team => _.isEqual(team.traderScore.toLowerCase(), Status.won));
+        const teamWonSettled = CalculateService.teamWonSettled(this.teamSelected, this.originalTeam);
+        const teamWonConfirmed = CalculateService.teamWonConfirmed(this.teamSelected, this.originalTeam);
+        const setting = await this.outrightService.getDeadHeatSetting(this.data.leagueId);
+
+        const errorSettingMessage = this.verifySetting(setting, teamWonSettled, teamWonSelected) 
+            || this.verifySetting(setting, teamWonConfirmed, teamWonSelected, true);
+
+        if (!_.isEmpty(errorSettingMessage)) {
+            this.toastrService.error(errorSettingMessage);
+            return;
+        }
+
         this.confirmationDialogMessage.message = Language.SaveTraderScore;
         this.messageBoxService.confirm(this.confirmationDialogMessage, async () => {
             const teams = this.teamSelected.map(team => ({
@@ -471,14 +485,15 @@ export class CalculatePopupComponent implements OnInit {
             return '';
         }
 
-        if(_.isEqual(team.originalTraderScore.toLowerCase(), Status.refund) && team.resultStatusId === 3) {
+        if(_.isEqual(team.traderScore.toLowerCase(), Status.refund)) {
             return 'bg-result-refund';
         }
 
-        if(_.isEqual(team.originalTraderScore.toLowerCase(), Status.won) && team.resultStatusId === 3) {
+        if(_.isEqual(team.traderScore.toLowerCase(), Status.won)) {
             return 'bg-result-won';
         }
 
         return '';
     }
 }
+
