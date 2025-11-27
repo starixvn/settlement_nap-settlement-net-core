@@ -47,6 +47,9 @@ public class FastMarketServiceImp(
     private readonly IFastMarketResultAmendmentService fastMarketResultAmendmentService = dependencies.FastMarketResultAmendmentService;
     private readonly XmlConvertService xmlConvertService = dependencies.XmlConvertService;
 
+    private const int AutoRefundFastMarket = 6;
+
+
     public async Task<FastMarketModel> Query(int matchId)
     {
         var criteria = new GetFastMarketMatchDetailCriteria { MatchId = matchId };
@@ -135,12 +138,38 @@ public class FastMarketServiceImp(
 
         ExecuteCalculate(criteria);
 
+        await InsertLetstalkMessage(request);
+
         return new Result
         {
             SettledSessionId = criteria.BroadcastSessionId,
             IsOrg = criteria.IsOrg,
             HasResultAmendment = hasResultAmendment
         };
+    }
+
+    private async Task InsertLetstalkMessage(SettleRequest request)
+    {
+        if (request.Action
+            != ActionName.RefundAll)
+        {
+            return;
+        }
+
+        var date = DateTimeOffset.Now;
+        var offsetHours = date.Offset.Hours;
+        string executeTime = date.ToString("MMM dd, yyyy HH:mm:ss") + $" GMT{offsetHours:+#;-#;+0}";
+        var bettypes = request.BetTypes.Select(x => $"{x.BetTypeId}({string.Join(",", x.FastMarketResults.Select(x => x.PositionName))})");
+
+        var message = $"The match has been executed Refund FastMarket with {string.Join(", ", bettypes)} successfully at {executeTime}";
+        var criteria = new AddNotificationCriteria
+        {
+            MatchId = request.MatchId,
+            MessageContent = message,
+            ActionName = $"Refund FastMarket",
+            MessageGroupId = AutoRefundFastMarket, // Auto Refund FM
+        };
+        await repository.ExecuteAsync(criteria);
     }
 
     private void ExecuteCalculate(PushFastMarketResultCriteria criteria)

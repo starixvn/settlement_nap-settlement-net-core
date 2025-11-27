@@ -63,7 +63,6 @@ public class FastMarketHandler(
                 new CancellationTokenSource(TimeSpan.FromSeconds(3)).Token);
         }
 
-
         return result;
     }
     public async Task<MarkedTickets> Handle(CheckingMarkedTicketsRequest request, CancellationToken cancellationToken)
