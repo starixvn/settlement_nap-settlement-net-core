@@ -7,9 +7,6 @@
     <Compile Remove="Services\Tennis\GameTotalResourceName.cs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Fanex.Settlement.MessageBridge" Version="1.0.15" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Settlement.Core\Settlement.Core.csproj" />
   </ItemGroup>
 </Project>
